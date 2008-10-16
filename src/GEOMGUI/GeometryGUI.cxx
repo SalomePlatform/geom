@@ -1624,7 +1624,7 @@ void GeometryGUI::onWindowActivated( SUIT_ViewWindow* win )
     return;
 
   const bool ViewOCC = ( win->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-  const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
+  //const bool ViewVTK = ( win->getViewManager()->getType() == SVTK_Viewer::Type() );
 
   // disable non-OCC viewframe menu commands
 //  action( 404 )->setEnabled( ViewOCC ); // SKETCHER
@@ -1723,25 +1723,36 @@ LightApp_Selection* GeometryGUI::createSelection() const
 void GeometryGUI::contextMenuPopup( const QString& client, QPopupMenu* menu, QString& title )
 {
   SalomeApp_Module::contextMenuPopup( client, menu, title );
+
   SALOME_ListIO lst;
   getApp()->selectionMgr()->selectedObjects( lst );
+  if (lst.Extent() < 1)
+    return;
 
-  if (lst.Extent() == 1) {
-    Handle(SALOME_InteractiveObject) io = lst.First();
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-    _PTR(Study) study = appStudy->studyDS();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
+  _PTR(Study) study = appStudy->studyDS();
+
+  bool isImported = true;
+  SALOME_ListIteratorOfListIO anIt (lst);
+  for (; anIt.More() && isImported; anIt.Next()) {
+    Handle(SALOME_InteractiveObject) io = anIt.Value();
     _PTR(SObject) aSObj = study->FindObjectID(io->getEntry());
     if (aSObj) {
-      // Set context menu title
-      if (client == "OCCViewer" || client == "VTKViewer")
-        title = QString(aSObj->GetName().c_str());
+      if (lst.Extent() == 1) {
+        // Set context menu title
+        if (client == "OCCViewer" || client == "VTKViewer")
+          title = QString(aSObj->GetName().c_str());
+      }
 
-      // Reload imported shape
       CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSObj);
       GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(anObj);
-      if (!CORBA::is_nil(aGeomObj) && aGeomObj->GetType() == GEOM_IMPORT)
-        action(5029)->addTo(menu);
+      if (CORBA::is_nil(aGeomObj) || aGeomObj->GetType() != GEOM_IMPORT)
+        isImported = false;
     }
+  }
+
+  if (isImported) {
+    action(5029)->addTo(menu); // Reload imported shape
   }
 }
 
