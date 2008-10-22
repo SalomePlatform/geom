@@ -220,9 +220,10 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg(GeometryGUI* theGeometryGUI, QW
   QMap< int, DlgRef_SpinBox* >::iterator anIter;
   for ( anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter )
     {
-      anIter.data()->RangeStepAndValidator( 0.001, COORD_MAX, SpecificStep, 3 );
       if ( anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24 )
            anIter.data()->RangeStepAndValidator( 0.001, 89.999, 5, 0 );
+      else
+           anIter.data()->RangeStepAndValidator( 0.001, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY );
     }
 
   setHelpFileName("chamfer_operation_page.html");
