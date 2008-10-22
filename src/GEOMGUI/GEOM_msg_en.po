@@ -3369,3 +3369,33 @@ msgstr "Unknown error"
 
 msgid "GEOM_IMPORT_ERRORS"
 msgstr "Import operation has finished with errors:"
+
+### GeomAlgo Error codes
+
+msgid " iErr : 10"
+msgstr "the Classifier is NULL"
+
+msgid " iErr : 11"
+msgstr "the Shape is NULL"
+
+msgid " iErr : 12"
+msgstr "Unallowed Type of Subshape"
+
+msgid " iErr : 13"
+msgstr "Unallowed State"
+
+msgid " iErr : 15"
+msgstr "Unallowed Surface Type"
+
+msgid " iErr : 20"
+msgstr "Triangulation is not Found"
+
+msgid " iErr : 30"
+msgstr "Can not Obtain the Line From the Link"
+
+msgid " iErr : 40"
+msgstr "A Point Can Not Be Classified"
+
+msgid " iErr : 41"
+msgstr "Invalid Data for Classifier"
+
