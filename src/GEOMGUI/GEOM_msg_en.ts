@@ -24,6 +24,42 @@ It can't be deleted </translation>
             <translation>Object of incorrect type selected!
 Please, select face, shell or solid and try again</translation>
         </message>
+	<message>
+	    <source> iErr : 10</source>
+	    <translation>the Classifier is NULL</translation>
+	</message>
+	<message>
+	    <source> iErr : 11</source>
+	    <translation>the Shape is NULL</translation>
+	</message>
+	<message>
+	    <source> iErr : 12</source>
+	    <translation>Unallowed Type of Subshape</translation>
+	</message>
+	<message>
+	    <source> iErr : 13</source>
+	    <translation>Unallowed State</translation>
+	</message>
+	<message>
+	    <source> iErr : 15</source>
+	    <translation>Unallowed Surface Type</translation>
+	</message>
+	<message>
+	    <source> iErr : 20</source>
+	    <translation>Triangulation is not Found</translation>
+	</message>
+	<message>
+	    <source> iErr : 30</source>
+	    <translation>Can not Obtain the Line From the Link</translation>
+	</message>
+	<message>
+	    <source> iErr : 40</source>
+	    <translation>A Point Can Not Be Classified</translation>
+	</message>
+	<message>
+	    <source> iErr : 41</source>
+	    <translation>Invalid Data for Classifier</translation>
+	</message>
         <message>
             <source>GEOM_2D_CONTINUTY</source>
             <translation>2D continuity</translation>
