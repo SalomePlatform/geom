@@ -296,7 +296,7 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
 
       gp_Pnt aPnt3( ( aPnt1.X() + aPnt2.X() ) / 2,
                     ( aPnt1.Y() + aPnt2.Y() ) / 2,
-                    ( aPnt1.Z() + aPnt2.Z() ) / 2 + 100 );
+                    ( aPnt1.Z() + aPnt2.Z() ) / 2 );
 
       gp_Vec va( aPnt3, aPnt1 );
       gp_Vec vb( aPnt3, aPnt2 );
