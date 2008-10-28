@@ -139,14 +139,14 @@ void PrimitiveGUI_FaceDlg::Init()
 
   double aDefaultSize = 100.0;
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupPlane->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPlane->SpinBox_DX, 0.00001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPlane->SpinBox_DX->setValue( aDefaultSize );
-  initSpinBox( GroupPlane->SpinBox_DY, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPlane->SpinBox_DY, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPlane->SpinBox_DY->setValue( aDefaultSize );
 
-  initSpinBox( GroupDimensions->SpinBox_DX, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupDimensions->SpinBox_DX->setValue( aDefaultSize );
-  initSpinBox( GroupDimensions->SpinBox_DY, 0.001, COORD_MAX, aStep, 3 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DY, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupDimensions->SpinBox_DY->setValue( aDefaultSize );
 
 	
