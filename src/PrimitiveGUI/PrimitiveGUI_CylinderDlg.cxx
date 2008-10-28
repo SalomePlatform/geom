@@ -127,11 +127,11 @@ void PrimitiveGUI_CylinderDlg::Init()
   /* First constructor : radius */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   /* First constructor : algebric height */
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   /* Second constructor : radius */
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   /* Second constructor : algebric height */
-  GroupDimensions->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, step, DBL_DIGITS_DISPLAY);
 
   GroupPoints->SpinBox_DX->SetValue(100.0);
   GroupPoints->SpinBox_DY->SetValue(300.0);

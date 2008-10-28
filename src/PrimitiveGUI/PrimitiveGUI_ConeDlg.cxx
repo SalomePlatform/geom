@@ -128,10 +128,10 @@ void PrimitiveGUI_ConeDlg::Init()
   /* min, max, step and decimals for spin boxes & initial values */
   GroupPoints->SpinBox_DX->RangeStepAndValidator(0.000, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DY->RangeStepAndValidator(0.000, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  GroupPoints->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupPoints->SpinBox_DZ->RangeStepAndValidator(0.001, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   GroupDimensions->SpinBox_DX->RangeStepAndValidator(0.000, COORD_MAX, step, DBL_DIGITS_DISPLAY);
   GroupDimensions->SpinBox_DY->RangeStepAndValidator(0.000, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
+  GroupDimensions->SpinBox_DZ->RangeStepAndValidator(0.001, COORD_MAX, step, DBL_DIGITS_DISPLAY);
 
   double aRadius1(100.0), aRadius2(0.0), aHeight(300.0); 
   GroupPoints->SpinBox_DX->SetValue(aRadius1);
