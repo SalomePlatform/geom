@@ -125,8 +125,7 @@ void GenerationGUI_RevolDlg::Init()
   //GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX,
   //                                               SpecificStep, DBL_DIGITS_DISPLAY);
   // 05.06.2008 skl for IPAL12958
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.0, 360.0, SpecificStep,
-                                                 DBL_DIGITS_DISPLAY);
+  GroupPoints->SpinBox_DX->RangeStepAndValidator(-360.0, 360.0, SpecificStep, DBL_DIGITS_DISPLAY);
   GroupPoints->SpinBox_DX->SetValue(45.0);
 
   /* signals and slots connections */
