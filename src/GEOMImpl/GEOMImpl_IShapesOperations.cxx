@@ -2890,6 +2890,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
   Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
 
+  if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
+  if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
+  if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
+
   Tol_Mass = Tol_3D;
   if      ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
   else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
