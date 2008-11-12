@@ -987,6 +987,7 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 {
   //myGeometryGUI->SetState( -1 );
   disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
+  myGeometryGUI->getApp()->updateActions();
   QDialog::closeEvent( e );
 }
 
