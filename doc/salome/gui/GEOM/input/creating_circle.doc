@@ -15,8 +15,8 @@ Radius)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + Radius.
 
-\note Passing None as <b>Center Point</b> means Origin of global
-coordinate system, passing None as \b Vector means OZ axis of global
+\note By default it is presumed that the <b>Center Point</b> is located at the  Origin of the global
+coordinate system, and the  \b Vector corresponds to OZ axis of the global
 coordinate system.
 
 \image html circle1.png

@@ -21,20 +21,20 @@ In this Menu:
 <ul>
 <li><b>Shape Type</b> radio button defines the type of elements for the
 group (points, wires, faces, shells or solids).</li>
-<li><b>Group Name</b> - here you can enter the name of the group, by
+<li><b>Group Name</b> - allows defining the name of the group, by
 default, it is Group_n.</li>
 <li>Then, using the "Select" button, select the <b>Main Shape</b> (a
 geometrical object on which the group will be created). </li>
-<li> <b>Main Shape Selection restriction</b> button group lets you restrict the range
-of group elements you operate with.
-<ul><li> <b>No restriction</b> button enables work with all sub-shapes of the Main
+<li> <b>Main Shape Selection restriction</b> button group allows limiting the range
+of available group elements,
+<ul><li> <b>No restriction</b> button enables all sub-shapes of the Main
 Shape.</li>
 <li><b>Geometrical parts of the Second Shape</b> restricts the range of accessible
-elements to those sub-shapes of the Main Shape that geometrically
+elements to the sub-shapes of the Main Shape that geometrically
 coincide with the <b>Second Shape</b>.</li>
 <li><b>Only Sub-Shapes of the Second Shape</b> restricts the range of
-accessible elements to those sub-shapes of the Main Shape that 
-are sub-shapes of <b>Second Shape</b>. This is useful because 
+accessible elements to the sub-shapes of the Main Shape that 
+are sub-shapes of the <b>Second Shape</b>. This is useful because 
 sometimes purely geometrical coincidence is not enough and it 
 is necessary to work with shapes, which actually belong both 
 to the main and the second shape.</li>

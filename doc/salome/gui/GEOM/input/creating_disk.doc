@@ -2,25 +2,26 @@
 
 \page create_disk_page Disk
 
+A primitive called disk is a round plane with a certain radius and orientation
+
 To create a \b Disk in the <b>Main Menu</b> select <b>New Entity - >
 Primitives - > Disk</b>
 
 \n There are 3 algorithms to create a \b Disk in 3D space. 
 \n The \b Result of each operation will be a GEOM_Object (face).
 
-\n Firstly, you can create a \b Disk by the given radius at the origin 
-of coordinates. You can define the axis of the disk by the orientation
-group buttons. There are three options to create an object in OXY, OYZ or OZX Planes.
+\n Firstly, you can create a \b Disk at the origin 
+of coordinates defining its radius and selecting the orientation of its axis with radio
+ buttons (OXY, OYZ or OZX).This 
+means that the Disk will lie in "OXY", "OYZ" or "OZX" plane correspondingly.
 \n <b>TUI Command:</b> <em>geompy.MakeDiskR(Radius, Orientation)</em>
 \n <b>Arguments:</b> Name + 2 values (Dimensions at origin: radius and
 orientation).
-\n The orientation can be defined by "1", "2" or "3" values. This 
-means that Disk will lie in "OXY", "OYZ" or "OZX" plane correspondingly.
 
 \image html disk1.png
 
 \n Secondly, you can define a \b Disk by a <b>Center Point</b>, a \b
-Vector giving the circle's normal and a \b Radius.
+Vector defining the normal of a circle and a \b Radius.
 \n <b>TUI Command:</b> <em>geompy.MakeDiskPntVecR(Point, Vector,
 Radius)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for

@@ -22,11 +22,11 @@ Select the required file and click \b Open. Your file will be imported in
 the module and its contents (geometrical object) will be displayed in
 the <b>Object Browser</b>.
 
-\note You can re-open ones imported shape from the initial file, if
-the file has been changed on disk. Use for that item
-<b>Reload From Disk</b> from context menu of imported
-shape. Reloaded shape will have the same representation parameters
-like before this operation.
+\note It is possible to re-open from the initial file a previously imported shape if
+the file has been changed on disk. For this, select
+<b>Reload From Disk</b> in the context menu of the imported
+shape. The reloaded shape will have the same representation parameters
+as before this operation.
 
 \image html geomimport_reopen.png
 
