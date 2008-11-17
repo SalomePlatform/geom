@@ -25,8 +25,17 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 EXTRA_DIST += images static
 
 dev_docs: doxyfile
-	echo "Running doxygen in directory: "`pwd`; \
-	$(DOXYGEN) $<;
+	echo "===========================================" ;			\
+	echo "Replacing geompyDC by geompy" ;					\
+	echo "===========================================" ;			\
+	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
+	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
+	  $(top_builddir)/src/GEOM_SWIG/geompy.py ; 				\
+	echo "===========================================" ;			\
+	echo "Generating TUI documentation" ;					\
+	echo "===========================================" ;			\
+	$(DOXYGEN) doxyfile ; 							\
+	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
 
 clean-local:
 	-rm -fr GEOM doxygen.bak

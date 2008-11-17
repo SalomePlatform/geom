@@ -26,6 +26,12 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 EXTRA_DIST += images input static
 
 usr_docs: doxyfile_tui doxyfile_py doxyfile 
+	echo "===========================================" ;			\
+	echo "Replacing geompyDC by geompy" ;					\
+	echo "===========================================" ;			\
+	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
+	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
+	  $(top_builddir)/src/GEOM_SWIG/geompy.py ; 				\
 	@echo "===========================================" ;			\
 	echo "Generating examples documentation" ;				\
 	echo "===========================================" ;			\
@@ -35,18 +41,10 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile_py ;						\
 	echo "===========================================" ;			\
-	echo "Replacing geompyDC by geompy" ;					\
-	echo "===========================================" ;			\
-	files=`find geompy_doc -type f` ;					\
-	for filen in $${files} ; do						\
-	  sed -e "s/\<geompyDC\>/geompy/g" -e "s/geompy\.geompy/geompy/g"	\
-	      -e "s/geompy::geompy/geompy/g" $${filen} > $${filen}_ ;		\
-	  mv -f $${filen}_ $${filen} ;						\
-	done ;									\
-	echo "===========================================" ;			\
 	echo "Generating GUI documentation" ;					\
 	echo "===========================================" ;			\
-	$(DOXYGEN) doxyfile ;
+	$(DOXYGEN) doxyfile ; \
+	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
 
 docs: usr_docs
 
