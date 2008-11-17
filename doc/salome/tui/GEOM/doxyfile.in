@@ -77,10 +77,12 @@ WARN_LOGFILE           = log.txt
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = ../../../share/salome/src \
+			 ../../../build/salome/src/GEOM_SWIG/geompy.py \
 		         ../../../share/salome/idl
 FILE_PATTERNS          = *.hxx *.cxx *.h *.c *.hh *.cc *.idl python_extension_must_be_here
 RECURSIVE              = YES
-EXCLUDE                = 
+EXCLUDE                = ../../../share/salome/src/GEOM_SWIG/geompy.py \
+			 ../../../share/salome/src/GEOM_SWIG/geompyDC.py
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = 

@@ -27,31 +27,19 @@ EXTRA_DIST+=GEOM
 
 doxygen=@DOXYGEN@
 
-# Below command replaces "geompyDC" by "geompy" except cases
-# "sgeompyDC", "1geompyDC" and "egeompyDC" (these sequences
-# can be found in file names and must not be replaces):
-#
-# sed 's/\([^s1e]\)geompyDC\|^geompyDC/\1geompy/g' $${filen} > ./tmp;
-#
 usr_docs:
-	cd ./GEOM; \
+	echo "Replacing geompyDC by geompy" ; \
+	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
+	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
+	  $(top_builddir)/src/GEOM_SWIG/geompy.py ; 				\
+	cd ./GEOM ; \
 	echo "Running doxygen in directory: "`pwd`; \
 	$(doxygen) ./doxyfile_tui; \
-	echo "Processing geompyDC.py file: "; \
+	echo "Processing geompy.py file: "; \
 	$(doxygen) ./doxyfile_py; \
-	cd ./geompy_doc; \
-	filesl=`find .`; \
-	for filen in $${filesl}; do \
-	  sed 's/\([^s1e]\)geompyDC\|^geompyDC/\1geompy/g' $${filen} > ./tmp1; \
-	  sed 's/geompy\.geompy/geompy/g' ./tmp1 > ./tmp; \
-	  rm -f tmp1; \
-	  sed 's/geompy::geompy/geompy/g' ./tmp > ./tmp1; \
-	  rm -f tmp; \
-	  mv -f tmp1 $${filen}; \
-	done; \
-	cd ..; \
 	echo "Running doxygen in directory: "`pwd`; \
-	$(doxygen) ./doxyfile;
+	$(doxygen) ./doxyfile; \
+	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
 
 docs: usr_docs
 

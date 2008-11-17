@@ -24,7 +24,16 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 EXTRA_DIST+=GEOM
 
-dev_docs:
+dev_docs: doxyfile
+	echo "===========================================" ;			\
+	echo "Replacing geompyDC by geompy" ;					\
+	echo "===========================================" ;			\
+	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
+	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
+	  $(top_builddir)/src/GEOM_SWIG/geompy.py ; 				\
+	echo "===========================================" ;			\
+	echo "Generating TUI documentation" ;					\
+	echo "===========================================" ;			\
 	cp -fr $(srcdir)/GEOM ./INPUT; \
 	cp -f ./GEOM/doxyfile ./INPUT; \
 	cd INPUT; \
@@ -49,7 +58,20 @@ dev_docs:
 	$(DOXYGEN) ./doxyfile; \
 	cd ../; \
 	cp -fr $(srcdir)/GEOM/sources/ GEOM/ ; \
-	rm -fr INPUT
+	rm -fr INPUT ; \
+	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
+
+clean-local:
+	-rm -fr GEOM doxygen.bak
+
+install-data-local:
+	if test -d GEOM; then \
+	  $(INSTALL) -d $(DESTDIR)$(docdir)/tui ; \
+	  cp -rp GEOM $(DESTDIR)$(docdir)/tui ; \
+	fi;
+
+uninstall-local:
+	rm -rf $(DESTDIR)$(docdir)/tui/GEOM
 
 doctuidir=$(docdir)/tui/GEOM
 

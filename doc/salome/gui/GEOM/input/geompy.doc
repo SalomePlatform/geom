@@ -6,7 +6,7 @@
 <a href="geompy_doc/modules.html">structured documentation for geompy.py</a>,
 where all package functionality is separated in groups by purpose.
 
-\n Also you can find any function in the \ref geompyDC::geompyDC
+\n Also you can find any function in the \ref geompy
 "linear documentation for geompy.py".
 
 */
