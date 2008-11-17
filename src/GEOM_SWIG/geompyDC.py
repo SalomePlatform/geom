@@ -107,8 +107,6 @@ class info:
 
 class geompyDC(GEOM._objref_GEOM_Gen):
 
-        ## @addtogroup l1_geompy_auxiliary
-        ## @{
         def __init__(self):
             GEOM._objref_GEOM_Gen.__init__(self)
             self.myBuilder = None
@@ -129,6 +127,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.GroupOp  = None
             pass
 
+        ## @addtogroup l1_geompy_auxiliary
+        ## @{
         def init_geom(self,theStudy):
             self.myStudy = theStudy
             self.myStudyId = self.myStudy._get_StudyId()
