@@ -39,6 +39,8 @@
 #include <TopExp.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -66,7 +68,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_3Sel(centralWidget());
+  GroupPoints = new DlgRef_3Sel1Check(centralWidget());
 
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE_OBJECT"));
@@ -75,6 +77,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg (GeometryGUI* theGeometryGUI, QWidg
   GroupPoints->PushButton1->setIcon(image1);
   GroupPoints->PushButton2->setIcon(image1);
   GroupPoints->PushButton3->setIcon(image1);
+  GroupPoints->CheckButton1->setText(tr("GEOM_SELECT_UNPUBLISHED_EDGES"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -113,6 +116,8 @@ void GenerationGUI_PipeDlg::Init()
   myBase = myPath = myVec = GEOM::GEOM_Object::_nil();
   myOkBase = myOkPath = myOkVec = false;
 
+  GroupPoints->CheckButton1->setEnabled(false);
+
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -126,6 +131,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupPoints->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit3,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+
+  connect(GroupPoints->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(SelectionTypeButtonClicked()));
 
   initName(tr("GEOM_PIPE"));
 
@@ -165,6 +172,23 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
   }
 
   displayPreview();
+}
+
+//=================================================================================
+// function : SelectionBittonClicked()
+// purpose  : Selection type Radio button management
+//=================================================================================
+void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
+{
+  if ( GroupPoints->CheckButton1->isChecked() ) {
+    globalSelection();
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+  } else {
+    TColStd_MapOfInteger aMap;
+    aMap.Add(GEOM_WIRE);
+    aMap.Add(GEOM_LINE);
+    globalSelection(aMap);
+  }
 }
 
 //=================================================================================
@@ -249,57 +273,66 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     bool myOk = false;
     QString aName = GEOMBase::GetName(aSelectedObject);
 
-    if (aSelectedObject != myBase) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if (aMap.Extent() == 1) {
-        int anIndex = aMap(1);
-        aName.append(":edge_" + QString::number(anIndex));
+    if (myEditCurrentArgument == GroupPoints->LineEdit2 && !GroupPoints->CheckButton1->isChecked() ){
+      myPath = aSelectedObject;
+      myOkPath = true;
+      myEditCurrentArgument->setText(aName);
+    }
+    else 
+      { 
+	if (aSelectedObject != myBase) {
+	  TColStd_IndexedMapOfInteger aMap;
+	  aSelMgr->GetIndexes(aSelList.First(), aMap);
+	  if (aMap.Extent() == 1) {
+	    int anIndex = aMap(1);
+	    aName.append(":edge_" + QString::number(anIndex));
+	    
+	    //Find SubShape Object in Father
+	    GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+	    
+	    if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+	      GEOM::GEOM_IShapesOperations_var aShapesOp =
+		getGeomEngine()->GetIShapesOperations(getStudyId());
+	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+	      myOk = true;
+	    }
+	    else { // get Object from study
+	      aSelectedObject = aFindedObject;
+	      myOk = true;
+	    }
+	  }
+	  else {
+	    myOk = true;
+	    if (S.ShapeType() != TopAbs_EDGE) {
+	      aSelectedObject = GEOM::GEOM_Object::_nil();
+	      aName = "";
+	      myOk = false;
+	    }
+	  }
+	  if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+	    myPath = aSelectedObject;
+	    myOkPath = myOk;
+	  }
+	  else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
+	    myVec = aSelectedObject;
+	    myOkVec = myOk;
+	  }
+	}
+	myEditCurrentArgument->setText(aName);
 
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp =
-            getGeomEngine()->GetIShapesOperations(getStudyId());
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-          myOk = true;
-        }
-        else { // get Object from study
-          aSelectedObject = aFindedObject;
-          myOk = true;
-        }
+	if (myOkPath) {
+	  if (!myOkBase)
+	    GroupPoints->PushButton1->click();
+	  else if (!myOkVec)
+	    GroupPoints->PushButton3->click();
+	}
+	else if (myOkVec) {
+	  if (!myOkBase)
+	    GroupPoints->PushButton1->click();
+	  else if (!myOkPath)
+	    GroupPoints->PushButton2->click();
+	}
       }
-      else {
-        myOk = true;
-        if (S.ShapeType() != TopAbs_EDGE) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-          myOk = false;
-        }
-      }
-      if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-	myPath = aSelectedObject;
-	myOkPath = myOk;
-      }
-      else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
-	myVec = aSelectedObject;
-	myOkVec = myOk;
-      }
-    }
-    myEditCurrentArgument->setText(aName);
-    if (myOkPath) {
-      if (!myOkBase)
-	GroupPoints->PushButton1->click();
-      else if (!myOkVec)
-	GroupPoints->PushButton3->click();
-    }
-    else if (myOkVec) {
-      if (!myOkBase)
-	GroupPoints->PushButton1->click();
-      else if (!myOkPath)
-	GroupPoints->PushButton2->click();
-    }
   }
 
   // clear selection
@@ -329,15 +362,24 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
   GroupPoints->LineEdit3->setEnabled(false);
   if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    GroupPoints->CheckButton1->setEnabled(false);
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
 
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    if ( GroupPoints->CheckButton1->isChecked() ) {
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    } else {
+      TColStd_MapOfInteger aMap;
+      aMap.Add(GEOM_WIRE);
+      aMap.Add(GEOM_LINE);
+      globalSelection(aMap);
+    }
+    GroupPoints->CheckButton1->setEnabled(true);
   }
   else if(send == GroupPoints->PushButton3) {
     myEditCurrentArgument = GroupPoints->LineEdit3;
-
+    GroupPoints->CheckButton1->setEnabled(false);
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   }
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
@@ -366,6 +408,11 @@ void GenerationGUI_PipeDlg::LineEditReturnPressed()
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
+
+  if (send == GroupPoints->LineEdit2)
+    GroupPoints->CheckButton1->setEnabled(true);
+  else
+    GroupPoints->CheckButton1->setEnabled(false);
 }
 
 //=================================================================================
@@ -376,8 +423,9 @@ void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  // reinit, because some selected objects could be removed
-  Init();
+  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  ConstructorsClicked(getConstructorId());
 }
 
 //=================================================================================

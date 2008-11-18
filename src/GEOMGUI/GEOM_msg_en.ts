@@ -1044,6 +1044,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_PIPE_TITLE</source>
             <translation>Pipe Construction</translation>
         </message>
+	<message>
+            <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
+            <translation>Select unpublished edges</translation>
+        </message>
         <message>
             <source>GEOM_PLANE</source>
             <translation>Plane</translation>

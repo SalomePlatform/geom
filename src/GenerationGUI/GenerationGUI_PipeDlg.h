@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_3Sel;
+class DlgRef_3Sel1Check;
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg
@@ -61,7 +61,7 @@ private:
   bool                               myOkPath;
   bool                               myOkVec; /* to check when arguments are defined */
   
-  DlgRef_3Sel*                       GroupPoints;
+  DlgRef_3Sel1Check*                       GroupPoints;
 
 private slots:
   void                               ClickOnOk();
@@ -71,6 +71,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
+  void                               SelectionTypeButtonClicked();
 };
 
 #endif // GENERATIONGUI_PIPEDLG_H
