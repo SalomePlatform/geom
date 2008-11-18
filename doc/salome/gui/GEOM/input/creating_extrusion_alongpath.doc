@@ -8,6 +8,7 @@ To generate a \b Pipe in the <b>Main Menu</b> select <b>New Entity - > Generatio
 Object</b> (vertex, edge, planar wire, face or shell), which will be extruded
 and the <b>Path Object</b> (edge or wire) along which the <b>Base 
 Object</b> will be extruded.
+\n Check Box <b>Select unpublished edges</b> - if checked, allows to select an edge of any other shape as the path object. 
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
 
@@ -23,6 +24,7 @@ Object</b> (edge, planar wire or face), which will be extruded,
 the <b>Path Object</b> (edge or wire) along which the <b>Base 
 Object</b> will be extruded and the <b>Vector</b> (edge or wire)
 to keep constant angular relations between the sections and this one.
+\n Check Box <b>Select unpublished edges</b> - if checked, allows to select an edge of any other shape as the path object. 
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
 
