@@ -31,7 +31,7 @@
 #include "GenerationGUI.h"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_3Sel_QTD.h"
+#include "DlgRef_3Sel1Check_QTD.h"
 
 //=================================================================================
 // class    : GenerationGUI_PipeDlg
@@ -64,7 +64,7 @@ private:
     bool myOkPath;
     bool myOkVec; /* to check when arguments are defined */
 
-    DlgRef_3Sel_QTD* GroupPoints;
+    DlgRef_3Sel1Check_QTD* GroupPoints;
 
 private slots:
     void ClickOnOk();
@@ -74,6 +74,7 @@ private slots:
     void SelectionIntoArgument();
     void SetEditCurrentArgument();
     void ConstructorsClicked(int constructorId);
+    void SelectionTypeButtonClicked();
 };
 
 #endif // DIALOGBOX_PIPE_H

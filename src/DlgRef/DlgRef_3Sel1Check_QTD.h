@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'DlgRef_3Sel1Check_QTD.ui'
 **
-** Created: Mon Oct 29 18:14:59 2007
+** Created: Tue Nov 18 12:14:50 2008
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -9,8 +9,6 @@
 
 #ifndef DLGREF_3SEL1CHECK_QTD_H
 #define DLGREF_3SEL1CHECK_QTD_H
-
-#include "GEOM_DlgRef.hxx"
 
 #include <qvariant.h>
 #include <qwidget.h>
@@ -25,7 +23,7 @@ class QLineEdit;
 class QLabel;
 class QCheckBox;
 
-class GEOM_DLGREF_EXPORT DlgRef_3Sel1Check_QTD : public QWidget
+class DlgRef_3Sel1Check_QTD : public QWidget
 {
     Q_OBJECT
 

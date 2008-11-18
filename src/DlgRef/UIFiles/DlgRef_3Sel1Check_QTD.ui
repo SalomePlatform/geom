@@ -8,8 +8,8 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>403</width>
-            <height>441</height>
+            <width>311</width>
+            <height>299</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -74,7 +74,7 @@
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="0" column="2" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="0" column="2">
                     <property name="name">
                         <cstring>LineEdit1</cstring>
                     </property>
@@ -111,7 +111,7 @@
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="1" column="2" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="1" column="2">
                     <property name="name">
                         <cstring>LineEdit2</cstring>
                     </property>
@@ -148,7 +148,7 @@
                         <string></string>
                     </property>
                 </widget>
-                <widget class="QLineEdit" row="2" column="2" rowspan="1" colspan="2">
+                <widget class="QLineEdit" row="2" column="2">
                     <property name="name">
                         <cstring>LineEdit3</cstring>
                     </property>
@@ -169,7 +169,7 @@
                         <string>TL3</string>
                     </property>
                 </widget>
-                <spacer row="4" column="3">
+                <spacer row="4" column="2">
                     <property name="name">
                         <cstring>Spacer3</cstring>
                     </property>

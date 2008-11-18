@@ -34,7 +34,7 @@
 #include "LightApp_SelectionMgr.h"
 
 #include <qlabel.h>
-
+#include <qcheckbox.h>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS.hxx>
@@ -43,6 +43,8 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepOffsetAPI_MakePipe.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_MapOfInteger.hxx>
 #if OCC_VERSION_MAJOR >= 5
 #include <BRepAlgo.hxx>
 #else
@@ -77,7 +79,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(GeometryGUI* theGeometryGUI, QWidge
   RadioButton2->setPixmap(image2);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_3Sel_QTD(this, "GroupPoints");
+  GroupPoints = new DlgRef_3Sel1Check_QTD(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_BASE_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_PATH_OBJECT"));
@@ -85,6 +87,7 @@ GenerationGUI_PipeDlg::GenerationGUI_PipeDlg(GeometryGUI* theGeometryGUI, QWidge
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
   GroupPoints->PushButton3->setPixmap(image1);
+  GroupPoints->CheckButton1->setText(tr("GEOM_SELECT_UNPUBLISHED_EDGES"));
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
@@ -119,6 +122,8 @@ void GenerationGUI_PipeDlg::Init()
 
   myOkBase = myOkPath = myOkVec = false;
 
+  GroupPoints->CheckButton1->setEnabled(false);
+
   /* signals and slots connections */
   connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -131,6 +136,8 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+
+  connect(GroupPoints->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(SelectionTypeButtonClicked()));
   
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
@@ -173,6 +180,22 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
   }
 
   displayPreview();
+}
+
+//=================================================================================
+// function : SelectionBittonClicked()
+// purpose  : Selection type Radio button management
+//=================================================================================
+void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
+{
+  if ( GroupPoints->CheckButton1->isChecked() ) {
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+  } else {
+    TColStd_MapOfInteger aMap;
+    aMap.Add(GEOM_WIRE);
+    aMap.Add(GEOM_LINE);
+    globalSelection(aMap);
+  }
 }
 
 
@@ -258,49 +281,55 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       return;
 
     QString aName = GEOMBase::GetName( aSelectedObject );
-    
-    if ( testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase)
-      {
-	LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-	TColStd_IndexedMapOfInteger aMap;
-
-	aSelMgr->GetIndexes( firstIObject(), aMap );
-	if ( aMap.Extent() == 1 )
-	  {
-	    int anIndex = aMap( 1 );
-	    aName.append( ":edge_" + QString::number( anIndex ) );
-
-	    //Find SubShape Object in Father
-	    GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-	    
-	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	      GEOM::GEOM_IShapesOperations_var aShapesOp =
-		getGeomEngine()->GetIShapesOperations( getStudyId() );
-	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	      myOk = true;
-	    }
-	    else {  // get Object from study
+    if (myEditCurrentArgument == GroupPoints->LineEdit2 && !GroupPoints->CheckButton1->isChecked() ){
+      myPath = aSelectedObject;
+      myOkPath = true;
+    }
+    else 
+      { 
+      if ( testResult && !aSelectedObject->_is_nil() && aSelectedObject != myBase)
+	{
+	  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+	  TColStd_IndexedMapOfInteger aMap;
+	  
+	  aSelMgr->GetIndexes( firstIObject(), aMap );
+	  if ( aMap.Extent() == 1 )
+	    {
+	      int anIndex = aMap( 1 );
+	      aName.append( ":edge_" + QString::number( anIndex ) );
+	      
+	      //Find SubShape Object in Father
+	      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+	      
+	      if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+		GEOM::GEOM_IShapesOperations_var aShapesOp =
+		  getGeomEngine()->GetIShapesOperations( getStudyId() );
+		aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+		myOk = true;
+	      }
+	      else {  // get Object from study
 		aSelectedObject = aFindedObject;
 		myOk = true;
+	      }
+	    }
+	  else {
+	    myOk = true;
+	    if (S.ShapeType() != TopAbs_EDGE) {
+	      aSelectedObject = GEOM::GEOM_Object::_nil();
+	      aName = "";
+	      myOk = false;
 	    }
 	  }
-	else {
-	  myOk = true;
-	  if (S.ShapeType() != TopAbs_EDGE) {
-	    aSelectedObject = GEOM::GEOM_Object::_nil();
-	    aName = "";
-	    myOk = false;
+	  if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+	    myPath = aSelectedObject;
+	    myOkPath = myOk;
+	  }
+	  else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
+	    myVec = aSelectedObject;
+	    myOkVec = myOk;
 	  }
 	}
-	if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-	  myPath = aSelectedObject;
-	  myOkPath = myOk;
-	}
-	else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
-	  myVec = aSelectedObject;
-	  myOkVec = myOk;
-	}
-      }
+    }
     myEditCurrentArgument->setText( aName );
   }
   
@@ -321,18 +350,28 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
     GroupPoints->LineEdit1->setFocus();
     globalSelection( GEOM_ALLSHAPES );
     myEditCurrentArgument = GroupPoints->LineEdit1;
+    GroupPoints->CheckButton1->setEnabled(false);
   }
   else if(send == GroupPoints->PushButton2) {
     GroupPoints->LineEdit2->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit2;
-    globalSelection();
-    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+
+    if ( GroupPoints->CheckButton1->isChecked() ) {
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    } else {
+      TColStd_MapOfInteger aMap;
+      aMap.Add(GEOM_WIRE);
+      aMap.Add(GEOM_LINE);
+      globalSelection(aMap);
+    }
+    GroupPoints->CheckButton1->setEnabled(true);
   }
   else if(send == GroupPoints->PushButton3) {
     GroupPoints->LineEdit3->setFocus();
     myEditCurrentArgument = GroupPoints->LineEdit3;
     globalSelection();
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+    GroupPoints->CheckButton1->setEnabled(false);
   }
   SelectionIntoArgument();
 }
@@ -352,6 +391,11 @@ void GenerationGUI_PipeDlg::LineEditReturnPressed()
       myEditCurrentArgument = send;
       GEOMBase_Skeleton::LineEditReturnPressed();
     }
+
+  if (send == GroupPoints->LineEdit2)
+    GroupPoints->CheckButton1->setEnabled(true);
+  else
+    GroupPoints->CheckButton1->setEnabled(false);
 }
 
 
@@ -373,7 +417,7 @@ void GenerationGUI_PipeDlg::enterEvent(QEvent* e)
 void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  globalSelection( GEOM_ALLSHAPES );
+  //  globalSelection( GEOM_ALLSHAPES );
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
 	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked(getConstructorId());

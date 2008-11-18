@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'DlgRef_3Sel1Check_QTD.ui'
 **
-** Created: Mon Oct 29 18:14:59 2007
+** Created: Tue Nov 18 12:14:50 2008
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -46,7 +46,7 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
 
-    GroupBox1Layout->addMultiCellWidget( LineEdit1, 0, 0, 2, 3 );
+    GroupBox1Layout->addWidget( LineEdit1, 0, 2 );
 
     TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
     TextLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel1->sizePolicy().hasHeightForWidth() ) );
@@ -60,7 +60,7 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     LineEdit2 = new QLineEdit( GroupBox1, "LineEdit2" );
 
-    GroupBox1Layout->addMultiCellWidget( LineEdit2, 1, 1, 2, 3 );
+    GroupBox1Layout->addWidget( LineEdit2, 1, 2 );
 
     TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
     TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
@@ -74,14 +74,14 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     LineEdit3 = new QLineEdit( GroupBox1, "LineEdit3" );
 
-    GroupBox1Layout->addMultiCellWidget( LineEdit3, 2, 2, 2, 3 );
+    GroupBox1Layout->addWidget( LineEdit3, 2, 2 );
 
     TextLabel3 = new QLabel( GroupBox1, "TextLabel3" );
     TextLabel3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel3->sizePolicy().hasHeightForWidth() ) );
 
     GroupBox1Layout->addWidget( TextLabel3, 2, 0 );
     Spacer3 = new QSpacerItem( 16, 721, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    GroupBox1Layout->addItem( Spacer3, 4, 3 );
+    GroupBox1Layout->addItem( Spacer3, 4, 2 );
 
     CheckButton1 = new QCheckBox( GroupBox1, "CheckButton1" );
 
@@ -89,7 +89,7 @@ DlgRef_3Sel1Check_QTD::DlgRef_3Sel1Check_QTD( QWidget* parent, const char* name,
 
     DlgRef_3Sel1Check_QTDLayout->addWidget( GroupBox1, 0, 0 );
     languageChange();
-    resize( QSize(403, 441).expandedTo(minimumSizeHint()) );
+    resize( QSize(311, 299).expandedTo(minimumSizeHint()) );
     clearWState( WState_Polished );
 
     // tab order

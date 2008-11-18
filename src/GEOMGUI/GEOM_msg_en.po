@@ -1205,6 +1205,9 @@ msgstr "<< Set"
 msgid "GEOM_PIPE_TITLE"
 msgstr "Pipe Construction"
 
+msgid "GEOM_SELECT_UNPUBLISHED_EDGES"
+msgstr "Select unpublished edges"
+
 #: GeometryGUI_PointDlg.cxx:52
 msgid "GEOM_POINT_TITLE"
 msgstr "Point Construction"
