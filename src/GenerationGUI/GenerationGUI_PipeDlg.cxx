@@ -180,8 +180,8 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
 {
+  globalSelection();
   if ( GroupPoints->CheckButton1->isChecked() ) {
-    globalSelection();
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
@@ -239,7 +239,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
   if (!testResult || aSelectedObject->_is_nil())
     return;
@@ -422,9 +422,9 @@ void GenerationGUI_PipeDlg::LineEditReturnPressed()
 void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   ConstructorsClicked(getConstructorId());
 }
 
