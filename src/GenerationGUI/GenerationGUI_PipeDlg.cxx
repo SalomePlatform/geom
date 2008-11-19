@@ -188,6 +188,7 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
 {
+  globalSelection();
   if ( GroupPoints->CheckButton1->isChecked() ) {
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   } else {
@@ -247,7 +248,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult );
     
   if (!testResult)
     return;
