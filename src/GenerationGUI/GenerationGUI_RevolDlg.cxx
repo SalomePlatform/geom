@@ -343,9 +343,10 @@ void GenerationGUI_RevolDlg::LineEditReturnPressed()
 void GenerationGUI_RevolDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
-  // reinit, because some selected objects could be removed
-  Init();
+  displayPreview();
 }
 
 //=================================================================================

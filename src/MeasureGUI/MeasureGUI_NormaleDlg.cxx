@@ -313,9 +313,10 @@ void MeasureGUI_NormaleDlg::LineEditReturnPressed()
 void MeasureGUI_NormaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
-  // reinit, because some selected objects could be removed
-  Init();
+  displayPreview();
 }
 
 //=================================================================================

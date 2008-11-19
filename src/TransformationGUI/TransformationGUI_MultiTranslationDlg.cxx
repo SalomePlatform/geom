@@ -490,9 +490,10 @@ void TransformationGUI_MultiTranslationDlg::LineEditReturnPressed()
 void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
-  // reinit, because some selected objects could be removed
-  Init();
+  ConstructorsClicked( getConstructorId() );
 }
 
 //=================================================================================

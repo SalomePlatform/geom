@@ -253,8 +253,10 @@ void BuildGUI_EdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  // reinit, because some selected objects could be removed
-  Init();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
+
+  displayPreview();
 }
 
 //=================================================================================

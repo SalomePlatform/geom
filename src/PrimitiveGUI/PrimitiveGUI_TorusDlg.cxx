@@ -393,8 +393,10 @@ void PrimitiveGUI_TorusDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  // reinit, because some selected objects could be removed
-  Init();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
+  
+  ConstructorsClicked( getConstructorId() );
 }
 
 //=================================================================================

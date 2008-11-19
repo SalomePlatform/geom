@@ -264,9 +264,9 @@ void OperationGUI_GetShapesOnShapeDlg::LineEditReturnPressed()
 void OperationGUI_GetShapesOnShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-
-  // reinit, because some selected objects could be removed
-  Init();
+  globalSelection(GEOM_ALLSHAPES);
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 }
 
 //=================================================================================

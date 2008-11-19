@@ -271,9 +271,19 @@ void RepairGUI_RemoveHolesDlg::LineEditReturnPressed()
 void RepairGUI_RemoveHolesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
-  // reinit, because some selected objects could be removed
-  Init();
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument->setText( "" );
+  GroupPoints->LineEdit2->setText( "" );
+  myObject = GEOM::GEOM_Object::_nil();
+  myWiresInd->length( 0 );
+
+  myClosed = -1;
+  myOpen = -1;
+
+  initSelection();
 }
 
 //=================================================================================

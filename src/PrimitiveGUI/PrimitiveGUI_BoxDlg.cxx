@@ -382,15 +382,12 @@ void PrimitiveGUI_BoxDlg::LineEditReturnPressed()
 void PrimitiveGUI_BoxDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  //if (getConstructorId() == 0) {
-  //  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
-  //  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-  //          this, SLOT(SelectionIntoArgument()));
-  //}
-  //displayPreview();
-
-  // reinit, because some selected objects could be removed
-  Init();
+  if (getConstructorId() == 0) {
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(SelectionIntoArgument()));
+  }
+  displayPreview();
 }
 
 //=================================================================================
