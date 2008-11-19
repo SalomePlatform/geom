@@ -24,7 +24,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 EXTRA_DIST+=GEOM
 
-dev_docs: doxyfile
+dev_docs: GEOM/doxyfile
 	echo "===========================================" ;			\
 	echo "Replacing geompyDC by geompy" ;					\
 	echo "===========================================" ;			\
