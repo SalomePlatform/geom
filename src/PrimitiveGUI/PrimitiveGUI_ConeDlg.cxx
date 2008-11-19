@@ -117,10 +117,10 @@ void PrimitiveGUI_ConeDlg::Init()
 
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupPoints->SpinBox_DX, 0.0, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox_DY, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DY, 0.0, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
   initSpinBox(GroupPoints->SpinBox_DZ, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
   initSpinBox(GroupDimensions->SpinBox_DX, 0.0, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DY, 0.0, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
   initSpinBox(GroupDimensions->SpinBox_DZ, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   // init variables
@@ -400,8 +400,10 @@ void PrimitiveGUI_ConeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  // reinit, because some selected objects could be removed
-  Init();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
+
+  ConstructorsClicked( getConstructorId() );
 }
 
 //=================================================================================
@@ -438,6 +440,8 @@ GEOM::GEOM_IOperations_ptr  PrimitiveGUI_ConeDlg::createOperation()
 //=================================================================================
 bool  PrimitiveGUI_ConeDlg::isValid (QString&)
 {
+  if (!getRadius1() && !getRadius2())
+    return false;
   return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) : true;
 }
 
