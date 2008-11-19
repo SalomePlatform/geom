@@ -439,10 +439,9 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
       QString aName = GEOMBase::GetName(aSelectedObject);
-
+      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-        TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
         if ( id == 2 || id == 3 )
           aNeedType = TopAbs_EDGE;
         else if ( id == 4 )
@@ -468,6 +467,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 	  else {
 	    aSelectedObject = aFindedObject; // get Object from study
 	  }
+	  GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE );
         }
         else { // Global Selection
           if ( aShape.ShapeType() != aNeedType ) {
@@ -478,8 +478,10 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         }
       }
 
+      if ( aShape.IsNull() || aShape.ShapeType() != aNeedType)
+	return;
+
       if ( id == 0 ) {
-        if ( aShape.IsNull() ) return;
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
         GroupXYZ->SpinBox_DX->setValue( aPnt.X() );
         GroupXYZ->SpinBox_DY->setValue( aPnt.Y() );
