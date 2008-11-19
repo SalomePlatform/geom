@@ -476,6 +476,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 
     QString aName = GEOMBase::GetName(aSelectedObject);
     myBase = aSelectedObject;
+    myOkBase = true;
     myEditCurrentArgument->setText(aName);
   }
 
@@ -628,7 +629,7 @@ bool GenerationGUI_PrismDlg::isValid (QString&)
   else if (getConstructorId() == 1)
     return (myOkBase && myOkPnt1 && myOkPnt2);   // by two points
   else if (getConstructorId() == 2)
-    return true;
+    return myOkBase;
 
   return false;
 }
