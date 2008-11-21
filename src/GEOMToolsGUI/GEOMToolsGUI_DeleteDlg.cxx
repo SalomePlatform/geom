@@ -53,7 +53,7 @@ static QStringList objectsToNames( const QMap<QString, QString>& objects )
     QString entry = it.key();
     QStringList::Iterator iter;
     bool added = false;
-    for ( iter = entries.begin(); iter != entries.end() && !added; ++it ) {
+    for ( iter = entries.begin(); iter != entries.end() && !added; ++iter ) {
       if ( isEntryLess( entry, *iter ) ) {
         entries.insert( iter, entry );
         added = true;
