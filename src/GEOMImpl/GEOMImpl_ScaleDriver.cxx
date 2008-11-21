@@ -25,10 +25,15 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_GTransform.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
+#include <BRepCheck_Analyzer.hxx>
+
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
 #include <TopoDS.hxx>
@@ -168,8 +173,19 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
 
   if (aShape.IsNull()) return 0;
 
-  if (!BRepAlgo::IsValid(aShape))
-    Standard_ConstructionError::Raise("Scaling aborted : non valid shape result");
+  BRepCheck_Analyzer ana (aShape, Standard_False);
+  if (!ana.IsValid()) {
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->SetPrecision(Precision::Confusion());
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+
+    ana.Init(aShape, Standard_False);
+    if (!ana.IsValid())
+      Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
+  }
 
   aFunction->SetValue(aShape);
 
