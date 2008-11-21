@@ -24,11 +24,15 @@
 #include <GEOMImpl_ITranslate.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
-#include <gp_Trsf.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Vec.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
+
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+
+#include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepCheck_Analyzer.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
@@ -37,7 +41,10 @@
 #include <TopExp.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>
-#include <BRep_Tool.hxx>
+
+#include <gp_Trsf.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Vec.hxx>
 
 //=======================================================================
 //function : GetID
@@ -237,8 +244,21 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
   }
   else return 0;
 
-
   if (aShape.IsNull()) return 0;
+
+  BRepCheck_Analyzer ana (aShape, Standard_True);
+  if (!ana.IsValid()) {
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->SetPrecision(Precision::Confusion());
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+
+    ana.Init(aShape, Standard_False);
+    if (!ana.IsValid())
+      Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
+  }
 
   aFunction->SetValue(aShape);
 
