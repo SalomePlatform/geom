@@ -3093,6 +3093,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
     Sort = Standard_False;
     for (Index=1; Index < MaxShapes; Index++)
     {
+      exchange = Standard_False;
       Standard_Real dMidXYZ = MidXYZ(OrderInd(Index)) - MidXYZ(OrderInd(Index+1));
       Standard_Real dLength = Length(OrderInd(Index)) - Length(OrderInd(Index+1));
       if ( dMidXYZ >= tol ) {
@@ -3125,13 +3126,14 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
           val1 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
           box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
           val2 = (aXmin+aXmax)*999 + (aYmin+aYmax)*99 + (aZmin+aZmax)*0.9;
-          exchange = val1 > val2;
-//           cout << "box: " << val1<<" > "<<val2 << endl;
+          //exchange = val1 > val2;
+          if ((val1 - val2) >= tol) {
+            exchange = Standard_True;
+          }
+          //cout << "box: " << val1<<" > "<<val2 << endl;
         }
       }
-      else {
-	exchange = Standard_False;
-      }
+
       if (exchange)
       {
 //         cout << "exchange " << Index << " & " << Index+1 << endl;
