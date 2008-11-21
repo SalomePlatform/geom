@@ -203,21 +203,44 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
   }
   if(aChain.Length()>1) {
     // second step: union edges with various curves
-    MESSAGE ("can not make analitical union => make approximation");
-    TopoDS_Wire W;
-    B.MakeWire(W);
+    // skl for bug 0020052 from Mantis: perform such unions
+    // only if curves are bspline or bezier
+    bool NeedUnion = true;
     for(j=1; j<=aChain.Length(); j++) {
       TopoDS_Edge edge = TopoDS::Edge(aChain.Value(j));
-      B.Add(W,edge);
+      Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge,Loc,fp1,lp1);
+      if(c3d.IsNull()) continue;
+      while(c3d->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+        Handle(Geom_TrimmedCurve) tc =
+          Handle(Geom_TrimmedCurve)::DownCast(c3d);
+        c3d = tc->BasisCurve();
+      }
+      if( ( c3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve)) ||
+            c3d->IsKind(STANDARD_TYPE(Geom_BezierCurve)) ) ) continue;
+      NeedUnion = false;
+      break;
     }
-    Handle(BRepAdaptor_HCompCurve) Adapt = new BRepAdaptor_HCompCurve(W);
-    Approx_Curve3d Conv(Adapt,Tol,GeomAbs_C1,9,1000);
-    Handle(Geom_BSplineCurve) bc = Conv.Curve();
-    TopoDS_Edge E;
-    B.MakeEdge (E,bc,Precision::Confusion());
-    B.Add (E,VF);
-    B.Add (E,VL);
-    aChain.SetValue(1,E);
+    if(NeedUnion) {
+      MESSAGE ("can not make analitical union => make approximation");
+      TopoDS_Wire W;
+      B.MakeWire(W);
+      for(j=1; j<=aChain.Length(); j++) {
+        TopoDS_Edge edge = TopoDS::Edge(aChain.Value(j));
+        B.Add(W,edge);
+      }
+      Handle(BRepAdaptor_HCompCurve) Adapt = new BRepAdaptor_HCompCurve(W);
+      Approx_Curve3d Conv(Adapt,Tol,GeomAbs_C1,9,1000);
+      Handle(Geom_BSplineCurve) bc = Conv.Curve();
+      TopoDS_Edge E;
+      B.MakeEdge (E,bc,Precision::Confusion());
+      B.Add (E,VF);
+      B.Add (E,VL);
+      aChain.SetValue(1,E);
+    }
+    else {
+      MESSAGE ("can not make approximation for such types of curves");
+      return Standard_False;
+    }
   }
 
   anEdge = TopoDS::Edge(aChain.Value(1));
