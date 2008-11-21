@@ -189,6 +189,11 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
     aMap.Add(GEOM_LINE);
     globalSelection(aMap);
   }
+  if(myEditCurrentArgument == GroupPoints->LineEdit2) {
+    myEditCurrentArgument->setText("");
+    myOkPath = false;
+  }
+  displayPreview();
 }
 
 //=================================================================================
