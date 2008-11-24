@@ -2,8 +2,8 @@
 
 \page transparency_page Transparency
 
-\n You can change the transparency of a shape in the range between 0
-(absolutely opaque) and 1 (absolutely transparent and thus invisible)
+\n You can change the transparency of a shape in the range between 0%
+(absolutely transparent and thus invisible) and 100% (absolutely opaque)
 in the following dialog box.
 
 \image html neo-transparency.png
