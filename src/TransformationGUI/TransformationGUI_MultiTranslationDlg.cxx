@@ -133,18 +133,21 @@ void TransformationGUI_MultiTranslationDlg::Init()
   double SpecificStep = 1;
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox_DY, 1.0, MAX_NUMBER, SpecificStep, 10);
+  initSpinBox(GroupPoints->SpinBox_DY, 1, MAX_NUMBER, SpecificStep, 10);
   GroupPoints->SpinBox_DX->setValue(myStepU);
   GroupPoints->SpinBox_DY->setValue(myNbTimesU);
+  GroupPoints->SpinBox_DY->setDecimals(0);
 
   initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY1, 1.0, MAX_NUMBER, SpecificStep, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY1, 1, MAX_NUMBER, SpecificStep, 10);
   initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY2, 1.0, MAX_NUMBER, SpecificStep, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY2, 1, MAX_NUMBER, SpecificStep, 10);
   GroupDimensions->SpinBox_DX1->setValue(myStepU);
   GroupDimensions->SpinBox_DY1->setValue(myNbTimesU);
   GroupDimensions->SpinBox_DX2->setValue(myStepV);
   GroupDimensions->SpinBox_DY2->setValue(myNbTimesV);
+  GroupDimensions->SpinBox_DY1->setDecimals(0);
+  GroupDimensions->SpinBox_DY2->setDecimals(0);
 
   // init variables
   myStepU = myStepV = 50.0;
