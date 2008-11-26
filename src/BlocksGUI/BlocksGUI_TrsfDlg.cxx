@@ -164,14 +164,17 @@ void BlocksGUI_TrsfDlg::ConstructorsClicked (int constructorId)
   case 0:
     myGrp2->hide();
     myGrp1->show();
-    mySpinBox[SpinBox1]->setValue(2.0);
+    mySpinBox[SpinBox1]->setValue(2);
+    mySpinBox[SpinBox1]->setDecimals(0);
     mySelBtn[MainObj1]->click();
     break;
   case 1:
     myGrp1->hide();
     myGrp2->show();
-    mySpinBox[SpinBox2U]->setValue(2.0);
-    mySpinBox[SpinBox2V]->setValue(2.0);
+    mySpinBox[SpinBox2U]->setValue(2);
+    mySpinBox[SpinBox2U]->setDecimals(0);
+    mySpinBox[SpinBox2V]->setValue(2);
+    mySpinBox[SpinBox2V]->setDecimals(0);
     mySelBtn[MainObj2]->click();
     break;
   default:
