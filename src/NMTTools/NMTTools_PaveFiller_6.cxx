@@ -77,11 +77,6 @@
 #include <IntTools_ShrunkRange.hxx>
 
 #include <BOPTools_CArray1OfSSInterference.hxx>
-//#include <BOPTools_ListIteratorOfListOfInterference.hxx>
-//#include <BOPTools_CArray1OfInterferenceLine.hxx>
-//#include <BOPTools_InterferenceLine.hxx>
-//#include <BOPTools_ListOfInterference.hxx>
-//#include <BOPTools_Interference.hxx>
 
 #include <BOPTools_SSInterference.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
@@ -105,19 +100,13 @@
 #include <NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx>
 #include <NMTTools_MapOfPaveBlock.hxx>
 
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 static
   void SharedEdges1(const TopoDS_Face& aF1,
 		    const TopoDS_Face& aF2,
 		    TopTools_ListOfShape& aLS);
-// Contribution of Samtech www.samcef.com END
-
-//modified by NIZNHY-PKV Mon Dec  4 12:56:04 2006f
 static
   Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
 			       IntTools_Context& aCtx);
-//modified by NIZNHY-PKV Mon Dec  4 12:56:08 2006t
 
 //=======================================================================
 // function: PerformFF
@@ -152,11 +141,6 @@ static
   for (; myDSIt->More(); myDSIt->Next()) {
     myDSIt->Current(n1, n2, bJustAdd);
     //
-    //bIsComputed=myIntrPool->IsComputed(n1, n2);
-    //if (bIsComputed) {
-    //  continue;
-    //}
-    //
     nF1 = n2;
     nF2 = n1;
     if(n1 < n2) {
@@ -166,21 +150,6 @@ static
     anIndexIn=0;
     aPnts.Clear();
     aCvs.Clear();
-    //
-    /*
-    bIsFound=IsPairFound(nF1, nF2, myIntrPool, aMapWhat, aMapWith);
-    if (bJustAdd) {
-      if (!bIsFound) {
-	myIntrPool->AddInterference (nF1, nF2, aTypeFF, anIndexIn);
-      }
-      else{
-	BOPTools_SSInterference anInterf (nF1, nF2, 1.e-07, 1.e-07, aCvs, aPnts);
-	anIndexIn=aFFs.Append(anInterf);
-	myIntrPool->AddInterference (nF1, nF2, aTypeFF, anIndexIn);
-      }
-      continue;
-    }
-    */
     //
     const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));//mpv
     const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));//mpv
@@ -233,14 +202,12 @@ static
     if (!aNbCurves && !aNbPoints) {
       BOPTools_SSInterference anInterf (nF1, nF2, 1.e-07, 1.e-07, aCvs, aPnts);
       anIndexIn=aFFs.Append(anInterf);
-      //myIntrPool->AddInterference (nF1, nF2, aTypeFF, anIndexIn);
       continue;
     }
     //
     {
       BOPTools_SSInterference anInterf (nF1, nF2, aTolR3D, aTolR2D, aCvsX, aPntsX);
       anIndexIn=aFFs.Append(anInterf);
-      //myIntrPool->AddInterference (nF1, nF2, aTypeFF, anIndexIn);
     }
     //
   }// for (; myDSIt.More(); myDSIt.Next()) 
@@ -255,11 +222,7 @@ static
 {
   myIsDone=Standard_False;
   //
-  // Modified  Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
   Standard_Boolean bIsExistingPaveBlock, bIsValidIn2D, bIsCoincided;
-  // Contribution of Samtech www.samcef.com END
-  //
   Standard_Boolean bIsMicroEdge, bHasES;
   Standard_Integer i, aNbFFs, nF1, nF2, aBid=0;
   Standard_Integer nV1, nV2, j, aNbCurves;
@@ -826,8 +789,6 @@ static
       BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aE, aF2FWD);
     }
   } 
-  //
-  //modified by NIZNHY-PKV Fri Mar 23 10:35:02 2007f
   // Check common blocks between edges and faces
   // Build P-Curves if they were not built in previos block.
   //
@@ -878,7 +839,6 @@ static
       } // for (; aItCB.More(); aItCB.Next()) {
     }//if (aS.ShapeType()==TopAbs_EDGE) {
   }    
-  //modified by NIZNHY-PKV Fri Mar 23 10:35:13 2007t
 }
 //=======================================================================
 // function: IsExistingPaveBlock
@@ -921,6 +881,7 @@ static
 {
   Standard_Boolean bFlag;
   Standard_Integer aNbSE, iC;
+  Standard_Real aTolE, aTol;
   TopTools_ListIteratorOfListOfShape anIt;
   //
   bFlag=Standard_False;
@@ -933,7 +894,15 @@ static
   anIt.Initialize(aLSE);
   for (; anIt.More(); anIt.Next()) {
     const TopoDS_Edge& aE=TopoDS::Edge(anIt.Value());
-    iC=CheckIntermediatePoint(aPBNew, aE, aTolR3D);
+    //modified by NIZNHY-PKV Mon Nov 17 09:54:43 2008f //0019974
+    aTolE=BRep_Tool::Tolerance(aE);
+    aTol=aTolR3D;
+    if (aTolE>aTol) {
+      aTol=aTolE;
+    }
+    iC=CheckIntermediatePoint(aPBNew, aE, aTol);
+    //iC=CheckIntermediatePoint(aPBNew, aE, aTolR3D);
+    //modified by NIZNHY-PKV Mon Nov 17 09:54:45 2008t
     if (!iC) {
       return !bFlag;
     }
@@ -1189,8 +1158,6 @@ static
 /////////////
 
 
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 //function : SharedEdges1
 //purpose  : 
@@ -1334,10 +1301,7 @@ void SharedEdges1(const TopoDS_Face& aF1,
   bRet=(Standard_Boolean)(iCount>iCountExt);
   return bRet;
 }
-//
-// Contribution of Samtech www.samcef.com END
 
-//modified by NIZNHY-PKV Mon Dec  4 12:30:38 2006f use_01
 //=======================================================================
 //function : IsMicroEdge
 //purpose  : 
@@ -1376,139 +1340,3 @@ Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE,
   //
   return bRet;
 }
-//modified by NIZNHY-PKV Mon Dec  4 12:55:50 2006t
-/*
-static 
-  Standard_Boolean IsPairFound(const Standard_Integer nF1,
-			       const Standard_Integer nF2,
-			       BOPTools_InterferencePool* myIntrPool,
-			       BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMapWhat,
-			       BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMapWith);
-
-static
-  void FMapWhat(const Standard_Integer nF,
-		BOPTools_InterferencePool* myIntrPool,
-		TColStd_IndexedMapOfInteger& aMapWhat);
-static
-  void FMapWith(const Standard_Integer nF,
-		BOPTools_InterferencePool* myIntrPool,
-		TColStd_IndexedMapOfInteger& aMapWith);
-static
-  Standard_Boolean IsFound(const TColStd_IndexedMapOfInteger& aMapWhat,
-			   const TColStd_IndexedMapOfInteger& aMapWith);
-
-//=======================================================================
-// function: IsPairFound
-// purpose: 
-//=======================================================================
-Standard_Boolean IsPairFound(const Standard_Integer nF1,
-			     const Standard_Integer nF2,
-			     BOPTools_InterferencePool* myIntrPool,
-			     BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMapWhat,
-			     BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMapWith)
-{
-  Standard_Boolean bIsFound;
-  //
-  if (!aMapWhat.Contains(nF1)) {
-    TColStd_IndexedMapOfInteger aMWhat;
-    FMapWhat(nF1, myIntrPool, aMWhat);
-    aMapWhat.Add(nF1, aMWhat);
-  }
-  //
-  if (!aMapWith.Contains(nF2)) {
-    TColStd_IndexedMapOfInteger aMWith;
-    FMapWith(nF2, myIntrPool, aMWith);
-    aMapWith.Add(nF2, aMWith);
-  }
-  //
-  const TColStd_IndexedMapOfInteger& aMWht=aMapWhat.FindFromKey(nF1);
-  const TColStd_IndexedMapOfInteger& aMWit=aMapWith.FindFromKey(nF2);
-  //
-  bIsFound=IsFound(aMWht, aMWit);
-  //
-  return bIsFound;
-}
-//=======================================================================
-// function: FMapWhat
-// purpose: 
-//=======================================================================
-void FMapWhat(const Standard_Integer nF,
-	      BOPTools_InterferencePool* myIntrPool,
-	      TColStd_IndexedMapOfInteger& aMapWhat)
-		    
-{
-  Standard_Integer nE, nV;
-  //
-  BooleanOperations_ShapesDataStructure* myDS=myIntrPool->DS();
-  BooleanOperations_OnceExplorer aExp(*myDS);
-  //
-  //  What
-  aMapWhat.Add(nF);
-  aExp.Init(nF, TopAbs_VERTEX);
-  for (; aExp.More(); aExp.Next()) {
-    nV=aExp.Current();
-    aMapWhat.Add(nV);
-  }
-  //
-  aExp.Init(nF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()) {
-    nE=aExp.Current();
-    aMapWhat.Add(nE);
-  }
-}
-//=======================================================================
-// function: FMapWith
-// purpose: 
-//=======================================================================
-void FMapWith(const Standard_Integer nF,
-	      BOPTools_InterferencePool* myIntrPool,
-	      TColStd_IndexedMapOfInteger& aMapWith)
-{
-  TColStd_IndexedMapOfInteger aMapWhat;
-  
-  FMapWhat(nF, myIntrPool, aMapWhat);
-  //
-  // With
-  Standard_Integer i, aNb, anIndex, aWhat, aWith;
-  BOPTools_ListIteratorOfListOfInterference anIt;
-  
-  const BOPTools_CArray1OfInterferenceLine& anArrIL= myIntrPool->InterferenceTable();
-
-  aNb=aMapWhat.Extent();
-  for (i=1; i<=aNb; i++) {
-    aWhat=aMapWhat(i);
-    
-    const BOPTools_InterferenceLine& aWithLine=anArrIL(aWhat);
-  
-    const BOPTools_ListOfInterference& aLI=aWithLine.List();
-    anIt.Initialize(aLI);
-    for (; anIt.More(); anIt.Next()) {
-      const BOPTools_Interference& anIntf=anIt.Value();
-      anIndex=anIntf.Index();
-      if (anIndex) {
-	aWith=anIntf.With();
-	aMapWith.Add(aWith);
-      }
-    }
-  }
-}
-//=======================================================================
-// function: IsFound
-// purpose: 
-//=======================================================================
-Standard_Boolean IsFound(const TColStd_IndexedMapOfInteger& aMapWhat,
-			 const TColStd_IndexedMapOfInteger& aMapWith)
-{
-  Standard_Boolean bFlag=Standard_False;
-  Standard_Integer i, aNb, aWhat;
-
-  aNb=aMapWhat.Extent();
-  for (i=1; i<=aNb; i++) {
-    aWhat=aMapWhat(i);
-    if (aMapWith.Contains(aWhat)) {
-      return !bFlag;
-    }
-  }
-  return bFlag;
-}
-*/
