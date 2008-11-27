@@ -1,6 +1,7 @@
-#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003  CEA
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -18,17 +19,16 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
+#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
 #  $Header$
-
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
-
+#
 import os
 
 def TestExportImport (geompy, shape):

@@ -1,4 +1,6 @@
-#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
@@ -18,15 +20,11 @@
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
-#
 #  File   : GEOM_Partition3.py
 #  Module : GEOM
-
-#%Make geometry (like CEA script (A2)) using Partition algorithm%
 # import callovo_01_GEOM
 # reload(callovo_01_GEOM)
-
-
+#
 import geompy
 geom = geompy.geom
 
