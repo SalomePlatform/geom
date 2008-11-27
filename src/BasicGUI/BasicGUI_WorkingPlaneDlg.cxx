@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -19,12 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//
-//
+//  GEOM GEOMGUI : GUI for Geometry component
 //  File   : BasicGUI_WorkingPlaneDlg.cxx
 //  Author : Lucien PIGNOLONI
 //  Module : GEOM
-
+//
 #include "BasicGUI_WorkingPlaneDlg.h"
 
 #include "GEOMBase.h"
