@@ -309,9 +309,9 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
       "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
       "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        "Ax: "                    + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        "Ay: "                    + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        "Az: "                    + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        "Ax :"                    + PRINT_DOUBLE( aDbls[3] ) +
+      "\n" +        "Ay :"                    + PRINT_DOUBLE( aDbls[4] ) +
+      "\n" +        "Az :"                    + PRINT_DOUBLE( aDbls[5] );
     break;
   case GEOM::GEOM_IKindOfShape::ROTATED_BOX:
     aKindStr = tr( "GEOM_BOX" );
@@ -320,17 +320,17 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
       "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1] ) +
       "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2] ) +
       "\nZ Axis:"                               +
-      "\n" +        "Zx: "                      + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        "Zy: "                      + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        "Zz: "                      + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        "Zx :"                      + PRINT_DOUBLE( aDbls[3] ) +
+      "\n" +        "Zy :"                      + PRINT_DOUBLE( aDbls[4] ) +
+      "\n" +        "Zz :"                      + PRINT_DOUBLE( aDbls[5] ) +
       "\nX Axis:"                               +
       "\n" +        tr( "GEOM_X_I" ).arg( "x" ) + PRINT_DOUBLE( aDbls[6] ) +
       "\n" +        tr( "GEOM_X_I" ).arg( "y" ) + PRINT_DOUBLE( aDbls[7] ) +
       "\n" +        tr( "GEOM_X_I" ).arg( "z" ) + PRINT_DOUBLE( aDbls[8] ) +
       "\nDimensions along local axes:"          +
-      "\n" +        "Ax: "                      + PRINT_DOUBLE( aDbls[9] ) +
-      "\n" +        "Ay: "                      + PRINT_DOUBLE( aDbls[10] ) +
-      "\n" +        "Az: "                      + PRINT_DOUBLE( aDbls[11] );
+      "\n" +        "Ax :"                      + PRINT_DOUBLE( aDbls[9] ) +
+      "\n" +        "Ay :"                      + PRINT_DOUBLE( aDbls[10] ) +
+      "\n" +        "Az :"                      + PRINT_DOUBLE( aDbls[11] );
     break;
   case GEOM::GEOM_IKindOfShape::TORUS:
     aKindStr = tr( "GEOM_TORUS" );
