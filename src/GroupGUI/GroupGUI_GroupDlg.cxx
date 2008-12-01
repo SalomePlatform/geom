@@ -268,6 +268,7 @@ bool GroupGUI_GroupDlg::ClickOnApply()
     {
       initName();
       myIdList->clear();
+      ConstructorsClicked( getConstructorId() );
     }
   else
     activateSelection();
