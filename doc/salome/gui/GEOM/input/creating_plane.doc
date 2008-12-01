@@ -27,7 +27,8 @@ of the plane).
 \image html plane2.png
 
 \n Finally, you can define a \b Plane by another \b Plane or <b>Local
-Coordinate System</b> and a <b>Size of the Plane</b>.
+Coordinate System</b> and a <b>Size of the Plane</b>. To change selection type cilck the corresponding
+radio button "Face" or "Local Coordinate System".
 \n <b>TUI Command:</b> <em>geompy.MakePlaneFace(Face, TrimSize)</em>
 \n <b>Arguments:</b> Name + 1 face + 1 value (to define the size of
 the plane).

@@ -100,7 +100,11 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   Group3Pnts->LineEdit2->setEnabled( false );
   Group3Pnts->LineEdit3->setEnabled( false );
 
-  GroupFace = new DlgRef_1Sel1Spin( centralWidget() );
+  GroupFace = new DlgRef_3Radio1Sel1Spin( centralWidget() );
+  GroupFace->RadioButton1->setText(tr("GEOM_FACE"));
+  GroupFace->RadioButton2->setText(tr("GEOM_LCS"));
+  GroupFace->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  GroupFace->RadioButton3->close();
   GroupFace->GroupBox1->setTitle( tr( "GEOM_FACE_OR_LCS" ) );
   GroupFace->TextLabel1->setText( tr( "GEOM_SELECTION" ) );
   GroupFace->TextLabel2->setText( tr( "GEOM_PLANE_SIZE" ) );
@@ -139,6 +143,7 @@ void BasicGUI_PlaneDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPntDir->LineEdit1;
+  GroupFace->RadioButton1->setChecked(true);
 
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
 
@@ -180,6 +185,8 @@ void BasicGUI_PlaneDlg::Init()
   connect( Group3Pnts->LineEdit2,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( Group3Pnts->LineEdit3,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupFace->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupFace->RadioButton1,SIGNAL( clicked() ), this, SLOT( SelectionTypeClicked() ) );
+  connect( GroupFace->RadioButton2,SIGNAL( clicked() ), this, SLOT( SelectionTypeClicked() ) );
 
   connect( GroupPntDir->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3Pnts->SpinBox_DX,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
@@ -203,6 +210,25 @@ void BasicGUI_PlaneDlg::SetDoubleSpinBoxStep( double step )
   GroupPntDir->SpinBox_DX->setSingleStep(step);
   Group3Pnts->SpinBox_DX->setSingleStep(step);
   GroupFace->SpinBox_DX->setSingleStep(step);
+}
+
+//=================================================================================
+// function : SelectionTypeClicked()
+// purpose  : Selection type radio buttons managment
+//=================================================================================
+void BasicGUI_PlaneDlg::SelectionTypeClicked()
+{
+  myFace   = GEOM::GEOM_Object::_nil();
+  if ( GroupFace->RadioButton1->isChecked()) {
+    globalSelection(); // close local contexts, if any
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+  } else if ( GroupFace->RadioButton2->isChecked()) {
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_PLANE );
+    aMap.Add( GEOM_MARKER );
+    globalSelection( aMap );
+  }
+  displayPreview();
 }
 
 
@@ -257,7 +283,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       break;
     }
-  case 2: /* plane from a planar face selection */
+  case 2: /* plane from a planar face or LSC selection */
     {
       GroupPntDir->hide();
       Group3Pnts->hide();
@@ -267,12 +293,15 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       GroupFace->LineEdit1->setText( "" );
       GroupFace->PushButton1->setDown( true );
       
-      /* for the first argument */
-      //globalSelection( GEOM_PLANE );
-      TColStd_MapOfInteger aMap;
-      aMap.Add( GEOM_PLANE );
-      aMap.Add( GEOM_MARKER );
-      globalSelection( aMap );
+      if ( GroupFace->RadioButton1->isChecked()) {
+	globalSelection(); // close local contexts, if any
+	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+      } else if ( GroupFace->RadioButton2->isChecked()) {
+	TColStd_MapOfInteger aMap;
+	aMap.Add( GEOM_PLANE );
+	aMap.Add( GEOM_MARKER );
+	globalSelection( aMap );
+      }
       break;
     }
   }
@@ -342,6 +371,8 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
     TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
     if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
       aNeedType = TopAbs_EDGE;
+    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
+      aNeedType = TopAbs_FACE;
 
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
@@ -377,7 +408,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText( aName );
 
-    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
+    /*    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
       globalSelection();
       if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
 	TColStd_MapOfInteger aMap;
@@ -387,7 +418,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
       }
       else
 	localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
-    }
+	}*/
 
     if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) {
       myPoint  = aSelectedObject;

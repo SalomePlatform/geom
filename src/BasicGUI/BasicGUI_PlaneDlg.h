@@ -31,6 +31,7 @@
 class DlgRef_1Sel1Spin;
 class DlgRef_2Sel1Spin;
 class DlgRef_3Sel1Spin;
+class DlgRef_3Radio1Sel1Spin;
 
 //=================================================================================
 // class    : BasicGUI_PlaneDlg
@@ -61,7 +62,7 @@ private:
 
   DlgRef_2Sel1Spin*                  GroupPntDir;
   DlgRef_3Sel1Spin*                  Group3Pnts;
-  DlgRef_1Sel1Spin*                  GroupFace;
+  DlgRef_3Radio1Sel1Spin*            GroupFace;
 
 private slots:
   void                               ClickOnOk();
@@ -76,6 +77,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
+  void                               SelectionTypeClicked();
 };
 
 #endif // BASICGUI_PLANEDLG_H

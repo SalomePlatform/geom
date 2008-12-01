@@ -552,6 +552,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_FACE</source>
             <translation>Face</translation>
         </message>
+	<message>
+            <source>GEOM_LCS</source>
+            <translation>Local coordinate system</translation>
+        </message>
         <message>
             <source>GEOM_FACES</source>
             <translation>Faces</translation>

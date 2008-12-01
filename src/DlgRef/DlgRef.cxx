@@ -486,6 +486,20 @@ DlgRef_3Radio::~DlgRef_3Radio()
 }
 
 //////////////////////////////////////////
+// DlgRef_3Radio1Sel1Spin
+//////////////////////////////////////////
+
+DlgRef_3Radio1Sel1Spin::DlgRef_3Radio1Sel1Spin( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_3Radio1Sel1Spin::~DlgRef_3Radio1Sel1Spin()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_3Sel1Check
 //////////////////////////////////////////
 

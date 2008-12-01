@@ -565,6 +565,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1Sel3Radio1Sel1Spin
+//////////////////////////////////////////
+
+#include "ui_DlgRef_3Radio1Sel1Spin_QTD.h"
+
+class DLGREF_EXPORT DlgRef_3Radio1Sel1Spin : public QWidget, 
+                                             public Ui::DlgRef_3Radio1Sel1Spin_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_3Radio1Sel1Spin( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_3Radio1Sel1Spin();
+};
+
+//////////////////////////////////////////
 // DlgRef_3Sel1Check
 //////////////////////////////////////////
 
