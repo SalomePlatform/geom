@@ -29,10 +29,14 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
 
-#ifdef WNT
-#include <SALOME_WNT.hxx>
+#ifdef WIN32
+# if defined STLEXPORT_EXPORTS
+#  define STLEXPORT_EXPORT __declspec( dllexport )
+# else
+#  define STLEXPORT_EXPORT __declspec( dllimport )
+# endif
 #else
-#define SALOME_WNT_EXPORT
+# define STLEXPORT_EXPORT
 #endif
 
 //=============================================================================
@@ -43,7 +47,7 @@
 
 extern "C"
 {
-  SALOME_WNT_EXPORT
+  STLEXPORT_EXPORT
   int Export(const TopoDS_Shape& theShape,
              const TCollection_AsciiString& theFileName,
              const TCollection_AsciiString& theFormatName)
