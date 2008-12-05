@@ -19,8 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_RotateDriver.hxx>
