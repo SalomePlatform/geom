@@ -42,6 +42,7 @@ usr_docs:
 	$(doxygen) ./doxyfile_py; \
 	echo "Running doxygen in directory: "`pwd`; \
 	$(doxygen) ./doxyfile; \
+	cd ..; \
 	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
 
 docs: usr_docs
