@@ -36,7 +36,7 @@ the direction) + Radius.
 \image html disk3.png
 
 <b>Example:</b>
-\image html disks.png
+\image html disks.png "Disks"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creating 
 \ref tui_creation_disk "Primitives".

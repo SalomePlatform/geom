@@ -20,7 +20,7 @@ coordinate system.
 
 <b>Example:</b>
 
-\image html ellipsesn.png
+\image html ellipsesn.png "Ellipse"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_ellipse "Basic Geometric Objects".

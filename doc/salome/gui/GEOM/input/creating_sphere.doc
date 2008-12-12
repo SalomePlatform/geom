@@ -28,7 +28,7 @@ Point</b> and its \b Radius (in this way you don't need to create it in advance)
 
 <b>Example:</b>
 
-\image html spheres.png
+\image html spheres.png "Spheres"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_sphere "Primitives".

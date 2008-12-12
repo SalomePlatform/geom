@@ -65,7 +65,7 @@ four edges from which the face is constructed.</li>
 \image html block3.png
 
 \n <b>Example:</b>
-\image html image185.jpg
+\image html image185.jpg "Quadrangle face built by blocks"
 
 
 <br><br>
@@ -109,6 +109,9 @@ automatically.</li>
 
 \image html image181.jpg
 <center>Hexahedral Solid built on the base of two Faces</center>
+
+
+The created blocks can be processed with  \ref blocks_operations_page "Operations on Blocks".
 
 Our <b>TUI Scripts</b> provide you with useful examples of
 \ref tui_building_by_blocks_page "Building by Blocks".

@@ -30,15 +30,15 @@ circle can be transformed into an ellipse.
 
 \n <b>Example of simple scaling:</b>
 
-\image html scale_transformsn1.png
+\image html scale_transformsn1.png "The initial object"
 
-\image html scale_transformsn2.png
+\image html scale_transformsn2.png "The resulting object (resized)"
 
 \n <b>Example of scaling by different factors along axes:</b>
 
-\image html scale_transformsn3.png
+\image html scale_transformsn3.png "The initial object"
 
-\image html scale_transformsn4.png
+\image html scale_transformsn4.png "The resulting object (resized and distorted)"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_scale "Scale Transformation" and of \ref swig_scale "Scale Along Axes Transformation"

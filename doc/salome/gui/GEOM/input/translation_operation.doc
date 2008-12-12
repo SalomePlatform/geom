@@ -43,9 +43,9 @@ of the vector.
 
 \n <b>Example:</b>
 
-\image html translationsn1.png
+\image html translationsn1.png "The initial shape (grey)"
 
-\image html translationsn2.png
+\image html translationsn2.png "The resulting shape (yellow)"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_translation "Transformation Operations".

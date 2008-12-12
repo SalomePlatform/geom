@@ -2,50 +2,23 @@
 
 \page create_geom_obj_page Creating geometrical objects
 
+Salome Geometry module provides the toolset allowing to create a vast
+range of geometrical objects, from points to complex extrusions: 
+
 <ul>
-<li>\subpage create_basic_geom_obj_page</li>
-<ul>
-<li>\ref create_point_page</li>
-<li>\ref create_line_page</li>
-<li>\ref create_circle_page</li>
-<li>\ref create_ellipse_page</li>
-<li>\ref create_arc_page</li>
-<li>\ref create_curve_page</li>
-<li>\ref create_vector_page</li>
-<li>\ref create_plane_page</li>
-<li>\ref create_wplane_page</li>
-<li>\ref create_lcs_page</li>
-</ul>
-<li>\subpage create_primitives_page</li>
-<ul>
-<li>\ref create_box_page</li>
-<li>\ref create_cylinder_page</li>
-<li>\ref create_sphere_page</li>
-<li>\ref create_torus_page </li>
-<li>\ref create_cone_page </li>
-<li>\ref create_disk_page </li>
-<li>\ref create_squareface_page </li>
-</ul>
-<li>\subpage create_complex_obj_page</li>
-<ul>
-<li>\ref create_extrusion_page</li>
-<li>\ref create_revolution_page</li>
-<li>\ref create_filling_page</li>
-<li>\ref create_extrusion_alongpath_page</li>
-</ul>
-<li>\subpage work_with_groups_page</li>
-<li>\subpage build_by_blocks_page</li>
-<li>\subpage create_sketcher_page</li>
-<li>\subpage create_adv_obj_page</li>
-<ul>
-<li>\ref create_explode_page</li>
-<li>\ref create_edge_page</li>
-<li>\ref create_wire_page</li>
-<li>\ref create_face_page</li>
-<li>\ref create_shell_page</li>
-<li>\ref create_solid_page</li>
-<li>\ref create_compound_page</li>
-</ul>
+<li>create \subpage create_basic_geom_obj_page "Basic objects" - points,
+lines, circles...</li>
+<li>create \subpage create_primitives_page "Primitives" - cubes, spheres, cones...</li>
+<li>create \subpage create_complex_obj_page "Complex objects" by
+extrution, rotation, interpolation of other objects.</li>
+<li>create and edit \subpage work_with_groups_page - "Groups of objects" of
+lower dimension, which belong to the objects of higher dimension.</li>
+<li>\subpage build_by_blocks_page - "Build by blocks" faces from
+edges and solids from faces.</li>
+<li>create line segments and arcs using \subpage create_sketcher_page "Sketcher".</li>
+<li>\subpage create_explode_page "Explode" objects of higher dimension
+into sub-objects of lower dimension.</li> 
+<li>create \subpage create_adv_obj_page "Advanced geometrical objects" - edges, wires, shells...</li>
 </ul>
 
 */

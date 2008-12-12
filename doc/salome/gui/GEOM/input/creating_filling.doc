@@ -27,9 +27,9 @@ tolerance, Number of iterations, Appro).
 
 <b>Example:</b>
 
-\image html filling_compoundsn.png
+\image html filling_compoundsn.png "Initial edges"
 
-\image html fillingsn.png
+\image html fillingsn.png "Resulting surface"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_filling "Complex Geometric Objects".

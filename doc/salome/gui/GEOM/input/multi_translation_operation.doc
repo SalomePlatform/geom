@@ -20,9 +20,9 @@ step value + 1 value (repetition).
 
 \image html mtrans1.png
 
-\image html multi_translation_initialsn.png
+\image html multi_translation_initialsn.png "The initial object"
 
-\image html multi_translation1dsn.png
+\image html multi_translation1dsn.png "The result of a simple multi-translation"
 
 \n To produce a <b>Double Multi Translation</b> (in two directions) you need to
 indicate an \b Object to be translated, and, for both axes, a \b
@@ -40,9 +40,9 @@ along \em Dir2.
 
 \image html mtrans2.png
 
-\image html multi_translation_initialsn.png
+\image html multi_translation_initialsn.png "The initial object"
 
-\image html multi_translation2dsn.png
+\image html multi_translation2dsn.png "The result of a double multi-translation"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_multi_translation "Transformation Operations".

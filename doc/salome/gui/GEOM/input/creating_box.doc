@@ -33,7 +33,7 @@ this way you don't need to create them in advance).
 
 <b>Example:</b>
 
-\image html boxes.png
+\image html boxes.png "Boxes"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_box "Primitives".

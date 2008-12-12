@@ -28,7 +28,7 @@ coordinate system.
 \image html circle2.png
 
 <b>Example:</b>
-\image html circles.png
+\image html circles.png ""
 
 \n Finally, you can define a circle by a <b>Center Point</b> and two
 \b Points.  
@@ -39,6 +39,9 @@ to define the plane where the circle lies.
 \n <b>Arguments:</b> Name + 3 points.
 
 \image html circle3.png
+
+<b>Example:</b>
+\image html circles.png "A circle by vector and radius and a circle by three points"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_circle "Basic Geometric Objects".

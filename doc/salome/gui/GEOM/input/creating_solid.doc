@@ -17,7 +17,7 @@ ListOfShape is a list of shells from which the solid is constructed.
 
 \n <b>Example:</b>
 
-\image html solidsn.png
+\image html solidsn.png "Solid"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_solid "Advanced Geometric Objects".

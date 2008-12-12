@@ -8,7 +8,7 @@ viewer only.
 
 <br><h2>Create a group</h2>
 
-\image html image56.gif
+\image html image56.png
 
 To create a group of subshapes of a geometrical object in the main
 menu select <b>New entity > Group > Create</b>
@@ -68,12 +68,12 @@ created, ShapeType is a type of shapes in the created group.
 
 <b>Example:</b>
 
-\image html image193.jpg
+\image html image193.jpg "Groups on a cylinder"
 
 
 <br><h2>Edit a group</h2>
 
-\image html image57.gif
+\image html image57.png
 
 To \b Edit an existing group in the main menu select <b>New entity >
 Group > Edit</b>. This menu is designed in the same way as the

@@ -22,7 +22,7 @@ Offset value
 
 \n <b>Example:</b>
 
-\image html offsetsn.png
+\image html offsetsn.png "The box and its offset surface"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_offset "Transformation Operations".

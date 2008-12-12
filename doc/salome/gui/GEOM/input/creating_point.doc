@@ -52,7 +52,7 @@ position of the point on the given face.
 
 <b>Example:</b>
 
-\image html points.png
+\image html points.png "Points by edge and parameter and by coordinates"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_point "Basic Geometric Objects".

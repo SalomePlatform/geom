@@ -38,11 +38,11 @@ BiNormal direction to perform the extrusion.
 
 <b>Example:</b>
 
-\image html pipe_wire_edgesn.png
+\image html pipe_wire_edgesn.png "Initial wire"
 
-\image html pipesn.png
+\image html pipesn.png "Resulting surface"
 
-\image html pipebinormalsn.png
+\image html pipebinormalsn.png "A face and its trajectory"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_pipe "Complex Geometric Objects".

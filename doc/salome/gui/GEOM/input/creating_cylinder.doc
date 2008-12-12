@@ -28,7 +28,7 @@ height).
 
 <b>Example:</b>
 
-\image html cylinders.png
+\image html cylinders.png "Cylinders"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_cylinder "Primitives".

@@ -17,7 +17,7 @@ Entity - > Build - > Compound</b>.
 
 \n <b>Example:</b>
 
-\image html compoundsn.png
+\image html compoundsn.png "Edges for creation of a compound"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_compound "Advanced Geometric Objects".

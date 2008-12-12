@@ -16,7 +16,7 @@ Dimension (radius) of the chamfer.
 
 \image html chamfer1.png
 
-\image html chamfer_all.png
+\image html chamfer_all.png "Chamfer on the whole object"
 
 \n In the algorithms below there exist two ways to define the \b
 Dimension of the Chamfer
@@ -44,7 +44,7 @@ Face1, Face2),</em> where \em D1 is a chamfer size along \em Face1 and
 
 \image html chamfer2.png
 
-\image html chamfer_edge.png
+\image html chamfer_edge.png "Chamfer on the specified edges"
 
 \n To create chamfer on the specified faces of the given shape,  you need
 to define the <b>Main Object</b> to create a fillet on, select the
@@ -62,7 +62,7 @@ ListOfFaceID),</em> where \em D1 is a chamfer size along \em Face1 and
 
 \image html chamfer3.png
 
-\image html chamfer_faces.png
+\image html chamfer_faces.png "Chamfer on the specified faces"
 
 \n To create chamfer on an arbitrary set of edges of the given shape
 to define the <b>Main Object</b> to create a fillet on, select the

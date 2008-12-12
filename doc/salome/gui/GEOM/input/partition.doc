@@ -46,9 +46,9 @@ and \em Plane is a Tool shape, to intersect the \em Shapes.
 
 \n <b>Example:</b>
 
-\image html partitionsn1.png
+\image html partitionsn1.png "Box intersected by a plane"
 
-\image html partitionsn2.png
+\image html partitionsn2.png "Result of intersection"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_partition "Basic Operations".

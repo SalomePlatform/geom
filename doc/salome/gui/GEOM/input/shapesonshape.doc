@@ -2,7 +2,7 @@
 
 \page shapesonshape_page Get Shapes on Shape
 
-This operation is a special case of <b>Explode</b> operation. It produces a group of sub-shapes of the explosed shape, which are located in a definite way relatively another reference shape.
+This operation is a special case of <b>Explode</b> operation. It produces a group of sub-shapes of the exploded shape, which are located in a definite way relatively another reference shape.
 
 To use this operation, select in the Main Menu <b>Operations -> Get Shapes on Shape.</b> The following dialog box will appear. 
 

@@ -21,7 +21,7 @@ orientation).
 
 \image html face1.png
 
-\n Secondly, you can define a \b Face by Heigth and Width sizes and an \b Edge defining the normal to the center of the face.
+\n Secondly, you can define a \b Face by the height and the width sizes and an \b Edge defining the normal to the center of the face.
 \n <b>TUI Command:</b> <em>geompy.MakeFaceObjHW(Vector, Height, Width)</em>
 \n <b>Arguments:</b> Name + 1 Vector (normal to the center) + 2 doubles (to
 describe a face sizes).
@@ -35,7 +35,7 @@ Height and Width for the new face. The created face will lie in the plane of the
 \image html face2.png
 
 <b>Example:</b>
-\image html faces.png
+\image html faces.png "Square face"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creating 
 \ref tui_creation_face "Primitives".

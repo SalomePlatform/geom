@@ -16,9 +16,9 @@
 
 \n <b>Example:</b>
 
-\image html fusesn1.png
+\image html fusesn1.png "The initial shapes"
 
-\image html cutsn.png
+\image html cutsn.png "The resulting object"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_cut "Boolean Operations".

@@ -25,7 +25,7 @@ which are the points through  which the \b Line passes.
 
 <b>Example:</b>
 
-\image html lines.png
+\image html lines.png "Line defined through points"
 
 \b NB! There is another way to create a line, which is currently
 accessible only via \b TUI commands.

@@ -17,9 +17,9 @@
 
 \n <b>Example:</b>
 
-\image html fusesn1.png
+\image html fusesn1.png "The initial shapes"
 
-\image html fusesn2.png
+\image html fusesn2.png "The resulting fuse"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_fuse "Boolean Operations".

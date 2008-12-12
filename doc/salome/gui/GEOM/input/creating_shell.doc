@@ -15,7 +15,7 @@ Build - > Shell</b>
 
 \n <b>Example:</b>
 
-\image html shellsn.png
+\image html shellsn.png "Shell"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_shell "Advanced Geometric Objects".

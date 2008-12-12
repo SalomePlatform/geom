@@ -20,9 +20,9 @@ select them in the 3D viewer).
 
 \n <b>Example:</b>
 
-\image html suppress_faces1.png
+\image html suppress_faces1.png "The initial box"
 
-\image html suppress_faces2.png
+\image html suppress_faces2.png "The box with suppressed faces"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_suppress_faces "Repairing Operations".

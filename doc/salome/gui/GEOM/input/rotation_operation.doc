@@ -36,9 +36,9 @@ from the first point to the second and to the third.
 
 \n <b>Example:</b>
 
-\image html rotationsn1.png
+\image html rotationsn1.png "The initial shape (yellow)"
 
-\image html rotationsn2.png
+\image html rotationsn2.png "The rotated shape (grey)"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_rotation "Transformation Operations".

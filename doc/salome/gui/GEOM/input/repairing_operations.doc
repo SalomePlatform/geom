@@ -2,17 +2,27 @@
 
 \page repairing_operations_page Repairing Operations
 
+Repairing operations improve the shapes, processing them with complex algorithms:  
+
 <ul>
-<li>\subpage shape_processing_operation_page</li>
-<li>\subpage suppress_faces_operation_page</li>
-<li>\subpage close_contour_operation_page</li>
-<li>\subpage suppress_internal_wires_operation_page</li>
-<li>\subpage suppress_holes_operation_page</li>
-<li>\subpage sewing_operation_page</li>
-<li>\subpage glue_faces_operation_page</li>
-<li>\subpage add_point_on_edge_operation_page</li>
-<li>\subpage change_orientation_operation_page</li>
-<li>\subpage remove_extra_edges_operation_page</li>
+<li>\subpage shape_processing_operation_page "Shape processing" -
+processes one or more shapes using various operators.</li>
+<li>\subpage suppress_faces_operation_page "Suppress faces" - removes
+chosen faces of a shape.</li>
+<li>\subpage close_contour_operation_page "Close contour" - closes an
+open contour asnd miodifies the underlying face.</li>
+<li>\subpage suppress_internal_wires_operation_page "Suppress internal wires" - removes internal wires from shapes.</li>
+<li>\subpage suppress_holes_operation_page "Suppress holes" - removes
+holes with free boundaries on a selected face.</li>
+<li>\subpage sewing_operation_page "Sewing" - sews faces or shells.</li>
+<li>\subpage glue_faces_operation_page "Glue faces" - unites
+coincident faces within the given tolerance.</li>
+<li>\subpage add_point_on_edge_operation_page "Add point on edge" -
+splits an edge in two.</li>
+<li>\subpage change_orientation_operation_page "Change orientation" -
+reverses the normals of the selected faces.</li>
+<li>\subpage remove_extra_edges_operation_page "Remove extra edges" -
+removes seam and degenerated edges from the given shape.</li>
 </ul>
 
 */
