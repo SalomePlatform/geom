@@ -339,9 +339,9 @@ QString MeasureGUI_WhatisDlg::getKindOfShape (QString& theParameters)
       "\n" +        tr("GEOM_Y_I").arg(0) + DlgRef_SpinBox::PrintDoubleValue(aDbls[1]) +
       "\n" +        tr("GEOM_Z_I").arg(0) + DlgRef_SpinBox::PrintDoubleValue(aDbls[2]) +
       "\n" +        tr("GEOM_DIMENSIONS") +
-      "\n" +        "Ax: "                + DlgRef_SpinBox::PrintDoubleValue(aDbls[3]) +
-      "\n" +        "Ay: "                + DlgRef_SpinBox::PrintDoubleValue(aDbls[4]) +
-      "\n" +        "Az: "                + DlgRef_SpinBox::PrintDoubleValue(aDbls[5]);
+      "\n" +        "Ax :"                + DlgRef_SpinBox::PrintDoubleValue(aDbls[3]) +
+      "\n" +        "Ay :"                + DlgRef_SpinBox::PrintDoubleValue(aDbls[4]) +
+      "\n" +        "Az :"                + DlgRef_SpinBox::PrintDoubleValue(aDbls[5]);
     break;
   case GEOM::GEOM_IKindOfShape::ROTATED_BOX:
     aKindStr = tr("GEOM_BOX");
@@ -350,17 +350,17 @@ QString MeasureGUI_WhatisDlg::getKindOfShape (QString& theParameters)
       "\n" +        tr("GEOM_Y_I").arg(0)   + DlgRef_SpinBox::PrintDoubleValue(aDbls[1]) +
       "\n" +        tr("GEOM_Z_I").arg(0)   + DlgRef_SpinBox::PrintDoubleValue(aDbls[2]) +
       "\nZ Axis:" +
-      "\n" +        "Zx: "                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[3]) +
-      "\n" +        "Zy: "                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[4]) +
-      "\n" +        "Zz: "                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[5]) +
+      "\n" +        "Zx :"                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[3]) +
+      "\n" +        "Zy :"                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[4]) +
+      "\n" +        "Zz :"                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[5]) +
       "\nX Axis:" +
       "\n" +        tr("GEOM_X_I").arg("x") + DlgRef_SpinBox::PrintDoubleValue(aDbls[6]) +
       "\n" +        tr("GEOM_X_I").arg("y") + DlgRef_SpinBox::PrintDoubleValue(aDbls[7]) +
       "\n" +        tr("GEOM_X_I").arg("z") + DlgRef_SpinBox::PrintDoubleValue(aDbls[8]) +
       "\nDimensions along local axes:" +
-      "\n" +        "Ax: "                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[9]) +
-      "\n" +        "Ay: "                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[10]) +
-      "\n" +        "Az: "                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[11]);
+      "\n" +        "Ax :"                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[9]) +
+      "\n" +        "Ay :"                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[10]) +
+      "\n" +        "Az :"                  + DlgRef_SpinBox::PrintDoubleValue(aDbls[11]);
     break;
   case GEOM::GEOM_IKindOfShape::TORUS:
     aKindStr = tr("GEOM_TORUS");
