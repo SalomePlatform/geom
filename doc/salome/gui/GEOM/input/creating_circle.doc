@@ -27,9 +27,6 @@ coordinate system.
 
 \image html circle2.png
 
-<b>Example:</b>
-\image html circles.png ""
-
 \n Finally, you can define a circle by a <b>Center Point</b> and two
 \b Points.  
 \n <b>TUI Command:</b> <em>geompy.MakeCircleCenter2Pnt(Point1, Point2,

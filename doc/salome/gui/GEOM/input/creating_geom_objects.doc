@@ -10,10 +10,10 @@ range of geometrical objects, from points to complex extrusions:
 lines, circles...</li>
 <li>create \subpage create_primitives_page "Primitives" - cubes, spheres, cones...</li>
 <li>create \subpage create_complex_obj_page "Complex objects" by
-extrution, rotation, interpolation of other objects.</li>
-<li>create and edit \subpage work_with_groups_page - "Groups of objects" of
+extrusion, rotation, interpolation of other objects.</li>
+<li>create and edit \subpage work_with_groups_page "Groups of objects" of
 lower dimension, which belong to the objects of higher dimension.</li>
-<li>\subpage build_by_blocks_page - "Build by blocks" faces from
+<li>\subpage build_by_blocks_page "Build by blocks" faces from
 edges and solids from faces.</li>
 <li>create line segments and arcs using \subpage create_sketcher_page "Sketcher".</li>
 <li>\subpage create_explode_page "Explode" objects of higher dimension

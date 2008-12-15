@@ -36,8 +36,12 @@ in sorted list of all sub-shapes of the given Type. Each index is in
 the range [1, Nb_Sub-Shapes_Of_Given_Type]</li>
 </ul>
 
-\n <b>Arguments:</b>1 SHAPE + 1 type of SubShape.
+\n <b>Arguments: </b>1 SHAPE + 1 type of SubShape.
 
 \image html neo-obj1.png
+
+<b>Example:</b>
+
+\image html explode.png "A box, exploded into faces"
 
 */
