@@ -84,9 +84,9 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
   return aDocID.IntegerValue();
 }
 
-void ProcessFunction(Handle(GEOM_Function)& theFunction, 
-		     TCollection_AsciiString& theScript,
-		     TColStd_MapOfTransient& theProcessed);
+void ProcessFunction(Handle(GEOM_Function)& theFunction,
+                     TCollection_AsciiString& theScript,
+                     TColStd_MapOfTransient& theProcessed);
 
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
 
@@ -122,9 +122,9 @@ GEOM_Engine::GEOM_Engine()
  *  Destructor
  */
 GEOM_Engine::~GEOM_Engine()
-{ 
+{
   GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
-  for(; It.More(); It.Next()) 
+  for(; It.More(); It.Next())
     {
       RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
     }
@@ -231,9 +231,9 @@ Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
  *  AddSubShape
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape, 
-					     Handle(TColStd_HArray1OfInteger) theIndices,
-					     bool isStandaloneOperation)
+Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
+                                             Handle(TColStd_HArray1OfInteger) theIndices,
+                                             bool isStandaloneOperation)
 {
   if(theMainShape.IsNull() || theIndices.IsNull()) return NULL;
 
@@ -286,7 +286,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   _objects.Bind(anID, anObject);
 
   GEOM::TPythonDump pd (aFunction);
- 
+
   if (isStandaloneOperation) {
     pd << anObject << " = geompy.GetSubShape(" << theMainShape << ", [";
     Standard_Integer i = theIndices->Lower(), up = theIndices->Upper();
@@ -318,7 +318,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   Handle(TDataStd_TreeNode) aNode;
   for (int i = 1; i<=nb; i++) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(i);
-    if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode)) 
+    if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode))
       aNode->Remove();
   }
 
@@ -421,23 +421,23 @@ void GEOM_Engine::Close(int theDocID)
  *  DumpPython
  */
 //=============================================================================
-TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID, 
-						Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-						bool isPublished, 
-						bool& aValidScript)
+TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
+                                                Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                                bool isPublished,
+                                                bool& aValidScript)
 {
   TCollection_AsciiString aScript;
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-  
+
   if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
- 
-  aScript = "import geompy\n";
+
+  aScript  = "import geompy\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
-  
-  Standard_Integer posToInertGlobalVars = aScript.Length() + 1;
+
+  Standard_Integer posToInsertGlobalVars = aScript.Length() + 1;
 
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
@@ -449,8 +449,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       aNode = Itr.Value();
       aFunction = GEOM_Function::GetFunction(aNode->Label());
       if(aFunction.IsNull()) {
-	MESSAGE ( "Null function !!!!" );
-	continue;
+        MESSAGE ( "Null function !!!!" );
+        continue;
       }
       ProcessFunction(aFunction, aScript, aMap);
     }
@@ -532,8 +532,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
 
   //Add final part of the script
-  if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
- 
+  if (aLen && aSeq->Value(aLen) < aScriptLength)
+    anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
+
   // ouv : NPAL12872
   for (anEntryToNameIt.Initialize( theObjectNames );
        anEntryToNameIt.More();
@@ -598,7 +599,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         aCommand += "addToStudy( ";
       if ( anEntryToBadName.IsBound( aEntry ))
         aCommand += aName + ", \"" + anEntryToBadName( aEntry ) + "\" )";
-      else 
+      else
         aCommand += aName + ", \"" + aName + "\" )";
 
       // bind a command to the last digit of the entry
@@ -633,15 +634,15 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
   if ( !globalVars.IsEmpty() ) {
     globalVars.Insert( 1, "\n\tglobal " );
-    anUpdatedScript.Insert( posToInertGlobalVars, globalVars );
+    anUpdatedScript.Insert( posToInsertGlobalVars, globalVars );
   }
-  
+
   return anUpdatedScript;
 }
 
 //=======================================================================
 //function : GetDumpName
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 const char* GEOM_Engine::GetDumpName (const char* theStudyEntry) const
@@ -654,7 +655,7 @@ const char* GEOM_Engine::GetDumpName (const char* theStudyEntry) const
 
 //=======================================================================
 //function : GetAllDumpNames
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
@@ -673,9 +674,9 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 //===========================================================================
 //                     Internal functions
 //===========================================================================
-void ProcessFunction(Handle(GEOM_Function)& theFunction, 
-		     TCollection_AsciiString& theScript,
-		     TColStd_MapOfTransient& theProcessed)
+void ProcessFunction(Handle(GEOM_Function)& theFunction,
+                     TCollection_AsciiString& theScript,
+                     TColStd_MapOfTransient& theProcessed)
 {
   if(theFunction.IsNull() || theProcessed.Contains(theFunction)) return;
 
@@ -683,26 +684,41 @@ void ProcessFunction(Handle(GEOM_Function)& theFunction,
   TDF_LabelSequence aSeq;
   theFunction->GetDependency(aSeq);
   Standard_Integer aLen = aSeq.Length();
-  for(Standard_Integer i = 1; i<= aLen; i++) {
+  for(Standard_Integer i = 1; i <= aLen; i++) {
     Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aSeq.Value(i));
     if(aFunction.IsNull()) continue;
     ProcessFunction(aFunction, theScript, theProcessed);
   }
 */
 
+  // pass functions, that depends on nonexisting ones
+  //jfa:test//bool doComment = false;
+  TDF_LabelSequence aSeq;
+  theFunction->GetDependency(aSeq);
+  Standard_Integer aLen = aSeq.Length();
+  //jfa:test//for (Standard_Integer i = 1; i <= aLen && !doComment; i++) {
+  for (Standard_Integer i = 1; i <= aLen; i++) {
+    Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aSeq.Value(i));
+    //jfa:test//if (aFunction.IsNull()) doComment = true;
+    //jfa:test//else if (!theProcessed.Contains(aFunction)) doComment = true;
+    if (aFunction.IsNull()) return;
+    if (!theProcessed.Contains(aFunction)) return;
+  }
+
   TCollection_AsciiString aDescr = theFunction->GetDescription();
   if(aDescr.Length() == 0) {
     //cout << "Warning: the function has no description" << endl;
     return;
   }
+
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return;
 
   theScript += "\n\t";
+  //jfa:test//if (doComment) theScript += "#";
   theScript += aDescr;
- 
+
   theProcessed.Add(theFunction);
-  return;
 }
 
 //=============================================================================
@@ -723,19 +739,19 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
     int c = (int)arr[i];
     j = i+1;
     if(c >= 48 && c <= 57) { //Is digit?
- 
+
       isFound = Standard_False;
       while((j < aLen) && ((c >= 48 && c <= 57) || c == 58) ) { //Check if it is an entry
-	c = (int)arr[j++];  
-	if(c == 58) isFound = Standard_True;
+        c = (int)arr[j++];
+        if(c == 58) isFound = Standard_True;
       }
-      
+
       if(isFound && arr[j-2] != 58) { // last char should be a diggit
-	aSeq->Append(i+1); // +1 because AsciiString starts from 1
-	aSeq->Append(j-1);
+        aSeq->Append(i+1); // +1 because AsciiString starts from 1
+        aSeq->Append(j-1);
       }
     }
-     
+
     i = j;
   }
 
