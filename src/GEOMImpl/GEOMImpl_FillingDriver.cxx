@@ -113,6 +113,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
       Scurrent = Ex.Current() ;
       if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
+      if (BRep_Tool::Degenerated(TopoDS::Edge(Scurrent))) continue;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
       C = new Geom_TrimmedCurve(C, First, Last);
       Section.AddCurve(C);
@@ -147,6 +148,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
       Scurrent = Ex.Current() ;
       if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
+      if (BRep_Tool::Degenerated(TopoDS::Edge(Scurrent))) continue;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
       Handle(Geom_TrimmedCurve) TC = Handle(Geom_TrimmedCurve)::DownCast(C);
       if(TC.IsNull()) {
