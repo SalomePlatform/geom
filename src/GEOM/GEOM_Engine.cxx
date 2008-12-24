@@ -36,6 +36,7 @@
 
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
+#include <TDF_Reference.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>
@@ -54,6 +55,7 @@
 #include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
+#include <set>
 #include <map>
 #include <string>
 
@@ -84,9 +86,10 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
   return aDocID.IntegerValue();
 }
 
-void ProcessFunction(Handle(GEOM_Function)& theFunction,
+void ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
-                     TColStd_MapOfTransient& theProcessed);
+                     TDF_LabelMap&            theProcessed,
+                     std::set<std::string>&   theDumpedObjs);
 
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
 
@@ -96,7 +99,6 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
  */
 //=============================================================================
 GEOM_Engine* GEOM_Engine::GetEngine() { return TheEngine; }
-
 
 //=============================================================================
 /*!
@@ -429,7 +431,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   TCollection_AsciiString aScript;
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
 
-  if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
+  if (aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
 
   aScript  = "import geompy\n";
   aScript += "import math\n";
@@ -441,18 +443,19 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
-  TColStd_MapOfTransient aMap;
+  TDF_LabelMap aFuncMap;
+  std::set<std::string> anObjMap;
 
-  if(aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
     TDataStd_ChildNodeIterator Itr(aRoot);
-    for(; Itr.More(); Itr.Next()) {
+    for (; Itr.More(); Itr.Next()) {
       aNode = Itr.Value();
       aFunction = GEOM_Function::GetFunction(aNode->Label());
-      if(aFunction.IsNull()) {
+      if (aFunction.IsNull()) {
         MESSAGE ( "Null function !!!!" );
         continue;
       }
-      ProcessFunction(aFunction, aScript, aMap);
+      ProcessFunction(aFunction, aScript, aFuncMap, anObjMap);
     }
   }
 
@@ -484,12 +487,12 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   //Replace entries by the names
   TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_"),
     allowedChars ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
-  if(aLen == 0) anUpdatedScript = aScript;
+  if (aLen == 0) anUpdatedScript = aScript;
 
-  for(Standard_Integer i = 1; i <= aLen; i+=2) {
+  for (Standard_Integer i = 1; i <= aLen; i+=2) {
     anUpdatedScript += aScript.SubString(aStart, aSeq->Value(i)-1);
     anEntry = aScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
-    if(theObjectNames.IsBound(anEntry)) {
+    if (theObjectNames.IsBound(anEntry)) {
       aName = theObjectNames.Find(anEntry);
       // check validity of aName
       bool isValidName = true;
@@ -579,6 +582,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     {
       const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
       const TCollection_AsciiString& aName = anEntryToNameIt.Value();
+      if (!anObjMap.count(aEntry.ToCString()))
+        continue; // was not dumped
       if ( !aEntry2StEntry.IsBound( aEntry ))
         continue; // was not published
       TCollection_AsciiString aCommand("\n\tgeompy."), aFatherEntry;
@@ -674,11 +679,13 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 //===========================================================================
 //                     Internal functions
 //===========================================================================
-void ProcessFunction(Handle(GEOM_Function)& theFunction,
+void ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
-                     TColStd_MapOfTransient& theProcessed)
+                     TDF_LabelMap&            theProcessed,
+                     std::set<std::string>&   theDumpedObjs)
 {
-  if(theFunction.IsNull() || theProcessed.Contains(theFunction)) return;
+  if (theFunction.IsNull()) return;
+  if (theProcessed.Contains(theFunction->GetEntry())) return;
 
 /*
   TDF_LabelSequence aSeq;
@@ -692,18 +699,37 @@ void ProcessFunction(Handle(GEOM_Function)& theFunction,
 */
 
   // pass functions, that depends on nonexisting ones
-  //jfa:test//bool doComment = false;
+  bool doNotProcess = false;
   TDF_LabelSequence aSeq;
   theFunction->GetDependency(aSeq);
   Standard_Integer aLen = aSeq.Length();
-  //jfa:test//for (Standard_Integer i = 1; i <= aLen && !doComment; i++) {
-  for (Standard_Integer i = 1; i <= aLen; i++) {
-    Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aSeq.Value(i));
-    //jfa:test//if (aFunction.IsNull()) doComment = true;
-    //jfa:test//else if (!theProcessed.Contains(aFunction)) doComment = true;
-    if (aFunction.IsNull()) return;
-    if (!theProcessed.Contains(aFunction)) return;
+  for (Standard_Integer i = 1; i <= aLen && !doNotProcess; i++) {
+    TDF_Label aRefLabel = aSeq.Value(i);
+    Handle(TDF_Reference) aRef;
+    if (!aRefLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
+      doNotProcess = true;
+    }
+    else {
+      if (aRef.IsNull() || aRef->Get().IsNull()) {
+        doNotProcess = true;
+      }
+      else {
+        Handle(TDataStd_TreeNode) aT;
+        if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) {
+          doNotProcess = true;
+        }
+        else {
+          TDF_Label aDepLabel = aT->Label();
+          Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aDepLabel);
+
+          if (aFunction.IsNull()) doNotProcess = true;
+          else if (!theProcessed.Contains(aDepLabel)) doNotProcess = true;
+        }
+      }
+    }
   }
+
+  if (doNotProcess) return;
 
   TCollection_AsciiString aDescr = theFunction->GetDescription();
   if(aDescr.Length() == 0) {
@@ -715,10 +741,13 @@ void ProcessFunction(Handle(GEOM_Function)& theFunction,
   if(aDescr == "None") return;
 
   theScript += "\n\t";
-  //jfa:test//if (doComment) theScript += "#";
   theScript += aDescr;
 
-  theProcessed.Add(theFunction);
+  theProcessed.Add(theFunction->GetEntry());
+
+  TCollection_AsciiString anObjEntry;
+  TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+  theDumpedObjs.insert(anObjEntry.ToCString());
 }
 
 //=============================================================================
