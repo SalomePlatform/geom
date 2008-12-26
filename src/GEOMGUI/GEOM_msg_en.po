@@ -80,6 +80,10 @@ msgstr "Not a single entity has been found"
 #==============================================================================
 #
 
+#
+#==============================================================================
+#
+
 #: GeometryGUI.cxx:563
 msgid "GEOM_INF_LOADED"
 msgstr "File %1 loaded."
@@ -472,6 +476,10 @@ msgstr "Step V :"
 #Step U
 msgid "GEOM_STEP_U"
 msgstr "Step U :"
+
+#BiNormal
+msgid "GEOM_BINORMAL"
+msgstr "BiNormal"
 
 #
 #==============================================================================
