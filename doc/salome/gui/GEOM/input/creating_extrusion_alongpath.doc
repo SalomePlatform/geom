@@ -8,6 +8,10 @@ To generate a \b Pipe in the <b>Main Menu</b> select <b>New Entity - > Generatio
 Object</b> (vertex, edge, planar wire, face or shell), which will be extruded
 and the <b>Path Object</b> (edge or wire) along which the <b>Base 
 Object</b> will be extruded.
+\n In this mode the default pipe generation algorithm is used. The pipe
+is created in such a way that the <b>angle between the normal vector</b> to
+the base shape <b>and the tangent to the path</b> wire at any point of the
+given path <b>is kept constant</b>.
 \n Check Box <b>Select unpublished edges</b> - if checked, allows to select an edge of any other shape as the path object. 
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
@@ -19,11 +23,18 @@ definition of the path.
 
 \image html pipe.png
 
+<b>Example:</b>
+
+\image html pipe_wire_edgesn.png
+
 \n Secondly, you can define the <b>Base
 Object</b> (edge, planar wire or face), which will be extruded, 
 the <b>Path Object</b> (edge or wire) along which the <b>Base 
-Object</b> will be extruded and the <b>Vector</b> (edge or wire)
-to keep constant angular relations between the sections and this one.
+Object</b> will be extruded and the <b>Vector</b> (edge or wire).
+\n In contrast to the default mode, in this mode the pipe is generated
+in such a way that the <b>angle between the normal vector</b> to the base
+shape <b>and the BiNormal vector</b> given as the third argument <b>is kept
+constant</b>.
 \n Check Box <b>Select unpublished edges</b> - if checked, allows to select an edge of any other shape as the path object. 
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
@@ -37,10 +48,6 @@ BiNormal direction to perform the extrusion.
 \image html pipe2.png
 
 <b>Example:</b>
-
-\image html pipe_wire_edgesn.png
-
-\image html pipesn.png
 
 \image html pipebinormalsn.png
 
