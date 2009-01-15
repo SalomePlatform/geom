@@ -30,9 +30,6 @@
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 
-EXPORT_SHAREDPYSCRIPTS=\
-	GEOM_shared_modules.py
-
 #
 # ===============================================================
 # Files to be installed
