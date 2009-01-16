@@ -49,7 +49,7 @@
 
 using namespace std;
 
-enum { ALL_SUBSHAPES = 0, GET_IN_PLACE, SUBSHAPES_OF_SHAPE2 };
+enum { ALL_SUBSHAPES = 0, GET_IN_PLACE, SUBSHAPES_OF_SHAPE2, SUBSHAPES_OF_INVISIBLE_SHAPE2 };
 
 GroupGUI_GroupDlg::GroupGUI_GroupDlg(Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent)
   :GEOMBase_Skeleton( theGeometryGUI, parent, "GroupGUI_GroupDlg", false,
@@ -389,7 +389,10 @@ void GroupGUI_GroupDlg::onGetInPlace()
         setInPlaceObj( aGetInPlaceObj );
       }
       else {
-        setInPlaceObj( anObj );
+        bool isVisible = true;
+        if ( SALOME_View* view = GEOM_Displayer::GetActiveView() )
+          isVisible = view->isVisible( firstIObject() );
+        setInPlaceObj( anObj, isVisible );
       }
       myEditCurrentArgument = 0;
       //myBusy = true; // just activate but do not select in the list
@@ -404,14 +407,16 @@ void GroupGUI_GroupDlg::onGetInPlace()
 //purpose  : temporarily add an object to study and remove old InPlaceObj
 //=======================================================================
 
-void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
+void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj, const bool isVisible )
 {
   if ( ! myInPlaceObj->_is_equivalent( theObj ) )
   {
     const char* tmpName = "__InPlaceObj__";
     // remove old InPlaceObj
     if ( !myInPlaceObj->_is_nil() ) {
-      if ( myInPlaceObjSelectWay == GET_IN_PLACE ) { // hide temporary object
+      if ( myInPlaceObjSelectState == GET_IN_PLACE ||
+           myInPlaceObjSelectState == SUBSHAPES_OF_INVISIBLE_SHAPE2 ) {
+        // hide temporary object or initially invisible shape 2 (issue 0014047)
         GEOM_Displayer aDisplayer(getStudy());
         aDisplayer.Erase( myInPlaceObj, true );
       }
@@ -443,7 +448,9 @@ void GroupGUI_GroupDlg::setInPlaceObj( GEOM::GEOM_Object_var theObj )
         myMain2InPlaceIndices.Bind( aMainIndex, aPlaceIndex );
     }
   }
-  myInPlaceObjSelectWay = subSelectionWay();
+  myInPlaceObjSelectState = subSelectionWay();
+  if ( myInPlaceObjSelectState == SUBSHAPES_OF_SHAPE2 && !isVisible )
+    myInPlaceObjSelectState = SUBSHAPES_OF_INVISIBLE_SHAPE2;
 }
 
 //=================================================================================

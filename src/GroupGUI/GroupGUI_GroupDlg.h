@@ -90,7 +90,7 @@ private:
     void                                updateState();
     void                                highlightSubShapes();
     void                                onGetInPlace();
-    void                                setInPlaceObj( GEOM::GEOM_Object_var theObj );
+    void                                setInPlaceObj( GEOM::GEOM_Object_var theObj, const bool isVisible=1 );
 
 private:
   Mode                            myMode;
@@ -98,7 +98,7 @@ private:
   GEOM::GEOM_Object_var           myMainObj;
   GEOM::GEOM_Object_var           myGroup;
   GEOM::GEOM_Object_var           myInPlaceObj;
-  int                             myInPlaceObjSelectWay;
+  int                             myInPlaceObjSelectState;
   TColStd_DataMapOfIntegerInteger myMain2InPlaceIndices;
 
   QPushButton*                    mySelBtn;
