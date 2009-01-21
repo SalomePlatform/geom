@@ -23,55 +23,62 @@
 // Created:	Tue Dec  7 17:15:42 2004
 // Author:	Pavel DURANDIN
 //
+
 #include <BlockFix_UnionFaces.ixx>
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#include <TopExp.hxx>
-#include <TopTools_MapOfShape.hxx>
+
+#include <ShapeAnalysis_WireOrder.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+
+#include <ShapeBuild_Edge.hxx>
 #include <ShapeBuild_ReShape.hxx>
+
+#include <ShapeExtend_WireData.hxx>
+#include <ShapeExtend_CompositeSurface.hxx>
+
+#include <ShapeFix_Face.hxx>
+#include <ShapeFix_ComposeShell.hxx>
+#include <ShapeFix_SequenceOfWireSegment.hxx>
+#include <ShapeFix_WireSegment.hxx>
+#include <ShapeFix_Wire.hxx>
+#include <ShapeFix_Edge.hxx>
+
+#include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepTools.hxx>
+
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+
+#include <TopTools_SequenceOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Face.hxx>  
 #include <TopoDS_Solid.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <Geom_Surface.hxx>
-#include <BRep_Tool.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <BRep_Builder.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <ShapeFix_Face.hxx>
-#include <BRep_Tool.hxx>
-#include <ShapeExtend_WireData.hxx>
-#include <ShapeAnalysis_WireOrder.hxx>
-#include <ShapeAnalysis_Edge.hxx>
-#include <Geom2d_Line.hxx>
-#include <gp_XY.hxx>
-#include <gp_Pnt2d.hxx>
-#include <ShapeBuild_Edge.hxx>
-#include <Geom_Curve.hxx>
-#include <TopoDS_Vertex.hxx>
-
-#include <ShapeFix_Wire.hxx>
-#include <ShapeFix_Edge.hxx>
-
-#include <Geom_RectangularTrimmedSurface.hxx>
-#include <BRepTools.hxx>
-
-#include <TColGeom_HArray2OfSurface.hxx>
-#include <ShapeExtend_CompositeSurface.hxx>
-#include <ShapeFix_ComposeShell.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <ShapeFix_SequenceOfWireSegment.hxx>
-#include <ShapeFix_WireSegment.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include <TColGeom_HArray2OfSurface.hxx>
+
+#include <Geom_Plane.hxx>
+#include <Geom_OffsetSurface.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_SphericalSurface.hxx>
+#include <Geom_Surface.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_RectangularTrimmedSurface.hxx>
 
+#include <Geom2d_Line.hxx>
+
+#include <gp_XY.hxx>
+#include <gp_Pnt2d.hxx>
   
 //=======================================================================
 //function : BlockFix_UnionFaces
@@ -292,7 +299,7 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
             }
           } while (isNewFound);
         
-          // sorting eny type of edges
+          // sorting any type of edges
           aWire = TopoDS::Wire(aContext->Apply(aWire));
                 
           TopoDS_Face tmpF = TopoDS::Face(aContext->Apply(faces(1).Oriented(TopAbs_FORWARD)));
@@ -489,7 +496,91 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
   S1 = BRep_Tool::Surface(aFace,L1);
   S2 = BRep_Tool::Surface(aCheckedFace,L2);
   
-  return (S1 == S2 && L1 == L2);
+  if (S1 == S2 && L1 == L2)
+    return true;
+
+  // begin: planar case (improvement 20052)
+  S1 = BRep_Tool::Surface(aFace);
+  S2 = BRep_Tool::Surface(aCheckedFace);
+
+  Handle(Geom_Plane) aGP1, aGP2;
+  Handle(Geom_RectangularTrimmedSurface) aGRTS1, aGRTS2;
+  Handle(Geom_OffsetSurface) aGOFS1, aGOFS2;
+
+  aGRTS1 = Handle(Geom_RectangularTrimmedSurface)::DownCast(S1);
+  aGRTS2 = Handle(Geom_RectangularTrimmedSurface)::DownCast(S2);
+
+  aGOFS1 = Handle(Geom_OffsetSurface)::DownCast(S1);
+  aGOFS2 = Handle(Geom_OffsetSurface)::DownCast(S2);
+
+  if (!aGOFS1.IsNull()) {
+    aGP1 = Handle(Geom_Plane)::DownCast(aGOFS1->BasisSurface());
+  }
+  else if (!aGRTS1.IsNull()) {
+    aGP1 = Handle(Geom_Plane)::DownCast(aGRTS1->BasisSurface());
+  }
+  else {
+    aGP1 = Handle(Geom_Plane)::DownCast(S1);
+  }
+
+  if (!aGOFS2.IsNull()) {
+    aGP2 = Handle(Geom_Plane)::DownCast(aGOFS2->BasisSurface());
+  }
+  else if (!aGRTS2.IsNull()) {
+    aGP2 = Handle(Geom_Plane)::DownCast(aGRTS2->BasisSurface());
+  }
+  else {
+    aGP2 = Handle(Geom_Plane)::DownCast(S2);
+  }
+
+  if (!aGP1.IsNull() && !aGP2.IsNull()) {
+    // both surfaces are planar, check equality
+    Standard_Real A1, B1, C1, D1;
+    Standard_Real A2, B2, C2, D2;
+    aGP1->Coefficients(A1, B1, C1, D1);
+    aGP2->Coefficients(A2, B2, C2, D2);
+
+    if (fabs(A1) > Precision::Confusion()) {
+      A1 = 1.0;
+      B1 /= A1;
+      C1 /= A1;
+      D1 /= A1;
+    }
+    else if (fabs(B1) > Precision::Confusion()) {
+      B1 = 1.0;
+      C1 /= B1;
+      D1 /= B1;
+    }
+    else {
+      C1 = 1.0;
+      D1 /= C1;
+    }
+
+    if (fabs(A2) > Precision::Confusion()) {
+      A2 = 1.0;
+      B2 /= A2;
+      C2 /= A2;
+      D2 /= A2;
+    }
+    else if (fabs(B2) > Precision::Confusion()) {
+      B2 = 1.0;
+      C2 /= B2;
+      D2 /= B2;
+    }
+    else {
+      C2 = 1.0;
+      D2 /= C2;
+    }
+
+    if (fabs(A1 - A2) < Precision::Confusion() &&
+        fabs(B1 - B2) < Precision::Confusion() &&
+        fabs(C1 - C2) < Precision::Confusion() &&
+        fabs(D1 - D2) < Precision::Confusion())
+      return true;
+  }
+  // end: planar case (improvement 20052)
+
+  return false;
 }
 
 
@@ -529,4 +620,3 @@ void BlockFix_UnionFaces::MovePCurves(TopoDS_Face& aTarget,
     B.Add(aTarget,ResWire);
   }
 }
-     
