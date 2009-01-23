@@ -106,6 +106,9 @@ void DlgRef_SpinBox::RangeStepAndValidator(double min, double max,double step,
 QString DlgRef_SpinBox::PrintDoubleValue (double theValue, int thePrecision)
 {
   const double prec = 1e-12;
+  
+  if ( abs(theValue) < thePrecision)
+    return "0";
 
   QString aRes;
   aRes.setNum(theValue, 'g', thePrecision);
