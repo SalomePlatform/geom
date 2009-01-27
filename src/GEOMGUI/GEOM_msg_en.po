@@ -996,7 +996,7 @@ msgstr "Size of plane :"
 
 #: GeometryGUI_CommonDlg.cxx:47
 msgid "GEOM_COMMON_TITLE"
-msgstr "BOOLEAN : Common Of Two Objects"
+msgstr "Common Of Two Objects"
 
 #: GeometryGUI_CompoundDlg.cxx:44
 msgid "GEOM_COMPOUND_TITLE"
@@ -1008,7 +1008,7 @@ msgstr "Cone Construction"
 
 #: GeometryGUI_CutDlg.cxx:48
 msgid "GEOM_CUT_TITLE"
-msgstr "BOOLEAN : Cut Of Two Objects"
+msgstr "Cut Of Two Objects"
 #
 #: GeometryGUI_CylinderDlg.cxx:47
 msgid "GEOM_CYLINDER_TITLE"
@@ -1116,7 +1116,7 @@ msgstr "Approximation"
 
 #: GeometryGUI_FuseDlg.cxx:48
 msgid "GEOM_FUSE_TITLE"
-msgstr "BOOLEAN : Fuse Two Objects"
+msgstr "Fuse Two Objects"
 
 #: GeometryGUI_InertiaDlg.cxx:42
 msgid "GEOM_INERTIA_TITLE"
@@ -1305,7 +1305,7 @@ msgstr "Scale Factor Z :"
 
 #: GeometryGUI_SectionDlg.cxx:50
 msgid "GEOM_SECTION_TITLE"
-msgstr "BOOLEAN : Section Of Two Objects"
+msgstr "Section Of Two Objects"
 
 #: GeometryGUI_SewingDlg.cxx:48
 msgid "GEOM_SEWING_TITLE"
