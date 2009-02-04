@@ -485,10 +485,10 @@ static
 
   gp_Pnt2d aPb=Coord2d(aVb, aEOuta, myFace);
 
-  const BOP_ListOfEdgeInfo& aLEInfoVb=mySmartMap.FindFromKey(aVb);
+  //const BOP_ListOfEdgeInfo& aLEInfoVb=mySmartMap.FindFromKey(aVb);
   //
   aTol=2.*Tolerance2D(aVb, aGAS);
-  aTol2=aTol*aTol;
+  aTol2=10.*aTol*aTol;
   //
   aNb=aLS.Length();
   if (aNb>0) {
@@ -550,7 +550,7 @@ static
   }
   //
   aTol2D=2.*Tolerance2D(aVb, aGAS);
-  aTol2D2=aTol2D*aTol2D;
+  aTol2D2=100.*aTol2D*aTol2D;
   //
   // anAngleIn in Vb from edge aEOuta
   const BOP_ListOfEdgeInfo& aLEInfo=mySmartMap.FindFromKey(aVb);
