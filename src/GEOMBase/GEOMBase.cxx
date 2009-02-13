@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,45 +17,35 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOMBase.cxx
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : GEOMBase.cxx
-//  Author : Damien COQUERET
-//  Module : GEOM
-//  $Header$
-
 #include "GEOMBase.h"
-#include "GeometryGUI.h"
-#include "GEOMBase_aParameterDlg.h"
 
-#include "GEOM_Client.hxx"
+#include <GeometryGUI.h>
+#include <GEOM_Client.hxx>
 
 ////  SALOME Includes
-#include "Utils_ORB_INIT.hxx"
-#include "Utils_SINGLETON.hxx"
+#include <GEOM_Actor.h>
+#include <SVTK_ViewModel.h>
+#include <SVTK_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewWindow.h>
 
-#include "SALOME_LifeCycleCORBA.hxx"
+#include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
-#include "GEOM_AssemblyBuilder.h"
-#include "GEOM_Actor.h"
-#include "SVTK_RenderWindowInteractor.h"
-#include "SVTK_ViewModel.h"
-#include "SVTK_ViewWindow.h"
-#include "OCCViewer_ViewPort3d.h"
-#include "OCCViewer_ViewModel.h"
-#include "OCCViewer_ViewWindow.h"
-
-#include "SALOME_ListIO.hxx"
-#include "SALOME_ListIteratorOfListIO.hxx"
-#include "GEOM_AISTrihedron.hxx"
-
-#include "SUIT_Session.h"
-#include "SUIT_ViewWindow.h"
-#include "SUIT_MessageBox.h"
-#include "SalomeApp_Application.h"
-#include "SalomeApp_Study.h"
+#include <SUIT_Desktop.h>
+#include <SUIT_Session.h>
+#include <SUIT_ViewManager.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_MessageBox.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 
 // // Open CASCADE Includes
 #include <BRep_Tool.hxx>
@@ -63,33 +53,19 @@
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepPrimAPI_MakeCone.hxx>
 
-#include <Geom_Circle.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <AIS_ListOfInteractive.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS.hxx>
 
 #include <Precision.hxx>
 
 #include <vtkRenderer.h>
-#include <qvaluelist.h>
-#include <qstringlist.h>
 
 #include <set>
-
-#include "GEOMImpl_Types.hxx"
-
-using namespace std;
-
-#include "SALOMEDSClient.hxx"
-
 
 //=====================================================================================
 // function : GetShapeFromIOR()
@@ -98,10 +74,10 @@ using namespace std;
 TopoDS_Shape GEOMBase::GetShapeFromIOR(QString IOR)
 {
   TopoDS_Shape result;
-  if(IOR.stripWhiteSpace().isEmpty())
+  if(IOR.trimmed().isEmpty())
     return result;
 
-  CORBA::Object_var obj = SalomeApp_Application::orb()->string_to_object((char*)(IOR.latin1()));
+  CORBA::Object_var obj = SalomeApp_Application::orb()->string_to_object(IOR.toLatin1().data());
   if(CORBA::is_nil(obj))
     return result;
   GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( obj );
@@ -227,55 +203,55 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
     {
     case TopAbs_COMPOUND:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUND"));
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUND").toLatin1().constData());
 	return true;
       }
     case  TopAbs_COMPSOLID:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUNDSOLID")) ;
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUNDSOLID").toLatin1().constData()) ;
 	return true ;
       }
     case TopAbs_SOLID:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SOLID")) ;
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SOLID").toLatin1().constData()) ;
 	return true ;
       }
     case TopAbs_SHELL:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHELL")) ;
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHELL").toLatin1().constData()) ;
 	return true ;
       }
     case TopAbs_FACE:
       {
 	BRepAdaptor_Surface surf(TopoDS::Face(aShape));
 	if(surf.GetType() == GeomAbs_Plane) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_PLANE"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_PLANE").toLatin1().constData());
 	  return true;
 	}
 	else if(surf.GetType() == GeomAbs_Cylinder) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCYLINDER"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCYLINDER").toLatin1().constData());
 	  return true;
 	}
 	else if(surf.GetType() == GeomAbs_Sphere) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFSPHERE"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFSPHERE").toLatin1().constData());
 	  return true ;
 	}
 	else if(surf.GetType() == GeomAbs_Torus) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFTORUS"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFTORUS").toLatin1().constData());
 	  return true ;
 	}
 	else if(surf.GetType() == GeomAbs_Cone) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCONE"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCONE").toLatin1().constData());
 	  return true ;
 	}
 	else {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_FACE"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_FACE").toLatin1().constData());
 	  return true;
 	}
       }
     case TopAbs_WIRE:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_WIRE"));
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_WIRE").toLatin1().constData());
 	return true;
       }
     case TopAbs_EDGE:
@@ -283,31 +259,31 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
 	BRepAdaptor_Curve curv(TopoDS::Edge(aShape));
 	if(curv.GetType() == GeomAbs_Line) {
 	  if((Abs(curv.FirstParameter()) >= 1E6) || (Abs(curv.LastParameter()) >= 1E6))
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_LINE"));
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_LINE").toLatin1().constData());
 	  else
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE"));
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
 	  return true;
 	}
 	else if(curv.GetType() == GeomAbs_Circle) {
 	  if(curv.IsClosed())
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_CIRCLE"));
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_CIRCLE").toLatin1().constData());
 	  else
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_ARC"));
+	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_ARC").toLatin1().constData());
 	return true;
       }
 	else {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE"));
+	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
 	  return true;
 	}
       }
     case TopAbs_VERTEX:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_VERTEX"));
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_VERTEX").toLatin1().constData());
 	return true;
       }
     case TopAbs_SHAPE:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHAPE"));
+	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHAPE").toLatin1().constData());
 	return true;
       }
     }
@@ -332,11 +308,13 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const char * IOR, Stand
   if ( !anObj )
     return resultShape;
 
-  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+  QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
-  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
-    if (it.current()->getViewManager()->getType() == OCCViewer_Viewer::Type()) {
-      Handle (AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)it.current()->getViewManager()->getViewModel())->getAISContext();
+  QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
+  while ( it.hasNext() ) {
+    SUIT_ViewWindow* aVW = it.next();
+    if (aVW && aVW->getViewManager()->getType() == OCCViewer_Viewer::Type()) {
+      Handle (AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)aVW->getViewManager()->getViewModel())->getAISContext();
 
       AIS_ListOfInteractive List;
       ic->DisplayedObjects(List);
@@ -352,7 +330,7 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const char * IOR, Stand
 	    Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(aSh->getIO());
 	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
 	      if(!onlyInActiveView ||
-		 it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
+		 aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
 		testResult = true;
 		resultShape = aSh;
 		return resultShape;
@@ -384,11 +362,13 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& t
   if ( !anObj )
     return GEOM_Actor::New();
 
-  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+  QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
-  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
-    if (it.current()->getViewManager()->getType() == SVTK_Viewer::Type()) {
-      SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( it.current() );
+  QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
+  while ( it.hasNext() ) {
+    SUIT_ViewWindow* aVW = it.next();
+    if (aVW && aVW->getViewManager()->getType() == SVTK_Viewer::Type()) {
+      SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( aVW );
       if( !aVTKViewWindow )
 	continue;
       vtkRenderer* Renderer = aVTKViewWindow->getRenderer();
@@ -402,7 +382,7 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& t
 	    Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(anActor->getIO());
 	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
 	      if(!onlyInActiveView ||
-		 it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
+		 aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
 		testResult = true;
 		return anActor;
 	      }
@@ -427,12 +407,14 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
   if ( theIO.IsNull() || !theIO->hasEntry() )
     return Handle(AIS_InteractiveObject)();
 
-  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+  QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
-  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
-    if (it.current()->getViewManager()->getType() != OCCViewer_Viewer::Type())
+  QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
+  while ( it.hasNext() ) {
+    SUIT_ViewWindow* aVW = it.next();
+    if (!aVW || aVW->getViewManager()->getType() != OCCViewer_Viewer::Type())
       continue;
-    Handle (AIS_InteractiveContext) anIC = ((OCCViewer_Viewer*)it.current()->getViewManager()->getViewModel())->getAISContext();
+    Handle (AIS_InteractiveContext) anIC = ((OCCViewer_Viewer*)aVW->getViewManager()->getViewModel())->getAISContext();
 
     AIS_ListOfInteractive aList;
     anIC->DisplayedObjects( aList );
@@ -448,7 +430,7 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
       {
         if( isOnlyInActiveView )
         {
-          if ( it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow() )
+          if ( aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow() )
             return anIter.Value();
         }
         else
@@ -475,11 +457,13 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIOinGEOMAISShape(const Handle(SALOME_Inte
     return res;
   }
 
-  QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+  QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
 
-  for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it ) {
-    if (it.current()->getViewManager()->getType() == OCCViewer_Viewer::Type()) {
-      Handle (AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)it.current()->getViewManager()->getViewModel())->getAISContext();
+  QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
+  while ( it.hasNext() ) {
+    SUIT_ViewWindow* aVW = it.next();
+    if (aVW && aVW->getViewManager()->getType() == OCCViewer_Viewer::Type()) {
+      Handle (AIS_InteractiveContext) ic = ((OCCViewer_Viewer*)aVW->getViewManager()->getViewModel())->getAISContext();
 
       AIS_ListOfInteractive List;
       ic->DisplayedObjects(List);
@@ -499,7 +483,7 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIOinGEOMAISShape(const Handle(SALOME_Inte
             {
               if(onlyInActiveView)
               {
-                if(it.current() == SUIT_Session::session()->activeApplication()->desktop()->activeWindow())
+                if(aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow())
                 {
                   testResult = true;
                   return aSh;
@@ -754,34 +738,6 @@ bool GEOMBase::LinearEdgeExtremities(const TopoDS_Shape& S,  gp_Pnt& P1, gp_Pnt&
 
 
 //=======================================================================
-// function : Parameter()
-// purpose  : return a parameter (float) from a dialog box
-//
-//  avalue1    : is a float or integer used as a default value displayed
-//  aTitle1    : is the title for aValue1
-//  aTitle     : is the main title
-//  bottom     : maximum value to be entered
-//  top	       : minimum value to be entered
-//  decimals   : number of decimals
-//=======================================================================
-double GEOMBase::Parameter(Standard_Boolean& res, const char* aValue1, const char* aTitle1, const char* aTitle, const double bottom, const double top, const int decimals)
-{
-  GEOMBase_aParameterDlg * Dialog = new GEOMBase_aParameterDlg(aValue1, aTitle1, SUIT_Session::session()->activeApplication()->desktop(),
-							       aTitle, TRUE, 0, bottom, top, decimals);
-  int r = Dialog->exec();
-  float X = 0.0;
-  if(r == QDialog::Accepted) {
-    res = Standard_True;
-    X = Dialog->getValue();
-  }
-  else
-    res = Standard_False;
-  delete Dialog;
-  return X;
-}
-
-
-//=======================================================================
 // function : SelectionByNameInDialogs()
 // purpose  : Called when user has entered a name of object in a LineEdit.
 //          : The selection is changed. Dialog box will receive the
@@ -795,13 +751,13 @@ bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectU
   _PTR(Study) ST = appStudy->studyDS();
 
   std::vector<_PTR(SObject)> listSO;
-  listSO = ST->FindObjectByName(objectUserName.latin1(), "GEOM");
+  listSO = ST->FindObjectByName(objectUserName.toStdString(), "GEOM");
 
   if(listSO.size() < 1) {
     const QString caption  = QObject::tr("GEOM_WRN_WARNING");
     const QString text = QObject::tr("GEOM_NAME_INCORRECT");
     const QString button0  = QObject::tr("GEOM_BUT_OK");
-    SUIT_MessageBox::error1(aWidget, caption, text, button0);
+    SUIT_MessageBox::critical(aWidget, caption, text, button0);
     return false;
   }
   /* More than one object with same name */
@@ -809,14 +765,14 @@ bool GEOMBase::SelectionByNameInDialogs(QWidget* aWidget, const QString& objectU
     const QString caption  = QObject::tr("GEOM_WRN_WARNING");
     const QString text = QObject::tr("GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE");
     const QString button0  = QObject::tr("GEOM_BUT_OK") ;
-    SUIT_MessageBox::error1(aWidget, caption, text, button0) ;
+    SUIT_MessageBox::critical(aWidget, caption, text, button0) ;
     listSO.clear();
     return false;
   }
 
   _PTR(SObject) theObj ( listSO[0] );
   /* Create a SALOME_InteractiveObject with a SALOME::SObject */
-  char* aCopyobjectUserName = CORBA::string_dup(objectUserName);
+  char* aCopyobjectUserName = CORBA::string_dup(objectUserName.toLatin1().constData());
   Handle(SALOME_InteractiveObject) SI = new SALOME_InteractiveObject(theObj->GetID().c_str(), "GEOM", aCopyobjectUserName);
   delete(aCopyobjectUserName);
 
@@ -873,7 +829,7 @@ QString GEOMBase::GetDefaultName(const QString& theOperation)
   bool isUnique = false;
   while (!isUnique) {
     aName = theOperation + "_" + QString::number(++aNumber);
-    isUnique = (aSet.count(aName.latin1()) == 0);
+    isUnique = (aSet.count(aName.toStdString()) == 0);
   }
 
   return aName;
@@ -891,12 +847,12 @@ void GEOMBase::ShowErrorMessage(const char* theErrorCode, const char* theComment
 
   QString aText = "";
   if (!anErrorCode.isEmpty())
-    aText.append("\n" + QObject::tr(anErrorCode));
+    aText.append("\n" + QObject::tr(anErrorCode.toLatin1().constData()));
   if (!aComment.isEmpty())
     aText.append("\n" + QString(theComment));
 
-  SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ),
-			   QObject::tr("GEOM_PRP_ABORT") + aText, "OK" );
+  SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ),
+			     QObject::tr("GEOM_PRP_ABORT") + aText, "OK" );
 }
 
 
@@ -957,7 +913,7 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
     CORBA::String_var anIOR = SalomeApp_Application::orb()->object_to_string( theObj );
     if ( strcmp(anIOR.in(), "") != 0 )
     {
-      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( string( anIOR ) ) );
+      _PTR(SObject) aSObj ( appStudy->studyDS()->FindObjectIOR( std::string( anIOR ) ) );
 
       _PTR(GenericAttribute) anAttr;
 

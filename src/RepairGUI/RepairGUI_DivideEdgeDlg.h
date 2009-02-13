@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,25 +17,20 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : RepairGUI_DivideEdgeDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : RepairGUI_DivideEdgeDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
+#ifndef REPAIRGUI_DIVIDEEDGEDLG_H
+#define REPAIRGUI_DIVIDEEDGEDLG_H
 
-#ifndef DIALOGBOX_DivideEdge_H
-#define DIALOGBOX_DivideEdge_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel_Ext.h"
-#include "QtxDblSpinBox.h"
-
-#include <TColStd_IndexedMapOfInteger.hxx>
-
-#include <qradiobutton.h>
-#include <qbuttongroup.h>
+class DlgRef_1SelExt;
+class SalomeApp_DoubleSpinBox;
+class QButtonGroup;
 
 //=================================================================================
 // class    : RepairGUI_DivideEdgeDlg
@@ -43,43 +38,43 @@
 //=================================================================================
 class RepairGUI_DivideEdgeDlg : public GEOMBase_Skeleton
 {
-    Q_OBJECT
-
+  Q_OBJECT
+      
 public:
-    RepairGUI_DivideEdgeDlg (GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			     const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~RepairGUI_DivideEdgeDlg();
-
+  RepairGUI_DivideEdgeDlg( GeometryGUI*, QWidget* = 0, bool = false );
+  ~RepairGUI_DivideEdgeDlg();
+  
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
-
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
+  virtual void                       addSubshapesToStudy();
+  
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void initSelection();
-
-    bool getIsByParameter() const;
-
-    GEOM::GEOM_Object_var myObject;
-    int myIndex;
-
-    DlgRef_1Sel_Ext* GroupPoints;
-    QButtonGroup*    myIsParameterGr;
-    QtxDblSpinBox*   myValEdt;
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  void                               initSelection();
+  
+  bool                               getIsByParameter() const;
+  
+private:
+  GEOM::GEOM_Object_var              myObject;
+  
+  DlgRef_1SelExt*                    GroupPoints;
+  QButtonGroup*                      myIsParameterGr;
+  SalomeApp_DoubleSpinBox*           myValEdt;
 
 protected slots:
-    void ClickOnOk();
-    bool ClickOnApply();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
 
-    void ActivateThisDialog();
-
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
+  void                               displayPreview();
+  void                               ValueChangedInSpinBox();
+  void                               ActivateThisDialog();
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 };
 
-#endif // DIALOGBOX_DivideEdge_H
+#endif // REPAIRGUI_DIVIDEEDGEDLG_H

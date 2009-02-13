@@ -27,12 +27,14 @@ cylinder = geompy.MakeCylinder(p1, v, radius1, height)
 translation1 = geompy.MakeTranslationTwoPoints(cylinder, p1, p3)
 translation2 = geompy.MakeTranslation(cylinder, 40, 40, 0)
 translation3 = geompy.MakeTranslationVector(cylinder, vt)
+translation4 = geompy.MakeTranslationVectorDistance(cylinder, vt, 200)
 
 # add objects in the study
 id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
 id_translation1 = geompy.addToStudy(translation1, "Translation1")
 id_translation2 = geompy.addToStudy(translation2, "Translation2")
 id_translation3 = geompy.addToStudy(translation3, "Translation3")
+id_translation4 = geompy.addToStudy(translation4, "Translation4")
 
 # display the results
 gg.createAndDisplayGO(id_cylinder)
@@ -43,6 +45,8 @@ gg.createAndDisplayGO(id_translation2)
 gg.setDisplayMode(id_translation2,1)
 gg.createAndDisplayGO(id_translation3)
 gg.setDisplayMode(id_translation3,1) 
+gg.createAndDisplayGO(id_translation4)
+gg.setDisplayMode(id_translation4,1) 
 \endcode
 
 \anchor tui_rotation
@@ -111,6 +115,7 @@ v = geompy.MakeVector(p1, p2)
 height = 35
 radius1 = 20
 cylinder = geompy.MakeCylinder(p1, v, radius1, height)
+circle   = geompy.MakeCircle(p2, v, radius1)
 
 # create local coordinate systems
 cs1 = geompy.MakeMarker( 0, 0, 0, 1,0,0, 0,1,0)
@@ -118,18 +123,25 @@ cs2 = geompy.MakeMarker(30,40,40, 1,0,0, 0,1,0)
 
 # modify the location of the given object
 position = geompy.MakePosition(cylinder, cs1, cs2)
+position2 = geompy.PositionAlongPath(position, circle, 0.75, 1, 1)
 
 # add objects in the study
 id_cs1 = geompy.addToStudy(cs1, "Coordinate system 1")
 id_cs2 = geompy.addToStudy(cs2, "Coordinate system 2")
 id_cylinder = geompy.addToStudy(cylinder, "Cylinder")
+id_circle = geompy.addToStudy(circle, "Circle")
 id_position = geompy.addToStudy(position, "Position")
+id_position2 = geompy.addToStudy(position2, "PositionAlongPath")
 
 # display the results
 gg.createAndDisplayGO(id_cylinder)
 gg.setDisplayMode(id_cylinder,1)
 gg.createAndDisplayGO(id_position)
 gg.setDisplayMode(id_position,1)
+gg.createAndDisplayGO(id_circle)
+gg.setDisplayMode(id_circle,1)
+gg.createAndDisplayGO(id_position2)
+gg.setDisplayMode(id_position2,1)
 \endcode
 
 \anchor tui_mirror
@@ -335,6 +347,27 @@ gg.createAndDisplayGO(id_rot1d)
 gg.setDisplayMode(id_rot1d,1)
 gg.createAndDisplayGO(id_rot2d)
 gg.setDisplayMode(id_rot2d,1) 
+\endcode
+
+\anchor tui_fillet2d
+<br><h2>Fillet 2D</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a face in OXY plane
+face = geompy.MakeFaceHW(100, 100, 1)
+fillet2d = geompy.MakeFillet2D(face, 30, [7, 9])
+
+# add objects in the study
+id_face  = geompy.addToStudy(face,"Face_1")
+id_fillet2d  = geompy.addToStudy(fillet2d,"Fillet 2D_1")
+
+# display disks
+gg.createAndDisplayGO(id_face)
+gg.createAndDisplayGO(id_fillet2d)
 \endcode
 
 \anchor tui_fillet

@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
 
@@ -46,6 +47,25 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 
   GEOM::GEOM_Object_ptr MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
 				       GEOM::GEOM_Object_ptr thePnt2);
+				    
+  GEOM::GEOM_Object_ptr MakeFaceHW (CORBA::Double theH,
+				    CORBA::Double theW,
+				    CORBA::Short  theOrientation);
+
+  GEOM::GEOM_Object_ptr MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj,
+				       CORBA::Double theH,
+				       CORBA::Double theW);
+
+  GEOM::GEOM_Object_ptr MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
+					 GEOM::GEOM_Object_ptr theVector,
+					 double theR);
+
+  GEOM::GEOM_Object_ptr MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
+
+  GEOM::GEOM_Object_ptr MakeDiskR (CORBA::Double theR,
+				   CORBA::Short  theOrientation);
 
   GEOM::GEOM_Object_ptr MakeCylinderRH (CORBA::Double theR,
 					CORBA::Double theH);
@@ -94,6 +114,15 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 					      GEOM::GEOM_Object_ptr thePoint1,
 					      GEOM::GEOM_Object_ptr thePoint2);
 
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
+				         CORBA::Double         theDX,
+				         CORBA::Double         theDY,
+				         CORBA::Double         theDZ);
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr theBase,
+				              CORBA::Double         theDX,
+				              CORBA::Double         theDY,
+				              CORBA::Double         theDZ);
+
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);
 
@@ -127,6 +156,10 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 
   GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
 						  const GEOM::ListOfGO& theLocations);
+
+  GEOM::GEOM_Object_ptr MakePipeBiNormalAlongVector (GEOM::GEOM_Object_ptr theBase,
+						     GEOM::GEOM_Object_ptr thePath,
+						     GEOM::GEOM_Object_ptr theVec);
 
   ::GEOMImpl_I3DPrimOperations* GetOperations()
   { return (::GEOMImpl_I3DPrimOperations*)GetImpl(); }

@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -19,24 +19,29 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : MeasureGUI_NormaleDlg.cxx
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_NormaleDlg.cxx
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
-//  $Header$
-
 #include "MeasureGUI_NormaleDlg.h"
 
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <DlgRef.h>
+#include <GEOMBase.h>
+#include <GeometryGUI.h>
 
-#include <qlabel.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
-#include "GEOMImpl_Types.hxx"
+// OCCT Includes
+#include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <TopExp.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
-#include "utilities.h"
+#include <GEOMImpl_Types.hxx>
 
 //=================================================================================
 // class    : MeasureGUI_NormaleDlg()
@@ -45,33 +50,35 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-MeasureGUI_NormaleDlg::MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
-                                              const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+MeasureGUI_NormaleDlg::MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, false)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_NORMALE")));
   QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setCaption(tr("GEOM_NORMALE_TITLE"));
+  setWindowTitle(tr("GEOM_NORMALE_TITLE"));
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_NORMALE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_NORMALE"));
+  mainFrame()->RadioButton1->setIcon(image0);
+  mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+  mainFrame()->RadioButton3->close();
 
-  GroupArgs = new DlgRef_2Sel_QTD (this, "GroupArgs");
+  GroupArgs = new DlgRef_2Sel (centralWidget());
   GroupArgs->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
 
   GroupArgs->TextLabel1->setText(tr("GEOM_FACE"));
   GroupArgs->TextLabel2->setText(tr("GEOM_POINT"));
 
-  GroupArgs->PushButton1->setPixmap(image1);
-  GroupArgs->PushButton2->setPixmap(image1);
+  GroupArgs->PushButton1->setIcon(image1);
+  GroupArgs->PushButton2->setIcon(image1);
 
-  Layout1->addWidget(GroupArgs, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
+  layout->setMargin(0); layout->setSpacing(6);
+  layout->addWidget(GroupArgs);
   /***************************************************************/
 
   setHelpFileName("using_measurement_tools_page.html#normale_anchor");
@@ -85,7 +92,6 @@ MeasureGUI_NormaleDlg::MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidg
 //=================================================================================
 MeasureGUI_NormaleDlg::~MeasureGUI_NormaleDlg()
 {
-  // no need to delete child widgets, Qt does it all for us
 }
 
 //=================================================================================
@@ -94,37 +100,28 @@ MeasureGUI_NormaleDlg::~MeasureGUI_NormaleDlg()
 //=================================================================================
 void MeasureGUI_NormaleDlg::Init()
 {
-  /* init variables */
+  // init variables
   GroupArgs->LineEdit1->setReadOnly(true);
   GroupArgs->LineEdit2->setReadOnly(true);
 
-  myFace = GEOM::GEOM_Object::_nil();
-  myPoint = GEOM::GEOM_Object::_nil();
+  GroupArgs->LineEdit1->setText("");
+  GroupArgs->LineEdit2->setText("");
+  myFace = myPoint = GEOM::GEOM_Object::_nil();
 
-  myEditCurrentArgument = GroupArgs->LineEdit1;
-  globalSelection(GEOM_FACE);
-
-  /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  // signals and slots connections
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   connect(GroupArgs->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupArgs->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(GroupArgs->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupArgs->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(myGeomGUI->getApp()->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect(GroupArgs->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupArgs->LineEdit2,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   initName(tr("GEOM_VECTOR_NORMALE"));
 
-  //ConstructorsClicked(0);
+  GroupArgs->PushButton1->click();
   SelectionIntoArgument();
-
-  /* displays Dialog */
-  GroupArgs->show();
-  this->show();
 }
 
 //=================================================================================
@@ -147,12 +144,14 @@ bool MeasureGUI_NormaleDlg::ClickOnApply()
     return false;
 
   initName();
+  // activate first line edit
+  GroupArgs->PushButton1->click();
   return true;
 }
 
 //=================================================================================
 // function : SelectionIntoArgument()
-// purpose  : Called when selection as changed or other case
+// purpose  : Called when selection is changed or on dialog initialization or activation
 //=================================================================================
 void MeasureGUI_NormaleDlg::SelectionIntoArgument()
 {
@@ -166,26 +165,130 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
     myPoint = GEOM::GEOM_Object::_nil();
   }
 
-  if (IObjectCount() != 1)
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1)
     return;
 
   // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(firstIObject(), testResult);
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-  if (!testResult)
+  if (!testResult || CORBA::is_nil(aSelectedObject))
     return;
 
+  QString aName = GEOMBase::GetName(aSelectedObject);
+
   if (myEditCurrentArgument == GroupArgs->LineEdit1) {
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
+      {
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        int anIndex = aMap(1);
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        aName += QString(":face_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != TopAbs_FACE) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
     myFace = aSelectedObject;
+    myEditCurrentArgument->setText(aName);
+
+    // clear selection
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(SelectionIntoArgument()));
+
+    if (!myFace->_is_nil() && myPoint->_is_nil())
+      GroupArgs->PushButton2->click();
   }
   else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
+    {
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) // Local Selection
+      {
+        GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+        int anIndex = aMap(1);
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        aName += QString(":vertex_%1").arg(anIndex);
+      }
+      else // Global Selection
+      {
+        if (aShape.ShapeType() != TopAbs_VERTEX) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+        }
+      }
+    }
     myPoint = aSelectedObject;
+    myEditCurrentArgument->setText(aName);
+
+    // clear selection
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(SelectionIntoArgument()));
+
+    if (!myPoint->_is_nil() && myFace->_is_nil())
+      GroupArgs->PushButton1->click();
   }
 
-  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+  displayPreview();
+}
 
+//=================================================================================
+// function : SetEditCurrentArgument()
+// purpose  :
+//=================================================================================
+void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
+{
+  QPushButton* send = (QPushButton*)sender();
+
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  globalSelection(GEOM_FACE);
+
+  if (send == GroupArgs->PushButton1) {
+    myEditCurrentArgument = GroupArgs->LineEdit1;
+
+    GroupArgs->PushButton2->setDown(false);
+    GroupArgs->LineEdit2->setEnabled(false);
+
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE);
+  }
+  else if (send == GroupArgs->PushButton2) {
+    myEditCurrentArgument = GroupArgs->LineEdit2;
+
+    GroupArgs->PushButton1->setDown(false);
+    GroupArgs->LineEdit1->setEnabled(false);
+
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  }
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
+  myEditCurrentArgument->setFocus();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
+
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
   displayPreview();
 }
 
@@ -197,32 +300,10 @@ void MeasureGUI_NormaleDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
   if (send == GroupArgs->LineEdit1 ||
-      send == GroupArgs->LineEdit2)
-  {
+      send == GroupArgs->LineEdit2) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
-}
-
-//=================================================================================
-// function : SetEditCurrentArgument()
-// purpose  :
-//=================================================================================
-void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
-{
-  QPushButton* send = (QPushButton*)sender();
-
-  if (send == GroupArgs->PushButton1) {
-    myEditCurrentArgument = GroupArgs->LineEdit1;
-    globalSelection(GEOM_FACE);
-  }
-  else if (send == GroupArgs->PushButton2) {
-    myEditCurrentArgument = GroupArgs->LineEdit2;
-    globalSelection(GEOM_POINT);
-  }
-
-  myEditCurrentArgument->setFocus();
-  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -232,17 +313,19 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
 void MeasureGUI_NormaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
 
-  SelectionIntoArgument();
+  displayPreview();
 }
 
 //=================================================================================
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void MeasureGUI_NormaleDlg::enterEvent (QEvent* e)
+void MeasureGUI_NormaleDlg::enterEvent (QEvent*)
 {
-  if (!GroupConstructors->isEnabled())
+  if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
 }
 

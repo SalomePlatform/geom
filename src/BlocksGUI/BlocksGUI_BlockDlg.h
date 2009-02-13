@@ -1,6 +1,7 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  CEA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -16,64 +17,63 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BlocksGUI_BlockDlg.h
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
 //
-//
-//  File   : BlocksGUI_BlockDlg.h
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
+#ifndef BLOCKSGUI_BLOCKDLG_H
+#define BLOCKSGUI_BLOCKDLG_H
 
-#ifndef DIALOGBOX_BLOCK_H
-#define DIALOGBOX_BLOCK_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOM_BlocksGUI.hxx"
-
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel_QTD.h"
-#include "DlgRef_6Sel_QTD.h"
-
+class DlgRef_2Sel;
+class DlgRef_6Sel;
 
 //=================================================================================
 // class    : BlocksGUI_BlockDlg
 // purpose  :
 //=================================================================================
-class GEOM_BLOCKSGUI_EXPORT BlocksGUI_BlockDlg : public GEOMBase_Skeleton
+class BlocksGUI_BlockDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
 public:
-  BlocksGUI_BlockDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
-		      bool modal = FALSE);
+  BlocksGUI_BlockDlg (GeometryGUI*, QWidget*);
   ~BlocksGUI_BlockDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid (QString&);
-  virtual bool                       execute (ObjectList& objects);
+  virtual bool                       execute (ObjectList&);
+  virtual void                       addSubshapesToStudy();
 
 private:
-  void Init();
-  void enterEvent (QEvent* e);
+  void                               Init();
+  void                               enterEvent (QEvent*);
 
 private:
-  int                   myConstructorId;
+  int                                myConstructorId;
 
-  GEOM::GEOM_Object_var myFace1, myFace2;
-  GEOM::GEOM_Object_var myFace3, myFace4, myFace5, myFace6;
+  GEOM::GEOM_Object_var              myFace1, myFace2;
+  GEOM::GEOM_Object_var              myFace3, myFace4, myFace5, myFace6;
 
-  DlgRef_2Sel_QTD*      Group2F;
-  DlgRef_6Sel_QTD*      Group6F;
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
+
+  DlgRef_2Sel*                       Group2F;
+  DlgRef_6Sel*                       Group6F;
 
 private slots:
-  void ClickOnOk();
-  bool ClickOnApply();
-  void ActivateThisDialog();
-  void ConstructorsClicked (int constructorId);
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               ConstructorsClicked (int);
 
-  void SelectionIntoArgument();
-  void SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 };
 
-#endif // DIALOGBOX_BLOCK_H
+#endif // BLOCKSGUI_BLOCKDLG_H

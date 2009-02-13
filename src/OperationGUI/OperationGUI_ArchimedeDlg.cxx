@@ -1,40 +1,39 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : OperationGUI_ArchimedeDlg.cxx
-//  Author : Nicolas REJNERI 
-//  Module : GEOM
-//  $Header$
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : OperationGUI_ArchimedeDlg.cxx
+// Author : Nicolas REJNERI, Open CASCADE S.A.S.
+//
 #include "OperationGUI_ArchimedeDlg.h"
-#include "DlgRef_1Sel3Spin.h"
 
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include <qlabel.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : OperationGUI_ArchimedeDlg()
@@ -44,33 +43,37 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 OperationGUI_ArchimedeDlg::OperationGUI_ArchimedeDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
-  : GEOMBase_Skeleton(theGeometryGUI, parent, "ArchimedeDlg", false,
-                      WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+  : GEOMBase_Skeleton( theGeometryGUI, parent, false )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_ARCHIMEDE")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ARCHIMEDE" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
   
-  setCaption(tr("GEOM_ARCHIMEDE_TITLE"));
+  setWindowTitle( tr( "GEOM_ARCHIMEDE_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_ARCHIMEDE"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_ARCHIMEDE" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel3Spin(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_WEIGHT"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_WATER_DENSITY"));
-  GroupPoints->TextLabel4->setText(tr("GEOM_MESHING_DEFLECTION"));
-  GroupPoints->PushButton1->setPixmap(image1);
+  GroupPoints = new DlgRef_1Sel3Spin( centralWidget() );
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_WEIGHT" ) );
+  GroupPoints->TextLabel3->setText( tr( "GEOM_WATER_DENSITY" ) );
+  GroupPoints->TextLabel4->setText( tr( "GEOM_MESHING_DEFLECTION" ) );
+  GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  Layout1->addWidget(GroupPoints, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
+
   /***************************************************************/
 
-  setHelpFileName("archimede_page.html");
+  setHelpFileName( "archimede_page.html" );
 
   /* Initialisations */
   Init();
@@ -98,31 +101,29 @@ void OperationGUI_ArchimedeDlg::Init()
 
   /* Get setting of myStep value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  double myStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100);
+  double myStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
   /* min, max, myStep and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(0.001, COORD_MAX, myStep, DBL_DIGITS_DISPLAY);
-  GroupPoints->SpinBox_DY->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep1, DBL_DIGITS_DISPLAY);
-  GroupPoints->SpinBox_DZ->RangeStepAndValidator(0.001, COORD_MAX, SpecificStep2, DBL_DIGITS_DISPLAY);
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
-  GroupPoints->SpinBox_DX->SetValue( 100.0 );
-  GroupPoints->SpinBox_DY->SetValue( 1.0 );
-  GroupPoints->SpinBox_DZ->SetValue( 0.01 );
+  GroupPoints->SpinBox_DX->setValue( 100.0 );
+  GroupPoints->SpinBox_DY->setValue( 1.0 );
+  GroupPoints->SpinBox_DZ->setValue( 0.01 );
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), GroupPoints->SpinBox_DZ, SLOT(SetStep(double)));
+  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-	  this, SLOT(SelectionIntoArgument()));
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+	   this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_ARCHIMEDE" ) );
   
@@ -131,6 +132,17 @@ void OperationGUI_ArchimedeDlg::Init()
   SelectionIntoArgument();
 }
 
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
+{
+  GroupPoints->SpinBox_DX->setSingleStep(step);
+  GroupPoints->SpinBox_DY->setSingleStep(step);
+  GroupPoints->SpinBox_DZ->setSingleStep(step);
+}
 
 //=================================================================================
 // function : ClickOnOk()
@@ -156,31 +168,32 @@ bool OperationGUI_ArchimedeDlg::ClickOnApply()
   return true;
 }
 
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
 void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
+  myEditCurrentArgument->setText("");
   myShape = GEOM::GEOM_Object::_nil();
-  
-  if ( IObjectCount() != 1 )
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1)
     return;
 
   Standard_Boolean testResult = Standard_False;
-  myShape = GEOMBase::ConvertIOinGEOMObject( firstIObject(), testResult );
+  myShape = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
-  if ( !testResult || myShape->_is_nil() || !GEOMBase::IsShape( myShape ) )
-  {
+  if (!testResult || myShape->_is_nil() || !GEOMBase::IsShape(myShape)) {
     myShape = GEOM::GEOM_Object::_nil();
     return;
   }
 
-  myEditCurrentArgument->setText( GEOMBase::GetName( myShape ) );
+  myEditCurrentArgument->setText(GEOMBase::GetName(myShape));
 }
-
 
 //=================================================================================
 // function : LineEditReturnPressed()
@@ -189,13 +202,12 @@ void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
 void OperationGUI_ArchimedeDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if(send == GroupPoints->LineEdit1)
+  if ( send == GroupPoints->LineEdit1 )
     myEditCurrentArgument = GroupPoints->LineEdit1;
   else
     return;
 
   GEOMBase_Skeleton::LineEditReturnPressed();
-  return;
 }
 
 //=================================================================================
@@ -206,9 +218,8 @@ void OperationGUI_ArchimedeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
-  connect(myGeomGUI->getApp()->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-  return;
+  connect( myGeomGUI->getApp()->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -216,12 +227,11 @@ void OperationGUI_ArchimedeDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_ArchimedeDlg::enterEvent(QEvent* e)
+void OperationGUI_ArchimedeDlg::enterEvent( QEvent* )
 {
-  if(GroupConstructors->isEnabled())
+  if ( mainFrame()->GroupConstructors->isEnabled() )
     return;
   this->ActivateThisDialog();
-  return;
 }
 
 
@@ -238,9 +248,13 @@ GEOM::GEOM_IOperations_ptr OperationGUI_ArchimedeDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool OperationGUI_ArchimedeDlg::isValid( QString& )
+bool OperationGUI_ArchimedeDlg::isValid( QString& msg )
 {
-  return !myShape->_is_nil();
+  bool ok = true;
+  ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  ok = GroupPoints->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  return !myShape->_is_nil() && ok;
 }
 
 //=================================================================================
@@ -251,15 +265,25 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
 
-  double aWeight         = GroupPoints->SpinBox_DX->GetValue();
-  double aWaterDensity   = GroupPoints->SpinBox_DY->GetValue();
-  double aMeshDeflection = GroupPoints->SpinBox_DZ->GetValue();
+  double aWeight         = GroupPoints->SpinBox_DX->value();
+  double aWaterDensity   = GroupPoints->SpinBox_DY->value();
+  double aMeshDeflection = GroupPoints->SpinBox_DZ->value();
   
   anObj = GEOM::GEOM_ILocalOperations::_narrow(
     getOperation() )->MakeArchimede( myShape, aWeight, aWaterDensity, aMeshDeflection );
 
   if ( !anObj->_is_nil() )
+  {
+    if ( !IsPreview() )
+    {
+      QStringList aParameters;
+      aParameters << GroupPoints->SpinBox_DX->text();
+      aParameters << GroupPoints->SpinBox_DY->text();
+      aParameters << GroupPoints->SpinBox_DZ->text();
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    }
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }

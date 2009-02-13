@@ -1,25 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
-using namespace std;
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifndef _GEOMImpl_IHealingOperations_HXX_
 #define _GEOMImpl_IHealingOperations_HXX_
 
@@ -44,17 +43,17 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                     const Handle(TColStd_HArray1OfExtendedString)& theValues );
 
   // Retrieve default Shape Process parameters (from resource file)
-  Standard_EXPORT void GetShapeProcessParameters( list<string>& theOperations,
-                                  list<string>& theParams,
-                                  list<string>& theValues );
+  Standard_EXPORT void GetShapeProcessParameters( std::list<std::string>& theOperations,
+                                                  std::list<std::string>& theParams,
+                                                  std::list<std::string>& theValues );
 
   // Retrieve default Shape Process parameters for given operator
-  Standard_EXPORT bool GetOperatorParameters( const string theOperation, 
-                              list<string>& theParams,
-                              list<string>& theValues );
+  Standard_EXPORT bool GetOperatorParameters( const std::string theOperation, 
+                                              std::list<std::string>& theParams,
+                                              std::list<std::string>& theValues );
 
   // returns all parameters that are valid for the given operation (Shape Process operator)
-  Standard_EXPORT static bool GetParameters( const string theOperation, list<string>& theParams );                                      
+  Standard_EXPORT static bool GetParameters( const std::string theOperation, std::list<std::string>& theParams );
 
   Standard_EXPORT Handle(GEOM_Object) SuppressFaces( Handle(GEOM_Object) theObject,
                                      const Handle(TColStd_HArray1OfInteger)& theFaces);

@@ -1,30 +1,27 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
-
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
-
-using namespace std;
 
 #include <Standard_Stream.hxx>
 
@@ -192,9 +189,9 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ShapeProcess (Handle(GEOM_Objec
  *  ShapeProcess
  */
 //=============================================================================
-void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOperations,
-                                                             list<string>& theParams,
-                                                             list<string>& theValues)
+void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::string>& theOperations,
+                                                             std::list<std::string>& theParams,
+                                                             std::list<std::string>& theValues)
 {
   ShHealOper_ShapeProcess aHealer;
   TColStd_SequenceOfAsciiString anOperators;
@@ -203,7 +200,7 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOp
   {
     for ( Standard_Integer i = 1; i <= anOperators.Length(); i++ )
     {
-      string anOperation = anOperators.Value( i ).ToCString();
+      std::string anOperation = anOperators.Value( i ).ToCString();
       if ( GetOperatorParameters( anOperation, theParams, theValues ) )
 	theOperations.push_back( anOperation );
       else
@@ -227,15 +224,15 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (list<string>& theOp
  *  GetOperatorParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetOperatorParameters( const string theOperation, 
-							 list<string>& theParams,
-							 list<string>& theValues )
+bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation, 
+							 std::list<std::string>& theParams,
+							 std::list<std::string>& theValues )
 {
   ShHealOper_ShapeProcess aHealer;
   int nbParamValueErrors( 0 );
-  list<string> aParams;
+  std::list<std::string> aParams;
   if ( GetParameters( theOperation, aParams ) ) {
-    for ( list<string>::iterator it = aParams.begin(); it != aParams.end(); ++it ) {
+    for ( std::list<std::string>::iterator it = aParams.begin(); it != aParams.end(); ++it ) {
       TCollection_AsciiString aParam( (Standard_CString)(*it).c_str() );
       TCollection_AsciiString aValue;
       if ( aHealer.GetParameter( aParam, aValue ) ) {
@@ -263,8 +260,8 @@ bool GEOMImpl_IHealingOperations::GetOperatorParameters( const string theOperati
  *  GetParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetParameters (const string theOperation,
-                                                 list<string>& theParams)
+bool GEOMImpl_IHealingOperations::GetParameters (const std::string theOperation,
+                                                 std::list<std::string>& theParams)
 {
   if ( theOperation == "SplitAngle" ) {
     theParams.push_back( "SplitAngle.Angle" );

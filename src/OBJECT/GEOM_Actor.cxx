@@ -1,31 +1,30 @@
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 //  GEOM OBJECT : interactive object for Geometry entities visualization
-//
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-//
-//
 //  File   : GEOM_Actor.cxx
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
 //  $Header$
-
+//
 /*!
   \class GEOM_Actor GEOM_Actor.h
   \brief This class allows to display an OpenCASCADE CAD model in a VTK viewer.
@@ -67,6 +66,8 @@
 #include <vtkMath.h>
 #include <vtkCamera.h>
 
+#include "utilities.h"
+
 //vtkStandardNewMacro(GEOM_Actor);
 
 #ifndef MYDEBUG
@@ -105,7 +106,7 @@ GEOM_Actor::GEOM_Actor():
   
 { 
 #ifdef MYDEBUG
-  cout <<this<< " GEOM_Actor::GEOM_Actor"<<endl;
+  MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
 #endif
 
   myPolyDataMapper->SetInput(myAppendFilter->GetOutput()); 
@@ -180,7 +181,7 @@ GEOM_Actor::GEOM_Actor():
 GEOM_Actor::~GEOM_Actor() 
 { 
 #ifdef MYDEBUG
-  cout <<this<< " ~GEOM_Actor::GEOM_Actor"<<endl;
+  MESSAGE (this<< " ~GEOM_Actor::GEOM_Actor");
 #endif
   myHighlightProp->Delete();
   myPreHighlightProp->Delete();
@@ -199,7 +200,7 @@ New()
  
 void Write(vtkPolyData* theDataSet, const char* theFileName){ 
   vtkPolyDataWriter* aWriter = vtkPolyDataWriter::New(); 
-  cout<<"Write - "<<theFileName<<"' : "<<theDataSet->GetNumberOfPoints()<<"; "<<theDataSet->GetNumberOfCells()<<endl; 
+  MESSAGE ("Write - "<<theFileName<<"' : "<<theDataSet->GetNumberOfPoints()<<"; "<<theDataSet->GetNumberOfCells()); 
   aWriter->SetInput(theDataSet); 
   aWriter->SetFileName(theFileName); 
   //aWriter->Write(); 
@@ -275,7 +276,7 @@ GEOM_Actor::
 setDisplayMode(int theMode) 
 { 
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SetDisplayMode = "<<theMode  <<endl;
+  MESSAGE ( "GEOM_Actor::SetDisplayMode = "<<theMode );
 #endif
   VTKViewer_Actor::setDisplayMode(theMode);
   SetVisibility(GetVisibility()); 
@@ -286,7 +287,7 @@ GEOM_Actor::
 SetSelected(bool theIsSelected) 
 { 
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SetSelected = "<<theIsSelected  <<endl;
+  MESSAGE ( "GEOM_Actor::SetSelected = "<<theIsSelected  );
 #endif
 
   myIsSelected = theIsSelected; 
@@ -298,8 +299,8 @@ GEOM_Actor::
 SetVisibility(int theVisibility) 
 { 
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SetVisibility = "<<theVisibility <<"  myIsSelected="<< myIsSelected
-       << " theVisibility="<<theVisibility<<" myIsPreselected="<<myIsPreselected<<endl;
+  MESSAGE ( "GEOM_Actor::SetVisibility = "<<theVisibility <<"  myIsSelected="<< myIsSelected
+	    << " theVisibility="<<theVisibility<<" myIsPreselected="<<myIsPreselected );
 #endif
 
   SALOME_Actor::SetVisibility(theVisibility);
@@ -313,7 +314,8 @@ SetVisibility(int theVisibility)
   myOneFaceEdgeActor->SetVisibility(theVisibility && myDisplayMode == (int)eWireframe && !myIsSelected);
   myIsolatedEdgeActor->SetVisibility(theVisibility && !myIsSelected);
 
-  myVertexActor->SetVisibility(false);// must be added new mode points 
+//  myVertexActor->SetVisibility(false);// must be added new mode points 
+  myVertexActor->SetVisibility(theVisibility);
 }
  
 
@@ -321,16 +323,14 @@ void
 GEOM_Actor
 ::SetNbIsos(const int theNb[2])
 {
-  myNbIsos[0] = theNb[0];
-  myNbIsos[1] = theNb[1];
+  myWireframeFaceSource->SetNbIso(theNb);
 }
 
 void
 GEOM_Actor
 ::GetNbIsos(int &theNbU,int &theNbV)
 {
-  theNbU = myNbIsos[0];
-  theNbV = myNbIsos[1];
+  myWireframeFaceSource->GetNbIso(theNbU, theNbV);
 }
 
 static 
@@ -465,7 +465,7 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
 // OLD METHODS
 void GEOM_Actor::setDeflection(double adef) {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::setDeflection"<<endl;
+  MESSAGE ( "GEOM_Actor::setDeflection" );
 #endif
   SetDeflection((float)adef,GetIsRelative());
 }
@@ -479,7 +479,7 @@ void GEOM_Actor::setDeflection(double adef) {
 void GEOM_Actor::SetHighlightProperty(vtkProperty* Prop)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SetHighlightProperty"<<endl;
+  MESSAGE ( "GEOM_Actor::SetHighlightProperty" );
 #endif
   this->myHighlightActor->GetProperty()->DeepCopy(Prop);
   
@@ -488,7 +488,7 @@ void GEOM_Actor::SetHighlightProperty(vtkProperty* Prop)
 void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop)
 {
 #ifdef MYDEBUG
-  cout << this << " GEOM_Actor::SetWireframeProperty"<<endl;
+  MESSAGE ( this << " GEOM_Actor::SetWireframeProperty" );
 #endif
   // must be filled
   myWireframeFaceActor->SetProperty(Prop);
@@ -497,7 +497,7 @@ void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop)
 void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SetShadingProperty"<<endl;
+  MESSAGE ( "GEOM_Actor::SetShadingProperty" );
 #endif
   myShadingFaceProp->DeepCopy(Prop);
 }
@@ -506,7 +506,7 @@ void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
 void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::Render"<<endl;
+  MESSAGE ( "GEOM_Actor::Render" );
 #endif
 
   if(!GetVisibility())
@@ -573,13 +573,12 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
     aMatrix->Delete();    
   } else
     this->Device->Render(ren, theMapper);
-
 }
 
 void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::ReleaseGraphicsResources"<<endl;
+  MESSAGE ( "GEOM_Actor::ReleaseGraphicsResources" );
 #endif  
 }
 
@@ -588,7 +587,7 @@ void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
 void GEOM_Actor::ShallowCopy(vtkProp *prop)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::ShallowCopy"<<endl;
+  MESSAGE ( "GEOM_Actor::ShallowCopy" );
 #endif
   GEOM_Actor *f = GEOM_Actor::SafeDownCast(prop);
   if ( f != NULL )
@@ -602,7 +601,7 @@ void GEOM_Actor::ShallowCopy(vtkProp *prop)
 
 const TopoDS_Shape& GEOM_Actor::getTopo() {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::getTopo"<<endl;
+  MESSAGE ( "GEOM_Actor::getTopo" );
 #endif
   return myShape;
 }
@@ -611,14 +610,14 @@ void GEOM_Actor::setInputShape(const TopoDS_Shape& ashape, double adef1,
                                int imode, bool isVector)
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::setInputShape"<<endl;
+  MESSAGE ( "GEOM_Actor::setInputShape" );
 #endif
 }
 
 double GEOM_Actor::getDeflection()
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::getDeflection"<<endl;
+  MESSAGE ( "GEOM_Actor::getDeflection" );
 #endif
   return (double) GetDeflection();
 }
@@ -627,7 +626,7 @@ double GEOM_Actor::getDeflection()
 double GEOM_Actor::isVector()
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::isVector"<<endl;
+  MESSAGE ( "GEOM_Actor::isVector" );
 #endif  
   return 0;
 }
@@ -635,21 +634,21 @@ double GEOM_Actor::isVector()
 void GEOM_Actor::SubShapeOn()
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SubShapeOn"<<endl;
+  MESSAGE ( "GEOM_Actor::SubShapeOn" );
 #endif  
 }
 
 void GEOM_Actor::SubShapeOff()
 {
 #ifdef MYDEBUG
-  cout << "GEOM_Actor::SubShapeOff"<<endl;
+  MESSAGE ( "GEOM_Actor::SubShapeOff" );
 #endif
 }
 
 void GEOM_Actor::highlight(bool highlight)
 {
 #ifdef MYDEBUG
-  cout << this << " GEOM_Actor::highlight highlight="<<highlight<<endl;
+  MESSAGE ( this << " GEOM_Actor::highlight highlight="<<highlight );
 #endif
   SALOME_Actor::highlight(highlight);
 }
@@ -671,7 +670,11 @@ vtkFloatingPointType GEOM_Actor::GetOpacity()
 void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b)
 {
   // enk:tested OK
-  myShadingFaceProp->SetColor(r,g,b);
+  myShadingFaceProp->SetColor(r,g,b);                          // shading color (Shading)
+  myIsolatedEdgeActor->GetProperty()->SetColor(r,g,b);         // standalone edge color (Wireframe)
+  myVertexActor->GetProperty()->SetColor(r,g,b);               // vertex actor (Shading/Wireframe)
+  myOneFaceEdgeActor->GetProperty()->SetColor(r,g,b);          // standalone face edge color (Wireframe)
+  mySharedEdgeActor->GetProperty()->SetColor(r,g,b);           // share edge color (Wireframe)
 }
 
 void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
@@ -684,7 +687,7 @@ void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFlo
   b = aRGB[2];
 }
 
-bool GEOM_Actor::IsInfinite()
+bool GEOM_Actor::IsInfinitive()
 {
   return (bool)(myShape.Infinite());
 }
@@ -698,7 +701,7 @@ GEOM_Actor
 {
   myIsSelected = theIsHighlight;
 #ifdef MYDEBUG
-  cout << this << " GEOM_Actor::Highlight myIsSelected="<<myIsSelected<<endl;
+  MESSAGE ( this << " GEOM_Actor::Highlight myIsSelected="<<myIsSelected );
 #endif
   
   SALOME_Actor::Highlight(theIsHighlight); // this method call ::highlight(theIsHighlight) in the end
@@ -715,7 +718,7 @@ GEOM_Actor
 	       bool theIsHighlight)
 {
 #ifdef MYDEBUG
-  cout << this<<" GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight<<endl;
+  MESSAGE ( this<<" GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight );
 #endif
 
   if ( !GetPickable() )
@@ -760,7 +763,7 @@ GEOM_Actor
 {
   // define the selection of object
 #ifdef MYDEBUG
-  cout << endl << this << " GEOM_Actor::Highlight (3) myIsSelected="<<myIsSelected<<endl;
+  MESSAGE ( std::endl << this << " GEOM_Actor::Highlight (3) myIsSelected="<<myIsSelected );
 #endif
   bool aRet = SALOME_Actor::Highlight(theInteractorStyle,theSelectionEvent,theIsHighlight);
   SetSelected(theIsHighlight);

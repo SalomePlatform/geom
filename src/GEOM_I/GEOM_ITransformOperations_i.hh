@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifndef _GEOM_ITransformOperations_i_HeaderFile
 #define _GEOM_ITransformOperations_i_HeaderFile
 
@@ -60,6 +61,11 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr TranslateVectorCopy (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector);
 
+  GEOM::GEOM_Object_ptr TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr theVector,
+						 CORBA::Double theDistance,
+						 CORBA::Boolean theCopy);
+
   GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector, CORBA::Double theStep, CORBA::Long theNbTimes);
 
   GEOM::GEOM_Object_ptr MultiTranslate2D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector1, CORBA::Double theStep1, CORBA::Long theNbTimes1,
@@ -72,7 +78,6 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr MultiRotate1D (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theVector,
 				       CORBA::Long theNbTimes);
-
  
   GEOM::GEOM_Object_ptr MultiRotate2D (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theVector, 
@@ -117,6 +122,18 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					GEOM::GEOM_Object_ptr thePoint,
 					CORBA::Double theFactor);
 
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+					     GEOM::GEOM_Object_ptr thePoint,
+					     CORBA::Double theFactorX,
+					     CORBA::Double theFactorY,
+					     CORBA::Double theFactorZ);
+
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr thePoint,
+						 CORBA::Double theFactorX,
+						 CORBA::Double theFactorY,
+						 CORBA::Double theFactorZ);
+
   GEOM::GEOM_Object_ptr PositionShape (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theStartLCS,
 				       GEOM::GEOM_Object_ptr theEndLCS);
@@ -124,6 +141,12 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr PositionShapeCopy (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr theStartLCS,
 					   GEOM::GEOM_Object_ptr theEndLCS);
+
+  GEOM::GEOM_Object_ptr PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr thePath,
+					   CORBA::Double         theDistance,
+					   CORBA::Boolean        theCopy,
+					   CORBA::Boolean        theReverse);
 
   GEOM::GEOM_Object_ptr RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr theCentPoint,
@@ -134,6 +157,8 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					       GEOM::GEOM_Object_ptr theCentPoint,
 					       GEOM::GEOM_Object_ptr thePoint1,
 					       GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr RecomputeObject (GEOM::GEOM_Object_ptr theObject);
 
 
   ::GEOMImpl_ITransformOperations* GetOperations() { return (::GEOMImpl_ITransformOperations*)GetImpl(); }

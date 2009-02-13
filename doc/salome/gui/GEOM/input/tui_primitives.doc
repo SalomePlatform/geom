@@ -64,7 +64,7 @@ id_cylinder2 = geompy.addToStudy(cylinder2,"Cylinder2")
 gg.createAndDisplayGO(id_cylinder1)
 gg.setDisplayMode(id_cylinder1,1)
 gg.createAndDisplayGO(id_cylinder2)
-gg.setDisplayMode(id_cylinder2,1) 
+gg.setDisplayMode(id_cylinder2,1)
 \endcode
 
 \anchor tui_creation_sphere
@@ -97,10 +97,10 @@ gg.setDisplayMode(id_sphere1,1)
 gg.createAndDisplayGO(id_sphere2)
 gg.setDisplayMode(id_sphere2,1)
 gg.createAndDisplayGO(id_sphere3)
-gg.setDisplayMode(id_sphere3,1) 
+gg.setDisplayMode(id_sphere3,1)
 \endcode
 
-\anchor tui_creation_torus 
+\anchor tui_creation_torus
 <br><h2>Creation of a Torus</h2>
 
 \code
@@ -125,7 +125,7 @@ id_torus2 = geompy.addToStudy(torus2,"Torus2")
 gg.createAndDisplayGO(id_torus1)
 gg.setDisplayMode(id_torus1,1)
 gg.createAndDisplayGO(id_torus2)
-gg.setDisplayMode(id_torus2,1) 
+gg.setDisplayMode(id_torus2,1)
 \endcode
 
 \anchor tui_creation_cone
@@ -153,7 +153,83 @@ id_cone2 = geompy.addToStudy(cone2,"Cone2")
 gg.createAndDisplayGO(id_cone1)
 gg.setDisplayMode(id_cone1,1)
 gg.createAndDisplayGO(id_cone2)
-gg.setDisplayMode(id_cone2,1) 
+gg.setDisplayMode(id_cone2,1)
+\endcode
+
+\anchor tui_creation_disk
+<br><h2>Creation of a Disk</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0., 0., 0.)
+px = geompy.MakeVertex(100., 0.  , 0.  )
+py = geompy.MakeVertex(0.  , 100., 0.  )
+pz = geompy.MakeVertex(0.  , 0.  , 100.)
+
+# create a vector on two points
+vxy  = geompy.MakeVector(px, py)
+
+# create a disk in OXY plane
+disk1 = geompy.MakeDiskR(100, 1)
+
+# create a disk from a point, a vector and a radius
+disk2 = geompy.MakeDiskPntVecR(pz, vxy, 30)
+
+#create a circle from three points
+disk3 = geompy.MakeDiskThreePnt(p0, px, py)
+
+# add objects in the study
+id_vxy    = geompy.addToStudy(vxy,  "Vector")
+id_disk1  = geompy.addToStudy(disk1,"Disk1")
+id_disk2  = geompy.addToStudy(disk2,"Disk2")
+id_disk3  = geompy.addToStudy(disk3,"Disk3")
+
+# display disks
+gg.createAndDisplayGO(id_vxy)
+gg.createAndDisplayGO(id_disk1)
+gg.createAndDisplayGO(id_diks2)
+gg.createAndDisplayGO(id_diks3)
+\endcode
+
+\anchor tui_creation_squareface
+<br><h2>Creation of a Face</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+px = geompy.MakeVertex(100., 0.  , 0.  )
+py = geompy.MakeVertex(0.  , 100., 0.  )
+
+# create a vector on two points
+vxy  = geompy.MakeVector(px, py)
+
+# create a face in OXY plane
+face1 = geompy.MakeFaceHW(100, 100, 1)
+
+# create a disk from a point, a vector and a radius
+face2 = geompy.MakeFaceObjHW(vxy, 50, 150)
+
+#create a circle from three points
+face3 = geompy.MakeFaceObjHW(face2, 150, 50)
+
+# add objects in the study
+id_vxy    = geompy.addToStudy(vxy,  "Vector")
+id_face1  = geompy.addToStudy(face1,"Face1")
+id_face2  = geompy.addToStudy(face2,"Face2")
+id_face3  = geompy.addToStudy(face3,"Face3")
+
+# display disks
+gg.createAndDisplayGO(id_vxy)
+gg.createAndDisplayGO(id_face1)
+gg.createAndDisplayGO(id_face2)
+gg.createAndDisplayGO(id_face3)
 \endcode
 
 */

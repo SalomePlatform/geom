@@ -1,6 +1,6 @@
-//  GEOMGUI_Selection
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,17 +17,13 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File   : GEOMGUI_Selection.h
+// Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
 //
-//
-//  File   : GEOMGUI_Selection.h
-//  Author : Alexander SOLOVYOV
-//  Module : GUI
-//  $Header$
-
-#ifndef GEOMGUI_SELECTION_HeaderFile
-#define GEOMGUI_SELECTION_HeaderFile
+#ifndef GEOMGUI_SELECTION_H
+#define GEOMGUI_SELECTION_H
 
 #include "GEOM_GEOMGUI.hxx"
 
@@ -36,14 +32,16 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
+class LightApp_SelectionMgr;
+
 class GEOMGUI_EXPORT GEOMGUI_Selection : public LightApp_Selection
 {
 public:
   GEOMGUI_Selection();
   virtual ~GEOMGUI_Selection();
 
-  virtual QtxValue      param( const int, const QString& ) const;
-  virtual QtxValue      globalParam( const QString& ) const;
+  virtual QVariant      parameter( const int, const QString& ) const;
+  virtual QVariant      parameter( const QString& ) const;
 
 private:
   bool                  isVisible( const int ) const;
@@ -56,4 +54,4 @@ private:
   GEOM::GEOM_Object_ptr getObject( const int ) const;
 };
 
-#endif
+#endif // GEOMGUI_SELECTION_H

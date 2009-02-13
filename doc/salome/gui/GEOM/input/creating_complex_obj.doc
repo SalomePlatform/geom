@@ -2,11 +2,19 @@
 
 \page create_complex_obj_page Creating Complex Objects
 
+<b>New entity -> Generation</b> submenu allows creating new geometric
+objects by modification and multiplication of the existing objects: 
+
+
 <ul>
-<li>\subpage create_extrusion_page</li>
-<li>\subpage create_revolution_page</li>
-<li>\subpage create_filling_page</li>
-<li>\subpage create_extrusion_alongpath_page</li>
+<li>\subpage create_extrusion_page "Extrude" a 2D object by vector,
+creating a 3D object. </li> 
+<li>\subpage create_revolution_page "Revolve" an object around an
+axis, creating a body of revolution.</li>
+<li>\subpage create_filling_page  "Create a surface" from a set of edges.</li>
+<li>\subpage create_extrusion_alongpath_page "Extrude an object along a path", 
+creating a more complex trajectory object.</li>
+
 </ul>
 
 */

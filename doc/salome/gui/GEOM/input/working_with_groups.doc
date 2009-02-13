@@ -8,7 +8,7 @@ viewer only.
 
 <br><h2>Create a group</h2>
 
-\image html image56.gif
+\image html image56.png
 
 To create a group of subshapes of a geometrical object in the main
 menu select <b>New entity > Group > Create</b>
@@ -19,29 +19,45 @@ menu select <b>New entity > Group > Create</b>
 In this Menu:
 
 <ul>
-<li><b>Shape Type</b> radio button define the type of elements for the
+<li><b>Shape Type</b> radio button defines the type of elements for the
 group (points, wires, faces, shells or solids).</li>
-<li><b>Group Name</b> - here you can enter the name of the group, by
+<li><b>Group Name</b> - allows defining the name of the group, by
 default, it is Group_n.</li>
 <li>Then, using the "Select" button, select the <b>Main Shape</b> (a
-geometrical object on which the group will be created). You can select
-the elements of your group in two ways: </li>
+geometrical object on which the group will be created). </li>
+<li> <b>Main Shape Selection restriction</b> button group allows limiting the range
+of available group elements,
+<ul><li> <b>No restriction</b> button enables all sub-shapes of the Main
+Shape.</li>
+<li><b>Geometrical parts of the Second Shape</b> restricts the range of accessible
+elements to the sub-shapes of the Main Shape that geometrically
+coincide with the <b>Second Shape</b>.</li>
+<li><b>Only Sub-Shapes of the Second Shape</b> restricts the range of
+accessible elements to the sub-shapes of the Main Shape that 
+are sub-shapes of the <b>Second Shape</b>. This is useful because 
+sometimes purely geometrical coincidence is not enough and it 
+is necessary to work with shapes, which actually belong both 
+to the main and the second shape.</li>
+</ul>
+<li> You can select the elements of your group in two ways:
 <ul>
-<li>Clicking <b>Select Sub-Shapes</b> button you can select them
-manually in the 3D Viewer, and add to the group by clicking the \b Add
-button (keep down the Shift button on the keyboard to select several
-elements and add all them together). The indexes of the selected
-elements will be displayed in the list. To delete elements from the
-list, select them and click \b Remove button.</li>
+<li>You can select them manually in the 3D Viewer, and add to the
+group by clicking the \b Add button (keep down the Shift button on the
+keyboard to select several elements and add all them together). The
+indexes of the selected elements will be displayed in the list. To
+delete elements from the list, select them and click \b Remove
+button.</li>
 <li>Clicking <b>Select All</b> button you can add all object's
 elements of a certain type in the list of the elements of the
-group. To delete elements from the list, select them and click \b
-Remove button.</li>
-</ul>
-<li>Finally, confirm your selection by clicking \b OK (also closes the
-Menu) or \b Apply (leaves the Menu open for creation of other groups),
-or skip it by clicking \b Close button.</li>
-</ul>
+group. If the <b>Second Shape</b> is used, the elements are added 
+according to <b>Main Shape Selection restriction</b> settings. To delete elements 
+from the list, select them and click \b Remove button.
+</li></ul>
+</li>
+<li>Finally, confirm your selection by clicking <b>Apply and Close
+</b> (also closes the Menu) or \b Apply (leaves the Menu open for 
+creation of other groups), or skip it by clicking \b Close button.
+</li></ul>
 
 \n The Result of the operation will be a \b GEOM_Object.
 
@@ -52,12 +68,12 @@ created, ShapeType is a type of shapes in the created group.
 
 <b>Example:</b>
 
-\image html image193.jpg
+\image html image193.jpg "Groups on a cylinder"
 
 
 <br><h2>Edit a group</h2>
 
-\image html image57.gif
+\image html image57.png
 
 To \b Edit an existing group in the main menu select <b>New entity >
 Group > Edit</b>. This menu is designed in the same way as the

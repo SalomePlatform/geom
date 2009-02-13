@@ -1,6 +1,7 @@
-#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003  CEA
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -16,14 +17,18 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
+#  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
 #  $Header$
-
+# ! Please, if you edit this example file, update also
+# ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc
+# ! as some sequences of symbols from this example are used during
+# ! documentation generation to identify certain places of this file
+#
 import os
 
 def TestExportImport (geompy, shape):
@@ -94,7 +99,11 @@ def TestExportImport (geompy, shape):
 
 def TestOtherOperations (geompy, math):
 
-  # MakeFaces
+  # prepare data for further operations
+  vx = geompy.MakeVectorDXDYDZ( 1,  0,  0)
+  vy = geompy.MakeVectorDXDYDZ( 0,  1,  0)
+  vz = geompy.MakeVectorDXDYDZ( 0,  0,  1)
+
   p11 = geompy.MakeVertex( 0,  0, 0)
   p12 = geompy.MakeVertex(30,  0, 0)
   p13 = geompy.MakeVertex(30, 30, 0)
@@ -123,6 +132,7 @@ def TestOtherOperations (geompy, math):
   id_w2 = geompy.addToStudy(w2, "Inside Wire")
   id_w3 = geompy.addToStudy(w3, "Inside Wire, translated along OZ")
 
+  # MakeFaces
   f12 = geompy.MakeFaces([w1, w2], 0)
   id_f12 = geompy.addToStudy(f12, "MakeFaces WO + WI")
 
@@ -232,6 +242,10 @@ def TestOtherOperations (geompy, math):
   else:
     print "The Box is VALID"
 
+  # GetSame
+  Cone_ss = geompy.GetSame(Compound1, Cone)
+  id_Cone_ss = geompy.addToStudyInFather(Compound1, Cone_ss, "Cone subshape")
+
   # test geometrical groups
 
   # CreateGroup
@@ -269,6 +283,7 @@ def TestOtherOperations (geompy, math):
   for ObjectID in GetObjectIDs:
     print " ", ObjectID
 
+  # GetMainShape
   BoxCopy = geompy.GetMainShape(CreateGroup)
 
   # DifferenceIDs
@@ -289,7 +304,8 @@ def TestOtherOperations (geompy, math):
   # -----------------------------------------------------------------------------
   # enumeration ShapeTypeString as a dictionary
   # -----------------------------------------------------------------------------
-  ShapeTypeString = {'0':"COMPOUND", '1':"COMPSOLID", '2':"SOLID", '3':"SHELL", '4':"FACE", '5':"WIRE", '6':"EDGE", '7':"VERTEX", '8':"SHAPE"}
+  ShapeTypeString = {'0':"COMPOUND", '1':"COMPSOLID", '2':"SOLID", '3':"SHELL",
+                     '4':"FACE", '5':"WIRE", '6':"EDGE", '7':"VERTEX", '8':"SHAPE"}
 
   GroupType = geompy.GetType(CreateGroup)
   print "Type of elements of the created group is ", ShapeTypeString[`GroupType`]
@@ -303,66 +319,67 @@ def TestOtherOperations (geompy, math):
   id_s0 = geompy.addToStudy(s0, "s0")
 
   v_0pp = geompy.MakeVectorDXDYDZ( 0,  1,  1)
-  v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
-  v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
-  v_n0p = geompy.MakeVectorDXDYDZ(-1,  0,  1)
-  v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
-  v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
+  #v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
+  #v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
+  #v_n0p = geompy.MakeVectorDXDYDZ(-1,  0,  1)
+  #v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
+  #v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
   v_0n0 = geompy.MakeVectorDXDYDZ( 0, -1,  0)
 
-  pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
-  pln_0np = geompy.MakePlane(p0, v_0np, 300)
-  pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
-  pln_n0p = geompy.MakePlane(p0, v_n0p, 300)
-  pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
-  pln_np0 = geompy.MakePlane(p0, v_np0, 300)
-
-  #part_tool_1 = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0],
-  #                                   [],
-  #                                   [],
-  #                                   [b0])
-  part_tool_1 = geompy.MakePartition([b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0])
-
-  id_part_tool_1 = geompy.addToStudy(part_tool_1, "part_tool_1")
-
-  pt_pnt_1  = geompy.MakeVertex( 55,   0,  55)
-  pt_pnt_2  = geompy.MakeVertex(  0,  55,  55)
-  pt_pnt_3  = geompy.MakeVertex(-55,   0,  55)
-  pt_pnt_4  = geompy.MakeVertex(  0, -55,  55)
-  pt_pnt_5  = geompy.MakeVertex( 55,  55,   0)
-  pt_pnt_6  = geompy.MakeVertex( 55, -55,   0)
-  pt_pnt_7  = geompy.MakeVertex(-55,  55,   0)
-  pt_pnt_8  = geompy.MakeVertex(-55, -55,   0)
-  pt_pnt_9  = geompy.MakeVertex( 55,   0, -55)
-  pt_pnt_10 = geompy.MakeVertex(  0,  55, -55)
-  pt_pnt_11 = geompy.MakeVertex(-55,   0, -55)
-  pt_pnt_12 = geompy.MakeVertex(  0, -55, -55)
-
-  pt_face_1  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_1)
-  pt_face_2  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_2)
-  pt_face_3  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_3)
-  pt_face_4  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_4)
-  pt_face_5  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_5)
-  pt_face_6  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_6)
-  pt_face_7  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_7)
-  pt_face_8  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_8)
-  pt_face_9  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_9)
-  pt_face_10 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_10)
-  pt_face_11 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_11)
-  pt_face_12 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_12)
-
+  #pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
+  #pln_0np = geompy.MakePlane(p0, v_0np, 300)
+  #pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
+  #pln_n0p = geompy.MakePlane(p0, v_n0p, 300)
+  #pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
+  #pln_np0 = geompy.MakePlane(p0, v_np0, 300)
+  #
+  #part_objs = [b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0]
+  #part_tool_1 = geompy.MakePartition(part_objs, [], [], [b0])
+  #part_tool_1 = geompy.MakePartition(part_objs)
+  #
+  #id_part_tool_1 = geompy.addToStudy(part_tool_1, "part_tool_1")
+  #
+  #pt_pnt_1  = geompy.MakeVertex( 55,   0,  55)
+  #pt_pnt_2  = geompy.MakeVertex(  0,  55,  55)
+  #pt_pnt_3  = geompy.MakeVertex(-55,   0,  55)
+  #pt_pnt_4  = geompy.MakeVertex(  0, -55,  55)
+  #pt_pnt_5  = geompy.MakeVertex( 55,  55,   0)
+  #pt_pnt_6  = geompy.MakeVertex( 55, -55,   0)
+  #pt_pnt_7  = geompy.MakeVertex(-55,  55,   0)
+  #pt_pnt_8  = geompy.MakeVertex(-55, -55,   0)
+  #pt_pnt_9  = geompy.MakeVertex( 55,   0, -55)
+  #pt_pnt_10 = geompy.MakeVertex(  0,  55, -55)
+  #pt_pnt_11 = geompy.MakeVertex(-55,   0, -55)
+  #pt_pnt_12 = geompy.MakeVertex(  0, -55, -55)
+  #
+  #pt_face_1  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_1)
+  #pt_face_2  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_2)
+  #pt_face_3  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_3)
+  #pt_face_4  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_4)
+  #pt_face_5  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_5)
+  #pt_face_6  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_6)
+  #pt_face_7  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_7)
+  #pt_face_8  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_8)
+  #pt_face_9  = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_9)
+  #pt_face_10 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_10)
+  #pt_face_11 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_11)
+  #pt_face_12 = geompy.GetFaceNearPoint(part_tool_1, pt_pnt_12)
+  #
   #pt_box = geompy.GetBlockNearPoint(part_tool_1, p0)
-
-  #part_tool = geompy.MakeCompound([pt_face_1, pt_face_4, pt_face_7, pt_face_10,
-  #                                 pt_face_2, pt_face_5, pt_face_8, pt_face_11,
-  #                                 #pt_face_3, pt_face_6, pt_face_9, pt_face_12, pt_box])
-  #                                 pt_face_3, pt_face_6, pt_face_9, pt_face_12)
+  #
+  #comp_parts = [pt_face_1, pt_face_4, pt_face_7, pt_face_10,
+  #              pt_face_2, pt_face_5, pt_face_8, pt_face_11,
+  #              #pt_face_3, pt_face_6, pt_face_9, pt_face_12, pt_box]
+  #              pt_face_3, pt_face_6, pt_face_9, pt_face_12]
+  #part_tool = geompy.MakeCompound(comp_parts)
   #id_part_tool = geompy.addToStudy(part_tool, "part_tool")
-
+  #
   #part = geompy.MakePartition([s0], [part_tool])
-  #part = geompy.MakePartition([s0], [ pt_face_1, pt_face_4, pt_face_7, pt_face_10,
-  #                                    pt_face_2, pt_face_5, pt_face_8, pt_face_11,
-  #                                    pt_face_3, pt_face_6, pt_face_9, pt_face_12, b0] )
+  #
+  #part_tools = [pt_face_1, pt_face_4, pt_face_7, pt_face_10,
+  #              pt_face_2, pt_face_5, pt_face_8, pt_face_11,
+  #              pt_face_3, pt_face_6, pt_face_9, pt_face_12, b0]
+  #part = geompy.MakePartition([s0], part_tools)
 
   p1 = geompy.MakeVertex(50, 0, 0)
   p2 = geompy.MakeVertex(-50, 0, 0)
@@ -370,10 +387,6 @@ def TestOtherOperations (geompy, math):
   p4 = geompy.MakeVertex(0, -50, 0)
   p5 = geompy.MakeVertex(0, 0, 50)
   p6 = geompy.MakeVertex(0, 0, -50)
-
-  vx = geompy.MakeVectorDXDYDZ( 1,  0,  0)
-  vy = geompy.MakeVectorDXDYDZ( 0,  1,  0)
-  vz = geompy.MakeVectorDXDYDZ( 0,  0,  1)
 
   plnX1 = geompy.MakePlane(p1, vx, 300)
   plnX2 = geompy.MakePlane(p2, vx, 300)
@@ -403,7 +416,8 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudy(freeFacesWithoutExtra, "freeFacesWithoutExtra")
 
   # GetSharedShapes
-  sharedFaces = geompy.GetSharedShapes(part, freeFacesWithoutExtra, geompy.ShapeType["FACE"])
+  sharedFaces = geompy.GetSharedShapes(part, freeFacesWithoutExtra,
+                                       geompy.ShapeType["FACE"])
 
   for shFace in sharedFaces:
     geompy.addToStudy(shFace, "sharedFace")
@@ -465,12 +479,13 @@ def TestOtherOperations (geompy, math):
     geompy.addToStudy(edge_i, "Edge on Plane (N = (0, -1, 0) & Location = (0, -50, 0)")
     
   # GetShapesOnPlaneWithLocationIDs
-  edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(blocksComp, geompy.ShapeType["EDGE"],
-                                                            v_0n0, Loc, geompy.GEOM.ST_ON)
+  edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(
+           blocksComp, geompy.ShapeType["EDGE"], v_0n0, Loc, geompy.GEOM.ST_ON)
   group_edges_on_pln = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(group_edges_on_pln, edges_on_pln_ids)
-  geompy.addToStudy(group_edges_on_pln, "Group of edges on Plane (N = (0, -1, 0) & Location = (0, -50, 0))")
-  
+  grname = "Group of edges on Plane (N = (0, -1, 0) & Location = (0, -50, 0))"
+  geompy.addToStudy(group_edges_on_pln, grname)
+
   # GetShapesOnCylinder
   edges_out_cyl = geompy.GetShapesOnCylinder(blocksComp, geompy.ShapeType["EDGE"],
                                              vy, 55, geompy.GEOM.ST_OUT)
@@ -489,7 +504,6 @@ def TestOtherOperations (geompy, math):
                                              p0, 100, geompy.GEOM.ST_ON)
   for vertex_i in vertices_on_sph:
     geompy.addToStudy(vertex_i, "Vertex on Sphere (center = (0, 0, 0), r = 100)")
-    pass
 
   # GetShapesOnSphereIDs
   vertices_on_sph_ids = geompy.GetShapesOnSphereIDs(blocksComp, geompy.ShapeType["VERTEX"],
@@ -513,13 +527,12 @@ def TestOtherOperations (geompy, math):
   quadrangle = geompy.MakeWire([qe1, qe2, qe3, qe4])
   geompy.addToStudy(quadrangle, "Quadrangle")
 
-  edges_onin_quad = geompy.GetShapesOnQuadrangle( f12, geompy.ShapeType["EDGE"],
-                                                  tl, tr, bl, br, geompy.GEOM.ST_ONIN)
+  edges_onin_quad = geompy.GetShapesOnQuadrangle(f12, geompy.ShapeType["EDGE"],
+                                                 tl, tr, bl, br, geompy.GEOM.ST_ONIN)
   comp = geompy.MakeCompound(edges_onin_quad)
   geompy.addToStudy(comp, "Edges of F12 ONIN Quadrangle")
   if len( edges_onin_quad ) != 4:
     print "Error in GetShapesOnQuadrangle()"
-    pass
 
   # GetShapesOnQuadrangleIDs
   vertices_on_quad_ids = geompy.GetShapesOnQuadrangleIDs(f12, geompy.ShapeType["VERTEX"],
@@ -527,6 +540,55 @@ def TestOtherOperations (geompy, math):
   vertices_on_quad = geompy.CreateGroup(f12, geompy.ShapeType["VERTEX"])
   geompy.UnionIDs(vertices_on_quad, vertices_on_quad_ids)
   geompy.addToStudy(vertices_on_quad, "Group of vertices on Quadrangle F12")
+
+  # GetShapesOnBox
+  edges_on_box = geompy.GetShapesOnBox(b0, part, geompy.ShapeType["EDGE"],
+                                       geompy.GEOM.ST_ON)
+  comp = geompy.MakeCompound(edges_on_box)
+  geompy.addToStudy(comp, "Edges of part ON box b0")
+  if len( edges_on_box ) != 12:
+    print "Error in GetShapesOnBox()"
+
+  # GetShapesOnBoxIDs
+  faces_on_box_ids = geompy.GetShapesOnBoxIDs(b0, part, geompy.ShapeType["FACE"],
+                                              geompy.GEOM.ST_ON)
+  faces_on_box = geompy.CreateGroup(part, geompy.ShapeType["FACE"])
+  geompy.UnionIDs(faces_on_box, faces_on_box_ids)
+  geompy.addToStudyInFather(part, faces_on_box, "Group of faces on box b0")
+
+  # Prepare arguments for GetShapesOnShape
+  sph1 = geompy.MakeSphere(50, 50,  50, 40)
+  sph2 = geompy.MakeSphere(50, 50, -50, 40)
+  pcyl = geompy.MakeVertex(50, 50, -50)
+  cyli = geompy.MakeCylinder(pcyl, vz, 40, 100)
+  fuse = geompy.MakeFuse(sph1, cyli)
+  fuse = geompy.MakeFuse(fuse, sph2)
+  # As after Fuse we have a compound, we need to obtain a solid from it
+  shsh = geompy.SubShapeAll(fuse, geompy.ShapeType["SOLID"])
+  sh_1 = shsh[0]
+  geompy.addToStudy(sh_1, "sh_1")
+
+  # GetShapesOnShape
+  faces_in_sh = geompy.GetShapesOnShape(sh_1, part, geompy.ShapeType["FACE"],
+                                        geompy.GEOM.ST_IN)
+  comp = geompy.MakeCompound(faces_in_sh)
+  geompy.addToStudy(comp, "Faces of part IN shape sh_1")
+  if len(faces_in_sh) != 11:
+    print "Error in GetShapesOnShape()"
+
+  # GetShapesOnShapeAsCompound
+  faces_in_sh_c = geompy.GetShapesOnShapeAsCompound(sh_1, part, geompy.ShapeType["FACE"],
+                                                    geompy.GEOM.ST_IN)
+  geompy.addToStudy(faces_in_sh_c, "Faces of part IN shape sh_1 (as compound)")
+
+  # GetShapesOnShapeIDs
+  edges_in_sh_ids = geompy.GetShapesOnShapeIDs(sh_1, part, geompy.ShapeType["EDGE"],
+                                               geompy.GEOM.ST_IN)
+  edges_in_sh = geompy.CreateGroup(part, geompy.ShapeType["EDGE"])
+  geompy.UnionIDs(edges_in_sh, edges_in_sh_ids)
+  geompy.addToStudyInFather(part, edges_in_sh, "Group of edges in shape sh_1")
+  if len(edges_in_sh_ids) != 15:
+    print "Error in GetShapesOnShapeIDs()"
 
   # Prepare arguments for GetInPlace and GetInPlaceByHistory
   box5 = geompy.MakeBoxDXDYDZ(100, 100, 100)
@@ -541,15 +603,9 @@ def TestOtherOperations (geompy, math):
   box5_faces = geompy.SubShapeAll(box5, geompy.ShapeType["FACE"])
   box6_faces = geompy.SubShapeAll(box6, geompy.ShapeType["FACE"])
 
-  ifa = 1
-  for aface in box5_faces:
-    geompy.addToStudyInFather(box5, aface, "Face" + `ifa`)
-    ifa = ifa + 1
-
-  ifa = 1
-  for aface in box6_faces:
-    geompy.addToStudyInFather(box6, aface, "Face" + `ifa`)
-    ifa = ifa + 1
+  for ifa in range(6):
+    geompy.addToStudyInFather(box5, box5_faces[ifa], "Face" + `ifa + 1`)
+    geompy.addToStudyInFather(box6, box6_faces[ifa], "Face" + `ifa + 1`)
 
   # GetInPlace(theShapeWhere, theShapeWhat)
   ibb = 5
@@ -557,19 +613,17 @@ def TestOtherOperations (geompy, math):
   for afaces in faces_list:
     ifa = 1
     for aface in afaces:
+      refl_box_face = geompy.GetInPlace(part, aface)
       if ibb == 6 and (ifa == 2 or ifa == 4):
-        # use IDL interface directly to avoid error message appearence in Python console
-        refl_box_face = geompy.ShapesOp.GetInPlace(part, aface)
+        # For two faces of the tool box
+        # there is no reflection in the result.
         if refl_box_face is not None:
-          geompy.addToStudyInFather(part, refl_box_face,
-                                    "Reflection of face " + `ifa` + " of box " + `ibb`)
-          error = "Result of GetInPlace must be NULL for face " + `ifa` + " of box " + `ibb`
+          error = "Result of GetInPlace must be NULL for face "
+          error += `ifa` + " of box " + `ibb`
           raise RuntimeError, error
       else:
-        # use geompy interface
-        refl_box_face = geompy.GetInPlace(part, aface)
-        geompy.addToStudyInFather(part, refl_box_face,
-                                  "Reflection of face " + `ifa` + " of box " + `ibb`)
+        ssname = "Reflection of face " + `ifa` + " of box " + `ibb`
+        geompy.addToStudyInFather(part, refl_box_face, ssname)
       ifa = ifa + 1
     ibb = ibb + 1
 
@@ -582,18 +636,20 @@ def TestOtherOperations (geompy, math):
   for afaces in faces_list:
     ifa = 1
     for aface in afaces:
+      ssname = "Reflection of face " + `ifa` + " of box " + `ibb` + " (by history)"
       if ibb == 6 and (ifa == 2 or ifa == 4):
         # use IDL interface directly to avoid error message appearence in Python console
         refl_box_face = geompy.ShapesOp.GetInPlaceByHistory(part, aface)
         if refl_box_face is not None:
-          geompy.addToStudyInFather(part, refl_box_face,
-                                    "Reflection of face " + `ifa` + " of box " + `ibb` + " (by history)")
-          error = "Result of GetInPlaceByHistory must be NULL for face " + `ifa` + " of box " + `ibb`
+          geompy.addToStudyInFather(part, refl_box_face, ssname)
+          error = "Result of GetInPlaceByHistory must be NULL for face "
+          error += `ifa` + " of box " + `ibb`
           raise RuntimeError, error
       else:
         # use geompy interface
         refl_box_face = geompy.GetInPlaceByHistory(part, aface)
-        geompy.addToStudyInFather(part, refl_box_face,
-                                  "Reflection of face " + `ifa` + " of box " + `ibb` + " (by history)")
+        geompy.addToStudyInFather(part, refl_box_face, ssname)
       ifa = ifa + 1
     ibb = ibb + 1
+
+#END

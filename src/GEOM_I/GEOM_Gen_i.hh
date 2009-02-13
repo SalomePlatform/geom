@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef __GEOM_GEN_I_H__
 #define __GEOM_GEN_I_H__
@@ -133,6 +135,24 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 				    const char* theName,
 				    GEOM::GEOM_Object_ptr theFather);
 
+  /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
+   *         To be used from python scripts out of geompy.addToStudy (non-default usage)
+   */
+  CORBA::Boolean RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
+				    GEOM::GEOM_Object_ptr   theObject,
+				    const GEOM::ListOfGO&   theArgs,
+				    GEOM::find_shape_method theFindMethod,
+				    CORBA::Boolean          theInheritFirstArg);
+
+  /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
+   *         To be used from GUI and from geompy.addToStudy
+   */
+  CORBA::Boolean RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
+				     SALOMEDS::SObject_ptr   theSObject,
+				     const GEOM::ListOfGO&   theArgs,
+				     GEOM::find_shape_method theFindMethod,
+				     CORBA::Boolean          theInheritFirstArg);
+
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
   //-----------------------------------------------------------------------//
@@ -212,12 +232,30 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   char* GetDumpName (const char* theStudyEntry);
 
   GEOM::string_array* GetAllDumpNames();
-
+  
+  // Object information
+  virtual bool hasObjectInfo();
+  virtual char* getObjectInfo(CORBA::Long studyId, const char* entry);
+  
   //-----------------------------------------------------------------------//
   // Internal methods                                                      //
   //-----------------------------------------------------------------------//
 
   virtual GEOM::GEOM_Object_ptr GetObject(CORBA::Long theStudyID, const char* theEntry);
+
+ private:
+  GEOM::ListOfGO* RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     theStudy,
+					    SALOMEDS::SObject_ptr   theOldSO,
+					    SALOMEDS::SObject_ptr   theNewSO,
+					    GEOM::GEOM_Object_ptr   theNewO,
+					    GEOM::find_shape_method theFindMethod);
+
+  CORBA::Boolean RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
+				   GEOM::GEOM_Object_ptr   theObject,
+				   SALOMEDS::SObject_ptr   theSObject,
+				   const GEOM::ListOfGO&   theArgs,
+				   GEOM::find_shape_method theFindMethod,
+				   CORBA::Boolean          theInheritFirstArg);
 
  private:
 

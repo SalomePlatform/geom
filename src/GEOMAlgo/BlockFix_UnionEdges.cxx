@@ -1,27 +1,28 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:      BlockFix_UnionEdges.cxx
 // Created:   07.12.04 15:27:30
 // Author:    Sergey KUUL
-
-
+//
 #include <BlockFix_UnionEdges.ixx>
 
 #include <Approx_Curve3d.hxx>
@@ -56,6 +57,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include "utilities.h"
 
 //=======================================================================
 //function : BlockFix_UnionEdges()
@@ -109,7 +111,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
     }
   }
   if(aChain.Length()<SeqEdges.Length()) {
-    cout<<"can not create correct chain..."<<endl;
+    MESSAGE ("can not create correct chain...");
     return Standard_False;
   }
   // union edges in chain
@@ -197,26 +199,49 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
     }
   }
   if(j<aChain.Length()) {
-    cout<<"null curve3d in edge..."<<endl;
+    MESSAGE ("null curve3d in edge...");
     return Standard_False;
   }
   if(aChain.Length()>1) {
     // second step: union edges with various curves
-    cout<<"can not make analitical union => make approximation"<<endl;
-    TopoDS_Wire W;
-    B.MakeWire(W);
+    // skl for bug 0020052 from Mantis: perform such unions
+    // only if curves are bspline or bezier
+    bool NeedUnion = true;
     for(j=1; j<=aChain.Length(); j++) {
       TopoDS_Edge edge = TopoDS::Edge(aChain.Value(j));
-      B.Add(W,edge);
+      Handle(Geom_Curve) c3d = BRep_Tool::Curve(edge,Loc,fp1,lp1);
+      if(c3d.IsNull()) continue;
+      while(c3d->IsKind(STANDARD_TYPE(Geom_TrimmedCurve))) {
+        Handle(Geom_TrimmedCurve) tc =
+          Handle(Geom_TrimmedCurve)::DownCast(c3d);
+        c3d = tc->BasisCurve();
+      }
+      if( ( c3d->IsKind(STANDARD_TYPE(Geom_BSplineCurve)) ||
+            c3d->IsKind(STANDARD_TYPE(Geom_BezierCurve)) ) ) continue;
+      NeedUnion = false;
+      break;
     }
-    Handle(BRepAdaptor_HCompCurve) Adapt = new BRepAdaptor_HCompCurve(W);
-    Approx_Curve3d Conv(Adapt,Tol,GeomAbs_C1,9,1000);
-    Handle(Geom_BSplineCurve) bc = Conv.Curve();
-    TopoDS_Edge E;
-    B.MakeEdge (E,bc,Precision::Confusion());
-    B.Add (E,VF);
-    B.Add (E,VL);
-    aChain.SetValue(1,E);
+    if(NeedUnion) {
+      MESSAGE ("can not make analitical union => make approximation");
+      TopoDS_Wire W;
+      B.MakeWire(W);
+      for(j=1; j<=aChain.Length(); j++) {
+        TopoDS_Edge edge = TopoDS::Edge(aChain.Value(j));
+        B.Add(W,edge);
+      }
+      Handle(BRepAdaptor_HCompCurve) Adapt = new BRepAdaptor_HCompCurve(W);
+      Approx_Curve3d Conv(Adapt,Tol,GeomAbs_C1,9,1000);
+      Handle(Geom_BSplineCurve) bc = Conv.Curve();
+      TopoDS_Edge E;
+      B.MakeEdge (E,bc,Precision::Confusion());
+      B.Add (E,VF);
+      B.Add (E,VL);
+      aChain.SetValue(1,E);
+    }
+    else {
+      MESSAGE ("can not make approximation for such types of curves");
+      return Standard_False;
+    }
   }
 
   anEdge = TopoDS::Edge(aChain.Value(1));

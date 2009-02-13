@@ -132,6 +132,39 @@ id_ellipse = geompy.addToStudy(ellipse,"Ellipse")
 gg.createAndDisplayGO(id_vector)
 gg.createAndDisplayGO(id_ellipse)
 \endcode
+
+\anchor tui_creation_arc
+<br><h2>Creation of an Arc</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create vertices
+p0 = geompy.MakeVertex(0., 0., 0.)
+p1 = geompy.MakeVertex(100., 0., 0.)
+p2 = geompy.MakeVertex(50., 0., 50.)
+
+# create an arc from a three points
+arc1 = geompy.MakeArc(p0, p1, p2)
+
+# create an arc from a center point, a start point and end point
+arc2 = geompy.MakeArcCenter(p0, p1, p2, 1)
+
+# create an arc from a center point, a major point and minor point
+arc3 = geompy.MakeArcOfEllipse(p0, p1, p2)
+
+# add objects in the study
+id_arc1 = geompy.addToStudy(arc1, "Arc 1")
+id_arc2 = geompy.addToStudy(arc2, "Arc 2")
+id_arc3 = geompy.addToStudy(arc3, "Arc 3")
+
+# display the arcs
+gg.createAndDisplayGO(id_arc1)
+gg.createAndDisplayGO(id_arc2)
+gg.createAndDisplayGO(id_arc3)
+\endcode
  
 \anchor tui_creation_curve
 <br><h2>Creation of a Curve</h2>

@@ -1,5 +1,28 @@
 <?xml version='1.0' encoding='us-ascii'?>
 <!DOCTYPE application PUBLIC "" "desktop.dtd">
+<!--
+  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+
+  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License.
+
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+
+  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+
+-->
 
 <!--  GUI customization for GEOMETRY component  -->
 
@@ -52,6 +75,8 @@
 	<popup-item item-id="4023" pos-id="" label-id="Sphere" icon-id="sphere.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
 	<popup-item item-id="4024" pos-id="" label-id="Torus" icon-id="torus.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
         <popup-item item-id="4025" pos-id="" label-id="Cone" icon-id="cone.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+        <popup-item item-id="4026" pos-id="" label-id="Face" icon-id="face.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+	<popup-item item-id="4027" pos-id="" label-id="Face" icon-id="disk.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <submenu label-id="Generation" item-id="403" pos-id="3">
@@ -79,6 +104,7 @@
    <separator pos-id=""/>
 
    <popup-item item-id="404" pos-id="" label-id="Sketch" icon-id="sketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+   <popup-item item-id="405" pos-id="" label-id="3D Sketch" icon-id="3dsketch.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <separator pos-id=""/>
    <popup-item item-id="407" pos-id="" label-id="Explode" icon-id="subshape.png" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    <submenu label-id="Build" item-id="408" pos-id="">
@@ -229,6 +255,8 @@
    <toolbutton-item item-id="4023" label-id="Sphere" icon-id="sphere.png" tooltip-id="Sphere" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="4024" label-id="Torus" icon-id="torus.png" tooltip-id="Torus" accel-id="" toggle-id="" execute-action=""/>
    <toolbutton-item item-id="4025" label-id="Cone" icon-id="cone.png" tooltip-id="Cone" accel-id="" toggle-id="" execute-action=""/> 
+   <toolbutton-item item-id="4026" label-id="Face" icon-id="face.png" tooltip-id="Face" accel-id="" toggle-id="" execute-action=""/> 
+   <toolbutton-item item-id="4027" label-id="Disk" icon-id="disk.png" tooltip-id="Disk" accel-id="" toggle-id="" execute-action=""/> 
 </toolbar>                                                                                
 
 <toolbar label-id="Ope. Boolean">

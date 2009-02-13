@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@
 //
 //  This library is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //  Lesser General Public License for more details.
 //
 //  You should have received a copy of the GNU Lesser General Public
@@ -19,35 +19,30 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BasicGUI.h
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : BasicGUI.h
-//  Author : Damien COQUERET
-//  Module : GEOM
-
 #ifndef BASICGUI_H
 #define BASICGUI_H
 
-#include "GEOM_BasicGUI.hxx"
-
-#include "GEOMGUI.h"
-#include "GEOMBase.h"
+#include <GEOMGUI.h>
 #include <V3d_View.hxx>
 
 //=================================================================================
 // class    : BasicGUI
 // purpose  :
 //=================================================================================
-class GEOM_BASICGUI_EXPORT BasicGUI : public GEOMGUI
+class BasicGUI : public GEOMGUI
 {
 public:
-  BasicGUI( GeometryGUI* parent );
+  BasicGUI( GeometryGUI* );
   ~BasicGUI();
 
-  bool OnGUIEvent(int theCommandID, SUIT_Desktop* parent);
-  bool OnMousePress(QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow);
+  bool   OnGUIEvent( int, SUIT_Desktop* );
+  bool   OnMousePress( QMouseEvent*, SUIT_Desktop*, SUIT_ViewWindow* );
 
-  gp_Pnt ConvertClickToPoint( int x, int y, Handle(V3d_View) aView );
+  gp_Pnt ConvertClickToPoint( int, int, Handle(V3d_View) );
 };
 
-#endif
+#endif // BASICGUI_H

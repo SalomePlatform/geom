@@ -22,11 +22,11 @@ deflection of the mesh, using to compute the section.
 
 \n <b>Example:</b>
 
-\image html archimedesn1.png
+\image html archimedesn1.png "The shape"
 
-\image html archimedesn2.png
+\image html archimedesn2.png "The waterline on the shape"
 
-\image html archimedesn3.png
+\image html archimedesn3.png "The resulting plane"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_archimede "Basic Operations".

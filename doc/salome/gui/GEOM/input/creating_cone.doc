@@ -33,7 +33,7 @@ the radiuses are equal, a \b Cylinder will be created instead.
 
 <b>Example:</b>
 
-\image html cones.png
+\image html cones.png "Normal and truncated cones"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_cone "Primitives".

@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -178,7 +180,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateDXDYDZ
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.TranslateDXDYDZ("
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateDXDYDZ("
     << theObject << ", " << theX << ", " << theY << ", " << theZ << ")";
 
   SetErrorCode(OK);
@@ -350,7 +352,6 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVector
   SetErrorCode(OK);
   return theObject;
 }
-
 //=============================================================================
 /*!
  *  TranslateVectorCopy
@@ -403,6 +404,73 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorCopy
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  TranslateVectorDistance
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorDistance
+       (Handle(GEOM_Object) theObject, Handle(GEOM_Object) theVector, double theDistance, bool theCopy)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || theVector.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be moved
+
+  Handle(GEOM_Object) aCopy;   //Add a new Copy object
+  Handle(GEOM_Function) aFunction;
+
+  //Add a translate function
+  if (theCopy) {
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_TranslateDriver::GetID(), TRANSLATE_VECTOR_DISTANCE);
+  }
+  else {
+    aFunction = theObject->AddFunction(GEOMImpl_TranslateDriver::GetID(), TRANSLATE_VECTOR_DISTANCE);
+  }
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_TranslateDriver::GetID()) return NULL;
+
+  GEOMImpl_ITranslate aTI(aFunction);
+  aTI.SetVector(theVector->GetLastFunction());
+  aTI.SetDistance(theDistance);
+//  aTI.SetShape(theObject->GetValue());
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the translation
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Translation driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  if (theCopy) {
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeTranslationVectorDistance("
+				 << theObject << ", " << theVector << ", " << theDistance << ")";
+    SetErrorCode(OK);
+    return aCopy;
+  }
+
+  GEOM::TPythonDump(aFunction) << "geompy.TranslateVectorDistance("
+			       << theObject << ", " << theVector << ", " << theDistance << ", " << theCopy << ")";
+  SetErrorCode(OK);
+  return theObject;
 }
 
 //=============================================================================
@@ -964,13 +1032,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || thePoint.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
-
-  // Get last functions of the arguments
-  Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
 
   //Add a scale function
   Handle(GEOM_Function) aFunction =
@@ -980,10 +1045,16 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShape
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ScaleDriver::GetID()) return NULL;
 
+  // Set arguments
   GEOMImpl_IScale aTI (aFunction);
   aTI.SetShape(anOriginal);
-  aTI.SetPoint(aPF);
   aTI.SetFactor(theFactor);
+
+  // Set point argument
+  if (!thePoint.IsNull()) {
+    Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
+    aTI.SetPoint(aPF);
+  }
 
   //Compute the scale
   try {
@@ -1019,7 +1090,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
 {
   SetErrorCode(KO);
 
-  if (theObject.IsNull() || thePoint.IsNull()) return NULL;
+  if (theObject.IsNull()) return NULL;
 
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
@@ -1035,10 +1106,16 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ScaleDriver::GetID()) return NULL;
 
+  // Set arguments
   GEOMImpl_IScale aTI (aFunction);
   aTI.SetShape(anOriginal);
-  aTI.SetPoint(thePoint->GetLastFunction());
   aTI.SetFactor(theFactor);
+
+  // Set point argument
+  if (!thePoint.IsNull()) {
+    Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
+    aTI.SetPoint(aPF);
+  }
 
   //Compute the scale
   try {
@@ -1062,6 +1139,85 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeCopy
 
   SetErrorCode(OK);
   return aCopy;
+}
+
+//=============================================================================
+/*!
+ *  ScaleShapeAlongAxes
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::ScaleShapeAlongAxes (Handle(GEOM_Object) theObject,
+                                                                        Handle(GEOM_Object) thePoint,
+                                                                        double theFactorX,
+                                                                        double theFactorY,
+                                                                        double theFactorZ,
+                                                                        bool   doCopy)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull()) return NULL;
+
+  Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
+  if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be scaled
+
+  //Add a scale function
+  Handle(GEOM_Object) aCopy;   //Add a new Copy object
+  Handle(GEOM_Function) aFunction;
+  if (doCopy) {
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_ScaleDriver::GetID(), SCALE_SHAPE_AXES_COPY);
+  }
+  else {
+    aFunction = theObject->AddFunction(GEOMImpl_ScaleDriver::GetID(), SCALE_SHAPE_AXES);
+  }
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ScaleDriver::GetID()) return NULL;
+
+  // Set arguments
+  GEOMImpl_IScale aTI (aFunction);
+  aTI.SetShape(anOriginal);
+  aTI.SetFactorX(theFactorX);
+  aTI.SetFactorY(theFactorY);
+  aTI.SetFactorZ(theFactorZ);
+
+  // Set point (optional argument)
+  if (!thePoint.IsNull()) {
+    Handle(GEOM_Function) aPF = thePoint->GetLastFunction();
+    aTI.SetPoint(aPF);
+  }
+
+  //Compute the scale
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Scale driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  SetErrorCode(OK);
+
+  //Make a Python command
+  if (doCopy) {
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeScaleAlongAxes("
+                                 << theObject << ", " << thePoint << ", "
+                                 << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
+    return aCopy;
+  }
+
+  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.ScaleShapeAlongAxes("
+                               << theObject << ", " << thePoint << ", "
+                               << theFactorX << ", " << theFactorY << ", " << theFactorZ << ")";
+  return theObject;
 }
 
 //=============================================================================
@@ -1182,6 +1338,75 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 
 //=============================================================================
 /*!
+ *  PositionAlongPath
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
+       (Handle(GEOM_Object) theObject, Handle(GEOM_Object) thePath, 
+	double theDistance, bool theCopy, bool theReverse)
+{
+  SetErrorCode(KO);
+
+  if (theObject.IsNull() || thePath.IsNull()) return NULL;
+
+  Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
+  if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
+
+  //Add a position function
+  Handle(GEOM_Function) aFunction;
+  Handle(GEOM_Object) aCopy;
+
+  if (theCopy) {
+    aCopy = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+    aFunction = aCopy->AddFunction(GEOMImpl_PositionDriver::GetID(), POSITION_ALONG_PATH);
+  }
+  else
+    aFunction = theObject->AddFunction(GEOMImpl_PositionDriver::GetID(), POSITION_ALONG_PATH);
+
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PositionDriver::GetID()) return NULL;
+
+  GEOMImpl_IPosition aTI (aFunction);
+  aTI.SetShape(anOriginal);
+  aTI.SetPath(thePath->GetLastFunction());
+  aTI.SetDistance(theDistance);
+  aTI.SetReverse(theReverse);
+
+  //Compute the position
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Position driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  if (theCopy) {
+    GEOM::TPythonDump(aFunction) << aCopy << " = geompy.PositionAlongPath("
+				 << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
+    SetErrorCode(OK);
+    return aCopy;
+  }
+
+  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.PositionAlongPath("
+    << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
+
+  SetErrorCode(OK);
+  return theObject;
+}
+
+//=============================================================================
+/*!
  *  Rotate
  */
 //=============================================================================
@@ -1229,7 +1454,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.Rotate(" << theObject
+  GEOM::TPythonDump(aFunction) << "geompy.Rotate(" << theObject
     << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);

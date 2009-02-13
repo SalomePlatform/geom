@@ -1,0 +1,31 @@
+/*!
+
+\page create_3dsketcher_page 3D Sketcher
+
+3D Sketcher allows creating a closed or unclosed 3D wire from a list of points.
+
+To create a 3D Sketch, select in the main menu <em>New Entity -> 3D Sketch</em>.
+
+\image html 3dsketch2.png
+
+The position of each coordinates can be defined by absolute coordinates X, Y, Z or
+by relative coordinates DX, DY, DZ with respect to the previous Applied point.
+Type of coordinates can be selected by the <b>Coordinates Type</b> radio buttons.
+\n <b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
+\n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it. 
+To make a closed wire using the TUI command, the first and the last point shoul 
+have the same coordinates.
+
+The Result of the operation will be a \b GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
+This algorithm creates a wire, from the list of real values which define XYZ 
+coordinates of points.
+
+<b>Example:</b>
+
+\image html 3dsketch1.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_3dsketcher_page "3D Sketcher".
+*/

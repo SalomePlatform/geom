@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -10,7 +10,7 @@
 //
 //  This library is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //  Lesser General Public License for more details.
 //
 //  You should have received a copy of the GNU Lesser General Public
@@ -19,30 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BasicGUI.cxx
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : BasicGUI.cxx
-//  Author : Damien COQUERET
-//  Module : GEOM
-//  $Header$
-
 #include "BasicGUI.h"
-#include "GeometryGUI.h"
-
-#include "SUIT_Session.h"
-#include "SUIT_Desktop.h"
-#include "SUIT_ViewWindow.h"
-#include "OCCViewer_ViewWindow.h"
-#include "OCCViewer_ViewModel.h"
-#include "OCCViewer_ViewManager.h"
-#include "OCCViewer_ViewPort3d.h"
-#include "utilities.h"
-
-#include <Precision.hxx>
-#include <BRep_Tool.hxx>
-#include <ProjLib.hxx>
-#include <ElSLib.hxx>
-#include <TopoDS.hxx>
 
 #include "BasicGUI_PointDlg.h"        // Method POINT
 #include "BasicGUI_LineDlg.h"         // Method LINE
@@ -55,14 +36,29 @@
 #include "BasicGUI_WorkingPlaneDlg.h" // Method WORKING PLANE
 #include "BasicGUI_MarkerDlg.h"       // Method REPAIR
 
-using namespace std;
+#include <GeometryGUI.h>
+
+#include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ViewWindow.h>
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewModel.h>
+#include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewPort3d.h>
+
+#include <BRep_Tool.hxx>
+#include <ProjLib.hxx>
+#include <ElSLib.hxx>
+#include <TopoDS.hxx>
+
+#include <QMouseEvent>
 
 //=======================================================================
 // function : BasicGUI()
 // purpose  : Constructor
 //=======================================================================
-BasicGUI::BasicGUI( GeometryGUI* parent ) :
-  GEOMGUI(parent)
+BasicGUI::BasicGUI( GeometryGUI* parent )
+  : GEOMGUI( parent )
 {
 }
 
@@ -79,51 +75,50 @@ BasicGUI::~BasicGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool BasicGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
+bool BasicGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
   QDialog* aDlg = NULL;
 
-  switch ( theCommandID )
-    {
-    case 4011: // POINT
-      aDlg = new BasicGUI_PointDlg( getGeometryGUI(), parent, "" ); 
-      break;
-    case 4012:  // LINE
-      aDlg = new BasicGUI_LineDlg( getGeometryGUI(), parent, "" );
-      break;
-    case 4013:  // CIRCLE
-      aDlg = new BasicGUI_CircleDlg( getGeometryGUI(), parent, "");
-      break;
-    case 4014:  // ELLIPSE
-      aDlg = new BasicGUI_EllipseDlg( getGeometryGUI(), parent, "" );
-      break;
-    case 4015:  // ARC
-      aDlg = new BasicGUI_ArcDlg( getGeometryGUI(), parent, "" );
-      break ;
-    case 4016: // VECTOR
-      aDlg = new BasicGUI_VectorDlg( getGeometryGUI(), parent, "" );
-      break;
-    case 4017: // PLANE
-      aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent, "");
-      break;
-    case 4018: // WORKING PLANE
-      aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent, "" );
-      break;
-    case 4019: // CURVE
-      aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent, "" );
-      break;
-    case 4020: // REPAIR
-      aDlg = new BasicGUI_MarkerDlg( getGeometryGUI(), parent );
-      break;      
-    default:
-      SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-      break;
-    }
-
+  switch ( theCommandID ) {
+  case 4011: // POINT
+    aDlg = new BasicGUI_PointDlg( getGeometryGUI(), parent ); 
+    break;
+  case 4012:  // LINE
+    aDlg = new BasicGUI_LineDlg( getGeometryGUI(), parent );
+    break;
+  case 4013:  // CIRCLE
+    aDlg = new BasicGUI_CircleDlg( getGeometryGUI(), parent );
+    break;
+  case 4014:  // ELLIPSE
+    aDlg = new BasicGUI_EllipseDlg( getGeometryGUI(), parent );
+    break;
+  case 4015:  // ARC
+    aDlg = new BasicGUI_ArcDlg( getGeometryGUI(), parent );
+    break ;
+  case 4016: // VECTOR
+    aDlg = new BasicGUI_VectorDlg( getGeometryGUI(), parent );
+    break;
+  case 4017: // PLANE
+    aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent );
+    break;
+  case 4018: // WORKING PLANE
+    aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent );
+    break;
+  case 4019: // CURVE
+    aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent );
+    break;
+  case 4020: // REPAIR
+    aDlg = new BasicGUI_MarkerDlg( getGeometryGUI(), parent );
+    break;      
+  default:
+    SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
+    break;
+  }
+  
   if ( aDlg != NULL )
     aDlg->show();
-
+  
   return true;
 }
 
@@ -137,34 +132,30 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
-  if ( aDlg && aDlg->isA( "BasicGUI_PointDlg" ) &&
+  if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "BasicGUI_PointDlg" ) == 0 ) &&
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
-       pe->state() != Qt::ControlButton )
-  {
+       pe->modifiers() != Qt::ControlModifier ) {
     BasicGUI_PointDlg* aPntDlg = (BasicGUI_PointDlg*) aDlg;
-    if ( aPntDlg->acceptMouseEvent() )
-    {
+    if ( aPntDlg->acceptMouseEvent() ) {
       OCCViewer_Viewer* anOCCViewer =
-        ((OCCViewer_ViewManager*)(theViewWindow->getViewManager()))->getOCCViewer();
+        ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
       Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
 
       gp_Pnt aPnt;    
 
       ic->InitSelected();
-      if ( pe->state() == Qt::ShiftButton )
+      if ( pe->modifiers() == Qt::ShiftModifier )
         ic->ShiftSelect();  // Append selection
       else
         ic->Select();       // New selection
 
       ic->InitSelected();
-      if ( ic->MoreSelected() )
-      {
+      if ( ic->MoreSelected() ) {
         TopoDS_Shape aShape = ic->SelectedShape();
         if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
           aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
       }
-      else
-      {
+      else {
         OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
         aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
       }
@@ -180,25 +171,25 @@ bool BasicGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
 // function : ConvertClickToPoint()
 // purpose  : Returns the point clicked in 3D view
 //=======================================================================
-gp_Pnt BasicGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView)
+gp_Pnt BasicGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
 {
   V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
-  aView->Eye(XEye, YEye, ZEye);
+  aView->Eye( XEye, YEye, ZEye );
 
-  aView->At(XAt, YAt, ZAt);
-  gp_Pnt EyePoint(XEye, YEye, ZEye);
-  gp_Pnt AtPoint(XAt, YAt, ZAt);
+  aView->At( XAt, YAt, ZAt );
+  gp_Pnt EyePoint( XEye, YEye, ZEye );
+  gp_Pnt AtPoint( XAt, YAt, ZAt );
 
-  gp_Vec EyeVector(EyePoint, AtPoint);
-  gp_Dir EyeDir(EyeVector);
+  gp_Vec EyeVector( EyePoint, AtPoint );
+  gp_Dir EyeDir( EyeVector );
 
-  gp_Pln PlaneOfTheView = gp_Pln(AtPoint,EyeDir);
+  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
   Standard_Real X, Y, Z;
-  aView->Convert(x, y, X, Y, Z);
-  gp_Pnt ConvertedPoint(X, Y, Z);
+  aView->Convert( x, y, X, Y, Z );
+  gp_Pnt ConvertedPoint( X, Y, Z );
 
-  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project(PlaneOfTheView, ConvertedPoint);
-  gp_Pnt ResultPoint = ElSLib::Value(ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView);
+  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
+  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
   return ResultPoint;
 }
 
@@ -207,7 +198,9 @@ gp_Pnt BasicGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView)
 //=====================================================================================
 extern "C"
 {
-GEOM_BASICGUI_EXPORT
+#ifdef WIN32
+  __declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new BasicGUI( parent );

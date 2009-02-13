@@ -24,7 +24,7 @@ of coordinates by its Major and Minor \b Radiuses.
 
 <b>Example:</b>
 
-\image html toruses.png
+\image html toruses.png "Toruses"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_torus "Primitives".

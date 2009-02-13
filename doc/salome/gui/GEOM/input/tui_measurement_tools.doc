@@ -23,7 +23,7 @@ if IsEqual(coords[0], 15.) and IsEqual(coords[1], 23.) and IsEqual(coords[2], 80
 else :
     print "Coordinates of point must be (15, 23, 80), but returned (",
     print coords[0], ", ", coords[1], ", ", coords[2], ")"
-    pass 
+    pass
 \endcode
 
 <br><h2>Basic Properties</h2>
@@ -68,7 +68,7 @@ else:
     dy = math.sqrt((coords[1] - 15)*(coords[1] - 15))
     dz = math.sqrt((coords[2] - 50)*(coords[2] - 50))
     if dx > 1e-7 or dy > 1e-7 or dz > 1e-7:
-        print "But must be (50, 15, 50)" 
+        print "But must be (50, 15, 50)"
 \endcode
 
 <br><h2>Inertia</h2>
@@ -85,7 +85,7 @@ print " (", In[0], ", ", In[1], ", ", In[2], ")"
 print " (", In[3], ", ", In[4], ", ", In[5], ")"
 print " (", In[6], ", ", In[7], ", ", In[8], ")"
 print "Main moments of inertia of box 100x30x100:"
-print " Ix = ", In[9], ", Iy = ", In[10], ", Iz = ", In[11] 
+print " Ix = ", In[9], ", Iy = ", In[10], ", Iz = ", In[11]
 \endcode
 
 <br><h2>Check Free Boundaries</h2>
@@ -217,7 +217,7 @@ id_cut_without_f_2 = geompy.addToStudy(cut_without_f_2, "Cut without f_2")
 
 # display the results
 gg.createAndDisplayGO(id_cut_without_f_2)
-gg.setDisplayMode(id_cut_without_f_2,1) 
+gg.setDisplayMode(id_cut_without_f_2,1)
 \endcode
 
 
@@ -233,7 +233,7 @@ bb = geompy.BoundingBox(box)
 print "\nBounding Box of box 100x30x100:"
 print " Xmin = ", bb[0], ", Xmax = ", bb[1]
 print " Ymin = ", bb[2], ", Ymax = ", bb[3]
-print " Zmin = ", bb[4], ", Zmax = ", bb[5] 
+print " Zmin = ", bb[4], ", Zmax = ", bb[5]
 \endcode
 
 <br><h2>Minimal Distance</h2>
@@ -245,9 +245,9 @@ import geompy
 box1 = geompy.MakeBoxDXDYDZ(100,30,100)
 box2 = geompy.MakeBox(105,0,0,200,30,100)
 min_dist = geompy.MinDistance(box1,box2)
-print "\nMinimal distance between box1 and box2 = ", min_dist 
+print "\nMinimal distance between box1 and box2 = ", min_dist
 \endcode
- 
+
 <br><h2>Tolerance</h2>
 
 \code
@@ -262,7 +262,7 @@ print " Face max. tolerance: ", Toler[1]
 print " Edge min. tolerance: ", Toler[2]
 print " Edge max. tolerance: ", Toler[3]
 print " Vertex min. tolerance: ", Toler[4]
-print " Vertex max. tolerance: ", Toler[5] 
+print " Vertex max. tolerance: ", Toler[5]
 \endcode
 
 <br><h2>Angle</h2>
@@ -284,6 +284,13 @@ Angle = geompy.GetAngle(OX, OXY)
 print "\nAngle between OX and OXY = ", Angle
 if math.fabs(Angle - 45.0) > 1e-05:
     print "  Error: returned angle is", Angle, "while must be 45.0"
+    pass
+
+Angle = geompy.GetAngleRadians(OX, OXY)
+
+print "\nAngle between OX and OXY in radians = ", Angle
+if math.fabs(Angle - math.pi/4) > 1e-05:
+    print "  Error: returned angle is", Angle, "while must be pi/4"
     pass
 
 # not in one plane
@@ -309,7 +316,6 @@ if (math.fabs(Angle + 1.0) > 1e-6 or geompy.MeasuOp.IsDone()):
 \endcode
 
 
- 
 <br><h2>What Is</h2>
 
 \code
@@ -319,7 +325,7 @@ import geompy
 box = geompy.MakeBoxDXDYDZ(100,30,100)
 Descr = geompy.WhatIs(box)
 print "\nBox 100x30x100 description:"
-print Descr 
+print Descr
 \endcode
 
 <br><h2>Check Shape</h2>
@@ -333,9 +339,9 @@ IsValid = geompy.CheckShape(box)
 if IsValid == 0:
     raise RuntimeError, "Invalid box created"
 else:
-    print "\nBox is valid" 
+    print "\nBox is valid"
 \endcode
- 
+
 <br><h2>Check Compound of Blocks</h2>
 
 \code
@@ -357,7 +363,7 @@ IsValid = geompy.CheckCompoundOfBlocks(glue)
 if IsValid == 0:
     raise RuntimeError, "Invalid compound created"
 else:
-    print "\nCompound is valid" 
+    print "\nCompound is valid"
 \endcode
 
 */

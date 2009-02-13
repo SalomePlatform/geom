@@ -1,6 +1,6 @@
-#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
@@ -17,19 +17,16 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#
-#
+#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : Makefile.in
 #  Author : Nicolas REJNERI, Paul RASCLE
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
 #  $Header$
-
-
 # Libraries targets
-
+#
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # ===============================================================
@@ -49,66 +46,46 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 #                          +              |
 #                          dependant libs |
 #
-# The file libSALOME_Swigcmodule.py will be installed in
-# <prefix>/lib/python<version>/site-package/salome.
-# The library will be installed in the same place.
+# The file libGEOM_Swig.py will be installed to the
+# <prefix>/bin/salome directory.
+# The library _libGEOM_Swig.so will be installed to the 
+# <prefix>/lib/python<version>/site-package/salome directory.
 #
 
-# this option puts it to dist
-#BUILT_SOURCES = swig_wrap.cpp
-
-SWIG_FLAGS    = \
-	@SWIG_FLAGS@ \
-	-I$(srcdir) \
-	-I$(srcdir)/../GEOMGUI
-
+SWIG_FLAGS    = @SWIG_FLAGS@ -I$(srcdir) -I$(srcdir)/../GEOMGUI
 SWIG_SOURCES  = libGEOM_Swig.i
 
-# Libraries targets
-lib_LTLIBRARIES = libGEOM_Swigcmodule.la
-
-nodist_pkgpython_DATA = libGEOM_Swig.py
 libGEOM_Swig.py: swig_wrap.cpp
 
-libGEOM_Swigcmodule_la_SOURCES = \
-	$(BUILT_SOURCES) \
-	$(SWIG_SOURCES)
+# Libraries targets
+lib_LTLIBRARIES                 = _libGEOM_Swig.la
+_libGEOM_Swig_la_SOURCES        = $(SWIG_SOURCES)
+nodist__libGEOM_Swig_la_SOURCES = swig_wrap.cpp
+salomeinclude_HEADERS           = $(SWIG_SOURCES)
 
-nodist_libGEOM_Swigcmodule_la_SOURCES = swig_wrap.cpp
-
-#LIB_CLIENT_IDL = SALOMEDS.idl \
-#                 SALOMEDS_Attributes.idl \
-#		 SALOME_Exception.idl \
-#		 GEOM_Gen.idl \
-#		 SALOME_Component.idl \
-#		 SALOME_GenericObj.idl
-
-libGEOM_Swigcmodule_la_CPPFLAGS = \
-	$(QT_INCLUDES) \
-	$(PYTHON_INCLUDES) \
-	$(CAS_CPPFLAGS) \
-	$(VTK_INCLUDES) \
-	$(OGL_INCLUDES) \
-	$(KERNEL_CXXFLAGS) \
-	$(GUI_CXXFLAGS) \
-	$(CORBA_CXXFLAGS) \
-	$(CORBA_INCLUDES) \
-	-I$(srcdir)/../GEOMGUI \
-	-I$(top_builddir)/idl \
+_libGEOM_Swig_la_CPPFLAGS =		\
+	$(QT_INCLUDES)			\
+	$(PYTHON_INCLUDES)		\
+	$(CAS_CPPFLAGS)			\
+	$(VTK_INCLUDES)			\
+	$(OGL_INCLUDES)			\
+	$(KERNEL_CXXFLAGS)		\
+	$(GUI_CXXFLAGS)			\
+	$(CORBA_CXXFLAGS)		\
+	$(CORBA_INCLUDES)		\
+	-I$(srcdir)/../GEOMGUI		\
+	-I$(top_builddir)/idl		\
 	-I$(top_builddir)/salome_adm/unix
 
-libGEOM_Swigcmodule_la_LDFLAGS = \
-	../GEOMGUI/libGEOM.la
-
-
-libGEOM_Swigcmodule_la_LIBADD  = \
+_libGEOM_Swig_la_LDFLAGS = -module
+_libGEOM_Swig_la_LIBADD  =		\
+	../GEOMGUI/libGEOM.la		\
 	$(PYTHON_LIBS)
 
 swig_wrap.cpp : $(SWIG_SOURCES)
 	$(SWIG) $(SWIG_FLAGS) -o $@ $<
 
-CLEANFILES = \
-	swig_wrap.cpp
+CLEANFILES = swig_wrap.cpp libGEOM_Swig.py
 
 #
 # ===============================================================
@@ -116,12 +93,8 @@ CLEANFILES = \
 # ===============================================================
 #
 
-# Scripts to be installed.
-dist_salomescript_DATA= \
-	libGEOM_Swig.py
+# Scripts to be installed (distributed)
+dist_salomescript_DATA =
 
-install-exec-hook:\
-	$(libdir)/_libGEOM_Swig.so
-
-$(libdir)/_libGEOM_Swig.so:
-	( cd $(libdir); ln -sf libGEOM_Swigcmodule.so _libGEOM_Swig.so; )
+# Scripts to be installed (non-distributed)
+nodist_salomescript_DATA = libGEOM_Swig.py

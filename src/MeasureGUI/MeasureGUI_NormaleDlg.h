@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -19,56 +19,53 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : MeasureGUI_NormaleDlg.h
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI_NormaleDlg.h
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
+#ifndef MEASUREGUI_NORMALEDLG_H
+#define MEASUREGUI_NORMALEDLG_H
 
-#ifndef DIALOGBOX_NORMALE_H
-#define DIALOGBOX_NORMALE_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOM_MeasureGUI.hxx"
-
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel_QTD.h"
+class DlgRef_2Sel;
 
 //=================================================================================
 // class    : MeasureGUI_NormaleDlg
 // purpose  :
 //=================================================================================
-class GEOM_MEASUREGUI_EXPORT MeasureGUI_NormaleDlg : public GEOMBase_Skeleton
+class MeasureGUI_NormaleDlg : public GEOMBase_Skeleton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    MeasureGUI_NormaleDlg (GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~MeasureGUI_NormaleDlg();
+  MeasureGUI_NormaleDlg( GeometryGUI*, QWidget* );
+  ~MeasureGUI_NormaleDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid (QString& msg);
-    virtual bool execute (ObjectList& objects);
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
 
 private:
-    void Init();
-    void enterEvent (QEvent* e);
+  void                               Init();
+  void                               enterEvent( QEvent* );
 
-    GEOM::GEOM_Object_var myFace;
-    GEOM::GEOM_Object_var myPoint;
+private:
+  GEOM::GEOM_Object_var              myFace;
+  GEOM::GEOM_Object_var              myPoint;
 
-    DlgRef_2Sel_QTD* GroupArgs;
+  DlgRef_2Sel*                       GroupArgs;
 
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
 
-    void ActivateThisDialog();
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
+  void                               ActivateThisDialog();
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 };
 
-#endif // DIALOGBOX_NORMALE_H
+#endif // MEASUREGUI_NORMALEDLG_H

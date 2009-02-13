@@ -1,27 +1,27 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
-
-using namespace std;
 
 #include <Standard_Stream.hxx>
 
@@ -1925,7 +1925,7 @@ Standard_Boolean HasAnyConnection (const Standard_Integer         theBlockIndex,
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
                                                 (Handle(GEOM_Object) theCompound,
-                                                 list<BCError>&      theErrors)
+                                                 std::list<BCError>&      theErrors)
 {
   SetErrorCode(KO);
 
@@ -2077,11 +2077,11 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocksOld
 //=============================================================================
 TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
                                                 (Handle(GEOM_Object)  theCompound,
-                                                 const list<BCError>& theErrors)
+                                                 const std::list<BCError>& theErrors)
 {
   TCollection_AsciiString aDescr;
 
-  list<BCError>::const_iterator errIt = theErrors.begin();
+  std::list<BCError>::const_iterator errIt = theErrors.begin();
   int i = 0;
   for (; errIt != theErrors.end(); i++, errIt++) {
     BCError errStruct = *errIt;
@@ -2106,8 +2106,8 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
       break;
     }
 
-    list<int> sshList = errStruct.incriminated;
-    list<int>::iterator sshIt = sshList.begin();
+    std::list<int> sshList = errStruct.incriminated;
+    std::list<int>::iterator sshIt = sshList.begin();
     int jj = 0;
     for (; sshIt != sshList.end(); jj++, sshIt++) {
       if (jj > 0)
@@ -2126,7 +2126,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
-                                               list<BCError>&      theErrors)
+                                               std::list<BCError>&      theErrors)
 {
   SetErrorCode(KO);
 

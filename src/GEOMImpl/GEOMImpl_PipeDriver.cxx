@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PipeDriver.hxx>
@@ -25,6 +26,7 @@
 #include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IPipeDiffSect.hxx>
 #include <GEOMImpl_IPipeShellSect.hxx>
+#include <GEOMImpl_IPipeBiNormal.hxx>
 #include <GEOMImpl_IPipe.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
@@ -146,7 +148,7 @@ static bool FillForOtherEdges(const TopoDS_Shape& F1,
   ShapeAnalysis_Edge sae;
   while(1) {
     if(!aMapVertEdge1.Contains(VS1))
-      cout<<"    FillForOtherEdges: map aMapVertEdge1 not contains key VS1"<<endl;
+      MESSAGE ("    FillForOtherEdges: map aMapVertEdge1 not contains key VS1");
     const TopTools_ListOfShape& aList1 = aMapVertEdge1.FindFromKey(VS1);
     //TopoDS_Shape E1next;
     TopTools_ListIteratorOfListOfShape anIter1(aList1);
@@ -155,7 +157,7 @@ static bool FillForOtherEdges(const TopoDS_Shape& F1,
     }
     //E1next = anIter1.Value();
     if(!aMapVertEdge2.Contains(VS2))
-      cout<<"    FillForOtherEdges: map aMapVertEdge2 not contains key VS2"<<endl;
+      MESSAGE ("    FillForOtherEdges: map aMapVertEdge2 not contains key VS2");
     const TopTools_ListOfShape& aList2 = aMapVertEdge2.FindFromKey(VS2);
     //TopoDS_Shape E2next;
     TopTools_ListIteratorOfListOfShape anIter2(aList2);
@@ -444,7 +446,7 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
       Standard_ConstructionError::Raise("FindNextPairOfFaces: Can not find edge in map");
     }
     if(!FF.Contains(E1))
-      cout<<"    FindNextPairOfFaces: map FF not contains key E1"<<endl;
+      MESSAGE ("    FindNextPairOfFaces: map FF not contains key E1");
     const TopoDS_Shape& E2 = FF.FindFromKey(E1);
     TopExp_Explorer anExpV;
     anExpV.Init( E1, TopAbs_VERTEX );
@@ -455,7 +457,7 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
     }
 
     if(!aMapEdgeFaces1.Contains(E1))
-      cout<<"    FindNextPairOfFaces: map aMapEdgeFaces1 not contains key E1"<<endl;
+      MESSAGE ("    FindNextPairOfFaces: map aMapEdgeFaces1 not contains key E1");
     const TopTools_ListOfShape& aList1 = aMapEdgeFaces1.FindFromKey(E1);
     if(aList1.Extent()<2)
       continue;
@@ -468,10 +470,10 @@ static void FindNextPairOfFaces(const TopoDS_Shape& aCurFace,
       continue;
 
     if(!FF.Contains(aCurFace))
-      cout<<"    FindNextPairOfFaces: map FF not contains key aCurFace"<<endl;
+      MESSAGE ("    FindNextPairOfFaces: map FF not contains key aCurFace");
     const TopoDS_Shape& F2 = FF.FindFromKey(aCurFace);
     if(!aMapEdgeFaces2.Contains(E2))
-      cout<<"    FindNextPairOfFaces: map aMapEdgeFaces2 not contains key E2"<<endl;
+      MESSAGE ("    FindNextPairOfFaces: map aMapEdgeFaces2 not contains key E2");
     const TopTools_ListOfShape& aList2 = aMapEdgeFaces2.FindFromKey(E2);
     if(aList2.Extent()<2) {
       if(aCI) delete aCI;
@@ -543,17 +545,17 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
   if(!V1.IsSame(V1new)) {
     V1 = V1new;
     P1 = BRep_Tool::Pnt(V1);
-    cout<<"  replace V1"<<endl;
+    MESSAGE ("  replace V1");
   }
   else
-    cout<<"  not replace V1"<<endl;
+    MESSAGE ("  not replace V1");
   if(!V2.IsSame(V2new)) {
     V2 = V2new;
     P2 = BRep_Tool::Pnt(V2);
-    cout<<"  replace V2"<<endl;
+    MESSAGE ("  replace V2");
   }
   else
-    cout<<"  not replace V2"<<endl;
+    MESSAGE ("  not replace V2");
 
   TopTools_IndexedDataMapOfShapeListOfShape aMapVertFaces1;
   TopExp::MapShapesAndAncestors(S1, TopAbs_VERTEX, TopAbs_FACE, aMapVertFaces1);
@@ -561,7 +563,7 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
   TopExp::MapShapesAndAncestors(S2, TopAbs_VERTEX, TopAbs_FACE, aMapVertFaces2);
 
   if(!aMapVertFaces1.Contains(V1))
-    cout<<"    FindFirstPairFaces: map aMapVertFaces1 not contains key V1"<<endl;
+    MESSAGE ("    FindFirstPairFaces: map aMapVertFaces1 not contains key V1");
   const TopTools_ListOfShape& aList1 = aMapVertFaces1.FindFromKey(V1);
   TopTools_ListIteratorOfListOfShape anIter1(aList1);
   FS1 = anIter1.Value();
@@ -581,7 +583,7 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
   TColgp_SequenceOfPnt Ps;
   TopTools_SequenceOfShape Fs;
   if(!aMapVertFaces2.Contains(V2))
-    cout<<"    FindFirstPairFaces: map aMapVertFaces2 not contains key V2"<<endl;
+    MESSAGE ("    FindFirstPairFaces: map aMapVertFaces2 not contains key V2");
   const TopTools_ListOfShape& aList2 = aMapVertFaces2.FindFromKey(V2);
   TopTools_ListIteratorOfListOfShape anIter2(aList2);
   for(; anIter2.More(); anIter2.Next()) {
@@ -1437,7 +1439,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
   B.MakeCompound(aComp);
 
   for(i=1 ; i<nbBases; i++) {
-    cout<<"Make pipe between sections "<<i<<" and "<<i+1<<endl;
+    MESSAGE ("Make pipe between sections "<<i<<" and "<<i+1);
     TopoDS_Shape aShBase1 = Bases.Value(i);
     TopoDS_Shape aShBase2 = Bases.Value(i+1);
     TopExp_Explorer anExp;
@@ -1478,7 +1480,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     FindFirstPairFaces(aShBase1, aShBase2, V1, V2, FS1, FS2);
 
     FF.Add(FS1,FS2);
-    cout<<"  first pair of corresponding faces is found"<<endl;
+    MESSAGE ("  first pair of corresponding faces is found");
 
     // add pairs of edges and vertexes to FF
     bool stat =  FillCorrespondingEdges(FS1, FS2, V1, V2, FF);
@@ -1486,10 +1488,10 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       if(aCI) delete aCI;
       Standard_ConstructionError::Raise("Can not create correct pipe");
     }
-    cout<<"  correspondences for subshapes of first pair of faces is found"<<endl;
+    MESSAGE ("  correspondences for subshapes of first pair of faces is found");
 
     FindNextPairOfFaces(FS1, aMapEdgeFaces1, aMapEdgeFaces2, FF, aCI);
-    cout<<"  other correspondences is found, make pipe for all pairs of faces"<<endl;
+    MESSAGE ("  other correspondences is found, make pipe for all pairs of faces");
 
     // make pipe for each pair of faces
     // auxilary map vertex->edge for created pipe edges
@@ -1506,7 +1508,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
       //if(nbff!=3) continue;
 
-      cout<<"    make pipe for "<<nbff<<" face"<<endl;
+      MESSAGE ("    make pipe for "<<nbff<<" face");
 
       Handle(Geom_Surface) S1 = BRep_Tool::Surface(TopoDS::Face(F1));
       if(S1->IsKind(STANDARD_TYPE(Geom_RectangularTrimmedSurface))) {
@@ -1550,12 +1552,12 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	TopoDS_Edge E1 = TopoDS::Edge(anExpE.Current());
 	//nbee++;
 	if(!FF.Contains(E1))
-	  cout<<"map FF not contains key E1"<<endl;
+	  MESSAGE ("map FF not contains key E1");
 
 	if(VPE.Contains(E1)) {
 	  aNewFs.Append(VPE.FindFromKey(E1));
 #ifdef _DEBUG_
-	  cout<<"    using existed face"<<endl;
+	  MESSAGE ("    using existed face");
 #endif
 	  continue;
 	}
@@ -1564,9 +1566,9 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	TopoDS_Vertex V1 = sae.FirstVertex(E1);
 	TopoDS_Vertex V2 = sae.LastVertex(E1);
 	if(!FF.Contains(V1))
-	  cout<<"map FF not contains key V1"<<endl;
+	  MESSAGE ("map FF not contains key V1");
 	if(!FF.Contains(V2))
-	  cout<<"map FF not contains key V2"<<endl;
+	  MESSAGE ("map FF not contains key V2");
 	TopoDS_Vertex V3 = TopoDS::Vertex(FF.FindFromKey(V2));
 	TopoDS_Vertex V4 = TopoDS::Vertex(FF.FindFromKey(V1));
 	TopoDS_Vertex Vtmp = sae.FirstVertex(E3);
@@ -1683,7 +1685,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	  BS = GF.Surface();
 	}
 	catch(...) {
-	  cout<<"      can not create BSplineSurface - create Bezier"<<endl;
+	  MESSAGE ("      can not create BSplineSurface - create Bezier");
 	  int NbP=26;
 	  TColgp_Array2OfPnt Points(1,NbP,1,NbP);
 	  double fp1,lp1,fp2,lp2;
@@ -1794,7 +1796,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	aSewing->Add(anExp.Current());
       }
       aSewing->Perform();
-      cout<<"    shell for face "<<nbff<<" is created"<<endl;
+      MESSAGE ("    shell for face "<<nbff<<" is created");
       const TopoDS_Shape aSewShape = aSewing->SewedShape();
       //BRepTools::Write(aSewShape,"/dn02/users_Linux/skl/work/Bugs/14857/sew.brep");
       if( aSewShape.ShapeType() == TopAbs_SHELL ) {
@@ -1810,16 +1812,16 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 	  B.MakeSolid(aSolid);
 	  B.Add(aSolid,aShell);
 	  B.Add(aComp,aSolid);
-	  cout<<"    solid for face "<<nbff<<" is created"<<endl;
+	  MESSAGE ("    solid for face "<<nbff<<" is created");
 	}
 	else {
 	  B.Add(aComp,aShell);
-	  cout<<"    solid for face "<<nbff<<" is not created"<<endl;
+	  MESSAGE ("    solid for face "<<nbff<<" is not created");
 	}
       }
       else {
 	B.Add(aComp,aShell);
-	cout<<"    solid for face "<<nbff<<" is not created"<<endl;
+	MESSAGE ("    solid for face "<<nbff<<" is not created");
       }
       //cout<<"    solid for face "<<nbff<<" is created"<<endl;
 
@@ -1852,6 +1854,72 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
 
 
 //=======================================================================
+//function : CreatePipeBiNormalAlongVector
+//purpose  : auxilary for Execute()
+//=======================================================================
+static TopoDS_Shape CreatePipeBiNormalAlongVector(const TopoDS_Wire& aWirePath,
+						  GEOMImpl_IPipe* aCI)
+{
+  GEOMImpl_IPipeBiNormal* aCIBN = (GEOMImpl_IPipeBiNormal*)aCI;
+
+  Handle(GEOM_Function) aRefBase = aCIBN->GetBase();
+  Handle(GEOM_Function) aRefVec = aCIBN->GetVector();
+  TopoDS_Shape aShapeBase = aRefBase->GetValue();
+  TopoDS_Shape aShapeVec = aRefVec->GetValue();
+
+  if (aShapeBase.IsNull()) {
+    if(aCIBN) delete aCIBN;
+    Standard_NullObject::Raise("MakePipe aborted : null base argument");
+  }
+
+  TopoDS_Shape aProf;
+  if( aShapeBase.ShapeType() == TopAbs_VERTEX ) {
+    aProf = aShapeBase;
+  }
+  else if( aShapeBase.ShapeType() == TopAbs_EDGE) {
+    aProf = BRepBuilderAPI_MakeWire(TopoDS::Edge(aShapeBase)).Shape();
+  }
+  else if( aShapeBase.ShapeType() == TopAbs_WIRE) {
+    aProf = aShapeBase;
+  }
+  else if( aShapeBase.ShapeType() == TopAbs_FACE) {
+    TopExp_Explorer wexp(aShapeBase,TopAbs_WIRE);
+    aProf = wexp.Current();
+  }
+  else {
+    Standard_TypeMismatch::Raise
+      ("MakePipe aborted : invalid type of base");
+  }
+  BRepOffsetAPI_MakePipeShell PipeBuilder(aWirePath);
+  PipeBuilder.Add(aProf);
+
+  if (aShapeVec.IsNull()) {
+    if(aCIBN) delete aCIBN;
+    Standard_NullObject::Raise
+      ("MakePipe aborted : null vector argument");
+  }
+  if (aShapeVec.ShapeType() != TopAbs_EDGE)
+    Standard_TypeMismatch::Raise
+      ("MakePipe aborted: invalid type of vector");
+  TopoDS_Edge anEdge = TopoDS::Edge(aShapeVec);
+  TopoDS_Vertex V1, V2;
+  TopExp::Vertices(anEdge, V1, V2, Standard_True);
+  if (V1.IsNull() || V2.IsNull())
+    Standard_NullObject::Raise
+      ("MakePipe aborted: vector is not defined");
+  gp_Vec aVec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+  gp_Dir BiNormal(aVec);
+  PipeBuilder.SetMode(BiNormal);
+  PipeBuilder.Build();
+  if( aShapeBase.ShapeType() == TopAbs_FACE) {
+      PipeBuilder.MakeSolid();
+  }
+
+  return PipeBuilder.Shape();
+}
+
+
+//=======================================================================
 //function : Execute
 //purpose  :
 //=======================================================================
@@ -1870,6 +1938,8 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     aCI = new GEOMImpl_IPipeShellSect(aFunction);
   else if(aType == PIPE_SHELLS_WITHOUT_PATH)
     aCI = new GEOMImpl_IPipeShellSect(aFunction);
+  else if(aType == PIPE_BI_NORMAL_ALONG_VECTOR)
+    aCI = new GEOMImpl_IPipeBiNormal(aFunction);
   else
     return 0;
 
@@ -1880,7 +1950,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Shape aShapePath = aRefPath->GetValue();
 
     if (aShapePath.IsNull()) {
-      cout<<"Driver : path is null"<<endl;
+      MESSAGE ("Driver : path is null");
       if(aCI) delete aCI;
       Standard_NullObject::Raise("MakePipe aborted : null path argument");
     }
@@ -2291,6 +2361,11 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   //building pipe shell sections without path
   else if (aType == PIPE_SHELLS_WITHOUT_PATH) {
     aShape = CreatePipeShellsWithoutPath(aCI);
+  }
+
+  //building a pipe with constant bi-normal along given vector
+  else if (aType == PIPE_BI_NORMAL_ALONG_VECTOR) {
+    aShape = CreatePipeBiNormalAlongVector(aWirePath, aCI);
   }
 
   if (aCI) {

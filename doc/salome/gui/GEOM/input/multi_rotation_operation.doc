@@ -24,9 +24,9 @@ the same way, but the Axis is defined  by direction and point.
 
 \image html neo-mrot1.png
 
-\image html multi_rotation1d1.png
+\image html multi_rotation1d1.png "The initial object"
 
-\image html multi_rotation1d2.png
+\image html multi_rotation1d2.png "The result of a simple multi-rotation"
 
 \n <b>Double Multi Rotation</b> (in two dimensions) rotates the given
 \b Object around the given \b Axis on the given \b Angle a given
@@ -46,9 +46,9 @@ but the Axis is defined  by direction and point.
 
 \image html neo-mrot2.png
 
-\image html multi_rotation2d1.png
+\image html multi_rotation2d1.png "The initial object"
 
-\image html multi_rotation2d2.png
+\image html multi_rotation2d2.png "The result of a double multi-rotation"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_multi_rotation "Transformation Operations".

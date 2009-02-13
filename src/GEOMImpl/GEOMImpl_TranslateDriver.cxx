@@ -1,34 +1,39 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-// Lesser General Public License for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_ITranslate.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
-#include <gp_Trsf.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Vec.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
+
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+
+#include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepCheck_Analyzer.hxx>
+#include <BRepBuilderAPI_Transform.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
@@ -37,7 +42,10 @@
 #include <TopExp.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Edge.hxx>
-#include <BRep_Tool.hxx>
+
+#include <gp_Trsf.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Vec.hxx>
 
 //=======================================================================
 //function : GetID
@@ -117,6 +125,26 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
     //           in shape and need a great time to process
     //BRepBuilderAPI_Transform aTransformation(anOriginal, aTrsf, Standard_False);
     //aShape = aTransformation.Shape();
+    TopLoc_Location aLocOrig = anOriginal.Location();
+    gp_Trsf aTrsfOrig = aLocOrig.Transformation();
+    TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
+    aShape = anOriginal.Located(aLocRes);
+  }
+  else if (aType == TRANSLATE_VECTOR_DISTANCE) {
+    Handle(GEOM_Function) aVector = TI.GetVector();
+    double aDistance = TI.GetDistance();
+    if(aVector.IsNull()) return 0;
+    TopoDS_Shape aV = aVector->GetValue();
+    if(aV.IsNull() || aV.ShapeType() != TopAbs_EDGE) return 0;
+    TopoDS_Edge anEdge = TopoDS::Edge(aV);
+
+    aP1 = BRep_Tool::Pnt(TopExp::FirstVertex(anEdge));
+    aP2 = BRep_Tool::Pnt(TopExp::LastVertex(anEdge));
+
+    gp_Vec aVec (aP1, aP2);
+    aVec.Normalize();
+    aTrsf.SetTranslation(aVec * aDistance);
+
     TopLoc_Location aLocOrig = anOriginal.Location();
     gp_Trsf aTrsfOrig = aLocOrig.Transformation();
     TopLoc_Location aLocRes (aTrsf * aTrsfOrig);
@@ -217,8 +245,21 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
   }
   else return 0;
 
-
   if (aShape.IsNull()) return 0;
+
+  BRepCheck_Analyzer ana (aShape, Standard_True);
+  if (!ana.IsValid()) {
+    ShapeFix_ShapeTolerance aSFT;
+    aSFT.LimitTolerance(aShape,Precision::Confusion(),Precision::Confusion());
+    Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+    aSfs->SetPrecision(Precision::Confusion());
+    aSfs->Perform();
+    aShape = aSfs->Shape();
+
+    ana.Init(aShape, Standard_False);
+    if (!ana.IsValid())
+      Standard_ConstructionError::Raise("Scaling aborted : algorithm has produced an invalid shape result");
+  }
 
   aFunction->SetValue(aShape);
 

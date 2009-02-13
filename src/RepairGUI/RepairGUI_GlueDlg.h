@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,21 +17,20 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : RepairGUI_GlueDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : RepairGUI_GlueDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
+#ifndef REPAIRGUI_GLUEDLG_H
+#define REPAIRGUI_GLUEDLG_H
 
-#ifndef DIALOGBOX_Glue_H
-#define DIALOGBOX_Glue_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-
-class QtxDblSpinBox;
-class DlgRef_1Sel_Ext;
+class DlgRef_1SelExt;
+class SalomeApp_DoubleSpinBox;
+class QPushButton;
 class QCheckBox;
 
 //=================================================================================
@@ -40,68 +39,66 @@ class QCheckBox;
 //=================================================================================
 class RepairGUI_GlueDlg : public GEOMBase_Skeleton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-                       const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
-    ~RepairGUI_GlueDlg();
+  RepairGUI_GlueDlg( GeometryGUI*, QWidget* = 0, bool = false );
+  ~RepairGUI_GlueDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
+  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void initSelection();
-    
-    void clearTemporary();
-
-    bool onAcceptLocal();
-    void clearShapeBufferLocal( GEOM::GEOM_Object_ptr );
-    // Reimplementation of onAccept for local case of this class.
-    
-    void activateSelection();
-    void updateButtonState();
-    void selectTmpInViewer();
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  void                               initSelection();
+  
+  void                               clearTemporary();
+  
+  bool                               onAcceptLocal();
+  void                               clearShapeBufferLocal( GEOM::GEOM_Object_ptr );
+  // Reimplementation of onAccept for local case of this class.
+  
+  void                               activateSelection();
+  void                               updateButtonState();
+  void                               selectTmpInViewer();
     
 private:    
-  
-    GEOM::GEOM_Object_var myObject;
-    ObjectList            myTmpObjs;
+  GEOM::GEOM_Object_var              myObject;
+  ObjectList                         myTmpObjs;
     
-    DlgRef_1Sel_Ext* GroupPoints;
-    DlgRef_1Sel_Ext* GroupPoints2;
-    QtxDblSpinBox*   myTolEdt;
-    QtxDblSpinBox*   myTolEdt2;
-    QPushButton*     myDetectBtn;
-    QCheckBox*       mySubShapesChk;
-
-    int myCurrConstrId;
+  DlgRef_1SelExt*                    GroupPoints;
+  DlgRef_1SelExt*                    GroupPoints2;
+  SalomeApp_DoubleSpinBox*           myTolEdt;
+  SalomeApp_DoubleSpinBox*           myTolEdt2;
+  QPushButton*                       myDetectBtn;
+  QCheckBox*                         mySubShapesChk;
+  
+  int                                myCurrConstrId;
     
 protected slots:
-    virtual void ClickOnCancel();
+  virtual void                       ClickOnCancel();
     
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
 
-    void ActivateThisDialog();
+  void                               ActivateThisDialog();
 
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 
-    void ConstructorsClicked(int);
-    //void ValueChangedInSpinBox();
-
-    void onDetect();
-    void onTolerChanged( double );
-    void onSubShapesChk();
+  void                               ConstructorsClicked( int );
+  //void                               ValueChangedInSpinBox();
+  
+  void                               onDetect();
+  void                               onTolerChanged( double );
+  void                               onSubShapesChk();
 };
 
-#endif // DIALOGBOX_Glue_H
+#endif // REPAIRGUI_GLUEDLG_H

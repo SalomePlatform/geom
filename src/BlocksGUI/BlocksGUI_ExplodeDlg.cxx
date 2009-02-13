@@ -1,6 +1,7 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  CEA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -16,98 +17,67 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BlocksGUI_ExplodeDlg.cxx
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
 //
-//
-//  File   : BlocksGUI_ExplodeDlg.cxx
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
-//  $Header$
-
 #include "BlocksGUI_ExplodeDlg.h"
 
-#include "DlgRef_SpinBox.h"
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "GEOM_Displayer.h"
-
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
-#include "OCCViewer_ViewModel.h"
-#include "SALOME_ListIteratorOfListIO.hxx"
-
-#include "utilities.h"
-
-#include <TColStd_IndexedMapOfInteger.hxx>
-
-#include <qmessagebox.h>
-#include <qtextedit.h>
-#include <qcheckbox.h>
-#include <qlabel.h>
+#include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
+#include <SUIT_MessageBox.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <OCCViewer_ViewModel.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 //=================================================================================
 // class    : BlocksGUI_ExplodeDlg()
 // purpose  : Constructs a BlocksGUI_ExplodeDlg which is a child of 'parent'.
 //=================================================================================
-BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg (GeometryGUI* theGeometryGUI, QWidget* parent, bool modal)
-     : GEOMBase_Skeleton(theGeometryGUI, parent, "ExplodeDlg", modal,
-                         WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BlocksGUI_ExplodeDlg::BlocksGUI_ExplodeDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent )
 {
-  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_BLOCK_EXPLODE")));
-  QPixmap imageS (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BLOCK_EXPLODE" ) ) );
+  QPixmap imageS( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_BLOCK_EXPLODE_TITLE"));
+  setWindowTitle( tr( "GEOM_BLOCK_EXPLODE_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_BLOCK_EXPLODE"));
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_BLOCK_EXPLODE" ) );
 
-  RadioButton1->setPixmap(image1);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->RadioButton1->setIcon( image1 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
   // Create first group
-  myGrp1 = new QGroupBox(1, Qt::Horizontal, tr("GEOM_ARGUMENTS"), this);
-
-  QGroupBox* aSelGrp = new QGroupBox(3, Qt::Horizontal, myGrp1);
-  aSelGrp->setFrameStyle(QFrame::NoFrame);
-  aSelGrp->setInsideMargin(0);
-
-  new QLabel(tr("GEOM_MAIN_OBJECT"), aSelGrp);
-  mySelBtn = new QPushButton(aSelGrp);
-  mySelBtn->setPixmap(imageS);
-  mySelName = new QLineEdit(aSelGrp);
-  mySelName->setReadOnly(true);
-
-  QGroupBox* aSpinGrp = new QGroupBox(2, Qt::Horizontal, myGrp1);
-  aSpinGrp->setFrameStyle(QFrame::NoFrame);
-  aSpinGrp->setInsideMargin(0);
-
-  new QLabel(tr("NB_FACES_MIN"), aSpinGrp);
-  mySpinBoxMin = new DlgRef_SpinBox(aSpinGrp);
-
-  new QLabel(tr("NB_FACES_MAX"), aSpinGrp);
-  mySpinBoxMax = new DlgRef_SpinBox(aSpinGrp);
-
-  QGroupBox* anInfoGrp = new QGroupBox(2, Qt::Horizontal, myGrp1);
-  anInfoGrp->setFrameStyle(QFrame::NoFrame);
-  anInfoGrp->setInsideMargin(0);
-
-  myBlocksNb = new QTextEdit(anInfoGrp);
-  myBlocksNb->setReadOnly(true);
-
-  QGroupBox* aCheckGrp = new QGroupBox(3, Qt::Horizontal, myGrp1);
-  aCheckGrp->setFrameStyle(QFrame::NoFrame);
-  aCheckGrp->setInsideMargin(0);
-
-  myCheckBtn = new QCheckBox(aCheckGrp, "CheckButton1");
-  myCheckBtn->setText(tr("GEOM_SUBSHAPE_SELECT"));
+  myGrp1 = new DlgRef_1Sel2Spin1View1Check( centralWidget() );
+  myGrp1->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  myGrp1->TextLabel1->setText( tr( "GEOM_MAIN_OBJECT" ) );
+  myGrp1->PushButton1->setIcon( imageS );
+  myGrp1->LineEdit1->setReadOnly( true );
+  myGrp1->TextLabel2->setText( tr( "NB_FACES_MIN" ) );
+  myGrp1->TextLabel3->setText( tr( "NB_FACES_MAX" ) );
+  myGrp1->CheckBox1->setText( tr( "GEOM_SUBSHAPE_SELECT" ) );
 
   // Add groups to layout
-  Layout1->addWidget(myGrp1, 1, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( myGrp1 );
   /***************************************************************/
 
-  setHelpFileName("explode_on_blocks_operation_page.html");
+  setHelpFileName( "explode_on_blocks_operation_page.html" );
 
   Init();
 }
@@ -128,57 +98,59 @@ BlocksGUI_ExplodeDlg::~BlocksGUI_ExplodeDlg()
 //=================================================================================
 void BlocksGUI_ExplodeDlg::Init()
 {
-  // Set range of spinboxes
-  double SpecificStep = 1.0;
-  mySpinBoxMin->RangeStepAndValidator(0.0, 999.0, SpecificStep, 3);
-  mySpinBoxMax->RangeStepAndValidator(0.0, 999.0, SpecificStep, 3);
+  mainFrame()->GroupBoxName->hide();
 
-  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-      != OCCViewer_Viewer::Type())
-    myCheckBtn->setEnabled(false);
+  // Set range of spinboxes
+  int SpecificStep = 1;
+  initSpinBox( myGrp1->SpinBox1, 0, 999, SpecificStep );
+  initSpinBox( myGrp1->SpinBox2, 0, 999, SpecificStep );
+
+  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+       != OCCViewer_Viewer::Type() )
+    myGrp1->CheckBox1->setEnabled( false );
 
   // signals and slots connections
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(mySelBtn, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( myGrp1->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(mySpinBoxMin, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(mySpinBoxMax, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect( myGrp1->SpinBox1, SIGNAL( valueChanged( int ) ), this, SLOT( ValueChangedInSpinBox( int ) ) );
+  connect( myGrp1->SpinBox2, SIGNAL( valueChanged( int ) ), this, SLOT( ValueChangedInSpinBox( int ) ) );
 
-  connect(myCheckBtn, SIGNAL(stateChanged(int)), this, SLOT(SubShapeToggled()));
+  connect( myGrp1->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( SubShapeToggled() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   myConstructorId = -1;
-  ConstructorsClicked(0);
+  ConstructorsClicked( 0 );
 }
 
 //=================================================================================
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void BlocksGUI_ExplodeDlg::ConstructorsClicked (int constructorId)
+void BlocksGUI_ExplodeDlg::ConstructorsClicked( int constructorId )
 {
-  if (myConstructorId == constructorId)
+  if ( myConstructorId == constructorId )
     return;
 
   myConstructorId = constructorId;
 
-  switch (constructorId) {
+  switch ( constructorId ) {
   case 0:
     myGrp1->show();
-    mySpinBoxMin->SetValue(6.0);
-    mySpinBoxMax->SetValue(6.0);
-    myCheckBtn->setChecked(FALSE);
+    myGrp1->SpinBox1->setValue( 6 );
+    myGrp1->SpinBox2->setValue( 6 );
+    myGrp1->CheckBox1->setChecked( false );
     break;
   default:
     break;
   }
 
   // init fields
-  myEditCurrentArgument = mySelName;
+  myEditCurrentArgument = myGrp1->LineEdit1;
   myObject = GEOM::GEOM_Object::_nil();
 
   activateSelection();
@@ -190,7 +162,7 @@ void BlocksGUI_ExplodeDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void BlocksGUI_ExplodeDlg::ClickOnOk()
 {
-  if (ClickOnApply())
+  if ( ClickOnApply() )
     ClickOnCancel();
 }
 
@@ -200,23 +172,22 @@ void BlocksGUI_ExplodeDlg::ClickOnOk()
 //=================================================================================
 bool BlocksGUI_ExplodeDlg::ClickOnApply()
 {
-  SUIT_Session::session()->activeApplication()->putInfo(tr(""));
+  SUIT_Session::session()->activeApplication()->putInfo( tr( "" ) );
 
   // Explode all sub shapes
-  if (isAllSubShapes()) {
+  if ( isAllSubShapes() ) {
     // More than 30 subshapes : ask confirmation
-    if (myNbBlocks > 30) {
-      const QString caption = tr("GEOM_CONFIRM");
-      const QString text = tr("GEOM_CONFIRM_INFO").arg(myNbBlocks);
-      const QString button0 = tr("GEOM_BUT_EXPLODE");
-      const QString button1 = tr("GEOM_BUT_CANCEL");
-
-      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+    if ( myNbBlocks > 30 ) {
+      if ( SUIT_MessageBox::warning( this, 
+				     tr( "GEOM_CONFIRM" ),
+				     tr( "GEOM_CONFIRM_INFO" ).arg( myNbBlocks ),
+				     tr( "GEOM_BUT_EXPLODE" ),
+				     tr( "GEOM_BUT_CANCEL" ) ) != 0 )
         return false;  /* aborted */
     }
   }
 
-  if (!onAccept())
+  if ( !onAccept() )
     return false;
 
   activateSelection();
@@ -234,16 +205,19 @@ void BlocksGUI_ExplodeDlg::SelectionIntoArgument()
     return;
 
   myObject = GEOM::GEOM_Object::_nil();
-  mySelName->setText("");
+  myGrp1->LineEdit1->setText("");
 
-  if (IObjectCount() == 1) {
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() == 1) {
     Standard_Boolean aResult = Standard_False;
-    GEOM::GEOM_Object_var anObj =
-      GEOMBase::ConvertIOinGEOMObject(firstIObject(), aResult);
+    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
-    if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
+    if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
       myObject = anObj;
-      mySelName->setText(GEOMBase::GetName(anObj));
+      myGrp1->LineEdit1->setText(GEOMBase::GetName(anObj));
     }
   }
 
@@ -258,10 +232,10 @@ void BlocksGUI_ExplodeDlg::SetEditCurrentArgument()
 {
   QPushButton* aSender = (QPushButton*)sender();
 
-  if (mySelBtn == aSender) {
-    mySelName->setFocus();
-    myEditCurrentArgument = mySelName;
-    myCheckBtn->setChecked(FALSE);
+  if ( myGrp1->PushButton1 == aSender ) {
+    myGrp1->LineEdit1->setFocus();
+    myEditCurrentArgument = myGrp1->LineEdit1;
+    myGrp1->CheckBox1->setChecked( false );
   }
 
   activateSelection();
@@ -274,8 +248,8 @@ void BlocksGUI_ExplodeDlg::SetEditCurrentArgument()
 void BlocksGUI_ExplodeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -284,9 +258,9 @@ void BlocksGUI_ExplodeDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BlocksGUI_ExplodeDlg::enterEvent (QEvent* e)
+void BlocksGUI_ExplodeDlg::enterEvent( QEvent* )
 {
-  if (!GroupConstructors->isEnabled())
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     this->ActivateThisDialog();
 }
 
@@ -294,9 +268,9 @@ void BlocksGUI_ExplodeDlg::enterEvent (QEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void BlocksGUI_ExplodeDlg::ValueChangedInSpinBox (double newValue)
+void BlocksGUI_ExplodeDlg::ValueChangedInSpinBox()
 {
-  if (!isAllSubShapes())
+  if ( !isAllSubShapes() )
     activateSelection();
   else
     updateButtonState();
@@ -305,7 +279,7 @@ void BlocksGUI_ExplodeDlg::ValueChangedInSpinBox (double newValue)
 //=================================================================================
 // function : SubShapeToggled()
 // purpose  : Allow user selection of all or only selected sub shapes
-//          : Called when 'myCheckBtn' state change
+//          : Called when 'myGrp1->CheckBox1' state change
 //=================================================================================
 void BlocksGUI_ExplodeDlg::SubShapeToggled()
 {
@@ -319,20 +293,21 @@ void BlocksGUI_ExplodeDlg::SubShapeToggled()
 void BlocksGUI_ExplodeDlg::activateSelection()
 {
   clearTemporary();
-  erasePreview(true);
+  erasePreview( true );
 
-  if (isAllSubShapes()) { // Sub-shapes selection disabled
-    disconnect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	       SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  if ( isAllSubShapes() ) { // Sub-shapes selection disabled
+    disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+		SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
     globalSelection( GEOM_ALLSHAPES );
-    if (myObject->_is_nil()) {
+    if ( myObject->_is_nil() ) {
       SelectionIntoArgument();
     }
-    connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	    SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
-  } else {
-    displayPreview(true, true, false);
-    globalSelection(GEOM_PREVIEW);
+    connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	     SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  } 
+  else {
+    displayPreview( true, true, false );
+    globalSelection( GEOM_PREVIEW );
   }
 }
 
@@ -342,28 +317,30 @@ void BlocksGUI_ExplodeDlg::activateSelection()
 //=================================================================================
 void BlocksGUI_ExplodeDlg::updateButtonState()
 {
-  if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
-      != OCCViewer_Viewer::Type() || myObject->_is_nil()) {
-    myCheckBtn->setChecked(FALSE);
-    myCheckBtn->setEnabled(FALSE);
-  } else {
-    myCheckBtn->setEnabled(TRUE);
+  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+       != OCCViewer_Viewer::Type() || myObject->_is_nil() ) {
+    myGrp1->CheckBox1->setChecked( false );
+    myGrp1->CheckBox1->setEnabled( false );
+  } 
+  else {
+    myGrp1->CheckBox1->setEnabled( true );
   }
 
   myNbBlocks = 0;
 
-  if (myObject->_is_nil()) {
-    myBlocksNb->setText("");
-  } else {
+  if ( myObject->_is_nil() ) {
+    myGrp1->TextBrowser1->setText( "" );
+  } 
+  else {
     bool isOnlyBlocks = GEOM::GEOM_IBlocksOperations::_narrow
-      (getOperation())->IsCompoundOfBlocks(myObject,
-                                           (int)mySpinBoxMin->GetValue(),
-                                           (int)mySpinBoxMax->GetValue(),
-                                           myNbBlocks);
-    if (isOnlyBlocks)
-      myBlocksNb->setText(tr("GEOM_NB_BLOCKS_NO_OTHERS").arg(myNbBlocks));
+      ( getOperation() )->IsCompoundOfBlocks( myObject,
+					      myGrp1->SpinBox1->value(),
+					      myGrp1->SpinBox2->value(),
+					      myNbBlocks );
+    if ( isOnlyBlocks )
+      myGrp1->TextBrowser1->setText( tr( "GEOM_NB_BLOCKS_NO_OTHERS" ).arg( myNbBlocks ) );
     else
-      myBlocksNb->setText(tr("GEOM_NB_BLOCKS_SOME_OTHERS").arg(myNbBlocks));
+      myGrp1->TextBrowser1->setText( tr( "GEOM_NB_BLOCKS_SOME_OTHERS" ).arg( myNbBlocks ) );
   }
 }
 
@@ -373,7 +350,7 @@ void BlocksGUI_ExplodeDlg::updateButtonState()
 //=================================================================================
 bool BlocksGUI_ExplodeDlg::isAllSubShapes() const
 {
-  return !myCheckBtn->isChecked() || !myCheckBtn->isEnabled();
+  return !myGrp1->CheckBox1->isChecked() || !myGrp1->CheckBox1->isEnabled();
 }
 
 //=================================================================================
@@ -382,93 +359,122 @@ bool BlocksGUI_ExplodeDlg::isAllSubShapes() const
 //=================================================================================
 GEOM::GEOM_IOperations_ptr BlocksGUI_ExplodeDlg::createOperation()
 {
-  return getGeomEngine()->GetIBlocksOperations(getStudyId());
+  return getGeomEngine()->GetIBlocksOperations( getStudyId() );
 }
 
 //=================================================================================
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool BlocksGUI_ExplodeDlg::isValid (QString&)
+bool BlocksGUI_ExplodeDlg::isValid (QString& msg)
 {
-  switch (getConstructorId()) {
+  bool okSP = true;
+  okSP = myGrp1->SpinBox1->isValid( msg, !IsPreview() ) && okSP;
+  okSP = myGrp1->SpinBox2->isValid( msg, !IsPreview() ) && okSP;
+
+  bool ok = false;
+  switch ( getConstructorId() ) {
   case 0:
-    if (IsPreview())
-      return !myObject->_is_nil();
-    else
-      return !myObject->_is_nil() && (isAllSubShapes() || IObjectCount());
+    if ( IsPreview() ) {
+      ok = !myObject->_is_nil();
+    }
+    else {
+      LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+      SALOME_ListIO aSelList;
+      aSelMgr->selectedObjects(aSelList);
+
+      ok = !myObject->_is_nil() && (isAllSubShapes() || aSelList.Extent());
+    }
+    break;
   default:
-    return false;
+    break;
   }
 
-  return false;
+  return ok && okSP;
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool BlocksGUI_ExplodeDlg::execute (ObjectList& objects)
+bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
 {
   GEOM::ListOfGO_var aList;
 
-  switch (getConstructorId()) {
-    case 0:
-      aList = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->ExplodeCompoundOfBlocks
-        (myObject,
-         (int)mySpinBoxMin->GetValue(),
-         (int)mySpinBoxMax->GetValue());
-      break;
+  switch ( getConstructorId() ) {
+  case 0:
+    aList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->ExplodeCompoundOfBlocks
+      ( myObject,
+	myGrp1->SpinBox1->value(),
+	myGrp1->SpinBox2->value() );
+    break;
   }
-
-  if (!aList->length())
+  
+  if ( !aList->length() )
     return false;
 
-  if (IsPreview()) {
+  if ( IsPreview() ) {
     clearTemporary();
-
+    
     // Store objects. They will be put in study when "Apply" is pressed
-    for (int i = 0, n = aList->length(); i < n; i++) {
-      objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
-      myTmpObjs.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+    for ( int i = 0, n = aList->length(); i < n; i++ ) {
+      objects.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
+      myTmpObjs.push_back( GEOM::GEOM_Object::_duplicate( aList[i] ) );
     }
 
-    return objects.size() ? true : false;
+    return objects.size() > 0;
   }
+
+  QStringList aParameters;
+  aParameters << myGrp1->SpinBox1->text();
+  aParameters << myGrp1->SpinBox2->text();
 
   // Throw away sub-shapes not selected by user if not in preview mode
   // and manual selection is active
-  if (!isAllSubShapes())
-  {
+  if ( !isAllSubShapes() ) {
     QMap<QString, char> selected;
 
+    LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
     // Get names of selected objects
-    SALOME_ListIteratorOfListIO it (selectedIO());
-    for (; it.More(); it.Next()) {
-      selected.insert(it.Value()->getName(), 0);
+    SALOME_ListIteratorOfListIO it (aSelList);
+    for ( ; it.More(); it.Next() ) {
+      selected.insert( it.Value()->getName(), 0 );
     }
 
     // Iterate through result and select objects with names from selection
-    ObjectList toRemoveFromEnggine;
+    ObjectList toRemoveFromEngine;
     ObjectList::iterator anIter;
-    for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter) {
-      CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string(*anIter);
-      if (selected.contains(QString(objStr.in())))
-        objects.push_back(*anIter);
+    for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter ) {
+      CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string( *anIter );
+      if ( selected.contains( QString( objStr.in() ) ) )
+      {
+	if ( !IsPreview() )
+	  (*anIter)->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        objects.push_back( *anIter );
+      }
       else
-        toRemoveFromEnggine.push_back(*anIter);
+        toRemoveFromEngine.push_back( *anIter );
     }
 
     // Remove from engine useless objects
-    ObjectList::iterator anIter2 = toRemoveFromEnggine.begin();
-    for (; anIter2 != toRemoveFromEnggine.end(); ++anIter2)
-      getGeomEngine()->RemoveObject(*anIter2);
+    ObjectList::iterator anIter2 = toRemoveFromEngine.begin();
+    for ( ; anIter2 != toRemoveFromEngine.end(); ++anIter2 )
+      getGeomEngine()->RemoveObject( *anIter2 );
 
     myTmpObjs.clear();
 
-  } else {
-    for (int i = 0, n = aList->length(); i < n; i++)
-      objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+  }
+  else {
+    for ( int i = 0, n = aList->length(); i < n; i++ )
+    {
+      GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
+      if ( !IsPreview() )
+	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      objects.push_back( anObj._retn() );
+    }
   }
 
   return objects.size();
@@ -481,8 +487,8 @@ bool BlocksGUI_ExplodeDlg::execute (ObjectList& objects)
 void BlocksGUI_ExplodeDlg::clearTemporary()
 {
   ObjectList::iterator anIter;
-  for (anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter)
-    getGeomEngine()->RemoveObject(*anIter);
+  for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter )
+    getGeomEngine()->RemoveObject( *anIter );
 
   myTmpObjs.clear();
 }
@@ -492,7 +498,7 @@ void BlocksGUI_ExplodeDlg::clearTemporary()
 // Purpose  : Get father object for object to be added in study
 //            ( called with addInStudy method )
 //================================================================
-GEOM::GEOM_Object_ptr BlocksGUI_ExplodeDlg::getFather (GEOM::GEOM_Object_ptr)
+GEOM::GEOM_Object_ptr BlocksGUI_ExplodeDlg::getFather( GEOM::GEOM_Object_ptr )
 {
   return myObject;
 }
@@ -501,7 +507,7 @@ GEOM::GEOM_Object_ptr BlocksGUI_ExplodeDlg::getFather (GEOM::GEOM_Object_ptr)
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-const char* BlocksGUI_ExplodeDlg::getNewObjectName() const
+QString BlocksGUI_ExplodeDlg::getNewObjectName() const
 {
-  return "";
+  return QString::null;
 }

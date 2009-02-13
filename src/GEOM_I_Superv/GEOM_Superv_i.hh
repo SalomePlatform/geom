@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifndef __GEOM_SUPERV_I_H__
 #define __GEOM_SUPERV_I_H__
@@ -187,6 +189,20 @@ public:
 				       CORBA::Double theDZ);
   GEOM::GEOM_Object_ptr MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt1, 
 				       GEOM::GEOM_Object_ptr thePnt2);
+  GEOM::GEOM_Object_ptr MakeFaceHW (CORBA::Double theH,
+				    CORBA::Double theW,
+				    CORBA::Short  theOrientation);
+  GEOM::GEOM_Object_ptr MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj, 
+				       CORBA::Double theH,
+				       CORBA::Double theW);
+  GEOM::GEOM_Object_ptr MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
+					 GEOM::GEOM_Object_ptr theVector,
+					 CORBA::Double theR);
+  GEOM::GEOM_Object_ptr MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
+  GEOM::GEOM_Object_ptr MakeDiskR (CORBA::Double theR,
+				   CORBA::Short  theOrientation);
   GEOM::GEOM_Object_ptr MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
 					      GEOM::GEOM_Object_ptr theAxis,
 					      CORBA::Double theRadius,
@@ -226,6 +242,14 @@ public:
   GEOM::GEOM_Object_ptr MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
 					      GEOM::GEOM_Object_ptr thePoint1,
 					      GEOM::GEOM_Object_ptr thePoint2);
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
+				         CORBA::Double         theDX,
+				         CORBA::Double         theDY,
+				         CORBA::Double         theDZ);
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr theBase,
+				              CORBA::Double         theDX,
+				              CORBA::Double         theDY,
+				              CORBA::Double         theDZ);
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase, 
 				  GEOM::GEOM_Object_ptr thePath);
   GEOM::GEOM_Object_ptr MakeRevolutionAxisAngle (GEOM::GEOM_Object_ptr theBase,
@@ -260,6 +284,10 @@ public:
   GEOM::GEOM_Object_ptr MakePipeShellsWithoutPath(const GEOM::ListOfGO& theBases,
 						  const GEOM::ListOfGO& theLocations);
   
+  GEOM::GEOM_Object_ptr MakePipeBiNormalAlongVector (GEOM::GEOM_Object_ptr theBase,
+						     GEOM::GEOM_Object_ptr thePath,
+						     GEOM::GEOM_Object_ptr theVec);
+
   //-----------------------------------------------------------//
   // BooleanOperations                                         //
   //-----------------------------------------------------------//
@@ -314,6 +342,10 @@ public:
 					 GEOM::GEOM_Object_ptr theVector);
   GEOM::GEOM_Object_ptr TranslateVectorCopy (GEOM::GEOM_Object_ptr theObject,
 					     GEOM::GEOM_Object_ptr theVector);
+  GEOM::GEOM_Object_ptr TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr theVector,
+						 CORBA::Double theDistance,
+						 CORBA::Boolean theCopy);
   GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
 					  GEOM::GEOM_Object_ptr theVector,
 					  CORBA::Double theStep,
@@ -373,12 +405,27 @@ public:
   GEOM::GEOM_Object_ptr ScaleShapeCopy (GEOM::GEOM_Object_ptr theObject, 
 					GEOM::GEOM_Object_ptr thePoint,
 					CORBA::Double theFactor);
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+					     GEOM::GEOM_Object_ptr thePoint,
+					     CORBA::Double theFactorX,
+					     CORBA::Double theFactorY,
+					     CORBA::Double theFactorZ);
+  GEOM::GEOM_Object_ptr ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+						 GEOM::GEOM_Object_ptr thePoint,
+						 CORBA::Double theFactorX,
+						 CORBA::Double theFactorY,
+						 CORBA::Double theFactorZ);
   GEOM::GEOM_Object_ptr PositionShape (GEOM::GEOM_Object_ptr theObject,
 				       GEOM::GEOM_Object_ptr theStartLCS,
 				       GEOM::GEOM_Object_ptr theEndLCS);
   GEOM::GEOM_Object_ptr PositionShapeCopy (GEOM::GEOM_Object_ptr theObject,
 					   GEOM::GEOM_Object_ptr theStartLCS,
 					   GEOM::GEOM_Object_ptr theEndLCS);
+  GEOM::GEOM_Object_ptr PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+					   GEOM::GEOM_Object_ptr thePath,
+					   CORBA::Double         theDistance,
+					   CORBA::Boolean        theCopy,
+					   CORBA::Boolean        theReverse);
 
   //-----------------------------------------------------------//
   // ShapesOperations                                          //
@@ -409,6 +456,17 @@ public:
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theShape);
+
+  GEOM::GEOM_List_ptr GetShapesOnShape (GEOM::GEOM_Object_ptr theCheckShape,
+  					GEOM::GEOM_Object_ptr theShape,
+  					CORBA::Short theShapeType,
+  					GEOM::shape_state theState);
+  GEOM::GEOM_Object_ptr GetShapesOnShapeAsCompound
+                                       (GEOM::GEOM_Object_ptr theCheckShape,
+  					GEOM::GEOM_Object_ptr theShape,
+  					CORBA::Short theShapeType,
+  					GEOM::shape_state theState);
+
 
   //-----------------------------------------------------------//
   // BlocksOperations                                          //
@@ -506,11 +564,15 @@ public:
                                        GEOM::GEOM_Object_ptr thePnt1,
                                        GEOM::GEOM_Object_ptr thePnt2,
                                        CORBA::Boolean theSense);
+  GEOM::GEOM_Object_ptr MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+					  GEOM::GEOM_Object_ptr thePnt2,
+					  GEOM::GEOM_Object_ptr thePnt3);
   GEOM::GEOM_Object_ptr MakePolyline (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, 
 						GEOM::GEOM_List_ptr theWorkingPlane);
+  GEOM::GEOM_Object_ptr Make3DSketcher (GEOM::GEOM_List_ptr theCoordinates);
 
   //-----------------------------------------------------------//
   // LocalOperations                                           //
@@ -525,6 +587,8 @@ public:
 					 GEOM::GEOM_List_ptr theFaces);
   GEOM::GEOM_Object_ptr MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR1,
 					     CORBA::Double theR2, GEOM::GEOM_List_ptr theFaces);
+  GEOM::GEOM_Object_ptr MakeFillet2D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+				      GEOM::GEOM_List_ptr theVertexes);
   GEOM::GEOM_Object_ptr MakeChamferAll (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
   GEOM::GEOM_Object_ptr MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
 					 CORBA::Double theD1, CORBA::Double theD2,

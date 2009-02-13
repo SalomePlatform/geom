@@ -1,32 +1,31 @@
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 #  GEOM NMTAlgo : partition algorithm
-#
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-# 
-#  This library is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU Lesser General Public 
-#  License as published by the Free Software Foundation; either 
-#  version 2.1 of the License. 
-# 
-#  This library is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-#  Lesser General Public License for more details. 
-# 
-#  You should have received a copy of the GNU Lesser General Public 
-#  License along with this library; if not, write to the Free Software 
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-# 
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
-#
-#
 #  File   : Makefile.in
 #  Author : Julia DOROVSKIKH
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
 #  $Header$
-
+#
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -51,10 +50,18 @@ salomeinclude_HEADERS = \
 	NMTDS_IndexedDataMapOfIntegerShape.hxx \
 	NMTDS_IndexedDataMapOfShapeBox.hxx \
 	NMTDS_IndexRange.hxx \
+	NMTDS_IndexRange.ixx \
+	NMTDS_IndexRange.jxx \
 	NMTDS_InterfPool.hxx \
+	NMTDS_InterfPool.ixx \
+	NMTDS_InterfPool.jxx \
 	NMTDS_InterfType.hxx \
 	NMTDS_Iterator.hxx \
+	NMTDS_Iterator.ixx \
+	NMTDS_Iterator.jxx \
 	NMTDS_IteratorCheckerSI.hxx \
+	NMTDS_IteratorCheckerSI.ixx \
+	NMTDS_IteratorCheckerSI.jxx \
 	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
 	NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx \
 	NMTDS_ListIteratorOfListOfPassKey.hxx \
@@ -69,17 +76,31 @@ salomeinclude_HEADERS = \
 	NMTDS_MapOfPassKeyBoolean.hxx  \
 	NMTDS_MapOfPassKey.hxx \
 	NMTDS_PassKeyBoolean.hxx \
+	NMTDS_PassKeyBoolean.ixx \
+	NMTDS_PassKeyBoolean.jxx \
 	NMTDS_PInterfPool.hxx \
 	NMTDS_PIterator.hxx \
 	NMTDS_PassKey.hxx \
+	NMTDS_PassKey.ixx \
+	NMTDS_PassKey.jxx \
 	NMTDS_PassKeyMapHasher.hxx \
+	NMTDS_PassKeyMapHasher.ixx \
+	NMTDS_PassKeyMapHasher.jxx \
 	NMTDS_PassKeyShape.hxx \
+	NMTDS_PassKeyShape.ixx \
+	NMTDS_PassKeyShape.jxx \
 	NMTDS_PassKeyShapeMapHasher.hxx \
+	NMTDS_PassKeyShapeMapHasher.ixx \
+	NMTDS_PassKeyShapeMapHasher.jxx \
 	NMTDS_PShapesDataStructure.hxx \
 	NMTDS_ShapesDataStructure.hxx \
+	NMTDS_ShapesDataStructure.ixx \
+	NMTDS_ShapesDataStructure.jxx \
 	NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx \
 	NMTDS_StdMapNodeOfMapOfPassKey.hxx \
 	NMTDS_Tools.hxx \
+	NMTDS_Tools.ixx \
+	NMTDS_Tools.jxx \
 	NMTDS_BoxBndTree.hxx
 
 # Libraries targets
@@ -124,12 +145,29 @@ dist_libNMTDS_la_SOURCES = \
 	NMTDS_Tools.cxx \
 	NMTDS_BoxBndTree.cxx
 
-# additionnal information to compil and link file
+# additional information to compile and link file
 
-libNMTDS_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
+libNMTDS_la_CPPFLAGS =		\
+	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)
 
-libNMTDS_la_LDFLAGS  = \
-	$(STDLIB) \
+libNMTDS_la_LDFLAGS  =		\
+	$(STDLIB)		\
 	$(CAS_LDPATH) -lTKBool -lTKBO
+
+# extra dist files
+CDL_FILES =				\
+	NMTDS.cdl			\
+	NMTDS_IndexRange.cdl		\
+	NMTDS_InterfPool.cdl		\
+	NMTDS_Iterator.cdl		\
+	NMTDS_IteratorCheckerSI.cdl	\
+	NMTDS_PassKey.cdl		\
+	NMTDS_PassKeyBoolean.cdl	\
+	NMTDS_PassKeyMapHasher.cdl	\
+	NMTDS_PassKeyShape.cdl		\
+	NMTDS_PassKeyShapeMapHasher.cdl	\
+	NMTDS_ShapesDataStructure.cdl	\
+	NMTDS_Tools.cdl
+
+EXTRA_DIST += $(CDL_FILES)

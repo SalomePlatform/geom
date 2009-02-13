@@ -12,6 +12,8 @@ be rotated, an \b Axis of rotation and an \b Angle of rotation.
 \n <b>TUI Command:</b> <em>geompy.MakeRotation(Shape, Axis, Angle)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 vector for direction of rotation + 1
 angle.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation4.png
 
@@ -27,14 +29,16 @@ this case rotation \b Angle is the angle between two vectors directed
 from the first point to the second and to the third.
 \n <b>TUI Command:</b> <em>geompy.MakeRotationThreePoints(Shape, CentralPoint, Point1, Point2)</em>
 \n <b>Arguments:</b> 1 shape + 3 points.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation4a.png
 
 \n <b>Example:</b>
 
-\image html rotationsn1.png
+\image html rotationsn1.png "The initial shape (yellow)"
 
-\image html rotationsn2.png
+\image html rotationsn2.png "The rotated shape (grey)"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_rotation "Transformation Operations".

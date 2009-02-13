@@ -2,54 +2,30 @@
 
 \page transform_geom_obj_page Transforming geometrical objects
 
+The objects created in Salome can be processed with Transformation
+operations, which can be classified into:   
+
 <ul>
-<li>\subpage basic_operations_page</li>
-<ul>
-<li>\ref partition_page</li>
-<li>\ref archimede_page</li>
+<li>\subpage using_boolean_operations_page  "Boolean operations" using
+Boolean logical operators.</li>
+<li>\subpage transformation_operations_page "Transformation operations", 
+which modify shape or location of the selected object.</li>
+
+<li>\subpage partition_page "Partition" operation, which creates a compound
+by intersection of several shapes with a tool object or a plane.</li>
+<li>\subpage archimede_page "Archimede" operation, which creates a
+plane corresponding to the modelled waterline of the object plunged
+into water.</li>
+<li>\subpage shapesonshape_page "Get shapes on shape" operation, a
+special case of \b Explode operation. </li>
+
+<li>Operations with \subpage blocks_operations_page "Blocks".</li>
+
+
+<li>\subpage restore_presentation_parameters_page "Restore presentation pareameters". 
+This cross-operation functionality allows the resulting shape to
+inherit colors and subshapes from its parent shapes.</li>
 </ul>
-<li>\subpage boolean_operations_page</li>
-<ul>
-<li>\ref using_boolean_operations_page</li>
-<li>\ref fuse_operation_page</li>
-<li>\ref common_operation_page</li>
-<li>\ref cut_operation_page</li>
-<li>\ref section_opeartion_page</li>
-</ul>
-<li>\subpage transformation_operations_page</li>
-<ul>
-<li>\ref translation_operation_page</li>
-<li>\ref rotation_operation_page</li>
-<li>\ref modify_location_operation_page</li>
-<li>\ref mirror_operation_page</li>
-<li>\ref scale_operation_page</li>
-<li>\ref offset_operation_page</li>
-<li>\ref multi_translation_operation_page</li>
-<li>\ref multi_rotation_operation_page</li>
-<li>\ref fillet_operation_page</li>
-<li>\ref chamfer_operation_page</li>
-</ul>
-<li>\subpage blocks_operations_page</li>
-<ul>
-<li>\ref multi_transformation_operation_page</li>
-<li>\ref explode_on_blocks_operation_page</li>
-<li>\ref propagate_operation_page</li>
-</ul>
-<li>\subpage repairing_operations_page</li>
-<ul>
-<li>\ref shape_processing_operation_page</li>
-<li>\ref suppress_faces_operation_page</li>
-<li>\ref close_contour_operation_page</li>
-<li>\ref suppress_internal_wires_operation_page</li>
-<li>\ref suppress_holes_operation_page</li>
-<li>\ref sewing_operation_page</li>
-<li>\ref glue_faces_operation_page</li>
-<li>\ref add_point_on_edge_operation_page</li>
-<li>\ref check_free_boundaries_operation_page</li>
-<li>\ref check_free_faces_operation_page</li>
-<li>\ref change_orientation_operation_page</li>
-<li>\ref remove_extra_edges_operation_page</li>
-</ul>
-</ul>
+
 
 */

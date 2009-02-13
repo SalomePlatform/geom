@@ -12,11 +12,15 @@ Vector giving its normal, and its <b>Major & Minor Radiuses</b>.
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + 1 X Radius + 1 Y Radius.
 
+\note By default it is presumed that the <b>Center Point</b> is located at the  Origin of the global
+coordinate system, and the  \b Vector corresponds to OZ axis of the global
+coordinate system.
+
 \image html ellipse.png
 
 <b>Example:</b>
 
-\image html ellipsesn.png
+\image html ellipsesn.png "Ellipse"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_ellipse "Basic Geometric Objects".

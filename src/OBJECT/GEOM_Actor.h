@@ -1,42 +1,42 @@
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 //  GEOM OBJECT : interactive object for Geometry entities visualization
-//
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-//
-//
 //  File   : GEOM_Actor.h
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
 //  $Header$
-
+//
 #ifndef GEOM_ACTOR_H
 #define GEOM_ACTOR_H
 
 #include "GEOM_OBJECT_defs.hxx"
+#include "GEOM_SmartPtr.h"
 
-#include "SALOME_Actor.h"
+#include <SALOME_Actor.h>
 
 #include <TopoDS_Shape.hxx>
-
-#include "GEOM_SmartPtr.h"
 #include <vtkSmartPointer.h>
+
+class vtkCamera;
 
 class GEOM_VertexSource;
 typedef GEOM_SmartPtr<GEOM_VertexSource> PVertexSource;
@@ -124,7 +124,7 @@ public:
   void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
   void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
 
-  virtual bool IsInfinite();
+  virtual bool IsInfinitive();
 
   // overloaded functions
   //! To map current selection to VTK representation

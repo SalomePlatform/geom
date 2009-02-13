@@ -24,7 +24,7 @@ faces in the block to be extracted).
 
 \n <b>Example:</b>
 
-\image html block_explodesn.png
+\image html block_explodesn.png "Explode on blocks operation"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_explode_on_blocks "Blocks Operations".

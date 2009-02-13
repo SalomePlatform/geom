@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
 
@@ -31,6 +32,7 @@
 #include <TColStd_HSequenceOfInteger.hxx>
 #include <TColStd_HSequenceOfReal.hxx>
 #include <gp_Ax3.hxx>
+#include <Geom_Surface.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -130,6 +132,24 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT Standard_Real GetAngle (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
 
+
+  // Methods for recieving radiuses of curvature of curves and surfaces
+  // in the given point
+  Standard_EXPORT Standard_Real CurveCurvatureByParam (Handle(GEOM_Object) theCurve,
+                                                       Standard_Real& theParam);
+  Standard_EXPORT Standard_Real CurveCurvatureByPoint (Handle(GEOM_Object) theCurve,
+                                                       Handle(GEOM_Object) thePoint);
+  Standard_EXPORT Standard_Real MaxSurfaceCurvatureByParam (Handle(GEOM_Object) theSurf,
+                                                            Standard_Real& theUParam,
+                                                            Standard_Real& theVParam);
+  Standard_EXPORT Standard_Real MaxSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
+                                                            Handle(GEOM_Object) thePoint);
+  Standard_EXPORT Standard_Real MinSurfaceCurvatureByParam (Handle(GEOM_Object) theSurf,
+                                                            Standard_Real& theUParam,
+                                                            Standard_Real& theVParam);
+  Standard_EXPORT Standard_Real MinSurfaceCurvatureByPoint (Handle(GEOM_Object) theSurf,
+                                                            Handle(GEOM_Object) thePoint);
+
  public:
   Standard_EXPORT static gp_Ax3 GetPosition (const TopoDS_Shape& theShape);
 
@@ -150,6 +170,11 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                       Handle(TColStd_HArray1OfInteger)&   NbProblems,
                       const TopAbs_ShapeEnum              Subtype,
                       TopTools_DataMapOfShapeListOfShape& theMap);
+
+  Standard_Real getSurfaceCurvatures (const Handle(Geom_Surface)& aSurf,
+                                      Standard_Real theUParam,
+                                      Standard_Real theVParam,
+                                      Standard_Boolean theNeedMaxCurv);
 };
 
 #endif

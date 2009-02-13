@@ -15,6 +15,10 @@ Radius)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + Radius.
 
+\note By default it is presumed that the <b>Center Point</b> is located at the  Origin of the global
+coordinate system, and the  \b Vector corresponds to OZ axis of the global
+coordinate system.
+
 \image html circle1.png
 
 \n Secondly, you can define a \b Circle by three \b Points that lie on it. 
@@ -22,9 +26,6 @@ the direction) + Radius.
 \n <b>Arguments:</b> Name + 3 points which will form the circle.
 
 \image html circle2.png
-
-<b>Example:</b>
-\image html circles.png
 
 \n Finally, you can define a circle by a <b>Center Point</b> and two
 \b Points.  
@@ -35,6 +36,9 @@ to define the plane where the circle lies.
 \n <b>Arguments:</b> Name + 3 points.
 
 \image html circle3.png
+
+<b>Example:</b>
+\image html circles.png "A circle by vector and radius and a circle by three points"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_circle "Basic Geometric Objects".

@@ -1,44 +1,41 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : DisplayGUI.cxx
+// Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
-//
-//  File   : DisplayGUI.cxx
-//  Author : Vadim SANDLER
-//  Module : GEOM
-//  $Header$
-
 #include "DisplayGUI.h"
-#include "GeometryGUI.h"
-#include "GEOM_Displayer.h"
+#include <GeometryGUI.h>
+#include <GEOM_Displayer.h>
+#include <GEOM_AISShape.hxx>
 
 #include <SUIT_Desktop.h>
-#include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_OverrideCursor.h>
 
 #include <OCCViewer_ViewManager.h>
 #include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
 
+#include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SVTK_ViewWindow.h>
@@ -56,8 +53,7 @@
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 
-#include <qmenubar.h>
-
+#include <QAction>
 
 //=======================================================================
 // function : DisplayGUI::DisplayGUI()
@@ -94,7 +90,7 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     {
       InvertDisplayMode();
       int newMode = GetDisplayMode();
-      getGeometryGUI()->action( 211 )->setMenuText
+      getGeometryGUI()->action( 211 )->setText
         ( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
       getGeometryGUI()->menuMgr()->update();
       break;
@@ -476,7 +472,9 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 //=====================================================================================
 extern "C"
 {
- GEOM_DISPLAYGUI_EXPORT
+#ifdef WIN32
+  __declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new DisplayGUI( parent );

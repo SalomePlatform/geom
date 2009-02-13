@@ -1,26 +1,28 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_BuilderFace.cxx
 // Created:	
 // Author:	Peter KURNEV
-
+//
 #include <GEOMAlgo_BuilderFace.ixx>
 
 #include <gp_Pnt2d.hxx>
@@ -251,6 +253,7 @@ static
   TopTools_MapIteratorOfMapOfOrientedShape aItM;
   TopTools_IndexedDataMapOfShapeListOfShape aVEMap;
   TopTools_MapOfOrientedShape aMAdded;
+  TopoDS_Iterator aItW;
   BRep_Builder aBB; 
   GEOMAlgo_WireEdgeSet aWES;
   GEOMAlgo_WESCorrector aWESCor;
@@ -278,6 +281,37 @@ static
     const TopoDS_Shape& aW=aIt.Value();
     myLoops.Append(aW);
   }
+  //modified by NIZNHY-PKV Tue Aug  5 15:09:29 2008f
+  // Post Treatment
+  TopTools_MapOfOrientedShape aMEP;
+  // 
+  // a. collect all edges that are in loops
+  aIt.Initialize (myLoops);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aW=aIt.Value();
+    aItW.Initialize(aW);
+    for (; aItW.More(); aItW.Next()) {
+      const TopoDS_Shape& aE=aItW.Value();
+      aMEP.Add(aE);
+    }
+  }
+  // 
+  // b. collect all edges that are to avoid
+  aItM.Initialize(myShapesToAvoid);
+  for (; aItM.More(); aItM.Next()) {
+    const TopoDS_Shape& aE=aItM.Key();
+    aMEP.Add(aE);
+  }
+  //
+  // c. add all edges that are not processed to myShapesToAvoid
+  aIt.Initialize (myShapes);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aE=aIt.Value();
+    if (!aMEP.Contains(aE)) {
+      myShapesToAvoid.Add(aE);
+    }
+  }
+  //modified by NIZNHY-PKV Tue Aug  5 15:09:35 2008t
   //
   // 2. Internal Wires
   myLoopsInternal.Clear();
@@ -302,7 +336,7 @@ static
     aBB.MakeWire(aW);
     aBB.Add(aW, aEE);
     //
-    TopoDS_Iterator aItW (aW);
+    aItW.Initialize(aW);
     for (; aItW.More()&&bFlag; aItW.Next()) {
       const TopoDS_Edge& aE=TopoDS::Edge(aItW.Value());
       //

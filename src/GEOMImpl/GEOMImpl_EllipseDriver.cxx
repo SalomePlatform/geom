@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_EllipseDriver.hxx>
@@ -71,24 +72,44 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape;
 
   if (aType == ELLIPSE_PNT_VEC_RR) {
-    Handle(GEOM_Function) aRefPoint  = aCI.GetCenter();
+    // Center
+    gp_Pnt aP = gp::Origin();
+    Handle(GEOM_Function) aRefPoint = aCI.GetCenter();
+    if (!aRefPoint.IsNull()) {
+      TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+      if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
+        Standard_ConstructionError::Raise
+          ("Circle creation aborted: invalid center argument, must be a point");
+      }
+      aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+    }
+    // Normal
+    gp_Vec aV = gp::DZ();
     Handle(GEOM_Function) aRefVector = aCI.GetVector();
-    TopoDS_Shape aShapePnt = aRefPoint->GetValue();
-    TopoDS_Shape aShapeVec = aRefVector->GetValue();
-    if (aShapePnt.ShapeType() == TopAbs_VERTEX &&
-        aShapeVec.ShapeType() == TopAbs_EDGE) {
-      gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+    if (!aRefVector.IsNull()) {
+      TopoDS_Shape aShapeVec = aRefVector->GetValue();
+      if (aShapeVec.ShapeType() != TopAbs_EDGE) {
+        Standard_ConstructionError::Raise
+          ("Circle creation aborted: invalid vector argument, must be a vector or an edge");
+      }
       TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
       TopoDS_Vertex V1, V2;
       TopExp::Vertices(anE, V1, V2, Standard_True);
       if (!V1.IsNull() && !V2.IsNull()) {
-        gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        gp_Ax2 anAxes (aP, aV);
-        gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
-        aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
+        aV = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+        if (aV.Magnitude() < gp::Resolution()) {
+          Standard_ConstructionError::Raise
+            ("Circle creation aborted: vector of zero length is given");
+        }
       }
     }
-  } else {
+    // Axes
+    gp_Ax2 anAxes (aP, aV);
+    // Ellipse
+    gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
+    aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
+  }
+  else {
   }
 
   if (aShape.IsNull()) return 0;

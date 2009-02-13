@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -213,6 +215,41 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFacesR1R2
   //Create the Fillet
   Handle(GEOM_Object) anObject =
     GetOperations()->MakeFilletFacesR1R2(aShapeRef, theR1, theR2, aFaces);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeFillet2D
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
+                      (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+		       const GEOM::ListOfLong& theVertexes)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  if (theShape == NULL) return aGEOMObject._retn();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference vertex
+  int ind = 0;
+  int aLen = theVertexes.length();
+  list<int> aVertexes;
+  for (; ind < aLen; ind++) {
+    aVertexes.push_back(theVertexes[ind]);
+  }
+
+  //Create the Fillet
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFillet2D(aShapeRef, theR, aVertexes);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

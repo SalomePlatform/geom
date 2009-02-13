@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <BRepOffsetAPI_MakeFilling.hxx>
@@ -34,7 +35,7 @@
 #include <GEOM_Function.hxx>
 
 #include <ShHealOper_Sewing.hxx>
-//#include <NMTAlgo_Splitter1.hxx>
+#include <ShHealOper_ShapeProcess.hxx>
 #include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
 
@@ -53,6 +54,7 @@
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepCheck_Analyzer.hxx>
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRepExtrema_ExtPF.hxx>
@@ -507,17 +509,28 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       aTool.SetShape(aBlockOrComp);
       aTool.Perform();
 
-      if (aType == BLOCK_REMOVE_EXTRA) {
+      TopoDS_Shape aFixedExtra = aTool.Shape();
 
-        aShape = aTool.Shape();
+      // Repair result
+      BRepCheck_Analyzer ana (aFixedExtra, false);
+      if (!ana.IsValid()) {
+        TopoDS_Shape aFixed;
+        ShHealOper_ShapeProcess aHealer;
+        aHealer.Perform(aFixedExtra, aFixed);
+        if (aHealer.isDone())
+          aFixedExtra = aFixed;
+      }
+
+      if (aType == BLOCK_REMOVE_EXTRA)
+      {
+        aShape = aFixedExtra;
+
         if (aShape == aBlockOrComp) {
           MESSAGE("No modifications have been done");
         }
-
-      } else { // aType == BLOCK_COMPOUND_IMPROVE
-
-        TopoDS_Shape aFixedExtra = aTool.Shape();
-
+      }
+      else // aType == BLOCK_COMPOUND_IMPROVE
+      {
         // 2. Separate non-blocks
         TopTools_ListOfShape BLO; // All blocks from the given compound
         TopTools_ListOfShape NOT; // Not blocks

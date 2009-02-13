@@ -52,6 +52,11 @@ is predefined and is equal to 90 degrees);</li>
 <li>Parameters of an element (for segment : length or target X or Y coordinate value, for arc : radius and angle).</li>
 </ol>
 
+\b Buttons:
+
+<b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
+\n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it.
+
 \n <b>Dialog Box:</b>
 
 \image html neo-scetcher1.png
@@ -60,9 +65,7 @@ is predefined and is equal to 90 degrees);</li>
 
 \n <b>Example:</b>
 
-\image html image204.jpg
-
-\image html image206.jpg
+\image html image204.jpg "Creation of a circle with sketcher"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sketcher_page "Sketcher".

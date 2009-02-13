@@ -10,7 +10,7 @@
 <br><h2>Intersection of two shapes.</h2>
 
 \n As far as the intersection of two objects can produce any type of
-geometrical objects, <b>Reconstruction Limit</b> box allows choosing the
+geometrical objects, <b>Resulting type</b> box allows choosing the
 preferrable result, i.e. a solid, a shell, a list of faces, etc.
 \n <b>TUI Command:</b> <em>geompy.MakePartition(ListOfShapes,
 ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
@@ -23,11 +23,13 @@ only to support the old scripts.
 \n <b>Arguments:</b> Name + 2 lists of shapes (the shapes from the
 first list will be intersected with the shapes from the second list) +
 reconstruction limit.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html partition1.png
 
-<b>Keep nonlimit shapes</b> checkbox allows building geometrical objects of
-all types at the same time i.e. no reconstruction limit is applied.
+<b>Keep shapes of lower type</b> checkbox allows building geometrical objects. 
+Only lower type objects will be preserved without the upper ones.
 
 
 <br><h2>Intersection of a Shape and a Plane.</h2>
@@ -37,14 +39,16 @@ Plane),</em> where \em Shapes are a list of Shapes to be intersected
 and \em Plane is a Tool shape, to intersect the \em Shapes.
 \n <b>Arguments:</b> Name + a list of shapes which will be intersected
 + 1 cutting plane.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html partition2.png
 
 \n <b>Example:</b>
 
-\image html partitionsn1.png
+\image html partitionsn1.png "Box intersected by a plane"
 
-\image html partitionsn2.png
+\image html partitionsn2.png "Result of intersection"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_partition "Basic Operations".

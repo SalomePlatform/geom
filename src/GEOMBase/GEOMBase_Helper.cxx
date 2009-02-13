@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2004  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,26 +17,23 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOMBase_Helper.cxx
+// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 //
-//
-//  File   : GEOMBase_Helper.cxx
-//  Author : Sergey ANIKIN
-//  Module : GEOM
-//  $Header$
-
-#include <SUIT_ViewModel.h>
-
 #include "GEOMBase_Helper.h"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
-#include "GeometryGUI.h"
-#include "GEOM_Displayer.h"
-#include "GEOMImpl_Types.hxx"
 
+#include <GeometryGUI.h>
+
+#include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
+#include <SUIT_ViewManager.h>
 #include <SUIT_ViewWindow.h>
+#include <SUIT_ViewModel.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
 
@@ -46,20 +43,14 @@
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
-#include <SalomeApp_DataModel.h>
+
+#include <SALOME_Prs.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 
-#include <OB_Browser.h>
-
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
-
-using namespace std;
-
-#include <SALOMEDSClient.hxx>
-
 
 //================================================================
 // Function : getActiveView
@@ -171,9 +162,9 @@ void GEOMBase_Helper::erase( const ObjectList& objList, const bool updateView )
 void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView )
 {
   if ( !object->_is_nil() ) {
-    string entry = getEntry( object );
+    std::string entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
-      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ) ) ), true, updateView );
+      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
   }
 }
 
@@ -210,9 +201,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     // Enable activisation of selection
     getDisplayer()->SetToActivate( true );
 
-    string entry = getEntry( object );
+    std::string entry = getEntry( object );
     getDisplayer()->Redisplay(new SALOME_InteractiveObject
-                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object))), false);
+                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
   }
 
   if ( withChildren ) {
@@ -220,7 +211,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     if ( aDoc && aDoc->studyDS() ) {
       _PTR(Study) aStudy = aDoc->studyDS();
       CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(object);
-      _PTR(SObject) aSObj (aStudy->FindObjectIOR(string(objStr.in())));
+      _PTR(SObject) aSObj (aStudy->FindObjectIOR(std::string(objStr.in())));
       if ( aSObj  ) {
 	_PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
 	for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
@@ -228,9 +219,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
             (GeometryGUI::ClientSObjectToObject(anIt->Value()));
 	  if ( !CORBA::is_nil( aChild ) ) {
 	    if ( !aChild->_is_nil() ) {
-	      string entry = getEntry( aChild );
+	      std::string entry = getEntry( aChild );
 	      getDisplayer()->Redisplay( new SALOME_InteractiveObject(
-                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ) ) ), false );
+                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
 	    }
 	  }
 	}
@@ -449,10 +440,10 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
     GEOM::GEOM_Object_ptr anObj = *anIter;
     if ( anObj->_is_nil() )
       continue;
-    string aEntry = getEntry( anObj );
+    std::string aEntry = getEntry( anObj );
     if ( aEntry != "" )
       aListOfIO.Append( new SALOME_InteractiveObject(
-        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ) ) ) );
+        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
   }
 
   getDisplayer()->LocalSelection( aListOfIO, theMode );
@@ -499,6 +490,18 @@ void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 }
 
 //================================================================
+// Function : globalSelection
+// Purpose  : Activate selection of subshapes. Set selection filters
+//            in accordance with mode. theMode is from GEOMImpl_Types
+//================================================================
+void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
+                                       const QList<int>& subShapes,
+				       const bool update )
+{
+  getDisplayer()->GlobalSelection( theModes, update, &subShapes );
+}
+
+//================================================================
 // Function : addInStudy
 // Purpose  : Add object in study
 //================================================================
@@ -511,10 +514,33 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
   if ( !aStudy || theObj->_is_nil() )
     return;
 
+  SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
+
   GEOM::GEOM_Object_ptr aFatherObj = getFather( theObj );
 
-  getGeomEngine()->AddInStudy(GeometryGUI::ClientStudyToStudy(aStudy),
-                              theObj, theName, aFatherObj);
+  SALOMEDS::SObject_var aSO =
+    getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
+
+  // Each dialog is responsible for this method implementation,
+  // default implementation does nothing
+  restoreSubShapes(aStudyDS, aSO);
+}
+
+//================================================================
+// Function : restoreSubShapes
+// Purpose  : restore tree of argument's sub-shapes under the resulting shape
+//================================================================
+void GEOMBase_Helper::restoreSubShapes (SALOMEDS::Study_ptr   /*theStudy*/,
+                                        SALOMEDS::SObject_ptr /*theSObject*/)
+{
+  // do nothing by default
+
+  // example of implementation in particular dialog:
+  // GEOM::ListOfGO anArgs;
+  // anArgs.length(0); // empty list means that all arguments should be restored
+  // getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+  //                                     /*theFindMethod=*/GEOM::FSM_GetInPlace,
+  //                                     /*theInheritFirstArg=*/false);
 }
 
 //================================================================
@@ -565,13 +591,14 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
   if (!aDesktop)
     return 0;
 
-  QPtrList<SUIT_Application> anAppList = SUIT_Session::session()->applications();
+  QList<SUIT_Application*> anAppList = SUIT_Session::session()->applications();
 
   SUIT_Application* anApp = 0;
-  for ( QPtrListIterator<SUIT_Application> it( anAppList ); it.current() ; ++it )
+  QListIterator<SUIT_Application*> it( anAppList );
+  while ( it.hasNext() )
     {
-      anApp = it.current();
-      if ( anApp->desktop() == aDesktop )
+      anApp = it.next();
+      if ( anApp && anApp->desktop() == aDesktop )
 	break;
     }
 
@@ -587,12 +614,12 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
   SalomeApp_Study* study = getStudy();
   if ( study )  {
     char * objIOR = GEOMBase::GetIORFromObject( object );
-    string IOR( objIOR );
+    std::string IOR( objIOR );
     free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
-	      return TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
+	      return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
       }
     }
   }
@@ -627,7 +654,7 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
     return;
 
   _PTR(Study) aStudy = getStudy()->studyDS();
-  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( string( IOR ) ) );
+  _PTR(SObject) aSObj ( aStudy->FindObjectIOR( std::string( IOR ) ) );
   if ( !aSObj )
     return;
 
@@ -722,10 +749,11 @@ GEOM::GEOM_IOperations_ptr GEOMBase_Helper::getOperation()
 bool GEOMBase_Helper::checkViewWindow()
 {
   if ( myViewWindow ){
-    QPtrList<SUIT_ViewWindow> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
-    for ( QPtrListIterator<SUIT_ViewWindow> it( aViewWindowsList ); it.current(); ++it )
+    QList<SUIT_ViewWindow*> aViewWindowsList = SUIT_Session::session()->activeApplication()->desktop()->windows();
+    QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
+    while ( it.hasNext() )
       {
-	if ( myViewWindow == it.current() )
+	if ( myViewWindow == it.next() )
 	  return true;
       }
   }
@@ -748,10 +776,10 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
-    SUIT_MessageBox::warn1 ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
-			   QObject::tr("WRN_WARNING"),
-			   QObject::tr("WRN_STUDY_LOCKED"),
-			   QObject::tr("BUT_OK") );
+    SUIT_MessageBox::warning ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
+			       QObject::tr("WRN_WARNING"),
+			       QObject::tr("WRN_STUDY_LOCKED"),
+			       QObject::tr("BUT_OK") );
     return false;
   }
 
@@ -795,7 +823,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	      if ( aName.isEmpty() )
 		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
 	    }
-	    addInStudy( *it, aName.latin1() );
+	    addInStudy( *it, aName.toLatin1().constData() );
             // updateView=false
 	    display( *it, false );
 	  }
@@ -842,10 +870,10 @@ void GEOMBase_Helper::showError()
   if ( msg.isEmpty() )
     msg = QObject::tr( "GEOM_PRP_ABORT" );
 
-  SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(),
-			   QObject::tr( "GEOM_ERROR_STATUS" ),
-			   msg,
-			   QObject::tr( "BUT_OK" ) );
+  SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
+			     QObject::tr( "GEOM_ERROR_STATUS" ),
+			     msg,
+			     QObject::tr( "BUT_OK" ) );
 }
 
 //================================================================
@@ -857,7 +885,7 @@ void GEOMBase_Helper::showError( const QString& msg )
   QString str( QObject::tr( "GEOM_INCORRECT_INPUT" ) );
   if ( !msg.isEmpty() )
     str += "\n" + msg;
-  SUIT_MessageBox::error1(SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ), str, QObject::tr( "BUT_OK" ) );
+  SUIT_MessageBox::critical(SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ), str, QObject::tr( "BUT_OK" ) );
 }
 
 //////////////////////////////////////////////////////////////////
@@ -909,9 +937,9 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 // Function : getNewObjectName
 // Purpose  : Redefine this method to return proper name for a new object
 //================================================================
-const char* GEOMBase_Helper::getNewObjectName() const
+QString GEOMBase_Helper::getNewObjectName() const
 {
-  return "";
+  return QString::null;
 }
 
 //================================================================
@@ -945,55 +973,9 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
 }
 
 //================================================================
-// Function : selectedIO
-// Purpose  : Return the list of selected SALOME_InteractiveObject's
-//================================================================
-const SALOME_ListIO& GEOMBase_Helper::selectedIO()
-{
-  mySelected.Clear();
-
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    if ( aSelMgr )
-      aSelMgr->selectedObjects( mySelected );
-  }
-
-  return mySelected;
-}
-
-//================================================================
-// Function : IObjectCount
-// Purpose  : Return the number of selected objects
-//================================================================
-int GEOMBase_Helper::IObjectCount()
-{
-  return selectedIO().Extent();
-}
-
-//================================================================
-// Function : firstIObject
-// Purpose  :  Return the first selected object in the selected object list
-//================================================================
-Handle(SALOME_InteractiveObject) GEOMBase_Helper::firstIObject()
-{
-  const SALOME_ListIO& aList = selectedIO();
-  return aList.Extent() > 0 ? aList.First() : Handle(SALOME_InteractiveObject)();
-}
-
-//================================================================
-// Function : lastIObject
-// Purpose  : Return the last selected object in the selected object list
-//================================================================
-Handle(SALOME_InteractiveObject) GEOMBase_Helper::lastIObject()
-{
-  const SALOME_ListIO& aList = selectedIO();
-  return aList.Extent() > 0 ? aList.Last() : Handle(SALOME_InteractiveObject)();
-}
-
-//================================================================
 // Function : getDesktop
-// Purpose  : Returns myDesktop field.  Initialized in constructor, usually as dynamic_cast<SUIT_Desktop*>(parentWidget())
+// Purpose  : Returns myDesktop field. Initialized in constructor,
+//            usually as dynamic_cast<SUIT_Desktop*>(parentWidget())
 //================================================================
 SUIT_Desktop* GEOMBase_Helper::getDesktop() const
 {
@@ -1010,7 +992,7 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
   ObjectList::iterator anIter;
   for ( anIter = objects.begin(); anIter != objects.end(); ++anIter )
   {
-    string entry = getEntry( *anIter );
+    std::string entry = getEntry( *anIter );
     QString aEntry( entry.c_str() );
     LightApp_DataOwner* anOwher = new LightApp_DataOwner( aEntry );
     aList.append( anOwher );
@@ -1035,20 +1017,21 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
 // Purpose  : It should return an object if its founded in study or
 //            return Null object if the object is not founded
 //================================================================
-GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr theFather, const char* theName)
+GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr theFather,
+                                                           const QString& theName)
 {
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   _PTR(Study) aDStudy = appStudy->studyDS();
-  string IOR = GEOMBase::GetIORFromObject( theFather );
+  std::string IOR = GEOMBase::GetIORFromObject( theFather );
   _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR ) );
 
   bool inStudy = false;
   GEOM::GEOM_Object_var aReturnObject;
   for (_PTR(ChildIterator) iit (aDStudy->NewChildIterator( SObj )); iit->More() && !inStudy; iit->Next()) {
     _PTR(SObject) child (iit->Value());
-    QString aChildName = child->GetName();
+    QString aChildName = child->GetName().c_str();
     if (aChildName == theName) {
       inStudy = true;
       CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(iit->Value());
@@ -1087,14 +1070,14 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
   for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ )
     {
       if ( !anOp->_is_nil() ) {
-	GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.data() );
+	GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.value() );
 	if ( !aFatherObj->_is_nil() ) {	
-	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key() );
+	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
       
 	//Add Object to study if its not exist
 	if ( aFindedObject == GEOM::GEOM_Object::_nil() )
 	  GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
-					      it.data(), it.key(), aFatherObj );
+						it.value(), it.key().toLatin1().data(), aFatherObj );
 	}
       }
       else {

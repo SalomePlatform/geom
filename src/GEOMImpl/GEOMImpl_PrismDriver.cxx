@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PrismDriver.hxx>
@@ -129,7 +130,21 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
-  } else {
+  } else if (aType == PRISM_BASE_DXDYDZ || aType == PRISM_BASE_DXDYDZ_2WAYS) {
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();
+    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    gp_Vec aV (aCI.GetDX(), aCI.GetDY(), aCI.GetDZ());
+    if (aV.Magnitude() > gp::Resolution()) {
+      if (aType == PRISM_BASE_DXDYDZ_2WAYS)
+	{
+	  gp_Trsf aTrsf;
+	  aTrsf.SetTranslation(-aV);
+	  BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+	  aShapeBase = aTransformation.Shape();
+	  aV = aV * 2;
+	}
+      aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
+    }
   }
 
   if (aShape.IsNull()) return 0;

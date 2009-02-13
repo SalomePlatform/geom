@@ -1,40 +1,39 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// File   : GEOMGUI_Selection.cxx
+// Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
 //
 #include "GEOMGUI_Selection.h"
 
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
-#include <LightApp_DataOwner.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 
-#include <OCCViewer_ViewModel.h>
-
+#include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_ViewManager.h>
-#include <SUIT_ViewModel.h>
-
-#include <SALOMEDSClient_SObject.hxx>
-#include <SALOMEDSClient_Study.hxx>
 
 #include <SALOME_Prs.h>
 #include <SALOME_InteractiveObject.hxx>
@@ -46,7 +45,7 @@
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 // OCCT Includes
 #include <AIS.hxx>
@@ -57,6 +56,7 @@
 #include <vtkActorCollection.h>
 
 GEOMGUI_Selection::GEOMGUI_Selection()
+: LightApp_Selection()
 {
 }
 
@@ -64,28 +64,28 @@ GEOMGUI_Selection::~GEOMGUI_Selection()
 {
 }
 
-QtxValue GEOMGUI_Selection::globalParam( const QString& p ) const
+QVariant GEOMGUI_Selection::parameter( const QString& p ) const
 {
-  if ( p == "isOCC" ) return QtxValue( activeViewType() == OCCViewer_Viewer::Type() );
+  if ( p == "isOCC" ) return QVariant( activeViewType() == OCCViewer_Viewer::Type() );
   if ( p == "selectionmode" ){ 
-    return QtxValue(selectionMode()); 
+    return QVariant(selectionMode()); 
   }
-  return LightApp_Selection::globalParam( p );
+  return LightApp_Selection::parameter( p );
 }
 
-QtxValue GEOMGUI_Selection::param( const int ind, const QString& p ) const
+QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
 {
-//  if      ( p == "isVisible"   )    return QtxValue( isVisible( ind ) );
+//  if      ( p == "isVisible"   )    return QVariant( isVisible( ind ) );
 // parameter isVisible is calculated in base SalomeApp_Selection
 //  else
   if( p == "type" )
-    return QtxValue( typeName( ind ) );
+    return QVariant( typeName( ind ) );
   else if ( p == "displaymode" )
-    return QtxValue( displayMode( ind ) );
+    return QVariant( displayMode( ind ) );
   else if ( p == "isAutoColor" )
-    return QtxValue( isAutoColor( ind ) );
+    return QVariant( isAutoColor( ind ) );
   else
-    return LightApp_Selection::param( ind, p );
+    return LightApp_Selection::parameter( ind, p );
 }
 
 QString GEOMGUI_Selection::typeName( const int index ) const
@@ -108,7 +108,7 @@ bool GEOMGUI_Selection::isVisible( const int index ) const
   GEOM::GEOM_Object_var obj = getObject( index );
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   if ( !CORBA::is_nil( obj ) && view ) {
-    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).latin1(), "GEOM", "TEMP_IO" );
+    Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject( entry( index ).toLatin1().constData(), "GEOM", "TEMP_IO" );
     return view->isVisible( io );
   }
   return false;
@@ -127,7 +127,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
   SALOME_View* view = GEOM_Displayer::GetActiveView();
   QString viewType = activeViewType();
   if ( view /*fix for 9320==>*/&& ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
-    SALOME_Prs* prs = view->CreatePrs( entry( index ) );
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
 	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
@@ -187,7 +187,7 @@ bool GEOMGUI_Selection::isComponent( const int index ) const
     QString anEntry = entry( index );
 
     if ( study && !anEntry.isNull() ) {
-      _PTR(SObject) aSO( study->FindObjectID( anEntry.latin1() ) );
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
       if ( aSO && aSO->GetFatherComponent() )
 	return aSO->GetFatherComponent()->GetIOR() == aSO->GetIOR();
     }
@@ -205,7 +205,7 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
     QString anEntry = entry(index);
 
     if (study && !anEntry.isNull()) {
-      _PTR(SObject) aSO (study->FindObjectID(anEntry.latin1()));
+      _PTR(SObject) aSO (study->FindObjectID(anEntry.toStdString()));
       if (aSO) {
         CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSO);
 	return GEOM::GEOM_Object::_narrow(anObj);

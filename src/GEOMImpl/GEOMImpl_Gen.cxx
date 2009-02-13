@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -43,7 +45,10 @@
 #include <GEOMImpl_PolylineDriver.hxx>
 #include <GEOMImpl_SplineDriver.hxx>
 #include <GEOMImpl_SketcherDriver.hxx>
+#include <GEOMImpl_3DSketcherDriver.hxx>
 #include <GEOMImpl_BoxDriver.hxx>
+#include <GEOMImpl_FaceDriver.hxx>
+#include <GEOMImpl_DiskDriver.hxx>
 #include <GEOMImpl_ConeDriver.hxx>
 #include <GEOMImpl_CylinderDriver.hxx>
 #include <GEOMImpl_PrismDriver.hxx>
@@ -57,6 +62,7 @@
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_ChamferDriver.hxx>
 #include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
 #include <GEOMImpl_MirrorDriver.hxx>
@@ -98,9 +104,12 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PolylineDriver::GetID(), new GEOMImpl_PolylineDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_SplineDriver::GetID(), new GEOMImpl_SplineDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_SketcherDriver::GetID(), new GEOMImpl_SketcherDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_3DSketcherDriver::GetID(), new GEOMImpl_3DSketcherDriver());
 
    // 3D Primitives
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_BoxDriver::GetID(), new GEOMImpl_BoxDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FaceDriver::GetID(), new GEOMImpl_FaceDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_DiskDriver::GetID(), new GEOMImpl_DiskDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ConeDriver::GetID(), new GEOMImpl_ConeDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_CylinderDriver::GetID(), new GEOMImpl_CylinderDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PrismDriver::GetID(), new GEOMImpl_PrismDriver());
@@ -125,6 +134,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    // Local Operations
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ChamferDriver::GetID(), new GEOMImpl_ChamferDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FilletDriver::GetID(), new GEOMImpl_FilletDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_Fillet2dDriver::GetID(), new GEOMImpl_Fillet2dDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ArchimedeDriver::GetID(), new GEOMImpl_ArchimedeDriver());
 
    // Geometrical Transformations, Offset, Scale

@@ -1,6 +1,7 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  CEA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -16,73 +17,80 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BlocksGUI_QuadFaceDlg.h
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
 //
-//
-//  File   : BlocksGUI_QuadFaceDlg.h
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
+#ifndef BLOCKSGUI_QUADFACEDLG_H
+#define BLOCKSGUI_QUADFACEDLG_H
 
-#ifndef DIALOGBOX_QUAD_FACE_H
-#define DIALOGBOX_QUAD_FACE_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOM_BlocksGUI.hxx"
+#include <QMap>
 
-#include "GEOMBase_Skeleton.h"
+class QGroupBox;
+class QPushButton;
+class QLineEdit;
 
 //=================================================================================
 // class    : BlocksGUI_QuadFaceDlg
 // purpose  :
 //=================================================================================
-class GEOM_BLOCKSGUI_EXPORT BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
+class BlocksGUI_QuadFaceDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
   enum { Vertex1, Vertex2, Vertex3, Vertex4,
-	 Edge12, Edge22,
-	 Edge14, Edge24, Edge34, Edge44 };
+         Edge12, Edge22,
+         Edge14, Edge24, Edge34, Edge44 };
 
 public:
-  BlocksGUI_QuadFaceDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
+  BlocksGUI_QuadFaceDlg (GeometryGUI*, QWidget*);
   ~BlocksGUI_QuadFaceDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual                       bool isValid (QString& msg);
-  virtual                       bool execute (ObjectList& objects);
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
+  virtual void                       addSubshapesToStudy();
 
 private:
-  void Init();
-  void enterEvent (QEvent* e);
+  void                               Init();
+  void                               enterEvent (QEvent*);
 
-  void createSelWg (const QString&, QPixmap&, QWidget*, const int);
-  void activateSelection();
+  void                               createSelWg (const QString&, QPixmap&,
+                                                  QWidget*, const int);
+  void                               activateSelection();
 
 private:
-  int                     myConstructorId;
+  int                                myConstructorId;
 
-  GEOM::GEOM_Object_var   myShape1;
-  GEOM::GEOM_Object_var   myShape2;
-  GEOM::GEOM_Object_var   myShape3;
-  GEOM::GEOM_Object_var   myShape4;
+  GEOM::GEOM_Object_var              myShape1;
+  GEOM::GEOM_Object_var              myShape2;
+  GEOM::GEOM_Object_var              myShape3;
+  GEOM::GEOM_Object_var              myShape4;
 
-  QFrame*                 myGrp1;
-  QFrame*                 myGrp2;
-  QFrame*                 myGrp3;
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
 
-  QMap<int, QPushButton*> mySelBtn;
-  QMap<int, QLineEdit*>   mySelName;
+  QGroupBox*                         myGrp1;
+  QGroupBox*                         myGrp2;
+  QGroupBox*                         myGrp3;
+
+  QMap<int, QPushButton*>            mySelBtn;
+  QMap<int, QLineEdit*>              mySelName;
 
 private slots:
-  void ClickOnOk();
-  bool ClickOnApply();
-  void ActivateThisDialog();
-  void ConstructorsClicked( int constructorId );
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               ConstructorsClicked (int);
 
-  void SelectionIntoArgument();
-  void SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 };
 
-#endif // DIALOGBOX_QUAD_FACE_H
+#endif // BLOCKSGUI_QUADFACEDLG_H

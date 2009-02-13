@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
 
@@ -772,6 +773,80 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt
 }
 
 //=============================================================================
+//  MakeFaceHW:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceHW (CORBA::Double theH,
+						 CORBA::Double theW,
+						 CORBA::Short  theOrientation)
+{
+  beginService( " GEOM_Superv_i::MakeFaceHW" );
+  MESSAGE("GEOM_Superv_i::MakeFaceHW");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceHW(theH, theW, theOrientation);
+  endService( " GEOM_Superv_i::MakeFaceHW" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeFaceObjHW:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj, 
+						    CORBA::Double theH,
+						    CORBA::Double theW)
+{
+  beginService( " GEOM_Superv_i::MakeFaceObjHW" );
+  MESSAGE("GEOM_Superv_i::MakeFaceObjHW");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFaceObjHW(theObj, theH, theW);
+  endService( " GEOM_Superv_i::MakeFaceObjHW" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeDiskPntVecR:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
+						      GEOM::GEOM_Object_ptr theVector,
+						      CORBA::Double theR)
+{
+  beginService( " GEOM_Superv_i::MakeDiskPntVecR" );
+  MESSAGE("GEOM_Superv_i::MakeDiskPntVecR");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskPntVecR(theCenter, theVector, theR);
+  endService( " GEOM_Superv_i::MakeDiskPntVecR" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeDiskThreePnt:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
+						       GEOM::GEOM_Object_ptr thePnt2,
+						       GEOM::GEOM_Object_ptr thePnt3)
+{
+  beginService( " GEOM_Superv_i::MakeDiskThreePnt" );
+  MESSAGE("GEOM_Superv_i::MakeDiskThreePnt");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskThreePnt(thePnt1, thePnt2, thePnt3);
+  endService( " GEOM_Superv_i::MakeDiskThreePnt" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeDiskR:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskR (CORBA::Double theR,
+						CORBA::Short  theOrientation)
+{
+  beginService( " GEOM_Superv_i::MakeDiskR" );
+  MESSAGE("GEOM_Superv_i::MakeDiskR");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeDiskR(theR, theOrientation);
+  endService( " GEOM_Superv_i::MakeDiskR" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeCylinderPntVecRH:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
@@ -813,9 +888,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
   MESSAGE("GEOM_Superv_i::MakeSphepe");
   getBasicOp();
   get3DPrimOp();
-  GEOM::GEOM_Object_var o = myBasicOp->MakePointXYZ(theX, theY, theZ);
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(o, theRadius);
-  o->Destroy();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeSpherePntR(myBasicOp->MakePointXYZ(theX, theY, theZ), theRadius);
   endService( " GEOM_Superv_i::MakeSphepe" );
   return anObj;
 }
@@ -970,6 +1043,34 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr
 }
 
 //=============================================================================
+//  MakePrismDXDYDZ:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
+		      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+{
+  beginService( " GEOM_Superv_i::MakePrismDXDYDZ" );
+  MESSAGE("GEOM_Superv_i::MakePrismDXDYDZ");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismDXDYDZ(theBase, theDX, theDY, theDZ);
+  endService( " GEOM_Superv_i::MakePrismDXDYDZ" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePrismDXDYDZ:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr theBase,
+		      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+{
+  beginService( " GEOM_Superv_i::MakePrismDXDYDZ2Ways" );
+  MESSAGE("GEOM_Superv_i::MakePrismDXDYDZ2Ways");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakePrismDXDYDZ2Ways(theBase, theDX, theDY, theDZ);
+  endService( " GEOM_Superv_i::MakePrismDXDYDZ2Ways" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePipe:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase, 
@@ -1118,6 +1219,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
   GEOM::GEOM_Object_ptr anObj =
     my3DPrimOp->MakePipeShellsWithoutPath(theBases,theLocations);
   endService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
+  return anObj;
+}
+
+
+//=============================================================================
+//  MakePipe:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector 
+                                                (GEOM::GEOM_Object_ptr theBase, 
+						 GEOM::GEOM_Object_ptr thePath, 
+						 GEOM::GEOM_Object_ptr theVec)
+{
+  beginService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
+  MESSAGE("GEOM_Superv_i::MakePipeBiNormalAlongVector");
+  get3DPrimOp();
+  GEOM::GEOM_Object_ptr anObj = 
+    my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec);
+  endService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
   return anObj;
 }
 
@@ -1344,6 +1463,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorCopy (GEOM::GEOM_Object_ptr 
   getTransfOp();
   GEOM::GEOM_Object_ptr anObj = myTransfOp->TranslateVectorCopy(theObject, theVector);
   endService( " GEOM_Superv_i::TranslateVectorCopy" );
+  return anObj;
+}
+
+//=============================================================================
+//  TranslateVectorDistance:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
+							      GEOM::GEOM_Object_ptr theVector,
+							      CORBA::Double theDistance,
+							      CORBA::Boolean theCopy)
+{
+  beginService( " GEOM_Superv_i::TranslateVectorDistance" );
+  MESSAGE("GEOM_Superv_i::TranslateVectorDistance");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->TranslateVectorDistance(theObject, 
+								    theVector, theDistance, theCopy);
+  endService( " GEOM_Superv_i::TranslateVectorDistance" );
   return anObj;
 }
 
@@ -1620,6 +1756,42 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theOb
 }
 
 //=============================================================================
+//  ScaleShapeAlongAxes:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
+							  GEOM::GEOM_Object_ptr thePoint,
+							  CORBA::Double theFactorX,
+							  CORBA::Double theFactorY,
+							  CORBA::Double theFactorZ)
+{
+  beginService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
+  MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxes");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->ScaleShapeAlongAxes
+    (theObject, thePoint, theFactorX, theFactorY, theFactorZ);
+  endService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
+  return anObj;
+}
+
+//=============================================================================
+//  ScaleShapeAlongAxesCopy:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
+							      GEOM::GEOM_Object_ptr thePoint,
+							      CORBA::Double theFactorX,
+							      CORBA::Double theFactorY,
+							      CORBA::Double theFactorZ)
+{
+  beginService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
+  MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxesCopy");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->ScaleShapeAlongAxesCopy
+    (theObject, thePoint, theFactorX, theFactorY, theFactorZ);
+  endService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
+  return anObj;
+}
+
+//=============================================================================
 //  PositionShape:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShape (GEOM::GEOM_Object_ptr theObject,
@@ -1646,6 +1818,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShapeCopy (GEOM::GEOM_Object_ptr th
   getTransfOp();
   GEOM::GEOM_Object_ptr anObj = myTransfOp->PositionShapeCopy(theObject, theStartLCS, theEndLCS);
   endService( " GEOM_Superv_i::PositionShapeCopy" );
+  return anObj;
+}
+
+//=============================================================================
+//  PositionAlongPath:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
+							GEOM::GEOM_Object_ptr thePath,
+							CORBA::Double         theDistance,
+							CORBA::Boolean        theCopy,
+							CORBA::Boolean        theReverse)
+{
+  beginService( " GEOM_Superv_i::PositionAlongPath" );
+  MESSAGE("GEOM_Superv_i::PositionAlongPath");
+  getTransfOp();
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->PositionAlongPath(theObject, thePath, theDistance, theCopy, theReverse);
+  endService( " GEOM_Superv_i::PositionAlongPath" );
   return anObj;
 }
 
@@ -1875,6 +2064,7 @@ CORBA::Long GEOM_Superv_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
   return aRes;
 }
 
+
 //=============================================================================
 //  ChangeOrientation:
 //=============================================================================
@@ -1885,6 +2075,46 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ChangeOrientation (GEOM::GEOM_Object_ptr th
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj = myShapesOp->ChangeOrientation(theShape);
   endService( " GEOM_Superv_i::ChangeOrientation" );
+  return anObj;
+}
+
+
+//=============================================================================
+//  GetShapesOnShape:
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::GetShapesOnShape
+                                          (GEOM::GEOM_Object_ptr theCheckShape,
+					   GEOM::GEOM_Object_ptr theShape,
+					   CORBA::Short theShapeType,
+					   GEOM::shape_state theState)
+{
+  beginService( " GEOM_Superv_i::GetShapesOnShape" );
+  MESSAGE("GEOM_Superv_i::GetShapesOnShape");
+  getShapesOp();
+  GEOM::ListOfGO* aList =
+    myShapesOp->GetShapesOnShape(theCheckShape, theShape, theShapeType, theState);
+  GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aList));
+  MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::GetShapesOnShape" );
+  return aListPtr->_this();
+}
+
+
+//=============================================================================
+//  GetShapesOnShapeAsCompound:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::GetShapesOnShapeAsCompound
+                                          (GEOM::GEOM_Object_ptr theCheckShape,
+					   GEOM::GEOM_Object_ptr theShape,
+					   CORBA::Short theShapeType,
+					   GEOM::shape_state theState)
+{
+  beginService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
+  MESSAGE("GEOM_Superv_i::GetShapesOnShapeAsCompound");
+  getShapesOp();
+  GEOM::GEOM_Object_ptr anObj = 
+    myShapesOp->GetShapesOnShapeAsCompound(theCheckShape, theShape, theShapeType, theState);
+  endService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
   return anObj;
 }
 
@@ -2334,6 +2564,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcCenter (GEOM::GEOM_Object_ptr theCen
 }
 
 //=============================================================================
+//  MakeArcOfEllipse:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
+						       GEOM::GEOM_Object_ptr thePnt2,
+						       GEOM::GEOM_Object_ptr thePnt3)
+{
+  beginService( " GEOM_Superv_i::MakeArcOfEllipse" );
+  MESSAGE("GEOM_Superv_i::MakeArcOfEllipse");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeArcOfEllipse(thePnt1, thePnt2, thePnt3);
+  endService( " GEOM_Superv_i::MakeArcOfEllipse" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePolyline:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints)
@@ -2403,6 +2648,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand,
     return anObj;
   }
   endService( " GEOM_Superv_i::MakeSketcher" );
+  return NULL;
+}
+
+//=============================================================================
+//  Make3DSketcher:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::Make3DSketcher ( GEOM::GEOM_List_ptr theCoordinates)
+{
+  beginService( " GEOM_Superv_i::Make3DSketcher" );
+  MESSAGE("GEOM_Superv_i::Make3DSketcher");
+  if (GEOM_List_i<GEOM::ListOfDouble>* aListImpl = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theCoordinates, myPOA).in())) {
+    getCurvesOp();
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->Make3DSketcher(aListImpl->GetList());
+    endService( " GEOM_Superv_i::Make3DSketcher" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::Make3DSketcher" );
   return NULL;
 }
 
@@ -2502,6 +2765,26 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr 
     return anObj;
   }
   endService( " GEOM_Superv_i::MakeFilletFacesR1R2" );
+  return NULL;
+}
+
+//=============================================================================
+//  MakeFillet2D:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShape, 
+						   CORBA::Double theR,
+						   GEOM::GEOM_List_ptr theVertexes)
+{
+  beginService( " GEOM_Superv_i::MakeFillet2D" );
+  MESSAGE("GEOM_Superv_i::MakeFillet2D");
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV = 
+      dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theVertexes, myPOA).in())) {
+    getLocalOp();
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet2D(theShape, theR, aListImplV->GetList());
+    endService( " GEOM_Superv_i::MakeFillet2D" );
+    return anObj;
+  }
+  endService( " GEOM_Superv_i::MakeFillet2D" );
   return NULL;
 }
 

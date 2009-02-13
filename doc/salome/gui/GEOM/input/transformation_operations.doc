@@ -2,17 +2,27 @@
 
 \page transformation_operations_page Transformation Operations
 
+Geometry module provides the following transformation operations,
+which allow to:
+
+
 <ul>
-<li>\subpage translation_operation_page</li>
-<li>\subpage rotation_operation_page</li>
-<li>\subpage modify_location_operation_page</li>
-<li>\subpage mirror_operation_page</li>
-<li>\subpage scale_operation_page</li>
-<li>\subpage offset_operation_page</li>
-<li>\subpage multi_translation_operation_page</li>
-<li>\subpage multi_rotation_operation_page</li>
-<li>\subpage fillet_operation_page</li>
-<li>\subpage chamfer_operation_page</li>
+<li>\subpage translation_operation_page "Translate" an object by a certain vector.</li>
+<li>\subpage rotation_operation_page "Rotate" an object around a
+certain axis by a certain angle.</li>
+<li>\subpage modify_location_operation_page "Move" an object to a new location.</li>
+<li>\subpage mirror_operation_page "Mirror" an object through a point
+an axis or a plane of symmetry.</li>
+<li>\subpage scale_operation_page "Scale" an object by one or several scale
+factors.</li>
+<li>Create an \subpage offset_operation_page "Offset" of the object.</li>
+<li>Create a simultaneous \subpage multi_translation_operation_page "Translation in several directions".</li>
+<li>Create a simultaneous \subpage multi_rotation_operation_page</li> "Rotation in several directions".</li>
+<li>Produce a \subpage fillet_operation_page "Fillet" on the selected
+edges of the object.</li>
+<li>Produce a \subpage fillet2d_operation_page "2D Fillet" on the corners of a Planar Face.</li>
+<li>Produce a \subpage chamfer_operation_page "Chamfer" on the
+selected edges of the object.</li>
 </ul>
 
 */

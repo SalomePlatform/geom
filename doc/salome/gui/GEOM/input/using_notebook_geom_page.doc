@@ -1,0 +1,18 @@
+/*!
+
+\page using_notebook_geom_page Using SALOME NoteBook
+
+It is possible to use variables defined through <b>SALOME NoteBook</b> for
+creation and modification of objects in the Geometry module with the following
+limitations:
+
+<ul>
+<li> \ref create_lcs_page "Local Coordinate System" dialog box.\n
+     The notebook parameters are correctly applied, but the study
+     update is problematic in case if the LCS is defined using an 
+     object whose dimensions are given by parameters.
+<li> \ref color_page "Select color" dialog box.
+<li> \ref isolines_page "Select Number of Isos" dialog box.
+</ul>
+*/
+

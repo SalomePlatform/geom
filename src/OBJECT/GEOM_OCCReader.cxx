@@ -1,31 +1,30 @@
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 //  GEOM OBJECT : interactive object for Geometry entities visualization
-//
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-//
-//
 //  File   : GEOM_OCCReader.h
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
 //  $Header$
-
+//
 #include "GEOM_OCCReader.h"
 
 // VTK Includes
@@ -34,24 +33,14 @@
 
 #include <vtkObjectFactory.h>
 #include <vtkPolyData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkMergePoints.h>
-
-#include <vtkTransform.h>
-#include <vtkMatrix4x4.h>
 
 // OpenCASCADE Includes
-#include <BRepAdaptor_Surface.hxx>
 #include <TopExp_Explorer.hxx>
-#include <BRepMesh_IncrementalMesh.hxx>
 #include <Poly_Triangulation.hxx>
 #include <Poly_Polygon3D.hxx>
-#include <BRep_Tool.hxx>
+#include <Poly_PolygonOnTriangulation.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
-#include <TopoDS_Wire.hxx>
-#include <BRepBndLib.hxx>
-#include <TopoDS.hxx>
 #include <TopAbs.hxx>
 #include <Precision.hxx>
 #include <BRepTools.hxx>
@@ -63,12 +52,7 @@
 #include <Geom2d_Line.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
 #include <HatchGen_Domain.hxx>
-#include <GeomAbs_IsoType.hxx>
-#include <Precision.hxx>
 #include <TopAbs_ShapeEnum.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
 #include <gp_Dir2d.hxx>
 #include <gp_Pnt2d.hxx>
 #include <TColStd_Array1OfInteger.hxx>
@@ -485,7 +469,7 @@ void GEOM_OCCReader::DrawTo(gp_Pnt P,
   coord[0] = P.X(); coord[1] = P.Y(); coord[2] = P.Z();
   Standard_Integer NewVTKpoint =  Pts->InsertNextPoint(coord);
 
-  int pts[2];
+  vtkIdType pts[2];
   pts[0] = lastVTKpoint;
   pts[1] = NewVTKpoint;
 
@@ -751,7 +735,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     aP2 = theNodesP(nbnodes);
 
     float coord[3];
-    int pts[2];
+    vtkIdType pts[2];
 
     for(int j=1;j<nbnodes;j++) {
       gp_Pnt pt1 = theNodesP(j);
@@ -783,7 +767,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     aP2 = theNodesPoly(nbnodes);
 
     float coord[3];
-    int pts[2];
+    vtkIdType pts[2];
     
     for(int j=1;j<nbnodes;j++) {
       Standard_Integer id1 = Nodesidx(j);
@@ -859,7 +843,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     int ptPrev = 0;
     int ptCur = 0;
 
-    int pts[2];
+    vtkIdType pts[2];
 
     int NbPoints = 15;
     for (int i = 1; i <= NbPoints; i++, ptPrev = ptCur)
@@ -902,7 +886,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
   const TColgp_Array1OfPnt& theNodes = T->Nodes();
     
   float coord[3];
-  int pts[2];
+  vtkIdType pts[2];
     
 
   // PUSH NODES
@@ -925,7 +909,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     Standard_Integer id1 = Nodesidx(i);
     Standard_Integer id2 = Nodesidx(i+1);
     
-    int pts[2];
+    vtkIdType pts[2];
     pts[0] = id1-1; pts[1] = id2-1;
 
     // insert line (pt1,pt2)
@@ -947,7 +931,7 @@ void GEOM_OCCReader::TransferVertexWData(const TopoDS_Vertex& aVertex,
   
   gp_Pnt P = BRep_Tool::Pnt( aVertex );
   float delta = 1, coord[3];
-  int pts[2];
+  vtkIdType pts[2];
   // insert pt
   ZERO_COORD; coord[0] = +delta;
   pts[0] = Pts->InsertNextPoint(coord);
@@ -1026,7 +1010,7 @@ void GEOM_OCCReader::TransferFaceSData(const TopoDS_Face& aFace,
       Standard_Integer N1,N2,N3;
       Triangles(i).Get(N1,N2,N3);
 	
-      int pts[3];
+      vtkIdType pts[3];
       pts[0] = N1-1; pts[1] = N2-1; pts[2] = N3-1;
       Cells->InsertNextCell(3,pts);
 

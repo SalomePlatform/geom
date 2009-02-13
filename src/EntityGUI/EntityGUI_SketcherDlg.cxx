@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -19,28 +19,27 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : EntityGUI_SketcherDlg.cxx
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : EntityGUI_SketcherDlg.cxx
-//  Author : Damien COQUERET
-//  Module : GEOM
-//  $Header$
-
 #include "EntityGUI_SketcherDlg.h"
-#include "Sketcher_Profile.hxx"
-#include "GEOM_Displayer.h"
-#include "GEOMBase.h"
+#include "EntityGUI_Widgets.h"
+#include <QtxDoubleSpinBox.h>
 
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
-#include "SUIT_MessageBox.h"
-#include "SUIT_ResourceMgr.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <GEOMBase.h>
+#include <GeometryGUI.h>
+#include <GEOMImpl_Types.hxx>
 
-#include <qpushbutton.h>
-#include <qlabel.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_Session.h>
+#include <SUIT_MessageBox.h>
+#include <SUIT_ResourceMgr.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+
+#include <QKeyEvent>
 
 #include <BRep_Tool.hxx>
 #include <TopExp.hxx>
@@ -49,12 +48,7 @@
 #include <TopoDS.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
-
-#include "GEOMImpl_Types.hxx"
-
-#include "utilities.h"
-
-using namespace std;
+#include <Sketcher_Profile.hxx>
 
 //=================================================================================
 // class    : EntityGUI_SketcherDlg()
@@ -63,177 +57,168 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
-                                             const char* name, bool modal, WFlags fl,
-					     const double lineWidth)
-  :EntityGUI_Skeleton_QTD(parent, name, modal, WStyle_Customize |
-                          WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
-   myIsAllAdded( false ),
-   GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
-   myGeometryGUI( GUI ),
-   myLineWidth( lineWidth )
+EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
+					      bool modal, Qt::WindowFlags fl,
+					      const double lineWidth )
+  : QDialog( parent, fl ),
+    myIsAllAdded( false ),
+    myIsApply( false ),
+    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
+    myGeometryGUI( GUI ),
+    myLineWidth( lineWidth )
 {
+  setModal( modal );
+  setAttribute( Qt::WA_DeleteOnClose );
+
   myGeometryGUI->SetActiveDialogBox(this);
 
-  if ( !name ) setName("EntityGUI_SketcherDlg");
+  MainWidget = new EntityGUI_Skeleton( this );
+  QVBoxLayout* topLayout = new QVBoxLayout( this );
+  topLayout->setMargin( 9 ); topLayout->setSpacing( 6 );
+  topLayout->addWidget( MainWidget );
 
-  buttonCancel->setText(tr("GEOM_BUT_CANCEL"));
-  buttonEnd->setText(tr("GEOM_BUT_END_SKETCH"));
-  buttonClose->setText(tr("GEOM_BUT_CLOSE_SKETCH"));
-  buttonHelp->setText(tr("GEOM_BUT_HELP"));
+  MainWidget->buttonCancel->setText( tr( "GEOM_BUT_CANCEL" ) );
+  MainWidget->buttonEnd->setText( tr( "GEOM_BUT_END_SKETCH" ) );
+  MainWidget->buttonClose->setText( tr( "GEOM_BUT_CLOSE_SKETCH" ) );
+  MainWidget->buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
 
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_UNDO")));
-  QPixmap image2(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_REDO")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO" ) ) );
+  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_REDO" ) ) );
 
-  setCaption(tr("GEOM_SKETCHER_TITLE"));
+  setWindowTitle( tr( "GEOM_SKETCHER_TITLE" ) );
 
-  GroupConstructors->setTitle(tr("GEOM_SKETCHER_EL"));
-  RadioButton1->setText(tr("GEOM_SKETCHER_SEGMENT"));
-  RadioButton2->setText(tr("GEOM_SKETCHER_ARC"));
-  GroupDest->setTitle(tr("GEOM_SKETCHER_DEST"));
-  GroupDest1->setTitle(tr("GEOM_SKETCHER_TYPE"));
-  RB_Dest1->setText(tr("GEOM_SKETCHER_POINT"));
-  RB_Dest2->setText(tr("GEOM_SKETCHER_DIR"));
+  MainWidget->GroupConstructors->setTitle( tr( "GEOM_SKETCHER_EL" ) );
+  MainWidget->RadioButton1->setText( tr( "GEOM_SKETCHER_SEGMENT" ) );
+  MainWidget->RadioButton2->setText( tr( "GEOM_SKETCHER_ARC" ) );
+  MainWidget->GroupDest->setTitle( tr( "GEOM_SKETCHER_DEST" ) );
+  MainWidget->GroupDest1->setTitle( tr( "GEOM_SKETCHER_TYPE" ) );
+  MainWidget->RB_Dest1->setText( tr( "GEOM_SKETCHER_POINT" ) );
+  MainWidget->RB_Dest2->setText( tr( "GEOM_SKETCHER_DIR" ) );
 
   /***************************************************************/
-  GroupPt = new EntityGUI_Point_QTD(GroupDest, "GroupPt");
-  GroupPt->GroupPoint->setTitle(tr("GEOM_SKETCHER_POINT"));
-  GroupPt->RB_Point1->setText(tr("GEOM_SKETCHER_ABS"));
-  GroupPt->RB_Point2->setText(tr("GEOM_SKETCHER_REL"));
-  GroupPt->RB_Point3->setText(tr("GEOM_SKETCHER_SEL"));
+  GroupPt = new EntityGUI_Point( MainWidget->DestCnt );
 
-  GroupD1 = new EntityGUI_Dir1_QTD(GroupDest, "GroupD1");
-  GroupD1->GroupDir1->setTitle(tr("GEOM_SKETCHER_DIR"));
-  GroupD1->RB_Dir11->setText(tr("GEOM_SKETCHER_ANGLE"));
-  GroupD1->RB_Dir12->setText(tr("GEOM_SKETCHER_PER"));
-  GroupD1->RB_Dir13->setText(tr("GEOM_SKETCHER_TAN"));
-  GroupD1->RB_Dir14->setText(tr("GEOM_SKETCHER_VXVY"));
+  GroupPt->GroupPoint->setTitle( tr( "GEOM_SKETCHER_POINT" ) );
+  GroupPt->RB_Point1->setText( tr( "GEOM_SKETCHER_ABS" ) );
+  GroupPt->RB_Point2->setText( tr( "GEOM_SKETCHER_REL" ) );
+  GroupPt->RB_Point3->setText( tr( "GEOM_SKETCHER_SEL" ) );
 
-  GroupD2 = new EntityGUI_Dir2_QTD(GroupDest, "GroupD2");
-  GroupD2->GroupDir2->setTitle(tr("GEOM_SKETCHER_DIR"));
-  GroupD2->RB_Dir21->setText(tr("GEOM_SKETCHER_LENGTH"));
-  GroupD2->RB_Dir22->setText(tr("GEOM_SKETCHER_X"));
-  GroupD2->RB_Dir23->setText(tr("GEOM_SKETCHER_Y"));
+  GroupD1 = new EntityGUI_Dir1( MainWidget->DestCnt );
 
-  Group1Sel = new EntityGUI_1Sel_QTD(this, "Group1Sel");
-  Group1Sel->TextLabel1->setText(tr("GEOM_SKETCHER_POINT2"));
-  Group1Sel->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
-  Group1Sel->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group1Sel->PushButton1->setPixmap(image0);
-  Group1Sel->buttonUndo->setPixmap(image1);
-  Group1Sel->buttonRedo->setPixmap(image2);
+  GroupD1->GroupDir1->setTitle( tr( "GEOM_SKETCHER_DIR" ) );
+  GroupD1->RB_Dir11->setText( tr( "GEOM_SKETCHER_ANGLE" ) );
+  GroupD1->RB_Dir12->setText( tr( "GEOM_SKETCHER_PER" ) );
+  GroupD1->RB_Dir13->setText( tr( "GEOM_SKETCHER_TAN" ) );
+  GroupD1->RB_Dir14->setText( tr( "GEOM_SKETCHER_VXVY" ) );
+
+  GroupD2 = new EntityGUI_Dir2( MainWidget->DestCnt );
+
+  GroupD2->GroupDir2->setTitle( tr( "GEOM_SKETCHER_DIR" ) );
+  GroupD2->RB_Dir21->setText( tr( "GEOM_SKETCHER_LENGTH" ) );
+  GroupD2->RB_Dir22->setText( tr( "GEOM_SKETCHER_X" ) );
+  GroupD2->RB_Dir23->setText( tr( "GEOM_SKETCHER_Y" ) );
+
+  Group1Sel = new EntityGUI_1Sel( MainWidget->SkeletonCnt );
+
+  Group1Sel->TextLabel1->setText( tr( "GEOM_SKETCHER_POINT2" ) );
+  Group1Sel->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
+  Group1Sel->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
+  Group1Sel->PushButton1->setIcon( image0 );
+  Group1Sel->buttonUndo->setIcon( image1 );
+  Group1Sel->buttonRedo->setIcon( image2 );
   Group1Sel->LineEdit1->setReadOnly( true );
 
-  Group1Spin = new EntityGUI_1Spin(this, "Group1Spin");
-  Group1Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
-  Group1Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group1Spin->buttonUndo->setPixmap(image1);
-  Group1Spin->buttonRedo->setPixmap(image2);
-  QWidget::setTabOrder(Group1Spin->SpinBox_DX , Group1Spin->buttonApply);
-  QWidget::setTabOrder(Group1Spin->buttonApply, Group1Spin->buttonUndo);
-  QWidget::setTabOrder(Group1Spin->buttonUndo , Group1Spin->buttonRedo);
+  Group1Spin = new EntityGUI_1Spin( MainWidget->SkeletonCnt );
+  Group1Spin->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
+  Group1Spin->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
+  Group1Spin->buttonUndo->setIcon( image1 );
+  Group1Spin->buttonRedo->setIcon( image2 );
 
-  Group2Spin = new EntityGUI_2Spin(this, "Group2Spin");
-  Group2Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
-  Group2Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group2Spin->buttonUndo->setPixmap(image1);
-  Group2Spin->buttonRedo->setPixmap(image2);
-  QWidget::setTabOrder(Group2Spin->SpinBox_DX , Group2Spin->SpinBox_DY);
-  QWidget::setTabOrder(Group2Spin->SpinBox_DY , Group2Spin->buttonApply);
-  QWidget::setTabOrder(Group2Spin->buttonApply, Group2Spin->buttonUndo);
-  QWidget::setTabOrder(Group2Spin->buttonUndo , Group2Spin->buttonRedo);
+  Group2Spin = new EntityGUI_2Spin( MainWidget->SkeletonCnt );
+  Group2Spin->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
+  Group2Spin->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
+  Group2Spin->buttonUndo->setIcon( image1 );
+  Group2Spin->buttonRedo->setIcon( image2 );
 
-  Group3Spin = new EntityGUI_3Spin(this, "Group3Spin");
-  Group3Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
-  Group3Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group3Spin->buttonUndo->setPixmap(image1);
-  Group3Spin->buttonRedo->setPixmap(image2);
-  QWidget::setTabOrder(Group3Spin->SpinBox_DX , Group3Spin->SpinBox_DY);
-  QWidget::setTabOrder(Group3Spin->SpinBox_DY , Group3Spin->SpinBox_DZ);
-  QWidget::setTabOrder(Group3Spin->SpinBox_DZ , Group3Spin->buttonApply);
-  QWidget::setTabOrder(Group3Spin->buttonApply, Group3Spin->buttonUndo);
-  QWidget::setTabOrder(Group3Spin->buttonUndo , Group3Spin->buttonRedo);
+  Group3Spin = new EntityGUI_3Spin( MainWidget->SkeletonCnt );
+  Group3Spin->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
+  Group3Spin->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
+  Group3Spin->buttonUndo->setIcon( image1 );
+  Group3Spin->buttonRedo->setIcon( image2 );
 
-  Group4Spin = new EntityGUI_4Spin(this, "Group4Spin");
-  Group4Spin->GroupBox1->setTitle(tr("GEOM_SKETCHER_VALUES"));
-  Group4Spin->buttonApply->setText(tr("GEOM_SKETCHER_APPLY"));
-  Group4Spin->buttonUndo->setPixmap(image1);
-  Group4Spin->buttonRedo->setPixmap(image2);
-  QWidget::setTabOrder(Group4Spin->SpinBox_DX , Group4Spin->SpinBox_DY);
-  QWidget::setTabOrder(Group4Spin->SpinBox_DY , Group4Spin->SpinBox_DZ);
-  QWidget::setTabOrder(Group4Spin->SpinBox_DZ , Group4Spin->SpinBox_DS);
-  QWidget::setTabOrder(Group4Spin->SpinBox_DS , Group4Spin->buttonApply);
-  QWidget::setTabOrder(Group4Spin->buttonApply, Group4Spin->buttonUndo);
-  QWidget::setTabOrder(Group4Spin->buttonUndo , Group4Spin->buttonRedo);
+  Group4Spin = new EntityGUI_4Spin( MainWidget->SkeletonCnt );
+  Group4Spin->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
+  Group4Spin->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
+  Group4Spin->buttonUndo->setIcon( image1 );
+  Group4Spin->buttonRedo->setIcon( image2 );
 
-  Layout5->addMultiCellWidget(GroupPt, 1, 1, 0, 1);
-  Layout5->addWidget(GroupD1, 1, 0);
-  Layout5->addWidget(GroupD2, 1, 1);
+  QGridLayout* DestCntLayout = new QGridLayout( MainWidget->DestCnt );
+  DestCntLayout->setMargin( 0 ); DestCntLayout->setSpacing( 6 );
+  DestCntLayout->addWidget( GroupPt, 0, 0, 1, 2 );
+  DestCntLayout->addWidget( GroupD1, 1, 0 );
+  DestCntLayout->addWidget( GroupD2, 1, 1 );
 
-  Layout1->addWidget(Group1Sel, 2, 0);
-  Layout1->addWidget(Group1Spin, 2, 0);
-  Layout1->addWidget(Group2Spin, 2, 0);
-  Layout1->addWidget(Group3Spin, 2, 0);
-  Layout1->addWidget(Group4Spin, 2, 0);
+  QVBoxLayout* SkeletonCntlayout = new QVBoxLayout( MainWidget->SkeletonCnt );
+  SkeletonCntlayout->setMargin( 0 ); SkeletonCntlayout->setSpacing( 6 );
+  SkeletonCntlayout->addWidget( Group1Sel,  0, 0 );
+  SkeletonCntlayout->addWidget( Group1Spin, 0, 0 );
+  SkeletonCntlayout->addWidget( Group2Spin, 0, 0 );
+  SkeletonCntlayout->addWidget( Group3Spin, 0, 0 );
+  SkeletonCntlayout->addWidget( Group4Spin, 0, 0 );
   /***************************************************************/
 
+  QButtonGroup* ButtonGroup = new QButtonGroup( this );
+  ButtonGroup->addButton( MainWidget->RB_Dest1, 1 );
+  ButtonGroup->addButton( MainWidget->RB_Dest2, 0 );
+
   /* signals and slots connections */
-  connect(buttonEnd, SIGNAL(clicked()), this, SLOT(ClickOnEnd()));
-  connect(buttonClose, SIGNAL(clicked()), this, SLOT(ClickOnEnd()));
-  connect(buttonCancel, SIGNAL(clicked()), this, SLOT(ClickOnCancel()));
-  connect(buttonHelp, SIGNAL( clicked() ), this, SLOT( ClickOnHelp()));
+  connect( MainWidget->buttonEnd,    SIGNAL( clicked() ), this, SLOT( ClickOnEnd() ) );
+  connect( MainWidget->buttonClose,  SIGNAL( clicked() ), this, SLOT( ClickOnEnd() ) );
+  connect( MainWidget->buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
+  connect( MainWidget->buttonHelp,   SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
 
-  connect(Group1Sel->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(Group1Sel->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
-  connect(Group1Sel->buttonRedo, SIGNAL(clicked()), this, SLOT(ClickOnRedo()));
-  connect(Group1Spin->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(Group1Spin->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
-  connect(Group1Spin->buttonRedo, SIGNAL(clicked()), this, SLOT(ClickOnRedo()));
-  connect(Group2Spin->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(Group2Spin->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
-  connect(Group2Spin->buttonRedo, SIGNAL(clicked()), this, SLOT(ClickOnRedo()));
-  connect(Group3Spin->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(Group3Spin->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
-  connect(Group3Spin->buttonRedo, SIGNAL(clicked()), this, SLOT(ClickOnRedo()));
-  connect(Group4Spin->buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-  connect(Group4Spin->buttonUndo, SIGNAL(clicked()), this, SLOT(ClickOnUndo()));
-  connect(Group4Spin->buttonRedo, SIGNAL(clicked()), this, SLOT(ClickOnRedo()));
+  connect( Group1Sel->buttonApply,   SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( Group1Sel->buttonUndo,    SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
+  connect( Group1Sel->buttonRedo,    SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
+  connect( Group1Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( Group1Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
+  connect( Group1Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
+  connect( Group2Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( Group2Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
+  connect( Group2Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
+  connect( Group3Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( Group3Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
+  connect( Group3Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) ) ;
+  connect( Group4Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( Group4Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
+  connect( Group4Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
 
-  connect(GroupConstructors, SIGNAL(clicked(int)), this, SLOT(TypeClicked(int)));
-  connect(GroupDest1, SIGNAL(clicked(int)), this, SLOT(DestClicked(int)));
-  connect(GroupPt->GroupPoint, SIGNAL(clicked(int)), this, SLOT(PointClicked(int)));
-  connect(GroupD1->GroupDir1, SIGNAL(clicked(int)), this, SLOT(Dir1Clicked(int)));
-  connect(GroupD2->GroupDir2, SIGNAL(clicked(int)), this, SLOT(Dir2Clicked(int)));
+  connect( MainWidget->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( TypeClicked( int ) ) );
+  connect( ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( DestClicked( int ) ) );
+  connect( GroupPt->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( PointClicked( int ) ) );
+  connect( GroupD1->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( Dir1Clicked( int ) ) );
+  connect( GroupD2->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( Dir2Clicked( int ) ));
 
-  connect(Group1Sel->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1Sel->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( Group1Sel->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group1Sel->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(Group1Spin->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group2Spin->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group2Spin->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group3Spin->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group3Spin->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group3Spin->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group4Spin->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group4Spin->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group4Spin->SpinBox_DZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(Group4Spin->SpinBox_DS, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect( Group1Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group1Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group2Spin->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group3Spin->SpinBox_DZ, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DX, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DY, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DZ, SLOT(SetStep(double)));
-  connect(myGeometryGUI, SIGNAL(SignalDefaultStepValueChanged(double)), Group4Spin->SpinBox_DS, SLOT(SetStep(double)));
+  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
-  connect(myGeometryGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
-  connect(myGeometryGUI, SIGNAL(SignalCloseAllDialogs()), this, SLOT(ClickOnCancel()));
-
+  connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeometryGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+  
   // install event filter on spin-boxes to provide Apply action on Return pressed
   Group1Spin->SpinBox_DX->installEventFilter(this);
   Group2Spin->SpinBox_DX->installEventFilter(this);
@@ -249,6 +234,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg(GeometryGUI* GUI, QWidget* parent,
   Init();
 }
 
+
 //=================================================================================
 // function : ~EntityGUI_SketcherDlg()
 // purpose  : Destroys the object and frees any allocated resources
@@ -258,6 +244,7 @@ EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
   myGeometryGUI->SetActiveDialogBox( 0 );
 }
 
+
 //=================================================================================
 // function : eventFilter()
 // purpose  : event filter for spin-boxes to provide Apply action on Return pressed
@@ -266,7 +253,7 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
 {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* ke = (QKeyEvent*)event;
-    if (ke->key() == Key_Return) {
+    if (ke->key() == Qt::Key_Return) {
       if (object == Group1Spin->SpinBox_DX) {
         Group1Spin->buttonApply->animateClick();
         return true;
@@ -289,17 +276,9 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
     }
   }
 
-  if (event->type() == QEvent::KeyRelease) {
-    // NPAL16010 (Sketcher Apply non available if only one line is modified)
-    // To have Apply active as soon as value text changed
-    QString s = ((QtxDblSpinBox*) object)->text();
-    bool ok;
-    double newVal = s.toDouble( &ok );
-    if ( ok )
-      ValueChangedInSpinBox( newVal );
-  }
+  // Fix of the NPAL16010 bug is removed, because it's not actual with the Qt-4.x
 
-  return EntityGUI_Skeleton_QTD::eventFilter(object, event);
+  return QDialog::eventFilter(object, event);
 }
 
 
@@ -328,29 +307,29 @@ void EntityGUI_SketcherDlg::Init()
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
-  Group1Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group4Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
-  Group4Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
-  Group4Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  Group4Spin->SpinBox_DS->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
+  initSpinBox( Group1Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
 
   /* displays Dialog */
-  GroupConstructors->setEnabled(false);
-  GroupDest1->setEnabled(false);
-  setEnabledUndo(false);
-  setEnabledRedo(false);
+  MainWidget->GroupConstructors->setEnabled( false );
+  MainWidget->GroupDest1->setEnabled( false );
+  setEnabledUndo( false );
+  setEnabledRedo( false );
 
-  RadioButton1->setChecked(true);
+  MainWidget->RadioButton1->setChecked( true );
 
   resize( 0, 0 );
-  TypeClicked(0);
+  TypeClicked( 0 );
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 
@@ -360,7 +339,7 @@ void EntityGUI_SketcherDlg::Init()
 //=================================================================================
 void EntityGUI_SketcherDlg::InitClick()
 {
-  disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
+  disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
 
   Group1Sel->hide();
   Group1Spin->hide();
@@ -368,7 +347,7 @@ void EntityGUI_SketcherDlg::InitClick()
   Group3Spin->hide();
   Group4Spin->hide();
 
-  resize(0, 0);
+  resize( 0, 0 );
 }
 
 
@@ -376,22 +355,20 @@ void EntityGUI_SketcherDlg::InitClick()
 // function : TypeClicked()
 // purpose  : Radio button management
 //=================================================================================
-void EntityGUI_SketcherDlg::TypeClicked(int constructorId)
+void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
 {
   myConstructorId = constructorId;
-  if ( myConstructorId == 0 )     // SEGMENT
-  {
-    GroupD2->setEnabled(true);
-    RB_Dest1->setEnabled(true);
-    RB_Dest1->setChecked(true);
-    DestClicked(1);
+  if ( myConstructorId == 0 ) {    // SEGMENT
+    GroupD2->setEnabled( true );
+    MainWidget->RB_Dest1->setEnabled( true );
+    MainWidget->RB_Dest1->setChecked( true );
+    DestClicked( 1 );
   }
-  else if (  myConstructorId == 1 ) // ARC
-  {
-    GroupD2->setEnabled(false);
-    RB_Dest1->setEnabled(false);
-    RB_Dest2->setChecked(true);
-    DestClicked(0);
+  else if (  myConstructorId == 1 ) { // ARC
+    GroupD2->setEnabled( false );
+    MainWidget->RB_Dest1->setEnabled( false );
+    MainWidget->RB_Dest2->setChecked( true );
+    DestClicked( 0 );
   }
 }
 
@@ -406,18 +383,18 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
   GroupD1->hide();
   GroupD2->hide();
 
-  if ( constructorId == 1 )
-  {  // Point
-    GroupPt->RB_Point1->setChecked(true);
+  if ( constructorId == 1 ) {
+    // Point
+    GroupPt->RB_Point1->setChecked( true );
     GroupPt->show();
-    PointClicked(1);  // XY
+    PointClicked( 1 );  // XY
   }
-  else if (  constructorId == 0 )
-  {  // Direction
-    GroupD1->RB_Dir11->setChecked(true);
+  else if (  constructorId == 0 ) {
+    // Direction
+    GroupD1->RB_Dir11->setChecked( true );
     GroupD1->show();
     GroupD2->show();
-    Dir1Clicked(2);  // Angle
+    Dir1Clicked( 2 );  // Angle
   }
 }
 
@@ -426,53 +403,49 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
 // function : PointClicked()
 // purpose  : Radio button management
 //=================================================================================
-void EntityGUI_SketcherDlg::PointClicked(int constructorId)
+void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 {
   InitClick();
 
   // Get setting of step value from file configuration
-  double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
+  double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
-  if ( myConstructorId == 0 )
-  {  // SEGMENT
-    if ( constructorId == 1 )
-    {  // XY
+  if ( myConstructorId == 0 ) {  // SEGMENT
+    if ( constructorId == 1 ) {  // XY
       mySketchType = PT_ABS;
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-      Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_X2"));
-      Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_Y2"));
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
+      Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
       myX = 0.0;
-      Group2Spin->SpinBox_DX->SetValue(myX);
+      Group2Spin->SpinBox_DX->setValue( myX );
       myY = 0.0;
-      Group2Spin->SpinBox_DY->SetValue(myY);
+      Group2Spin->SpinBox_DY->setValue( myY );
       Group2Spin->show();
       Group2Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
     }
-    else if ( constructorId == 0 )
-    {  // DXDY
+    else if ( constructorId == 0 ) {  // DXDY
       mySketchType = PT_RELATIVE;
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-      Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_DX2"));
-      Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_DY2"));
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
+      Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
       myDX = 0.0;
-      Group2Spin->SpinBox_DX->SetValue(myDX);
+      Group2Spin->SpinBox_DX->setValue( myDX );
       myDY = 0.0;
-      Group2Spin->SpinBox_DY->SetValue(myDY);
+      Group2Spin->SpinBox_DY->setValue( myDY );
       Group2Spin->show();
       Group2Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
     }
-    else if ( constructorId == 2 )
-    {  // Selection
+    else if ( constructorId == 2 ) {  // Selection
       mySketchType = PT_SEL;
       myEditCurrentArgument = Group1Sel->LineEdit1;
-      connect(myGeometryGUI->getApp()->selectionMgr(),
-	      SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+      connect( myGeometryGUI->getApp()->selectionMgr(),
+	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       Group1Sel->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
@@ -485,11 +458,11 @@ void EntityGUI_SketcherDlg::PointClicked(int constructorId)
 // function : Dir1Clicked()
 // purpose  : Radio button management
 //=================================================================================
-void EntityGUI_SketcherDlg::Dir1Clicked(int constructorId)
+void EntityGUI_SketcherDlg::Dir1Clicked( int constructorId )
 {
   myConstructorDirId = constructorId;
-  GroupD2->RB_Dir21->setChecked(true);
-  Dir2Clicked(2);
+  GroupD2->RB_Dir21->setChecked( true );
+  Dir2Clicked( 2 );
 }
 
 
@@ -497,209 +470,183 @@ void EntityGUI_SketcherDlg::Dir1Clicked(int constructorId)
 // function : Dir2Clicked()
 // purpose  : Radio button management
 //=================================================================================
-void EntityGUI_SketcherDlg::Dir2Clicked(int constructorId)
+void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
 {
   InitClick();
   myAngle = 0.0;
 
   // Get setting of step value from file configuration
-  double step = SUIT_Session::session()->resourceMgr()->doubleValue("Geometry", "SettingsGeomStep", 100.0);
+  double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
-  if ( myConstructorId == 0 )
-  {  // SEGMENT
+  if ( myConstructorId == 0 ) {  // SEGMENT
     myX = 0.0;
     myY = 0.0;
     myLength = 100.0;
-    if ( myConstructorDirId == 2 )
-    {  // Angle
-      Group2Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
-      Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-      Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
-      Group2Spin->SpinBox_DX->SetValue(myAngle);
+    if ( myConstructorDirId == 2 ) {  // Angle
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
+      Group2Spin->SpinBox_DX->setValue( myAngle );
       Group2Spin->buttonApply->setFocus();
       Group2Spin->show();
 
-      if ( constructorId == 2 )
-      {  // Length
-				mySketchType = DIR_ANGLE_LENGTH;
-				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_LENGTH2"));
-				Group2Spin->SpinBox_DY->SetValue(myLength);
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_ANGLE_LENGTH;
+	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_LENGTH2" ) );
+	Group2Spin->SpinBox_DY->setValue( myLength );
       }
-      else if ( constructorId == 0 )
-      {  // X
-				mySketchType = DIR_ANGLE_X;
-				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_X3"));
-				Group2Spin->SpinBox_DY->SetValue(myX);
+      else if ( constructorId == 0 ) {  // X
+	mySketchType = DIR_ANGLE_X;
+	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_X3" ) );
+	Group2Spin->SpinBox_DY->setValue( myX );
       }
-      else if ( constructorId == 1 )
-      {  // Y
-				mySketchType = DIR_ANGLE_Y;
-				Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_Y3"));
-				Group2Spin->SpinBox_DY->SetValue(myY);
+      else if ( constructorId == 1 ) {  // Y
+	mySketchType = DIR_ANGLE_Y;
+	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y3" ) );
+	Group2Spin->SpinBox_DY->setValue( myY );
       }
     }
-    else if ( myConstructorDirId == 0 )
-    {  // Perpendicular
+    else if ( myConstructorDirId == 0 ) {  // Perpendicular
       Group1Spin->show();
       Group1Spin->buttonApply->setFocus();
 
-      if ( constructorId == 2 )
-      {  // Length
-				mySketchType = DIR_PER_LENGTH;
-				Group1Spin->TextLabel1->setText(tr("GEOM_SKETCHER_LENGTH2"));
-				Group1Spin->SpinBox_DX->SetValue(myLength);
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_PER_LENGTH;
+	Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_LENGTH2" ) );
+	Group1Spin->SpinBox_DX->setValue( myLength );
       }
-      else if ( constructorId == 0 )
-      {  // X
-				mySketchType = DIR_PER_X;
-				Group1Spin->TextLabel1->setText(tr("GEOM_SKETCHER_X3"));
-				Group1Spin->SpinBox_DX->SetValue(myX);
+      else if ( constructorId == 0 ) {  // X
+	mySketchType = DIR_PER_X;
+	Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X3" ) );
+	Group1Spin->SpinBox_DX->setValue( myX );
       }
-      else if ( constructorId == 1 )
-      {  // Y
-				mySketchType = DIR_PER_Y;
-				Group1Spin->TextLabel1->setText(tr("GEOM_SKETCHER_Y3"));
-				Group1Spin->SpinBox_DX->SetValue(myY);
+      else if ( constructorId == 1 ) {  // Y
+	mySketchType = DIR_PER_Y;
+	Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_Y3" ) );
+	Group1Spin->SpinBox_DX->setValue( myY );
       }
     }
-    else if ( myConstructorDirId == 1 )
-    {  // Tangent
+    else if ( myConstructorDirId == 1 ) {  // Tangent
       Group1Spin->show();
       Group1Spin->buttonApply->setFocus();
 
-      if ( constructorId == 2 )
-      {  // Length
-				mySketchType = DIR_TAN_LENGTH;
-				Group1Spin->TextLabel1->setText(tr("GEOM_SKETCHER_LENGTH2"));
-				Group1Spin->SpinBox_DX->SetValue(myLength);
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_TAN_LENGTH;
+	Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_LENGTH2" ) );
+	Group1Spin->SpinBox_DX->setValue( myLength );
       }
-      else if ( constructorId == 0 )
-      {  // X
-				mySketchType = DIR_TAN_X;
-				Group1Spin->TextLabel1->setText(tr("GEOM_SKETCHER_X3"));
-				Group1Spin->SpinBox_DX->SetValue(myX);
+      else if ( constructorId == 0 ) {  // X
+	mySketchType = DIR_TAN_X;
+	Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X3" ) );
+	Group1Spin->SpinBox_DX->setValue( myX );
       }
-      else if ( constructorId == 1 )
-      {  // Y
-				mySketchType = DIR_TAN_Y;
-				Group1Spin->TextLabel1->setText(tr("GEOM_SKETCHER_Y3"));
-				Group1Spin->SpinBox_DX->SetValue(myY);
+      else if ( constructorId == 1 ) {  // Y
+	mySketchType = DIR_TAN_Y;
+	Group1Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_Y3" ) );
+	Group1Spin->SpinBox_DX->setValue( myY );
       }
     }
-    else if ( myConstructorDirId == 3 )
-    {  // DXDY
-      Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
-      Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 0.1, DBL_DIGITS_DISPLAY);
-      Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-      Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_VX2"));
-      Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_VY2"));
+    else if ( myConstructorDirId == 3 ) {  // DXDY
+      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_VX2" ) );
+      Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_VY2" ) );
       myDX = 0.0;
-      Group3Spin->SpinBox_DX->SetValue(myDX);
+      Group3Spin->SpinBox_DX->setValue( myDX );
       myDY = 0.0;
-      Group3Spin->SpinBox_DY->SetValue(myDY);
+      Group3Spin->SpinBox_DY->setValue( myDY );
       Group3Spin->show();
       Group3Spin->buttonApply->setFocus();
 
-      if ( constructorId == 2 )
-      {  // Length
-				mySketchType = DIR_DXDY_LENGTH;
-				Group3Spin->TextLabel3->setText(tr("GEOM_SKETCHER_LENGTH2"));
-				Group3Spin->SpinBox_DZ->SetValue(myLength);
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_DXDY_LENGTH;
+	Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_LENGTH2" ) );
+	Group3Spin->SpinBox_DZ->setValue( myLength );
       }
-      else if ( constructorId == 0 )
-      {  // X
-				mySketchType = DIR_DXDY_X;
-				Group3Spin->TextLabel3->setText(tr("GEOM_SKETCHER_X3"));
-				Group3Spin->SpinBox_DZ->SetValue(myX);
+      else if ( constructorId == 0 ) { // X
+	mySketchType = DIR_DXDY_X;
+	Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_X3" ) );
+	Group3Spin->SpinBox_DZ->setValue( myX );
       }
-      else if ( constructorId == 1 )
-      {  // Y
-				mySketchType = DIR_DXDY_Y;
-				Group3Spin->TextLabel3->setText(tr("GEOM_SKETCHER_Y3"));
-				Group3Spin->SpinBox_DZ->SetValue(myY);
+      else if ( constructorId == 1 ) {  // Y
+	mySketchType = DIR_DXDY_Y;
+	Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_Y3" ) );
+	Group3Spin->SpinBox_DZ->setValue( myY );
       }
     }
   }
-  else if ( myConstructorId == 1 )
-  {  // ARC
-    if ( myConstructorDirId == 2 )
-    {  // Angle
-      if ( constructorId == 2 )
-      {  // Length
-        mySketchType = DIR_ANGLE_LENGTH;
-        Group3Spin->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
-        Group3Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-        Group3Spin->SpinBox_DZ->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
-        Group3Spin->TextLabel1->setText(tr("GEOM_SKETCHER_ANGLE2"));
-        Group3Spin->TextLabel2->setText(tr("GEOM_SKETCHER_RADIUS2"));
-        Group3Spin->TextLabel3->setText(tr("GEOM_SKETCHER_ANGLE2"));
-        Group3Spin->SpinBox_DX->SetValue(myAngle);
-        myRadius = 100.0;
-        Group3Spin->SpinBox_DY->SetValue(myRadius);
-        myLength = 30.0;
-        Group3Spin->SpinBox_DZ->SetValue(myLength);
-        Group3Spin->show();
-        Group3Spin->buttonApply->setFocus();
+  else if ( myConstructorId == 1 ) {  // ARC
+    if ( myConstructorDirId == 2 ) {  // Angle
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_ANGLE_LENGTH;
+	initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
+	Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
+	Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_ANGLE2" ));
+	Group3Spin->SpinBox_DX->setValue( myAngle );
+	myRadius = 100.0;
+	Group3Spin->SpinBox_DY->setValue( myRadius );
+	myLength = 30.0;
+	Group3Spin->SpinBox_DZ->setValue( myLength );
+	Group3Spin->show();
+	Group3Spin->buttonApply->setFocus();
       }
     }
-    else if ( myConstructorDirId == 0 )
-    {  // Perpendicular
-      if ( constructorId == 2 )
-      {  // Length
-        mySketchType = DIR_PER_LENGTH;
-        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
-        Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
-        Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
-        myRadius = 100.0;
-        Group2Spin->SpinBox_DX->SetValue(myRadius);
-        myLength = 30.0;
-        Group2Spin->SpinBox_DY->SetValue(myLength);
-        Group2Spin->show();
-        Group2Spin->buttonApply->setFocus();
+    else if ( myConstructorDirId == 0 ) {  // Perpendicular
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_PER_LENGTH;
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
+	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
+	myRadius = 100.0;
+	Group2Spin->SpinBox_DX->setValue( myRadius );
+	myLength = 30.0;
+	Group2Spin->SpinBox_DY->setValue( myLength );
+	Group2Spin->show();
+	Group2Spin->buttonApply->setFocus();
       }
     }
-    else if ( myConstructorDirId == 1 )
-    {  // Tangent
-      if ( constructorId == 2 )
-      {  // Length
-        mySketchType = DIR_TAN_LENGTH;
-        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-        Group2Spin->SpinBox_DY->RangeStepAndValidator(COORD_MIN, COORD_MAX, 5., DBL_DIGITS_DISPLAY);
-        Group2Spin->TextLabel1->setText(tr("GEOM_SKETCHER_RADIUS2"));
-        Group2Spin->TextLabel2->setText(tr("GEOM_SKETCHER_ANGLE2"));
-        myRadius = 100.0;
-        Group2Spin->SpinBox_DX->SetValue(myRadius);
-        myLength = 30.0;
-        Group2Spin->SpinBox_DY->SetValue(myLength);
-        Group2Spin->show();
-        Group2Spin->buttonApply->setFocus();
+    else if ( myConstructorDirId == 1 ) {  // Tangent
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_TAN_LENGTH;
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+	Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
+	Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
+	myRadius = 100.0;
+	Group2Spin->SpinBox_DX->setValue( myRadius );
+	myLength = 30.0;
+	Group2Spin->SpinBox_DY->setValue( myLength );
+	Group2Spin->show();
+	Group2Spin->buttonApply->setFocus();
       }
     }
-    else if ( myConstructorDirId == 3 )
-    {  // DXDY
-      if ( constructorId == 2 )
-      {  // Length
-				mySketchType = DIR_DXDY_LENGTH;
-				Group4Spin->TextLabel1->setText(tr("GEOM_SKETCHER_VX2"));
-				Group4Spin->TextLabel2->setText(tr("GEOM_SKETCHER_VY2"));
-				Group4Spin->TextLabel3->setText(tr("GEOM_SKETCHER_RADIUS2"));
-				Group4Spin->TextLabel4->setText(tr("GEOM_SKETCHER_ANGLE2"));
-				myDX = 0.0;
-				Group4Spin->SpinBox_DX->SetValue(myDX);
-				myDY = 0.0;
-				Group4Spin->SpinBox_DY->SetValue(myDY);
-				myRadius = 100.0;
-				Group4Spin->SpinBox_DZ->SetValue(myRadius);
-				myLength = 30.0;
-				Group4Spin->SpinBox_DS->SetValue(myLength);
-				Group4Spin->show();
-				Group4Spin->buttonApply->setFocus();
+    else if ( myConstructorDirId == 3 ) {  // DXDY
+      if ( constructorId == 2 ) {  // Length
+	mySketchType = DIR_DXDY_LENGTH;
+	Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_VX2" ) );
+	Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_VY2" ) );
+	Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
+	Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
+	myDX = 0.0;
+	Group4Spin->SpinBox_DX->setValue( myDX );
+	myDY = 0.0;
+	Group4Spin->SpinBox_DY->setValue( myDY );
+	myRadius = 100.0;
+	Group4Spin->SpinBox_DZ->setValue( myRadius );
+	myLength = 30.0;
+	Group4Spin->SpinBox_DS->setValue( myLength );
+	Group4Spin->show();
+	Group4Spin->buttonApply->setFocus();
       }
     }
   }
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 
@@ -719,44 +666,41 @@ void EntityGUI_SketcherDlg::ClickOnCancel()
 //=================================================================================
 void EntityGUI_SketcherDlg::ClickOnEnd()
 {
-  if ( sender() == buttonClose )
-  {
+  if ( sender() == MainWidget->buttonClose ) {
     // Verify validity of commands
-    if ( myCommand.count() <= 2 )
-    {
-      SUIT_MessageBox::error1( SUIT_Session::session()->activeApplication()->desktop(),
-			       tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
+    if ( myCommand.count() <= 2 ) {
+      SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
+				 tr( "GEOM_ERROR_STATUS" ), tr( "CANNOT_CLOSE" ), tr( "BUT_OK" ) );
       return;
     }
 
-    QString Command = myCommand.join( "" ) + GetNewCommand();
-    Sketcher_Profile aProfile (Command.ascii());
+    QString Parameters;
+    QString Command = myCommand.join( "" ) + GetNewCommand( Parameters );
+    Sketcher_Profile aProfile( Command.toAscii() );
 
     Command = myCommand.join( "" );
-    aProfile = Sketcher_Profile(Command.ascii());
+    aProfile = Sketcher_Profile( Command.toAscii() );
     TopoDS_Shape myShape;
     if ( aProfile.IsDone() )
       myShape = aProfile.GetShape();
 
-    if(myShape.ShapeType() != TopAbs_VERTEX)
+    if ( myShape.ShapeType() != TopAbs_VERTEX )
       myCommand.append( ":WW" );
   }
-  else
-  {
+  else {
     // PAL16008 (Sketcher Validation should be equal to Apply&Close)
-    if (Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ||
-        Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ||
-        Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ||
-        Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ||
-        Group1Sel ->buttonApply->isEnabled() && Group1Sel->isVisible() )
-    {
+    if ( Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ||
+	 Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ||
+	 Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ||
+	 Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ||
+	 Group1Sel ->buttonApply->isEnabled() && Group1Sel->isVisible() ) {
       ClickOnApply();
     }
     myIsAllAdded = true;
   }
 
-  if( myCommand.size() > 2 )
-    if( !onAccept() )
+  if ( myCommand.size() > 2 )
+    if ( !onAccept() )
       return;
 
   close();
@@ -768,36 +712,42 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
-  if (sender() && sender()->inherits("QPushButton"))
-    ((QPushButton*)sender())->setFocus(); // to update value of currently edited spin-box (PAL11948)
+  if ( sender() && sender()->inherits( "QPushButton" ) )
+    ( (QPushButton*)sender() )->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
-  myCommand.append( GetNewCommand() );
+  QString aParameters;
+  myCommand.append( GetNewCommand( aParameters ) );
   mySketchState = NEXT_POINT;
 
   myUndoCommand.clear();
   myUndoCommand.append( "Sketcher" );
 
-  GroupConstructors->setEnabled(true);
-  GroupDest1->setEnabled(true);
-  setEnabledUndo(true);
-  setEnabledRedo(false);
+  myParameters.append( aParameters );
+  myUndoParameters.clear();
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  MainWidget->GroupConstructors->setEnabled( true );
+  MainWidget->GroupDest1->setEnabled( true );
+  setEnabledUndo( true );
+  setEnabledRedo( false );
+
+  myIsApply = true;
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  myIsApply = false;
 
   // Set focus to SpinBox_DX
-  if (sender() == Group1Spin->buttonApply) {
+  if ( sender() == Group1Spin->buttonApply ) {
     (Group1Spin->SpinBox_DX)->setFocus();
     (Group1Spin->SpinBox_DX)->selectAll();
   }
-  else if (sender() == Group2Spin->buttonApply) {
+  else if ( sender() == Group2Spin->buttonApply ) {
     (Group2Spin->SpinBox_DX)->setFocus();
     (Group2Spin->SpinBox_DX)->selectAll();
   }
-  else if (sender() == Group3Spin->buttonApply) {
+  else if ( sender() == Group3Spin->buttonApply ) {
     (Group3Spin->SpinBox_DX)->setFocus();
     (Group3Spin->SpinBox_DX)->selectAll();
   }
-  else if (sender() == Group4Spin->buttonApply) {
+  else if ( sender() == Group4Spin->buttonApply ) {
     (Group4Spin->SpinBox_DX)->setFocus();
     (Group4Spin->SpinBox_DX)->selectAll();
   }
@@ -811,21 +761,21 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
 //=================================================================================
 void EntityGUI_SketcherDlg::ClickOnHelp()
 {
-  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (app)
-    app->onHelpContextModule(myGeometryGUI ? app->moduleName(myGeometryGUI->moduleName()) : QString(""), myHelpFileName);
+  LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+  if ( app )
+    app->onHelpContextModule( myGeometryGUI ? app->moduleName( myGeometryGUI->moduleName() ) : QString( "" ), myHelpFileName );
   else {
-		QString platform;
+    QString platform;
 #ifdef WIN32
-		platform = "winapplication";
+    platform = "winapplication";
 #else
-		platform = "application";
+    platform = "application";
 #endif
 
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
+			      QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
+			      QObject::tr( "BUT_OK" ) );
   }
 }
 
@@ -838,20 +788,23 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
   myUndoCommand.append( myCommand.last() );
   myCommand.pop_back();
 
-  if(myCommand.count() == 1) {
+  myUndoParameters.append( myParameters.last() );
+  myParameters.pop_back();
+
+  if ( myCommand.count() == 1 ) {
     mySketchState = FIRST_POINT;
 
-    RadioButton1->setChecked(true);
-    TypeClicked(0);
+    MainWidget->RadioButton1->setChecked( true );
+    TypeClicked( 0 );
 
-    GroupConstructors->setEnabled(false);
-    GroupDest1->setEnabled(false);
-    setEnabledUndo(false);
+    MainWidget->GroupConstructors->setEnabled( false );
+    MainWidget->GroupDest1->setEnabled( false );
+    setEnabledUndo( false );
   }
 
-  setEnabledRedo(true);
+  setEnabledRedo( true );
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -863,42 +816,45 @@ void EntityGUI_SketcherDlg::ClickOnRedo()
   myCommand.append( myUndoCommand.last() );
   myUndoCommand.pop_back();
 
+  myParameters.append( myUndoParameters.last() );
+  myUndoParameters.pop_back();
+
   mySketchState = NEXT_POINT;
 
-  GroupConstructors->setEnabled(true);
-  GroupDest1->setEnabled(true);
-  setEnabledUndo(true);
+  MainWidget->GroupConstructors->setEnabled( true );
+  MainWidget->GroupDest1->setEnabled( true );
+  setEnabledUndo( true );
 
-  if(myUndoCommand.count() == 1)
-    setEnabledRedo(false);
+  if ( myUndoCommand.count() == 1 )
+    setEnabledRedo( false );
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 //=================================================================================
 // function : setEnabledUndo()
 // purpose  :
 //=================================================================================
-void EntityGUI_SketcherDlg::setEnabledUndo(bool value)
+void EntityGUI_SketcherDlg::setEnabledUndo( bool value )
 {
-  Group1Sel->buttonUndo->setEnabled(value);
-  Group1Spin->buttonUndo->setEnabled(value);
-  Group2Spin->buttonUndo->setEnabled(value);
-  Group3Spin->buttonUndo->setEnabled(value);
-  Group4Spin->buttonUndo->setEnabled(value);
+  Group1Sel->buttonUndo->setEnabled( value );
+  Group1Spin->buttonUndo->setEnabled( value );
+  Group2Spin->buttonUndo->setEnabled( value );
+  Group3Spin->buttonUndo->setEnabled( value );
+  Group4Spin->buttonUndo->setEnabled( value );
 }
 
 //=================================================================================
 // function : setEnabledRedo()
 // purpose  :
 //=================================================================================
-void EntityGUI_SketcherDlg::setEnabledRedo(bool value)
+void EntityGUI_SketcherDlg::setEnabledRedo( bool value )
 {
-  Group1Sel->buttonRedo->setEnabled(value);
-  Group1Spin->buttonRedo->setEnabled(value);
-  Group2Spin->buttonRedo->setEnabled(value);
-  Group3Spin->buttonRedo->setEnabled(value);
-  Group4Spin->buttonRedo->setEnabled(value);
+  Group1Sel->buttonRedo->setEnabled( value );
+  Group1Spin->buttonRedo->setEnabled( value );
+  Group2Spin->buttonRedo->setEnabled( value );
+  Group3Spin->buttonRedo->setEnabled( value );
+  Group4Spin->buttonRedo->setEnabled( value );
 }
 
 //=================================================================================
@@ -907,23 +863,26 @@ void EntityGUI_SketcherDlg::setEnabledRedo(bool value)
 //=================================================================================
 void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   myX = myLastX1;
   myY = myLastY1;
 
-  int nbSel = IObjectCount();
-  if ( nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1 )
-  {
+  LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int nbSel = aSelList.Extent();
+  if (nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1) {
     Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( firstIObject(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+    if (!CORBA::is_nil(aSelectedObject) && aRes) {
       TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_VERTEX ) ) {
+      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
 	gp_Trsf aTrans;
 	gp_Ax3 aWPlane = myGeometryGUI->GetWorkingPlane();
 
 	aTrans.SetTransformation(aWPlane);
-	BRepBuilderAPI_Transform aTransformation(aShape, aTrans, Standard_False);
+	BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
 	aShape = aTransformation.Shape();
 
 	gp_Pnt aPnt;
@@ -936,7 +895,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
     }
   }
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 
@@ -946,8 +905,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 //=================================================================================
 void EntityGUI_SketcherDlg::SetEditCurrentArgument()
 {
-  if ( sender() == Group1Sel->PushButton1 )
-  {
+  if ( sender() == Group1Sel->PushButton1 ) {
     myEditCurrentArgument = Group1Sel->LineEdit1;
     myEditCurrentArgument->setFocus();
   }
@@ -961,17 +919,21 @@ void EntityGUI_SketcherDlg::SetEditCurrentArgument()
 //=================================================================================
 void EntityGUI_SketcherDlg::LineEditReturnPressed()
 {
-  if ( sender() == Group1Sel->LineEdit1 )
-  {
+  if ( sender() == Group1Sel->LineEdit1 ) {
     myEditCurrentArgument = Group1Sel->LineEdit1;
 
-  	/* User name of object input management                          */
-  	/* If successfull the selection is changed and signal emitted... */
-  	/* so SelectionIntoArgument() is automatically called.           */
-  	const QString objectUserName = myEditCurrentArgument->text();
-  	QWidget* thisWidget = (QWidget*)this;
-  	if(GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, selectedIO()))
-    	myEditCurrentArgument->setText(objectUserName);
+    /* User name of object input management                          */
+    /* If successfull the selection is changed and signal emitted... */
+    /* so SelectionIntoArgument() is automatically called.           */
+    const QString objectUserName = myEditCurrentArgument->text();
+    QWidget* thisWidget = (QWidget*)this;
+
+    LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
+    SALOME_ListIO aSelList;
+    aSelMgr->selectedObjects(aSelList);
+
+    if (GEOMBase::SelectionByNameInDialogs(thisWidget, objectUserName, aSelList))
+      myEditCurrentArgument->setText( objectUserName );
   }
 }
 
@@ -986,8 +948,8 @@ void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 
   setEnabled( false );
   globalSelection();
-  disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeometryGUI->SetActiveDialogBox(0);
+  disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
+  myGeometryGUI->SetActiveDialogBox( 0 );
 }
 
 
@@ -998,11 +960,11 @@ void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 void EntityGUI_SketcherDlg::ActivateThisDialog()
 {
   myGeometryGUI->EmitSignalDeactivateDialog();
-  setEnabled(true);
-  myGeometryGUI->SetActiveDialogBox((QDialog*)this);
+  setEnabled( true );
+  myGeometryGUI->SetActiveDialogBox( this );
 
-  connect(myGeometryGUI->getApp()->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( myGeometryGUI->getApp()->selectionMgr(),
+	  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   //myGeometryGUI->SetState( 0 );
   globalSelection( GEOM_POINT );
@@ -1010,7 +972,7 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
   myEditCurrentArgument = Group1Sel->LineEdit1;
   myEditCurrentArgument->setFocus();
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 
@@ -1018,9 +980,9 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
 // function : enterEvent [REDEFINED]
 // purpose  :
 //=================================================================================
-void EntityGUI_SketcherDlg::enterEvent(QEvent* e)
+void EntityGUI_SketcherDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled())
+  if ( !MainWidget->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -1029,10 +991,11 @@ void EntityGUI_SketcherDlg::enterEvent(QEvent* e)
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void EntityGUI_SketcherDlg::closeEvent(QCloseEvent* e)
+void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 {
   //myGeometryGUI->SetState( -1 );
-  disconnect(myGeometryGUI->getApp()->selectionMgr(), 0, this, 0);
+  disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
+  myGeometryGUI->getApp()->updateActions();
   QDialog::closeEvent( e );
 }
 
@@ -1041,233 +1004,184 @@ void EntityGUI_SketcherDlg::closeEvent(QCloseEvent* e)
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
-void EntityGUI_SketcherDlg::ValueChangedInSpinBox(double newValue)
+void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
 {
   QObject* send = (QObject*)sender();
   Standard_Real vx, vy, vz, vs;
   vx = vy = vz = vs = 0.0;
 
-  if ( send == Group1Spin->SpinBox_DX)
-  {
-    vx = newValue;
-  }
-  else if ( send == Group2Spin->SpinBox_DX )
-  {
-    vx = newValue;
-    vy = Group2Spin->SpinBox_DY->GetValue();
-  }
-  else if ( send == Group2Spin->SpinBox_DY)
-  {
-    vx = Group2Spin->SpinBox_DX->GetValue();
-    vy = newValue;
-  }
-  else if ( send == Group3Spin->SpinBox_DX)
-  {
-    vx = newValue;
-    vy = Group3Spin->SpinBox_DY->GetValue();
-    vz = Group3Spin->SpinBox_DZ->GetValue();
-  }
-  else if ( send == Group3Spin->SpinBox_DY)
-  {
-    vx = Group3Spin->SpinBox_DX->GetValue();
-    vy = newValue;
-    vz = Group3Spin->SpinBox_DZ->GetValue();
-  }
-  else if ( send == Group3Spin->SpinBox_DZ)
-  {
-    vx = Group3Spin->SpinBox_DX->GetValue();
-    vy = Group3Spin->SpinBox_DY->GetValue();
-    vz = newValue;
-  }
-  else if ( send == Group4Spin->SpinBox_DX)
-  {
-    vx = newValue;
-    vy = Group4Spin->SpinBox_DY->GetValue();
-    vz = Group4Spin->SpinBox_DZ->GetValue();
-    vs = Group4Spin->SpinBox_DS->GetValue();
-  }
-  else if ( send == Group4Spin->SpinBox_DY)
-  {
-    vx = Group4Spin->SpinBox_DX->GetValue();
-    vy = newValue;
-    vz = Group4Spin->SpinBox_DZ->GetValue();
-    vs = Group4Spin->SpinBox_DS->GetValue();
-  }
-  else if ( send == Group4Spin->SpinBox_DZ)
-  {
-    vx = Group4Spin->SpinBox_DX->GetValue();
-    vy = Group4Spin->SpinBox_DY->GetValue();
-    vz = newValue;
-    vs = Group4Spin->SpinBox_DS->GetValue();
-  }
-  else if ( send == Group4Spin->SpinBox_DS)
-  {
-    vx = Group4Spin->SpinBox_DX->GetValue();
-    vy = Group4Spin->SpinBox_DY->GetValue();
-    vz = Group4Spin->SpinBox_DZ->GetValue();
-    vs = newValue;
-  }
-  // NPAL16010 (Sketcher Apply non available if only one line is modified)
-  // if ValueChangedInSpinBox() called from eventFilter()
-  else if ( Group1Spin->SpinBox_DX->hasFocus() )
-  {
-    vx = newValue;
-  }
-  else if ( Group2Spin->SpinBox_DX ->hasFocus() )
-  {
-    vx = newValue;
-    vy = Group2Spin->SpinBox_DY->GetValue();
-  }
-  else if ( Group2Spin->SpinBox_DY->hasFocus() )
-  {
-    vx = Group2Spin->SpinBox_DX->GetValue();
-    vy = newValue;
-  }
-  else if ( Group3Spin->SpinBox_DX->hasFocus() )
-  {
-    vx = newValue;
-    vy = Group3Spin->SpinBox_DY->GetValue();
-    vz = Group3Spin->SpinBox_DZ->GetValue();
-  }
-  else if ( Group3Spin->SpinBox_DY->hasFocus() )
-  {
-    vx = Group3Spin->SpinBox_DX->GetValue();
-    vy = newValue;
-    vz = Group3Spin->SpinBox_DZ->GetValue();
-  }
-  else if ( Group3Spin->SpinBox_DZ->hasFocus() )
-  {
-    vx = Group3Spin->SpinBox_DX->GetValue();
-    vy = Group3Spin->SpinBox_DY->GetValue();
-    vz = newValue;
-  }
-  else if ( Group4Spin->SpinBox_DX->hasFocus() )
-  {
-    vx = newValue;
-    vy = Group4Spin->SpinBox_DY->GetValue();
-    vz = Group4Spin->SpinBox_DZ->GetValue();
-    vs = Group4Spin->SpinBox_DS->GetValue();
-  }
-  else if ( Group4Spin->SpinBox_DY->hasFocus() )
-  {
-    vx = Group4Spin->SpinBox_DX->GetValue();
-    vy = newValue;
-    vz = Group4Spin->SpinBox_DZ->GetValue();
-    vs = Group4Spin->SpinBox_DS->GetValue();
-  }
-  else if ( Group4Spin->SpinBox_DZ->hasFocus() )
-  {
-    vx = Group4Spin->SpinBox_DX->GetValue();
-    vy = Group4Spin->SpinBox_DY->GetValue();
-    vz = newValue;
-    vs = Group4Spin->SpinBox_DS->GetValue();
-  }
-  else if ( Group4Spin->SpinBox_DS->hasFocus() )
-  {
-    vx = Group4Spin->SpinBox_DX->GetValue();
-    vy = Group4Spin->SpinBox_DY->GetValue();
-    vz = Group4Spin->SpinBox_DZ->GetValue();
-    vs = newValue;
-  }
+  QString vxStr, vyStr, vzStr, vsStr;
 
-  if ( myConstructorId == 0 )
-  {  // SEGMENT
-    if ( mySketchType == PT_ABS)
-    {
+  QString newValueStr;
+  if( SalomeApp_DoubleSpinBox* aDoubleSpinBox = (SalomeApp_DoubleSpinBox*)send )
+    newValueStr = aDoubleSpinBox->text();
+
+  if ( send == Group1Spin->SpinBox_DX ) {
+    vx = newValue;                        vxStr = newValueStr;
+  }
+  else if ( send == Group2Spin->SpinBox_DX ) {
+    vx = newValue;                        vxStr = newValueStr;
+    vy = Group2Spin->SpinBox_DY->value(); vyStr = Group2Spin->SpinBox_DY->text();
+  }
+  else if ( send == Group2Spin->SpinBox_DY ) {
+    vx = Group2Spin->SpinBox_DX->value(); vxStr = Group2Spin->SpinBox_DX->text();
+    vy = newValue;                        vyStr = newValueStr;
+  }
+  else if ( send == Group3Spin->SpinBox_DX ) {
+    vx = newValue;                        vxStr = newValueStr;
+    vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
+    vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
+  }
+  else if ( send == Group3Spin->SpinBox_DY ) {
+    vx = Group3Spin->SpinBox_DX->value(); vxStr = Group3Spin->SpinBox_DX->text();
+    vy = newValue;                        vyStr = newValueStr;
+    vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
+  }
+  else if ( send == Group3Spin->SpinBox_DZ ) {
+    vx = Group3Spin->SpinBox_DX->value(); vxStr = Group3Spin->SpinBox_DX->text();
+    vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
+    vz = newValue;                        vzStr = newValueStr;
+  }
+  else if ( send == Group4Spin->SpinBox_DX ) {
+    vx = newValue;                        vxStr = newValueStr;
+    vy = Group4Spin->SpinBox_DY->value(); vyStr = Group4Spin->SpinBox_DY->text();
+    vz = Group4Spin->SpinBox_DZ->value(); vzStr = Group4Spin->SpinBox_DZ->text();
+    vs = Group4Spin->SpinBox_DS->value(); vsStr = Group4Spin->SpinBox_DS->text();
+  }
+  else if ( send == Group4Spin->SpinBox_DY ) {
+    vx = Group4Spin->SpinBox_DX->value(); vxStr = Group4Spin->SpinBox_DX->text();
+    vy = newValue;                        vyStr = newValueStr;
+    vz = Group4Spin->SpinBox_DZ->value(); vzStr = Group4Spin->SpinBox_DZ->text();
+    vs = Group4Spin->SpinBox_DS->value(); vsStr = Group4Spin->SpinBox_DS->text();
+  }
+  else if ( send == Group4Spin->SpinBox_DZ ) {
+    vx = Group4Spin->SpinBox_DX->value(); vxStr = Group4Spin->SpinBox_DX->text();
+    vy = Group4Spin->SpinBox_DY->value(); vyStr = Group4Spin->SpinBox_DY->text();
+    vz = newValue;                        vzStr = newValueStr;
+    vs = Group4Spin->SpinBox_DS->value(); vsStr = Group4Spin->SpinBox_DS->text();
+  }
+  else if ( send == Group4Spin->SpinBox_DS ) {
+    vx = Group4Spin->SpinBox_DX->value(); vxStr = Group4Spin->SpinBox_DX->text();
+    vy = Group4Spin->SpinBox_DY->value(); vyStr = Group4Spin->SpinBox_DY->text();
+    vz = Group4Spin->SpinBox_DZ->value(); vzStr = Group4Spin->SpinBox_DZ->text();
+    vs = newValue;                        vsStr = newValueStr;
+  }
+  // Fix of the NPAL16010 bug is removed, because it's not actual with the Qt-4.x
+
+  if ( myConstructorId == 0 ) {  // SEGMENT
+    if ( mySketchType == PT_ABS ) {
       myX = vx;
       myY = vy;
+      myXStr = vxStr;
+      myYStr = vyStr;
     }
-    else if ( mySketchType == PT_RELATIVE)
-    {
+    else if ( mySketchType == PT_RELATIVE ) {
       myDX = vx;
       myDY = vy;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
     }
-    else if ( mySketchType == DIR_ANGLE_LENGTH)
-    {
+    else if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myAngle = vx;
       myLength = vy;
+      myAngleStr = vxStr;
+      myLengthStr = vyStr;
     }
-    else if ( mySketchType == DIR_ANGLE_X)
-    {
+    else if ( mySketchType == DIR_ANGLE_X ) {
       myAngle = vx;
       myX = vy;
+      myAngleStr = vxStr;
+      myXStr = vyStr;
     }
-    else if ( mySketchType == DIR_ANGLE_Y)
-    {
+    else if ( mySketchType == DIR_ANGLE_Y ) {
       myAngle = vx;
       myY = vy;
+      myAngleStr = vxStr;
+      myYStr = vyStr;
     }
-    else if ( mySketchType == DIR_PER_LENGTH)
-    {
+    else if ( mySketchType == DIR_PER_LENGTH ) {
       myLength = vx;
+      myLengthStr = vxStr;
     }
-    else if ( mySketchType == DIR_PER_X)
-    {
+    else if ( mySketchType == DIR_PER_X ) {
       myX = vx;
+      myXStr = vxStr;
     }
-    else if ( mySketchType == DIR_PER_Y)
-    {
+    else if ( mySketchType == DIR_PER_Y ) {
       myY = vx;
+      myYStr = vxStr;
     }
-    else if ( mySketchType == DIR_TAN_LENGTH)
-    {
+    else if ( mySketchType == DIR_TAN_LENGTH ) {
       myLength = vx;
+      myLengthStr = vxStr;
     }
-    else if ( mySketchType == DIR_TAN_X)
-    {
+    else if ( mySketchType == DIR_TAN_X ) {
       myX = vx;
+      myXStr = vxStr;
     }
-    else if ( mySketchType == DIR_TAN_Y)
-    {
+    else if ( mySketchType == DIR_TAN_Y ) {
       myY = vx;
+      myYStr = vxStr;
     }
-    else if ( mySketchType == DIR_DXDY_LENGTH)
-    {
+    else if ( mySketchType == DIR_DXDY_LENGTH ) {
       myDX = vx;
       myDY = vy;
       myLength = vz;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myLengthStr = vzStr;
     }
-    else if ( mySketchType == DIR_DXDY_X)
-    {
+    else if ( mySketchType == DIR_DXDY_X ) {
       myDX = vx;
       myDY = vy;
       myX = vz;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myXStr = vzStr;
     }
-    else if ( mySketchType == DIR_DXDY_Y)
-    {
+    else if ( mySketchType == DIR_DXDY_Y ) {
       myDX = vx;
       myDY = vy;
       myY = vz;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myYStr = vzStr;
     }
   }
-  else if ( myConstructorId == 1 )
-  {  // ARC
-    if ( mySketchType == DIR_ANGLE_LENGTH)
-    {
+  else if ( myConstructorId == 1 ) {  // ARC
+    if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myAngle = vx;
       myRadius = vy;
       myLength = vz;
+      myAngleStr = vxStr;
+      myRadiusStr = vyStr;
+      myLengthStr = vzStr;
     }
-    else if ( mySketchType == DIR_PER_LENGTH)
-    {
+    else if ( mySketchType == DIR_PER_LENGTH ) {
       myRadius = vx;
       myLength = vy;
+      myRadiusStr = vxStr;
+      myLengthStr = vyStr;
     }
-    else if ( mySketchType == DIR_TAN_LENGTH)
-    {
+    else if ( mySketchType == DIR_TAN_LENGTH ) {
       myRadius = vx;
       myLength = vy;
+      myRadiusStr = vxStr;
+      myLengthStr = vyStr;
     }
-    else if ( mySketchType == DIR_DXDY_LENGTH)
-    {
+    else if ( mySketchType == DIR_DXDY_LENGTH ) {
       myDX = vx;
       myDY = vy;
       myRadius = vz;
       myLength = vs;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+      myRadiusStr = vzStr;
+      myLengthStr = vsStr;
     }
   }
 
-  GEOMBase_Helper::displayPreview(false, true, true, myLineWidth);
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 
@@ -1275,95 +1189,108 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox(double newValue)
 // function : GetNewCommand()
 // purpose  : Build the new command with context
 //=================================================================================
-QString EntityGUI_SketcherDlg::GetNewCommand()
+QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
 {
+  theParameters.clear();
   QString myNewCommand = ":";
   if ( mySketchState == FIRST_POINT ) {
-    if ( mySketchType == PT_ABS || mySketchType == PT_SEL)
-      myNewCommand = myNewCommand + "F " + QString::number(myX) + " " + QString::number(myY);
-    if ( mySketchType == PT_RELATIVE)
-      myNewCommand = myNewCommand + "F " + QString::number(myDX) + " " + QString::number(myDY);
+    if ( mySketchType == PT_ABS || mySketchType == PT_SEL ) {
+      myNewCommand = myNewCommand + "F " + QString::number( myX ) + " " + QString::number( myY );
+      theParameters = myXStr + ":" + myYStr;
+    }
+    if ( mySketchType == PT_RELATIVE) {
+      myNewCommand = myNewCommand + "F " + QString::number( myDX ) + " " + QString::number( myDY );
+      theParameters = myDXStr + ":" + myDYStr;
+    }
     return myNewCommand;
   }
 
-  if ( myConstructorId == 0  )
-  {  // SEGMENT
-    if ( mySketchType == PT_ABS || mySketchType == PT_SEL)
-      myNewCommand = myNewCommand + "TT " + QString::number(myX) + " " + QString::number(myY);
-    if ( mySketchType == PT_RELATIVE)
-      myNewCommand = myNewCommand + "T " + QString::number(myDX) + " " + QString::number(myDY);
-    if ( mySketchType == DIR_ANGLE_LENGTH)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(myAngle);
-      myNewCommand = myNewCommand + ":" + "L " + QString::number(myLength);
+  if ( myConstructorId == 0  ) {  // SEGMENT
+    if ( mySketchType == PT_ABS || mySketchType == PT_SEL ) {
+      myNewCommand = myNewCommand + "TT " + QString::number( myX ) + " " + QString::number( myY );
+      theParameters = myXStr + ":" + myYStr;
     }
-    if ( mySketchType == DIR_ANGLE_X)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(myAngle);
-      myNewCommand = myNewCommand + ":" + "IX " + QString::number(myX);
+    if ( mySketchType == PT_RELATIVE) {
+      myNewCommand = myNewCommand + "T " + QString::number( myDX ) + " " + QString::number( myDY );
+      theParameters = myDXStr + ":" + myDYStr;
     }
-    if ( mySketchType == DIR_ANGLE_Y)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(myAngle);
-      myNewCommand = myNewCommand + ":" + "IY " + QString::number(myY);
+    if ( mySketchType == DIR_ANGLE_LENGTH ) {
+      myNewCommand = myNewCommand + "R " + QString::number( myAngle );
+      myNewCommand = myNewCommand + ":" + "L " + QString::number( myLength );
+      theParameters = myAngleStr + ":" + myLengthStr;
     }
-    if ( mySketchType == DIR_PER_LENGTH)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(90.0);
-      myNewCommand = myNewCommand + ":" + "L " + QString::number(myLength);
+    if ( mySketchType == DIR_ANGLE_X ) {
+      myNewCommand = myNewCommand + "R " + QString::number( myAngle );
+      myNewCommand = myNewCommand + ":" + "IX " + QString::number( myX );
+      theParameters = myAngleStr + ":" + myXStr;
     }
-    if ( mySketchType == DIR_PER_X)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(90.0);
-      myNewCommand = myNewCommand + ":" + "IX " + QString::number(myX);
+    if ( mySketchType == DIR_ANGLE_Y ) {
+      myNewCommand = myNewCommand + "R " + QString::number( myAngle );
+      myNewCommand = myNewCommand + ":" + "IY " + QString::number( myY );
+      theParameters = myAngleStr + ":" + myYStr;
     }
-    if ( mySketchType == DIR_PER_Y)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(90.0);
-      myNewCommand = myNewCommand + ":" + "IY " + QString::number(myY);
+    if ( mySketchType == DIR_PER_LENGTH ) {
+      myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
+      myNewCommand = myNewCommand + ":" + "L " + QString::number( myLength );
+      theParameters = QString::number( 90.0 ) + ":" + myLengthStr;
     }
-    if ( mySketchType == DIR_TAN_LENGTH)
-      myNewCommand = myNewCommand + "L " + QString::number(myLength);
-    if ( mySketchType == DIR_TAN_X)
-      myNewCommand = myNewCommand + "IX " + QString::number(myX);
-    if ( mySketchType == DIR_TAN_Y)
+    if ( mySketchType == DIR_PER_X ) {
+      myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
+      myNewCommand = myNewCommand + ":" + "IX " + QString::number( myX );
+      theParameters = QString::number( 90.0 ) + ":" + myXStr;
+    }
+    if ( mySketchType == DIR_PER_Y ) {
+      myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
+      myNewCommand = myNewCommand + ":" + "IY " + QString::number( myY );
+      theParameters = QString::number( 90.0 ) + ":" + myYStr;
+    }
+    if ( mySketchType == DIR_TAN_LENGTH ) {
+      myNewCommand = myNewCommand + "L " + QString::number( myLength );
+      theParameters = myLengthStr;
+    }
+    if ( mySketchType == DIR_TAN_X ) {
+      myNewCommand = myNewCommand + "IX " + QString::number( myX );
+      theParameters = myXStr;
+    }
+    if ( mySketchType == DIR_TAN_Y) {
       myNewCommand = myNewCommand + "IY " + QString::number(myY);
-    if ( mySketchType == DIR_DXDY_LENGTH)
-    {
-      myNewCommand = myNewCommand + "D " + QString::number(myDX) + " " + QString::number(myDY);
-      myNewCommand = myNewCommand + ":" + "L " + QString::number(myLength);
+      theParameters = myYStr;
     }
-    if ( mySketchType == DIR_DXDY_X)
-    {
-      myNewCommand = myNewCommand + "D " + QString::number(myDX) + " " + QString::number(myDY);
-      myNewCommand = myNewCommand + ":" + "IX " + QString::number(myX);
+    if ( mySketchType == DIR_DXDY_LENGTH ) {
+      myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
+      myNewCommand = myNewCommand + ":" + "L " + QString::number( myLength );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myLengthStr;
     }
-    if ( mySketchType == DIR_DXDY_Y)
-    {
-      myNewCommand = myNewCommand + "D " + QString::number(myDX) + " " + QString::number(myDY);
-      myNewCommand = myNewCommand + ":" + "IY " + QString::number(myY);
+    if ( mySketchType == DIR_DXDY_X ) {
+      myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
+      myNewCommand = myNewCommand + ":" + "IX " + QString::number( myX );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myXStr;
+    }
+    if ( mySketchType == DIR_DXDY_Y ) {
+      myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
+      myNewCommand = myNewCommand + ":" + "IY " + QString::number( myY );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myYStr;
     }
   }
-  else if ( myConstructorId == 1 )
-  {  // ARC
-    if ( mySketchType == DIR_ANGLE_LENGTH)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(myAngle);
-      myNewCommand = myNewCommand + ":" + "C " + QString::number(myRadius) + " " + QString::number(myLength);
+  else if ( myConstructorId == 1 ) {  // ARC
+    if ( mySketchType == DIR_ANGLE_LENGTH ) {
+      myNewCommand = myNewCommand + "R " + QString::number( myAngle );
+      myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = myAngleStr + ":" + myRadiusStr + ":" + myLengthStr;
     }
-    if ( mySketchType == DIR_PER_LENGTH)
-    {
-      myNewCommand = myNewCommand + "R " + QString::number(90.0);
-      myNewCommand = myNewCommand + ":" + "C " + QString::number(myRadius) + " " + QString::number(myLength);
+    if ( mySketchType == DIR_PER_LENGTH ) {
+      myNewCommand = myNewCommand + "R " + QString::number( 90.0 );
+      myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = QString::number( 90.0 ) + ":" + myRadiusStr + ":" + myLengthStr;
     }
-    if ( mySketchType == DIR_TAN_LENGTH)
-    {
-      myNewCommand = myNewCommand + "C " + QString::number(myRadius) + " " + QString::number(myLength);
+    if ( mySketchType == DIR_TAN_LENGTH ) {
+      myNewCommand = myNewCommand + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = myRadiusStr + ":" + myLengthStr;
     }
-    if ( mySketchType == DIR_DXDY_LENGTH)
-    {
-      myNewCommand = myNewCommand + "D " + QString::number(myDX) + " " + QString::number(myDY);
-      myNewCommand = myNewCommand + ":" + "C " + QString::number(myRadius) + " " + QString::number(myLength);
+    if ( mySketchType == DIR_DXDY_LENGTH ) {
+      myNewCommand = myNewCommand + "D " + QString::number( myDX ) + " " + QString::number( myDY );
+      myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );
+      theParameters = myDXStr + ":" + myDYStr + ":" + myRadiusStr + ":" + myLengthStr;
     }
   }
   return myNewCommand;
@@ -1384,7 +1311,32 @@ GEOM::GEOM_IOperations_ptr EntityGUI_SketcherDlg::createOperation()
 //=================================================================================
 bool EntityGUI_SketcherDlg::isValid( QString& msg )
 {
-  return true;
+  bool ok = true;
+  bool toCorrect = !IsPreview() || myIsApply;
+
+  if( Group1Spin->isVisible() ) {
+    ok = Group1Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+  }
+  else if( Group2Spin->isVisible() ) {
+    ok = Group2Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group2Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+  }
+  else if( Group3Spin->isVisible() ) {
+    ok = Group3Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+    ok = Group3Spin->SpinBox_DZ->isValid( msg, toCorrect ) && ok;
+  }
+  else if( Group4Spin->isVisible() ) {
+    ok = Group4Spin->SpinBox_DX->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DY->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DZ->isValid( msg, toCorrect ) && ok;
+    ok = Group4Spin->SpinBox_DS->isValid( msg, toCorrect ) && ok;
+  }
+
+  if( myIsApply && !ok )
+    showError( msg );
+
+  return ok;
 }
 
 //=================================================================================
@@ -1393,7 +1345,9 @@ bool EntityGUI_SketcherDlg::isValid( QString& msg )
 //=================================================================================
 bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 {
-  if(mySketchState == FIRST_POINT) {
+  QString aParameters;
+
+  if ( mySketchState == FIRST_POINT ) {
     myLastX2 = myX;
     myLastY2 = myY;
   }
@@ -1403,17 +1357,17 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
     //Last Shape
     QString Command1 = myCommand.join( "" );
-    Sketcher_Profile aProfile1 (Command1.ascii());
-    if(aProfile1.IsDone())
+    Sketcher_Profile aProfile1( Command1.toAscii() );
+    if ( aProfile1.IsDone() )
       myShape1 = aProfile1.GetShape();
 
     //Current Shape
-    QString Command2 = Command1 + GetNewCommand();
-    Sketcher_Profile aProfile2 (Command2.ascii());
-    if(aProfile2.IsDone())
+    QString Command2 = Command1 + GetNewCommand( aParameters );
+    Sketcher_Profile aProfile2( Command2.toAscii() );
+    if ( aProfile2.IsDone() )
       myShape2 = aProfile2.GetShape();
 
-    if(myShape2.IsNull()) {
+    if ( myShape2.IsNull() ) {
       //the current point is the same as the last one
       myLastX2 = myLastX1;
       myLastY2 = myLastY1;
@@ -1421,79 +1375,79 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     else {
       TopoDS_Vertex V1, V2;
       gp_Pnt pt;
-      if(myShape1.ShapeType() == TopAbs_VERTEX) {
+      if ( myShape1.ShapeType() == TopAbs_VERTEX ) {
 	//the last shape is the first point
-	pt = BRep_Tool::Pnt(TopoDS::Vertex(myShape1));
+	pt = BRep_Tool::Pnt( TopoDS::Vertex( myShape1 ) );
 	myLastX1 = pt.X();
 	myLastY1 = pt.Y();
       }
       else {
-	TopExp::Vertices(TopoDS::Wire(myShape1), V1, V2);
-	pt = BRep_Tool::Pnt(V2);
+	TopExp::Vertices( TopoDS::Wire( myShape1 ), V1, V2 );
+	pt = BRep_Tool::Pnt( V2 );
 	myLastX1 = pt.X();
 	myLastY1 = pt.Y();
       }
-      TopExp::Vertices(TopoDS::Wire(myShape2), V1, V2);
-      pt = BRep_Tool::Pnt(V2);
+      TopExp::Vertices( TopoDS::Wire( myShape2 ), V1, V2 );
+      pt = BRep_Tool::Pnt( V2 );
       myLastX2 = pt.X();
       myLastY2 = pt.Y();
     }
   }
 
   QString cmd;
-  if( ( mySketchState != FIRST_POINT &&
-        myLastX1 == myLastX2 && myLastY1 == myLastY2 ) || myIsAllAdded ) {
+  if ( ( mySketchState != FIRST_POINT &&
+	 myLastX1 == myLastX2 && myLastY1 == myLastY2 ) || myIsAllAdded ) {
     cmd = myCommand.join( "" );
 
     if ( Group1Sel->isVisible() ) {
-      Group1Sel->buttonApply->setEnabled(false);
+      Group1Sel->buttonApply->setEnabled( false );
       //Group1Sel->buttonApply->setFocus();
     }
     if ( Group1Spin->isVisible() ) {
-      Group1Spin->buttonApply->setEnabled(false);
+      Group1Spin->buttonApply->setEnabled( false );
       //Group1Spin->buttonApply->setFocus();
     }
     if ( Group2Spin->isVisible() ) {
-      Group2Spin->buttonApply->setEnabled(false);
+      Group2Spin->buttonApply->setEnabled( false );
       //Group2Spin->buttonApply->setFocus();
     }
     if ( Group3Spin->isVisible() ) {
-      Group3Spin->buttonApply->setEnabled(false);
+      Group3Spin->buttonApply->setEnabled( false );
       //Group3Spin->buttonApply->setFocus();
     }
     if ( Group4Spin->isVisible() ) {
-      Group4Spin->buttonApply->setEnabled(false);
+      Group4Spin->buttonApply->setEnabled( false );
       //Group4Spin->buttonApply->setFocus();
     }
   }
   else {
-    cmd = myCommand.join( "" ) + GetNewCommand();
+    cmd = myCommand.join( "" ) + GetNewCommand( aParameters );
 
     if ( Group1Sel->isVisible() ) {
-      Group1Sel->buttonApply->setEnabled(true);
+      Group1Sel->buttonApply->setEnabled( true );
       //Group1Sel->buttonApply->setFocus();
     }
     if ( Group1Spin->isVisible() ) {
-      Group1Spin->buttonApply->setEnabled(true);
+      Group1Spin->buttonApply->setEnabled( true );
       //Group1Spin->buttonApply->setFocus();
     }
     if ( Group2Spin->isVisible() ) {
-      Group2Spin->buttonApply->setEnabled(true);
+      Group2Spin->buttonApply->setEnabled( true );
       //Group2Spin->buttonApply->setFocus();
     }
     if ( Group3Spin->isVisible() ) {
-      Group3Spin->buttonApply->setEnabled(true);
+      Group3Spin->buttonApply->setEnabled( true );
       //Group3Spin->buttonApply->setFocus();
     }
     if ( Group4Spin->isVisible() ) {
-      Group4Spin->buttonApply->setEnabled(true);
+      Group4Spin->buttonApply->setEnabled( true );
       //Group4Spin->buttonApply->setFocus();
     }
   }
 
   gp_Ax3 myWPlane = myGeometryGUI->GetWorkingPlane();
   GEOM::ListOfDouble_var WPlane = new GEOM::ListOfDouble;
-  WPlane->length(9);
+  WPlane->length( 9 );
   WPlane[0] = myWPlane.Location().X();
   WPlane[1] = myWPlane.Location().Y();
   WPlane[2] = myWPlane.Location().Z();
@@ -1507,10 +1461,18 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   WPlane[8] = myWPlane.XDirection().Z();
 
   GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.latin1(), WPlane );
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.toLatin1(), WPlane );
 
   if ( !anObj->_is_nil() )
+  {
+    if( !IsPreview() ) {
+      QStringList aCurrentParameters = myParameters;
+      aCurrentParameters << aParameters;
+      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aCurrentParameters));
+    }
+
     objects.push_back( anObj._retn() );
+  }
 
   return true;
 }
@@ -1524,7 +1486,9 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                             const bool            append,
                                             const bool            activate,
                                             const bool            update,
-                                            const double          lineWidth )
+                                            const double          lineWidth,
+                                            const int             displayMode,
+                                            const int             color )
 {
   // Set color for preview shape
   getDisplayer()->SetColor( Quantity_NOC_RED );
@@ -1577,22 +1541,19 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
        Group1Spin->isVisible() && !Group1Spin->buttonApply->isEnabled() ||
        Group2Spin->isVisible() && !Group2Spin->buttonApply->isEnabled() ||
        Group3Spin->isVisible() && !Group3Spin->buttonApply->isEnabled() ||
-       Group4Spin->isVisible() && !Group4Spin->buttonApply->isEnabled() )
-  {
+       Group4Spin->isVisible() && !Group4Spin->buttonApply->isEnabled() ) {
      theApplyedWire = aShape;
      return true;
   }
 
   BRepBuilderAPI_MakeWire aBuilder;
   TopExp_Explorer anExp( aShape, TopAbs_EDGE );
-  while( 1 )
-  {
+  while ( 1 ) {
     TopoDS_Shape anEdge = anExp.Current();
     anExp.Next();
     if ( anExp.More() ) // i.e. non-last edge
       aBuilder.Add( TopoDS::Edge( anEdge ) );
-    else
-    {
+    else {
       theLastSegment = anEdge;
       break;
     }
@@ -1614,9 +1575,35 @@ void  EntityGUI_SketcherDlg::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
-    {
-      e->accept();
-      ClickOnHelp();
-    }
+  if ( e->key() == Qt::Key_F1 ) {
+    e->accept();
+    ClickOnHelp();
+  }
+}
+
+void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
+					 double min,  double max,
+					 double step, int decimals )
+{
+  spinBox->setDecimals( decimals );
+  spinBox->setRange( min, max );
+  spinBox->setSingleStep( step );
+}
+
+//=================================================================================
+// function : SetDoubleSpinBoxStep()
+// purpose  : Double spin box management
+//=================================================================================
+void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
+{
+  Group1Spin->SpinBox_DX->setSingleStep(step);
+  Group2Spin->SpinBox_DX->setSingleStep(step);
+  Group2Spin->SpinBox_DY->setSingleStep(step);
+  Group3Spin->SpinBox_DX->setSingleStep(step);
+  Group3Spin->SpinBox_DY->setSingleStep(step);
+  Group3Spin->SpinBox_DZ->setSingleStep(step);
+  Group4Spin->SpinBox_DX->setSingleStep(step);
+  Group4Spin->SpinBox_DY->setSingleStep(step);
+  Group4Spin->SpinBox_DZ->setSingleStep(step);
+  Group4Spin->SpinBox_DS->setSingleStep(step);
 }

@@ -1,24 +1,26 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //GEOM_Object types
-
+//
 #define GEOM_COPY    0
 #define GEOM_IMPORT  1
 
@@ -45,8 +47,9 @@
 #define GEOM_ELLIPSE  18
 #define GEOM_CIRC_ARC 19
 
-#define GEOM_FILLET  20
-#define GEOM_CHAMFER 21
+#define GEOM_FILLET    20
+#define GEOM_FILLET_2D 45
+#define GEOM_CHAMFER   21
 
 #define GEOM_EDGE  22
 #define GEOM_WIRE  23
@@ -81,6 +84,14 @@
 
 #define GEOM_THRUSECTIONS 40
 
+#define GEOM_COMPOUNDFILTER 41
+
+#define GEOM_SHAPES_ON_SHAPE 42
+
+#define GEOM_ELLIPSE_ARC 43
+
+#define GEOM_3DSKETCHER 44
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -93,6 +104,7 @@
 #define POINT_XYZ_REF            2
 #define POINT_CURVE_PAR          3
 #define POINT_LINES_INTERSECTION 4
+#define POINT_SURFACE_PAR        5
 //#define POINT_FACE_PAR 5
 
 #define VECTOR_TWO_PNT  1
@@ -111,6 +123,7 @@
 
 #define TRANSLATE_TWO_POINTS      1
 #define TRANSLATE_VECTOR          2
+#define TRANSLATE_VECTOR_DISTANCE 9
 #define TRANSLATE_TWO_POINTS_COPY 3
 #define TRANSLATE_VECTOR_COPY     4
 #define TRANSLATE_1D              5
@@ -137,17 +150,27 @@
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2
+#define SCALE_SHAPE_AXES      3
+#define SCALE_SHAPE_AXES_COPY 4
 
 #define POSITION_SHAPE      1
 #define POSITION_SHAPE_COPY 2
 #define POSITION_SHAPE_FROM_GLOBAL      3
 #define POSITION_SHAPE_FROM_GLOBAL_COPY 4
+#define POSITION_ALONG_PATH 5
 
 #define TORUS_RR         1
 #define TORUS_PNT_VEC_RR 2
 
 #define BOX_DX_DY_DZ  1
 #define BOX_TWO_PNT   2
+
+#define FACE_OBJ_H_W  1
+#define FACE_H_W        2
+
+#define DISK_PNT_VEC_R    1
+#define DISK_THREE_PNT    2
+#define DISK_R            3
 
 #define CYLINDER_R_H         1
 #define CYLINDER_PNT_VEC_R_H 2
@@ -162,6 +185,8 @@
 #define PRISM_BASE_TWO_PNT       2
 #define PRISM_BASE_VEC_H_2WAYS   3
 #define PRISM_BASE_TWO_PNT_2WAYS 4
+#define PRISM_BASE_DXDYDZ        5
+#define PRISM_BASE_DXDYDZ_2WAYS  6
 
 #define REVOLUTION_BASE_AXIS_ANGLE       1
 #define REVOLUTION_BASE_AXIS_ANGLE_2WAYS 2
@@ -170,6 +195,7 @@
 #define PIPE_DIFFERENT_SECTIONS 2
 #define PIPE_SHELL_SECTIONS 3
 #define PIPE_SHELLS_WITHOUT_PATH 4
+#define PIPE_BI_NORMAL_ALONG_VECTOR 5
 
 #define THRUSECTIONS_RULED 1
 #define THRUSECTIONS_SMOOTHED 2
@@ -194,14 +220,17 @@
 
 #define ELLIPSE_PNT_VEC_RR 1
 
-#define CIRC_ARC_THREE_PNT 1
-#define CIRC_ARC_CENTER    2
+#define CIRC_ARC_THREE_PNT         1
+#define CIRC_ARC_CENTER            2
+#define ELLIPSE_ARC_CENTER_TWO_PNT 3
 
 #define FILLET_SHAPE_ALL      1
 #define FILLET_SHAPE_EDGES    2
 #define FILLET_SHAPE_FACES    3
 #define FILLET_SHAPE_EDGES_2R 4
 #define FILLET_SHAPE_FACES_2R 5
+
+#define FILLET_2D_SHAPE_VERTEXES      1
 
 #define CHAMFER_SHAPE_ALL      1
 #define CHAMFER_SHAPE_EDGE     2
@@ -245,6 +274,8 @@
 #define CDG_MEASURE 1
 
 #define GROUP_FUNCTION 1
+
+#define SHAPES_ON_SHAPE 1
 
 // Blocks
 #define BLOCK_FACE_FOUR_PNT       1

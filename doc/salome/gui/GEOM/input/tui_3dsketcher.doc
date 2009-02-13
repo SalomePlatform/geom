@@ -1,0 +1,20 @@
+/*!
+
+\page tui_3dsketcher_page 3D Sketcher
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create a 3D sketcher (wire) of the given points coordinates
+sketcher1 = geompy.Make3DSketcher([ 0,0,0, 50,50,50, 0,50,0, 50,0,50, 10,20,100, 0,0,0 ])
+
+# add object in the study
+id_sketcher1 = geompy.addToStudy(sketcher1,"Sketcher1")
+
+# display the sketcher
+gg.createAndDisplayGO(id_sketcher1)
+\endcode
+
+*/

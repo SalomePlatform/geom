@@ -1,25 +1,27 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  File   : GEOM_Gen.idl
 //  Author : Sergey RUIN
-
+//
 #ifndef __GEOM_GEN__
 #define __GEOM_GEN__
 
@@ -36,7 +38,7 @@ module GEOM
    *  Topological types of shapes (like Open Cascade types)
    */
   enum shape_type { COMPOUND, COMPSOLID, SOLID, SHELL,
-	            FACE, WIRE, EDGE, VERTEX, SHAPE };
+                    FACE, WIRE, EDGE, VERTEX, SHAPE };
 
 
   /*!
@@ -75,6 +77,32 @@ module GEOM
      */
     ST_ONIN
   };
+
+  /*!
+   *  Kind of method to find inside one main shape some subshapes,
+   *  corresponding to other given shape (its argument)
+   *  Is used in functions GEOM_Gen.RestoreSubShapes<xxx>()
+   */
+  enum find_shape_method
+  {
+    /*! Use GetInPlace functionality. Suits all cases, except transformations */
+    FSM_GetInPlace,
+
+    /*! To be used only for transformation result, to find subshapes of argument.
+     *  Only this method can be used after transformation.
+     */
+    FSM_Transformed,
+
+    /*! To find only shared subshapes, not modified by the operation */
+    FSM_GetSame,
+
+    /*! Use GetShapesOnShape method (can work only on solids) */
+    FSM_GetShapesOnShape,
+
+    /*! Use GetInPlaceByHistory method (can work only after Partition) */
+    FSM_GetInPlaceByHistory
+  };
+
 
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
@@ -205,6 +233,18 @@ module GEOM
      *  For example, method return false for GEOM_MARKER
      */
      boolean IsShape();
+
+     /*!
+     *  Set list of parameters
+     *  \param theParameters is a string containing the notebook variables separated by ":" symbol,
+     *         used for object creation
+     */
+    void SetParameters (in string theParameters);
+			    
+    /*!
+     *  Return list of notebook variables used for object creation separated by ":" symbol
+     */
+    string GetParameters();
   };
 
 
@@ -288,19 +328,31 @@ module GEOM
 				  in double theParameter);
 
     /*!
+     *  Create a point, corresponding to the given parameters on the
+     *    given surface.
+     *  \param theRefSurf The referenced surface.
+     *  \param theUParameter Value of U-parameter on the referenced surface.
+     *  \param theVParameter Value of V-parameter on the referenced surface.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnSurface (in GEOM_Object theRefSurf,
+				    in double theUParameter,
+				    in double theVParameter);
+
+    /*!
      *  Create a point, on two lines intersection.
      *  \param theRefLine1, theRefLine2 The referenced lines.
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointOnLinesIntersection (in GEOM_Object theRefLine1,
 					      in GEOM_Object theRefLine2);
-    
+
      /*!
      *  Create a vector, corresponding to tangent to the given parameter on the given curve.
      *  \param theRefCurve The referenced curve.
      *  \param theParameter Value of parameter on the referenced curve.This value should be have value
      *  \between 0. and 1.. Value of 0. corresponds first parameter of curve value 1. corresponds
-     *  \last parameter of curve. 
+     *  \last parameter of curve.
      *  \return New GEOM_Object, containing the created point.
      */
      GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
@@ -394,11 +446,11 @@ module GEOM
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
 			    in double theXDX, in double theXDY, in double theXDZ,
 			    in double theYDX, in double theYDY, in double theYDZ);
-     
+
     /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
      *  Values of parameters should be between 0. and 1.0
-     *  \param theFace - face for which tangent plane shuold be built. 
+     *  \param theFace - face for which tangent plane shuold be built.
      *  \param theParameterU - value of parameter by U
      *  \param theParameterV - value of parameter Vthe
      *  \param theTrimSize - defines sizes of created face
@@ -473,6 +525,20 @@ module GEOM
      */
     GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
 				     in GEOM_Object theVector);
+
+    /*!
+     *  Translate the given object along the given vector on given distance,
+     *  creating its copy before the translation.
+     *  \param theObject The object to be translated.
+     *  \param theVector Translation vector, giving a direction.
+     *  \param theDistance Translation distance, giving a distance.
+     *  \param theCope Translation copy, creating its copy if true.
+     *  \return New GEOM_Object, containing the translated object.
+     */
+    GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
+					 in GEOM_Object theVector,
+					 in double      theDistance,
+					 in boolean     theCopy);
 
     /*!
      *  Translate the given object along the given vector a given number times
@@ -684,6 +750,33 @@ module GEOM
 				in double theFactor);
 
     /*!
+     *  Scale the given object by different factors along coordinate axes.
+     *  \param theObject The object to be scaled.
+     *  \param thePoint Center point for scaling.
+     *  \param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+     *  \return theObject.
+     */
+    GEOM_Object ScaleShapeAlongAxes (in GEOM_Object theObject,
+                                     in GEOM_Object thePoint,
+                                     in double theFactorX,
+                                     in double theFactorY,
+                                     in double theFactorZ);
+
+    /*!
+     *  Scale the given object by different factors along coordinate axes,
+     *  creating its copy before the scaling.
+     *  \param theObject The object to be scaled.
+     *  \param thePoint Center point for scaling.
+     *  \param theFactorX,theFactorY,theFactorZ Scaling factors along each axis.
+     *  \return New GEOM_Object, containing the scaled shape.
+     */
+    GEOM_Object ScaleShapeAlongAxesCopy (in GEOM_Object theObject,
+                                         in GEOM_Object thePoint,
+                                         in double theFactorX,
+                                         in double theFactorY,
+                                         in double theFactorZ);
+
+    /*!
      *  Modify the Location of the given object by LCS.
      *  \param theObject The object to be displaced.
      *  \param theStartLCS Coordinate system to perform displacement from it.
@@ -713,6 +806,29 @@ module GEOM
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
 				   in GEOM_Object theStartLCS,
 				   in GEOM_Object theEndLCS);
+
+    /*!
+     *  Modify the Location of the given object by Path,
+     *  \param  theObject The object to be displaced.
+     *  \param  thePath Wire or Edge along that the object will be translated.
+     *	\param  theDistance progress of Path (0 = actual location, 1 = end of path location).
+     *	\param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
+     *	\param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
+     *  \return New GEOM_Object, containing the displaced shape.
+     */
+
+    GEOM_Object PositionAlongPath (in GEOM_Object theObject,
+				   in GEOM_Object thePath,
+				   in double theDistance,
+				   in boolean theCopy,
+				   in boolean theReverse);
+
+    /*!
+     *  Recompute the shape from its arguments.
+     *  \param theObject The object to be recomputed.
+     *  \return theObject.
+     */
+    GEOM_Object RecomputeObject (in GEOM_Object theObject);
   };
 
   /*!
@@ -742,6 +858,53 @@ module GEOM
      */
     GEOM_Object MakeBoxTwoPnt (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
 
+    /*!
+     *  Create a face specified dimensions along OX-OY coordinate axes,
+     *  with edges parallel to the coordinate axes.
+     *  Center of the face will be at point (0, 0, 0).
+     *  \param theH Height of the Face.
+     *  \param theW Width of the Face.
+     *  \param theOrientation Orientation belong axis OXY OYZ OZX
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceHW (in double theH, in double theW, in short theOrientation);
+    /*!
+     *  Create a face by normale vector or edge and two specified sizes,
+     *  vertical (H) and horisontal (W).
+     *  \param theVec defines plane.
+     *  \param theH vertical size (height).
+     *  \param theW horisontal size (width). 
+     *  \return New GEOM_Object, containing the created face.
+     */
+    GEOM_Object MakeFaceObjHW (in GEOM_Object theObj, in double theH, in double theW);
+    /*!
+     *  Create a Disk (circular face) with given center, normal vector and radius.
+     *  \param thePnt disk center.
+     *  \param theVec Vector, normal to the plane of the disk.
+     *  \param theR Disk radius.
+     *  \return New GEOM_Object, containing the created disk.
+     */
+    GEOM_Object MakeDiskPntVecR (in GEOM_Object thePnt,
+				 in GEOM_Object theVec,
+				 in double theR);
+    /*!
+     *  Create a disk (circular face), passing through three given points
+     *  \param thePnt1, thePnt2, thePnt3 Points, defining the disk.
+     *  \return New GEOM_Object, containing the created disk.
+     */
+    GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
+				  in GEOM_Object thePnt2,
+				  in GEOM_Object thePnt3);
+				  
+    /*!
+     *  Create a disk specified dimensions along OX-OY coordinate axes,
+     *  Center of the disk at point (0, 0, 0).
+     *  \param theR of the Disk.
+     *  \param theOrientation Orientation belong axis OXY OYZ OZX
+     *  \return New GEOM_Object, containing the created disk.
+     */
+    GEOM_Object MakeDiskR (in double theR, in short theOrientation);
+    
     /*!
      *  Create a cylinder with given radius and height at
      *  the origin of coordinate system. Axis of the cylinder
@@ -863,6 +1026,18 @@ module GEOM
     GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
 				      in GEOM_Object thePoint1,
 				      in GEOM_Object thePoint2);
+				    
+    /*!
+     *  Create a shape by extrusion of the base shape along a vector, defined by DX DY DZ.
+     *  \param theBase Base shape to be extruded.
+     *  \param DX, DY, DZ end of extrusion vector.
+     *  \return New GEOM_Object, containing the created prism.
+     */
+    GEOM_Object MakePrismDXDYDZ (in GEOM_Object theBase,
+                          	 in double theDX, in double theDY, in double theDZ);
+    /*  The same prism but in two directions forward&backward */
+    GEOM_Object MakePrismDXDYDZ2Ways (in GEOM_Object theBase,
+                                      in double theDX, in double theDY, in double theDZ);
 
     /*!
      *  Create a shape by extrusion of the base shape along
@@ -937,7 +1112,7 @@ module GEOM
 					       in GEOM_Object thePath,
 					       in boolean theWithContact ,
 					       in boolean theWithCorrection );
-    
+
     /*!
      *  Create a shape by extrusion of the profile shape along
      *  the path shape. The path shape can be a shell or a face.
@@ -969,6 +1144,22 @@ module GEOM
      */
     GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
 					   in ListOfGO theLocations);
+
+    /*!
+     *  Create a shape by extrusion of the base shape along
+     *  the path shape with constant bi-normal direction along the given vector. 
+     *  The path shape can be a wire or an edge.
+     *  \param theBase Base shape to be extruded.
+     *  \param thePath Path shape to extrude the base shape along it.
+     *  \param theVec Vector defines a constant binormal direction to keep the
+     *                same angle beetween the Direction and the sections
+     *                along the sweep surface.
+     *  \return New GEOM_Object, containing the created pipe.
+     */
+    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase, 
+					     in GEOM_Object thePath, 
+					     in GEOM_Object theVec);
+
   };
 
   /*!
@@ -1271,7 +1462,7 @@ module GEOM
 				    in long        theShapeType,
 				    in GEOM_Object theAx1,
 				    in shape_state theState);
-				    
+
     /*!
      *  Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified plane by the certain way, defined through \a theState parameter.
@@ -1279,7 +1470,7 @@ module GEOM
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theAx1 Vector (or line, or linear edge), specifying normal
      *                direction of the plane to find shapes on.
-     *  \param thePnt Point specifying location of the plane to find shapes on.     
+     *  \param thePnt Point specifying location of the plane to find shapes on.
      *  \param theState The state of the subshapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
@@ -1367,6 +1558,45 @@ module GEOM
 			     in GEOM_Object theShape,
 			     in long        theShapeType,
 			     in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of IDs of all found sub-shapes.
+     */
+    ListOfLong GetShapesOnShapeIDs (in GEOM_Object theCheckShape,
+				    in GEOM_Object theShape,
+				    in short       theShapeType,
+				    in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return List of all found sub-shapes.
+     */
+    ListOfGO GetShapesOnShape (in GEOM_Object theCheckShape,
+			       in GEOM_Object theShape,
+			       in short       theShapeType,
+			       in shape_state theState);
+
+    /*!
+     * \brief Find subshapes complying with given status
+     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theShape - the shape to explore
+     * \param theShapeType - type of subshape of theShape
+     * \param theState - required state
+     * \return compound includes all found sub-shapes.
+     */
+    GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
+					    in GEOM_Object theShape,
+					    in short       theShapeType,
+					    in shape_state theState);
 
     /*!
      *  Get sub-shape(s) of \a theShapeWhere, which are
@@ -1895,6 +2125,17 @@ module GEOM
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense);
+			       
+    /*!
+     *  Create an arc of ellipse of center C and two points P1 P2.
+     *  \param theCenter Center point of the arc.
+     *  \param thePnt1 Major radius is distance from center to Pnt1.
+     *  \param thePnt2 define a plane and Minor radius as a shortest distance from Pnt2 to vector Center->Pnt1.
+     *  \return New GEOM_Object, containing the created arc.
+     */
+    GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
+			          in GEOM_Object thePnt1,
+			          in GEOM_Object thePnt2);
 
 
     /*!
@@ -1953,6 +2194,16 @@ module GEOM
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
+    
+    /*!
+     *  Create a 3D sketcher, following the numerical description,
+     *  passed through points created by \a theCoordinates argument. \n
+     *  Format of the description string have to be the following:
+     *
+     *  "Make3DSketcher[x1, y1, z1, x2, y2, z2, ..., xN, yN, zN]"
+     */
+    
+    GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
 
       /*!
      *  Create a sketcher (wire or face), following the textual description,
@@ -2009,10 +2260,24 @@ module GEOM
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in ListOfLong  theFaces);
+				 
     GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
 				     in double      theR1,
 				     in double      theR2,
 				     in ListOfLong  theFaces);
+				     
+    /*!
+     *  Perform a fillet on face of the specified vertexes of the given shape.
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \param theVertexes Global indices of vertexes to perform fillet on.
+     *    \note Global index of sub-shape can be obtained, using method
+     *          <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR>.
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFillet2D (in GEOM_Object theShape,
+			      in double      theR,
+			      in ListOfLong  theVertexes);
 
     /*!
      *  Perform a symmetric chamfer on all edges of the given shape.
@@ -2037,7 +2302,7 @@ module GEOM
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
 				 in double theD1, in double theD2,
 				 in long theFace1, in long theFace2);
-    /*! 
+    /*!
      *  The Same but with params theD = Chamfer Lenght
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
@@ -2061,7 +2326,7 @@ module GEOM
     GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in ListOfLong theFaces);
-    /*! 
+    /*!
      *  The Same but with params theD = Chamfer Lenght
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
@@ -2080,7 +2345,7 @@ module GEOM
     GEOM_Object MakeChamferEdges (in GEOM_Object theShape,
 				  in double theD1, in double theD2,
 				  in ListOfLong theEdges);
-    /*! 
+    /*!
      *  The Same but with params theD = Chamfer Lenght
      *  and theAngle = Chamfer Angle (Angle in radians)
      */
@@ -2490,6 +2755,59 @@ module GEOM
      *  Get point coordinates
      */
     void PointCoordinates (in GEOM_Object theShape, out double X, out double Y, out double Z);
+
+    /*!
+     *  Get radius of curvature of curve in the point determinated by param
+     *  \param theShape - curve.
+     *  \param theParam - parameter on curve
+     *  \return Value of curvature.
+     */
+    double CurveCurvatureByParam (in GEOM_Object theShape, in double theParam);
+
+    /*!
+     *  Get radius of curvature of curve in the given point
+     *  \param theShape - curve.
+     *  \param thePoint - point
+     *  \return Value of curvature.
+     */
+    double CurveCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
+
+    /*!
+     *  Get max radius of curvature of surface in the point determinated by params
+     *  \param theShape - surface.
+     *  \param theUParam - U-parameter on surface
+     *  \param theVParam - V-parameter on surface
+     *  \return Value of curvature.
+     */
+    double MaxSurfaceCurvatureByParam (in GEOM_Object theShape, in double theUParam,
+				       in double theVParam);
+
+    /*!
+     *  Get max radius of curvature of surface in the given point
+     *  \param theShape - surface.
+     *  \param thePoint - point
+     *  \return Value of curvature.
+     */
+    double MaxSurfaceCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
+
+    /*!
+     *  Get min radius of curvature of surface in the point determinated by params
+     *  \param theShape - surface.
+     *  \param theUParam - U-parameter on surface
+     *  \param theVParam - V-parameter on surface
+     *  \return Value of curvature.
+     */
+    double MinSurfaceCurvatureByParam (in GEOM_Object theShape, in double theUParam,
+				       in double theVParam);
+
+    /*!
+     *  Get min radius of curvature of surface in the given point
+     *  \param theShape - surface.
+     *  \param thePoint - point
+     *  \return Value of curvature.
+     */
+    double MinSurfaceCurvatureByPoint (in GEOM_Object theShape, in GEOM_Object thePoint);
+
   };
 
 
@@ -2586,7 +2904,7 @@ module GEOM
     void Redo (in long theStudyID);
 
     /*!
-     * Publishing manangement
+     * Publishing management
      * Adds in theStudy a object theObject under with a name theName,
      * if theFather is not NULL the object is placed under thFather's SObject.
      * Returns a SObject where theObject is placed
@@ -2595,6 +2913,45 @@ module GEOM
 				  in GEOM_Object theObject,
 				  in string theName,
 				  in GEOM_Object theFather);
+
+    /*!
+     *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
+     *  To be used from python scripts out of geompy.addToStudy (non-default usage)
+     *  \param theStudy  the study, in which theObject is published already,
+     *                   and in which the arguments will be published
+     *  \param theObject published GEOM object, arguments of which will be published
+     *  \param theArgs   list of GEOM_Object, operation arguments to be published.
+     *                   If this list is empty, all operation arguments will be published
+     *  \param theFindMethod method to search subshapes, corresponding to arguments and
+     *                       their subshapes. Value from enumeration GEOM::find_shape_method.
+     *  \param theInheritFirstArg set properties of the first argument for \a theObject.
+     *                            Do not publish subshapes in place of arguments, but only
+     *                            in place of subshapes of the first argument,
+     *                            because the whole shape corresponds to the first argument.
+     *                            Mainly to be used after transformations, but it also can be
+     *                            usefull after partition with one object shape, and some other
+     *                            operations, where only the first argument has to be considered.
+     *                            If theObject has only one argument shape, this flag is automatically
+     *                            considered as True, not regarding really passed value.
+     *  \return True in case of success, False otherwise.
+     */
+    boolean RestoreSubShapesO (in SALOMEDS::Study   theStudy,
+			       in GEOM_Object       theObject,
+			       in ListOfGO          theArgs,
+			       in find_shape_method theFindMethod,
+			       in boolean           theInheritFirstArg);
+
+    /*!
+     *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
+     *  To be used from GUI and from geompy.addToStudy.
+     *  Work like the above method, but accepts study object theSObject instead of GEOM_Object.
+     *  \param theSObject study object, referencing GEOM object, arguments of which will be published
+     */
+    boolean RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
+				in SALOMEDS::SObject theSObject,
+				in ListOfGO          theArgs,
+				in find_shape_method theFindMethod,
+				in boolean           theInheritFirstArg);
 
     /*!
      *  Methods to access interfaces for objects creation and transformation

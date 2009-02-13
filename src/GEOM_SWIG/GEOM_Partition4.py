@@ -1,4 +1,6 @@
-#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
@@ -18,17 +20,13 @@
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
-#
 #  File   : GEOM_Partition4.py
 #  Module : GEOM
-
-#%Make geometry (like CEA script (A3)) using Partition algorithm%
 # import couplex2_01_GEOM
 # reload(couplex2_01_GEOM)
-
 # Dimensions de alveolus
 # Parall‰pipˆde rectangle de taille alDx, alDy, alDz
-
+#
 alDx   = 2.5
 alDy   = 20.0
 alDz   = 2.5

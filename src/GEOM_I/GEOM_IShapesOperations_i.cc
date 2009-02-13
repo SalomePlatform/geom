@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -1289,6 +1291,133 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnBoxIDs
 
   return aSeq._retn();
 }
+
+
+//=============================================================================
+/*!
+ *  GetShapesOnShape
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnShape
+                                           (GEOM::GEOM_Object_ptr theCheckShape,
+					    GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Short          theShapeType,
+					    GEOM::shape_state     theState)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theCheckShape == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theCheckShape->GetEntry());
+
+  if (aShape.IsNull() || aCheckShape.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Shape
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnShape
+    (aCheckShape,aShape, theShapeType,ShapeState(theState));
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+
+//=============================================================================
+/*!
+ *  GetShapesOnShapeAsCompound
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetShapesOnShapeAsCompound
+                                           (GEOM::GEOM_Object_ptr theCheckShape,
+					    GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Short          theShapeType,
+					    GEOM::shape_state     theState)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theCheckShape == NULL )
+    return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theCheckShape->GetEntry());
+
+  if (aShape.IsNull() || aCheckShape.IsNull() )
+    return aGEOMObject._retn();
+
+  //Get Shapes On Shape
+  Handle(GEOM_Object) anObject = GetOperations()->GetShapesOnShapeAsCompound
+    (aCheckShape,aShape, theShapeType,ShapeState(theState));
+
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+
+//=============================================================================
+/*!
+ *  GetShapesOnShapeIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnShapeIDs
+                                           (GEOM::GEOM_Object_ptr theCheckShape,
+					    GEOM::GEOM_Object_ptr theShape,
+					    CORBA::Short          theShapeType,
+					    GEOM::shape_state     theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if ( theShape == NULL ||  theCheckShape == NULL )
+    return aSeq._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theShape->GetEntry());
+  Handle(GEOM_Object) aCheckShape = GetOperations()->GetEngine()->GetObject
+    (theShape->GetStudyID(), theCheckShape->GetEntry());
+
+  if (aShape.IsNull() || aCheckShape.IsNull() )
+    return aSeq._retn();
+
+  //Get Shapes On Shape
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnShapeIDs
+    (aCheckShape,aShape, theShapeType,ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
 
 //=============================================================================
 /*!

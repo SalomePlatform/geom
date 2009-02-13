@@ -1,32 +1,31 @@
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+#
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 #  GEOM NMTTools : partition algorithm
-#
-#  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-# 
-#  This library is free software; you can redistribute it and/or 
-#  modify it under the terms of the GNU Lesser General Public 
-#  License as published by the Free Software Foundation; either 
-#  version 2.1 of the License. 
-# 
-#  This library is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-#  Lesser General Public License for more details. 
-# 
-#  You should have received a copy of the GNU Lesser General Public 
-#  License along with this library; if not, write to the Free Software 
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-# 
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
-#
-#
 #  File   : Makefile.in
 #  Author : Julia DOROVSKIKH
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
 #  $Header$
-
+#
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -39,11 +38,21 @@ salomeinclude_HEADERS = \
 	Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
 	NMTTools_CheckerSI.hxx \
+	NMTTools_CheckerSI.ixx \
+	NMTTools_CheckerSI.jxx \
 	NMTTools_CommonBlockAPI.hxx \
+	NMTTools_CommonBlockAPI.ixx \
+	NMTTools_CommonBlockAPI.jxx \
 	NMTTools_CommonBlock.hxx \
+	NMTTools_CommonBlock.ixx \
+	NMTTools_CommonBlock.jxx \
 	NMTTools_CommonBlockPool.hxx \
 	NMTTools_CoupleOfShape.hxx \
+	NMTTools_CoupleOfShape.ixx \
+	NMTTools_CoupleOfShape.jxx \
 	NMTTools_DEProcessor.hxx \
+	NMTTools_DEProcessor.ixx \
+	NMTTools_DEProcessor.jxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
@@ -51,6 +60,8 @@ salomeinclude_HEADERS = \
 	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	NMTTools_IndexedDataMapOfShapePaveBlock.hxx \
 	NMTTools_IteratorOfCoupleOfShape.hxx \
+	NMTTools_IteratorOfCoupleOfShape.ixx \
+	NMTTools_IteratorOfCoupleOfShape.jxx \
 	NMTTools_ListIteratorOfListOfCommonBlock.hxx \
 	NMTTools_ListIteratorOfListOfCoupleOfShape.hxx \
 	NMTTools_ListNodeOfListOfCommonBlock.hxx \
@@ -58,8 +69,12 @@ salomeinclude_HEADERS = \
 	NMTTools_ListOfCommonBlock.hxx \
 	NMTTools_ListOfCoupleOfShape.hxx \
 	NMTTools_PaveFiller.hxx \
+	NMTTools_PaveFiller.ixx \
+	NMTTools_PaveFiller.jxx \
 	NMTTools_PPaveFiller.hxx \
 	NMTTools_Tools.hxx \
+	NMTTools_Tools.ixx \
+	NMTTools_Tools.jxx \
 	Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
 	Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx \
 	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx \
@@ -112,15 +127,43 @@ dist_libNMTTools_la_SOURCES = \
 	NMTTools_MapOfPaveBlock_0.cxx \
 	NMTTools_StdMapNodeOfMapOfPaveBlock_0.cxx
 
-# additionnal information to compil and link file
+# additional information to compile and link file
 
-libNMTTools_la_CPPFLAGS = \
-	$(CAS_CPPFLAGS) \
-	$(KERNEL_CXXFLAGS) \
+libNMTTools_la_CPPFLAGS =	\
+	$(CAS_CPPFLAGS)		\
+	$(KERNEL_CXXFLAGS)	\
 	-I$(srcdir)/../NMTDS
 
-libNMTTools_la_LDFLAGS  = \
-	../NMTDS/libNMTDS.la \
-	$(STDLIB) \
-	$(CAS_LDPATH) -lTKBool -lTKBO \
+libNMTTools_la_LDFLAGS  =		\
+	../NMTDS/libNMTDS.la		\
+	$(STDLIB)			\
+	$(CAS_LDPATH) -lTKBool -lTKBO	\
 	$(KERNEL_LDFLAGS)
+
+CDL_FILES =					\
+	NMTTools.cdl				\
+	NMTTools_CheckerSI.cdl			\
+	NMTTools_CommonBlock.cdl		\
+	NMTTools_CommonBlockAPI.cdl		\
+	NMTTools_CoupleOfShape.cdl		\
+	NMTTools_DEProcessor.cdl		\
+	NMTTools_IteratorOfCoupleOfShape.cdl	\
+	NMTTools_PaveFiller.cdl			\
+	NMTTools_Tools.cdl
+
+EXTRA_DIST += $(CDL_FILES)
+
+########################################
+# Non-used (obsolete?) files
+########################################
+# NMTTools_PCurveMaker.cdl
+# NMTTools_PCurveMaker.cxx
+# NMTTools_PCurveMaker.hxx
+# NMTTools_PCurveMaker.ixx
+# NMTTools_PCurveMaker.jxx
+# NMTTools_PDSFiller.hxx
+# NMTTools_DSFiller.cdl
+# NMTTools_DSFiller.cxx
+# NMTTools_DSFiller.hxx
+# NMTTools_DSFiller.ixx
+# NMTTools_DSFiller.jxx

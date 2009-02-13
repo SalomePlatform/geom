@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,30 +17,27 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GeometryGUI.h
+// Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
-//
-//  File   : GeometryGUI.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
-
 #ifndef GEOMETRYGUI_H
 #define GEOMETRYGUI_H
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include "SalomeApp_Module.h"
+#include <SalomeApp_Module.h>
+
+#include <GEOM_Client.hxx>
+#include <SALOME_InteractiveObject.hxx>
+#include <SALOMEDSClient.hxx>
 
 #include "GEOMGUI.h"
-#include "GEOM_Client.hxx"
-#include "SALOME_InteractiveObject.hxx"
-
-#include "SALOMEDSClient.hxx"
 
 // QT Includes
-#include <qmap.h>
+#include <QMap>
 
 // OCCT Includes
 #include <gp_Ax3.hxx>
@@ -52,7 +49,7 @@
 typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
-class QPopupMenu;
+class QMenu;
 class GEOMGUI_OCCSelector;
 class LightApp_VTKSelector;
 class LightApp_Selection;
@@ -84,6 +81,8 @@ public:
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
 
+  static char*                JoinObjectParameters(const QStringList& theParametersList);
+
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }
   Standard_CString&           GetFatherior()      { return myFatherior; }
   //void                        SetState( const int state ) { myState = state; }
@@ -106,7 +105,7 @@ public:
   virtual void                BuildPresentation( const Handle(SALOME_InteractiveObject)&, SUIT_ViewWindow* = 0 );
 
 //  virtual void                DefinePopup( QString & theContext, QString & theParent, QString & theObject);
-//  virtual bool                CustomPopup( QAD_Desktop* parent, QPopupMenu* popup, const QString& theContext,
+//  virtual bool                CustomPopup( QAD_Desktop* parent, QMenu* popup, const QString& theContext,
 //			                   const QString& theParent, const QString& theObject );
 
   // The Working Plane management
@@ -117,11 +116,14 @@ public:
   virtual void                windows( QMap<int, int>& ) const;
   virtual void                viewManagers( QStringList& ) const;
 
-  virtual void                contextMenuPopup( const QString&, QPopupMenu*, QString& );
+  virtual void                contextMenuPopup( const QString&, QMenu*, QString& );
   virtual void                createPreferences();
   virtual void                preferencesChanged( const QString&, const QString& );
   int                         getLocalSelectionMode() const;
   void                        setLocalSelectionMode(const int mode);
+
+  virtual void storeVisualParameters  (int savePoint);
+  virtual void restoreVisualParameters(int savePoint);
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );
@@ -167,8 +169,8 @@ private:
   gp_Ax3                      myWorkingPlane;
   QMap<int,QString>           myRules;           // popup rules
 
-  QPtrList<GEOMGUI_OCCSelector>   myOCCSelectors;
-  QPtrList<LightApp_VTKSelector> myVTKSelectors;
+  QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
+  QList<LightApp_VTKSelector*> myVTKSelectors;
 
   LightApp_Displayer*         myDisplayer;
   int                         myLocalSelectionMode; //Select Only

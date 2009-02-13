@@ -1,0 +1,44 @@
+/*!
+
+\page create_disk_page Disk
+
+A primitive called disk is a round plane with a certain radius and orientation
+
+To create a \b Disk in the <b>Main Menu</b> select <b>New Entity - >
+Primitives - > Disk</b>
+
+\n There are 3 algorithms to create a \b Disk in 3D space. 
+\n The \b Result of each operation will be a GEOM_Object (face).
+
+\n Firstly, you can create a \b Disk at the origin 
+of coordinates defining its radius and selecting the orientation of its axis with radio
+ buttons (OXY, OYZ or OZX).This 
+means that the Disk will lie in "OXY", "OYZ" or "OZX" plane correspondingly.
+\n <b>TUI Command:</b> <em>geompy.MakeDiskR(Radius, Orientation)</em>
+\n <b>Arguments:</b> Name + 2 values (Dimensions at origin: radius and
+orientation).
+
+\image html disk1.png
+
+\n Secondly, you can define a \b Disk by a <b>Center Point</b>, a \b
+Vector defining the normal of a circle and a \b Radius.
+\n <b>TUI Command:</b> <em>geompy.MakeDiskPntVecR(Point, Vector,
+Radius)</em>
+\n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
+the direction) + Radius.
+
+\image html disk2.png
+
+\n Finally, you can define a \b Disk by three \b Points that lie on its boundary. 
+\n <b>TUI Command:</b> <em>geompy.MakeDiskThreePnt(Point1, Point2, Point3)</em>
+\n <b>Arguments:</b> Name + 3 points which will form the disk.
+
+\image html disk3.png
+
+<b>Example:</b>
+\image html disks.png "Disks"
+
+Our <b>TUI Scripts</b> provide you with useful examples of creating 
+\ref tui_creation_disk "Primitives".
+
+*/

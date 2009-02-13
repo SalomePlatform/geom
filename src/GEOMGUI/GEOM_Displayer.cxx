@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,38 +17,36 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOM_Displayer.cxx
+// Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
-//
-//  File   : GEOM_Displayer.cxx
-//  Author : Vadim SANDLER
-//  Module : GEOM
-//  $Header$
-
 #include "GEOM_Displayer.h"
 
 #include "GeometryGUI.h"
 
-#include "GEOM_TypeFilter.h"
-#include "GEOM_EdgeFilter.h"
-#include "GEOM_FaceFilter.h"
-#include "GEOM_PreviewFilter.h"
-#include "GEOM_LogicalFilter.h"
-#include "GEOM_OCCFilter.h"
+#include <GEOM_TypeFilter.h>
+#include <GEOM_EdgeFilter.h>
+#include <GEOM_FaceFilter.h>
+#include <GEOM_CompoundFilter.h>
+#include <GEOM_PreviewFilter.h>
+#include <GEOM_LogicalFilter.h>
+#include <GEOM_OCCFilter.h>
 
-#include "GEOM_Actor.h"
-#include "GEOM_AssemblyBuilder.h"
-#include "GEOM_AISShape.hxx"
-#include "GEOM_AISVector.hxx"
-#include "GEOM_AISTrihedron.hxx"
-#include "GEOM_VTKTrihedron.hxx"
+#include <GEOM_Actor.h>
+#include <GEOM_AssemblyBuilder.h>
+#include <GEOM_AISShape.hxx>
+#include <GEOM_AISVector.hxx>
+#include <GEOM_AISTrihedron.hxx>
+#include <GEOM_VTKTrihedron.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
 #include <SUIT_Session.h>
-#include <SUIT_Tools.h>
 #include <SUIT_ViewManager.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
@@ -57,6 +55,8 @@
 #include <SalomeApp_Tools.h>
 
 #include <SALOME_ListIteratorOfListIO.hxx>
+#include <SALOME_ListIO.hxx>
+#include <SALOME_Prs.h>
 
 #include <SOCC_Prs.h>
 #include <SOCC_ViewModel.h>
@@ -64,15 +64,11 @@
 #include <SVTK_Prs.h>
 #include <SVTK_ViewModel.h>
 
-#include <SALOMEDSClient.hxx>
-#include <SALOMEDSClient_SObject.hxx>
-
 // OCCT Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
-#include <Graphic3d_AspectMarker3d.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
 #include <StdSelect_TypeOfFace.hxx>
 #include <TopoDS_Face.hxx>
@@ -88,13 +84,10 @@
 #include <vtkActorCollection.h>
 #include <vtkProperty.h>
 
-// STL Includes
-#include <cstring>
-
 // CORBA Headers
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
-#include "GEOMImpl_Types.hxx"
+#include <GEOMImpl_Types.hxx>
 
 using namespace std;
 
@@ -164,6 +157,30 @@ SUIT_SelectionFilter* GEOM_Displayer::getFilter( const int theMode )
       default             : aFilter = new GEOM_TypeFilter( getStudy(), theMode ); break;
       }
 
+  return aFilter;
+}
+
+//================================================================
+// Function : getComplexFilter
+// Purpose  : Get compound filter corresponding to the type of 
+//            object from GEOMImpl_Types.h
+//================================================================
+SUIT_SelectionFilter* GEOM_Displayer::getComplexFilter( const QList<int>* aSubShapes)
+{
+  GEOM_CompoundFilter* aFilter;
+  
+  if(aSubShapes != NULL ) {
+    aFilter = new GEOM_CompoundFilter(getStudy());
+    QList<int> aTopAbsTypes;
+    QList<int>::const_iterator it;
+    for(it = aSubShapes->constBegin(); it != aSubShapes->constEnd(); ++it ) {
+      int topAbsMode = getTopAbsMode(*it);
+      if(topAbsMode != -1 )
+        aTopAbsTypes.append(topAbsMode);
+    }
+    aFilter->addSubTypes(aTopAbsTypes);
+  }
+  
   return aFilter;
 }
 
@@ -379,9 +396,10 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
   if ( app )
   {
     SUIT_Desktop* desk = app->desktop();
-    QPtrList<SUIT_ViewWindow> wnds = desk->windows();
+    QList<SUIT_ViewWindow*> wnds = desk->windows();
     SUIT_ViewWindow* wnd;
-    for ( wnd = wnds.first(); wnd; wnd = wnds.next() )
+    QListIterator<SUIT_ViewWindow*> it( wnds );
+    while ( it.hasNext() && (wnd = it.next()) )
     {
       SUIT_ViewManager* vman = wnd->getViewManager();
       if ( vman )
@@ -612,6 +630,10 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		anAspect = AISShape->Attributes()->WireAspect();
 		anAspect->SetColor( aColor );
 		AISShape->Attributes()->SetWireAspect( anAspect );
+
+                // bug [SALOME platform 0019868]
+                // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
+                AISShape->SetOwnDeviationAngle( 10*PI/180 );
 	      }
 	  }
 
@@ -666,7 +688,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		      GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( aGeomObject );
 		      if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() )
 		      {
-			QValueList<SALOMEDS::Color> aReservedColors;
+			QList<SALOMEDS::Color> aReservedColors;
 
 			SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( app );
 			CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
@@ -929,7 +951,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
     if ( prs )
     {
       Handle( SALOME_InteractiveObject ) theIO = new SALOME_InteractiveObject();
-      theIO->setEntry( entry.latin1() );
+      theIO->setEntry( entry.toLatin1().constData() );
       if ( !theIO.IsNull() )
       {
 	// set interactive object
@@ -1032,7 +1054,7 @@ void GEOM_Displayer::GlobalSelection( const int theMode, const bool update )
  */
 //=================================================================
 void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
-				      const bool update )
+				      const bool update, const QList<int>* theSubShapes )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -1076,16 +1098,26 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
   if ( theModes.Extent() == 1 )
     {
       int aMode = TColStd_MapIteratorOfMapOfInteger( theModes ).Key();
-      aFilter = getFilter( aMode );
+      
+      if ( aMode == GEOM_COMPOUNDFILTER )
+        aFilter = getComplexFilter( theSubShapes );
+      else    
+        aFilter = getFilter( aMode );
     }
   else if ( theModes.Extent() > 1 )
     {
       TColStd_MapOfInteger aTopAbsModes;
       TColStd_MapIteratorOfMapOfInteger anIter( theModes );
-      QPtrList<SUIT_SelectionFilter> aListOfFilters;
+      QList<SUIT_SelectionFilter*> aListOfFilters;
       for ( ; anIter.More(); anIter.Next() )
 	{
-	  SUIT_SelectionFilter* aFilter = getFilter( anIter.Key() );
+          SUIT_SelectionFilter* aFilter;
+          int aMode = anIter.Key();
+          if ( aMode == GEOM_COMPOUNDFILTER )
+            aFilter = getComplexFilter( theSubShapes );
+          else    
+            aFilter = getFilter( aMode );
+
 	  if ( aFilter )
 	    aListOfFilters.append( aFilter );
 	}
@@ -1300,7 +1332,7 @@ int GEOM_Displayer::UnsetDisplayMode()
   return aPrevMode;
 }
 
-SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QValueList<SALOMEDS::Color>& theReservedColors )
+SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& theReservedColors )
 {
   int aHue = -1;
   int aTolerance = 64;
@@ -1323,8 +1355,8 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QValueList<SALOMEDS::Color
 
     //cout << "Auto colors : ";
     bool ok = true;
-    QValueList<SALOMEDS::Color>::const_iterator it = theReservedColors.constBegin();
-    QValueList<SALOMEDS::Color>::const_iterator itEnd = theReservedColors.constEnd();
+    QList<SALOMEDS::Color>::const_iterator it = theReservedColors.constBegin();
+    QList<SALOMEDS::Color>::const_iterator itEnd = theReservedColors.constEnd();
     for( ; it != itEnd; ++it )
     {
       SALOMEDS::Color anAutoColor = *it;

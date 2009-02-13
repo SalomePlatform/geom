@@ -1,4 +1,6 @@
-#  Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#
+#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 #
 #  This library is free software; you can redistribute it and/or
@@ -15,17 +17,18 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 # This is a Qt message file in .po format.  Each msgid starts with
 # a scope.  This scope should *NOT* be translated - eg. translating
 # from French to English, "Foo::Bar" would be translated to "Pub",
 # not "Foo::Pub".
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "POT-Creation-Date: 2002-03-19 09:35:48 AM CET\n"
-"PO-Revision-Date: 2003-10-27 17:32+0100\n"
+"PO-Revision-Date: 2008-03-12 12:26+0300\n"
 "Last-Translator: FULLNAME <EMAIL@ADDRESS>\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 
@@ -183,11 +186,11 @@ msgstr "%1 Objects"
 
 #: GeometryGUI.cxx:4414
 msgid "GEOM_MEN_SKETCHER_X"
-msgstr "Enter a length to set X"
+msgstr "Enter a Length to Set X"
 
 #: GeometryGUI.cxx:4438
 msgid "GEOM_MEN_SKETCHER_Y"
-msgstr "Enter a length to set Y"
+msgstr "Enter a Length to Set Y"
 
 #: GeometryGUI.cxx:2898
 msgid "GEOM_MEN_TRANSPARENCY"
@@ -203,11 +206,11 @@ msgstr "Y :"
 
 #: GeometryGUI_NbIsosDlg.cxx:36
 msgid "GEOM_MEN_ISOU"
-msgstr "Isos u :"
+msgstr "Isos U :"
 
 #: GeometryGUI_NbIsosDlg.cxx:53
 msgid "GEOM_MEN_ISOV"
-msgstr "Isos v :"
+msgstr "Isos V :"
 
 #: GeometryGUI_TransparencyDlg.cxx:31
 msgid "GEOM_MEN_TRANSPARENCY_LABEL"
@@ -240,6 +243,9 @@ msgstr "Warning"
 #: GeometryGUI.cxx:3854
 msgid "GEOM_REALLY_DELETE"
 msgstr "Do you really want to delete this %1 object(s):"
+
+msgid "GEOM_DELETE_OBJECTS"
+msgstr "Delete objects"
 
 #
 #==============================================================================
@@ -678,6 +684,10 @@ msgstr "Edge"
 msgid "GEOM_FACE"
 msgstr "Face"
 
+#Face
+msgid "GEOM_PLANAR_FACE"
+msgstr "Planar Face"
+
 #Faces
 msgid "GEOM_FACES"
 msgstr "Faces"
@@ -1011,10 +1021,6 @@ msgstr "Tol. 3D :"
 #: GeometryGUI_FillingDlg.cxx:192
 msgid "GEOM_FILLING_NB_ITER"
 msgstr "Nb. Iter :"
-
-#: GeometryGUI_FillingDlg.cxx:84
-msgid "GEOM_FILLING_APPROX"
-msgstr "Approximation"
 
 #: GeometryGUI_FuseDlg.cxx:48
 msgid "GEOM_FUSE_TITLE"
@@ -1385,7 +1391,7 @@ msgstr "Wireframe"
 
 #: GeometryGUI.cxx:4613
 msgid "GEOM_MEN_SHADING"
-msgstr "\nShading"
+msgstr "Shading"
 
 msgid "GEOM_RECONSTRUCTION_LIMIT"
 msgstr "Reconstruction Limit"
@@ -2235,7 +2241,7 @@ msgid "TOP_WORK_PLANE"
 msgstr "Create a working plane"
 
 msgid "MEN_WORK_PLANE"
-msgstr "Working plane"
+msgstr "Working Plane"
 
 msgid "STB_WORK_PLANE"
 msgstr "Create a working plane"
@@ -2244,7 +2250,7 @@ msgid "TOP_LOCAL_CS"
 msgstr "Create a local coordinate system"
 
 msgid "MEN_LOCAL_CS"
-msgstr "Local coordinate system"
+msgstr "Local Coordinate System"
 
 msgid "STB_LOCAL_CS"
 msgstr "Create a local coordinate system"
@@ -2331,7 +2337,7 @@ msgid "TOP_PIPE"
 msgstr "Extrusion along a path"
 
 msgid "MEN_PIPE"
-msgstr "Extrusion along a path"
+msgstr "Extrusion Along a Path"
 
 msgid "STB_PIPE"
 msgstr "Create a shape by Extrusion along a path"
@@ -2529,7 +2535,7 @@ msgid "TOP_MIRROR"
 msgstr "Mirror image"
 
 msgid "MEN_MIRROR"
-msgstr "Mirror image"
+msgstr "Mirror Image"
 
 msgid "STB_MIRROR"
 msgstr "Mirror image"
@@ -2538,7 +2544,7 @@ msgid "TOP_SCALE"
 msgstr "Scale transform"
 
 msgid "MEN_SCALE"
-msgstr "Scale transform"
+msgstr "Scale Transform"
 
 msgid "STB_SCALE"
 msgstr "Scale transform"
@@ -2547,7 +2553,7 @@ msgid "TOP_OFFSET"
 msgstr "Offset surface"
 
 msgid "MEN_OFFSET"
-msgstr "Offset surface"
+msgstr "Offset Surface"
 
 msgid "STB_OFFSET"
 msgstr "Offset surface"
@@ -2610,7 +2616,7 @@ msgid "TOP_CLIPPING"
 msgstr "Clipping range"
 
 msgid "MEN_CLIPPING"
-msgstr "Clipping range"
+msgstr "Clipping Range"
 
 msgid "STB_CLIPPING"
 msgstr "Clipping range"
@@ -2619,7 +2625,7 @@ msgid "TOP_MUL_TRANSFORM"
 msgstr "Multi-transformation"
 
 msgid "MEN_MUL_TRANSFORM"
-msgstr "Multi-transformation"
+msgstr "Multi-Transformation"
 
 msgid "STB_MUL_TRANSFORM"
 msgstr "Multi-transformation"
@@ -2649,7 +2655,7 @@ msgid "TOP_SHAPE_PROCESS"
 msgstr "Perform shape processing"
 
 msgid "MEN_SHAPE_PROCESS"
-msgstr "Shape processing"
+msgstr "Shape Processing"
 
 msgid "STB_SHAPE_PROCESS"
 msgstr "Perform shape processing "
@@ -2658,7 +2664,7 @@ msgid "TOP_SUPPRESS_FACES"
 msgstr "Perform suppress faces"
 
 msgid "MEN_SUPPRESS_FACES"
-msgstr "Suppress faces"
+msgstr "Suppress Faces"
 
 msgid "STB_SUPPRESS_FACES"
 msgstr "Perform suppress faces"
@@ -2667,7 +2673,7 @@ msgid "TOP_CLOSE_CONTOUR"
 msgstr "Perform close contour"
 
 msgid "MEN_CLOSE_CONTOUR"
-msgstr "Close contour"
+msgstr "Close Contour"
 
 msgid "STB_CLOSE_CONTOUR"
 msgstr "Perform close contour"
@@ -2676,7 +2682,7 @@ msgid "TOP_SUPPRESS_INT_WIRES"
 msgstr "Perform suppress internal wires"
 
 msgid "MEN_SUPPRESS_INT_WIRES"
-msgstr "Suppress internal wires"
+msgstr "Suppress Internal Wires"
 
 msgid "STB_SUPPRESS_INT_WIRES"
 msgstr "Perform suppress internal wires"
@@ -2685,7 +2691,7 @@ msgid "TOP_SUPPERSS_HOLES"
 msgstr "Perform suppress holes"
 
 msgid "MEN_SUPPERSS_HOLES"
-msgstr "Suppress holes"
+msgstr "Suppress Holes"
 
 msgid "STB_SUPPERSS_HOLES"
 msgstr "Perform suppress holes"
@@ -2703,7 +2709,7 @@ msgid "TOP_GLUE_FACES"
 msgstr "Perform glue faces"
 
 msgid "MEN_GLUE_FACES"
-msgstr "Glue faces"
+msgstr "Glue Faces"
 
 msgid "STB_GLUE_FACES"
 msgstr "Perform glue faces"
@@ -2712,7 +2718,7 @@ msgid "TOP_POINT_ON_EDGE"
 msgstr "Add point on edge"
 
 msgid "MEN_POINT_ON_EDGE"
-msgstr "Add point on edge"
+msgstr "Add Point on Edge"
 
 msgid "STB_POINT_ON_EDGE"
 msgstr "Add point on edge"
@@ -2721,7 +2727,7 @@ msgid "TOP_CHECK_FREE_BNDS"
 msgstr "Check free boundaries"
 
 msgid "MEN_CHECK_FREE_BNDS"
-msgstr "Check free boundaries"
+msgstr "Check Free Boundaries"
 
 msgid "STB_CHECK_FREE_BNDS"
 msgstr "Check free boundaries"
@@ -2730,7 +2736,7 @@ msgid "TOP_CHECK_FREE_FACES"
 msgstr "Check free faces"
 
 msgid "MEN_CHECK_FREE_FACES"
-msgstr "Check free faces"
+msgstr "Check Free Faces"
 
 msgid "STB_CHECK_FREE_FACES"
 msgstr "Check free faces"
@@ -2739,7 +2745,7 @@ msgid "TOP_CHANGE_ORIENTATION"
 msgstr "Change orientation"
 
 msgid "MEN_CHANGE_ORIENTATION"
-msgstr "Change orientation"
+msgstr "Change Orientation"
 
 msgid "STB_CHANGE_ORIENTATION"
 msgstr "Change orientation"
@@ -2748,7 +2754,7 @@ msgid "TOP_REMOVE_EXTRA_EDGES"
 msgstr "Remove extra edges"
 
 msgid "MEN_REMOVE_EXTRA_EDGES"
-msgstr "Remove extra edges"
+msgstr "Remove Extra Edges"
 
 msgid "STB_REMOVE_EXTRA_EDGES"
 msgstr "Remove extra edges"
@@ -2760,7 +2766,7 @@ msgid "TOP_POINT_COORDS"
 msgstr "Point coordinates"
 
 msgid "MEN_POINT_COORDS"
-msgstr "Point coordinates"
+msgstr "Point Coordinates"
 
 msgid "STB_POINT_COORDS"
 msgstr "Point coordinates"
@@ -2769,7 +2775,7 @@ msgid "TOP_BASIC_PROPS"
 msgstr "Basic properties"
 
 msgid "MEN_BASIC_PROPS"
-msgstr "Basic properties"
+msgstr "Basic Properties"
 
 msgid "STB_BASIC_PROPS"
 msgstr "Basic properties"
@@ -2778,7 +2784,7 @@ msgid "TOP_MASS_CENTER"
 msgstr "Compute center of mass"
 
 msgid "MEN_MASS_CENTER"
-msgstr "Center of mass"
+msgstr "Center of Mass"
 
 msgid "STB_MASS_CENTER"
 msgstr "Compute center of mass"
@@ -2787,7 +2793,7 @@ msgid "TOP_NORMALE"
 msgstr "Compute normal to a face"
 
 msgid "MEN_NORMALE"
-msgstr "Normal to a face"
+msgstr "Normal to a Face"
 
 msgid "STB_NORMALE"
 msgstr "Compute normal to a face in a point (optional)"
@@ -2808,7 +2814,7 @@ msgid "TOP_BND_BOX"
 msgstr "Compute bounding box"
 
 msgid "MEN_BND_BOX"
-msgstr "Bounding box"
+msgstr "Bounding Box"
 
 msgid "STB_BND_BOX"
 msgstr "Compute bounding box"
@@ -2817,7 +2823,7 @@ msgid "TOP_MIN_DIST"
 msgstr "Compute minimum distance"
 
 msgid "MEN_MIN_DIST"
-msgstr "Min distance"
+msgstr "Min Distance"
 
 msgid "STB_MIN_DIST"
 msgstr "Compute minimum distance"
@@ -2835,7 +2841,7 @@ msgid "TOP_TOLERANCE"
 msgstr "Compute tolerance"
 
 msgid "MEN_TOLERANCE"
-msgstr "Compute tolerance"
+msgstr "Compute Tolerance"
 
 msgid "STB_TOLERANCE"
 msgstr "Compute tolerance"
@@ -2862,7 +2868,7 @@ msgid "TOP_CHECK_COMPOUND"
 msgstr "Check compound of blocks"
 
 msgid "MEN_CHECK_COMPOUND"
-msgstr "Check compound of blocks"
+msgstr "Check Compound of Blocks"
 
 msgid "STB_CHECK_COMPOUND"
 msgstr "Check compound of blocks"
@@ -2889,7 +2895,7 @@ msgid "TOP_SHADING_COLOR"
 msgstr "Set shading color"
 
 msgid "MEN_SHADING_COLOR"
-msgstr "Shading color"
+msgstr "Shading Color"
 
 msgid "STB_SHADING_COLOR"
 msgstr "Set shading color"
@@ -2907,7 +2913,7 @@ msgid "TOP_STEP_VALUE"
 msgstr "Set step value"
 
 msgid "MEN_STEP_VALUE"
-msgstr "Step value"
+msgstr "Step Value"
 
 msgid "STB_STEP_VALUE"
 msgstr "Set step value"
@@ -2916,7 +2922,7 @@ msgid "MEN_VIEW"
 msgstr "View"
 
 msgid "MEN_DISPLAY_MODE"
-msgstr "Display mode"
+msgstr "Display Mode"
 
 msgid "TOP_SHADING"
 msgstr "Shading"
@@ -2934,7 +2940,7 @@ msgid "TOP_DISPLAY_ALL"
 msgstr "Show all"
 
 msgid "MEN_DISPLAY_ALL"
-msgstr "Show all"
+msgstr "Show All"
 
 msgid "STB_DISPLAY_ALL"
 msgstr "Show all"
@@ -2943,7 +2949,7 @@ msgid "TOP_ERASE_ALL"
 msgstr "Hide all"
 
 msgid "MEN_ERASE_ALL"
-msgstr "Hide all"
+msgstr "Hide All"
 
 msgid "STB_ERASE_ALL"
 msgstr "Hide all"
@@ -2961,7 +2967,7 @@ msgid "TOP_DISPLAY_ONLY"
 msgstr "Show only"
 
 msgid "MEN_DISPLAY_ONLY"
-msgstr "Show only"
+msgstr "Show Only"
 
 msgid "STB_DISPLAY_ONLY"
 msgstr "Show only"
@@ -3006,7 +3012,7 @@ msgid "TOP_POP_AUTO_COLOR"
 msgstr "Auto color"
 
 msgid "MEN_POP_AUTO_COLOR"
-msgstr "Auto color"
+msgstr "Auto Color"
 
 msgid "STB_POP_AUTO_COLOR"
 msgstr "Auto color"
@@ -3015,7 +3021,7 @@ msgid "TOP_POP_DISABLE_AUTO_COLOR"
 msgstr "Disable auto color"
 
 msgid "MEN_POP_DISABLE_AUTO_COLOR"
-msgstr "Disable auto color"
+msgstr "Disable Auto Color"
 
 msgid "STB_POP_DISABLE_AUTO_COLOR"
 msgstr "Disable auto color"
@@ -3063,7 +3069,7 @@ msgid "TOOL_PRIMITIVES"
 msgstr "Primitives"
 
 msgid "TOOL_BOOLEAN"
-msgstr "Boolean operations"
+msgstr "Boolean Operations"
 
 msgid "TOOL_GENERATION"
 msgstr "Generation"

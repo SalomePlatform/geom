@@ -1,27 +1,26 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifndef _GEOMImpl_IBlocksOperations_HXX_
 #define _GEOMImpl_IBlocksOperations_HXX_
-
-using namespace std;
 
 #include "GEOM_IOperations.hxx"
 
@@ -114,17 +113,17 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
 
   struct BCError {
     BCErrorType error;
-    list<int>   incriminated;
+    std::list<int>   incriminated;
   };
 
   Standard_EXPORT Standard_Boolean CheckCompoundOfBlocksOld (Handle(GEOM_Object) theCompound,
-                                             list<BCError>&      theErrors);
+                                             std::list<BCError>&      theErrors);
 
   Standard_EXPORT Standard_Boolean CheckCompoundOfBlocks (Handle(GEOM_Object) theCompound,
-                                          list<BCError>&      theErrors);
+                                          std::list<BCError>&      theErrors);
 
   Standard_EXPORT TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)  theCompound,
-                                         const list<BCError>& theErrors);
+                                         const std::list<BCError>& theErrors);
 
   Standard_EXPORT Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape);
 

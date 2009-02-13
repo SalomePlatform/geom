@@ -1,27 +1,27 @@
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  File   : GEOM_Superv.idl
 //  Author : Lucien PIGNOLONI
-
+//
 #ifndef __GEOM_SUPERV__
 #define __GEOM_SUPERV__
 
@@ -126,6 +126,20 @@ module GEOM
 			       in double theDZ) ;
     GEOM_Object MakeBoxTwoPnt (in GEOM_Object thePnt1, 
 			       in GEOM_Object thePnt2) ;
+    GEOM_Object MakeFaceHW (in double theH, 
+			    in double theW,
+			    in short  theOrientation) ;
+    GEOM_Object MakeFaceObjHW (in GEOM_Object theObj, 
+			       in double      theH,
+			       in double      theW) ;
+    GEOM_Object MakeDiskPntVecR (in GEOM_Object thePnt,
+				 in GEOM_Object theVec,
+				 in double      theR) ;
+    GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
+				  in GEOM_Object thePnt2,
+				  in GEOM_Object thePnt3) ;
+    GEOM_Object MakeDiskR (in double theR, 
+ 		           in short  theOrientation) ;
     GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
 				      in GEOM_Object theAxis,
 				      in double      theRadius,
@@ -198,6 +212,10 @@ module GEOM
     GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
 					   in ListOfGO theLocations );
 
+    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase, 
+					     in GEOM_Object thePath, 
+					     in GEOM_Object theVec);
+
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//
@@ -249,6 +267,10 @@ module GEOM
 				 in GEOM_Object theVector) ;
     GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
 				     in GEOM_Object theVector) ;
+    GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
+					 in GEOM_Object theVector,
+					 in double      theDistance,
+					 in boolean     theCopy) ;
     GEOM_Object MultiTranslate1D (in GEOM_Object theObject,
 				  in GEOM_Object theVector,
 				  in double      theStep,
@@ -305,12 +327,27 @@ module GEOM
     GEOM_Object ScaleShapeCopy (in GEOM_Object theObject, 
 				in GEOM_Object thePoint,
 				in double      theFactor) ;
+    GEOM_Object ScaleShapeAlongAxes (in GEOM_Object theObject,
+                                     in GEOM_Object thePoint,
+                                     in double theFactorX,
+                                     in double theFactorY,
+                                     in double theFactorZ);
+    GEOM_Object ScaleShapeAlongAxesCopy (in GEOM_Object theObject,
+                                         in GEOM_Object thePoint,
+                                         in double theFactorX,
+                                         in double theFactorY,
+                                         in double theFactorZ);
     GEOM_Object PositionShape (in GEOM_Object theObject,
 			       in GEOM_Object theStartLCS,
 			       in GEOM_Object theEndLCS) ;
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
 				   in GEOM_Object theStartLCS,
 				   in GEOM_Object theEndLCS) ;
+    GEOM_Object PositionAlongPath (in GEOM_Object theObject,
+				   in GEOM_Object thePath,
+				   in double theDistance,
+				   in boolean theCopy,
+				   in boolean theReverse);
 
     //-----------------------------------------------------------//
     // ShapesOperations                                          //
@@ -341,6 +378,15 @@ module GEOM
     long NumberOfFaces (in GEOM_Object theShape) ;
     long NumberOfEdges (in GEOM_Object theShape) ;
     GEOM_Object ChangeOrientation (in GEOM_Object theShape) ;
+
+    GEOM_List GetShapesOnShape (in GEOM_Object theCheckShape,
+				in GEOM_Object theShape, 
+				in short       theShapeType,
+				in shape_state theState);
+    GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
+					    in GEOM_Object theShape, 
+					    in short       theShapeType,
+					    in shape_state theState);
 
     //-----------------------------------------------------------//
     // BlocksOperations                                          //
@@ -439,6 +485,9 @@ module GEOM
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense) ;
+    GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
+			         in GEOM_Object thePnt1,
+			         in GEOM_Object thePnt2) ;
     GEOM_Object MakePolyline (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineBezier (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineInterpolation (in GEOM_List thePoints) ;
@@ -464,6 +513,9 @@ module GEOM
 				     in double      theR1,
 				     in double      theR2,
 				     in GEOM_List   theFaces) ;
+    GEOM_Object MakeFillet2D (in GEOM_Object theShape,
+			      in double      theR,
+			      in GEOM_List   theVertexes) ;
     GEOM_Object MakeChamferAll (in GEOM_Object theShape,
 				in double      theD) ;
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,

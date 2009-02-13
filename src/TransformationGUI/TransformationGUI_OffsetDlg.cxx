@@ -1,85 +1,82 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : TransformationGUI_OffsetDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-//  $Header$
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : TransformationGUI_OffsetDlg.cxx
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
+//
 #include "TransformationGUI_OffsetDlg.h"
 
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include <qlabel.h>
-#include <qcheckbox.h>
-
-#include "utilities.h"
-
-using namespace std;
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
 
 //=================================================================================
 // class    : TransformationGUI_OffsetDlg()
-// purpose  : Constructs a TransformationGUI_OffsetDlg which is a child of 'parent', with the
+// purpose  : Constructs a TransformationGUI_OffsetDlg which is a child of 'parent', with the 
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                                         const char* name, bool modal, WFlags fl)
-    :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                       WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
+							  bool modal, Qt::WindowFlags fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_OFFSET")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_OFFSET" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_OFFSET_TITLE"));
+  setWindowTitle( tr( "GEOM_OFFSET_TITLE" ) );
 
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_OFFSET"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
-
-  GroupPoints = new DlgRef_1Sel1Spin1Check(this, "GroupPoints");
-  GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupPoints->TextLabel2->setText(tr("GEOM_OFFSET"));
-  GroupPoints->CheckButton1->setText(tr("GEOM_CREATE_COPY"));
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_OFFSET" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
+ 
+  GroupPoints = new DlgRef_1Sel1Spin1Check( centralWidget() );
+  GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_OFFSET" ) );
+  GroupPoints->CheckButton1->setText( tr( "GEOM_CREATE_COPY" ) );
 
   // san -- modification of an exisitng object by offset is not allowed
   GroupPoints->CheckButton1->hide();
 
-  GroupPoints->PushButton1->setPixmap(image1);
-
-  Layout1->addWidget(GroupPoints, 2, 0);
-
+  GroupPoints->PushButton1->setIcon( image1 );
+  
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupPoints );
+  
   /***************************************************************/
 
-  setHelpFileName("offset_operation_page.html");
-
+  setHelpFileName( "offset_operation_page.html" );
+  
   Init();
 }
 
@@ -89,7 +86,7 @@ TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg(GeometryGUI* theGeometr
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
 TransformationGUI_OffsetDlg::~TransformationGUI_OffsetDlg()
-{
+{  
   /* no need to delete child widgets, Qt does it all for us */
 }
 
@@ -99,33 +96,35 @@ TransformationGUI_OffsetDlg::~TransformationGUI_OffsetDlg()
 // purpose  :
 //=================================================================================
 void TransformationGUI_OffsetDlg::Init()
-{
+{  
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
-
+  
   /* Get setting of step value from file configuration */
   double step = 1;
-
+   
   /* min, max, step and decimals for spin boxes & initial values */
-  GroupPoints->SpinBox_DX->RangeStepAndValidator(COORD_MIN, COORD_MAX, step, DBL_DIGITS_DISPLAY);
-  GroupPoints->SpinBox_DX->SetValue(1e-05);
-
+  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  GroupPoints->SpinBox_DX->setValue( 1e-05 );
+  
   // Activate Create a Copy mode
-  GroupPoints->CheckButton1->setChecked(true);
-  CreateCopyModeChanged(true);
+  GroupPoints->CheckButton1->setChecked( true );
+  CreateCopyModeChanged( true );
+
+  mainFrame()->GroupBoxPublish->show();
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  
+  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(myGeomGUI->getApp()->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
-
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
-
+  connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged( bool ) ) );
+  
   initName( tr( "GEOM_OFFSET" ) );
 
   globalSelection( GEOM_ALLSHAPES );
@@ -151,7 +150,7 @@ bool TransformationGUI_OffsetDlg::ClickOnApply()
 {
   if ( !onAccept( GroupPoints->CheckButton1->isChecked() ) )
     return false;
-
+  
   initName();
   return true;
 }
@@ -163,22 +162,25 @@ bool TransformationGUI_OffsetDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_OffsetDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText("");
+  myEditCurrentArgument->setText( "" );
   QString aName;
 
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(selectedIO(), aName);
-  if(aNbSel < 1)
-    {
-      myObjects.length(0);
-      return;
-    }
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
+  if ( aNbSel < 1 ) {
+    myObjects.length( 0 );
+    return;
+  }
 
   // nbSel > 0
-  GEOMBase::ConvertListOfIOInListOfGO(selectedIO(), myObjects);
+  GEOMBase::ConvertListOfIOInListOfGO (aSelList, myObjects);
   if (!myObjects.length())
     return;
 
-  myEditCurrentArgument->setText( aName );
+  myEditCurrentArgument->setText(aName);
 
   displayPreview();
 }
@@ -191,8 +193,7 @@ void TransformationGUI_OffsetDlg::SelectionIntoArgument()
 void TransformationGUI_OffsetDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 )
-  {
+  if ( send == GroupPoints->LineEdit1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -206,13 +207,13 @@ void TransformationGUI_OffsetDlg::LineEditReturnPressed()
 void TransformationGUI_OffsetDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-
-  if(send == GroupPoints->PushButton1)
-    {
-      myEditCurrentArgument = GroupPoints->LineEdit1;
-      myEditCurrentArgument->setFocus();
-      SelectionIntoArgument();
-    }
+  
+  if ( send == GroupPoints->PushButton1 ) {
+    GroupPoints->PushButton1->setDown(true);
+    myEditCurrentArgument = GroupPoints->LineEdit1;
+    myEditCurrentArgument->setFocus();
+    SelectionIntoArgument();
+  }
 }
 
 
@@ -220,9 +221,9 @@ void TransformationGUI_OffsetDlg::SetEditCurrentArgument()
 // function : enterEvent()
 // purpose  : when mouse enter onto the QWidget
 //=================================================================================
-void TransformationGUI_OffsetDlg::enterEvent(QEvent * e)
+void TransformationGUI_OffsetDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 
@@ -234,8 +235,8 @@ void TransformationGUI_OffsetDlg::enterEvent(QEvent * e)
 void TransformationGUI_OffsetDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(myGeomGUI->getApp()->selectionMgr(),
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
+  connect( myGeomGUI->getApp()->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_ALLSHAPES );
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
@@ -268,19 +269,17 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_OffsetDlg::createOperation()
 bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 {
   //return !(myObjects.length() == 0);
-  if (myObjects.length() == 0) return false;
+  if ( myObjects.length() == 0 ) return false;
 
-  for (int i = 0; i < myObjects.length(); i++)
-  {
+  for ( int i = 0; i < myObjects.length(); i++ ) {
     GEOM::shape_type aType = myObjects[i]->GetShapeType();
-    if( aType != GEOM::FACE && aType != GEOM::SHELL && aType != GEOM::SOLID ){
-       msg = tr("ERROR_SHAPE_TYPE");
-       return false;
+    if ( aType != GEOM::FACE && aType != GEOM::SHELL && aType != GEOM::SOLID ) {
+      msg = tr( "ERROR_SHAPE_TYPE" );
+      return false;
     }
   }
-  return true;
+  return GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
 }
-
 
 //=================================================================================
 // function : execute
@@ -289,41 +288,47 @@ bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
 {
   bool res = false;
-
+  
   GEOM::GEOM_Object_var anObj;
-
-  if (GroupPoints->CheckButton1->isChecked() || IsPreview())
-    for (int i = 0; i < myObjects.length(); i++)
-    {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
-        OffsetShapeCopy( myObjects[i], GetOffset() );
-      if ( !anObj->_is_nil() )
-        objects.push_back( anObj._retn() );
+  
+  if ( GroupPoints->CheckButton1->isChecked() || IsPreview() ) {
+    for ( int i = 0; i < myObjects.length(); i++ ) {
+      
+      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShapeCopy( myObjects[i], GetOffset() );
+      if ( !anObj->_is_nil() ) {
+        if(!IsPreview()) {
+          anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
+        }
+	objects.push_back( anObj._retn() );
+      }
     }
-  else
-    for (int i = 0; i < myObjects.length(); i++)
-    {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->
-        OffsetShape( myObjects[i], GetOffset() );
+  }
+  else {
+    for ( int i = 0; i < myObjects.length(); i++ ) {
+      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShape( myObjects[i], GetOffset() );
       if ( !anObj->_is_nil() )
-        objects.push_back( anObj._retn() );
+	objects.push_back( anObj._retn() );
     }
-
+  }
   res = true;
-
+    
   return res;
 }
 
 //=================================================================================
-// function : closeEvent
+// function : restoreSubShapes
 // purpose  :
 //=================================================================================
-void TransformationGUI_OffsetDlg::closeEvent( QCloseEvent* e )
+void TransformationGUI_OffsetDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
+                                                    SALOMEDS::SObject_ptr theSObject )
 {
-  // myGeomGUI->SetState( -1 );
-  GEOMBase_Skeleton::closeEvent( e );
+  if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
+					 /*theFindMethod=*/GEOM::FSM_Transformed,
+					 /*theInheritFirstArg=*/true );
+  }
 }
-
 
 //=================================================================================
 // function : GetOffset()
@@ -331,15 +336,14 @@ void TransformationGUI_OffsetDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 double TransformationGUI_OffsetDlg::GetOffset() const
 {
-  return GroupPoints->SpinBox_DX->GetValue();
+  return GroupPoints->SpinBox_DX->value();
 }
-
 
 //=================================================================================
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_OffsetDlg::CreateCopyModeChanged(bool isCreateCopy)
+void TransformationGUI_OffsetDlg::CreateCopyModeChanged( bool isCreateCopy )
 {
-  this->GroupBoxName->setEnabled(isCreateCopy);
+  mainFrame()->GroupBoxName->setEnabled( isCreateCopy );
 }

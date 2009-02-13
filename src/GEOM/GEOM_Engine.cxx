@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -34,6 +36,7 @@
 
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
+#include <TDF_Reference.hxx>
 #include <TDF_LabelSequence.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>
@@ -52,13 +55,30 @@
 #include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
+#include <set>
 #include <map>
 #include <string>
+#include <vector>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#define COMMA ','
+#define O_BRACKET '('
+#define C_BRACKET ')'
+#define O_SQR_BRACKET '['
+#define C_SQR_BRACKET ']'
+#define PY_NULL "None"
+
+#ifdef _DEBUG_
+static int MYDEBUG = 0;
+#else
+static int MYDEBUG = 0;
+#endif
+
 static GEOM_Engine* TheEngine = NULL;
+
+using namespace std;
 
 static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
 {
@@ -82,11 +102,19 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
   return aDocID.IntegerValue();
 }
 
-void ProcessFunction(Handle(GEOM_Function)& theFunction, 
-		     TCollection_AsciiString& theScript,
-		     TColStd_MapOfTransient& theProcessed);
+void ProcessFunction(Handle(GEOM_Function)&   theFunction,
+                     TCollection_AsciiString& theScript,
+                     const TVariablesList&    theVariables,
+                     TDF_LabelMap&            theProcessed,
+                     std::set<std::string>&   theDumpedObjs);
+
+void ReplaceVariables(TCollection_AsciiString& theCommand, 
+                      const TVariablesList&    theVariables);
+
+
 
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
+
 
 //=============================================================================
 /*!
@@ -94,7 +122,6 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
  */
 //=============================================================================
 GEOM_Engine* GEOM_Engine::GetEngine() { return TheEngine; }
-
 
 //=============================================================================
 /*!
@@ -120,9 +147,9 @@ GEOM_Engine::GEOM_Engine()
  *  Destructor
  */
 GEOM_Engine::~GEOM_Engine()
-{ 
+{
   GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
-  for(; It.More(); It.Next()) 
+  for(; It.More(); It.Next())
     {
       RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
     }
@@ -229,9 +256,9 @@ Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
  *  AddSubShape
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape, 
-					     Handle(TColStd_HArray1OfInteger) theIndices,
-					     bool isStandaloneOperation)
+Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
+                                             Handle(TColStd_HArray1OfInteger) theIndices,
+                                             bool isStandaloneOperation)
 {
   if(theMainShape.IsNull() || theIndices.IsNull()) return NULL;
 
@@ -284,7 +311,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   _objects.Bind(anID, anObject);
 
   GEOM::TPythonDump pd (aFunction);
- 
+
   if (isStandaloneOperation) {
     pd << anObject << " = geompy.GetSubShape(" << theMainShape << ", [";
     Standard_Integer i = theIndices->Lower(), up = theIndices->Upper();
@@ -316,7 +343,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   Handle(TDataStd_TreeNode) aNode;
   for (int i = 1; i<=nb; i++) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(i);
-    if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode)) 
+    if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode))
       aNode->Remove();
   }
 
@@ -419,38 +446,40 @@ void GEOM_Engine::Close(int theDocID)
  *  DumpPython
  */
 //=============================================================================
-TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID, 
-						Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-						bool isPublished, 
-						bool& aValidScript)
+TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
+                                                Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                                TVariablesList theVariables,
+                                                bool isPublished,
+                                                bool& aValidScript)
 {
   TCollection_AsciiString aScript;
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-  
-  if(aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
- 
-  aScript = "import geompy\n";
+
+  if (aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
+
+  aScript  = "import geompy\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   aScript += "def RebuildData(theStudy):";
   aScript += "\n\tgeompy.init_geom(theStudy)";
-  
-  Standard_Integer posToInertGlobalVars = aScript.Length() + 1;
+
+  Standard_Integer posToInsertGlobalVars = aScript.Length() + 1;
 
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
-  TColStd_MapOfTransient aMap;
+  TDF_LabelMap aCheckedFuncMap;
+  std::set<std::string> anIgnoreObjMap;
 
-  if(aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
+  if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
     TDataStd_ChildNodeIterator Itr(aRoot);
-    for(; Itr.More(); Itr.Next()) {
+    for (; Itr.More(); Itr.Next()) {
       aNode = Itr.Value();
       aFunction = GEOM_Function::GetFunction(aNode->Label());
-      if(aFunction.IsNull()) {
-	cout << "Null function !!!!" << endl;
-	continue;
+      if (aFunction.IsNull()) {
+        MESSAGE ( "Null function !!!!" );
+        continue;
       }
-      ProcessFunction(aFunction, aScript, aMap);
+      ProcessFunction(aFunction, aScript, theVariables, aCheckedFuncMap, anIgnoreObjMap);
     }
   }
 
@@ -482,12 +511,12 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   //Replace entries by the names
   TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_"),
     allowedChars ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
-  if(aLen == 0) anUpdatedScript = aScript;
+  if (aLen == 0) anUpdatedScript = aScript;
 
-  for(Standard_Integer i = 1; i <= aLen; i+=2) {
+  for (Standard_Integer i = 1; i <= aLen; i+=2) {
     anUpdatedScript += aScript.SubString(aStart, aSeq->Value(i)-1);
     anEntry = aScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
-    if(theObjectNames.IsBound(anEntry)) {
+    if (theObjectNames.IsBound(anEntry)) {
       aName = theObjectNames.Find(anEntry);
       // check validity of aName
       bool isValidName = true;
@@ -530,8 +559,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
 
   //Add final part of the script
-  if(aLen && aSeq->Value(aLen) < aScriptLength)  anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
- 
+  if (aLen && aSeq->Value(aLen) < aScriptLength)
+    anUpdatedScript += aScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
+
   // ouv : NPAL12872
   for (anEntryToNameIt.Initialize( theObjectNames );
        anEntryToNameIt.More();
@@ -576,6 +606,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     {
       const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
       const TCollection_AsciiString& aName = anEntryToNameIt.Value();
+      if (anIgnoreObjMap.count(aEntry.ToCString()))
+        continue; // should not be dumped
       if ( !aEntry2StEntry.IsBound( aEntry ))
         continue; // was not published
       TCollection_AsciiString aCommand("\n\tgeompy."), aFatherEntry;
@@ -596,7 +628,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         aCommand += "addToStudy( ";
       if ( anEntryToBadName.IsBound( aEntry ))
         aCommand += aName + ", \"" + anEntryToBadName( aEntry ) + "\" )";
-      else 
+      else
         aCommand += aName + ", \"" + aName + "\" )";
 
       // bind a command to the last digit of the entry
@@ -612,7 +644,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
     }
   }
 
-  anUpdatedScript += "\n\tpass\n";
+  //anUpdatedScript += "\n\tpass\n";
+  anUpdatedScript += "\n";
   aValidScript = true;
 
   // fill _studyEntry2NameMap and build globalVars
@@ -631,15 +664,15 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   }
   if ( !globalVars.IsEmpty() ) {
     globalVars.Insert( 1, "\n\tglobal " );
-    anUpdatedScript.Insert( posToInertGlobalVars, globalVars );
+    anUpdatedScript.Insert( posToInsertGlobalVars, globalVars );
   }
-  
+
   return anUpdatedScript;
 }
 
 //=======================================================================
 //function : GetDumpName
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 const char* GEOM_Engine::GetDumpName (const char* theStudyEntry) const
@@ -652,7 +685,7 @@ const char* GEOM_Engine::GetDumpName (const char* theStudyEntry) const
 
 //=======================================================================
 //function : GetAllDumpNames
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
@@ -671,36 +704,66 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 //===========================================================================
 //                     Internal functions
 //===========================================================================
-void ProcessFunction(Handle(GEOM_Function)& theFunction, 
-		     TCollection_AsciiString& theScript,
-		     TColStd_MapOfTransient& theProcessed)
+void ProcessFunction(Handle(GEOM_Function)&   theFunction,
+                     TCollection_AsciiString& theScript,
+                     const TVariablesList&    theVariables,
+                     TDF_LabelMap&            theProcessed,
+                     std::set<std::string>&   theIgnoreObjs)
 {
-  if(theFunction.IsNull() || theProcessed.Contains(theFunction)) return;
+  if (theFunction.IsNull()) return;
 
-/*
+  // not to process twice
+  if (theProcessed.Contains(theFunction->GetEntry())) return;
+  theProcessed.Add(theFunction->GetEntry());
+
+  // pass functions, that depends on nonexisting ones
+  bool doNotProcess = false;
   TDF_LabelSequence aSeq;
   theFunction->GetDependency(aSeq);
   Standard_Integer aLen = aSeq.Length();
-  for(Standard_Integer i = 1; i<= aLen; i++) {
-    Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aSeq.Value(i));
-    if(aFunction.IsNull()) continue;
-    ProcessFunction(aFunction, theScript, theProcessed);
-  }
-*/
+  for (Standard_Integer i = 1; i <= aLen && !doNotProcess; i++) {
+    TDF_Label aRefLabel = aSeq.Value(i);
+    Handle(TDF_Reference) aRef;
+    if (!aRefLabel.FindAttribute(TDF_Reference::GetID(), aRef)) {
+      doNotProcess = true;
+    }
+    else {
+      if (aRef.IsNull() || aRef->Get().IsNull()) {
+        doNotProcess = true;
+      }
+      else {
+        Handle(TDataStd_TreeNode) aT;
+        if (!TDataStd_TreeNode::Find(aRef->Get(), aT)) {
+          doNotProcess = true;
+        }
+        else {
+          TDF_Label aDepLabel = aT->Label();
+          Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(aDepLabel);
 
-  TCollection_AsciiString aDescr = theFunction->GetDescription();
-  if(aDescr.Length() == 0) {
-    //cout << "Warning: the function has no description" << endl;
+          if (aFunction.IsNull()) doNotProcess = true;
+          else if (!theProcessed.Contains(aDepLabel)) doNotProcess = true;
+        }
+      }
+    }
+  }
+
+  if (doNotProcess) {
+    TCollection_AsciiString anObjEntry;
+    TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
+    theIgnoreObjs.insert(anObjEntry.ToCString());
     return;
   }
+
+  TCollection_AsciiString aDescr = theFunction->GetDescription();
+  if(aDescr.Length() == 0) return;
+
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return;
 
+  //Replace parameter by notebook variables
+  ReplaceVariables(aDescr,theVariables);
   theScript += "\n\t";
   theScript += aDescr;
- 
-  theProcessed.Add(theFunction);
-  return;
 }
 
 //=============================================================================
@@ -714,28 +777,330 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
   Standard_Integer aLen = theString.Length();
   Standard_Boolean isFound = Standard_False;
 
-  char* arr = theString.ToCString();
+  const char* arr = theString.ToCString();
   Standard_Integer i = 0, j;
 
   while(i < aLen) {
     int c = (int)arr[i];
     j = i+1;
     if(c >= 48 && c <= 57) { //Is digit?
- 
+
       isFound = Standard_False;
       while((j < aLen) && ((c >= 48 && c <= 57) || c == 58) ) { //Check if it is an entry
-	c = (int)arr[j++];  
-	if(c == 58) isFound = Standard_True;
+        c = (int)arr[j++];
+        if(c == 58) isFound = Standard_True;
       }
-      
+
       if(isFound && arr[j-2] != 58) { // last char should be a diggit
-	aSeq->Append(i+1); // +1 because AsciiString starts from 1
-	aSeq->Append(j-1);
+        aSeq->Append(i+1); // +1 because AsciiString starts from 1
+        aSeq->Append(j-1);
       }
     }
-     
+
     i = j;
   }
 
   return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  ReplaceVariables: Replace parameters of the function by variales from 
+ *                    Notebook if need
+ */
+//=============================================================================
+void ReplaceVariables(TCollection_AsciiString& theCommand, 
+                      const TVariablesList&    theVariables)
+{
+  if (MYDEBUG)
+    cout<<"Command : "<<theCommand<<endl;
+
+  if (MYDEBUG) {
+    cout<<"All Entries:"<<endl;
+    TVariablesList::const_iterator it = theVariables.begin();
+    for(;it != theVariables.end();it++)
+      cout<<"\t'"<<(*it).first<<"'"<<endl;
+  }
+
+  //Additional case - multi-row commands
+  int aCommandIndex = 1;
+  while( aCommandIndex < 10 ) { // tmp check
+    TCollection_AsciiString aCommand = theCommand.Token("\n",aCommandIndex);
+    if( aCommand.Length() == 0 )
+      break;
+
+    if (MYDEBUG)
+      cout<<"Sub-command : "<<aCommand<<endl;
+
+    Standard_Integer aStartCommandPos = theCommand.Location(aCommand,1,theCommand.Length());
+    Standard_Integer aEndCommandPos = aStartCommandPos + aCommand.Length();
+
+    //Get Entry of the result object
+    TCollection_AsciiString anEntry;
+    if( aCommand.Search("=") != -1 ) // command returns an object
+      anEntry = aCommand.Token("=",1);
+    else { // command modifies the object
+      int aStartEntryPos = aCommand.Location(1,'(',1,aCommand.Length());
+      int aEndEntryPos = aCommand.Location(1,',',aStartEntryPos,aCommand.Length());
+      anEntry = aCommand.SubString(aStartEntryPos+1, aEndEntryPos-1);
+    }
+
+    //Remove white spaces
+    anEntry.RightAdjust();
+    anEntry.LeftAdjust();
+    if(MYDEBUG)
+      cout<<"Result entry : '" <<anEntry<<"'"<<endl;
+
+    //Check if result is list of entries - enough to get the first entry in this case
+    int aNbEntries = 1;
+    if( anEntry.Value( 1 ) == O_SQR_BRACKET && anEntry.Value( anEntry.Length() ) == C_SQR_BRACKET ) {
+      while(anEntry.Location(aNbEntries,COMMA,1,anEntry.Length()))
+	aNbEntries++;
+      TCollection_AsciiString aSeparator(COMMA);
+      anEntry = anEntry.Token(aSeparator.ToCString(),1);
+      anEntry.Remove( 1, 1 );
+      anEntry.RightAdjust();
+      anEntry.LeftAdjust();
+      if(MYDEBUG)
+	cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
+    }
+    
+    //Find variables used for object construction
+    ObjectStates* aStates = 0;
+    TVariablesList::const_iterator it = theVariables.find(anEntry);
+    if( it != theVariables.end() )
+      aStates = (*it).second;
+
+    if(!aStates) {
+      if(MYDEBUG)
+	cout<<"Valiables list empty!!!"<<endl;
+      aCommandIndex++;
+      continue;
+    }
+
+    TState aVariables = aStates->GetCurrectState();
+
+    if(MYDEBUG) {
+      cout<<"Variables from SObject:"<<endl;
+      for (int i = 0; i < aVariables.size();i++)
+	cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
+    }
+
+    //Calculate total number of parameters
+    Standard_Integer aTotalNbParams = 1;
+    while(aCommand.Location(aTotalNbParams,COMMA,1,aCommand.Length()))
+      aTotalNbParams++;
+
+    if(MYDEBUG)
+      cout<<"aTotalNbParams = "<<aTotalNbParams<<endl;
+
+    Standard_Integer aFirstParam = aNbEntries;
+
+    //Replace parameters by variables
+    Standard_Integer aStartPos = 0;
+    Standard_Integer aEndPos = 0;
+    int iVar = 0;
+    TCollection_AsciiString aVar, aReplacedVar;
+    for(Standard_Integer i=aFirstParam;i <= aTotalNbParams;i++) {
+      //Replace first parameter (bettwen '(' character and first ',' character)
+      if(i == aFirstParam)
+      {
+	aStartPos = aCommand.Location(O_BRACKET, 1, aCommand.Length()) + 1;
+	if(aTotalNbParams - aNbEntries > 0 )
+	  aEndPos = aCommand.Location(aFirstParam, COMMA, 1, aCommand.Length());
+	else
+	  aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());	
+      }
+      //Replace last parameter (bettwen ',' character and ')' character)
+      else if(i == aTotalNbParams)
+      {
+	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+	aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
+      }
+      //Replace other parameters (bettwen two ',' characters)
+      else if(i != aFirstParam && i != aTotalNbParams )
+      {
+	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+	aEndPos = aCommand.Location(i, COMMA, 1, aCommand.Length());
+      }
+
+      if( aCommand.Value( aStartPos ) == O_SQR_BRACKET )
+	aStartPos++;
+      if( aCommand.Value( aEndPos-1 ) == C_SQR_BRACKET )
+	aEndPos--;
+
+      if(MYDEBUG) 
+	cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
+
+      aVar = aCommand.SubString(aStartPos, aEndPos-1);
+      aVar.RightAdjust();
+      aVar.LeftAdjust();
+    
+      if(MYDEBUG) 
+	cout<<"Variable: '"<< aVar <<"'"<<endl;
+
+      // specific case for sketcher
+      if(aVar.Location( TCollection_AsciiString("Sketcher:"), 1, aVar.Length() ) != 0) {
+	Standard_Integer aNbSections = 1;
+	while( aVar.Location( aNbSections, ':', 1, aVar.Length() ) )
+	  aNbSections++;
+	aNbSections--;
+
+	int aStartSectionPos = 0, aEndSectionPos = 0;
+	TCollection_AsciiString aSection, aReplacedSection;
+	for(Standard_Integer aSectionIndex = 1; aSectionIndex <= aNbSections; aSectionIndex++) {
+	  aStartSectionPos = aVar.Location( aSectionIndex, ':', 1, aVar.Length() ) + 1;
+	  if( aSectionIndex != aNbSections )
+	    aEndSectionPos = aVar.Location( aSectionIndex + 1, ':', 1, aVar.Length() );
+	  else
+	    aEndSectionPos = aVar.Length();
+
+	  aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
+	  if(MYDEBUG) 
+	    cout<<"aSection: "<<aSection<<endl;
+
+	  Standard_Integer aNbParams = 1;
+	  while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
+	    aNbParams++;
+	  aNbParams--;
+
+	  int aStartParamPos = 0, aEndParamPos = 0;
+	  TCollection_AsciiString aParameter, aReplacedParameter;
+	  for(Standard_Integer aParamIndex = 1; aParamIndex <= aNbParams; aParamIndex++) {
+	    aStartParamPos = aSection.Location( aParamIndex, ' ', 1, aSection.Length() ) + 1;
+	    if( aParamIndex != aNbParams )
+	      aEndParamPos = aSection.Location( aParamIndex + 1, ' ', 1, aSection.Length() );
+	    else
+	      aEndParamPos = aSection.Length() + 1;
+
+	    aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
+	    if(MYDEBUG) 
+	      cout<<"aParameter: "<<aParameter<<endl;
+
+	    if(iVar >= aVariables.size())
+	      continue;
+
+	    aReplacedParameter = aVariables[iVar].myVariable;
+	    if(aReplacedParameter.IsEmpty()) {
+	      iVar++;
+	      continue;
+	    }
+
+	    if(aVariables[iVar].isVariable) {
+	      aReplacedParameter.InsertBefore(1,"'");
+	      aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
+	    }
+
+	    if(MYDEBUG) 
+	      cout<<"aSection before : "<<aSection<<endl;
+	    aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
+	    aSection.Insert(aStartParamPos, aReplacedParameter);
+	    if(MYDEBUG) 
+	      cout<<"aSection after  : "<<aSection<<endl<<endl;
+	    iVar++;
+	  }
+	  if(MYDEBUG) 
+	    cout<<"aVar before : "<<aVar<<endl;
+	  aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
+	  aVar.Insert(aStartSectionPos, aSection);
+	  if(MYDEBUG) 
+	    cout<<"aVar after  : "<<aVar<<endl<<endl;
+	}
+
+	if(MYDEBUG) 
+	  cout<<"aCommand before : "<<aCommand<<endl;
+	aCommand.Remove(aStartPos, aEndPos - aStartPos);
+	aCommand.Insert(aStartPos, aVar);
+	if(MYDEBUG) 
+	  cout<<"aCommand after  : "<<aCommand<<endl;
+
+	break;
+      } // end of specific case for sketcher
+
+      //If parameter is entry or 'None', skip it
+      if(theVariables.find(aVar) != theVariables.end() || aVar.Search(":") != -1 || aVar == PY_NULL)
+	continue;
+
+      if(iVar >= aVariables.size())
+	continue;
+
+      aReplacedVar = aVariables[iVar].myVariable;
+      if(aReplacedVar.IsEmpty()) {
+	iVar++;
+	continue;
+      }
+
+      if(aVariables[iVar].isVariable) {
+	aReplacedVar.InsertBefore(1,"\"");
+	aReplacedVar.InsertAfter(aReplacedVar.Length(),"\"");
+      }
+
+      aCommand.Remove(aStartPos, aEndPos - aStartPos);
+      aCommand.Insert(aStartPos, aReplacedVar);
+      iVar++;
+    }
+
+    theCommand.Remove(aStartCommandPos, aEndCommandPos - aStartCommandPos);
+    theCommand.Insert(aStartCommandPos, aCommand);
+
+    aCommandIndex++;
+
+    aStates->IncrementState();
+  }
+
+  if (MYDEBUG)
+    cout<<"Command : "<<theCommand<<endl;
+}
+
+//================================================================================
+/*!
+ * \brief Constructor
+ */
+//================================================================================
+ObjectStates::ObjectStates()
+{
+  _dumpstate = 0;
+}
+
+//================================================================================
+/*!
+ * \brief Destructor
+ */
+//================================================================================
+ObjectStates::~ObjectStates()
+{
+}
+
+//================================================================================
+/*!
+ * \brief Return current object state
+ * \retval state - Object state (vector of notebook variable)
+ */
+//================================================================================
+TState ObjectStates::GetCurrectState() const
+{
+  if(_states.size() > _dumpstate)
+    return _states[_dumpstate];
+  return TState();
+}
+
+//================================================================================
+/*!
+ * \brief Add new object state 
+ * \param theState - Object state (vector of notebook variable)
+ */
+//================================================================================
+void ObjectStates::AddState(const TState &theState)
+{
+  _states.push_back(theState);
+}
+
+//================================================================================
+/*!
+ * \brief Increment object state
+ */
+//================================================================================
+void ObjectStates::IncrementState()
+{
+  _dumpstate++;
 }

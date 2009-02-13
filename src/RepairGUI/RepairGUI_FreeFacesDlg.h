@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,19 +17,17 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : RepairGUI_FreeFacesDlg.h
+// Author : Vladimir KLYACHIN, Open CASCADE S.A.S. (vladimir.klyachin@opencascade.com)
 //
-//
-//  File   : RepairGUI_FreeFacesDlg.h
-//  Author : VKN
-//  Module : GEOM
+#ifndef REPAIRGUI_FREEFACESDLG_H
+#define REPAIRGUI_FREEFACESDLG_H
 
-#ifndef DIALOGBOX_FreeFaces_H
-#define DIALOGBOX_FreeFaces_H
-
-#include <qdialog.h>
-#include "GEOMBase_Helper.h"
+#include <QDialog>
+#include <GEOMBase_Helper.h>
 
 class GEOM_Displayer;
 class QPushButton;
@@ -43,42 +41,41 @@ class GeometryGUI;
 class RepairGUI_FreeFacesDlg : public QDialog,
                                public GEOMBase_Helper
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent = 0,
-			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~RepairGUI_FreeFacesDlg();
-
+  RepairGUI_FreeFacesDlg( GeometryGUI*, QWidget* = 0, bool = false );
+  ~RepairGUI_FreeFacesDlg();
+  
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
-
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
+  
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void keyPressEvent(QKeyEvent* e);
-    void activateSelection();
-    GEOM_Displayer* getDisplayer();
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  void                               closeEvent( QCloseEvent* );
+  void                               keyPressEvent( QKeyEvent* );
+  void                               activateSelection();
+  GEOM_Displayer*                    getDisplayer();
 
 private slots:
-    void onClose();
-    void onHelp(); 
-    void onDeactivate();
-    void onActivate();
-    void onSelectionDone();
-    void onSetEditCurrentArgument();
+  void                               onClose();
+  void                               onHelp(); 
+  void                               onDeactivate();
+  void                               onActivate();
+  void                               onSelectionDone();
+  void                               onSetEditCurrentArgument();
 
 private:
-    GEOM_Displayer*        myDisplayer;
-    GEOM::GEOM_Object_var  myObj;
-    QPushButton*           mySelBtn;
-    QLineEdit*             myEdit;
-    GeometryGUI*           myGeomGUI;
-    QString                myHelpFileName;
+  GEOM_Displayer*                    myDisplayer;
+  GEOM::GEOM_Object_var              myObj;
+  QPushButton*                       mySelBtn;
+  QLineEdit*                         myEdit;
+  GeometryGUI*                       myGeomGUI;
+  QString                            myHelpFileName;
 };
 
-#endif // DIALOGBOX_FreeFaces_H
+#endif // REPAIRGUI_FREEFACESDLG_H

@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is distributed in the hope that it will be useful
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -88,7 +90,9 @@ Handle(GEOM_Object) GEOM_Object::GetObject(TDF_Label& theLabel)
 
   GEOM_Engine* anEngine=  GEOM_Engine::GetEngine();
   if(anEngine == NULL) return NULL;
-  return anEngine->GetObject(anID->Get(), anEntry.ToCString());
+  return anEngine->GetObject(anID->Get(), (char*) anEntry.ToCString());
+
+
 }
 
 //=============================================================================
@@ -376,6 +380,31 @@ TCollection_AsciiString GEOM_Object::GetAuxData()
     aData = aCommentAttr->Get();
 
   return aData;
+}
+
+//=============================================================================
+/*!
+ *  SetParameters
+ */
+//=============================================================================
+void GEOM_Object::SetParameters(const TCollection_AsciiString& theParameters)
+{
+  if( _parameters.IsEmpty() )
+    _parameters = theParameters;
+  else {
+    _parameters += "|";
+    _parameters += theParameters;
+  }
+}
+
+//=============================================================================
+/*!
+ *  GetParameters
+ */
+//=============================================================================
+TCollection_AsciiString GEOM_Object::GetParameters() const
+{
+  return _parameters;
 }
 
 

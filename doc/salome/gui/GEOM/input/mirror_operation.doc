@@ -14,33 +14,39 @@ otherwise it will be removed.
 \n Firstly an \b Object can be mirrored through a \b Point of symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByPoint(Object, Point)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 vertex.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation7.png
 
-\image html mirror_pointsn1.png
+\image html mirror_pointsn1.png "The initial shape and the mirror point"
 
-\image html mirror_pointsn2.png
+\image html mirror_pointsn2.png "The resulting shape (grey)"
 
 \n Secondly an \b Object can be mirrored through an \b Axis of
 symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByAxis(Object, Axis)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 vector.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation8.png
 
-\image html mirror_axissn1.png
+\image html mirror_axissn1.png "The initial shape and the mirror edge"
 
-\image html mirror_axissn2.png
+\image html mirror_axissn2.png "The resulting shape (grey)"
 
 \n Finally an \b Object can be mirrored through a \b Plane of symmetry
 \n <b>TUI Command:</b> <em>geompy.MakeMirrorByPlane(Shape, Plane)</em>
 \n <b>Arguments:</b> Name + one or several objects + 1 plane
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation9.png
 
-\image html mirror_planesn1.png
+\image html mirror_planesn1.png "The initial shape and the mirror plane"
 
-\image html mirror_planesn2.png
+\image html mirror_planesn2.png "The resulting shape (grey)"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_mirror "Transformation Operations".

@@ -1,21 +1,23 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
@@ -97,6 +99,156 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeBoxTwoPnt
 
   //Create the Box
   Handle(GEOM_Object) anObject = GetOperations()->MakeBoxTwoPnt(aPnt1, aPnt2);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeFaceHW
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceHW (CORBA::Double theH,
+							    CORBA::Double theW,
+							    CORBA::Short  theOrientation)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theH == 0 || theW == 0)
+    return aGEOMObject._retn();
+
+  //Create the Face
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceHW(theH, theW, theOrientation);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeFaceObjHW
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFaceObjHW
+                                               (GEOM::GEOM_Object_ptr theObj,
+						CORBA::Double theH,
+						CORBA::Double theW)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theObj == NULL || theH == 0 || theW == 0)
+    return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) anObj = GetOperations()->GetEngine()->GetObject
+    (theObj->GetStudyID(), theObj->GetEntry());
+
+  if (anObj.IsNull())
+    return aGEOMObject._retn();
+
+  //Create the Face
+  Handle(GEOM_Object) anObject = GetOperations()->MakeFaceObjHW(anObj, theH, theW);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskPntVecR
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskPntVecR
+                      (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
+		       CORBA::Double theR)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
+    (thePnt->GetStudyID(), thePnt->GetEntry());
+  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
+    (theVec->GetStudyID(), theVec->GetEntry());
+
+  if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  // Make Disk
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeDiskPntVecR(aPnt, aVec, theR);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskThreePnt
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskThreePnt
+                      (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2,
+		       GEOM::GEOM_Object_ptr thePnt3)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
+    (thePnt1->GetStudyID(), thePnt1->GetEntry());
+  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
+    (thePnt2->GetStudyID(), thePnt2->GetEntry());
+  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
+    (thePnt3->GetStudyID(), thePnt3->GetEntry());
+
+  if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
+
+  // Make Disk
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakeDiskThreePnt(aPnt1, aPnt2, aPnt3);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeDiskR
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDiskR (CORBA::Double theR,
+							   CORBA::Short  theOrientation)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theR == 0)
+    return aGEOMObject._retn();
+
+  //Create the Face
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDiskR(theR, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -461,6 +613,68 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt2Ways
 
 //=============================================================================
 /*!
+ *  MakePrismDXDYDZ
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ
+                      (GEOM::GEOM_Object_ptr theBase, CORBA::Double theDX,
+		       CORBA::Double theDY, CORBA::Double theDZ)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+
+  if (aBase.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakePrismDXDYDZ(aBase, theDX, theDY, theDZ);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePrismDXDYDZ2Ways
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ2Ways
+                      (GEOM::GEOM_Object_ptr theBase, CORBA::Double theDX,
+		       CORBA::Double theDY, CORBA::Double theDZ)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+
+  if (aBase.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakePrismDXDYDZ2Ways(aBase, theDX, theDY, theDZ);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePipe
  */
 //=============================================================================
@@ -814,6 +1028,43 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeShellsWithoutPath
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePipeShellsWithoutPath(aSeqBases,aSeqLocations);
 
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+
+//=============================================================================
+/*!
+ *  MakePipeBiNormalAlongVector
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePipeBiNormalAlongVector
+                 (GEOM::GEOM_Object_ptr theBase, 
+		  GEOM::GEOM_Object_ptr thePath, 
+		  GEOM::GEOM_Object_ptr theVec)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theBase == NULL || thePath == NULL || theVec == NULL) return aGEOMObject._retn();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetOperations()->GetEngine()->GetObject
+    (theBase->GetStudyID(), theBase->GetEntry());
+  Handle(GEOM_Object) aPath = GetOperations()->GetEngine()->GetObject
+    (thePath->GetStudyID(), thePath->GetEntry());
+  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
+    (theVec->GetStudyID(), theVec->GetEntry());
+
+  if (aBase.IsNull() || aPath.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  //Create the Pipe
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePipeBiNormalAlongVector(aBase, aPath, aVec);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

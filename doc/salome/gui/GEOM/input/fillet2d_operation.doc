@@ -1,0 +1,27 @@
+/*!
+
+\page fillet2d_operation_page Fillet 2D
+
+This operation creates fillets on the corners of a <b>2D Planar Face</b>.
+
+\image html fillet2d_2.png
+
+To produce a \b Fillet 2D in the <b>Main Menu</b> select 
+<b>Operations - > Transformation - > Fillet 2D</b>
+
+Define the <b>Planar Face</b> to create a fillet on, select the necessary 
+vertexes on this face in the OCC Viewer and define the \b Radius of the Fillet.
+
+\b Note: This Operation Works for the <b>Planar 2D</b> Faces Only.
+
+<b>TUI Command:</b> <em>geompy.MakeFillet(Shape, R, ListVertexes)</em>
+\n <b>Arguments:</b> Name + 1 shape + one or several vertexes + 1 value (Fillet radius).
+
+<b>Examples:</b>
+
+\image html fillet2d_1.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_fillet2d "Transformation Operations".
+
+*/

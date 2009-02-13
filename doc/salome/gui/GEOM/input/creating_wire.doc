@@ -19,7 +19,7 @@ button.
 
 \n <b>Example:</b>
 
-\image html wiresn.png
+\image html wiresn.png "Wire"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_wire "Advanced Geometric Objects".

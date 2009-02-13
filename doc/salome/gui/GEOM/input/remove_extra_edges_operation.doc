@@ -10,6 +10,8 @@ shape and unites faces and edges, sharing one surface.
 \n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape)</em>,
 there <em>theShape</em> is a compound or a single solid to remove irregular edges from.
 \n <b>Arguments:</b> Name + one shape.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html remove_extra_edges.png
 

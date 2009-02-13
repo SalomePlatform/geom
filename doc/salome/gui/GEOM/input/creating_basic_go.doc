@@ -2,6 +2,9 @@
 
 \page create_basic_geom_obj_page Creating Basic Geometric Objects
 
+<b>New Entity -> Basic </b> submenu gives access to creation of such
+geometrical objects as: 
+
 <ul>
 <li>\subpage create_point_page</li>
 <li>\subpage create_line_page</li>

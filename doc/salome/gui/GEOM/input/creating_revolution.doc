@@ -20,7 +20,7 @@ solid or compsolid).
 
 <b>Example:</b>
 
-\image html revolutionsn.png
+\image html revolutionsn.png "Body of revolution"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_revolution "Complex Geometric Objects".

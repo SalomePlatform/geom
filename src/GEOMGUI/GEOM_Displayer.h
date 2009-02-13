@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,31 +17,32 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOM_Displayer.h
+// Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
-//
-//  File   : GEOM_Displayer.h
-//  Author : Vadim SANDLER
-//  Module : GEOM
-//  $Header$
-
-#if !defined (__GEOM_DISPLAYER_H)
-#define __GEOM_DISPLAYER_H
-
-using namespace std;
+#ifndef GEOM_DISPLAYER_H
+#define GEOM_DISPLAYER_H
 
 #include "GEOM_GEOMGUI.hxx"
 
-#include "SALOME_Prs.h"
-#include "SALOME_InteractiveObject.hxx"
-#include "SALOME_ListIO.hxx"
+#include <SALOME_InteractiveObject.hxx>
+
+class SALOME_ListIO;
+class SALOME_View;
+class SALOME_Prs;
+class SALOME_OCCPrs;
+class SALOME_VTKPrs;
+class SALOME_OCCViewType;
+
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
 #include <LightApp_Displayer.h>
 #include <Aspect_TypeOfMarker.hxx>
 
-#include <qvaluelist.h>
+#include <QList>
 
 #include <list>
 
@@ -148,11 +149,11 @@ public:
   void         LocalSelection( const Handle(SALOME_InteractiveObject)&, const int );
   void         LocalSelection( const SALOME_ListIO& theIOList, const int );
   void         GlobalSelection( const int = GEOM_ALLOBJECTS, const bool = false );
-  void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false );
+  void         GlobalSelection( const TColStd_MapOfInteger&, const bool = false, const QList<int>* = 0 );
 
   SalomeApp_Study* getStudy() const;
 
-  static SALOMEDS::Color getUniqueColor( const QValueList<SALOMEDS::Color>& );
+  static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
 
 protected:
   /* internal methods */
@@ -171,11 +172,12 @@ protected:
   void        clearTemporary( LightApp_SelectionMgr* theSelMgr );
 
   SUIT_SelectionFilter* getFilter( const int theMode );
+  SUIT_SelectionFilter* getComplexFilter( const QList<int>* );
 
 protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
-  string                           myName;
+  std::string                      myName;
   int                              myType;
   SALOME_View*                     myViewFrame;
 
@@ -192,5 +194,5 @@ private:
   SalomeApp_Application* myApp;
 };
 
-#endif // __GEOM_DISPLAYER_H
+#endif // GEOM_DISPLAYER_H
 

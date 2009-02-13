@@ -1,0 +1,43 @@
+/*!
+
+\page create_squareface_page Square Face
+
+A primitive called <b>Square Face</b> is a square plane of certain dimensions and orientation
+
+To create a \b Square Face  in the <b>Main Menu</b> select <b>New Entity - >
+Primitives - > Face</b>
+
+\n There are 2 algorithms to create a \b Square \b Face in the 3D space. 
+\n The \b Result of each operation will be a GEOM_Object (Face).
+
+\n Firstly, you can create a \b Face at the origin 
+of coordinates defining its boundaries by the height and the width and its axis by the orientation
+radio buttons (OXY, OYZ or OZX).This 
+means that the Square Face will lie in "OXY", "OYZ" or "OZX" plane correspondingly.
+\n <b>TUI Command:</b> <em>geompy.MakeFaceHW(Height, Width, Orientation)</em>
+\n <b>Arguments:</b> Name + 3 values (Dimensions at origin: heigth, width and
+orientation).
+
+
+\image html face1.png
+
+\n Secondly, you can define a \b Face by the height and the width sizes and an \b Edge defining the normal to the center of the face.
+\n <b>TUI Command:</b> <em>geompy.MakeFaceObjHW(Vector, Height, Width)</em>
+\n <b>Arguments:</b> Name + 1 Vector (normal to the center) + 2 doubles (to
+describe a face sizes).
+
+\n It is also possible to create a Square Face from another selected face. For this, switch the <b>Object Type</b> button 
+to \b Face, then select a face object and set the values of
+Height and Width for the new face. The created face will lie in the plane of the selected face.
+\n <b>TUI Command:</b> <em>geompy.MakeFaceObjHW(Face, Height, Width)</em>
+\n <b>Arguments:</b> Name + 1 Face + 2 parameters (to describe a face sizes).
+
+\image html face2.png
+
+<b>Example:</b>
+\image html faces.png "Square face"
+
+Our <b>TUI Scripts</b> provide you with useful examples of creating 
+\ref tui_creation_face "Primitives".
+
+*/

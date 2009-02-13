@@ -1,6 +1,6 @@
 /*!
 
-\page view_geom_obj_page Overview
+\page view_geom_obj_page Viewing geometrical objects
 
 \n Newly created geometrical objects are automatically displayed in
 the <b>OCC 3D Viewer</b>.
@@ -18,25 +18,25 @@ other useful options by right-clicking on the selected object.
 object.</li>
 <li><b>Delete</b> - irreversibly deletes the selected object from the
 viewer and from the Object Browser.</li> 
-<li>\ref display_mode_page "Display Mode" - allows to select between
+<li>\subpage display_mode_page "Display Mode" - allows to select between
 Wireframe and Shading presentation.</li>
-<li>\ref color_page "Color" - allows to change the filling color in
+<li>\subpage color_page "Color" - allows to change the filling color in
 the standard <b>Select Color</b> menu.</li>
-<li>\ref transparency_page "Transparency" - allows to change the
+<li>\subpage transparency_page "Transparency" - allows to change the
 transparency of geometrical objects.</li>
-<li>\ref isolines_page "Isos" - allows to change the number of
+<li>\subpage isolines_page "Isos" - allows to change the number of
 isolines displayed within a shape.</li>
 <li><b>Hide</b> - allows to hide the selected geometrical object from the
 viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
-\n \image html image18.gif
+\n \image html image18.png
 </li>
 <li><b>Hide all</b> - allows to hide all objects from the viewer. TUI
 Command: <em>sg.EraseAll()</em>
-\n \image html image26.gif
+\n \image html image26.png
 </li>
-<li><b>Display Only</b> - allows to display only the selected
+<li><b>Show Only</b> - allows to display only the selected
 geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em>
-\n \image html image33.gif
+\n \image html image33.png
 </li>
 <li><b>Update</b> - refreshes the presentation of your geometrical object in the
 Object Browser, applying all recent changes.</li>

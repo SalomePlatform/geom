@@ -1,44 +1,40 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2004  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : GEOMBase_Helper.h
-//  Author : Sergey ANIKIN
-//  Module : GEOM
-//  $Header$
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOMBase_Helper.h
+// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
+//
 #ifndef GEOMBASE_HELPER_H
 #define GEOMBASE_HELPER_H
 
 #include "GEOM_GEOMBase.hxx"
 
-#include "GEOM_Displayer.h"
-#include "SALOME_Prs.h"
-#include "SALOME_ListIO.hxx"
+#include <GEOM_Displayer.h>
+#include <SALOME_ListIO.hxx>
 #include <SALOMEconfig.h>
 #include CORBA_CLIENT_HEADER(GEOM_Gen)
 
-#include <qstring.h>
-#include <qmap.h>
+#include <QString>
+#include <QMap>
 
 #include <list>
 
@@ -47,8 +43,8 @@ typedef std::list<GEOM::GEOM_Object_ptr> ObjectList;
 class SalomeApp_Study;
 class SUIT_Desktop;
 class SUIT_ViewWindow;
+class SALOME_Prs;
 class GEOM_Operation;
-class TopoDS_Shape;
 class TColStd_MapOfInteger;
 
 //================================================================
@@ -100,6 +96,7 @@ protected:
   void activate( const int );
   void globalSelection( const int = GEOM_ALLOBJECTS, const bool = false  );
   void globalSelection( const TColStd_MapOfInteger&, const bool = false );
+  void globalSelection( const TColStd_MapOfInteger&, const QList<int>& ,const bool = false );
   void updateViewer    ();
 
   void prepareSelection( const ObjectList&, const int );
@@ -134,21 +131,6 @@ protected:
 
   inline void setPrefix( const QString& prefix ) { myPrefix = prefix; }
   QString getPrefix( GEOM::GEOM_Object_ptr = GEOM::GEOM_Object::_nil() ) const;
-
-  const SALOME_ListIO& selectedIO();
-  // Function returns a list of SALOME_InteractiveObject's from
-  // selection manager in GUI
-
-  int   IObjectCount() ;
-  // Function returns the number of selected objects
-  
-  Handle(SALOME_InteractiveObject) firstIObject() ;
-  // Function returns the first selected object in the list
-  // of selected objects
-
-  Handle(SALOME_InteractiveObject) lastIObject() ;
-  // Function returns the last selected object in the list
-  // of selected objects
   
   bool selectObjects( ObjectList& objects );
   // Selects list of objects 
@@ -170,15 +152,18 @@ protected:
   // It should perform the required operation and put all new or modified objects into 
   // <objects> argument.Should return <false> if some error occurs during its execution. 
 
+  virtual void restoreSubShapes( SALOMEDS::Study_ptr theStudy, SALOMEDS::SObject_ptr theSObject );
+  // This method is called by addInStudy().
+
   virtual GEOM::GEOM_Object_ptr getFather( GEOM::GEOM_Object_ptr theObj );
   // This method is called by addInStudy(). It should return a father object
   // for <theObj> or a nil reference if <theObj> should be published
   // as a top-level object.
 
-  virtual const char* getNewObjectName() const; 
+  virtual QString getNewObjectName() const; 
   virtual void addSubshapesToStudy();
 
-  GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const char* theName );
+  GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
   //This Metod to find SubObject in theFather Object by Name (theName)
 
   void addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap );
@@ -208,4 +193,4 @@ private:
 
 };
 
-#endif
+#endif // GEOMBASE_HELPER_H

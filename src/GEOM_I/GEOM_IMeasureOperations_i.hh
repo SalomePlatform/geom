@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #ifndef _GEOM_IMeasureOperations_i_HeaderFile
 #define _GEOM_IMeasureOperations_i_HeaderFile
 
@@ -93,6 +94,28 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
 
   CORBA::Double GetAngle (GEOM::GEOM_Object_ptr theShape1,
 			  GEOM::GEOM_Object_ptr theShape2);
+
+  // Methods for recieving radiuses of curvature of curves and surfaces
+  // in the given point
+  CORBA::Double CurveCurvatureByParam (GEOM::GEOM_Object_ptr theCurve,
+				       CORBA::Double theParam);
+
+  CORBA::Double CurveCurvatureByPoint (GEOM::GEOM_Object_ptr theCurve,
+				       GEOM::GEOM_Object_ptr thePoint);
+
+  CORBA::Double MaxSurfaceCurvatureByParam (GEOM::GEOM_Object_ptr theSurf,
+					    CORBA::Double theUParam,
+					    CORBA::Double theVParam);
+
+  CORBA::Double MaxSurfaceCurvatureByPoint (GEOM::GEOM_Object_ptr theSurf,
+					    GEOM::GEOM_Object_ptr thePoint);
+
+  CORBA::Double MinSurfaceCurvatureByParam (GEOM::GEOM_Object_ptr theSurf,
+					    CORBA::Double theUParam,
+					    CORBA::Double theVParam);
+
+  CORBA::Double MinSurfaceCurvatureByPoint (GEOM::GEOM_Object_ptr theSurf,
+					    GEOM::GEOM_Object_ptr thePoint);
 
   ::GEOMImpl_IMeasureOperations* GetOperations()
   { return (::GEOMImpl_IMeasureOperations*)GetImpl(); }

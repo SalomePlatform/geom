@@ -1,0 +1,75 @@
+/*!
+
+\page tui_test_all_page GEOM_TestAll.py
+
+\anchor swig_All
+<br><h2>GEOM_TestAll.py</h2>
+
+\dontinclude GEOM_TestAll.py
+\skipline def TestAll
+
+\until vxyz
+
+\anchor swig_MakeMarker
+\until cs3
+
+\until MakePlaneThreePnt
+
+\anchor swig_MakeArc
+\until MakeArcCenter
+
+\anchor swig_MakeCircle
+\until Circle2
+
+\until MakeVertexOnCurve
+
+\anchor swig_MakeVertexOnLinesIntersection
+\until p_on_l1l2
+
+\anchor swig_MakeTangentOnCurve
+\until tan_on_arc
+
+\until MakeCompound
+
+\anchor swig_MakeVertexOnSurface
+\until p_on_face
+
+\until S = geompy.MakeRotation
+
+\anchor swig_MakeLineTwoFaces
+\until Line3
+
+\anchor swig_all_advanced
+\until MakeSewing
+
+\anchor swig_all_trsf
+\until RotatPnt
+
+\anchor swig_scale
+\until Scale4
+
+\anchor swig_all_trsf_more
+\until MakeOffset
+
+\anchor swig_ChangeOrientation
+\until ChangeOrientation
+
+\anchor swig_FilletChamfer
+\until End of Local operations
+
+\anchor swig_all_patterns
+\until MultiRot2D
+
+\anchor swig_all_measure
+\until "CheckShape(Prism) = "
+
+\anchor swig_all_partition
+\until Partition1
+
+\anchor swig_all_addtostudy
+\until id_Partition1
+
+\anchor swig_all_decompose
+\until print "DONE"
+
+*/

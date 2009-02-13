@@ -1,27 +1,28 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_BuilderSolid.cxx
 // Created:	
 // Author:	Peter KURNEV 
-
-
+//
 #include <GEOMAlgo_BuilderSolid.ixx>
 
 #include <gp_Pnt2d.hxx>
@@ -93,7 +94,10 @@ static
   void MakeInternalShells(const TopTools_MapOfShape& ,
 			  TopTools_ListOfShape& );
 
-
+//modified by NIZNHY-PKV Tue Aug  5 15:06:50 2008f
+static
+  Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell);
+//modified by NIZNHY-PKV Tue Aug  5 15:06:57 2008t
 
 //=======================================================================
 //function : 
@@ -228,6 +232,17 @@ static
 	  myShapesToAvoid.Add(aF2);
 	}
       }
+      //DEB
+      else {
+	TopTools_ListIteratorOfListOfShape aItLF;
+	//
+	aItLF.Initialize (aLF);
+	for (; aItLF.More(); aItLF.Next()) {
+	  const TopoDS_Shape& aFx=aItLF.Value();
+	  int a=0;
+	}
+      }
+      //DEB
     }// for (i=1; i<=aNbE; ++i) {
     //
     if (!bFound) {
@@ -246,14 +261,16 @@ static
   //
   myLoops.Clear();
   //
-  Standard_Integer aNbLF, aNbOff, aNbFP;
+  Standard_Integer aNbLF, aNbOff, aNbFP, aNbFA;
   TopAbs_Orientation anOr;
   TopoDS_Edge aEL;
   BRep_Builder aBB;
   NMTTools_CoupleOfShape aCSOff;
-  TopTools_MapOfOrientedShape AddedFacesMap;
+  TopTools_MapOfOrientedShape AddedFacesMap;//, aMFP;
   TopTools_IndexedDataMapOfShapeListOfShape aEFMap, aMEFP;
-  TopTools_ListIteratorOfListOfShape aItF;
+  TopTools_ListIteratorOfListOfShape aItF, aIt;
+  TopTools_MapIteratorOfMapOfOrientedShape aItM;
+  TopoDS_Iterator aItS;
   //
   //=================================================
   //
@@ -366,16 +383,60 @@ static
 	}
       } // for (; aEdgeExp.More(); aEdgeExp.Next()) { 
     } //for (; aItAddedF.More(); aItAddedF.Next()) {
-    myLoops.Append(aShell);
+    //modified by NIZNHY-PKV Tue Aug  5 15:07:08 2008f
+    //myLoops.Append(aShell);
+    if (IsClosedShell(aShell)) {
+      myLoops.Append(aShell);
+    }
+    /*
+    else {
+      TopoDS_Iterator aItS;
+      aItS.Initialize(aShell);
+      for (; aItS.More(); aItS.Next()) {
+	const TopoDS_Shape& aFs=aItS.Value();
+	aMFP.Add(aFs);
+      }
+    }
+    */
+    //modified by NIZNHY-PKV Tue Aug  5 15:07:30 2008t
   } // for (; aItF.More(); aItF.Next()) {
+  //modified by NIZNHY-PKV Tue Aug  5 15:07:35 2008f
+  //
+  // Post Treatment
+  TopTools_MapOfOrientedShape aMP;
+  // 
+  // a. collect all edges that are in loops
+  aIt.Initialize (myLoops);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aS=aIt.Value();
+    aItS.Initialize(aS);
+    for (; aItS.More(); aItS.Next()) {
+      const TopoDS_Shape& aF=aItS.Value();
+      aMP.Add(aF);
+    }
+  }
+  // 
+  // b. collect all edges that are to avoid
+  aItM.Initialize(myShapesToAvoid);
+  for (; aItM.More(); aItM.Next()) {
+    const TopoDS_Shape& aF=aItM.Key();
+    aMP.Add(aF);
+  }
+  //
+  // c. add all edges that are not processed to myShapesToAvoid
+  aIt.Initialize (myShapes);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aF=aIt.Value();
+    if (!aMP.Contains(aF)) {
+      myShapesToAvoid.Add(aF);
+    }
+  }
+  //modified by NIZNHY-PKV Tue Aug  5 15:07:44 2008t
   //=================================================
   //
   // 2.Internal Shells
   //
   myLoopsInternal.Clear();
-  //
-  Standard_Integer aNbFA;
-  TopTools_MapIteratorOfMapOfOrientedShape aItM;
   //
   aEFMap.Clear();
   AddedFacesMap.Clear();
@@ -730,7 +791,50 @@ Standard_Boolean IsGrowthShell(const TopoDS_Shape& theShell,
   }
   return bRet;
 }
-
+//modified by NIZNHY-PKV Tue Aug  5 15:07:50 2008f
+//=======================================================================
+//function : IsClosedShell
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
+{
+  Standard_Integer aNbE;
+  Standard_Boolean bRet;
+  TopoDS_Iterator aIt;
+  TopExp_Explorer aExp;
+  TopTools_MapOfShape aM;
+  // 
+  bRet=Standard_False;
+  aIt.Initialize(theShell);
+  for(; aIt.More(); aIt.Next()) {
+    const TopoDS_Face& aF=TopoDS::Face(aIt.Value());
+    aExp.Init(aF, TopAbs_EDGE);
+    for (; aExp.More(); aExp.Next()) {
+      const TopoDS_Edge& aE=TopoDS::Edge(aExp.Current());
+      if (BRep_Tool::Degenerated(aE)) {
+	continue;
+      }
+      /*
+      if (BRep_Tool::IsClosed(aE, aF)) {
+	continue;
+      }
+      */
+      if (aE.Orientation()==TopAbs_INTERNAL) {
+	continue;
+      }
+      if (!aM.Add(aE)) {
+	aM.Remove(aE);
+      }
+    }
+  }
+  //
+  aNbE=aM.Extent();
+  if (!aNbE) {
+    bRet=!bRet;
+  }
+  return bRet;
+}
+//modified by NIZNHY-PKV Tue Aug  5 15:08:07 2008t
 //BRepTools::Write(aFF, "ff");
 //
 //  ErrorStatus :

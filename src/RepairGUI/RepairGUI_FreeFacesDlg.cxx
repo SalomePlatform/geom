@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,47 +17,46 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : RepairGUI_FreeFacesDlg.cxx
+// Author : Vladimir KLYACHIN, Open CASCADE S.A.S. (vladimir.klyachin@opencascade.com)
 //
-//
-//  File   : RepairGUI_FreeFacesDlg.cxx
-//  Author : VKN
-//  Module : GEOM
-//  $Header$
-
 #include "RepairGUI_FreeFacesDlg.h"
 
-#include "LightApp_Application.h"
-#include "LightApp_SelectionMgr.h"
-#include "SalomeApp_Application.h"
-#include "SalomeApp_Tools.h"
+#include <LightApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+#include <SalomeApp_Application.h>
+#include <SalomeApp_Tools.h>
 
-#include "SUIT_MessageBox.h"
-#include "SUIT_Session.h"
-#include "SUIT_OverrideCursor.h"
+#include <SUIT_MessageBox.h>
+#include <SUIT_Session.h>
+#include <SUIT_OverrideCursor.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ResourceMgr.h>
 
-#include "SALOME_ListIteratorOfListIO.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include "GEOMImpl_Types.hxx"
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TopExp.hxx>
-#include "GEOMBase.h"
-#include "GeometryGUI.h"
-#include "GEOM_Displayer.h"
 
-#include <qapplication.h>
-#include <qlineedit.h>
-#include <qlabel.h>
-#include <qlayout.h>
-#include <qgroupbox.h>
-#include <qpushbutton.h>
-#define SPACING 5
-#define MARGIN 10
+#include <GEOMBase.h>
+#include <GeometryGUI.h>
+#include <GEOM_Displayer.h>
+
+#include <QLineEdit>
+#include <QLabel>
+#include <QGroupBox>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QKeyEvent>
+
+#define SPACING 6
+#define MARGIN  9
 #define MIN_WIDTH 200
-
-using namespace std;
 
 //=================================================================================
 // class    : RepairGUI_FreeFacesDlg()
@@ -66,60 +65,66 @@ using namespace std;
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg(GeometryGUI* GUI, QWidget* parent,
-                                               const char* name, bool modal, WFlags fl)
-  :QDialog(parent, "RepairGUI_FreeBoundDlg", false,
-           WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu | WDestructiveClose),
-   GEOMBase_Helper(dynamic_cast<SUIT_Desktop*>(parent)),
-   myGeomGUI(GUI)
+RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg( GeometryGUI* GUI, QWidget* parent,
+						bool modal )
+  : QDialog( parent, false ),
+    GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
+    myGeomGUI( GUI ), 
+    myDisplayer( 0 )
 {
-  myDisplayer = 0;
+  setAttribute( Qt::WA_DeleteOnClose );
 
-  setSizeGripEnabled( TRUE );
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_SELECT")));
+  setSizeGripEnabled( true );
 
-  setCaption(tr("GEOM_FREE_FACES_TITLE"));
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+
+  setWindowTitle( tr( "GEOM_FREE_FACES_TITLE" ) );
 
   /***************************************************************/
 
-  QGroupBox* aMainGrp = new QGroupBox( 1, Qt::Horizontal, tr( "GEOM_SELECTED_SHAPE" ), this );
+  QGroupBox* aMainGrp = new QGroupBox( tr( "GEOM_SELECTED_SHAPE" ), this );
   
-
-  QGroupBox* aSelGrp = new QGroupBox( 1, Qt::Vertical, aMainGrp );
-
-  aSelGrp->setInsideMargin( 0 );
-  aSelGrp->setFrameStyle( QFrame::NoFrame );
-  new QLabel( tr( "GEOM_OBJECT" ), aSelGrp );
-  mySelBtn = new QPushButton( aSelGrp );
-  mySelBtn->setPixmap( image1 );
-  myEdit = new QLineEdit( aSelGrp );
+  QLabel* lab = new QLabel( tr( "GEOM_OBJECT" ), aMainGrp );
+  mySelBtn = new QPushButton( aMainGrp );
+  mySelBtn->setIcon( image1 );
+  myEdit = new QLineEdit( aMainGrp );
   myEdit->setReadOnly( true );
   myEdit->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
   myEdit->setMinimumWidth( MIN_WIDTH );
+
+  QHBoxLayout* aMainLay = new QHBoxLayout( aMainGrp );
+  aMainLay->setSpacing( SPACING );
+  aMainLay->setMargin( MARGIN );
+  aMainLay->addWidget( lab );
+  aMainLay->addWidget( mySelBtn );
+  aMainLay->addWidget( myEdit );
 
   QFrame* aFrame = new QFrame( this );
   aFrame->setFrameStyle( QFrame::Box | QFrame::Sunken );
   QPushButton* aCloseBtn = new QPushButton( tr( "GEOM_BUT_CLOSE" ), aFrame );
   QPushButton* aHelpBtn = new QPushButton( tr( "GEOM_BUT_HELP" ), aFrame );
-  QHBoxLayout* aBtnLay = new QHBoxLayout( aFrame, MARGIN, SPACING );
+
+  QHBoxLayout* aBtnLay = new QHBoxLayout( aFrame );
+  aBtnLay->setSpacing( SPACING );
+  aBtnLay->setMargin( MARGIN );
   aBtnLay->addWidget( aCloseBtn );
-  aBtnLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+  aBtnLay->addSpacing( SPACING );
+  aBtnLay->addStretch();
   aBtnLay->addWidget( aHelpBtn );
 
   QVBoxLayout* aLay = new QVBoxLayout( this );
   aLay->setSpacing( SPACING );
   aLay->setMargin( MARGIN );
   aLay->addWidget( aMainGrp );
-  aLay->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum ) );
+  aLay->addStretch();
   aLay->addWidget( aFrame );
 
-  //myHelpFileName = "files/salome2_sp3_measuregui_functions.htm#free_faces";
   myHelpFileName = "using_measurement_tools_page.html#faces_anchor";
 
   connect( aCloseBtn, SIGNAL( clicked() ), SLOT( onClose() ) );
-  connect( aHelpBtn, SIGNAL( clicked() ), SLOT( onHelp() ) );
-  connect( mySelBtn,    SIGNAL( clicked() ),
-           this,        SLOT  ( onSetEditCurrentArgument() ) );
+  connect( aHelpBtn,  SIGNAL( clicked() ), SLOT( onHelp() ) );
+  connect( mySelBtn,  SIGNAL( clicked() ),
+           this,      SLOT  ( onSetEditCurrentArgument() ) );
   /***************************************************************/
 
   Init();
@@ -142,7 +147,7 @@ RepairGUI_FreeFacesDlg::~RepairGUI_FreeFacesDlg()
 void RepairGUI_FreeFacesDlg::onClose()
 {
   globalSelection();
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
   myGeomGUI->SetActiveDialogBox( 0 );
   reject();
   erasePreview();
@@ -154,20 +159,22 @@ void RepairGUI_FreeFacesDlg::onClose()
 //=================================================================================
 void RepairGUI_FreeFacesDlg::onHelp()
 {
-  LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (app)
-    app->onHelpContextModule(myGeomGUI ? app->moduleName(myGeomGUI->moduleName()) : QString(""), myHelpFileName);
+  LightApp_Application* app = (LightApp_Application*)( SUIT_Session::session()->activeApplication() );
+  if ( app )
+    app->onHelpContextModule( myGeomGUI ? app->moduleName( myGeomGUI->moduleName() ) : QString(""), myHelpFileName );
   else {
-		QString platform;
+    QString platform;
 #ifdef WIN32
-		platform = "winapplication";
+    platform = "winapplication";
 #else
-		platform = "application";
+    platform = "application";
 #endif
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning( this, 
+			      tr( "WRN_WARNING" ),
+			      tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
+								    platform ) ).
+			      arg( myHelpFileName ) );
   }
 }
 
@@ -177,9 +184,9 @@ void RepairGUI_FreeFacesDlg::onHelp()
 //=================================================================================
 void RepairGUI_FreeFacesDlg::onDeactivate()
 {
-  setEnabled(false);
+  setEnabled( false );
   globalSelection();
-  disconnect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 0, this, 0 );
+  disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 0, this, 0 );
   myGeomGUI->SetActiveDialogBox( 0 );
 }
 
@@ -192,8 +199,8 @@ void RepairGUI_FreeFacesDlg::onActivate()
   myGeomGUI->EmitSignalDeactivateDialog();
   setEnabled( true );
   myGeomGUI->SetActiveDialogBox( this );
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
+	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
   activateSelection();
 }
 
@@ -207,7 +214,7 @@ void RepairGUI_FreeFacesDlg::Init()
 
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
-  connect( ((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
 	   SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
 
   activateSelection();
@@ -221,23 +228,25 @@ void RepairGUI_FreeFacesDlg::Init()
 void RepairGUI_FreeFacesDlg::onSelectionDone()
 {
   erasePreview();
-  if( IObjectCount() != 1 )
-  {
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if ( aSelList.Extent() != 1 ) {
     myEdit->setText( "" );
     return;
   }
 
   Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( firstIObject(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), isOk );
 
-  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
-  {
+  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) ) {
     myEdit->setText( "" );
     return;
   }
-  else
-  {
+  else {
     myObj = anObj;
     displayPreview( false, true, true, 3 );
   }
@@ -247,7 +256,7 @@ void RepairGUI_FreeFacesDlg::onSelectionDone()
 // function : enterEvent()
 // purpose  : Mouse enter onto the dialog to activate it
 //=================================================================================
-void RepairGUI_FreeFacesDlg::enterEvent(QEvent* e)
+void RepairGUI_FreeFacesDlg::enterEvent( QEvent* )
 {
   onActivate();
 }
@@ -268,7 +277,7 @@ void RepairGUI_FreeFacesDlg::activateSelection()
 // function : closeEvent()
 // purpose  :
 //=================================================================================
-void RepairGUI_FreeFacesDlg::closeEvent(QCloseEvent* e)
+void RepairGUI_FreeFacesDlg::closeEvent( QCloseEvent* )
 {
   onClose();
 }
@@ -286,7 +295,7 @@ GEOM::GEOM_IOperations_ptr RepairGUI_FreeFacesDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool RepairGUI_FreeFacesDlg::isValid( QString& msg )
+bool RepairGUI_FreeFacesDlg::isValid( QString& )
 {
   return !myObj->_is_nil() ;
 }
@@ -303,12 +312,10 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
   TopoDS_Shape aSelShape;
   TopoDS_Shape aFace; 
   TopTools_IndexedMapOfShape anIndices;
-  if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) )
-  {
+  if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
     myEdit->setText( GEOMBase::GetName( myObj ) );
     QString aMess;
-    if ( !isValid( aMess ) )
-    {
+    if ( !isValid( aMess ) ) {
       erasePreview( true );
       return false;
     }
@@ -318,11 +325,9 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
     TopExp::MapShapes( aSelShape, anIndices);
     SALOME_Prs* aPrs = 0;
     
-    for ( int i = 0, n = aFaceLst->length(); i < n; i++ )
-    {
+    for ( int i = 0, n = aFaceLst->length(); i < n; i++ ) {
       aFace = anIndices.FindKey( aFaceLst[i] );
-      try
-      {
+      try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
         getDisplayer()->SetToActivate( false );
 	aPrs = !aFace.IsNull() ? getDisplayer()->BuildPrs( aFace ) : 0;
@@ -369,9 +374,8 @@ void RepairGUI_FreeFacesDlg::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
-    {
-      e->accept();
-      onHelp();
-    }
+  if ( e->key() == Qt::Key_F1 ) {
+    e->accept();
+    onHelp();
+  }
 }

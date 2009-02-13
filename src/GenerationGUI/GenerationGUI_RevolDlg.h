@@ -1,83 +1,79 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : GenerationGUI_RevolDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GenerationGUI_RevolDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
+//
+#ifndef GENERATIONGUI_REVOLUTIONDLG_H
+#define GENERATIONGUI_REVOLUTIONDLG_H
 
-#ifndef DIALOGBOX_REVOLUTION_H
-#define DIALOGBOX_REVOLUTION_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GenerationGUI.h"
-
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel1Spin2Check.h"
-
-#include <gp_Dir.hxx>
+class DlgRef_2Sel1Spin2Check;
 
 //=================================================================================
 // class    : GenerationGUI_RevolDlg
 // purpose  :
 //=================================================================================
-class GENERATIONGUI_EXPORT GenerationGUI_RevolDlg : public GEOMBase_Skeleton
+class GenerationGUI_RevolDlg : public GEOMBase_Skeleton
 { 
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    GenerationGUI_RevolDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			   const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~GenerationGUI_RevolDlg();
+  GenerationGUI_RevolDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
+  ~GenerationGUI_RevolDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& msg );
-    virtual bool execute( ObjectList& objects );    
-    virtual void addSubshapesToStudy();
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
 
-private :
-    void Init();
-    void enterEvent(QEvent* e);
-    double getAngle() const;
-
-    GEOM::GEOM_Object_var myBase; /* Base shape */
-    GEOM::GEOM_Object_var myAxis; /* Axis of the revolution */
-    bool myOkBase; 
-    bool myOkAxis;
-    bool myBothway;
-
-    DlgRef_2Sel1Spin2Check* GroupPoints;
-
+private:
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  double                             getAngle() const;
+  
+private:
+  GEOM::GEOM_Object_var              myBase; /* Base shape */
+  GEOM::GEOM_Object_var              myAxis; /* Axis of the revolution */
+  bool                               myOkBase; 
+  bool                               myOkAxis;
+  bool                               myBothway;
+  
+  DlgRef_2Sel1Spin2Check*            GroupPoints;
+    
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-    void ActivateThisDialog();
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-    void ValueChangedInSpinBox();
-    void onReverse();
-    void onBothway();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
+  void                               ValueChangedInSpinBox();
+  void                               SetDoubleSpinBoxStep( double );
+  void                               onReverse();
+  void                               onBothway();
 };
 
-#endif // DIALOGBOX_REVOLUTION_H
+#endif // GENERATIONGUI_REVOLUTIONDLG_H

@@ -2,10 +2,15 @@
 
 \page blocks_operations_page Blocks Operations
 
+The solids built by blocks \ref  build_by_blocks_page can be
+processed with blocks transformation operations: 
+
 <ul>
-<li>\subpage multi_transformation_operation_page</li>
-<li>\subpage explode_on_blocks_operation_page</li> 
-<li>\subpage propagate_operation_page</li>
+<li>\subpage multi_transformation_operation_page "Multi-transformation" - produces several translations of a block in one or two directions.</li>
+<li>\subpage explode_on_blocks_operation_page "Explode on blocks" -
+returns blocks of the given compound.</li> 
+<li>\subpage propagate_operation_page "Propagate" - builds all
+possible propagation groups from the given shape.</li>
 </ul>
 
 */

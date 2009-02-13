@@ -18,9 +18,9 @@ is a shape to build propagation groups on.
 
 \n <b>Example:</b>
 
-\image html image15.jpg
+\image html image15.jpg "The initial box"
 
-\image html image16.jpg
+\image html image16.jpg "The resulting edges"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_propagate "Blocks Operations".

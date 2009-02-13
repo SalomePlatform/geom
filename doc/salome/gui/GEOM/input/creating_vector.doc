@@ -23,7 +23,7 @@ coordinates</b> by its <b>End Point</b>.
 
 <b>Example:</b>
 
-\image html image34.gif
+\image html image34.gif "A vector by two points and a vector from the origin of coordinates"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_vector "Basic Geometric Objects".

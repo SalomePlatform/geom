@@ -29,9 +29,9 @@ checked </li>
 
 \n <b>Example:</b>
 
-\image html supp_int_wires1.png
+\image html supp_int_wires1.png "The box with internal wires"
 
-\image html supp_int_wires2.png
+\image html supp_int_wires2.png "The internal wires have been suppressed"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_suppress_internal_wires "Repairing Operations".

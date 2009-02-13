@@ -1,37 +1,33 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : MeasureGUI.cxx
+// Author : Damien COQUERET, Open CASCADE S.A.S.
 //
-//
-//  File   : MeasureGUI.cxx
-//  Author : Damien COQUERET
-//  Module : GEOM
-//  $Header$
-
 #include "MeasureGUI.h"
-#include "SUIT_Desktop.h"
-#include "SUIT_Session.h"
 
-#include "SalomeApp_Tools.h"
-#include "SalomeApp_Application.h"
+#include <GeometryGUI.h>
+#include <SUIT_Desktop.h>
+#include <SalomeApp_Application.h>
 
 #include "MeasureGUI_PropertiesDlg.h"    // Method PROPERTIES
 #include "MeasureGUI_CenterMassDlg.h"    // Method CENTER MASS
@@ -45,6 +41,8 @@
 #include "MeasureGUI_CheckShapeDlg.h"    // Method CHECKSHAPE
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h" // Method CHECKCOMPOUND
 #include "MeasureGUI_PointDlg.h"         // Method POINTCOORDINATES
+
+#include <QApplication>
 
 //=======================================================================
 // function : MeasureGUI()
@@ -74,24 +72,52 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
-  switch ( theCommandID )
-  {
-    case 701 : new MeasureGUI_PropertiesDlg  (getGeometryGUI(), parent); break; // LENGTH, AREA AND VOLUME
-    case 702 : new MeasureGUI_CenterMassDlg  (getGeometryGUI(), parent); break; // CENTER MASS
-    case 703 : new MeasureGUI_InertiaDlg     (getGeometryGUI(), parent); break; // INERTIA
-    case 704 : new MeasureGUI_NormaleDlg     (getGeometryGUI(), parent); break; // NORMALE
-    case 7041: new MeasureGUI_BndBoxDlg      (getGeometryGUI(), parent); break; // BOUNDING BOX
-    case 7042: new MeasureGUI_DistanceDlg    (getGeometryGUI(), parent); break; // MIN DISTANCE
-    case 7043: new MeasureGUI_AngleDlg       (getGeometryGUI(), parent); break; // ANGLE
-    case 705 : new MeasureGUI_MaxToleranceDlg(getGeometryGUI(), parent); break; // MAXTOLERANCE
-    case 706 : new MeasureGUI_WhatisDlg      (getGeometryGUI(), parent); break; // WHATIS
-    case 707 : new MeasureGUI_CheckShapeDlg  (getGeometryGUI(), parent); break; // CHECKSHAPE
-    case 7072: new MeasureGUI_CheckCompoundOfBlocksDlg  (getGeometryGUI(), parent); break; // CHECKCOMPOUND
-    case 708 : new MeasureGUI_PointDlg       (getGeometryGUI(), parent); break; // POINT COORDINATES
-
-    default: 
-      app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
-      break;
+  QDialog* dlg = 0;
+  switch ( theCommandID ) {
+  case 701:
+    dlg = new MeasureGUI_PropertiesDlg( getGeometryGUI(), parent );
+    break; // LENGTH, AREA AND VOLUME
+  case 702:
+    dlg = new MeasureGUI_CenterMassDlg( getGeometryGUI(), parent );
+    break; // CENTER MASS
+  case 703:
+    dlg = new MeasureGUI_InertiaDlg( getGeometryGUI(), parent );
+    break; // INERTIA
+  case 704 : 
+    dlg = new MeasureGUI_NormaleDlg( getGeometryGUI(), parent );
+    break; // NORMALE
+  case 7041:
+    dlg = new MeasureGUI_BndBoxDlg( getGeometryGUI(), parent );
+    break; // BOUNDING BOX
+  case 7042:
+    dlg = new MeasureGUI_DistanceDlg( getGeometryGUI(), parent );
+    break; // MIN DISTANCE
+  case 7043: 
+    dlg = new MeasureGUI_AngleDlg( getGeometryGUI(), parent );
+    break; // ANGLE
+  case 705: 
+    dlg = new MeasureGUI_MaxToleranceDlg( getGeometryGUI(), parent );
+    break; // MAXTOLERANCE
+  case 706:
+    dlg = new MeasureGUI_WhatisDlg( getGeometryGUI(), parent );
+    break; // WHATIS
+  case 707:
+    dlg = new MeasureGUI_CheckShapeDlg( getGeometryGUI(), parent );
+    break; // CHECKSHAPE
+  case 7072:
+    dlg = new MeasureGUI_CheckCompoundOfBlocksDlg( getGeometryGUI(), parent );
+    break; // CHECKCOMPOUND
+  case 708:
+    dlg = new MeasureGUI_PointDlg( getGeometryGUI(), parent );
+    break; // POINT COORDINATES
+  default: 
+    app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
+    break;
+  }
+  if ( dlg ) {
+    dlg->updateGeometry();
+    dlg->resize( dlg->minimumSizeHint() );
+    dlg->show();
   }
   return true;
 }
@@ -102,7 +128,9 @@ bool MeasureGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 extern "C"
 {
-GEOM_MEASUREGUI_EXPORT
+#ifdef WIN32
+  __declspec( dllexport )
+#endif
   GEOMGUI* GetLibGUI( GeometryGUI* parent )
   {
     return new MeasureGUI( parent );

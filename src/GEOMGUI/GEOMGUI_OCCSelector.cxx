@@ -1,23 +1,27 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// File   : GEOMGUI_OCCSelector.cxx
+// Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
+//
 #include "GEOMGUI_OCCSelector.h"
 
 #include <LightApp_DataSubOwner.h>
@@ -100,6 +104,7 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
           if (!bigShape.IsEqual(curBigShape))
           {
             curBigShape = bigShape;
+            subShapes.Clear();
             TopExp::MapShapes(bigShape, subShapes);
           }
           index = subShapes.FindIndex(subShape);
@@ -211,12 +216,12 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     {
       QString entry = subOwner->entry();
 #ifndef WNT
-      if ( indexesMap.IsBound( TCollection_AsciiString((char*)entry.latin1())))
+      if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
 #else
-	  if ( indexesMap.IsBound( (char*)entry.latin1()))
+      if ( indexesMap.IsBound( entry.toLatin1().data() ) )
 #endif
       {
-	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind((char*)entry.latin1());
+	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
 	subIndexes.Add( subOwner->index() );
 	//indexesMap.replace( entry, subIndexes );
       }
@@ -224,7 +229,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       {
 	TColStd_IndexedMapOfInteger subIndexes;
 	subIndexes.Add( subOwner->index() );
-	indexesMap.Bind((char*)entry.latin1(), subIndexes);
+	indexesMap.Bind(entry.toLatin1().data(), subIndexes);
       }
     }
     else // the owner is NOT a sub owner, maybe it is a DataOwner == GLOBAL selection
@@ -268,10 +273,11 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
           {
             // has a local selection
             Handle(AIS_Shape) aisShape = Handle(AIS_Shape)::DownCast( io );
-            if (!aisShape.IsNull() && indexesMap.IsBound((char*)entryStr.latin1()))
+            if (!aisShape.IsNull() && indexesMap.IsBound(entryStr.toLatin1().data()))
             {
               isLocal = true;
               TopoDS_Shape shape = aisShape->Shape();
+              aMapOfShapes.Clear();
               TopExp::MapShapes(shape, aMapOfShapes);
             }
           }
@@ -298,7 +304,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
           if (isLocal)
           {
             const TColStd_IndexedMapOfInteger& subIndexes =
-              indexesMap.ChangeFind((char*)entryStr.latin1());
+              indexesMap.ChangeFind(entryStr.toLatin1().data());
 
             const TopoDS_Shape& aSubShape = anOwner->Shape();
             int aSubShapeId = aMapOfShapes.FindIndex( aSubShape );

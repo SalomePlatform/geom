@@ -7,6 +7,8 @@
 \n This operation cuts a shape with another one.
 \n The \b Result will be any \b GEOM_Object.
 \n <b>Arguments:</b> Name + 2 shapes.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \n <b>Dialog Box:</b>
 
@@ -14,9 +16,9 @@
 
 \n <b>Example:</b>
 
-\image html fusesn1.png
+\image html fusesn1.png "The initial shapes"
 
-\image html cutsn.png
+\image html cutsn.png "The resulting object"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_cut "Boolean Operations".

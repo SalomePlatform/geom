@@ -1,28 +1,29 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_WireSplitter.cxx
 // Created:	
 // Author:	Peter KURNEV
 //		<pkv@irinox>
-
-
+//
 #include <GEOMAlgo_WireSplitter.ixx>
 
 #include <TColStd_SequenceOfReal.hxx>
@@ -484,10 +485,10 @@ static
 
   gp_Pnt2d aPb=Coord2d(aVb, aEOuta, myFace);
 
-  const BOP_ListOfEdgeInfo& aLEInfoVb=mySmartMap.FindFromKey(aVb);
+  //const BOP_ListOfEdgeInfo& aLEInfoVb=mySmartMap.FindFromKey(aVb);
   //
   aTol=2.*Tolerance2D(aVb, aGAS);
-  aTol2=aTol*aTol;
+  aTol2=10.*aTol*aTol;
   //
   aNb=aLS.Length();
   if (aNb>0) {
@@ -549,7 +550,7 @@ static
   }
   //
   aTol2D=2.*Tolerance2D(aVb, aGAS);
-  aTol2D2=aTol2D*aTol2D;
+  aTol2D2=100.*aTol2D*aTol2D;
   //
   // anAngleIn in Vb from edge aEOuta
   const BOP_ListOfEdgeInfo& aLEInfo=mySmartMap.FindFromKey(aVb);
@@ -664,9 +665,7 @@ static
   //
   if (aType==GeomAbs_BSplineSurface||
       aType==GeomAbs_Sphere||
-      //modified by NIZNHY-PKV Wed Nov 29 10:18:50 2006f
       GeomAbs_SurfaceOfRevolution) {
-    //modified by NIZNHY-PKV Wed Nov 29 10:18:55 2006t
     if (aTol2D < aTolV3D) {
       aTol2D=aTolV3D;
     }
@@ -790,24 +789,29 @@ static
 			 const GeomAdaptor_Surface& aGAS,
 			 const Standard_Boolean aFlag)
 {
-  Standard_Real aFirst, aLast, aToler, dt, aTV, aTV1, anAngle;
-  
+  Standard_Real aFirst, aLast, aToler, dt, aTV, aTV1, anAngle, aTX;
+  gp_Pnt2d aPV, aPV1;
+  gp_Vec2d aV2D;
   Handle(Geom2d_Curve) aC2D;
-  
+  //
+  aTV=BRep_Tool::Parameter (aV, anEdge, myFace);
+  if (Precision::IsInfinite(aTV)) {
+    return 0.;
+  }
+  //
   BOPTools_Tools2D::CurveOnSurface (anEdge, myFace, aC2D, 
 				    aFirst, aLast, aToler, Standard_True);
-
-  aTV=BRep_Tool::Parameter (aV, anEdge, myFace);
-  if (Precision::IsInfinite(aTV))
-    return 0.;
-
   //dt=1.e-7;
-  dt=Tolerance2D(aV, aGAS);
-  
-  if(dt > (aLast - aFirst) * 0.25) {
+  //modified by NIZNHY-PKV Wed Sep 10 14:06:04 2008f
+  //dt=Tolerance2D(aV, aGAS);
+  dt=2.*Tolerance2D(aV, aGAS);
+  //modified by NIZNHY-PKV Wed Sep 10 14:06:07 2008t
+  //
+  aTX=0.25*(aLast - aFirst);
+  if(dt > aTX) {
     // to save direction of the curve as much as it possible
     // in the case of big tolerances
-    dt = (aLast - aFirst) * 0.25; 
+    dt = aTX; 
   }
   //
   if (fabs (aTV-aFirst) < fabs(aTV - aLast)) {
@@ -816,27 +820,22 @@ static
   else {
     aTV1=aTV - dt;
   }
-  
-  gp_Pnt2d aPV, aPV1;
+  //
   aC2D->D0 (aTV, aPV);
   aC2D->D0 (aTV1, aPV1);
-  
-  gp_Vec2d aV2D;
   //
   if (aFlag) {//IN
     gp_Vec2d aV2DIn(aPV1, aPV);
-    //
     aV2D=aV2DIn;
   }
-
   else {
     gp_Vec2d aV2DOut(aPV, aPV1);
     aV2D=aV2DOut;
   }
-
+  //
   gp_Dir2d aDir2D(aV2D);
   anAngle=Angle(aDir2D);
-
+  //
   return anAngle;
 }
 //=======================================================================

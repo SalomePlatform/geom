@@ -2,6 +2,43 @@
 
 \page geompy_page Python Interface geompy.py
 
-\n Please, see \ref geompyDC::geompyDC "documentation for geompy.py"
+\n Please, see
+<a href="geompy_doc/modules.html">structured documentation for geompy.py</a>,
+where all package functionality is separated in groups by purpose.
+
+\n Also you can find any function in the \ref geompy
+"linear documentation for geompy.py".
+
+By the links below you can find sample scripts for all operations
+provided by Geometry module.
+
+<ul>
+  <li>\subpage tui_viewing_geom_objs_page</li>
+  <li>\subpage tui_creating_geom_objs_page</li>
+  <ul>
+    <li>\ref tui_basic_geom_objs_page</li>
+    <li>\ref tui_primitives_page</li>
+    <li>\ref tui_complex_objs_page</li>
+    <li>\ref tui_working_with_groups_page</li>
+    <li>\ref tui_building_by_blocks_page</li>
+    <li>\ref tui_sketcher_page</li>
+    <li>\ref tui_advanced_geom_objs_page</li>
+  </ul>
+  <li>\subpage tui_transformation_page</li>
+  <ul>
+    <li>\ref tui_basic_operations_page</li>
+    <li>\ref tui_boolean_operations_page</li>
+    <li>\ref tui_transformation_operations_page</li>
+    <li>\ref tui_blocks_operations_page</li>
+    <li>\ref tui_repairing_operations_page</li>
+  </ul>
+  <li>\subpage tui_measurement_tools_page</li>
+  <li>\subpage tui_swig_examples_page</li>
+  <ul>
+    <li>\ref tui_test_others_page</li>
+    <li>\ref tui_test_spanner_page</li>
+    <li>\ref tui_test_all_page</li>
+  </ul>
+</ul>
 
 */

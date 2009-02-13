@@ -1,25 +1,26 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //NOTE: This is an intreface to a function for the Translate creation.
-
-
+//
 #include "GEOM_Function.hxx"
 
 #define TRANSLATE_ARG_POINT1   1  
@@ -33,7 +34,8 @@
 #define TRANSLATE_ARG_VECTOR2  11
 #define TRANSLATE_ARG_DX  12
 #define TRANSLATE_ARG_DY  13  
-#define TRANSLATE_ARG_DZ  14  
+#define TRANSLATE_ARG_DZ  14
+#define TRANSLATE_ARG_DISTANCE 15    
 
 class GEOMImpl_ITranslate
 {
@@ -80,6 +82,10 @@ class GEOMImpl_ITranslate
   void SetDX(double theDX) { return _func->SetReal(TRANSLATE_ARG_DX, theDX); }
 
   double GetDX() { return _func->GetReal(TRANSLATE_ARG_DX); }
+
+  void SetDistance(double theDistance) { return _func->SetReal(TRANSLATE_ARG_DISTANCE, theDistance); }
+
+  double GetDistance() { return _func->GetReal(TRANSLATE_ARG_DISTANCE); }
 
   void SetDY(double theDY) { return _func->SetReal(TRANSLATE_ARG_DY, theDY); }
 

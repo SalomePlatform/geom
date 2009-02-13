@@ -1,6 +1,7 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  CEA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -16,90 +17,74 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BlocksGUI_ExplodeDlg.h
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
 //
-//
-//  File   : BlocksGUI_ExplodeDlg.h
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
+#ifndef BLOCKSGUI_EXPLODEDLG_H
+#define BLOCKSGUI_EXPLODEDLG_H
 
-#ifndef DIALOGBOX_BLOCK_EXPLODE_H
-#define DIALOGBOX_BLOCK_EXPLODE_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOM_BlocksGUI.hxx"
-
-#include "GEOMBase_Skeleton.h"
-
-class DlgRef_SpinBox;
-class QTextEdit;
-class QCheckBox;
+class DlgRef_1Sel2Spin1View1Check;
 
 //=================================================================================
 // class    : BlocksGUI_ExplodeDlg
 // purpose  :
 //=================================================================================
-class GEOM_BLOCKSGUI_EXPORT BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
+class BlocksGUI_ExplodeDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
 public:
-  BlocksGUI_ExplodeDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
+  BlocksGUI_ExplodeDlg( GeometryGUI*, QWidget* );
   ~BlocksGUI_ExplodeDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid (QString& msg);
-  virtual bool                       execute (ObjectList& objects);
-  virtual GEOM::GEOM_Object_ptr      getFather(GEOM::GEOM_Object_ptr theObj);
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
+  virtual GEOM::GEOM_Object_ptr      getFather( GEOM::GEOM_Object_ptr );
 
-  virtual const char*                getNewObjectName() const; 
-
-private:
-  void Init();
-  void enterEvent (QEvent* e);
-
-  void activateSelection();
-
-  void updateButtonState();
-  bool isAllSubShapes() const;
-  int  shapeType() const;
-
-  void clearTemporary();
+  virtual QString                    getNewObjectName() const; 
 
 private:
-  int                        myConstructorId;
+  void                               Init();
+  void                               enterEvent( QEvent* );
 
-  CORBA::Long                myNbBlocks;
-  GEOM::GEOM_Object_var      myObject;
+  void                               activateSelection();
 
-  ObjectList                 myTmpObjs;
+  void                               updateButtonState();
+  bool                               isAllSubShapes() const;
+  int                                shapeType() const;
 
-  QFrame*                    myGrp1;
+  void                               clearTemporary();
 
-  QPushButton*               mySelBtn;
-  QLineEdit*                 mySelName;
+private:
+  int                                myConstructorId;
 
-  DlgRef_SpinBox*            mySpinBoxMin;
-  DlgRef_SpinBox*            mySpinBoxMax;
+  CORBA::Long                        myNbBlocks;
+  GEOM::GEOM_Object_var              myObject;
 
-  QTextEdit*                 myBlocksNb;
+  ObjectList                         myTmpObjs;
 
-  QCheckBox*                 myCheckBtn;
+  DlgRef_1Sel2Spin1View1Check*       myGrp1;
 
 private slots:
-  void ClickOnOk();
-  bool ClickOnApply();
-  void ActivateThisDialog();
-  void ConstructorsClicked (int constructorId);
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               ConstructorsClicked( int );
 
-  void SelectionIntoArgument();
-  void SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 
-  void SubShapeToggled();
+  void                               SubShapeToggled();
 
-  void ValueChangedInSpinBox (double newValue);
+  void                               ValueChangedInSpinBox();
 };
 
-#endif // DIALOGBOX_BLOCK_EXPLODE_H
+#endif // BLOCKSGUI_EXPLODEDLG_H

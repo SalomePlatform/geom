@@ -29,6 +29,17 @@ Point, End Point, boolean Sense)</em>
 
 \image html arc2.png
 
+Finally, it is possible to create an <b>Arc of Ellipse</b>, which is also done by three points: 
+the Arguments <b>Point 1</b>, <b>Point 2</b> and the <b>Center Point</b>. The arc is built on the Ellipse that 
+lies in the plane defined by the three points, with the center in the <b>Center point</b>. 
+The major radius of the Ellipse is defined by the distance between the <b>Center Point</b> and 
+the most remote Argument point. The minor radius is defined by the shortest distance between the 
+other Argument point and the major radius.
+\n <b>TUI Command:</b> <em>geompy.MakeArcOfEllipse(Center Point, First Point, Second Point)</em>
+\n <b>Arguments:</b> Name + 3 vertices.
+
+\image html arcofellipse2.png
+
 \n <b>Examples:</b>
 
 \image html arcsn.png
@@ -40,4 +51,10 @@ Point, End Point, boolean Sense)</em>
 \image html arcsn2.png
 <center>Reversed arc.</center>
 
+\image html arcofellipse1.png
+<center>Arc Of Ellipse.</center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_arc "Basic Geometric Objects".
 */
+

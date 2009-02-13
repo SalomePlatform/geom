@@ -1,0 +1,180 @@
+<ui version="4.0" >
+ <class>MeasureGUI_1Sel6LineEdit_QTD</class>
+ <widget class="QWidget" name="MeasureGUI_1Sel6LineEdit_QTD" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>196</width>
+    <height>160</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string/>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <property name="horizontalSpacing" >
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing" >
+    <number>6</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="GroupBox1" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <property name="horizontalSpacing" >
+       <number>6</number>
+      </property>
+      <property name="verticalSpacing" >
+       <number>6</number>
+      </property>
+      <item row="1" column="0" colspan="3" >
+       <layout class="QGridLayout" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <property name="horizontalSpacing" >
+         <number>6</number>
+        </property>
+        <property name="verticalSpacing" >
+         <number>6</number>
+        </property>
+        <item row="1" column="1" >
+         <widget class="QLineEdit" name="LineEdit11" />
+        </item>
+        <item row="2" column="2" >
+         <widget class="QLineEdit" name="LineEdit22" />
+        </item>
+        <item row="0" column="1" >
+         <widget class="QLabel" name="TextLabel2" >
+          <property name="text" >
+           <string>TL2</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QLineEdit" name="LineEdit21" />
+        </item>
+        <item row="1" column="2" >
+         <widget class="QLineEdit" name="LineEdit12" />
+        </item>
+        <item row="3" column="2" >
+         <widget class="QLineEdit" name="LineEdit32" />
+        </item>
+        <item row="1" column="0" >
+         <widget class="QLabel" name="TextLabel4" >
+          <property name="text" >
+           <string>TL4</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QLabel" name="TextLabel3" >
+          <property name="text" >
+           <string>TL3</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0" >
+         <widget class="QLabel" name="TextLabel6" >
+          <property name="text" >
+           <string>TL6</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="QLabel" name="TextLabel5" >
+          <property name="text" >
+           <string>TL5</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1" >
+         <widget class="QLineEdit" name="LineEdit31" />
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QPushButton" name="PushButton1" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="TextLabel1" >
+        <property name="text" >
+         <string>TL1</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QLineEdit" name="LineEdit1" >
+        <property name="minimumSize" >
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>PushButton1</tabstop>
+  <tabstop>LineEdit1</tabstop>
+  <tabstop>LineEdit11</tabstop>
+  <tabstop>LineEdit12</tabstop>
+  <tabstop>LineEdit21</tabstop>
+  <tabstop>LineEdit22</tabstop>
+  <tabstop>LineEdit31</tabstop>
+  <tabstop>LineEdit32</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

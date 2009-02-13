@@ -1,25 +1,29 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ICurvesOperations.hxx>
+
+#include <TColStd_HArray1OfReal.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
@@ -32,6 +36,7 @@
 #include <GEOMImpl_EllipseDriver.hxx>
 #include <GEOMImpl_ArcDriver.hxx>
 #include <GEOMImpl_SketcherDriver.hxx>
+#include <GEOMImpl_3DSketcherDriver.hxx>
 
 #include <GEOMImpl_IPolyline.hxx>
 #include <GEOMImpl_ICircle.hxx>
@@ -39,6 +44,7 @@
 #include <GEOMImpl_IEllipse.hxx>
 #include <GEOMImpl_IArc.hxx>
 #include <GEOMImpl_ISketcher.hxx>
+#include <GEOMImpl_I3DSketcher.hxx>
 
 #include "utilities.h"
 
@@ -266,7 +272,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 {
   SetErrorCode(KO);
 
-  if (thePnt.IsNull() || theVec.IsNull()) return NULL;
+  // Not set thePnt means origin of global CS,
+  // Not set theVec means Z axis of global CS
+  //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Circle object
   Handle(GEOM_Object) aCircle = GetEngine()->AddObject(GetDocID(), GEOM_CIRCLE);
@@ -281,13 +289,18 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   GEOMImpl_ICircle aCI (aFunction);
 
-  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
-  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+  if (!thePnt.IsNull()) {
+    Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+    if (aRefPnt.IsNull()) return NULL;
+    aCI.SetCenter(aRefPnt);
+  }
 
-  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+  if (!theVec.IsNull()) {
+    Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+    if (aRefVec.IsNull()) return NULL;
+    aCI.SetVector(aRefVec);
+  }
 
-  aCI.SetCenter(aRefPnt);
-  aCI.SetVector(aRefVec);
   aCI.SetRadius(theR);
 
   //Compute the Circle value
@@ -325,7 +338,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 {
   SetErrorCode(KO);
 
-  if (thePnt.IsNull() || theVec.IsNull()) return NULL;
+  // Not set thePnt means origin of global CS,
+  // Not set theVec means Z axis of global CS
+  //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Ellipse object
   Handle(GEOM_Object) anEll = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE);
@@ -340,13 +355,18 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   GEOMImpl_IEllipse aCI (aFunction);
 
-  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
-  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+  if (!thePnt.IsNull()) {
+    Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+    if (aRefPnt.IsNull()) return NULL;
+    aCI.SetCenter(aRefPnt);
+  }
 
-  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+  if (!theVec.IsNull()) {
+    Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+    if (aRefVec.IsNull()) return NULL;
+    aCI.SetVector(aRefVec);
+  }
 
-  aCI.SetCenter(aRefPnt);
-  aCI.SetVector(aRefVec);
   aCI.SetRMajor(theRMajor);
   aCI.SetRMinor(theRMinor);
 
@@ -497,6 +517,67 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
 
 //=============================================================================
 /*!
+ *  MakeArcOfEllipse
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Object) thePnt1,
+								  Handle(GEOM_Object) thePnt2,
+								  Handle(GEOM_Object) thePnt3)
+{
+  SetErrorCode(KO);
+
+  if (thePnt1.IsNull() || thePnt2.IsNull() || thePnt3.IsNull()) return NULL;
+
+  //Add a new Circle Arc object
+  Handle(GEOM_Object) anArc = GetEngine()->AddObject(GetDocID(), GEOM_ELLIPSE_ARC);
+
+  //Add a new Circle Arc function
+  Handle(GEOM_Function) aFunction =
+      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), ELLIPSE_ARC_CENTER_TWO_PNT);
+
+  if (aFunction.IsNull()) return NULL;
+  
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ArcDriver::GetID()) return NULL;
+  GEOMImpl_IArc aCI (aFunction);
+
+  Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
+  Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
+  
+
+  if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
+
+  aCI.SetPoint1(aRefPnt1);
+  aCI.SetPoint2(aRefPnt2);
+  aCI.SetPoint3(aRefPnt3);
+  
+  //Compute the Arc value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Arc driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << anArc << " = geompy.MakeArcOfEllipse("
+    << thePnt1 << ", " << thePnt2 << ", " << thePnt3 << ")";
+
+  SetErrorCode(OK);
+  return anArc;
+}
+
+//=============================================================================
+/*!
  *  MakeSplineBezier
  */
 //=============================================================================
@@ -634,13 +715,12 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
  *  MakeSketcher
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
-                               (const TCollection_AsciiString& theCommand,
-                                list<double>                   theWorkingPlane)
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCommand,
+							      list<double> theWorkingPlane)
 {
   SetErrorCode(KO);
 
-  if (theCommand.IsEmpty()) return NULL;
+  if (!theCommand || strcmp(theCommand, "") == 0) return NULL;
 
   //Add a new Sketcher object
   Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
@@ -655,7 +735,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
 
   GEOMImpl_ISketcher aCI (aFunction);
 
-  aCI.SetCommand(theCommand);
+  TCollection_AsciiString aCommand((char*) theCommand);
+  aCI.SetCommand(aCommand);
 
   int ind = 1;
   list<double>::iterator it = theWorkingPlane.begin();
@@ -680,7 +761,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aSketcher << " = geompy.MakeSketcher(\"" << theCommand.ToCString() << "\", [";
+  pd << aSketcher << " = geompy.MakeSketcher(\"" << aCommand.ToCString() << "\", [";
 
   it = theWorkingPlane.begin();
   pd << (*it++);
@@ -695,16 +776,83 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher
 
 //=============================================================================
 /*!
+ *  Make3DSketcher
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (list<double> theCoordinates)
+{
+  SetErrorCode(KO);
+
+  //Add a new Sketcher object
+  Handle(GEOM_Object) a3DSketcher = GetEngine()->AddObject(GetDocID(), GEOM_3DSKETCHER);
+
+  //Add a new Sketcher function
+  Handle(GEOM_Function) aFunction =
+    a3DSketcher->AddFunction(GEOMImpl_3DSketcherDriver::GetID(), GEOM_3DSKETCHER);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_3DSketcherDriver::GetID()) return NULL;
+
+  GEOMImpl_I3DSketcher aCI (aFunction);
+
+  int nbOfCoords = 0;
+  list<double>::iterator it = theCoordinates.begin();
+  for (; it != theCoordinates.end(); it++)
+    nbOfCoords++;
+
+  Handle(TColStd_HArray1OfReal) aCoordsArray = new TColStd_HArray1OfReal (1, nbOfCoords);
+
+  it = theCoordinates.begin();
+  int ind = 1;
+  for (; it != theCoordinates.end(); it++, ind++)
+    aCoordsArray->SetValue(ind, *it);
+
+  aCI.SetCoordinates(aCoordsArray);
+    
+  //Compute the Sketcher value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("3D Sketcher driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << a3DSketcher << " = geompy.Make3DSketcher([";
+
+  it = theCoordinates.begin();
+  pd << (*it++);
+  while (it != theCoordinates.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return a3DSketcher;
+}
+
+//=============================================================================
+/*!
  *  MakeSketcherOnPlane
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
-                               (const TCollection_AsciiString& theCommand,
+                               (const char* theCommand,
                                 Handle(GEOM_Object)            theWorkingPlane)
 {
   SetErrorCode(KO);
 
-  if (theCommand.IsEmpty()) return NULL;
+  if (!theCommand || strcmp(theCommand, "") == 0) return NULL;
 
   //Add a new Sketcher object
   Handle(GEOM_Object) aSketcher = GetEngine()->AddObject(GetDocID(), GEOM_SKETCHER);
@@ -718,7 +866,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
   if (aFunction->GetDriverGUID() != GEOMImpl_SketcherDriver::GetID()) return NULL;
 
   GEOMImpl_ISketcher aCI (aFunction);
-  aCI.SetCommand(theCommand);
+
+  TCollection_AsciiString aCommand((char*) theCommand);
+  aCI.SetCommand(aCommand);
 
   Handle(GEOM_Function) aRefPlane = theWorkingPlane->GetLastFunction();
   if (aRefPlane.IsNull()) return NULL;
@@ -742,7 +892,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   //Make a Python command
   GEOM::TPythonDump (aFunction) << aSketcher << " = geompy.MakeSketcherOnPlane(\""
-    << theCommand.ToCString() << "\", " << theWorkingPlane << " )";
+    << aCommand.ToCString() << "\", " << theWorkingPlane << " )";
 
   SetErrorCode(OK);
   return aSketcher;

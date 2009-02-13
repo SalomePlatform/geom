@@ -1,6 +1,7 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  CEA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -16,28 +17,29 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BlocksGUI_TrsfDlg.h
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
 //
-//
-//  File   : BlocksGUI_TrsfDlg.h
-//  Author : Julia DOROVSKIKH
-//  Module : GEOM
+#ifndef BLOCKSGUI_TRSFDLG_H
+#define BLOCKSGUI_TRSFDLG_H
 
-#ifndef DIALOGBOX_BLOCK_MULTITRSF_H
-#define DIALOGBOX_BLOCK_MULTITRSF_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOM_BlocksGUI.hxx"
+#include <QMap>
 
-#include "GEOMBase_Skeleton.h"
-
-class DlgRef_SpinBox;
+class SalomeApp_DoubleSpinBox;
+class QGroupBox;
+class QPushButton;
+class QLineEdit;
 
 //=================================================================================
 // class    : BlocksGUI_TrsfDlg
 // purpose  :
 //=================================================================================
-class GEOM_BLOCKSGUI_EXPORT BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
+class BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
@@ -45,46 +47,50 @@ class GEOM_BLOCKSGUI_EXPORT BlocksGUI_TrsfDlg : public GEOMBase_Skeleton
   enum { SpinBox1, SpinBox2U, SpinBox2V };
 
 public:
-  BlocksGUI_TrsfDlg (GeometryGUI*, QWidget* parent, bool modal = FALSE);
+  BlocksGUI_TrsfDlg (GeometryGUI*, QWidget*);
   ~BlocksGUI_TrsfDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid (QString& msg);
-  virtual bool                       execute (ObjectList& objects);
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
 
 private:
-  void Init();
-  void enterEvent (QEvent* e);
+  void                               Init();
+  void                               enterEvent(QEvent*);
 
-  void createSelWg (const QString&, QPixmap&, QWidget*, const int);
-  void activateSelection();
-  void enableWidgets();
+  void                               createSelWg (const QString&, QPixmap&, QWidget*, const int);
+  void                               createSpinWg (const QString&, QWidget*, const int);
+  void                               activateSelection();
+  void                               enableWidgets();
 
 private:
-  int                        myConstructorId;
+  int                                myConstructorId;
 
-  GEOM::GEOM_Object_var      myShape;
-  QMap<int, int>             myFaces;
+  GEOM::GEOM_Object_var              myShape;
+  QMap<int, int>                     myFaces;
 
-  QFrame*                    myGrp1;
-  QFrame*                    myGrp2;
+  // to initialize the first selection field with a selected object on the dialog creation
+  bool                               myInitial;
 
-  QMap<int, QPushButton*>    mySelBtn;
-  QMap<int, QLineEdit*>      mySelName;
-  QMap<int, DlgRef_SpinBox*> mySpinBox;
+  QGroupBox*                         myGrp1;
+  QGroupBox*                         myGrp2;
+
+  QMap<int, QPushButton*>            mySelBtn;
+  QMap<int, QLineEdit*>              mySelName;
+  QMap<int, SalomeApp_DoubleSpinBox*> mySpinBox;
 
 private slots:
-  void ClickOnOk();
-  bool ClickOnApply();
-  void ActivateThisDialog();
-  void ConstructorsClicked (int constructorId);
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  void                               ActivateThisDialog();
+  void                               ConstructorsClicked (int);
 
-  void SelectionIntoArgument();
-  void SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
 
-  void ValueChangedInSpinBox (double newValue);
+  void                               ValueChangedInSpinBox (int);
 };
 
-#endif // DIALOGBOX_BLOCK_MULTITRSF_H
+#endif // BLOCKSGUI_TRSFDLG_H

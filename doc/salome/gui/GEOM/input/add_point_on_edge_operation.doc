@@ -26,9 +26,9 @@ the point according to one of the selected modes.
 
 \n <b>Example:</b>
 
-\image html image167.jpg
+\image html image167.jpg "The initial edge"
 
-\image html image168.jpg
+\image html image168.jpg "The edge split in two segments" 
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_add_point_on_edge "Repairing Operations".

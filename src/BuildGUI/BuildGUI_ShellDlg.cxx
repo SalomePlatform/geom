@@ -1,41 +1,42 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : BuildGUI_ShellDlg.cxx
-//  Author : Damien COQUERET
-//  Module : GEOM
-//  $Header$
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : BuildGUI_ShellDlg.cxx
+// Author : Damien COQUERET, Open CASCADE S.A.S.
+//
 #include "BuildGUI_ShellDlg.h"
-#include "GEOMImpl_Types.hxx"
 
-#include "SUIT_Session.h"
-#include "SalomeApp_Application.h"
-#include "LightApp_SelectionMgr.h"
+#include <DlgRef.h>
+#include <GeometryGUI.h>
+#include <GEOMBase.h>
 
-#include "TColStd_MapOfInteger.hxx"
+#include <GEOMImpl_Types.hxx>
 
-#include <qlabel.h>
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SalomeApp_Application.h>
+#include <LightApp_SelectionMgr.h>
+
+#include <TColStd_MapOfInteger.hxx>
 
 //=================================================================================
 // class    : BuildGUI_ShellDlg()
@@ -44,29 +45,32 @@
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-BuildGUI_ShellDlg::BuildGUI_ShellDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
-                                     const char* name, bool modal, WFlags fl)
-  :GEOMBase_Skeleton(theGeometryGUI, parent, name, modal, WStyle_Customize |
-                     WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu)
+BuildGUI_ShellDlg::BuildGUI_ShellDlg( GeometryGUI* theGeometryGUI, QWidget* parent )
+  : GEOMBase_Skeleton( theGeometryGUI, parent )
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_SHELL")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_BUILD_SHELL" ) ) );
+  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
-  setCaption(tr("GEOM_SHELL_TITLE"));
+  setWindowTitle( tr( "GEOM_SHELL_TITLE" ) );
     
   /***************************************************************/
-  GroupConstructors->setTitle(tr("GEOM_SHELL"));
-  RadioButton1->setPixmap(image0);
-  RadioButton2->close(TRUE);
-  RadioButton3->close(TRUE);
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_SHELL" ) );
+  mainFrame()->RadioButton1->setIcon( image0 );
+  mainFrame()->RadioButton2->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
+  mainFrame()->RadioButton3->close();
 
-  GroupShell = new DlgRef_1Sel_QTD(this, "GroupShell");
-  GroupShell->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupShell->TextLabel1->setText(tr("GEOM_OBJECTS"));
-  GroupShell->PushButton1->setPixmap(image1);
+  GroupShell = new DlgRef_1Sel( centralWidget() );
+
+  GroupShell->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
+  GroupShell->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupShell->PushButton1->setIcon( image1 );
   GroupShell->LineEdit1->setReadOnly( true );
   
-  Layout1->addWidget(GroupShell, 2, 0);
+  QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  layout->setMargin( 0 ); layout->setSpacing( 6 );
+  layout->addWidget( GroupShell );
   /***************************************************************/
 
   setHelpFileName("create_shell_page.html");
@@ -99,20 +103,25 @@ void BuildGUI_ShellDlg::Init()
   myOkFacesAndShells = false;
   
   TColStd_MapOfInteger aMap;
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_FACE);
-  globalSelection( aMap );
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_FACE );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_FACE );
+  globalSelection( aMap, aSubShapes );
+  
 
   /* signals and slots connections */
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
-  connect(buttonApply, SIGNAL(clicked()), this, SLOT(ClickOnApply()));
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect(GroupShell->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect( GroupShell->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  initName(tr("GEOM_SHELL"));
+  initName( tr( "GEOM_SHELL" ) );
 }
 
 
@@ -150,14 +159,18 @@ void BuildGUI_ShellDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText( "" );
   QString aString;
 
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
   myOkFacesAndShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects( selectedIO(), aString, true );
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
   if ( nbSel == 0 )
     return;
   if ( nbSel != 1 )
     aString = QString( "%1_objects ").arg( nbSel );
 
-  GEOMBase::ConvertListOfIOInListOfGO( selectedIO(),  myFacesAndShells, true );
+  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myFacesAndShells, true);
   if ( !myFacesAndShells.length() )
     return;
 
@@ -173,13 +186,18 @@ void BuildGUI_ShellDlg::SelectionIntoArgument()
 void BuildGUI_ShellDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if (send != GroupShell->PushButton1)
+  if ( send != GroupShell->PushButton1 )
     return;
 
   TColStd_MapOfInteger aMap;
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_FACE);
-  globalSelection( aMap );
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_FACE );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_FACE );
+  globalSelection( aMap, aSubShapes );
+  
   myEditCurrentArgument = GroupShell->LineEdit1;
 
   myEditCurrentArgument->setFocus();
@@ -194,12 +212,16 @@ void BuildGUI_ShellDlg::SetEditCurrentArgument()
 void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(), 
-	  SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument())) ;
+  connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
+	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   TColStd_MapOfInteger aMap;
-  aMap.Add(GEOM_SHELL);
-  aMap.Add(GEOM_FACE);
-  globalSelection( aMap );
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_FACE );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_FACE );
+  globalSelection( aMap, aSubShapes );
 }
 
 
@@ -207,9 +229,9 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void BuildGUI_ShellDlg::enterEvent(QEvent* e)
+void BuildGUI_ShellDlg::enterEvent( QEvent* )
 {
-  if ( !GroupConstructors->isEnabled() )
+  if ( !mainFrame()->GroupConstructors->isEnabled() )
     ActivateThisDialog();
 }
 

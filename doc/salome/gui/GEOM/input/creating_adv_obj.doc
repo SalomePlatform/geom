@@ -2,8 +2,10 @@
 
 \page create_adv_obj_page Creating Advanced Geometrical Objects
 
+<b>New Entity -> Build </b> submenu allows to create topological
+entities: 
+
 <ul>
-<li>\subpage create_explode_page</li>
 <li>\subpage create_edge_page</li>
 <li>\subpage create_wire_page</li>
 <li>\subpage create_face_page</li>

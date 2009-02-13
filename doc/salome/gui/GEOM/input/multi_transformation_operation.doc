@@ -22,7 +22,7 @@ integer (number of blocks).
 
 \image html mtransf1.png
 
-\image html multi_transformationsn1d.png
+\image html multi_transformationsn1d.png "Single Multi-transformation on a box"
 
 <br><h2>Double Multi Transformation (in two directions)</h2>
 
@@ -38,7 +38,7 @@ integers (number of blocks).
 
 \image html mtransf2.png
 
-\image html multi_transformationsn2d.png
+\image html multi_transformationsn2d.png "Double Multi-transformation on a box"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_multi_transformation "Blocks Operations".

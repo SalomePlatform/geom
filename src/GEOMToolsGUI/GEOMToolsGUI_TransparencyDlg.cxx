@@ -1,48 +1,43 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : GEOMBase_TransparencyDlg.cxx
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
-
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOMToolsGUI_TransparencyDlg.cxx
+// Author : Lucien PIGNOLONI
+//
 #include "GEOMToolsGUI_TransparencyDlg.h"
-#include "GEOMBase.h"
-#include "GEOM_AISShape.hxx"
-#include "GeometryGUI.h"
+#include <GEOMBase.h>
+#include <GEOM_AISShape.hxx>
+#include <GeometryGUI.h>
 
-#include "SALOME_ListIO.hxx"
-#include "SALOME_ListIteratorOfListIO.hxx"
+#include <SALOME_ListIO.hxx>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SVTK_ViewModel.h>
 #include <SVTK_ViewWindow.h>
 #include <SVTK_View.h>
 
 #include <OCCViewer_ViewModel.h>
-#include <OCCViewer_ViewWindow.h>
 
 #include <SUIT_ViewManager.h>
-#include <SUIT_Application.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -53,18 +48,17 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <qframe.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qslider.h>
-#include <qlayout.h>
-#include <qvariant.h>
-#include <qtooltip.h>
-#include <qwhatsthis.h>
-#include <qapplication.h>
-#include <qgroupbox.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QSlider>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGroupBox>
+#include <QKeyEvent>
 
 #include <AIS_InteractiveContext.hxx>
+
 using namespace std;
 
 //=================================================================================
@@ -76,82 +70,92 @@ using namespace std;
 //
 //=================================================================================
 GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
-  :QDialog( parent, "GEOMBase_TransparencyDlg", true, WStyle_Customize | WStyle_NormalBorder | WStyle_Title | WStyle_SysMenu )
+  :QDialog( parent, Qt::WindowTitleHint | Qt::WindowSystemMenuHint )
 {
+  setModal( true );
+  
   resize(152, 107); 
-  setCaption(tr("GEOM_TRANSPARENCY_TITLE"));
-  setSizeGripEnabled(TRUE);
-  QGridLayout* lay = new QGridLayout(this); 
+  setWindowTitle(tr("GEOM_TRANSPARENCY_TITLE"));
+  setSizeGripEnabled(true);
+  QVBoxLayout* lay = new QVBoxLayout(this); 
   lay->setSpacing(6);
   lay->setMargin(11);
-
+  
   /*************************************************************************/
-  QGroupBox* GroupButtons = new QGroupBox( this, "GroupButtons" );
-  GroupButtons->setColumnLayout(0, Qt::Vertical );
-  GroupButtons->layout()->setSpacing( 0 );
-  GroupButtons->layout()->setMargin( 0 );
-  QGridLayout* GroupButtonsLayout = new QGridLayout( GroupButtons->layout() );
+  QGroupBox* GroupButtons = new QGroupBox( this );
+  QHBoxLayout* GroupButtonsLayout = new QHBoxLayout( GroupButtons );
   GroupButtonsLayout->setAlignment( Qt::AlignTop );
   GroupButtonsLayout->setSpacing( 6 );
   GroupButtonsLayout->setMargin( 11 );
   
-  QPushButton* buttonOk = new QPushButton( GroupButtons, "buttonOk" );
-  buttonOk->setText( tr( "GEOM_BUT_OK" ) );
-  buttonOk->setAutoDefault( TRUE );
-  buttonOk->setDefault( TRUE );
-
-  QPushButton* buttonHelp = new QPushButton( GroupButtons, "buttonHelp" );
-  buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
-  buttonHelp->setAutoDefault( TRUE );
-  buttonHelp->setDefault( TRUE );
-  
-  GroupButtonsLayout->addWidget( buttonOk, 0, 0 );
-  GroupButtonsLayout->addItem( new QSpacerItem( 0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum), 0, 1 );
-  GroupButtonsLayout->addWidget( buttonHelp, 0, 2 );
-
   /*************************************************************************/
-  QGroupBox* GroupC1 = new QGroupBox( this, "GroupC1" );
-  GroupC1->setColumnLayout(0, Qt::Vertical );
-  GroupC1->layout()->setSpacing( 0 );
-  GroupC1->layout()->setMargin( 0 );
-  QGridLayout* GroupC1Layout = new QGridLayout( GroupC1->layout() );
+  QGroupBox* GroupC1 = new QGroupBox( this );
+  QGridLayout* GroupC1Layout = new QGridLayout( GroupC1 );
   GroupC1Layout->setAlignment( Qt::AlignTop );
   GroupC1Layout->setSpacing( 6 );
   GroupC1Layout->setMargin( 11 );
   
-  QLabel* TextLabelOpaque = new QLabel( GroupC1, "TextLabelOpaque" );
-  TextLabelOpaque->setText( tr( "GEOM_TRANSPARENCY_OPAQUE"  ) );
-  TextLabelOpaque->setAlignment( int( QLabel::AlignLeft ) );
-  GroupC1Layout->addWidget( TextLabelOpaque, 0, 0 );
-  GroupC1Layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ), 0, 1 );
+  QLabel* TextLabelTransparent = new QLabel( tr( "GEOM_TRANSPARENCY_TRANSPARENT" ), GroupC1 );
+  TextLabelTransparent->setAlignment( Qt::AlignRight );
+  GroupC1Layout->addWidget( TextLabelTransparent, 0, 0 );
   
-  QLabel* TextLabelTransparent = new QLabel( GroupC1, "TextLabelTransparent" );
-  TextLabelTransparent->setText( tr( "GEOM_TRANSPARENCY_TRANSPARENT"  ) );
-  TextLabelTransparent->setAlignment( int( QLabel::AlignRight ) );
-  GroupC1Layout->addWidget( TextLabelTransparent, 0, 2 );
+  myValueLab = new QLabel( GroupC1 );
+  myValueLab->setAlignment( Qt::AlignCenter );
+  myValueLab->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
+  QFont fnt = myValueLab->font(); fnt.setBold( true ); myValueLab->setFont( fnt );
+  GroupC1Layout->addWidget( myValueLab, 0, 1 );
+
+  QLabel* TextLabelOpaque = new QLabel( tr( "GEOM_TRANSPARENCY_OPAQUE" ), GroupC1 );
+  TextLabelOpaque->setAlignment( Qt::AlignLeft );
+  GroupC1Layout->addWidget( TextLabelOpaque, 0, 2 );
+  //GroupC1Layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ), 0, 1 );
   
-  mySlider = new QSlider( 0, 10, 1, 5, Horizontal, GroupC1, "mySlider" );
+  mySlider = new QSlider( Qt::Horizontal, GroupC1 );
+  mySlider->setFocusPolicy( Qt::NoFocus );
   mySlider->setMinimumSize( 300, 0 );
-  mySlider->setTickmarks( QSlider::Left );
-  GroupC1Layout->addMultiCellWidget( mySlider, 1, 1, 0, 2 );
+  mySlider->setTickPosition( QSlider::TicksAbove );
+  mySlider->setTickInterval( 10 );
+  mySlider->setMinimum( 0 );
+  mySlider->setMaximum( 100 );
+  mySlider->setSingleStep( 1 );
+  mySlider->setPageStep( 10 );
+  //mySlider->setValue( 5 );
+
+  mySlider->setTickPosition( QSlider::TicksLeft );
+  GroupC1Layout->addWidget( mySlider, 1, 0, 1, 3 );
+
   /*************************************************************************/
+  QPushButton* buttonOk = new QPushButton( tr( "GEOM_BUT_OK" ), GroupButtons );
+  buttonOk->setAutoDefault( true );
+  buttonOk->setDefault( true );
   
-  lay->addWidget(GroupC1, 0,  0);
-  lay->addWidget(GroupButtons, 1, 0);
+  QPushButton* buttonHelp = new QPushButton( tr( "GEOM_BUT_HELP" ), GroupButtons );
+  buttonHelp->setAutoDefault( true );
+  buttonHelp->setDefault( true );
+  
+  GroupButtonsLayout->addWidget( buttonOk );
+  GroupButtonsLayout->addSpacing( 10 );
+  GroupButtonsLayout->addStretch();
+  GroupButtonsLayout->addWidget( buttonHelp );
+  
+  /*************************************************************************/
+  lay->addWidget(GroupC1);
+  lay->addWidget(GroupButtons);
     
   /* First call valueChanged() method for initialisation               */
   /* The default value of transparency will change with the selection  */
   myFirstInit = true;
   //  mySlider->setMaxValue( 10 );
   //  mySlider->setValue( 5 ) ;
-  ValueHasChanged(mySlider->value());
+  SetTransparency();
   
   myHelpFileName = "transparency_page.html";
 
   // signals and slots connections : after ValueHasChanged()
-  connect(buttonOk, SIGNAL(clicked()), this, SLOT(ClickOnOk()));
+  connect(buttonOk,   SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonHelp, SIGNAL(clicked()), this, SLOT(ClickOnHelp()));
-  connect(mySlider, SIGNAL(valueChanged(int)), this, SLOT(ValueHasChanged(int)));
+  connect(mySlider,   SIGNAL(valueChanged(int)), this, SLOT(SetTransparency()));
+  connect(mySlider,   SIGNAL(sliderMoved(int)),  this, SLOT(ValueHasChanged()));
 }
 
 
@@ -204,20 +208,31 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
 #else
 		platform = "application";
 #endif
-    SUIT_MessageBox::warn1(0, QObject::tr("WRN_WARNING"),
-			   QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			   arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			   QObject::tr("BUT_OK"));
+    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
+			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+			     QObject::tr("BUT_OK"));
   }
 }
 
 //=================================================================================
 // function : ValueHasChanged()
 // purpose  : Called when value of slider change
+//=================================================================================
+void GEOMToolsGUI_TransparencyDlg::ValueHasChanged()
+{
+  myValueLab->setText( QString("%1%").arg( mySlider->value() ) );
+}
+
+//=================================================================================
+// function : SetTransparency()
+// purpose  : Called when value of slider change
 //          : or the first time as initilisation
 //=================================================================================
-void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
+void GEOMToolsGUI_TransparencyDlg::SetTransparency()
 {
+  float newValue = ( 100 - mySlider->value() ) / 100.;
+
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app )
     return;
@@ -244,14 +259,15 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
     SVTK_View* aView = vtkVW->getView();
     if ( myFirstInit ) {	
       myFirstInit = false;
-      float transp = (aView->GetTransparency(FirstIOS))*10.0;
-      mySlider->setValue(int(transp));
+      int transp = int (100 - ((aView->GetTransparency(FirstIOS))*100.0) + 0.5);
+      mySlider->setValue(transp);
+      ValueHasChanged();
       return;
     }
 
     SUIT_OverrideCursor();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      aView->SetTransparency( It.Value(), newValue/10.0 );
+      aView->SetTransparency( It.Value(), newValue );
     }
     aView->Repaint();
   } // if ( isVTK )
@@ -265,8 +281,9 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
       aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, found );
       if( !found )
 	return;
-      float transp = (int(aisShape->Transparency() * 10.0 + 0.001));
-      mySlider->setValue(int(transp));
+      int transp = int( 100 - ( aisShape->Transparency() * 100.0 ) + 0.5);
+      mySlider->setValue(transp);
+      ValueHasChanged();
       return;
     }
     
@@ -278,12 +295,14 @@ void GEOMToolsGUI_TransparencyDlg::ValueHasChanged( int newValue )
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), found );
       if ( found ) {
-	ic->SetTransparency( aisShape, newValue / 10.0, false );
+	ic->SetTransparency( aisShape, newValue, false );
 	ic->Redisplay( aisShape, Standard_False, Standard_True );
       }
     } // for...
     ic->UpdateCurrentViewer();
   } // if ( isOCC )
+
+  ValueHasChanged();
 }
 
 //=================================================================================
@@ -296,7 +315,7 @@ void GEOMToolsGUI_TransparencyDlg::keyPressEvent( QKeyEvent* e )
   if ( e->isAccepted() )
     return;
 
-  if ( e->key() == Key_F1 )
+  if ( e->key() == Qt::Key_F1 )
     {
       e->accept();
       ClickOnHelp();

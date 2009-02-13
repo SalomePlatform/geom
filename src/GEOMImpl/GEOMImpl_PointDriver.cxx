@@ -1,23 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PointDriver.hxx>
@@ -36,7 +37,11 @@
 #include <TopoDS_Vertex.hxx>
 
 #include <Geom_Curve.hxx>
+#include <Geom_Surface.hxx>
 #include <gp_Pnt.hxx>
+#include <TopoDS_Face.hxx>
+#include <ShapeAnalysis.hxx>
+
 
 //=======================================================================
 //function : GetID
@@ -57,6 +62,7 @@ GEOMImpl_PointDriver::GEOMImpl_PointDriver()
 {
 }
 
+
 //=======================================================================
 //function : Execute
 //purpose  :
@@ -74,7 +80,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   if (aType == POINT_XYZ) {
     aPnt = gp_Pnt(aPI.GetX(), aPI.GetY(), aPI.GetZ());
 
-  } else if (aType == POINT_XYZ_REF) {
+  }
+  else if (aType == POINT_XYZ_REF) {
 
     Handle(GEOM_Function) aRefPoint = aPI.GetRef();
     TopoDS_Shape aRefShape = aRefPoint->GetValue();
@@ -85,8 +92,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aRefShape));
     aPnt = gp_Pnt(P.X() + aPI.GetX(), P.Y() + aPI.GetY(), P.Z() + aPI.GetZ());
 
-  } else if (aType == POINT_CURVE_PAR) {
-
+  }
+  else if (aType == POINT_CURVE_PAR) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
@@ -97,8 +104,24 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), aFP, aLP);
     aP = aFP + (aLP - aFP) * aPI.GetParameter();
     aPnt = aCurve->Value(aP);
-
-  } else if (aType == POINT_LINES_INTERSECTION) {
+  }
+  else if (aType == POINT_SURFACE_PAR) {
+    Handle(GEOM_Function) aRefCurve = aPI.GetSurface();
+    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_FACE) {
+      Standard_TypeMismatch::Raise
+        ("Point On Surface creation aborted : surface shape is not a face");
+    }
+    TopoDS_Face F = TopoDS::Face(aRefShape);
+    Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+    Standard_Real U1,U2,V1,V2;
+    //aSurf->Bounds(U1,U2,V1,V2);
+    ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+    Standard_Real U = U1 + (U2-U1) * aPI.GetParameter();
+    Standard_Real V = V1 + (V2-V1) * aPI.GetParameter2();
+    aPnt = aSurf->Value(U,V);
+  }
+  else if (aType == POINT_LINES_INTERSECTION) {
     Handle(GEOM_Function) aRef1 = aPI.GetLine1();
     Handle(GEOM_Function) aRef2 = aPI.GetLine2();
 

@@ -1,6 +1,6 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
 //  This library is free software; you can redistribute it and/or
@@ -17,27 +17,20 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : RepairGUI_SewingDlg.h
+// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
 //
-//
-//  File   : RepairGUI_SewingDlg.h
-//  Author : Lucien PIGNOLONI
-//  Module : GEOM
+#ifndef REPAIRGUI_SEWINGDLG_H
+#define REPAIRGUI_SEWINGDLG_H
 
-#ifndef DIALOGBOX_Sewing_H
-#define DIALOGBOX_Sewing_H
+#include <GEOMBase_Skeleton.h>
 
-#include "GEOMBase_Skeleton.h"
-#include "DlgRef_1Sel_Ext.h"
-#include "QtxDblSpinBox.h"
-
-#include <TColStd_IndexedMapOfInteger.hxx>
-
-#include <qcheckbox.h>
-#include <qbuttongroup.h>
-#include <qlineedit.h>
-#include <qlabel.h>
+class DlgRef_1SelExt;
+class SalomeApp_DoubleSpinBox;
+class QPushButton;
 
 //=================================================================================
 // class    : RepairGUI_SewingDlg
@@ -45,45 +38,44 @@
 //=================================================================================
 class RepairGUI_SewingDlg : public GEOMBase_Skeleton
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    RepairGUI_SewingDlg(GeometryGUI* theGeometryGUI, QWidget* parent = 0,
-			const char* name = 0, bool modal = FALSE, WFlags fl = 0);
-    ~RepairGUI_SewingDlg();
+  RepairGUI_SewingDlg( GeometryGUI*, QWidget* = 0, bool = false );
+  ~RepairGUI_SewingDlg();
 
 protected:
-    // redefined from GEOMBase_Helper
-    virtual GEOM::GEOM_IOperations_ptr createOperation();
-    virtual bool isValid( QString& );
-    virtual bool execute( ObjectList& objects );
+  // redefined from GEOMBase_Helper
+  virtual GEOM::GEOM_IOperations_ptr createOperation();
+  virtual bool                       isValid( QString& );
+  virtual bool                       execute( ObjectList& );
+  
+private:
+  void                               Init();
+  void                               enterEvent( QEvent* );
+  void                               initSelection();
 
 private:
-    void Init();
-    void enterEvent(QEvent* e);
-    void closeEvent(QCloseEvent* e);
-    void initSelection();
+  GEOM::GEOM_Object_var              myObject;
 
-    GEOM::GEOM_Object_var myObject;
-
-    DlgRef_1Sel_Ext* GroupPoints;
-    QtxDblSpinBox*   myTolEdt;
-    QPushButton*     myFreeBoundBtn;
-
-    int myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().
-    int myOpen;   // Number of free open   boundaries detected. Calculated in execute(), used in onDetect().
-
+  DlgRef_1SelExt*                    GroupPoints;
+  SalomeApp_DoubleSpinBox*           myTolEdt;
+  QPushButton*                       myFreeBoundBtn;
+  
+  int                                myClosed; // Number of free closed boundaries detected. Calculated in execute(), used in onDetect().
+  int                                myOpen;   // Number of free open   boundaries detected. Calculated in execute(), used in onDetect().
+  
 private slots:
-    void ClickOnOk();
-    bool ClickOnApply();
-
-    void ActivateThisDialog();
-
-    void LineEditReturnPressed();
-    void SelectionIntoArgument();
-    void SetEditCurrentArgument();
-
-    void onDetect();
+  void                               ClickOnOk();
+  bool                               ClickOnApply();
+  
+  void                               ActivateThisDialog();
+  
+  void                               LineEditReturnPressed();
+  void                               SelectionIntoArgument();
+  void                               SetEditCurrentArgument();
+  
+  void                               onDetect();
 };
 
-#endif // DIALOGBOX_Sewing_H
+#endif // REPAIRGUI_SEWINGDLG_H

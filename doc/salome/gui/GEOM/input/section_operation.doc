@@ -10,14 +10,16 @@
 \n The \b Result will be any \b GEOM_Object (EDGE or WIRE).
 \n <b>TUI Command:</b> <em>geompy.MakeSection(s1, s2)</em>
 \n <b>Arguments:</b> Name + 2 shapes.
+\n <b>Advanced option:</b>
+   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html neo-section.png
 
 \n <b>Example:</b>
 
-\image html fusesn1.png
+\image html fusesn1.png "The initial shapes"
 
-\image html sectionsn.png
+\image html sectionsn.png "The resulting object"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_section "Boolean Operations".

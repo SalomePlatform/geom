@@ -1,0 +1,77 @@
+<ui version="4.0" >
+ <class>EntityGUI_Point_QTD</class>
+ <widget class="QWidget" name="EntityGUI_Point_QTD" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>97</width>
+    <height>100</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>EntityGUI_Point_QTD</string>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="GroupPoint" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>0</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title" >
+      <string>Point</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="RB_Point2" >
+        <property name="text" >
+         <string>Relative</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QRadioButton" name="RB_Point3" >
+        <property name="text" >
+         <string>Selection</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="RB_Point1" >
+        <property name="text" >
+         <string>Absolute</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>RB_Point1</tabstop>
+  <tabstop>RB_Point2</tabstop>
+  <tabstop>RB_Point3</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

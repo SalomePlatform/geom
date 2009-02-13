@@ -1,25 +1,24 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-
-using namespace std;
-
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ILocalOperations.hxx>
@@ -30,9 +29,11 @@ using namespace std;
 #include <GEOMImpl_Types.hxx>
 
 #include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_ChamferDriver.hxx>
 
 #include <GEOMImpl_IFillet.hxx>
+#include <GEOMImpl_IFillet2d.hxx>
 #include <GEOMImpl_IChamfer.hxx>
 
 #include <GEOMImpl_IArchimede.hxx>
@@ -138,7 +139,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletAll
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
-       (Handle(GEOM_Object) theShape, double theR, list<int> theEdges)
+       (Handle(GEOM_Object) theShape, double theR, std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -164,7 +165,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }
@@ -207,7 +208,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdges
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
-       (Handle(GEOM_Object) theShape, double theR1, double theR2, list<int> theEdges)
+       (Handle(GEOM_Object) theShape, double theR1, double theR2, std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -234,7 +235,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }
@@ -278,7 +279,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletEdgesR1R2
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
-       (Handle(GEOM_Object) theShape, double theR, list<int> theFaces)
+       (Handle(GEOM_Object) theShape, double theR, std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -304,7 +305,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -347,7 +348,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFaces
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
-       (Handle(GEOM_Object) theShape, double theR1, double theR2, list<int> theFaces)
+       (Handle(GEOM_Object) theShape, double theR1, double theR2, std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -374,7 +375,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -409,6 +410,75 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFilletFacesR1R2
 
   SetErrorCode(OK);
   return aFillet;
+}
+
+//=============================================================================
+/*!
+ *  MakeFillet2D
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
+       (Handle(GEOM_Object) theShape, double theR, std::list<int> theVertexes)
+{
+  SetErrorCode(KO);
+
+  //Add a new Fillet object
+  Handle(GEOM_Object) aFillet2D = GetEngine()->AddObject(GetDocID(), GEOM_FILLET_2D);
+
+  //Add a new Fillet function
+  Handle(GEOM_Function) aFunction =
+    aFillet2D->AddFunction(GEOMImpl_Fillet2dDriver::GetID(), FILLET_2D_SHAPE_VERTEXES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_Fillet2dDriver::GetID()) return NULL;
+
+  GEOMImpl_IFillet2d aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetShape(aRefShape);
+  aCI.SetR(theR);
+  int aLen = theVertexes.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  std::list<int>::iterator it = theVertexes.begin();
+  for (; it != theVertexes.end(); it++, ind++) {
+    aCI.SetVertex(ind, (*it));
+  }
+
+  //Compute the Fillet value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("2D Fillet driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aFillet2D << " = geompy.MakeFillet2D(" << theShape
+    << ", " << theR << ", [";
+
+  it = theVertexes.begin();
+  pd << (*it++);
+  while (it != theVertexes.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aFillet2D;
 }
 
 //=============================================================================
@@ -585,7 +655,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgeAD
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
                             (Handle(GEOM_Object) theShape, double theD1, double theD2,
-                             list<int> theFaces)
+                             std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -612,7 +682,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -656,7 +726,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFaces
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
                             (Handle(GEOM_Object) theShape, double theD, double theAngle,
-                             list<int> theFaces)
+                             std::list<int> theFaces)
 {
   SetErrorCode(KO);
 
@@ -683,7 +753,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theFaces.begin();
+  std::list<int>::iterator it = theFaces.begin();
   for (; it != theFaces.end(); it++, ind++) {
     aCI.SetFace(ind, (*it));
   }
@@ -727,7 +797,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferFacesAD
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
                             (Handle(GEOM_Object) theShape, double theD1, double theD2,
-                             list<int> theEdges)
+                             std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -737,16 +807,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGES);
-  if (aFunction.IsNull()) { return NULL; cout << "Edges Function is NULL!!!" << endl; }
+  if (aFunction.IsNull()) { MESSAGE ( "Edges Function is NULL!!!" ); return NULL;}
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ return NULL; cout << "Chamfer Driver is NULL!!!" << endl; }
+	{ MESSAGE ( "Chamfer Driver is NULL!!!" ); return NULL; }
 
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) { return NULL; cout << "Shape is NULL!!!" << endl; }
+  if (aRefShape.IsNull()) { MESSAGE ("Shape is NULL!!!"); return NULL;}
 
   aCI.SetShape(aRefShape);
   aCI.SetD1(theD1);
@@ -755,7 +825,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }
@@ -799,7 +869,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
                             (Handle(GEOM_Object) theShape, double theD, double theAngle,
-                             list<int> theEdges)
+                             std::list<int> theEdges)
 {
   SetErrorCode(KO);
 
@@ -809,16 +879,16 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
   //Add a new Chamfer function
   Handle(GEOM_Function) aFunction =
     aChamfer->AddFunction(GEOMImpl_ChamferDriver::GetID(), CHAMFER_SHAPE_EDGES_AD);
-  if (aFunction.IsNull()) { return NULL; cout << "Edges Function is NULL!!!" << endl; }
+  if (aFunction.IsNull()) { MESSAGE ( "Edges Function is NULL!!!" ); return NULL; }
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ return NULL; cout << "Chamfer Driver is NULL!!!" << endl; }
+	{ MESSAGE("Chamfer Driver is NULL!!!"); return NULL;}
 
   GEOMImpl_IChamfer aCI (aFunction);
 
   Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
-  if (aRefShape.IsNull()) { return NULL; cout << "Shape is NULL!!!" << endl; }
+  if (aRefShape.IsNull()) { MESSAGE ("Shape is NULL!!!"); return NULL;}
 
   aCI.SetShape(aRefShape);
   aCI.SetD(theD);
@@ -827,7 +897,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<int>::iterator it = theEdges.begin();
+  std::list<int>::iterator it = theEdges.begin();
   for (; it != theEdges.end(); it++, ind++) {
     aCI.SetEdge(ind, (*it));
   }

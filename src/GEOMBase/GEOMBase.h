@@ -1,37 +1,35 @@
-//  GEOM GEOMGUI : GUI for Geometry component
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS 
-// 
-//  This library is free software; you can redistribute it and/or 
-//  modify it under the terms of the GNU Lesser General Public 
-//  License as published by the Free Software Foundation; either 
-//  version 2.1 of the License. 
-// 
-//  This library is distributed in the hope that it will be useful, 
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-//  Lesser General Public License for more details. 
-// 
-//  You should have received a copy of the GNU Lesser General Public 
-//  License along with this library; if not, write to the Free Software 
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA 
-// 
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-//  File   : GEOMBase.h
-//  Author : Damien COQUERET
-//  Module : GEOM
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+// GEOM GEOMGUI : GUI for Geometry component
+// File   : GEOMBase.h
+// Author : Damien COQUERET, Open CASCADE S.A.S.
+//
 #ifndef GEOMBASE_H
 #define GEOMBASE_H
 
 #include "GEOM_GEOMBase.hxx"
 
 // SALOME Includes
-#include "GEOM_AISShape.hxx"
+#include <GEOM_AISShape.hxx>
 
 // IDL Headers
 #include <SALOMEconfig.h>
@@ -40,11 +38,10 @@
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
 // QT Includes
-#include <qstring.h>
+#include <QString>
 
 class GEOM_Actor;
 class SALOME_ListIO;
-class TColStd_MapOfInteger;
 
 class QWidget;
 
@@ -101,12 +98,6 @@ public :
   static bool LinearEdgeExtremities(const TopoDS_Shape& S, gp_Pnt& P1, gp_Pnt& P2);
   static void GetBipointDxDyDz(gp_Pnt P1, gp_Pnt P2, double& dx, double& dy, double& dz);
 
-  /* User dialog 1 parameter returned */
-  static double Parameter(Standard_Boolean& res,
-			  const char* aValue1 = 0, const char* aTitle1 = 0,
-			  const char* aTitle = 0, const double bottom = -1E6,
-			  const double top = +1E6, const int decimals = 6);
-
   /* Simulation management */
   static bool CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone);
 
@@ -127,4 +118,4 @@ public :
   static bool IsShape(GEOM::GEOM_Object_ptr theObj);
 };
 
-#endif
+#endif // GEOMBASE_H
