@@ -29,8 +29,10 @@
 #include <vtkPolyDataMapper.h>  
 #include <vtkPolyDataNormals.h>  
 #include <vtkActor.h> 
- 
+#include <VTKViewer_Actor.h>
 #include <vtkRenderer.h> 
+
+
  
 vtkStandardNewMacro(GEOM_DeviceActor);
  
@@ -38,7 +40,7 @@ GEOM_DeviceActor::GEOM_DeviceActor():
   myStripper(vtkStripper::New(),true), 
   myPolyDataMapper(vtkPolyDataMapper::New(),true), 
   myPolyDataNormals(vtkPolyDataNormals::New(),true), 
-  myActor(vtkActor::New(),true) 
+  myActor(VTKViewer_Actor::New(),true) 
 { 
   myStripper->SetInput(myPolyDataNormals->GetOutput()); 
   myPolyDataMapper->SetInput(myStripper->GetOutput()); 

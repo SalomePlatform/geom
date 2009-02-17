@@ -36,8 +36,9 @@ typedef GEOM_SmartPtr<vtkStripper> PStripper;
 class vtkPolyDataNormals; 
 typedef GEOM_SmartPtr<vtkPolyDataNormals> PPolyDataNormals; 
  
-class vtkActor; 
-typedef GEOM_SmartPtr<vtkActor> PActor; 
+//class vtkActor;
+class VTKViewer_Actor;
+typedef GEOM_SmartPtr<VTKViewer_Actor> PActor;
  
 class vtkProperty; 
 class vtkRenderer; 
@@ -61,6 +62,8 @@ public:
 
   void AddToRender(vtkRenderer* theRenderer); 
   void RemoveFromRender(vtkRenderer* theRenderer);
+  
+  PActor GetDeviceActor() {return myActor;}
  
 protected: 
   PPolyDataNormals myPolyDataNormals; 

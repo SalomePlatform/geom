@@ -102,8 +102,8 @@ GEOM_Actor::GEOM_Actor():
 
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
-  myShadingFaceProp(vtkProperty::New())
-  
+  myShadingFaceProp(vtkProperty::New()),
+  isOnlyVertex(false)
 { 
 #ifdef MYDEBUG
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
@@ -119,6 +119,7 @@ GEOM_Actor::GEOM_Actor():
   myHighlightProp->SetAmbientColor(1, 1, 1);
   myHighlightProp->SetDiffuseColor(1, 1, 1);
   myHighlightProp->SetSpecularColor(0.5, 0.5, 0.5);
+  myHighlightProp->SetPointSize(SALOME_POINT_SIZE);
   myHighlightActor->SetProperty(myHighlightProp.GetPointer());
 
   this->myHighlightActor->SetInput(myAppendFilter->GetOutput(),false);
@@ -314,8 +315,7 @@ SetVisibility(int theVisibility)
   myOneFaceEdgeActor->SetVisibility(theVisibility && myDisplayMode == (int)eWireframe && !myIsSelected);
   myIsolatedEdgeActor->SetVisibility(theVisibility && !myIsSelected);
 
-//  myVertexActor->SetVisibility(false);// must be added new mode points 
-  myVertexActor->SetVisibility(theVisibility);
+  myVertexActor->SetVisibility(theVisibility && !myIsSelected);
 }
  
 
@@ -387,8 +387,8 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   mySharedEdgeSource->Clear();
   myWireframeFaceSource->Clear();
   myShadingFaceSource->Clear();
-
-  TopExp_Explorer aVertexExp (theShape,TopAbs_VERTEX);
+  
+  TopExp_Explorer aVertexExp (theShape,TopAbs_VERTEX);  
   for (; aVertexExp.More(); aVertexExp.Next())
   {
      const TopoDS_Vertex& aVertex = TopoDS::Vertex(aVertexExp.Current());
@@ -399,8 +399,20 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   // look if edges are free or shared
   TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
-
+  
   SetShape(theShape,anEdgeMap,theIsVector);
+  isOnlyVertex = 
+    myIsolatedEdgeSource->IsEmpty() &&
+    myOneFaceEdgeSource->IsEmpty() &&
+    mySharedEdgeSource->IsEmpty() &&
+    myWireframeFaceSource->IsEmpty() &&
+    myShadingFaceSource->IsEmpty();
+
+  
+  if((bool)myShape.Infinite() || isOnlyVertex ){
+    myVertexActor->GetDeviceActor()->SetInfinitive(true);
+    myHighlightActor->GetDeviceActor()->SetInfinitive(true);
+  }
 }
 
 void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
@@ -555,7 +567,7 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
     this->Device->SetBackfaceProperty(this->BackfaceProperty);
   }
   this->Device->SetProperty(this->Property);
-  if(myShape.ShapeType() == TopAbs_VERTEX) {
+  /*  if(myShape.ShapeType() == TopAbs_VERTEX) {
     if(ren){
       //The parameter determine size of vertex actor relate to diagonal of RendererWindow
       static vtkFloatingPointType delta = 0.01;
@@ -570,9 +582,9 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
     this->GetMatrix(ren->GetActiveCamera(), aMatrix);
     this->Device->SetUserMatrix(aMatrix);
     this->Device->Render(ren,theMapper);
-    aMatrix->Delete();    
-  } else
-    this->Device->Render(ren, theMapper);
+    aMatrix->Delete();
+    } else*/
+  this->Device->Render(ren, theMapper);
 }
 
 void GEOM_Actor::ReleaseGraphicsResources(vtkWindow *)
@@ -659,6 +671,7 @@ void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
   myShadingFaceProp->SetOpacity(opa);
   myHighlightProp->SetOpacity(opa);
   myPreHighlightProp->SetOpacity(opa);
+  myVertexActor->GetProperty()->SetOpacity(opa);
 }
 
 vtkFloatingPointType GEOM_Actor::GetOpacity()
@@ -689,7 +702,7 @@ void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFlo
 
 bool GEOM_Actor::IsInfinitive()
 {
-  return (bool)(myShape.Infinite());
+  return ((bool)myShape.Infinite() || isOnlyVertex);
 }
 
 /*!
@@ -829,7 +842,7 @@ void GEOM_Actor::GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result)
         Rz[i] = (pos[i] - this->Position[i])/distance;
 	}
       }
-  
+
     vtkMath::Cross(vup,Rz,Rx);
     vtkMath::Normalize(Rx);
     vtkMath::Cross(Rz,Rx,Ry);

@@ -47,6 +47,9 @@ public:
                vtkPolyData* thePolyData, 
                vtkPoints* thePts,
                bool theIsVector = false); 
+
+  bool IsEmpty(){return myEdgeSet.IsEmpty();}
+
  
 protected: 
   TEdgeSet myEdgeSet;

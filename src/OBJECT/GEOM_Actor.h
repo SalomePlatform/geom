@@ -177,6 +177,7 @@ protected:
 private:
   TopoDS_Shape myShape;
   int myNbIsos[2];
+  bool isOnlyVertex;
 
   float myDeflection;
   bool myIsRelative;

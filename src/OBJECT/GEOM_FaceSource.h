@@ -43,6 +43,7 @@ public:
  
   void AddFace(const TopoDS_Face& theFace); 
   void Clear(){ myFaceSet.Clear();} 
+  bool IsEmpty(){return myFaceSet.IsEmpty();}
  
 protected: 
   TFaceSet myFaceSet; 
