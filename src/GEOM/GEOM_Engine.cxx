@@ -712,9 +712,7 @@ void ProcessFunction(Handle(GEOM_Function)&   theFunction,
 {
   if (theFunction.IsNull()) return;
 
-  // not to process twice
   if (theProcessed.Contains(theFunction->GetEntry())) return;
-  theProcessed.Add(theFunction->GetEntry());
 
   // pass functions, that depends on nonexisting ones
   bool doNotProcess = false;
@@ -753,6 +751,7 @@ void ProcessFunction(Handle(GEOM_Function)&   theFunction,
     theIgnoreObjs.insert(anObjEntry.ToCString());
     return;
   }
+  theProcessed.Add(theFunction->GetEntry());
 
   TCollection_AsciiString aDescr = theFunction->GetDescription();
   if(aDescr.Length() == 0) return;
@@ -928,6 +927,8 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 	aStartPos++;
       if( aCommand.Value( aEndPos-1 ) == C_SQR_BRACKET )
 	aEndPos--;
+      if ( aStartPos == aEndPos )
+        continue; // PAL20889: for "[]"
 
       if(MYDEBUG) 
 	cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
