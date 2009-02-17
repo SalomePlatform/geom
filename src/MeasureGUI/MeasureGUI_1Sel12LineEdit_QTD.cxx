@@ -1,59 +1,36 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 /****************************************************************************
 ** Form implementation generated from reading ui file 'MeasureGUI_1Sel12LineEdit_QTD.ui'
 **
-** Created: mar oct 28 16:11:14 2003
-**      by:  The User Interface Compiler (uic)
+** Created: Tue Feb 17 11:08:48 2009
+**      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
 ****************************************************************************/
+
 #include "MeasureGUI_1Sel12LineEdit_QTD.h"
 
 #include <qvariant.h>
-#include <qgroupbox.h>
-#include <qlabel.h>
-#include <qlineedit.h>
 #include <qpushbutton.h>
+#include <qgroupbox.h>
+#include <qlineedit.h>
+#include <qlabel.h>
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <qwhatsthis.h>
 
-/* 
- *  Constructs a MeasureGUI_1Sel12LineEdit_QTD which is a child of 'parent', with the 
+/*
+ *  Constructs a MeasureGUI_1Sel12LineEdit_QTD as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  */
-MeasureGUI_1Sel12LineEdit_QTD::MeasureGUI_1Sel12LineEdit_QTD( QWidget* parent,  const char* name, WFlags fl )
+MeasureGUI_1Sel12LineEdit_QTD::MeasureGUI_1Sel12LineEdit_QTD( QWidget* parent, const char* name, WFlags fl )
     : QWidget( parent, name, fl )
 {
     if ( !name )
 	setName( "MeasureGUI_1Sel12LineEdit_QTD" );
-    resize( 131, 171 ); 
-    setCaption( trUtf8( "MeasureGUI_1Sel12LineEdit_QTD" ) );
     MeasureGUI_1Sel12LineEdit_QTDLayout = new QGridLayout( this, 1, 1, 0, 6, "MeasureGUI_1Sel12LineEdit_QTDLayout"); 
 
     GroupBox1 = new QGroupBox( this, "GroupBox1" );
     GroupBox1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)7, (QSizePolicy::SizeType)7, 0, 0, GroupBox1->sizePolicy().hasHeightForWidth() ) );
-    GroupBox1->setTitle( trUtf8( "" ) );
     GroupBox1->setColumnLayout(0, Qt::Vertical );
     GroupBox1->layout()->setSpacing( 6 );
     GroupBox1->layout()->setMargin( 11 );
@@ -78,7 +55,6 @@ MeasureGUI_1Sel12LineEdit_QTD::MeasureGUI_1Sel12LineEdit_QTD( QWidget* parent,  
 
     TextLabel5 = new QLabel( GroupBox1, "TextLabel5" );
     TextLabel5->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel5->sizePolicy().hasHeightForWidth() ) );
-    TextLabel5->setText( trUtf8( "TL5" ) );
 
     Layout2->addWidget( TextLabel5, 3, 0 );
 
@@ -108,13 +84,11 @@ MeasureGUI_1Sel12LineEdit_QTD::MeasureGUI_1Sel12LineEdit_QTD( QWidget* parent,  
 
     TextLabel2 = new QLabel( GroupBox1, "TextLabel2" );
     TextLabel2->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel2->sizePolicy().hasHeightForWidth() ) );
-    TextLabel2->setText( trUtf8( "TL2" ) );
 
     Layout2->addWidget( TextLabel2, 0, 0 );
 
     TextLabel4 = new QLabel( GroupBox1, "TextLabel4" );
     TextLabel4->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel4->sizePolicy().hasHeightForWidth() ) );
-    TextLabel4->setText( trUtf8( "TL4" ) );
 
     Layout2->addWidget( TextLabel4, 2, 0 );
 
@@ -132,40 +106,57 @@ MeasureGUI_1Sel12LineEdit_QTD::MeasureGUI_1Sel12LineEdit_QTD( QWidget* parent,  
 
     TextLabel3 = new QLabel( GroupBox1, "TextLabel3" );
     TextLabel3->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel3->sizePolicy().hasHeightForWidth() ) );
-    TextLabel3->setText( trUtf8( "TL3" ) );
 
     Layout2->addWidget( TextLabel3, 1, 0 );
 
     Layout1->addMultiCellLayout( Layout2, 1, 1, 0, 2 );
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
+    LineEdit1->setMinimumSize( QSize( 250, 0 ) );
 
     Layout1->addWidget( LineEdit1, 0, 2 );
-    QSpacerItem* spacer = new QSpacerItem( 0, 40, QSizePolicy::Minimum, QSizePolicy::Expanding );
-    Layout1->addItem( spacer, 2, 2 );
+    Spacer8 = new QSpacerItem( 0, 40, QSizePolicy::Minimum, QSizePolicy::Expanding );
+    Layout1->addItem( Spacer8, 2, 2 );
 
     PushButton1 = new QPushButton( GroupBox1, "PushButton1" );
     PushButton1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, PushButton1->sizePolicy().hasHeightForWidth() ) );
-    PushButton1->setText( trUtf8( "" ) );
 
     Layout1->addWidget( PushButton1, 0, 1 );
 
     TextLabel1 = new QLabel( GroupBox1, "TextLabel1" );
     TextLabel1->setSizePolicy( QSizePolicy( (QSizePolicy::SizeType)0, (QSizePolicy::SizeType)0, 0, 0, TextLabel1->sizePolicy().hasHeightForWidth() ) );
-    TextLabel1->setText( trUtf8( "TL1" ) );
 
     Layout1->addWidget( TextLabel1, 0, 0 );
 
     GroupBox1Layout->addLayout( Layout1, 0, 0 );
 
     MeasureGUI_1Sel12LineEdit_QTDLayout->addWidget( GroupBox1, 0, 0 );
+    languageChange();
+    resize( QSize(131, 171).expandedTo(minimumSizeHint()) );
+    clearWState( WState_Polished );
 }
 
-/*  
+/*
  *  Destroys the object and frees any allocated resources
  */
 MeasureGUI_1Sel12LineEdit_QTD::~MeasureGUI_1Sel12LineEdit_QTD()
 {
     // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void MeasureGUI_1Sel12LineEdit_QTD::languageChange()
+{
+    setCaption( tr( "MeasureGUI_1Sel12LineEdit_QTD" ) );
+    GroupBox1->setTitle( QString::null );
+    TextLabel5->setText( tr( "TL5" ) );
+    TextLabel2->setText( tr( "TL2" ) );
+    TextLabel4->setText( tr( "TL4" ) );
+    TextLabel3->setText( tr( "TL3" ) );
+    PushButton1->setText( QString::null );
+    TextLabel1->setText( tr( "TL1" ) );
 }
 
