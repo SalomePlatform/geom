@@ -277,7 +277,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def addToStudyInFather(self, aFather, aShape, aName):
             # Example: see GEOM_TestAll.py
             try:
-                aSObject = self.AddInStudy(myStudy, aShape, aName, aFather)
+                aSObject = self.AddInStudy(self.myStudy, aShape, aName, aFather)
             except:
                 print "addToStudyInFather() failed"
                 return ""
