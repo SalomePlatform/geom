@@ -24,4 +24,8 @@ into sub-objects of lower dimension.</li>
 <li>create \subpage create_adv_obj_page "Advanced geometrical objects" - edges, wires, shells...</li>
 </ul>
 
+\note It is possible to use the variables defined in the SALOME \b NoteBook
+ to specify the numerical parameters for creation of any object.
+
+
 */

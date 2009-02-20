@@ -9,10 +9,10 @@ Object</b> (vertex, edge, planar wire, face or shell), which will be extruded
 and the <b>Path Object</b> (edge or wire) along which the <b>Base 
 Object</b> will be extruded.
 \n In this mode the default pipe generation algorithm is used. The pipe
-is created in such a way that the <b>angle between the normal vector</b> to
-the base shape <b>and the tangent to the path</b> wire at any point of the
-given path <b>is kept constant</b>.
-\n Check Box <b>Select unpublished edges</b> - if checked, allows to select an edge of any other shape as the path object. 
+is created so that the <b>angle between the normal vector</b> to
+the base shape <b>and the tangent to the path</b> wire remains constant at any point of the
+given path.
+\n <b>Select unpublished edges</b> checkbox - if checked, allows to select an edge of any other shape as the path object. 
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
 
@@ -25,17 +25,18 @@ definition of the path.
 
 <b>Example:</b>
 
-\image html pipe_wire_edgesn.png "Extrusion of wire"
+\image html pipe_wire_edgesn.png "Extrusion of a wire"
 
 \n Secondly, you can define the <b>Base
 Object</b> (edge, planar wire or face), which will be extruded, 
 the <b>Path Object</b> (edge or wire) along which the <b>Base 
-Object</b> will be extruded and the <b>Vector</b> (edge or wire).
+Object</b> will be extruded and the <b>BiNormal Vector</b> (edge or
+wire).
+
 \n In contrast to the default mode, in this mode the pipe is generated
-in such a way that the <b>angle between the normal vector</b> to the base
-shape <b>and the BiNormal vector</b> given as the third argument <b>is kept
-constant</b>.
-\n Check Box <b>Select unpublished edges</b> - if checked, allows to select an edge of any other shape as the path object. 
+to preserve the constant <b>angle between the normal vector</b> to the base
+shape <b>and the BiNormal vector</b> given as the third argument.
+\n <b>Select unpublished edges</b> checkbox - if checked, allows to select an edge of any other shape as the path object. 
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell,
 solid or compsolid).
 
@@ -49,7 +50,7 @@ BiNormal direction to perform the extrusion.
 
 <b>Example:</b>
 
-\image html pipebinormalsn.png "Extrusion of face with BiNormal parameter"
+\image html pipebinormalsn.png "Extrusion of a face with BiNormal parameter"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of
 \ref tui_creation_pipe "Complex Geometric Objects".

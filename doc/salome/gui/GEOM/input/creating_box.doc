@@ -30,10 +30,7 @@ accessible only via \b TUI commands.
 this way you don't need to create them in advance).
 \n <b>TUI Command:</b> <em>geompy.MakeBox(x1,y1,z1,x2,y2,z2)</em>
 \n <b>Arguments:</b> Name + X, Y and Z coordinates of both points.
-\note You can also use variables defined in the SALOME \b NoteBook
-to specify any numerical parameters of the box.
 
-\image html box3.png
 
 <b>Example:</b>
 

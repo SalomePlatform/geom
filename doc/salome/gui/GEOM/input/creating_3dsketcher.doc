@@ -8,18 +8,29 @@ To create a 3D Sketch, select in the main menu <em>New Entity -> 3D Sketch</em>.
 
 \image html 3dsketch2.png
 
-The position of each coordinates can be defined by absolute coordinates X, Y, Z or
-by relative coordinates DX, DY, DZ with respect to the previous Applied point.
-Type of coordinates can be selected by the <b>Coordinates Type</b> radio buttons.
-\n <b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
-\n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it. 
-To make a closed wire using the TUI command, the first and the last point shoul 
+In this dialog it is possible to define the coordinates of the points.
+
+The position of each point can be defined by \b  Absolute coordinates X, Y, Z or
+by \b Relative coordinates DX, DY, DZ with respect to the previous Applied point.
+The type of coordinates can be selected by the <b>Coordinates Type</b>
+radio buttons.
+
+To add the point in the list of points and to proceed with the
+definition of the next point, click <b>Apply</b> button. \b Undo and
+\b Redo buttons, respectively, remove or restore the last point in the list.
+
+\n <b>"Sketch Validation"</b> button applies the wire, built by the
+user, "as is".
+\n <b>"Sketch Closure"</b> closes the Sketch by a straight line from
+the start to the end point and applies it. 
+
+To make a closed wire using the TUI command, the first and the last point should 
 have the same coordinates.
 
 The Result of the operation will be a \b GEOM_Object.
 
 <b>TUI Command:</b> <em>geompy.Make3DSketcher( [ PointsList ] )</em>
-This algorithm creates a wire, from the list of real values which define XYZ 
+This algorithm creates a wire from the list of real values, which define XYZ 
 coordinates of points.
 
 <b>Example:</b>
