@@ -87,10 +87,7 @@ libGEOMObject_la_LDFLAGS  =			\
 	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKV3d -lTKMesh -lTKGeomAlgo -lTKTopAlgo -lTKService \
 	$(VTK_LIBS) \
 	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace \
-	$(GUI_LDFLAGS) -lsuit -lqtx -lVTKViewer -lSVTK -lSalomeObject \
-
-
-
+	$(GUI_LDFLAGS) -lsuit -lqtx -lVTKViewer -lSVTK -lSalomeObject
 #	$(CORBA_LIBS) \
 #	$(STDLIB) \
 #	$(PYTHON_LIBS) \
