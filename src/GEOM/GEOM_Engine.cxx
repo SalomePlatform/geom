@@ -839,16 +839,20 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     if( aCommand.Search("=") != -1 ) // command returns an object
       anEntry = aCommand.Token("=",1);
     else { // command modifies the object
-      int aStartEntryPos = aCommand.Location(1,'(',1,aCommand.Length());
-      int aEndEntryPos = aCommand.Location(1,',',aStartEntryPos,aCommand.Length());
-      anEntry = aCommand.SubString(aStartEntryPos+1, aEndEntryPos-1);
+      if (int aStartEntryPos = aCommand.Location(1,'(',1,aCommand.Length()))
+        if (int aEndEntryPos = aCommand.Location(1,',',aStartEntryPos,aCommand.Length()))
+          anEntry = aCommand.SubString(aStartEntryPos+1, aEndEntryPos-1);
     }
-
     //Remove white spaces
     anEntry.RightAdjust();
     anEntry.LeftAdjust();
     if(MYDEBUG)
       cout<<"Result entry : '" <<anEntry<<"'"<<endl;
+
+    if ( anEntry.IsEmpty() ) {
+      aCommandIndex++;
+      continue;
+    }
 
     //Check if result is list of entries - enough to get the first entry in this case
     int aNbEntries = 1;
