@@ -101,4 +101,5 @@ libDlgRef_la_CPPFLAGS =		\
 
 libDlgRef_la_LDFLAGS  =		\
 	$(STDLIB)		\
-	$(QT_MT_LIBS) 
+	$(QT_MT_LIBS)           \
+	$(GUI_LDFLAGS) -lqtx -lSalomeApp

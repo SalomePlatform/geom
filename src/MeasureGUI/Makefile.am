@@ -120,5 +120,6 @@ libMeasureGUI_la_CPPFLAGS =		\
 	-I$(top_builddir)/salome_adm/unix
 
 libMeasureGUI_la_LDFLAGS  =		\
+	$(CAS_LDFLAGS) -lTKGeomBase \
 	../GEOMBase/libGEOMBase.la
 

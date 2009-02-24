@@ -75,6 +75,7 @@ libGEOMbasic_la_CPPFLAGS =	\
 	-I$(top_builddir)/salome_adm/unix
 
 libGEOMbasic_la_LDFLAGS  =			\
+	$(CORBA_LIBS)				\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
 	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKXSBase		\

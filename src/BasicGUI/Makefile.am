@@ -102,4 +102,5 @@ libBasicGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la				\
 	../GEOMGUI/libGEOM.la					\
+	$(CAS_LDFLAGS) -lTKGeomBase                             \
 	$(GUI_LDFLAGS) -lsuit

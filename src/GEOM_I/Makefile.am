@@ -91,7 +91,7 @@ libGEOMEngine_la_LDFLAGS  =			\
 	../GEOMImpl/libGEOMimpl.la		\
 	../SKETCHER/libGEOMSketcher.la		\
 	../GEOM/libGEOMbasic.la			\
-	$(KERNEL_LDFLAGS) -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lTOOLSDS	\
+	$(KERNEL_LDFLAGS) -lOpUtil -lSalomeNS -lSalomeContainer -lSalomeGenericObj -lTOOLSDS	\
 	$(CAS_DATAEXCHANGE)			\
 	$(CAS_LDPATH) -lTKFillet -lTKOffset
 

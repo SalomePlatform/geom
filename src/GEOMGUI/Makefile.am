@@ -83,8 +83,8 @@ libGEOM_la_LDFLAGS =						\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\
-	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA		\
-	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent
+	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeNS -lSalomeDSClient		\
+	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent -lSalomePrs -lstd
 # -lSalomeApp 
 # -lToolsGUI
 #	$(CORBA_LIBS) \

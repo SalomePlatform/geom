@@ -83,11 +83,15 @@ libGEOMObject_la_CPPFLAGS =	\
 	$(GUI_CXXFLAGS) 
 	
 libGEOMObject_la_LDFLAGS  =			\
-	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace	\
-	$(GUI_LDFLAGS) -lqtx -lVTKViewer -lSVTK -lSalomeObject
+	$(QT_MT_LIBS) \
+	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKV3d -lTKMesh -lTKGeomAlgo -lTKTopAlgo -lTKService \
+	$(VTK_LIBS) \
+	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace \
+	$(GUI_LDFLAGS) -lsuit -lqtx -lVTKViewer -lSVTK -lSalomeObject \
+
+
+
 #	$(CORBA_LIBS) \
 #	$(STDLIB) \
 #	$(PYTHON_LIBS) \
-#	$(QT_MT_LIBS) \
-#	$(VTK_LIBS) \
 #	$(OGL_LIBS)

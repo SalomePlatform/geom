@@ -75,4 +75,4 @@ libGEOMToolsGUI_la_CPPFLAGS =		\
 libGEOMToolsGUI_la_LDFLAGS  = 		\
 	../GEOMBase/libGEOMBase.la 	\
 	../GEOMGUI/libGEOM.la 		\
-	$(GUI_LDFLAGS) -lVTKViewer -lOCCViewer -lsuit -lSalomeApp
+	$(GUI_LDFLAGS) -lVTKViewer -lOCCViewer -lsuit -lSalomeApp -lPyConsole

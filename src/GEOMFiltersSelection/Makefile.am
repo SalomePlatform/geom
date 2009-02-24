@@ -66,7 +66,9 @@ libGEOMFiltersSelection_la_CPPFLAGS =	\
 	-I$(top_builddir)/salome_adm/unix
 
 libGEOMFiltersSelection_la_LDFLAGS  = \
+	$(QT_MT_LIBS) \
+	$(CAS_KERNEL) -lTKG3d -lTKV3d -lTKService \
 	../../idl/libSalomeIDLGEOM.la				\
 	../GEOMClient/libGEOMClient.la				\
-	$(GUI_LDFLAGS) -lsuit -lSalomeApp -lSalomeSession	\
+	$(GUI_LDFLAGS) -lsuit -lSalomeApp -lSalomeSession -lSalomeObject -lLightApp \
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeContainer -lTOOLSDS

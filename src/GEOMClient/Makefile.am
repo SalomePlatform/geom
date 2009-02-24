@@ -52,7 +52,7 @@ libGEOMClient_la_CPPFLAGS =	\
 libGEOMClient_la_LDFLAGS  =				\
 	../../idl/libSalomeIDLGEOM.la			\
 	../GEOM/libGEOMbasic.la				\
-	$(KERNEL_LDFLAGS) -lSalomeIDLKernel -lOpUtil	\
+	$(KERNEL_LDFLAGS) -lSalomeIDLKernel -lSALOMEBasics -lOpUtil	\
 	$(CAS_TKTopAlgo)
 
 # \

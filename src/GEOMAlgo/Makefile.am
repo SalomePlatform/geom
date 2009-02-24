@@ -335,7 +335,8 @@ libGEOMAlgo_la_CPPFLAGS =	\
 libGEOMAlgo_la_LDFLAGS  =		\
 	../NMTTools/libNMTTools.la	\
 	$(STDLIB)			\
-	$(CAS_LDPATH) -lTKBO -lTKShHealing -lTKBool -lTKMesh
+	$(CAS_LDPATH) -lTKBO -lTKShHealing -lTKBool -lTKMesh \
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace
 
 # extra distributed files
 CDL_FILES =					\
