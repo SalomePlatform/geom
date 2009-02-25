@@ -2780,7 +2780,7 @@ void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, 
 {
   GProp_GProps theProps;
   gp_Pnt aCenterMass;
-  TopoDS_Shape aPntShape;
+  //TopoDS_Shape aPntShape;
   Standard_Real aShapeSize;
 
   if      (aShape.ShapeType() == TopAbs_EDGE) BRepGProp::LinearProperties(aShape,  theProps);
@@ -2790,8 +2790,9 @@ void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, 
   aCenterMass = theProps.CentreOfMass();
   aShapeSize  = theProps.Mass();
 
-  aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
-  aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
+//   aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
+//   aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
+  aVertex = aCenterMass;
   tab[0] = aVertex.X();
   tab[1] = aVertex.Y();
   tab[2] = aVertex.Z();
@@ -2799,9 +2800,53 @@ void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, 
   return;
 }
 
+namespace {
+
+  //================================================================================
+  /*!
+   * \brief Return normal to face at extrema point
+   */
+  //================================================================================
+
+  gp_Vec GetNormal(const TopoDS_Face& face, const BRepExtrema_DistShapeShape& extrema)
+  {
+    gp_Vec defaultNorm(1,0,0); // to have same normals on different faces
+    try {
+      // get UV at extrema point
+      Standard_Real u,v, f,l;
+      switch ( extrema.SupportTypeShape2(1) ) {
+      case BRepExtrema_IsInFace: {
+        extrema.ParOnFaceS2(1, u, v );
+        break;
+      }
+      case BRepExtrema_IsOnEdge: {
+        TopoDS_Edge edge = TopoDS::Edge( extrema.SupportOnShape2(1));
+        Handle(Geom2d_Curve) pcurve = BRep_Tool::CurveOnSurface( edge, face, f,l );
+        extrema.ParOnEdgeS2( 1, u );
+        gp_Pnt2d uv = pcurve->Value( u );
+        u = uv.Coord(1);
+        v = uv.Coord(2);
+        break;
+      }
+      case BRepExtrema_IsVertex: return defaultNorm;
+      }
+      // get derivatives
+      BRepAdaptor_Surface surface( face, false );
+      gp_Vec du, dv; gp_Pnt p;
+      surface.D1( u, v, p, du, dv );
+
+      return du ^ dv;
+
+    } catch (Standard_Failure ) {
+    }
+    return defaultNorm;
+  }
+}
+
 //=============================================================================
 /*!
- *  GetInPlace
+    case GetInPlace:
+    default:
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) theShapeWhere,
@@ -2853,7 +2898,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   else if ( aWhat.ShapeType() == TopAbs_SOLID || aWhat.ShapeType() == TopAbs_COMPSOLID ) iType = TopAbs_SOLID;
   else if ( aWhat.ShapeType() == TopAbs_COMPOUND ) {
     // Only the iType of the first shape in the compound is taken into account
-    TopoDS_Iterator It (aWhat, Standard_True, Standard_True);
+    TopoDS_Iterator It (aWhat, Standard_False, Standard_False);
+    if ( !It.More() ) {
+      SetErrorCode("Error: theShapeWhat is an empty COMPOUND.");
+      return NULL;
+    }
     compType = It.Value().ShapeType();
     if      ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
     else if ( compType == TopAbs_FACE  || compType == TopAbs_SHELL)     iType = TopAbs_FACE;
@@ -2924,8 +2973,25 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
           aVertex   = TopoDS::Vertex( aPntShape );
           BRepExtrema_DistShapeShape aWhereDistance ( aVertex, Exp_aWhere.Current() );
           BRepExtrema_DistShapeShape aWhatDistance  ( aVertex, Exp_aWhat.Current() );
-          if ( fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D )
-            isFound = true;
+          if ( aWhereDistance.IsDone() && aWhatDistance.IsDone() &&
+               fabs(aWhereDistance.Value() - aWhatDistance.Value()) <= Tol_1D )
+          {
+            // 0020162: "EDF 961 GEOM : Getinplace is getting additionnal orthogonal faces"
+            // aVertex must be projected to the same point on Where and on What
+            gp_Pnt pOnWhat  = aWhatDistance.PointOnShape2(1);
+            gp_Pnt pOnWhere = aWhereDistance.PointOnShape2(1);
+            isFound = ( pOnWhat.Distance(pOnWhere) <= Tol_1D );
+            if ( isFound && iType == TopAbs_FACE )
+            {
+              // check normals at pOnWhat and pOnWhere
+              const double angleTol = PI/180.;
+              gp_Vec normToWhat  = GetNormal( TopoDS::Face(Exp_aWhat.Current()), aWhatDistance);
+              gp_Vec normToWhere = GetNormal( TopoDS::Face(Exp_aWhere.Current()), aWhereDistance);
+              if ( normToWhat * normToWhere < 0 )
+                normToWhat.Reverse();
+              isFound = ( normToWhat.Angle( normToWhere ) < angleTol );
+            }
+          }
         }
       }
       if ( isFound ) {
