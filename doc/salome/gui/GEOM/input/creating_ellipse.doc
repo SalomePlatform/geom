@@ -4,17 +4,30 @@
 
 To create an \b Ellipse in the <b>Main Menu</b> select <b>New Entity - > Basic - > Ellipse</b>
 
-\n You can define an \b Ellipse by its <b>Center Point</b>, a \b
-Vector giving its normal, and its <b>Major & Minor Radiuses</b>.
+\n You can define an \b Ellipse by its <b>Center</b> point, a \b
+Vector giving its normal, another vector specifying the direction of
+ellipse's <b>Major Axis</b> and its <b>Major</b> & <b>Minor Radiuses</b>.
 \n The \b Result of the operation will be a GEOM_Object (edge).
 
-\n <b>TUI Command:</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>
+\note The parameters <b>Center</b>, <b>Vector</b> and <b>Major Axis</b>
+are optional. By default it is presumed that the <b>Center</b> point
+is located at the origin of the global coordinate system, the \b Vector
+corresponds to the OZ axis of the global coordinate system and <b>Major Axis</b>
+corresponds to the OX axis of the global coordinate system.
+
+
+\note Actual direction of the major axis vector is defined as
+<EM> Vmaj' = (Vn * Vmaj) * Vn</em> where \em Vn is a normal vector and
+\em Vmaj is an original vector of the major axis.
+
+\n <b>TUI Command (no major axis):</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>
 \n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
 the direction) + 1 X Radius + 1 Y Radius.
 
-\note By default it is presumed that the <b>Center Point</b> is located at the  Origin of the global
-coordinate system, and the  \b Vector corresponds to OZ axis of the global
-coordinate system.
+\n <b>TUI Command (use major axis):</b><em>geompy.MakeEllipseVec(Point, Vector, RadiusMajor, RadiusMinor, VectorMajor)</em>
+\n <b>Arguments:</b> Name + 1 vertex (for the center) + 1 edge (for
+the normal direction) + 1 X Radius + 1 Y Radius + 1 edge (for the
+major axis direction)
 
 \image html ellipse.png
 

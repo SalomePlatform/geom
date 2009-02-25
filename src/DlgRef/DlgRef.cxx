@@ -543,6 +543,20 @@ DlgRef_3Sel1Spin::~DlgRef_3Sel1Spin()
 }
 
 //////////////////////////////////////////
+// DlgRef_3Sel2Spin
+//////////////////////////////////////////
+
+DlgRef_3Sel2Spin::DlgRef_3Sel2Spin( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_3Sel2Spin::~DlgRef_3Sel2Spin()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_3Sel3Spin1Check
 //////////////////////////////////////////
 
@@ -766,7 +780,7 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
 {
   const double prec = 1e-12;
   
-  if ( abs(theValue) < thePrecision)
+  if ( qAbs(theValue) < prec )
     return "0";
 
   QString aRes;

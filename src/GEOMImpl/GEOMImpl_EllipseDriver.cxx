@@ -79,7 +79,7 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShapePnt = aRefPoint->GetValue();
       if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
         Standard_ConstructionError::Raise
-          ("Circle creation aborted: invalid center argument, must be a point");
+          ("Ellipse creation aborted: invalid center argument, must be a point");
       }
       aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
     }
@@ -90,7 +90,7 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShapeVec = aRefVector->GetValue();
       if (aShapeVec.ShapeType() != TopAbs_EDGE) {
         Standard_ConstructionError::Raise
-          ("Circle creation aborted: invalid vector argument, must be a vector or an edge");
+          ("Ellipse creation aborted: invalid normal vector argument, must be a vector or an edge");
       }
       TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
       TopoDS_Vertex V1, V2;
@@ -99,12 +99,37 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
         aV = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aV.Magnitude() < gp::Resolution()) {
           Standard_ConstructionError::Raise
-            ("Circle creation aborted: vector of zero length is given");
+            ("Ellipse creation aborted: normal vector of zero length is given");
         }
       }
     }
+    // Main Axis vector
+    gp_Vec aVM = gp::DX();
+    Handle(GEOM_Function) aRefVectorMaj = aCI.GetVectorMajor();
+    if (!aRefVectorMaj.IsNull()) {
+      TopoDS_Shape aShapeVec = aRefVectorMaj->GetValue();
+      if (aShapeVec.ShapeType() != TopAbs_EDGE) {
+        Standard_ConstructionError::Raise
+          ("Ellipse creation aborted: invalid major axis vector argument, must be a vector or an edge");
+      }
+      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
+      TopoDS_Vertex V1, V2;
+      TopExp::Vertices(anE, V1, V2, Standard_True);
+      if (!V1.IsNull() && !V2.IsNull()) {
+        aVM = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+        if (aVM.Magnitude() < gp::Resolution()) {
+          Standard_ConstructionError::Raise
+            ("Ellipse creation aborted: major axis vector of zero length is given");
+        }
+	if (aV.IsParallel(aVM, Precision::Angular())) {
+	  Standard_ConstructionError::Raise
+	    ("Ellipse creation aborted: normal and major axis vectors are parallel");
+	}
+      }
+    }
+
     // Axes
-    gp_Ax2 anAxes (aP, aV);
+    gp_Ax2 anAxes (aP, aV, aVM);
     // Ellipse
     gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
     aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();

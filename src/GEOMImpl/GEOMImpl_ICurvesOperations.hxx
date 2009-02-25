@@ -51,7 +51,8 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeEllipse (Handle(GEOM_Object) thePnt,
                                                    Handle(GEOM_Object) theVec,
-                                                   double theRMajor, double theRMinor);
+                                                   double theRMajor, double theRMinor,
+						   Handle(GEOM_Object) theVecMaj);
 
   Standard_EXPORT Handle(GEOM_Object) MakeArc (Handle(GEOM_Object) thePnt1,
                                                Handle(GEOM_Object) thePnt2,

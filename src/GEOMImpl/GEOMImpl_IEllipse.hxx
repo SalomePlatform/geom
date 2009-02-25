@@ -23,10 +23,11 @@
 //
 #include "GEOM_Function.hxx"
 
-#define ELLIPS_ARG_CC   1
-#define ELLIPS_ARG_VV   2
-#define ELLIPS_ARG_RMAJ 3
-#define ELLIPS_ARG_RMIN 4
+#define ELLIPS_ARG_CC    1
+#define ELLIPS_ARG_VV    2
+#define ELLIPS_ARG_RMAJ  3
+#define ELLIPS_ARG_RMIN  4
+#define ELLIPS_ARG_VVMAJ 5
 
 class GEOMImpl_IEllipse
 {
@@ -40,11 +41,15 @@ class GEOMImpl_IEllipse
   void SetRMajor(double theR) { _func->SetReal(ELLIPS_ARG_RMAJ, theR); }
   void SetRMinor(double theR) { _func->SetReal(ELLIPS_ARG_RMIN, theR); }
 
+  void SetVectorMajor(Handle(GEOM_Function) theV) { _func->SetReference(ELLIPS_ARG_VVMAJ, theV); }
+
   Handle(GEOM_Function) GetCenter() { return _func->GetReference(ELLIPS_ARG_CC); }
   Handle(GEOM_Function) GetVector() { return _func->GetReference(ELLIPS_ARG_VV); }
 
   double GetRMajor() { return _func->GetReal(ELLIPS_ARG_RMAJ); }
   double GetRMinor() { return _func->GetReal(ELLIPS_ARG_RMIN); }
+
+  Handle(GEOM_Function) GetVectorMajor() { return _func->GetReference(ELLIPS_ARG_VVMAJ); }
 
  private:
 

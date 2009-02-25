@@ -334,12 +334,14 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
                        (Handle(GEOM_Object) thePnt, Handle(GEOM_Object) theVec,
-                        double theRMajor, double theRMinor)
+                        double theRMajor, double theRMinor,
+			Handle(GEOM_Object) theVecMaj)
 {
   SetErrorCode(KO);
 
   // Not set thePnt means origin of global CS,
   // Not set theVec means Z axis of global CS
+  // Not set theVecMaj means X axis of global CS
   //if (thePnt.IsNull() || theVec.IsNull()) return NULL;
 
   //Add a new Ellipse object
@@ -370,6 +372,12 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   aCI.SetRMajor(theRMajor);
   aCI.SetRMinor(theRMinor);
 
+  if (!theVecMaj.IsNull()) {
+    Handle(GEOM_Function) aRefVecMaj = theVecMaj->GetLastFunction();
+    if (aRefVecMaj.IsNull()) return NULL;
+    aCI.SetVectorMajor(aRefVecMaj);
+  }
+
   //Compute the Ellipse value
   try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
@@ -387,8 +395,15 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
-    << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
+  if (!theVecMaj.IsNull()) {
+    GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
+				 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor
+				 << ", " << theVecMaj << ")";
+  }
+  else {
+    GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
+				 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
+  }
 
   SetErrorCode(OK);
   return anEll;

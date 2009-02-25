@@ -57,6 +57,11 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
 				     GEOM::GEOM_Object_ptr theVector,
 				     double theRMajor, double theRMinor);
 
+  GEOM::GEOM_Object_ptr MakeEllipseVec (GEOM::GEOM_Object_ptr theCenter,
+					GEOM::GEOM_Object_ptr theVector,
+					double theRMajor, double theRMinor,
+					GEOM::GEOM_Object_ptr theVectorMajor);
+
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);

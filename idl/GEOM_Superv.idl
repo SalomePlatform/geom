@@ -478,6 +478,11 @@ module GEOM
 			     in GEOM_Object theVec,
 			     in double      theRMajor,
 			     in double      theRMinor) ;
+    GEOM_Object MakeEllipseVec (in GEOM_Object thePnt,
+				in GEOM_Object theVec,
+				in double      theRMajor,
+				in double      theRMinor,
+				in GEOM_Object theVecMaj) ;
     GEOM_Object MakeArc (in GEOM_Object thePnt1,
 			 in GEOM_Object thePnt2,
 			 in GEOM_Object thePnt3) ;

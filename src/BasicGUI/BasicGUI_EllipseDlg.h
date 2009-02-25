@@ -28,7 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_2Sel2Spin;
+class DlgRef_3Sel2Spin;
 
 //=================================================================================
 // class    : BasicGUI_EllipseDlg
@@ -54,9 +54,9 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir;
+  GEOM::GEOM_Object_var              myPoint, myDir, myMajor;
   
-  DlgRef_2Sel2Spin*                  GroupPoints;
+  DlgRef_3Sel2Spin*                  GroupPoints;
   
 private slots:
   void                               ClickOnOk();

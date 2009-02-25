@@ -3761,6 +3761,25 @@ Please, select face, shell or solid and try again</translation>
         </message>
     </context>
     <context>
+        <name>BasicGUI_EllipseDlg</name>
+        <message>
+            <source>GEOM_VECTOR_MAJOR</source>
+            <translation>Major Axis</translation>
+        </message>
+        <message>
+            <source>ORIGIN_DEFAULT</source>
+            <translation>Origin by default</translation>
+        </message>
+        <message>
+            <source>X_AXIS_DEFAULT</source>
+            <translation>X axis by default</translation>
+        </message>
+        <message>
+            <source>Z_AXIS_DEFAULT</source>
+            <translation>Z axis by default</translation>
+        </message>
+    </context>
+    <context>
         <name>BasicGUI_MarkerDlg</name>
         <message>
             <source>CAPTION</source>

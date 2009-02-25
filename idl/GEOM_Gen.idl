@@ -2103,6 +2103,21 @@ module GEOM
 			     in double theRMinor);
 
     /*!
+     *  Create an ellipse with given center, normal vector, main axis vector and radiuses.
+     *  \param thePnt Ellipse center.
+     *  \param theVec Vector, normal to the plane of the ellipse.
+     *  \param theRMajor Major ellipse radius.
+     *  \param theRMinor Minor ellipse radius.
+     *  \param theVecMaj Vector, direction of the ellipse's main axis.
+     *  \return New GEOM_Object, containing the created ellipse.
+     */
+    GEOM_Object MakeEllipseVec (in GEOM_Object thePnt,
+				in GEOM_Object theVec,
+				in double theRMajor,
+				in double theRMinor,
+				in GEOM_Object theVecMaj);
+
+    /*!
      *  Create an arc of circle, passing through three given points.
      *  \param thePnt1 Start point of the arc.
      *  \param thePnt2 Middle point of the arc.

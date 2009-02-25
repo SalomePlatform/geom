@@ -652,13 +652,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVec Vector, normal to the plane of the ellipse.
         #  @param theRMajor Major ellipse radius.
         #  @param theRMinor Minor ellipse radius.
+        #  @param theVecMaj Vector, direction by the main exis.
         #  @return New GEOM_Object, containing the created ellipse.
         #
         #  @ref tui_creation_ellipse "Example"
-        def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor):
+        def MakeEllipse(self, thePnt, theVec, theRMajor, theRMinor, theVecMaj=None):
             # Example: see GEOM_TestAll.py
             theRMajor, theRMinor, Parameters = ParseParameters(theRMajor, theRMinor)
-            anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
+            if theVecMaj is not None:
+                anObj = self.CurvesOp.MakeEllipseVec(thePnt, theVec, theRMajor, theRMinor, theVecMaj)
+            else:
+                anObj = self.CurvesOp.MakeEllipse(thePnt, theVec, theRMajor, theRMinor)
+                pass
             RaiseIfFailed("MakeEllipse", self.CurvesOp)
             anObj.SetParameters(Parameters)
             return anObj

@@ -630,6 +630,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_3Sel2Spin
+//////////////////////////////////////////
+
+#include "ui_DlgRef_3Sel2Spin_QTD.h"
+
+class DLGREF_EXPORT DlgRef_3Sel2Spin : public QWidget, 
+                                       public Ui::DlgRef_3Sel2Spin_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_3Sel2Spin( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_3Sel2Spin();
+};
+
+//////////////////////////////////////////
 // DlgRef_3Sel3Spin1Check
 //////////////////////////////////////////
 

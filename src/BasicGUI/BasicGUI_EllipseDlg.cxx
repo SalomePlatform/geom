@@ -68,19 +68,23 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg( GeometryGUI* theGeometryGUI, QWidget* 
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel2Spin( centralWidget() );
+  GroupPoints = new DlgRef_3Sel2Spin( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_CENTER" ) + " (Origin by default)" );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_VECTOR" ) + " (Z axis by default)" );
-  GroupPoints->TextLabel3->setText( tr( "GEOM_RADIUS_MAJOR" ) );
-  GroupPoints->TextLabel4->setText( tr( "GEOM_RADIUS_MINOR" ) );
+  GroupPoints->TextLabel1->setText( tr( "%1 (%2)" ).arg( tr( "GEOM_CENTER" ), tr( "ORIGIN_DEFAULT" ) ) );
+  GroupPoints->TextLabel2->setText( tr( "%1 (%2)" ).arg( tr( "GEOM_VECTOR" ), tr( "Z_AXIS_DEFAULT" ) ) );
+  GroupPoints->TextLabel3->setText( tr( "%1 (%2)" ).arg( tr( "GEOM_VECTOR_MAJOR" ), tr( "X_AXIS_DEFAULT" ) ) );
+  GroupPoints->TextLabel4->setText( tr( "GEOM_RADIUS_MAJOR" ) );
+  GroupPoints->TextLabel5->setText( tr( "GEOM_RADIUS_MINOR" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->PushButton2->setIcon( image1 );
+  GroupPoints->PushButton3->setIcon( image1 );
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->LineEdit3->setReadOnly( true );
   GroupPoints->LineEdit1->setEnabled( true );
   GroupPoints->LineEdit2->setEnabled( false );
+  GroupPoints->LineEdit3->setEnabled( false );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -114,7 +118,7 @@ void BasicGUI_EllipseDlg::Init()
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   GroupPoints->PushButton1->setDown(true);
 
-  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  myPoint = myDir = myMajor = GEOM::GEOM_Object::_nil();
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -137,9 +141,11 @@ void BasicGUI_EllipseDlg::Init()
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
   connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( GroupPoints->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPoints->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
@@ -188,13 +194,16 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   initName();
 
   // reset
-  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  myPoint = myDir = myMajor = GEOM::GEOM_Object::_nil();
   GroupPoints->LineEdit1->setText( "" );
   GroupPoints->LineEdit2->setText( "" );
+  GroupPoints->LineEdit3->setText( "" );
   GroupPoints->PushButton1->setDown(true);
   GroupPoints->PushButton2->setDown(false);
+  GroupPoints->PushButton3->setDown(false);
   GroupPoints->LineEdit1->setEnabled( true );
   GroupPoints->LineEdit2->setEnabled( false );
+  GroupPoints->LineEdit3->setEnabled( false );
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
   globalSelection(); // close local contexts, if any
@@ -219,6 +228,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   if (aSelList.Extent() != 1) {
     if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint = GEOM::GEOM_Object::_nil();
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir   = GEOM::GEOM_Object::_nil();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit3) myMajor = GEOM::GEOM_Object::_nil();
     return;
   }
 
@@ -232,7 +242,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
 
     TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+    if ( myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupPoints->LineEdit3 )
       aNeedType = TopAbs_EDGE;
     
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
@@ -278,7 +288,12 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myDir   = aSelectedObject;
-      if ( !myDir->_is_nil() && myPoint->_is_nil() )
+      if ( !myDir->_is_nil() && myMajor->_is_nil() )
+	GroupPoints->PushButton3->click();
+    }
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) {
+      myMajor = aSelectedObject;
+      if ( !myMajor->_is_nil() && myPoint->_is_nil() )
 	GroupPoints->PushButton1->click();
     }
   }
@@ -298,19 +313,31 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
   if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GroupPoints->PushButton2->setDown(false);
+    GroupPoints->PushButton3->setDown(false);
     GroupPoints->LineEdit1->setEnabled( true );
     GroupPoints->LineEdit2->setEnabled( false );
+    GroupPoints->LineEdit3->setEnabled( false );
   }
   else if ( send == GroupPoints->PushButton2 ) {
     myEditCurrentArgument = GroupPoints->LineEdit2;
     GroupPoints->PushButton1->setDown(false);
+    GroupPoints->PushButton3->setDown(false);
     GroupPoints->LineEdit1->setEnabled( false );
     GroupPoints->LineEdit2->setEnabled( true );
+    GroupPoints->LineEdit3->setEnabled( false );
+  }
+  else if ( send == GroupPoints->PushButton3 ) {
+    myEditCurrentArgument = GroupPoints->LineEdit3;
+    GroupPoints->PushButton1->setDown(false);
+    GroupPoints->PushButton2->setDown(false);
+    GroupPoints->LineEdit1->setEnabled( false );
+    GroupPoints->LineEdit2->setEnabled( false );
+    GroupPoints->LineEdit3->setEnabled( true );
   }
 
   globalSelection(); // close local contexts, if any
   TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+  if ( myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupPoints->LineEdit3 )
     aNeedType = TopAbs_EDGE;
   localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
   
@@ -328,7 +355,8 @@ void BasicGUI_EllipseDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
   if ( send == GroupPoints->LineEdit1 ||
-       send == GroupPoints->LineEdit2 ) {
+       send == GroupPoints->LineEdit2 ||
+       send == GroupPoints->LineEdit3 ) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -350,6 +378,7 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
 
   GroupPoints->LineEdit1->setText( "" );
   GroupPoints->LineEdit2->setText( "" );
+  GroupPoints->LineEdit3->setText( "" );
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
   //globalSelection( GEOM_POINT );
@@ -429,7 +458,9 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
   aParameters<<GroupPoints->SpinBox_DX->text();
   aParameters<<GroupPoints->SpinBox_DY->text();
   
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse( myPoint, myDir, aMajorR, aMinorR );
+  GEOM::GEOM_Object_var anObj = myMajor->_is_nil() ? 
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse   ( myPoint, myDir, aMajorR, aMinorR )         :
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipseVec( myPoint, myDir, aMajorR, aMinorR, myMajor );
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
       anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
@@ -450,6 +481,8 @@ void BasicGUI_EllipseDlg::addSubshapesToStudy()
     objMap[GroupPoints->LineEdit1->text()] = myPoint;
   if (!CORBA::is_nil(myDir))
     objMap[GroupPoints->LineEdit2->text()] = myDir;
+  if (!CORBA::is_nil(myMajor))
+    objMap[GroupPoints->LineEdit3->text()] = myMajor;
 
   addSubshapesToFather( objMap );
 }
