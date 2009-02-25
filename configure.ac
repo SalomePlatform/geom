@@ -232,11 +232,34 @@ CORBA=adm_local/unix/$corba
 
 fi
 
-GEOM_WITH_GUI=yes
+echo
+echo ---------------------------------------------
+echo Testing GUI
+echo ---------------------------------------------
+echo
 
-AM_CONDITIONAL(GEOM_ENABLE_GUI, [test "${GEOM_WITH_GUI}" = "yes"])
+CHECK_GUI_MODULE
 
-if test "${GEOM_WITH_GUI}" = "yes"; then
+gui_ok=no
+if test "${SalomeGUI_need}" != "no" -a "${FullGUI_ok}" = "yes" ; then 
+  gui_ok=yes
+fi
+
+AM_CONDITIONAL(GEOM_ENABLE_GUI, [test "${gui_ok}" = "yes"])
+
+if test "${SalomeGUI_need}" == "yes"; then
+  if test "${FullGUI_ok}" != "yes"; then
+    AC_MSG_WARN(For configure GEOM module necessary full GUI!)
+  fi
+elif test "${SalomeGUI_need}" == "auto"; then
+  if test "${FullGUI_ok}" != "yes"; then
+    AC_MSG_WARN(Full GUI not found. Build will be done without GUI!)
+  fi
+elif test "${SalomeGUI_need}" == "no"; then
+  echo Build without GUI option has been chosen
+fi
+
+if test "${gui_ok}" = "yes"; then
     echo
     echo ---------------------------------------------
     echo testing openGL
@@ -260,26 +283,6 @@ if test "${GEOM_WITH_GUI}" = "yes"; then
     echo
 
     CHECK_VTK
-
-    echo
-    echo ---------------------------------------------
-    echo Testing GUI
-    echo ---------------------------------------------
-    echo
-
-    CHECK_SALOME_GUI
-
-    echo
-    echo ---------------------------------------------
-    echo Testing full GUI
-    echo ---------------------------------------------
-    echo
-
-    CHECK_CORBA_IN_GUI
-    if test "x${CORBA_IN_GUI}" != "xyes"; then
-      echo "failed : For configure GEOM module necessary full GUI !"
-      exit
-    fi
 fi
 
 echo
@@ -330,11 +333,12 @@ echo
 
 echo Configure
 
-if test "${GEOM_WITH_GUI}" = "yes"; then
-variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok SalomeGUI_ok"
-fi
-if test "${GEOM_WITH_GUI}" = "no"; then
-variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+if test "${gui_ok}" = "yes"; then
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+elif test "${SalomeGUI_need}" != "no"; then
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+else
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
 fi
 
 for var in $variables
