@@ -333,6 +333,20 @@ DlgRef_2Sel1Spin::~DlgRef_2Sel1Spin()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel1SpinInt
+//////////////////////////////////////////
+
+DlgRef_2Sel1SpinInt::DlgRef_2Sel1SpinInt( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel1SpinInt::~DlgRef_2Sel1SpinInt()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel2List
 //////////////////////////////////////////
 

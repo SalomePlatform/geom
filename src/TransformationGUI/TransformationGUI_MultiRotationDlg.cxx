@@ -70,7 +70,7 @@ TransformationGUI_MultiRotationDlg::TransformationGUI_MultiRotationDlg
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_2Sel1Spin(centralWidget());
+  GroupPoints = new DlgRef_2Sel1SpinInt(centralWidget());
   GroupPoints->GroupBox1->setTitle(tr("GEOM_MULTIROTATION_SIMPLE"));
   GroupPoints->TextLabel1->setText(tr("GEOM_MAIN_OBJECT"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
@@ -124,23 +124,20 @@ void TransformationGUI_MultiRotationDlg::Init()
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
-  double SpecificStep1 = 5;
-  double SpecificStep2 = 1;
+  int SpecificStep1 = 5;
+  int SpecificStep2 = 1;
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, 1.0, 999, SpecificStep2, 10);
+  initSpinBox(GroupPoints->SpinBox_DX, 1, 999, SpecificStep2);
   GroupPoints->SpinBox_DX->setValue(myNbTimes1);
-  GroupPoints->SpinBox_DX->setDecimals(0);
 
   initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, SpecificStep1, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY1, 1.0, 999, SpecificStep2, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY1, 1, 999, SpecificStep2);
   initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY2, 1.0, 999, SpecificStep2, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY2, 1, 999, SpecificStep2);
   GroupDimensions->SpinBox_DX1->setValue(myAng);
   GroupDimensions->SpinBox_DY1->setValue(myNbTimes1);
   GroupDimensions->SpinBox_DX2->setValue(myStep);
   GroupDimensions->SpinBox_DY2->setValue(myNbTimes2);
-  GroupDimensions->SpinBox_DY1->setDecimals(0);
-  GroupDimensions->SpinBox_DY2->setDecimals(0);
 
   // init variables
   myAng = 45.0;
@@ -171,11 +168,11 @@ void TransformationGUI_MultiRotationDlg::Init()
   connect(GroupDimensions->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupDimensions->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupPoints->SpinBox_DX,      SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DX,      SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
   connect(GroupDimensions->SpinBox_DX1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY1, SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
 
   connect(GroupDimensions->SpinBox_DX1,SIGNAL(textChanged( const QString& )),
           this, SLOT(TextValueChangedInSpinBox( const QString& )));
@@ -195,11 +192,11 @@ void TransformationGUI_MultiRotationDlg::Init()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::SetDoubleSpinBoxStep (double step)
 {
-  GroupPoints->SpinBox_DX->setSingleStep(step);
+  GroupPoints->SpinBox_DX->setSingleStep((int)step);
   GroupDimensions->SpinBox_DX1->setSingleStep(step);
-  GroupDimensions->SpinBox_DY1->setSingleStep(step);
+  GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
   GroupDimensions->SpinBox_DX2->setSingleStep(step);
-  GroupDimensions->SpinBox_DY2->setSingleStep(step);
+  GroupDimensions->SpinBox_DY2->setSingleStep((int)step);
 }
 
 //=================================================================================
@@ -478,6 +475,7 @@ void TransformationGUI_MultiRotationDlg::TextValueChangedInSpinBox(const QString
     GroupDimensions->CheckButton1->setChecked(false);
   GroupDimensions->CheckButton1->setEnabled(isDigit);
 }
+
 //=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
@@ -486,14 +484,26 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox (double newValue)
 {
   QObject* send = (QObject*)sender();
 
-  if (send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DY1)
-    myNbTimes1 = (int)newValue;
-  else if (send == GroupDimensions->SpinBox_DX1)
+  if (send == GroupDimensions->SpinBox_DX1)
     myAng = newValue;
   else if (send == GroupDimensions->SpinBox_DX2)
     myStep = newValue;
+
+  displayPreview();
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox (int newValue)
+{
+  QObject* send = (QObject*)sender();
+
+  if (send == GroupPoints->SpinBox_DX || send == GroupDimensions->SpinBox_DY1)
+    myNbTimes1 = newValue;
   else if (send == GroupDimensions->SpinBox_DY2)
-    myNbTimes2 = (int)newValue;
+    myNbTimes2 = newValue;
 
   displayPreview();
 }
@@ -508,9 +518,7 @@ void TransformationGUI_MultiRotationDlg::ReverseAngle()
 
   int aConstructorId = getConstructorId();
 
-  if (aConstructorId == 0)
-    GroupPoints->SpinBox_DX->setValue(myAng);
-  else if (aConstructorId == 1)
+  if (aConstructorId == 1)
     GroupDimensions->SpinBox_DX1->setValue(myAng);
 
   displayPreview();

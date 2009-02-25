@@ -29,7 +29,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Sel4Spin1Check;
-class DlgRef_2Sel1Spin;
+class DlgRef_2Sel1SpinInt;
 
 //=================================================================================
 // class    : TransformationGUI_MultiRotationDlg
@@ -65,7 +65,7 @@ private:
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
   
-  DlgRef_2Sel1Spin*                  GroupPoints;
+  DlgRef_2Sel1SpinInt*               GroupPoints;
   DlgRef_2Sel4Spin1Check*            GroupDimensions;
 
 private slots:
@@ -77,6 +77,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               ReverseAngle();
   void                               ValueChangedInSpinBox( double );
+  void                               ValueChangedInSpinBox( int );
   void                               TextValueChangedInSpinBox( const QString& );
   void                               ConstructorsClicked( int );
   void                               SetDoubleSpinBoxStep( double );

@@ -390,6 +390,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_2Sel1SpinInt
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel1SpinInt_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel1SpinInt : public QWidget, 
+                                          public Ui::DlgRef_2Sel1SpinInt_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel1SpinInt( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel1SpinInt();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel2List
 //////////////////////////////////////////
 

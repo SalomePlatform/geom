@@ -111,11 +111,11 @@ BlocksGUI_TrsfDlg::~BlocksGUI_TrsfDlg()
 void BlocksGUI_TrsfDlg::Init()
 {
   // Set range of spinboxes
-  double SpecificStep = 1.0;
-  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIter;
+  int SpecificStep = 1;
+  QMap<int, SalomeApp_IntSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
-    //anIter.data()->RangeStepAndValidator(1.0, 999.999, SpecificStep, 3);
-    initSpinBox(anIter.value(), 1.0, 999, SpecificStep, 3);
+    //anIter.data()->RangeStepAndValidator(1, 999, SpecificStep);
+    initSpinBox(anIter.value(), 1, 999, SpecificStep);
   }
 
   // signals and slots connections
@@ -128,7 +128,7 @@ void BlocksGUI_TrsfDlg::Init()
   for (anIterBtn = mySelBtn.begin(); anIterBtn != mySelBtn.end(); ++anIterBtn)
     connect(anIterBtn.value(), SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  QMap<int, SalomeApp_DoubleSpinBox*>::iterator anIterSpin;
+  QMap<int, SalomeApp_IntSpinBox*>::iterator anIterSpin;
   for (anIterSpin = mySpinBox.begin(); anIterSpin != mySpinBox.end(); ++anIterSpin)
     connect(anIterSpin.value(), SIGNAL(valueChanged(int)), this, SLOT(ValueChangedInSpinBox(int)));
 
@@ -166,16 +166,13 @@ void BlocksGUI_TrsfDlg::ConstructorsClicked (int constructorId)
     myGrp2->hide();
     myGrp1->show();
     mySpinBox[SpinBox1]->setValue(2);
-    mySpinBox[SpinBox1]->setDecimals(0);
     mySelBtn[MainObj1]->click();
     break;
   case 1:
     myGrp1->hide();
     myGrp2->show();
     mySpinBox[SpinBox2U]->setValue(2);
-    mySpinBox[SpinBox2U]->setDecimals(0);
     mySpinBox[SpinBox2V]->setValue(2);
-    mySpinBox[SpinBox2V]->setDecimals(0);
     mySelBtn[MainObj2]->click();
     break;
   default:
@@ -453,7 +450,7 @@ void BlocksGUI_TrsfDlg::createSpinWg (const QString& theLbl,
                                       const int      theId)
 {
   QLabel* lab = new QLabel(theLbl, theParent);
-  mySpinBox[theId] = new SalomeApp_DoubleSpinBox(theParent);
+  mySpinBox[theId] = new SalomeApp_IntSpinBox(theParent);
   QGridLayout* l = 0;
   if (!theParent->layout()) {
     l = new QGridLayout(theParent);

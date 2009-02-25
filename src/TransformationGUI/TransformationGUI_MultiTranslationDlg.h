@@ -78,6 +78,7 @@ private slots:
   void                               ReverseStepU();
   void                               ReverseStepV();
   void                               ValueChangedInSpinBox( double );
+  void                               ValueChangedInSpinBox( int );
   void                               TextValueChangedInSpinBox( const QString& );
   void                               ConstructorsClicked( int );
   void                               SetDoubleSpinBoxStep( double );

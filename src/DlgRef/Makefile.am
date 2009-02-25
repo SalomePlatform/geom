@@ -60,6 +60,7 @@ UIC_FILES =					\
 	ui_DlgRef_2Sel1List_QTD.h		\
 	ui_DlgRef_2Sel1Spin2Check_QTD.h		\
 	ui_DlgRef_2Sel1Spin_QTD.h		\
+	ui_DlgRef_2Sel1SpinInt_QTD.h		\
 	ui_DlgRef_2Sel2List_QTD.h		\
 	ui_DlgRef_2Sel2Spin1Check_QTD.h		\
 	ui_DlgRef_2Sel2Spin_QTD.h		\

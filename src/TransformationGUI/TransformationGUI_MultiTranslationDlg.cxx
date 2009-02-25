@@ -130,24 +130,21 @@ void TransformationGUI_MultiTranslationDlg::Init()
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
-  double SpecificStep = 1;
+  int SpecificStep = 1;
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox_DY, 1, 999, SpecificStep, 10);
+  initSpinBox(GroupPoints->SpinBox_DY, 1, 999, SpecificStep);
   GroupPoints->SpinBox_DX->setValue(myStepU);
   GroupPoints->SpinBox_DY->setValue(myNbTimesU);
-  GroupPoints->SpinBox_DY->setDecimals(0);
 
   initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY1, 1, 999, SpecificStep, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY1, 1, 999, SpecificStep);
   initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY2, 1, 999, SpecificStep, 10);
+  initSpinBox(GroupDimensions->SpinBox_DY2, 1, 999, SpecificStep);
   GroupDimensions->SpinBox_DX1->setValue(myStepU);
   GroupDimensions->SpinBox_DY1->setValue(myNbTimesU);
   GroupDimensions->SpinBox_DX2->setValue(myStepV);
   GroupDimensions->SpinBox_DY2->setValue(myNbTimesV);
-  GroupDimensions->SpinBox_DY1->setDecimals(0);
-  GroupDimensions->SpinBox_DY2->setDecimals(0);
 
   // init variables
   myStepU = myStepV = 50.0;
@@ -181,11 +178,11 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect(GroupDimensions->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX,      SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupPoints->SpinBox_DY,      SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DY,      SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
   connect(GroupDimensions->SpinBox_DX1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY1, SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-  connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
 
   connect(GroupPoints->SpinBox_DX,      SIGNAL(textChanged(const QString& )), 
           this, SLOT(TextValueChangedInSpinBox(const QString& )));
@@ -212,11 +209,11 @@ void TransformationGUI_MultiTranslationDlg::Init()
 void TransformationGUI_MultiTranslationDlg::SetDoubleSpinBoxStep (double step)
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
-  GroupPoints->SpinBox_DY->setSingleStep(step);
+  GroupPoints->SpinBox_DY->setSingleStep((int)step);
   GroupDimensions->SpinBox_DX1->setSingleStep(step);
-  GroupDimensions->SpinBox_DY1->setSingleStep(step);
+  GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
   GroupDimensions->SpinBox_DX2->setSingleStep(step);
-  GroupDimensions->SpinBox_DY2->setSingleStep(step);
+  GroupDimensions->SpinBox_DY2->setSingleStep((int)step);
 }
 
 //=================================================================================
@@ -561,18 +558,35 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox (double newVal
   case 0:
     if (send == GroupPoints->SpinBox_DX)
       myStepU = newValue;
-    else if (send == GroupPoints->SpinBox_DY)
-      myNbTimesU = (int)newValue;
     break;
   case 1:
     if (send == GroupDimensions->SpinBox_DX1)
       myStepU = newValue;
-    else if (send == GroupDimensions->SpinBox_DY1)
-      myNbTimesU = (int)newValue;
     else if (send == GroupDimensions->SpinBox_DX2)
       myStepV = newValue;
+    break;
+  }
+
+  displayPreview();
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox (int newValue)
+{
+  QObject* send = (QObject*)sender();
+  switch (getConstructorId()) {
+  case 0:
+    if (send == GroupPoints->SpinBox_DY)
+      myNbTimesU = newValue;
+    break;
+  case 1:
+    if (send == GroupDimensions->SpinBox_DY1)
+      myNbTimesU = newValue;
     else if (send == GroupDimensions->SpinBox_DY2)
-      myNbTimesV = (int)newValue;
+      myNbTimesV = newValue;
     break;
   }
 

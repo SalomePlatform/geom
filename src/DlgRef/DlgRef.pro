@@ -60,6 +60,7 @@ HEADERS += DlgRef_1Sel3Spin_QTD.h
 HEADERS += DlgRef_1Sel4Spin_QTD.h
 HEADERS += DlgRef_1Sel5Spin_QTD.h
 HEADERS += DlgRef_2Sel1Spin_QTD.h
+HEADERS += DlgRef_2Sel1SpinInt_QTD.h
 HEADERS += DlgRef_2Sel2Spin_QTD.h
 HEADERS += DlgRef_2Sel3Spin_QTD.h
 HEADERS += DlgRef_1Sel1Spin1Check_QTD.h
