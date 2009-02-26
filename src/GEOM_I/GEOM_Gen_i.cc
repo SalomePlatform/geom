@@ -1471,10 +1471,12 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
     }
   }
     
-  char anInfo [strlen("Module ") + strlen(ComponentDataType()) + strlen(", ") + strlen(aTypeInfo)];
+  char* anInfo = new char[strlen("Module ") + strlen(ComponentDataType()) + strlen(", ") + strlen(aTypeInfo) + 3];
   sprintf(anInfo, "Module %s, %s", ComponentDataType(), aTypeInfo);
   
-  return CORBA::string_dup(anInfo);
+  char* ret = CORBA::string_dup(anInfo);
+  delete [] anInfo;
+  return ret;
 }
 
 //=====================================================================================
