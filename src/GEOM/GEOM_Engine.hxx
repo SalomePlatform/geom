@@ -51,13 +51,13 @@ typedef std::vector<TState>    TAllStates;
 class ObjectStates
 {
 public:
-  ObjectStates();
+  Standard_EXPORT ObjectStates();
   ~ObjectStates();
 
   TAllStates GetAllStates() const { return _states; }
 
   TState GetCurrectState() const;
-  void AddState(const TState &theState);
+  Standard_EXPORT void AddState(const TState &theState);
   void IncrementState();
 
 private:
