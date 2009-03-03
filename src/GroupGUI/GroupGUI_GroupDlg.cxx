@@ -214,7 +214,7 @@ void GroupGUI_GroupDlg::Init()
   connect( mySelAllBtn,         SIGNAL( clicked() ),            this, SLOT( SetEditCurrentArgument() ) );
   connect( myAddBtn,            SIGNAL( clicked() ),            this, SLOT( add() ) );
   connect( myRemBtn,            SIGNAL( clicked() ),            this, SLOT( remove() ) );
-  connect( myIdList,            SIGNAL( selectionChanged() ),   this, SLOT( selectionChanged() ) );
+  connect( myIdList,            SIGNAL( itemSelectionChanged() ),   this, SLOT( selectionChanged() ) );
 
   setInPlaceObj(GEOM::GEOM_Object::_nil());
 
