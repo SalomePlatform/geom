@@ -234,7 +234,7 @@ msgid "GEOM_NAME_INCORRECT"
 msgstr "Object name not found"
 
 msgid "GEOM_INCORRECT_INPUT"
-msgstr "Some parameters are missing"
+msgstr "Incorrect Input Data!"
 
 #
 #==============================================================================
