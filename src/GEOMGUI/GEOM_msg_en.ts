@@ -745,7 +745,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_INCORRECT_INPUT</source>
-            <translation>Some parameters are missing</translation>
+            <translation>Incorrect Input Data!</translation>
         </message>
         <message>
             <source>GEOM_INERTIA_CONSTR</source>
