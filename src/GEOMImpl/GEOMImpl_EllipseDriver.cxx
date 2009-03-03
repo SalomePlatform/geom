@@ -103,8 +103,11 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
+
+    // Axes
+    gp_Ax2 anAxes (aP, aV);
+
     // Main Axis vector
-    gp_Vec aVM = gp::DX();
     Handle(GEOM_Function) aRefVectorMaj = aCI.GetVectorMajor();
     if (!aRefVectorMaj.IsNull()) {
       TopoDS_Shape aShapeVec = aRefVectorMaj->GetValue();
@@ -116,7 +119,7 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Vertex V1, V2;
       TopExp::Vertices(anE, V1, V2, Standard_True);
       if (!V1.IsNull() && !V2.IsNull()) {
-        aVM = gp_Vec(BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+	gp_Vec aVM (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aVM.Magnitude() < gp::Resolution()) {
           Standard_ConstructionError::Raise
             ("Ellipse creation aborted: major axis vector of zero length is given");
@@ -125,11 +128,11 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
 	  Standard_ConstructionError::Raise
 	    ("Ellipse creation aborted: normal and major axis vectors are parallel");
 	}
+	// Axes defined with main axis vector
+	anAxes  = gp_Ax2 (aP, aV, aVM);
       }
     }
 
-    // Axes
-    gp_Ax2 anAxes (aP, aV, aVM);
     // Ellipse
     gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
     aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
