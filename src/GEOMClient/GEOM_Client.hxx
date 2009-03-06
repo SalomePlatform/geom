@@ -52,7 +52,7 @@ class TopoDS_Shape;
 #endif
 
 #ifdef WNT
- #if defined GEOMCLIENT_EXPORTS
+ #if defined GEOMCLIENT_EXPORTS || defined GEOMClient_EXPORTS
   #if defined WIN32
    #define GEOMCLIENT_EXPORT __declspec( dllexport )
   #else

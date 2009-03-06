@@ -26,7 +26,7 @@
 #define GEOM_DLGREF_H
 
 #if defined WIN32
-#  if defined DLGREF_EXPORTS
+#  if defined DLGREF_EXPORTS || defined DlgRef_EXPORTS
 #    define DLGREF_EXPORT __declspec( dllexport )
 #  else
 #    define DLGREF_EXPORT __declspec( dllimport )

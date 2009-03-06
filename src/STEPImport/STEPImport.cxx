@@ -40,7 +40,7 @@
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #ifdef WNT
- #if defined STEPIMPORT_EXPORTS
+ #if defined STEPIMPORT_EXPORTS || defined STEPImport_EXPORTS
   #if defined WIN32
    #define STEPIMPORT_EXPORT __declspec( dllexport )
   #else

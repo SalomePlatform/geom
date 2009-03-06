@@ -32,7 +32,7 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WIN32
-# if defined STLEXPORT_EXPORTS
+# if defined STLEXPORT_EXPORTS || defined STLExport_EXPORTS
 #  define STLEXPORT_EXPORT __declspec( dllexport )
 # else
 #  define STLEXPORT_EXPORT __declspec( dllimport )

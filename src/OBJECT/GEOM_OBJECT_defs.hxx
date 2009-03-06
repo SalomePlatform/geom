@@ -27,7 +27,7 @@
 #define _GEOM_OBJECT_defs_HXX_
 
 #ifdef WIN32
-# if defined GEOM_OBJECT_EXPORTS
+# if defined GEOM_OBJECT_EXPORTS || defined GEOMObject_EXPORTS
 #  define GEOM_OBJECT_EXPORT __declspec( dllexport )
 # else
 #  define GEOM_OBJECT_EXPORT __declspec( dllimport )

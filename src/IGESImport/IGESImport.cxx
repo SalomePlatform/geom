@@ -33,7 +33,7 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
- #if defined IGESIMPORT_EXPORTS
+ #if defined IGESIMPORT_EXPORTS || defined IGESImport_EXPORTS
   #if defined WIN32
    #define IGESIMPORT_EXPORT __declspec( dllexport )
   #else

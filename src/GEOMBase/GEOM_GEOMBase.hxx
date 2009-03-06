@@ -26,7 +26,7 @@
 #define GEOM_GEOMBASE_HXX
 
 #if defined WIN32
-#  if defined GEOMBASE_EXPORTS
+#  if defined GEOMBASE_EXPORTS || defined GEOMBase_EXPORTS
 #    define GEOMBASE_EXPORT __declspec( dllexport )
 #  else
 #    define GEOMBASE_EXPORT __declspec( dllimport )

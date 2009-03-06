@@ -32,7 +32,7 @@
 #include <TopoDS_Shape.hxx>
 
 #ifdef WNT
- #if defined BREPEXPORT_EXPORTS
+ #if defined BREPEXPORT_EXPORTS || defined BREPExport_EXPORTS
   #if defined WIN32
    #define BREPEXPORT_EXPORT __declspec( dllexport )
   #else

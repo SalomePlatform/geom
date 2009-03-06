@@ -26,7 +26,7 @@
 #define GEOM_GEOMGUI_HXX
 
 #if defined WIN32
-#  if defined GEOMGUI_EXPORTS
+#  if defined GEOMGUI_EXPORTS || defined GEOM_EXPORTS
 #    define GEOMGUI_EXPORT __declspec( dllexport )
 #  else
 #    define GEOMGUI_EXPORT __declspec( dllimport )

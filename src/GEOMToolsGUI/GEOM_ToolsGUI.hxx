@@ -27,7 +27,7 @@
 #define _GEOM_ToolsGUI_HXX_
 
 #ifdef WNT
- #if defined GEOMTOOLSGUI_EXPORTS
+ #if defined GEOMTOOLSGUI_EXPORTS || defined GEOMToolsGUI_EXPORTS
   #if defined WIN32
    #define GEOMTOOLSGUI_EXPORT __declspec( dllexport )
   #else
