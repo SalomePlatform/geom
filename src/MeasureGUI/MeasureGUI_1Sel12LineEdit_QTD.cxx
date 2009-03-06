@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form implementation generated from reading ui file 'MeasureGUI_1Sel12LineEdit_QTD.ui'
 **
-** Created: Tue Feb 17 11:08:48 2009
+** Created: Fri Mar 6 16:48:17 2009
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -112,7 +112,7 @@ MeasureGUI_1Sel12LineEdit_QTD::MeasureGUI_1Sel12LineEdit_QTD( QWidget* parent, c
     Layout1->addMultiCellLayout( Layout2, 1, 1, 0, 2 );
 
     LineEdit1 = new QLineEdit( GroupBox1, "LineEdit1" );
-    LineEdit1->setMinimumSize( QSize( 250, 0 ) );
+    LineEdit1->setMinimumSize( QSize( 300, 0 ) );
 
     Layout1->addWidget( LineEdit1, 0, 2 );
     Spacer8 = new QSpacerItem( 0, 40, QSizePolicy::Minimum, QSizePolicy::Expanding );

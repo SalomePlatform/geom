@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Form interface generated from reading ui file 'MeasureGUI_1Sel12LineEdit_QTD.ui'
 **
-** Created: Tue Feb 17 11:08:48 2009
+** Created: Fri Mar 6 16:48:17 2009
 **      by: The User Interface Compiler ($Id$)
 **
 ** WARNING! All changes made in this file will be lost!
