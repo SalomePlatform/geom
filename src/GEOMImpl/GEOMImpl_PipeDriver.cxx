@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PipeDriver.hxx>
@@ -28,10 +28,11 @@
 #include <GEOMImpl_IPipeShellSect.hxx>
 #include <GEOMImpl_IPipeBiNormal.hxx>
 #include <GEOMImpl_IPipe.hxx>
+#include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
-#include <GEOMAlgo_GlueAnalyser.hxx>
+//#include <GEOMAlgo_GlueAnalyser.hxx>
 
 #include <ShapeAnalysis_FreeBounds.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -2385,6 +2386,11 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     if (!ana.IsValid())
       Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
+
+  // Glue (for bug 0020207)
+  TopExp_Explorer anExpV (aShape, TopAbs_VERTEX);
+  if (anExpV.More())
+    aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
 
   TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
