@@ -941,7 +941,7 @@ msgstr "Archimede Construction"
 
 #: GeometryGUI_BndBoxDlg.cxx:59
 msgid "GEOM_BNDBOX_TITLE"
-msgstr "Bounding Box Informations"
+msgstr "Bounding Box Information"
 
 #: GeometryGUI_BndBoxDlg.cxx:82
 msgid "GEOM_BNDBOX_OBJDIM"
@@ -1016,11 +1016,11 @@ msgstr "Cylinder Construction"
 
 #: GeometryGUI_CheckShape.cxx:60
 msgid "GEOM_CHECK_TITLE"
-msgstr "Check Shape Informations"
+msgstr "Check Shape Information"
 
 #: GeometryGUI_CheckShape.cxx:83
 msgid "GEOM_CHECK_INFOS"
-msgstr "Object And Its Topological Informations"
+msgstr "Object And Its Topological Information"
 
 #: GeometryGUI_DistanceDlg.cxx:57
 msgid "GEOM_MINDIST_TITLE"
@@ -1248,7 +1248,7 @@ msgstr "Base Shape + 2 Points"
 
 #: GeometryGUI_PropertiesDlg.cxx:56
 msgid "GEOM_PROPERTIES_TITLE"
-msgstr "Basic Properties Informations"
+msgstr "Basic Properties Information"
 
 #: GeometryGUI_PropertiesDlg.cxx:78
 msgid "GEOM_PROPERTIES_CONSTR"
@@ -1402,11 +1402,11 @@ msgstr "Vector Construction"
 
 #: GeometryGUI_WhatisDlg.cxx:63
 msgid "GEOM_WHATIS_TITLE"
-msgstr "Whatis Informations"
+msgstr "Whatis Information"
 
 #: GeometryGUI_WhatisDlg.cxx:86
 msgid "GEOM_WHATIS_OBJECT"
-msgstr "Object And Its Topological Informations"
+msgstr "Object And Its Topological Information"
 
 #: GeometryGUI_WireDlg.cxx:46
 msgid "GEOM_WIRE_TITLE"
