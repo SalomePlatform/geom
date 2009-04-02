@@ -89,21 +89,22 @@
 #include <gp_Lin.hxx>
 
 #include <GeomAPI_ProjectPointOnCurve.hxx>
-#include <ShapeAnalysis.hxx>
-#include <ShapeAnalysis_Surface.hxx>
 #include <GeomLProp_CLProps.hxx>
 #include <GeomLProp_SLProps.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeAnalysis_Surface.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#include <BRepClass3d_SolidClassifier.hxx>
+#include <BRep_Builder.hxx>
 #include <GeomAPI_IntSS.hxx>
+#include <Geom_Circle.hxx>
 #include <Geom_SphericalSurface.hxx>
 #include <Geom_ToroidalSurface.hxx>
-#include <Geom_Circle.hxx>
-#include <BRep_Builder.hxx>
-#include <TopoDS_Compound.hxx>
 #include <ShapeFix_Shape.hxx>
+#include <TopoDS_Compound.hxx>
 
 
 //=============================================================================
@@ -1643,6 +1644,34 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
+
+    // Issue 0020231: A min distance bug with torus and vertex.
+    // Make GetMinDistance() return zero if a sole VERTEX is inside any of SOLIDs
+
+    // which of shapes consists of only one vertex?
+    TopExp_Explorer exp1(aShape1,TopAbs_VERTEX), exp2(aShape2,TopAbs_VERTEX);
+    TopoDS_Shape V1 = exp1.More() ? exp1.Current() : TopoDS_Shape();
+    TopoDS_Shape V2 = exp2.More() ? exp2.Current() : TopoDS_Shape();
+    exp1.Next(); exp2.Next();
+    if ( exp1.More() ) V1.Nullify();
+    if ( exp2.More() ) V2.Nullify();
+    // vertex and container of solids
+    TopoDS_Shape V = V1.IsNull() ? V2 : V1;
+    TopoDS_Shape S = V1.IsNull() ? aShape1 : aShape2;
+    if ( !V.IsNull() ) {
+      // classify vertex against solids
+      gp_Pnt p = BRep_Tool::Pnt( TopoDS::Vertex( V ) );
+      for ( exp1.Init( S, TopAbs_SOLID ); exp1.More(); exp1.Next() ) {
+        BRepClass3d_SolidClassifier classifier( exp1.Current(), p, 1e-6);
+        if ( classifier.State() == TopAbs_IN ) {
+          p.Coord(X1, Y1, Z1);
+          p.Coord(X2, Y2, Z2);
+          SetErrorCode(OK);
+          return 0.0;
+        }
+      }
+    }
+    // End Issue 0020231
 
     // skl 30.06.2008
     // additional workaround for bugs 19899, 19908 and 19910 from Mantis
