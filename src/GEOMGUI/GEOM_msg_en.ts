@@ -217,7 +217,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_BNDBOX_TITLE</source>
-            <translation>Bounding Box Informations</translation>
+            <translation>Bounding Box Information</translation>
         </message>
         <message>
             <source>GEOM_BOX</source>
@@ -1185,7 +1185,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_PROPERTIES_TITLE</source>
-            <translation>Basic Properties Informations</translation>
+            <translation>Basic Properties Information</translation>
         </message>
         <message>
             <source>GEOM_PROPERTIES_VOLUME</source>
@@ -1885,11 +1885,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_WHATIS_OBJECT</source>
-            <translation>Object And Its Topological Informations</translation>
+            <translation>Object And Its Topological Information</translation>
         </message>
         <message>
             <source>GEOM_WHATIS_TITLE</source>
-            <translation>Whatis Informations</translation>
+            <translation>Whatis Information</translation>
         </message>
         <message>
             <source>GEOM_WIRE</source>
