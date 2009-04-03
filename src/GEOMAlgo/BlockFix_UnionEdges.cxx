@@ -22,7 +22,7 @@
 // File:      BlockFix_UnionEdges.cxx
 // Created:   07.12.04 15:27:30
 // Author:    Sergey KUUL
-//
+
 #include <BlockFix_UnionEdges.ixx>
 
 #include <Approx_Curve3d.hxx>
@@ -169,7 +169,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       Handle(Geom_Circle) C2 = Handle(Geom_Circle)::DownCast(c3d2);
       gp_Pnt P01 = C1->Location();
       gp_Pnt P02 = C2->Location();
-      if(P01.Distance(P02)>Precision::Confusion()) continue;
+      if (P01.Distance(P02) > Precision::Confusion()) continue;
       // can union circles => create new edge
       TopoDS_Vertex V1 = sae.FirstVertex(edge1);
       gp_Pnt PV1 = BRep_Tool::Pnt(V1);
@@ -177,19 +177,31 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       gp_Pnt PV2 = BRep_Tool::Pnt(V2);
       TopoDS_Vertex VM = sae.LastVertex(edge1);
       gp_Pnt PVM = BRep_Tool::Pnt(VM);
-      GC_MakeCircle MC(PV1,PVM,PV2);
+      GC_MakeCircle MC (PV1,PVM,PV2);
       Handle(Geom_Circle) C = MC.Value();
-      gp_Pnt P0 = C->Location();
-      gp_Dir D1(gp_Vec(P0,PV1));
-      gp_Dir D2(gp_Vec(P0,PV2));
-      Standard_Real fpar = C->XAxis().Direction().Angle(D1);
-      Standard_Real lpar = C->XAxis().Direction().Angle(D2);
-      Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(C,fpar,lpar);
       TopoDS_Edge E;
-      B.MakeEdge (E,tc,Precision::Confusion());
-      B.Add (E,V1);  B.Add (E,V2);
-      B.UpdateVertex(V1, fpar, E, 0.);
-      B.UpdateVertex(V2, lpar, E, 0.);
+      if (!MC.IsDone() || C.IsNull()) {
+        // jfa for Mantis issue 0020228
+        if (PV1.Distance(PV2) > Precision::Confusion()) continue;
+        // closed chain
+        C = C1;
+        B.MakeEdge (E,C,Precision::Confusion());
+        B.Add(E,V1);
+        B.Add(E,V2);
+      }
+      else {
+        gp_Pnt P0 = C->Location();
+        gp_Dir D1(gp_Vec(P0,PV1));
+        gp_Dir D2(gp_Vec(P0,PV2));
+        Standard_Real fpar = C->XAxis().Direction().Angle(D1);
+        Standard_Real lpar = C->XAxis().Direction().Angle(D2);
+        Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(C,fpar,lpar);
+        B.MakeEdge (E,tc,Precision::Confusion());
+        B.Add(E,V1);
+        B.Add(E,V2);
+        B.UpdateVertex(V1, fpar, E, 0.);
+        B.UpdateVertex(V2, lpar, E, 0.);
+      }
       ShapeFix_Edge sfe;
       sfe.FixAddPCurve(E,aFace,Standard_False);
       sfe.FixSameParameter(E);
@@ -198,11 +210,11 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       j--;
     }
   }
-  if(j<aChain.Length()) {
+  if (j < aChain.Length()) {
     MESSAGE ("null curve3d in edge...");
     return Standard_False;
   }
-  if(aChain.Length()>1) {
+  if (aChain.Length() > 1) {
     // second step: union edges with various curves
     // skl for bug 0020052 from Mantis: perform such unions
     // only if curves are bspline or bezier
@@ -251,7 +263,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
@@ -260,18 +272,18 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
   myContext = new ShapeBuild_ReShape;
   myTolerance = Tol;
   TopoDS_Shape aResult = myContext->Apply(Shape);
-  
+
   // processing each solid
   TopExp_Explorer exps;
   for(exps.Init(Shape, TopAbs_SOLID); exps.More(); exps.Next()) {
     TopoDS_Solid aSolid = TopoDS::Solid(exps.Current());
 
     TopTools_IndexedMapOfShape ChangedFaces;
-    
+
     // creating map of edge faces
     TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces;
     TopExp::MapShapesAndAncestors(aSolid, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces);
-  
+
     Handle(ShapeBuild_ReShape) aContext = new ShapeBuild_ReShape;
     TopoDS_Shape aRes = aSolid;
     aRes = aContext->Apply(aSolid);
@@ -302,7 +314,7 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
           }
         }
       }
-      
+
       for(Standard_Integer i=1; i<=aMapFacesEdges.Extent(); i++) {
         const TopTools_ListOfShape& ListEdges = aMapFacesEdges.FindFromIndex(i);
         TopTools_SequenceOfShape SeqEdges;
@@ -327,9 +339,9 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
             ChangedFaces.Add(tmpF);
         }
       }
-      
+
     } // end processing each face
-    
+
     // fix changed faces and replace them in the local context
     for(Standard_Integer i=1; i<=ChangedFaces.Extent(); i++) {
       TopoDS_Face aFace = TopoDS::Face(aContext->Apply(ChangedFaces.FindKey(i)));
