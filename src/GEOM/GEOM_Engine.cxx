@@ -210,7 +210,13 @@ Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
     if (_lastCleared.Root() == aDoc->Main().Root()) {
       useExisting = true;
       aChild = _lastCleared;
-      _lastCleared.Nullify();
+      // 0020229: if next label exists and is empty, try to reuse it
+      Standard_Integer aNextTag = aChild.Tag() + 1;
+      TDF_Label aNextL = aDoc->Main().FindChild(aNextTag, Standard_False);
+      if (!aNextL.IsNull() && !aNextL.HasAttribute())
+        _lastCleared = aNextL;
+      else
+        _lastCleared.Nullify();
     }
   }
   if (!useExisting) {
@@ -250,7 +256,13 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
     if (_lastCleared.Root() == aDoc->Main().Root()) {
       useExisting = true;
       aChild = _lastCleared;
-      _lastCleared.Nullify();
+      // 0020229: if next label exists and is empty, try to reuse it
+      Standard_Integer aNextTag = aChild.Tag() + 1;
+      TDF_Label aNextL = aDoc->Main().FindChild(aNextTag, Standard_False);
+      if (!aNextL.IsNull() && !aNextL.HasAttribute())
+        _lastCleared = aNextL;
+      else
+        _lastCleared.Nullify();
     }
   }
   if (!useExisting) {
