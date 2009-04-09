@@ -137,3 +137,19 @@ GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObjec
   GEOM::GEOM_Object_var GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
   return GO._retn();
 }
+
+//=============================================================================
+/*!
+ *  GetObjectImpl
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theObject)
+{
+  Handle(GEOM_Object) anImpl;
+  if (!CORBA::is_nil(theObject)) {
+    CORBA::String_var anEntry = theObject->GetEntry();
+    anImpl = GetImpl()->GetEngine()->GetObject
+      (theObject->GetStudyID(), anEntry);
+  }
+  return anImpl;
+}
