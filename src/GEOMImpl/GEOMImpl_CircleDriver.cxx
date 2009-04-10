@@ -111,8 +111,13 @@ Standard_Integer GEOMImpl_CircleDriver::Execute(TFunction_Logbook& log) const
     }
     // Axes
     gp_Ax2 anAxes (aP, aV);
+    // Radius
+    double anR = aCI.GetRadius();
+    char aMsg[] = "Circle creation aborted: radius value less than 1e-07 is not acceptable";
+    if (anR < Precision::Confusion())
+      Standard_ConstructionError::Raise(aMsg);
     // Circle
-    gp_Circ aCirc (anAxes, aCI.GetRadius());
+    gp_Circ aCirc (anAxes, anR);
     aShape = BRepBuilderAPI_MakeEdge(aCirc).Edge();
   }
   else if (aType == CIRCLE_CENTER_TWO_PNT) {
