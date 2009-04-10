@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_SphereDriver.hxx>
@@ -67,16 +67,27 @@ Standard_Integer GEOMImpl_SphereDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
 
+  char aMsg[] = "Sphere creation aborted: radius value less than 1e-07 is not acceptable";
+
   if (aType == SPHERE_R) {
-    aShape = BRepPrimAPI_MakeSphere(aCI.GetR()).Shape();
+    double anR = aCI.GetR();
+    if (anR < Precision::Confusion())
+      Standard_ConstructionError::Raise(aMsg);
+
+    aShape = BRepPrimAPI_MakeSphere(anR).Shape();
   }
   else if (aType == SPHERE_PNT_R) {
+    double anR = aCI.GetR();
+    if (anR < Precision::Confusion())
+      Standard_ConstructionError::Raise(aMsg);
+
     Handle(GEOM_Function) aRefPoint  = aCI.GetPoint();
     TopoDS_Shape aShapePnt = aRefPoint->GetValue();
-    if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
-      gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
-      aShape = BRepPrimAPI_MakeSphere(aP, aCI.GetR()).Shape();
-    }
+    if (aShapePnt.ShapeType() != TopAbs_VERTEX)
+      Standard_ConstructionError::Raise("Invalid shape given for sphere center: it must be a point");
+    gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+
+    aShape = BRepPrimAPI_MakeSphere(aP, anR).Shape();
   }
   else {
   }
