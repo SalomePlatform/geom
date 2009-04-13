@@ -530,6 +530,10 @@ public:
   GEOM::GEOM_Object_ptr MakeEllipse (GEOM::GEOM_Object_ptr theCenter,
 				     GEOM::GEOM_Object_ptr theVector,
 				     CORBA::Double theRMajor, CORBA::Double theRMinor);
+  GEOM::GEOM_Object_ptr MakeEllipseVec (GEOM::GEOM_Object_ptr theCenter,
+					GEOM::GEOM_Object_ptr theVector,
+					CORBA::Double theRMajor, CORBA::Double theRMinor,
+					GEOM::GEOM_Object_ptr theVectorMajor);
   GEOM::GEOM_Object_ptr MakeArc (GEOM::GEOM_Object_ptr thePnt1,
 				 GEOM::GEOM_Object_ptr thePnt2,
 				 GEOM::GEOM_Object_ptr thePnt3);

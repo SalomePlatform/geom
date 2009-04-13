@@ -732,6 +732,14 @@ msgstr "Major radius :"
 msgid "GEOM_RADIUS_MINOR"
 msgstr "Minor radius :"
 
+#Major axis
+msgid "GEOM_VECTOR_MAJOR"
+msgstr "Major Axis"
+
+#Optional tag
+msgid "GEOM_OPTIONAL"
+msgstr "optional"
+
 #Compound
 msgid "GEOM_COMPOUND"
 msgstr "Compound"

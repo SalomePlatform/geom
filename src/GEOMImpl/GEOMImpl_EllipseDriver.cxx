@@ -72,23 +72,68 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape;
 
   if (aType == ELLIPSE_PNT_VEC_RR) {
+    // Center
     Handle(GEOM_Function) aRefPoint  = aCI.GetCenter();
-    Handle(GEOM_Function) aRefVector = aCI.GetVector();
     TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+    if (aShapePnt.ShapeType() != TopAbs_VERTEX) {
+      Standard_ConstructionError::Raise
+	("Ellipse creation aborted: invalid center argument, must be a point");
+    }
+    gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+    // Normal
+    Handle(GEOM_Function) aRefVector = aCI.GetVector();
     TopoDS_Shape aShapeVec = aRefVector->GetValue();
-    if (aShapePnt.ShapeType() == TopAbs_VERTEX &&
-        aShapeVec.ShapeType() == TopAbs_EDGE) {
-      gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+    if (aShapeVec.ShapeType() != TopAbs_EDGE) {
+      Standard_ConstructionError::Raise
+	("Ellipse creation aborted: invalid normal vector argument, must be a vector or an edge");
+    }
+    TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(anE, V1, V2, Standard_True);
+    if (V1.IsNull() || V2.IsNull()) {
+      Standard_ConstructionError::Raise
+	("Ellipse creation aborted: invalid normal vector argument: cannot retrieve vertices");
+    }
+    gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+    if (aV.Magnitude() < gp::Resolution()) {
+      Standard_ConstructionError::Raise
+	("Ellipse creation aborted: normal vector of zero length is given");
+    }
+
+    // Axes
+    gp_Ax2 anAxes (aP, aV);
+
+    // Main Axis vector (optional)
+    Handle(GEOM_Function) aRefVectorMaj = aCI.GetVectorMajor();
+    if (!aRefVectorMaj.IsNull()) {
+      TopoDS_Shape aShapeVec = aRefVectorMaj->GetValue();
+      if (aShapeVec.ShapeType() != TopAbs_EDGE) {
+        Standard_ConstructionError::Raise
+          ("Ellipse creation aborted: invalid major axis vector argument, must be a vector or an edge");
+      }
       TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
       TopoDS_Vertex V1, V2;
       TopExp::Vertices(anE, V1, V2, Standard_True);
-      if (!V1.IsNull() && !V2.IsNull()) {
-        gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
-        gp_Ax2 anAxes (aP, aV);
-        gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
-        aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
+      if (V1.IsNull() || V2.IsNull()) {
+	Standard_ConstructionError::Raise
+	  ("Ellipse creation aborted: invalid major axis vector argument: cannot retrieve vertices");
       }
+      gp_Vec aVM (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+      if (aVM.Magnitude() < gp::Resolution()) {
+	Standard_ConstructionError::Raise
+	  ("Ellipse creation aborted: major axis vector of zero length is given");
+      }
+      if (aV.IsParallel(aVM, Precision::Angular())) {
+	Standard_ConstructionError::Raise
+	  ("Ellipse creation aborted: normal and major axis vectors are parallel");
+      }
+      // Axes defined with main axis vector
+      anAxes  = gp_Ax2 (aP, aV, aVM);
     }
+
+    // Ellipse
+    gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
+    aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
   } else {
   }
 

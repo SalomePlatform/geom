@@ -30,7 +30,7 @@
 #include "GEOM_BasicGUI.hxx"
 
 #include "GEOMBase_Skeleton.h"
-#include "DlgRef_2Sel2Spin.h"
+#include "DlgRef_3Sel2Spin.h"
 
 #include "BasicGUI.h"
 
@@ -59,9 +59,9 @@ private :
     void Init();
     void enterEvent(QEvent* e);
 
-    GEOM::GEOM_Object_var myPoint, myDir;
+    GEOM::GEOM_Object_var myPoint, myDir, myMajor;
 
-    DlgRef_2Sel2Spin* GroupPoints;
+    DlgRef_3Sel2Spin* GroupPoints;
 
 private slots:
     void ClickOnOk();

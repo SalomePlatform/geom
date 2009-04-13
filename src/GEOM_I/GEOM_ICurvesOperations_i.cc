@@ -173,17 +173,54 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
 
   if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
 
-  //Get the reference points
+  //Get the arguments
   Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
     (thePnt->GetStudyID(), thePnt->GetEntry());
   Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
     (theVec->GetStudyID(), theVec->GetEntry());
+  Handle(GEOM_Object) aVecMaj;
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
   // Make Ellipse
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeEllipse(aPnt, aVec, theRMajor, theRMinor);
+    GetOperations()->MakeEllipse(aPnt, aVec, theRMajor, theRMinor, aVecMaj);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeEllipseVec
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipseVec
+                      (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
+		       CORBA::Double theRMajor, double theRMinor,
+		       GEOM::GEOM_Object_ptr theVecMaj)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the arguments
+  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
+    (thePnt->GetStudyID(), thePnt->GetEntry());
+  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
+    (theVec->GetStudyID(), theVec->GetEntry());
+  Handle(GEOM_Object) aVecMaj;
+  if (!CORBA::is_nil(theVecMaj)) {
+    aVecMaj = GetOperations()->GetEngine()->GetObject
+      (theVecMaj->GetStudyID(), theVecMaj->GetEntry());
+    if (aVecMaj.IsNull()) return aGEOMObject._retn();
+  }
+
+  // Make Ellipse
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeEllipse(aPnt, aVec, theRMajor, theRMinor, aVecMaj);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

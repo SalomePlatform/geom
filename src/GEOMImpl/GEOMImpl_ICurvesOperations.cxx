@@ -325,7 +325,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
                        (Handle(GEOM_Object) thePnt, Handle(GEOM_Object) theVec,
-                        double theRMajor, double theRMinor)
+                        double theRMajor, double theRMinor,
+			Handle(GEOM_Object) theVecMaj)
 {
   SetErrorCode(KO);
 
@@ -354,6 +355,13 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   aCI.SetRMajor(theRMajor);
   aCI.SetRMinor(theRMinor);
 
+  // vector of major axis is optional parameter
+  if (!theVecMaj.IsNull()) {
+    Handle(GEOM_Function) aRefVecMaj = theVecMaj->GetLastFunction();
+    if (aRefVecMaj.IsNull()) return NULL;
+    aCI.SetVectorMajor(aRefVecMaj);
+  }
+
   //Compute the Ellipse value
   try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
@@ -371,8 +379,16 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
-    << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
+  //Make a Python command
+  if (!theVecMaj.IsNull()) {
+    GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
+				 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor
+				 << ", " << theVecMaj << ")";
+  }
+  else {
+    GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
+				 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
+  }
 
   SetErrorCode(OK);
   return anEll;

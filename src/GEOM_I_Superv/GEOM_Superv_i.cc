@@ -2413,6 +2413,23 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipse (GEOM::GEOM_Object_ptr theCente
 }
 
 //=============================================================================
+//  MakeEllipseVec:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipseVec (GEOM::GEOM_Object_ptr theCenter,
+						     GEOM::GEOM_Object_ptr theVector,
+						     CORBA::Double theRMajor, 
+						     CORBA::Double theRMinor,
+						     GEOM::GEOM_Object_ptr theVectorMajor)
+{
+  beginService( " GEOM_Superv_i::MakeEllipseVec" );
+  MESSAGE("GEOM_Superv_i::MakeEllipseVec");
+  getCurvesOp();
+  GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeEllipseVec(theCenter, theVector, theRMajor, theRMinor, theVectorMajor);
+  endService( " GEOM_Superv_i::MakeEllipseVec" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeArc:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArc (GEOM::GEOM_Object_ptr thePnt1,

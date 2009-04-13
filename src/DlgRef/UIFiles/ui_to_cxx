@@ -121,5 +121,8 @@
 #uic -o DlgRef_3Sel1Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
 #uic -o DlgRef_3Sel1Check_QTD.cxx -impl DlgRef_3Sel1Check_QTD.h DlgRef_3Sel1Check_QTD.ui>>>>>>> 1.6.2.3
 
-uic -o DlgRef_3Sel3Spin2Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
-uic -o DlgRef_3Sel3Spin2Check_QTD.cxx -impl DlgRef_3Sel3Spin2Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
+#uic -o DlgRef_3Sel3Spin2Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
+#uic -o DlgRef_3Sel3Spin2Check_QTD.cxx -impl DlgRef_3Sel3Spin2Check_QTD.h DlgRef_3Sel3Spin2Check_QTD.ui
+
+uic -o DlgRef_3Sel2Spin_QTD.h DlgRef_3Sel2Spin_QTD.ui
+uic -o DlgRef_3Sel2Spin_QTD.cxx -impl DlgRef_3Sel2Spin_QTD.h DlgRef_3Sel2Spin_QTD.ui

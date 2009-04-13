@@ -49,6 +49,7 @@ dist_libDlgRef_la_SOURCES = \
 	DlgRef_2Sel1Spin_QTD.cxx \
 	DlgRef_2Sel2Spin_QTD.cxx \
 	DlgRef_2Sel3Spin_QTD.cxx \
+	DlgRef_3Sel2Spin_QTD.cxx \
 	DlgRef_1Sel1Spin1Check_QTD.cxx \
 	DlgRef_2Sel1Spin2Check_QTD.cxx \
 	DlgRef_2Sel2Spin1Check_QTD.cxx \
@@ -79,6 +80,7 @@ dist_libDlgRef_la_SOURCES = \
 	DlgRef_2Sel1Spin.cxx \
 	DlgRef_2Sel2Spin.cxx \
 	DlgRef_2Sel3Spin.cxx \
+	DlgRef_3Sel2Spin.cxx \
 	DlgRef_1Sel1Spin1Check.cxx \
 	DlgRef_2Sel1Spin2Check.cxx \
 	DlgRef_2Sel2Spin1Check.cxx \
@@ -113,6 +115,7 @@ MOC_FILES = \
 	DlgRef_2Sel1Spin_QTD_moc.cxx \
 	DlgRef_2Sel2Spin_QTD_moc.cxx \
 	DlgRef_2Sel3Spin_QTD_moc.cxx \
+	DlgRef_3Sel2Spin_QTD_moc.cxx \
 	DlgRef_2Sel3Spin2Rb_QTD_moc.cxx \
 	DlgRef_2Sel3Spin2Rb_moc.cxx \
 	DlgRef_1Sel1Spin1Check_QTD_moc.cxx \
@@ -143,6 +146,7 @@ MOC_FILES = \
 	DlgRef_2Sel1Spin_moc.cxx \
 	DlgRef_2Sel2Spin_moc.cxx \
 	DlgRef_2Sel3Spin_moc.cxx \
+	DlgRef_3Sel2Spin_moc.cxx \
 	DlgRef_1Sel1Spin1Check_moc.cxx \
 	DlgRef_2Sel1Spin2Check_moc.cxx \
 	DlgRef_2Sel2Spin1Check_moc.cxx \
@@ -179,6 +183,7 @@ salomeinclude_HEADERS = \
 	DlgRef_2Sel1Spin_QTD.h \
 	DlgRef_2Sel2Spin_QTD.h \
 	DlgRef_2Sel3Spin_QTD.h \
+	DlgRef_3Sel2Spin_QTD.h \
 	DlgRef_1Sel1Spin1Check_QTD.h \
 	DlgRef_2Sel1Spin2Check_QTD.h \
 	DlgRef_2Sel2Spin1Check_QTD.h \
@@ -209,6 +214,7 @@ salomeinclude_HEADERS = \
 	DlgRef_2Sel1Spin.h \
 	DlgRef_2Sel2Spin.h \
 	DlgRef_2Sel3Spin.h \
+	DlgRef_3Sel2Spin.h \
 	DlgRef_1Sel1Spin1Check.h \
 	DlgRef_2Sel1Spin2Check.h \
 	DlgRef_2Sel2Spin1Check.h \

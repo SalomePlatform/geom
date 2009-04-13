@@ -70,17 +70,20 @@ BasicGUI_EllipseDlg::BasicGUI_EllipseDlg(GeometryGUI* theGeometryGUI, QWidget* p
   RadioButton2->close(TRUE);
   RadioButton3->close(TRUE);
 
-  GroupPoints = new DlgRef_2Sel2Spin(this, "GroupPoints");
+  GroupPoints = new DlgRef_3Sel2Spin(this, "GroupPoints");
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPoints->TextLabel1->setText(tr("GEOM_CENTER"));
   GroupPoints->TextLabel2->setText(tr("GEOM_VECTOR"));
-  GroupPoints->TextLabel3->setText(tr("GEOM_RADIUS_MAJOR"));
-  GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_MINOR"));
+  GroupPoints->TextLabel3->setText(tr("%1 (%2)").arg(tr("GEOM_VECTOR_MAJOR")).arg(tr("GEOM_OPTIONAL")));
+  GroupPoints->TextLabel4->setText(tr("GEOM_RADIUS_MAJOR"));
+  GroupPoints->TextLabel5->setText(tr("GEOM_RADIUS_MINOR"));
   GroupPoints->PushButton1->setPixmap(image1);
   GroupPoints->PushButton2->setPixmap(image1);
+  GroupPoints->PushButton3->setPixmap(image1);
 
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
+  GroupPoints->LineEdit3->setReadOnly( true );
 
   Layout1->addWidget(GroupPoints, 2, 0);
   /***************************************************************/
@@ -111,7 +114,7 @@ void BasicGUI_EllipseDlg::Init()
   globalSelection(); // close local contexts, if any
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
-  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  myPoint = myDir = myMajor = GEOM::GEOM_Object::_nil();
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -135,9 +138,11 @@ void BasicGUI_EllipseDlg::Init()
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
   connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
+  connect(GroupPoints->LineEdit3, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
@@ -175,9 +180,10 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
   initName();
 
   // reset
-  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  myPoint = myDir = myMajor = GEOM::GEOM_Object::_nil();
   GroupPoints->LineEdit1->setText( "" );
   GroupPoints->LineEdit2->setText( "" );
+  GroupPoints->LineEdit3->setText( "" );
   myEditCurrentArgument = GroupPoints->LineEdit1;
   //globalSelection(GEOM_POINT);
   globalSelection(); // close local contexts, if any
@@ -207,6 +213,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
   {
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) myMajor = GEOM::GEOM_Object::_nil();
     return;
   }
 
@@ -223,7 +230,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
     {
       TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-      if (myEditCurrentArgument == GroupPoints->LineEdit2)
+      if (myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupPoints->LineEdit3)
         aNeedType = TopAbs_EDGE;
 
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -260,6 +267,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
 
     if      ( myEditCurrentArgument == GroupPoints->LineEdit1 ) myPoint = aSelectedObject;
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) myDir   = aSelectedObject;
+    else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) myMajor = aSelectedObject;
   }
 
   displayPreview();
@@ -277,10 +285,11 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
 
   if      ( send == GroupPoints->PushButton1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
   else if ( send == GroupPoints->PushButton2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
+  else if ( send == GroupPoints->PushButton3 ) myEditCurrentArgument = GroupPoints->LineEdit3;
   
   myEditCurrentArgument->setFocus();
   globalSelection(); // close local contexts, if any
-  if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
+  if ( myEditCurrentArgument == GroupPoints->LineEdit2 || myEditCurrentArgument == GroupPoints->LineEdit3 )
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
   else
     localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
@@ -295,7 +304,8 @@ void BasicGUI_EllipseDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
   if ( send == GroupPoints->LineEdit1 ||
-       send == GroupPoints->LineEdit2 )
+       send == GroupPoints->LineEdit2 ||
+       send == GroupPoints->LineEdit3 )
   {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
@@ -318,6 +328,7 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
 
   GroupPoints->LineEdit1->setText( "" );
   GroupPoints->LineEdit2->setText( "" );
+  GroupPoints->LineEdit3->setText( "" );
 
   myPoint = myDir = GEOM::GEOM_Object::_nil();
   //globalSelection( GEOM_POINT );
@@ -387,7 +398,10 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
 {
   double aMajorR = GroupPoints->SpinBox_DX->GetValue();
   double aMinorR = GroupPoints->SpinBox_DY->GetValue();
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse( myPoint, myDir, aMajorR, aMinorR );
+
+  GEOM::GEOM_Object_var anObj = myMajor->_is_nil() ? 
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse   ( myPoint, myDir, aMajorR, aMinorR )         :
+    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipseVec( myPoint, myDir, aMajorR, aMinorR, myMajor );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
@@ -414,6 +428,8 @@ void BasicGUI_EllipseDlg::addSubshapesToStudy()
 
   objMap[GroupPoints->LineEdit1->text()] = myPoint;
   objMap[GroupPoints->LineEdit2->text()] = myDir;
+  if (!CORBA::is_nil(myMajor))
+    objMap[GroupPoints->LineEdit3->text()] = myMajor;
 
   addSubshapesToFather( objMap );
 }
