@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_ICurvesOperations_i.hh"
@@ -37,8 +37,8 @@ using namespace std;
  */
 //=============================================================================
 GEOM_ICurvesOperations_i::GEOM_ICurvesOperations_i (PortableServer::POA_ptr thePOA,
-						    GEOM::GEOM_Gen_ptr theEngine,
-						    ::GEOMImpl_ICurvesOperations* theImpl)
+                                                    GEOM::GEOM_Gen_ptr theEngine,
+                                                    ::GEOMImpl_ICurvesOperations* theImpl)
 :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_ICurvesOperations_i::GEOM_ICurvesOperations_i");
@@ -62,20 +62,16 @@ GEOM_ICurvesOperations_i::~GEOM_ICurvesOperations_i()
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
                       (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
-		       CORBA::Double theR)
+                       CORBA::Double theR)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
-  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
-    (theVec->GetStudyID(), theVec->GetEntry());
+  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
 
@@ -95,22 +91,17 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCirclePntVecR
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleThreePnt
                       (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2,
-		       GEOM::GEOM_Object_ptr thePnt3)
+                       GEOM::GEOM_Object_ptr thePnt3)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
-    (thePnt1->GetStudyID(), thePnt1->GetEntry());
-  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
-    (thePnt2->GetStudyID(), thePnt2->GetEntry());
-  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
-    (thePnt3->GetStudyID(), thePnt3->GetEntry());
+  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
@@ -130,22 +121,17 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleThreePnt
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleCenter2Pnt
                       (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2,
-		       GEOM::GEOM_Object_ptr thePnt3)
+                       GEOM::GEOM_Object_ptr thePnt3)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
-    (thePnt1->GetStudyID(), thePnt1->GetEntry());
-  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
-    (thePnt2->GetStudyID(), thePnt2->GetEntry());
-  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
-    (thePnt3->GetStudyID(), thePnt3->GetEntry());
+  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
@@ -164,20 +150,16 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCircleCenter2Pnt
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
                       (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
-		       CORBA::Double theRMajor, double theRMinor)
+                       CORBA::Double theRMajor, double theRMinor)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt == NULL || theVec == NULL) return aGEOMObject._retn();
-
   //Get the arguments
-  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
-  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
-    (theVec->GetStudyID(), theVec->GetEntry());
+  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
   Handle(GEOM_Object) aVecMaj;
 
   if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
@@ -198,8 +180,8 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipse
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipseVec
                       (GEOM::GEOM_Object_ptr thePnt, GEOM::GEOM_Object_ptr theVec,
-		       CORBA::Double theRMajor, double theRMinor,
-		       GEOM::GEOM_Object_ptr theVecMaj)
+                       CORBA::Double theRMajor, double theRMinor,
+                       GEOM::GEOM_Object_ptr theVecMaj)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -207,14 +189,11 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipseVec
   GetOperations()->SetNotDone();
 
   //Get the arguments
-  Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-    (thePnt->GetStudyID(), thePnt->GetEntry());
-  Handle(GEOM_Object) aVec = GetOperations()->GetEngine()->GetObject
-    (theVec->GetStudyID(), theVec->GetEntry());
+  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
   Handle(GEOM_Object) aVecMaj;
   if (!CORBA::is_nil(theVecMaj)) {
-    aVecMaj = GetOperations()->GetEngine()->GetObject
-      (theVecMaj->GetStudyID(), theVecMaj->GetEntry());
+    aVecMaj = GetObjectImpl(theVecMaj);
     if (aVecMaj.IsNull()) return aGEOMObject._retn();
   }
 
@@ -234,23 +213,18 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeEllipseVec
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArc
                                                 (GEOM::GEOM_Object_ptr thePnt1,
-						 GEOM::GEOM_Object_ptr thePnt2,
-						 GEOM::GEOM_Object_ptr thePnt3)
+                                                 GEOM::GEOM_Object_ptr thePnt2,
+                                                 GEOM::GEOM_Object_ptr thePnt3)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
-    (thePnt1->GetStudyID(), thePnt1->GetEntry());
-  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
-    (thePnt2->GetStudyID(), thePnt2->GetEntry());
-  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
-    (thePnt3->GetStudyID(), thePnt3->GetEntry());
+  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
@@ -280,15 +254,10 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcCenter
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt1 == NULL || thePnt2 == NULL || thePnt3 == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
-      (thePnt1->GetStudyID(), thePnt1->GetEntry());
-  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
-      (thePnt2->GetStudyID(), thePnt2->GetEntry());
-  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
-      (thePnt3->GetStudyID(), thePnt3->GetEntry());
+  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() || aPnt3.IsNull()) return aGEOMObject._retn();
 
@@ -300,6 +269,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcCenter
 
   return GetObject(anObject);
 }
+
 //=============================================================================
 /*!
  *  MakePolyline
@@ -318,11 +288,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
   int aLen = thePoints.length();
   list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    if (thePoints[ind] == NULL) return aGEOMObject._retn();
-
-    Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-      (thePoints[ind]->GetStudyID(), thePoints[ind]->GetEntry());
-
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
@@ -354,11 +320,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
   int aLen = thePoints.length();
   list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    if (thePoints[ind] == NULL) return aGEOMObject._retn();
-
-    Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-      (thePoints[ind]->GetStudyID(), thePoints[ind]->GetEntry());
-
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
@@ -390,11 +352,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
   int aLen = thePoints.length();
   list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
-    if (thePoints[ind] == NULL) return aGEOMObject._retn();
-
-    Handle(GEOM_Object) aPnt = GetOperations()->GetEngine()->GetObject
-      (thePoints[ind]->GetStudyID(), thePoints[ind]->GetEntry());
-
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
     aPoints.push_back(aPnt);
   }
@@ -446,8 +404,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcherOnPlane
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  Handle(GEOM_Object) aWorkingPlane = GetOperations()->GetEngine()->GetObject
-    (theWorkingPlane->GetStudyID(), theWorkingPlane->GetEntry());
+  Handle(GEOM_Object) aWorkingPlane = GetObjectImpl(theWorkingPlane);
 
   // Make Sketcher
   Handle(GEOM_Object) anObject =

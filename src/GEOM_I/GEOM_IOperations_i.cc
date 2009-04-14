@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include "GEOM_IOperations_i.hh"
 
 #include "GEOM_Engine.hxx"
@@ -131,9 +131,26 @@ void GEOM_IOperations_i::AbortOperation()
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IOperations_i::GetObject(Handle(GEOM_Object) theObject)
 {
-  if(theObject.IsNull()) return NULL;
+  GEOM::GEOM_Object_var GO;
+  if (theObject.IsNull()) return GO._retn();
   TCollection_AsciiString anEntry;
   TDF_Tool::Entry(theObject->GetEntry(), anEntry);
-  GEOM::GEOM_Object_var GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
+  GO = _engine->GetObject(theObject->GetDocID(), anEntry.ToCString());
   return GO._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetObjectImpl
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOM_IOperations_i::GetObjectImpl(GEOM::GEOM_Object_ptr theObject)
+{
+  Handle(GEOM_Object) anImpl;
+  if (!CORBA::is_nil(theObject)) {
+    CORBA::String_var anEntry = theObject->GetEntry();
+    anImpl = GetImpl()->GetEngine()->GetObject
+      (theObject->GetStudyID(), anEntry);
+  }
+  return anImpl;
 }

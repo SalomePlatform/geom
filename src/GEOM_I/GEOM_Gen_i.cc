@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -1230,8 +1230,10 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
 GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
 					       const GEOM::ListOfLong& theIndices)
 {
-  if(theMainShape == NULL || theIndices.length() < 1) return GEOM::GEOM_Object::_nil();
-  Handle(GEOM_Object) aMainsShape = _impl->GetObject(theMainShape->GetStudyID(), theMainShape->GetEntry());
+  if (CORBA::is_nil(theMainShape) || theIndices.length() < 1)
+    return GEOM::GEOM_Object::_nil();
+  CORBA::String_var entry = theMainShape->GetEntry();
+  Handle(GEOM_Object) aMainsShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
   if (aMainsShape.IsNull()) return GEOM::GEOM_Object::_nil();
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1, theIndices.length());
@@ -1291,7 +1293,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
 {
   GEOM::GEOM_Object_var obj;
   Handle(GEOM_Object) handle_object = _impl->GetObject(theStudyID, (char*)theEntry);
-  if (handle_object.IsNull()) return NULL;
+  if (handle_object.IsNull()) return obj._retn();
 
   TCollection_AsciiString stringIOR = handle_object->GetIOR();
   if (stringIOR.Length() > 1) {

@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <list>
@@ -42,8 +42,8 @@ using namespace std;
 //=============================================================================
 
 GEOM_IHealingOperations_i::GEOM_IHealingOperations_i (PortableServer::POA_ptr thePOA,
-						      GEOM::GEOM_Gen_ptr theEngine,
-						      ::GEOMImpl_IHealingOperations* theImpl)
+                                                      GEOM::GEOM_Gen_ptr theEngine,
+                                                      ::GEOMImpl_IHealingOperations* theImpl)
 :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_IHealingOperations_i::GEOM_IHealingOperations_i");
@@ -106,27 +106,22 @@ Handle(TColStd_HArray1OfExtendedString) GEOM_IHealingOperations_i::Convert
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ProcessShape (GEOM::GEOM_Object_ptr theObject,
-							       const GEOM::string_array& theOperations,
-							       const GEOM::string_array& theParams,
-							       const GEOM::string_array& theValues)
+                                                               const GEOM::string_array& theOperations,
+                                                               const GEOM::string_array& theParams,
+                                                               const GEOM::string_array& theValues)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Check parameters
-  if ( CORBA::is_nil(theObject) )
-    return aGEOMObject._retn();
-
   // Check if theOperations has more than 0 elements and theParams and theValues have the same length
-//  if ( theOperations.length() <= 0 || theParams.length() != theValues.length() )
-//    return aGEOMObject._retn();
+  //if (theOperations.length() <= 0 || theParams.length() != theValues.length())
+  //  return aGEOMObject._retn();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
-  if ( anObject.IsNull() )
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  if (anObject.IsNull())
     return aGEOMObject._retn();
 
   // Perform
@@ -171,7 +166,7 @@ void GEOM_IHealingOperations_i::GetShapeProcessParameters(GEOM::string_array_out
       anOpArray[i] = CORBA::string_dup( (*opIt).c_str() );
 
     for ( i = 0, parIt = paramsList.begin(), valIt = valuesList.begin();
-	  parIt != paramsList.end(); i++, ++parIt,++valIt ) {
+          parIt != paramsList.end(); i++, ++parIt,++valIt ) {
       aParArray[i] = CORBA::string_dup( (*parIt).c_str() );
       aValArray[i] = CORBA::string_dup( (*valIt).c_str() );
     }
@@ -188,9 +183,9 @@ void GEOM_IHealingOperations_i::GetShapeProcessParameters(GEOM::string_array_out
  *  GetOperatorParameters
  */
 //=============================================================================
-void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,  
-						       GEOM::string_array_out theParams, 
-						       GEOM::string_array_out theValues)
+void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,
+                                                       GEOM::string_array_out theParams,
+                                                       GEOM::string_array_out theValues)
 {
   GEOM::string_array_var aParArray = new GEOM::string_array();
   GEOM::string_array_var aValArray = new GEOM::string_array();
@@ -209,8 +204,8 @@ void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,
       int i;
       for ( i = 0, parIt = paramsList.begin(), valIt = valuesList.begin();
             parIt != paramsList.end(); i++, ++parIt,++valIt ) {
-	aParArray[i] = CORBA::string_dup( (*parIt).c_str() );
-	aValArray[i] = CORBA::string_dup( (*valIt).c_str() );
+        aParArray[i] = CORBA::string_dup( (*parIt).c_str() );
+        aValArray[i] = CORBA::string_dup( (*valIt).c_str() );
       }
     }
   }
@@ -226,22 +221,19 @@ void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SuppressFaces (GEOM::GEOM_Object_ptr theObject,
-								const GEOM::short_array& theFaces)
+                                                                const GEOM::short_array& theFaces)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Check parameters
-  if ( CORBA::is_nil(theObject) ) // if theFaces is empty - it's OK, it means that ALL faces must be removed
-    return aGEOMObject._retn();
-
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
+
+  // if theFaces is empty - it's OK, it means that ALL faces must be removed
 
   // Perform
   Handle(GEOM_Object) aNewObject =
@@ -258,21 +250,16 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::SuppressFaces (GEOM::GEOM_Objec
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::CloseContour (GEOM::GEOM_Object_ptr theObject,
-							       const GEOM::short_array& theWires,
-							       CORBA::Boolean isCommonVertex)
+                                                               const GEOM::short_array& theWires,
+                                                               CORBA::Boolean isCommonVertex)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Check parameters
-  if ( CORBA::is_nil(theObject) )
-    return aGEOMObject._retn();
-
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -291,22 +278,19 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::CloseContour (GEOM::GEOM_Object
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::RemoveIntWires (GEOM::GEOM_Object_ptr theObject,
-								 const GEOM::short_array& theWires)
+                                                                 const GEOM::short_array& theWires)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Check parameters
-  if ( CORBA::is_nil(theObject) ) // if theWires is empty - it's OK, it means that ALL wires should be removed
-    return aGEOMObject._retn();
-
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
+
+  // if theWires is empty - it's OK, it means that ALL wires should be removed
 
   // Perform
   Handle(GEOM_Object) aNewObject =
@@ -323,22 +307,19 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::RemoveIntWires (GEOM::GEOM_Obje
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FillHoles (GEOM::GEOM_Object_ptr theObject,
-							    const GEOM::short_array& theWires)
+                                                            const GEOM::short_array& theWires)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Check parameters
-  if ( CORBA::is_nil(theObject) ) // if theWires is empty - it's OK, it means that ALL wires should be removed
-    return aGEOMObject._retn();
-
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
+
+  // if theWires is empty - it's OK, it means that ALL wires should be removed
 
   // Perform
   Handle(GEOM_Object) aNewObject =
@@ -355,7 +336,7 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FillHoles (GEOM::GEOM_Object_pt
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theObject,
-						      CORBA::Double theTolerance)
+                                                      CORBA::Double theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -363,12 +344,11 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
   GetOperations()->SetNotDone();
 
   // Check parameters
-  if ( CORBA::is_nil(theObject) || theTolerance < 0 )
+  if (theTolerance < 0)
     return aGEOMObject._retn();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -388,8 +368,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::Sew (GEOM::GEOM_Object_ptr theO
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_ptr theObject,
                                                              CORBA::Short theIndex,
-							     CORBA::Double theValue,
-							     CORBA::Boolean isByParameter)
+                                                             CORBA::Double theValue,
+                                                             CORBA::Boolean isByParameter)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -397,12 +377,11 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
   GetOperations()->SetNotDone();
 
   // Check parameters
-  if ( CORBA::is_nil(theObject) || theValue < 0 || theValue > 1 )
+  if (theValue < 0 || theValue > 1)
     return aGEOMObject._retn();
 
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -421,8 +400,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
  */
 //=============================================================================
 CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_ptr theObject,
-							    GEOM::ListOfGO_out theClosedWires,
-							    GEOM::ListOfGO_out theOpenWires )
+                                                            GEOM::ListOfGO_out theClosedWires,
+                                                            GEOM::ListOfGO_out theOpenWires )
 {
   theClosedWires = new GEOM::ListOfGO;
   theOpenWires = new GEOM::ListOfGO;
@@ -430,12 +409,8 @@ CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_pt
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  if ( CORBA::is_nil(theObject) )
-  	return false;
-
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return false;
 
@@ -444,7 +419,7 @@ CORBA::Boolean GEOM_IHealingOperations_i::GetFreeBoundary ( GEOM::GEOM_Object_pt
   bool res = GetOperations()->GetFreeBoundary( anObject, aClosed, anOpen );
 
   if ( !GetOperations()->IsDone() || !res )
-  	return false;
+    return false;
 
   int i, n = aClosed->Length();
   theClosedWires->length( n );
@@ -479,8 +454,7 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientation (GEOM::GEOM_O
   aGEOMObject = GEOM::GEOM_Object::_duplicate(theObject);
 
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -491,7 +465,7 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientation (GEOM::GEOM_O
 //    return aGEOMObject._retn();
 
   //return GetObject(aNewObject);
-  return aGEOMObject._retn();  
+  return aGEOMObject._retn();
 }
 
 
@@ -507,13 +481,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientationCopy (GEOM::GE
   // Set a not done flag
   GetOperations()->SetNotDone();
 
-  // Check parameters
-  if ( CORBA::is_nil(theObject) )
-    return aGEOMObject._retn();
-
   // Get the object itself
-  Handle(GEOM_Object) anObject =
-    GetOperations()->GetEngine()->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
   if (anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -525,4 +494,3 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientationCopy (GEOM::GE
 
   return GetObject(aNewObject);
 }
-
