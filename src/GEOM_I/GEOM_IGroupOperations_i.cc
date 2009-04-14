@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IGroupOperations_i.hh"
@@ -39,8 +39,8 @@
  */
 //=============================================================================
 GEOM_IGroupOperations_i::GEOM_IGroupOperations_i (PortableServer::POA_ptr thePOA,
-						  GEOM::GEOM_Gen_ptr theEngine,
-						  ::GEOMImpl_IGroupOperations* theImpl)
+                                                  GEOM::GEOM_Gen_ptr theEngine,
+                                                  ::GEOMImpl_IGroupOperations* theImpl)
      :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_IGroupOperations_i::GEOM_IGroupOperations_i");
@@ -61,19 +61,19 @@ GEOM_IGroupOperations_i::~GEOM_IGroupOperations_i()
 /*!
  *  CreateGroup
  */
-//============================================================================= 
-GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CreateGroup(GEOM::GEOM_Object_ptr theMainShape, CORBA::Long theShapeType)
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CreateGroup(GEOM::GEOM_Object_ptr theMainShape,
+                                                           CORBA::Long theShapeType)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theMainShape == NULL || theShapeType < 0) return aGEOMObject._retn();
+  if (theShapeType < 0) return aGEOMObject._retn();
 
   //Get the reference shape
-  Handle(GEOM_Object) aShapeRef = GetOperations()->GetEngine()->GetObject(theMainShape->GetStudyID(), theMainShape->GetEntry());
-
+  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theMainShape);
   if (aShapeRef.IsNull()) return aGEOMObject._retn();
 
   //Create the Fillet
@@ -89,40 +89,33 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::CreateGroup(GEOM::GEOM_Object_ptr
  *  AddObject
  */
 //=============================================================================
-void GEOM_IGroupOperations_i::AddObject(GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId) 
+void GEOM_IGroupOperations_i::AddObject(GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject(theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   GetOperations()->AddObject(aGroupRef, theSubShapeId);
-  return;
 }
 
 //=============================================================================
 /*!
  *  RemoveObject
  */
-//============================================================================= 
-void GEOM_IGroupOperations_i::RemoveObject(GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId) 
+//=============================================================================
+void GEOM_IGroupOperations_i::RemoveObject(GEOM::GEOM_Object_ptr theGroup, CORBA::Long theSubShapeId)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject(theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   GetOperations()->RemoveObject(aGroupRef, theSubShapeId);
-
-  return;
 }
 
 //=============================================================================
@@ -131,16 +124,13 @@ void GEOM_IGroupOperations_i::RemoveObject(GEOM::GEOM_Object_ptr theGroup, CORBA
  */
 //=============================================================================
 void GEOM_IGroupOperations_i::UnionList (GEOM::GEOM_Object_ptr theGroup,
-					 const GEOM::ListOfGO& theSubShapes) 
+                                         const GEOM::ListOfGO& theSubShapes)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
-    (theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to add
@@ -148,16 +138,13 @@ void GEOM_IGroupOperations_i::UnionList (GEOM::GEOM_Object_ptr theGroup,
 
   int ind, aLen = theSubShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theSubShapes[ind] == NULL) return;
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theSubShapes[ind]->GetStudyID(), theSubShapes[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
     if (aSh.IsNull()) return;
     aSubShapes->Append(aSh);
   }
 
   //Perform the operation
   GetOperations()->UnionList(aGroupRef, aSubShapes);
-  return;
 }
 
 //=============================================================================
@@ -166,16 +153,13 @@ void GEOM_IGroupOperations_i::UnionList (GEOM::GEOM_Object_ptr theGroup,
  */
 //=============================================================================
 void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
-					      const GEOM::ListOfGO& theSubShapes) 
+                                              const GEOM::ListOfGO& theSubShapes)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
-    (theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to remove
@@ -183,16 +167,13 @@ void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
 
   int ind, aLen = theSubShapes.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theSubShapes[ind] == NULL) return;
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theSubShapes[ind]->GetStudyID(), theSubShapes[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theSubShapes[ind]);
     if (aSh.IsNull()) return;
     aSubShapes->Append(aSh);
   }
 
   //Perform the operation
   GetOperations()->DifferenceList(aGroupRef, aSubShapes);
-  return;
 }
 
 //=============================================================================
@@ -201,16 +182,13 @@ void GEOM_IGroupOperations_i::DifferenceList (GEOM::GEOM_Object_ptr theGroup,
  */
 //=============================================================================
 void GEOM_IGroupOperations_i::UnionIDs (GEOM::GEOM_Object_ptr   theGroup,
-					const GEOM::ListOfLong& theSubShapes) 
+                                        const GEOM::ListOfLong& theSubShapes)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
-    (theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to add
@@ -232,16 +210,13 @@ void GEOM_IGroupOperations_i::UnionIDs (GEOM::GEOM_Object_ptr   theGroup,
  */
 //=============================================================================
 void GEOM_IGroupOperations_i::DifferenceIDs (GEOM::GEOM_Object_ptr   theGroup,
-					     const GEOM::ListOfLong& theSubShapes) 
+                                             const GEOM::ListOfLong& theSubShapes)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject
-    (theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return;
 
   //Get sub-shape to remove
@@ -261,17 +236,14 @@ void GEOM_IGroupOperations_i::DifferenceIDs (GEOM::GEOM_Object_ptr   theGroup,
 /*!
  *  GetType
  */
-//============================================================================= 
+//=============================================================================
 CORBA::Long GEOM_IGroupOperations_i::GetType(GEOM::GEOM_Object_ptr theGroup)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return -1;
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject(theGroup->GetStudyID(), theGroup->GetEntry());
-
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return -1;
 
   return GetOperations()->GetType(aGroupRef);
@@ -281,7 +253,7 @@ CORBA::Long GEOM_IGroupOperations_i::GetType(GEOM::GEOM_Object_ptr theGroup)
 /*!
  *  GetMainShape
  */
-//============================================================================= 
+//=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::GetMainShape(GEOM::GEOM_Object_ptr theGroup)
 {
   GEOM::GEOM_Object_var aGEOMObject;
@@ -289,10 +261,8 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::GetMainShape(GEOM::GEOM_Object_pt
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return aGEOMObject._retn();
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject(theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return aGEOMObject._retn();
 
   Handle(GEOM_Object) anObject = GetOperations()->GetMainShape(aGroupRef);
@@ -305,7 +275,7 @@ GEOM::GEOM_Object_ptr GEOM_IGroupOperations_i::GetMainShape(GEOM::GEOM_Object_pt
 /*!
  *  GetObjects
  */
-//============================================================================= 
+//=============================================================================
 GEOM::ListOfLong* GEOM_IGroupOperations_i::GetObjects(GEOM::GEOM_Object_ptr theGroup)
 {
   GEOM::ListOfLong_var aList;
@@ -313,20 +283,17 @@ GEOM::ListOfLong* GEOM_IGroupOperations_i::GetObjects(GEOM::GEOM_Object_ptr theG
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theGroup == NULL) return aList._retn();
-
   //Get the reference group
-  Handle(GEOM_Object) aGroupRef = GetOperations()->GetEngine()->GetObject(theGroup->GetStudyID(), theGroup->GetEntry());
+  Handle(GEOM_Object) aGroupRef = GetObjectImpl(theGroup);
   if (aGroupRef.IsNull()) return aList._retn();
 
-  aList = new GEOM::ListOfLong;    
+  aList = new GEOM::ListOfLong;
 
   Handle(TColStd_HArray1OfInteger) aSeq = GetOperations()->GetObjects(aGroupRef);
   if (!GetOperations()->IsDone() || aSeq.IsNull()) return aList._retn();
-    
+
   aList->length(aSeq->Length());
   for(int i = 1; i<=aSeq->Length(); i++) aList[i-1] = aSeq->Value(i);
 
   return aList._retn();
 }
-

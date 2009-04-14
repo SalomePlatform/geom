@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -42,8 +42,8 @@
  */
 //=============================================================================
 GEOM_IInsertOperations_i::GEOM_IInsertOperations_i (PortableServer::POA_ptr thePOA,
-						    GEOM::GEOM_Gen_ptr theEngine,
-						    ::GEOMImpl_IInsertOperations* theImpl)
+                                                    GEOM::GEOM_Gen_ptr theEngine,
+                                                    ::GEOMImpl_IInsertOperations* theImpl)
      :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_IInsertOperations_i::GEOM_IInsertOperations_i");
@@ -72,13 +72,8 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::MakeCopy(GEOM::GEOM_Object_ptr t
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theOriginal == NULL) return aGEOMObject._retn();
-
   //Get the reference shape
-  Handle(GEOM_Object) anOriginal =
-    GetOperations()->GetEngine()->GetObject(theOriginal->GetStudyID(),
-					    theOriginal->GetEntry());
-
+  Handle(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
   if (anOriginal.IsNull()) return aGEOMObject._retn();
 
   //Create the copy
@@ -96,21 +91,16 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::MakeCopy(GEOM::GEOM_Object_ptr t
 //=============================================================================
 void GEOM_IInsertOperations_i::Export
                    (GEOM::GEOM_Object_ptr theOriginal,
-		    const char*           theFileName,
-		    const char*           theFormatName)
+                    const char*           theFileName,
+                    const char*           theFormatName)
 {
   GEOM::GEOM_Object_var aGEOMObject = GEOM::GEOM_Object::_duplicate(theOriginal);
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theOriginal == NULL) return;
-
   //Get the reference shape
-  Handle(GEOM_Object) anOriginal =
-    GetOperations()->GetEngine()->GetObject(theOriginal->GetStudyID(),
-					    theOriginal->GetEntry());
-
+  Handle(GEOM_Object) anOriginal = GetObjectImpl(theOriginal);
   if (anOriginal.IsNull()) return;
 
   //Export the shape to the file
@@ -119,8 +109,6 @@ void GEOM_IInsertOperations_i::Export
   GetOperations()->Export(anOriginal, aFileName, aFormatName);
   free(aFileName);
   free(aFormatName);
-
-  return;
 }
 
 //=============================================================================
@@ -130,7 +118,7 @@ void GEOM_IInsertOperations_i::Export
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::Import
                    (const char* theFileName,
-		    const char* theFormatName)
+                    const char* theFormatName)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -174,8 +162,8 @@ void GEOM_IInsertOperations_i::ImportTranslators
       // fill the local CORBA arrays with values from sequences
       CORBA::Long i = 1;
       for (; i <= formSize; i++) {
-	aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
-	aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
+        aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
+        aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
       }
     }
   }
@@ -209,8 +197,8 @@ void GEOM_IInsertOperations_i::ExportTranslators
       // fill the local CORBA arrays with values from sequences
       CORBA::Long i = 1;
       for (; i <= formSize; i++) {
-	aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
-	aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
+        aFormatsArray[i-1]  = CORBA::string_dup(aFormats->Value(i).ToCString());
+        aPatternsArray[i-1] = CORBA::string_dup(aPatterns->Value(i).ToCString());
       }
     }
   }

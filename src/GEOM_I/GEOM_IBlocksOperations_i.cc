@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOM_IBlocksOperations_i.hh"
@@ -39,8 +39,8 @@
  */
 //=============================================================================
 GEOM_IBlocksOperations_i::GEOM_IBlocksOperations_i (PortableServer::POA_ptr thePOA,
-						    GEOM::GEOM_Gen_ptr theEngine,
-						    ::GEOMImpl_IBlocksOperations* theImpl)
+                                                    GEOM::GEOM_Gen_ptr theEngine,
+                                                    ::GEOMImpl_IBlocksOperations* theImpl)
 :GEOM_IOperations_i(thePOA, theEngine, theImpl)
 {
   MESSAGE("GEOM_IBlocksOperations_i::GEOM_IBlocksOperations_i");
@@ -64,25 +64,18 @@ GEOM_IBlocksOperations_i::~GEOM_IBlocksOperations_i()
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad
                (GEOM::GEOM_Object_ptr theEdge1, GEOM::GEOM_Object_ptr theEdge2,
-		GEOM::GEOM_Object_ptr theEdge3, GEOM::GEOM_Object_ptr theEdge4)
+                GEOM::GEOM_Object_ptr theEdge3, GEOM::GEOM_Object_ptr theEdge4)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theEdge1 == NULL || theEdge2 == NULL ||
-      theEdge3 == NULL || theEdge4 == NULL) return aGEOMObject._retn();
-
   //Get the reference edges
-  Handle(GEOM_Object) anEdge1 = GetOperations()->GetEngine()->GetObject
-    (theEdge1->GetStudyID(), theEdge1->GetEntry());
-  Handle(GEOM_Object) anEdge2 = GetOperations()->GetEngine()->GetObject
-    (theEdge2->GetStudyID(), theEdge2->GetEntry());
-  Handle(GEOM_Object) anEdge3 = GetOperations()->GetEngine()->GetObject
-    (theEdge3->GetStudyID(), theEdge3->GetEntry());
-  Handle(GEOM_Object) anEdge4 = GetOperations()->GetEngine()->GetObject
-    (theEdge4->GetStudyID(), theEdge4->GetEntry());
+  Handle(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
+  Handle(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
+  Handle(GEOM_Object) anEdge3 = GetObjectImpl(theEdge3);
+  Handle(GEOM_Object) anEdge4 = GetObjectImpl(theEdge4);
 
   if (anEdge1.IsNull() || anEdge2.IsNull() ||
       anEdge3.IsNull() || anEdge4.IsNull()) return aGEOMObject._retn();
@@ -109,13 +102,9 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad2Edges
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theEdge1 == NULL || theEdge2 == NULL) return aGEOMObject._retn();
-
   //Get the reference edges
-  Handle(GEOM_Object) anEdge1 = GetOperations()->GetEngine()->GetObject
-    (theEdge1->GetStudyID(), theEdge1->GetEntry());
-  Handle(GEOM_Object) anEdge2 = GetOperations()->GetEngine()->GetObject
-    (theEdge2->GetStudyID(), theEdge2->GetEntry());
+  Handle(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
+  Handle(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
 
   if (anEdge1.IsNull() || anEdge2.IsNull()) return aGEOMObject._retn();
 
@@ -135,25 +124,18 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad2Edges
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad4Vertices
                       (GEOM::GEOM_Object_ptr thePnt1, GEOM::GEOM_Object_ptr thePnt2,
-		       GEOM::GEOM_Object_ptr thePnt3, GEOM::GEOM_Object_ptr thePnt4)
+                       GEOM::GEOM_Object_ptr thePnt3, GEOM::GEOM_Object_ptr thePnt4)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (thePnt1 == NULL || thePnt2 == NULL ||
-      thePnt3 == NULL || thePnt4 == NULL) return aGEOMObject._retn();
-
   //Get the reference points
-  Handle(GEOM_Object) aPnt1 = GetOperations()->GetEngine()->GetObject
-    (thePnt1->GetStudyID(), thePnt1->GetEntry());
-  Handle(GEOM_Object) aPnt2 = GetOperations()->GetEngine()->GetObject
-    (thePnt2->GetStudyID(), thePnt2->GetEntry());
-  Handle(GEOM_Object) aPnt3 = GetOperations()->GetEngine()->GetObject
-    (thePnt3->GetStudyID(), thePnt3->GetEntry());
-  Handle(GEOM_Object) aPnt4 = GetOperations()->GetEngine()->GetObject
-    (thePnt4->GetStudyID(), thePnt4->GetEntry());
+  Handle(GEOM_Object) aPnt1 = GetObjectImpl(thePnt1);
+  Handle(GEOM_Object) aPnt2 = GetObjectImpl(thePnt2);
+  Handle(GEOM_Object) aPnt3 = GetObjectImpl(thePnt3);
+  Handle(GEOM_Object) aPnt4 = GetObjectImpl(thePnt4);
 
   if (aPnt1.IsNull() || aPnt2.IsNull() ||
       aPnt3.IsNull() || aPnt4.IsNull()) return aGEOMObject._retn();
@@ -174,31 +156,21 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeQuad4Vertices
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeHexa
                (GEOM::GEOM_Object_ptr theFace1, GEOM::GEOM_Object_ptr theFace2,
-		GEOM::GEOM_Object_ptr theFace3, GEOM::GEOM_Object_ptr theFace4,
-		GEOM::GEOM_Object_ptr theFace5, GEOM::GEOM_Object_ptr theFace6)
+                GEOM::GEOM_Object_ptr theFace3, GEOM::GEOM_Object_ptr theFace4,
+                GEOM::GEOM_Object_ptr theFace5, GEOM::GEOM_Object_ptr theFace6)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theFace1 == NULL || theFace2 == NULL ||
-      theFace3 == NULL || theFace4 == NULL ||
-      theFace5 == NULL || theFace6 == NULL) return aGEOMObject._retn();
-
   //Get the reference Faces
-  Handle(GEOM_Object) anFace1 = GetOperations()->GetEngine()->GetObject
-    (theFace1->GetStudyID(), theFace1->GetEntry());
-  Handle(GEOM_Object) anFace2 = GetOperations()->GetEngine()->GetObject
-    (theFace2->GetStudyID(), theFace2->GetEntry());
-  Handle(GEOM_Object) anFace3 = GetOperations()->GetEngine()->GetObject
-    (theFace3->GetStudyID(), theFace3->GetEntry());
-  Handle(GEOM_Object) anFace4 = GetOperations()->GetEngine()->GetObject
-    (theFace4->GetStudyID(), theFace4->GetEntry());
-  Handle(GEOM_Object) anFace5 = GetOperations()->GetEngine()->GetObject
-    (theFace5->GetStudyID(), theFace5->GetEntry());
-  Handle(GEOM_Object) anFace6 = GetOperations()->GetEngine()->GetObject
-    (theFace6->GetStudyID(), theFace6->GetEntry());
+  Handle(GEOM_Object) anFace1 = GetObjectImpl(theFace1);
+  Handle(GEOM_Object) anFace2 = GetObjectImpl(theFace2);
+  Handle(GEOM_Object) anFace3 = GetObjectImpl(theFace3);
+  Handle(GEOM_Object) anFace4 = GetObjectImpl(theFace4);
+  Handle(GEOM_Object) anFace5 = GetObjectImpl(theFace5);
+  Handle(GEOM_Object) anFace6 = GetObjectImpl(theFace6);
 
   if (anFace1.IsNull() || anFace2.IsNull() ||
       anFace3.IsNull() || anFace4.IsNull() ||
@@ -226,13 +198,9 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeHexa2Faces
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theFace1 == NULL || theFace2 == NULL) return aGEOMObject._retn();
-
   //Get the reference Faces
-  Handle(GEOM_Object) anFace1 = GetOperations()->GetEngine()->GetObject
-    (theFace1->GetStudyID(), theFace1->GetEntry());
-  Handle(GEOM_Object) anFace2 = GetOperations()->GetEngine()->GetObject
-    (theFace2->GetStudyID(), theFace2->GetEntry());
+  Handle(GEOM_Object) anFace1 = GetObjectImpl(theFace1);
+  Handle(GEOM_Object) anFace2 = GetObjectImpl(theFace2);
 
   if (anFace1.IsNull() || anFace2.IsNull()) return aGEOMObject._retn();
 
@@ -258,12 +226,8 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeBlockCompound
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return aGEOMObject._retn();
-
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aGEOMObject._retn();
 
   //Create the Blocks Compound
@@ -281,22 +245,18 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeBlockCompound
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetPoint (GEOM::GEOM_Object_ptr theShape,
-							  const CORBA::Double   theX,
-							  const CORBA::Double   theY,
-							  const CORBA::Double   theZ,
-							  const CORBA::Double   theEpsilon)
+                                                          const CORBA::Double   theX,
+                                                          const CORBA::Double   theY,
+                                                          const CORBA::Double   theZ,
+                                                          const CORBA::Double   theEpsilon)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Create the Point
@@ -314,24 +274,18 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetPoint (GEOM::GEOM_Object_ptr 
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetEdge (GEOM::GEOM_Object_ptr theShape,
-							 GEOM::GEOM_Object_ptr thePoint1,
-							 GEOM::GEOM_Object_ptr thePoint2)
+                                                         GEOM::GEOM_Object_ptr thePoint1,
+                                                         GEOM::GEOM_Object_ptr thePoint2)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL ||
-      thePoint1 == NULL || thePoint2 == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aPoint1 = GetOperations()->GetEngine()->GetObject
-    (thePoint1->GetStudyID(), thePoint1->GetEntry());
-  Handle(GEOM_Object) aPoint2 = GetOperations()->GetEngine()->GetObject
-    (thePoint2->GetStudyID(), thePoint2->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
 
   if (aShape.IsNull() ||
       aPoint1.IsNull() || aPoint2.IsNull()) return aGEOMObject._retn();
@@ -351,20 +305,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetEdge (GEOM::GEOM_Object_ptr t
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetEdgeNearPoint (GEOM::GEOM_Object_ptr theShape,
-								  GEOM::GEOM_Object_ptr thePoint)
+                                                                  GEOM::GEOM_Object_ptr thePoint)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || thePoint == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aPoint = GetOperations()->GetEngine()->GetObject
-    (thePoint->GetStudyID(), thePoint->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
@@ -384,31 +334,22 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetEdgeNearPoint (GEOM::GEOM_Obj
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByPoints
                                               (GEOM::GEOM_Object_ptr theShape,
-					       GEOM::GEOM_Object_ptr thePoint1,
-					       GEOM::GEOM_Object_ptr thePoint2,
-					       GEOM::GEOM_Object_ptr thePoint3,
-					       GEOM::GEOM_Object_ptr thePoint4)
+                                               GEOM::GEOM_Object_ptr thePoint1,
+                                               GEOM::GEOM_Object_ptr thePoint2,
+                                               GEOM::GEOM_Object_ptr thePoint3,
+                                               GEOM::GEOM_Object_ptr thePoint4)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL ||
-      thePoint1 == NULL || thePoint2 == NULL ||
-      thePoint3 == NULL || thePoint4 == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aPoint1 = GetOperations()->GetEngine()->GetObject
-    (thePoint1->GetStudyID(), thePoint1->GetEntry());
-  Handle(GEOM_Object) aPoint2 = GetOperations()->GetEngine()->GetObject
-    (thePoint2->GetStudyID(), thePoint2->GetEntry());
-  Handle(GEOM_Object) aPoint3 = GetOperations()->GetEngine()->GetObject
-    (thePoint3->GetStudyID(), thePoint3->GetEntry());
-  Handle(GEOM_Object) aPoint4 = GetOperations()->GetEngine()->GetObject
-    (thePoint4->GetStudyID(), thePoint4->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+  Handle(GEOM_Object) aPoint3 = GetObjectImpl(thePoint3);
+  Handle(GEOM_Object) aPoint4 = GetObjectImpl(thePoint4);
 
   if (aShape.IsNull() ||
       aPoint1.IsNull() || aPoint2.IsNull() ||
@@ -430,24 +371,18 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByPoints
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByEdges
                                                (GEOM::GEOM_Object_ptr theShape,
-						GEOM::GEOM_Object_ptr theEdge1,
-						GEOM::GEOM_Object_ptr theEdge2)
+                                                GEOM::GEOM_Object_ptr theEdge1,
+                                                GEOM::GEOM_Object_ptr theEdge2)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL ||
-      theEdge1 == NULL || theEdge2 == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) anEdge1 = GetOperations()->GetEngine()->GetObject
-    (theEdge1->GetStudyID(), theEdge1->GetEntry());
-  Handle(GEOM_Object) anEdge2 = GetOperations()->GetEngine()->GetObject
-    (theEdge2->GetStudyID(), theEdge2->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anEdge1 = GetObjectImpl(theEdge1);
+  Handle(GEOM_Object) anEdge2 = GetObjectImpl(theEdge2);
 
   if (aShape.IsNull() ||
       anEdge1.IsNull() || anEdge2.IsNull()) return aGEOMObject._retn();
@@ -467,20 +402,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByEdges
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetOppositeFace (GEOM::GEOM_Object_ptr theShape,
-								 GEOM::GEOM_Object_ptr theFace)
+                                                                 GEOM::GEOM_Object_ptr theFace)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theFace == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aFace = GetOperations()->GetEngine()->GetObject
-    (theFace->GetStudyID(), theFace->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aFace = GetObjectImpl(theFace);
 
   if (aShape.IsNull() || aFace.IsNull()) return aGEOMObject._retn();
 
@@ -499,20 +430,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetOppositeFace (GEOM::GEOM_Obje
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceNearPoint (GEOM::GEOM_Object_ptr theShape,
-								  GEOM::GEOM_Object_ptr thePoint)
+                                                                  GEOM::GEOM_Object_ptr thePoint)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || thePoint == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aPoint = GetOperations()->GetEngine()->GetObject
-    (thePoint->GetStudyID(), thePoint->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
@@ -531,20 +458,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceNearPoint (GEOM::GEOM_Obj
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByNormale (GEOM::GEOM_Object_ptr theShape,
-								  GEOM::GEOM_Object_ptr theVector)
+                                                                  GEOM::GEOM_Object_ptr theVector)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL || theVector == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-  Handle(GEOM_Object) aVector = GetOperations()->GetEngine()->GetObject
-    (theVector->GetStudyID(), theVector->GetEntry());
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aVector = GetObjectImpl(theVector);
 
   if (aShape.IsNull() || aVector.IsNull()) return aGEOMObject._retn();
 
@@ -564,20 +487,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByNormale (GEOM::GEOM_Obj
 //=============================================================================
 GEOM::ListOfGO* GEOM_IBlocksOperations_i::ExplodeCompoundOfBlocks
                                           (GEOM::GEOM_Object_ptr theCompound,
-					   const CORBA::Long     theMinNbFaces,
-					   const CORBA::Long     theMaxNbFaces)
+                                           const CORBA::Long     theMinNbFaces,
+                                           const CORBA::Long     theMaxNbFaces)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return aSeq._retn();
-
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aSeq._retn();
 
   //Explode
@@ -601,9 +520,9 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::ExplodeCompoundOfBlocks
 //=============================================================================
 CORBA::Boolean GEOM_IBlocksOperations_i::IsCompoundOfBlocks
                                           (GEOM::GEOM_Object_ptr theCompound,
-					   const CORBA::Long     theMinNbFaces,
-					   const CORBA::Long     theMaxNbFaces,
-					   CORBA::Long&          theNbBlocks)
+                                           const CORBA::Long     theMinNbFaces,
+                                           const CORBA::Long     theMaxNbFaces,
+                                           CORBA::Long&          theNbBlocks)
 {
   theNbBlocks = 0;
   CORBA::Boolean isComp = false;
@@ -611,20 +530,16 @@ CORBA::Boolean GEOM_IBlocksOperations_i::IsCompoundOfBlocks
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return isComp;
-
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return isComp;
 
   //Check
   Standard_Integer nbBlocks = 0;
   isComp = GetOperations()->IsCompoundOfBlocks(aCompound,
-					       theMinNbFaces,
-					       theMaxNbFaces,
-					       nbBlocks);
+                                               theMinNbFaces,
+                                               theMaxNbFaces,
+                                               nbBlocks);
   if (!GetOperations()->IsDone())
     return isComp;
 
@@ -639,19 +554,15 @@ CORBA::Boolean GEOM_IBlocksOperations_i::IsCompoundOfBlocks
 //=============================================================================
 CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
                                           (GEOM::GEOM_Object_ptr theCompound,
-					   GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors)
+                                           GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors)
 {
   CORBA::Boolean isComp = false;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return isComp;
-
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return isComp;
 
   //Check
@@ -722,12 +633,10 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
 //=============================================================================
 char* GEOM_IBlocksOperations_i::PrintBCErrors
                       (GEOM::GEOM_Object_ptr theCompound,
-		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
+                       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
 {
   //Get the reference Compound
-  if (theCompound == NULL) return NULL;
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return NULL;
 
   // Convert the errors sequence
@@ -770,7 +679,7 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
   }
 
   TCollection_AsciiString aDescr = GetOperations()->PrintBCErrors(aCompound, anErrors);
-  return CORBA::string_dup(aDescr.ToCString());    
+  return CORBA::string_dup(aDescr.ToCString());
 }
 
 //=============================================================================
@@ -785,12 +694,8 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges (GEOM::GEOM_Obj
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Get the result
@@ -814,12 +719,8 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::CheckAndImprove (GEOM::GEOM_Obje
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aGEOMObject._retn();
 
   //Get the result
@@ -837,20 +738,16 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::CheckAndImprove (GEOM::GEOM_Obje
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockNearPoint (GEOM::GEOM_Object_ptr theCompound,
-								   GEOM::GEOM_Object_ptr thePoint)
+                                                                   GEOM::GEOM_Object_ptr thePoint)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL || thePoint == NULL) return aGEOMObject._retn();
-
   //Get the reference Objects
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-  Handle(GEOM_Object) aPoint = GetOperations()->GetEngine()->GetObject
-    (thePoint->GetStudyID(), thePoint->GetEntry());
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
 
   if (aCompound.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
 
@@ -869,19 +766,15 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockNearPoint (GEOM::GEOM_Ob
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockByParts (GEOM::GEOM_Object_ptr theCompound,
-								 const GEOM::ListOfGO& theParts)
+                                                                 const GEOM::ListOfGO& theParts)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return aGEOMObject._retn();
-
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aGEOMObject._retn();
 
   //Get the parts
@@ -890,9 +783,7 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockByParts (GEOM::GEOM_Obje
 
   aLen = theParts.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theParts[ind] == NULL) return aGEOMObject._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theParts[ind]->GetStudyID(), theParts[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theParts[ind]);
     if (aSh.IsNull()) return aGEOMObject._retn();
     aParts->Append(aSh);
   }
@@ -912,19 +803,15 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetBlockByParts (GEOM::GEOM_Obje
  */
 //=============================================================================
 GEOM::ListOfGO* GEOM_IBlocksOperations_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
-							    const GEOM::ListOfGO& theParts)
+                                                            const GEOM::ListOfGO& theParts)
 {
   GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theCompound == NULL) return aSeq._retn();
-
   //Get the reference Compound
-  Handle(GEOM_Object) aCompound = GetOperations()->GetEngine()->GetObject
-    (theCompound->GetStudyID(), theCompound->GetEntry());
-
+  Handle(GEOM_Object) aCompound = GetObjectImpl(theCompound);
   if (aCompound.IsNull()) return aSeq._retn();
 
   //Get the parts
@@ -933,9 +820,7 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::GetBlocksByParts (GEOM::GEOM_Object_pt
 
   aLen = theParts.length();
   for (ind = 0; ind < aLen; ind++) {
-    if (theParts[ind] == NULL) return aSeq._retn();
-    Handle(GEOM_Object) aSh = GetOperations()->GetEngine()->GetObject
-      (theParts[ind]->GetStudyID(), theParts[ind]->GetEntry());
+    Handle(GEOM_Object) aSh = GetObjectImpl(theParts[ind]);
     if (aSh.IsNull()) return aSeq._retn();
     aParts->Append(aSh);
   }
@@ -961,29 +846,25 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::GetBlocksByParts (GEOM::GEOM_Object_pt
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation1D
                                               (GEOM::GEOM_Object_ptr theBlock,
-					       const CORBA::Long     theDirFace1,
-					       const CORBA::Long     theDirFace2,
-					       const CORBA::Long     theNbTimes)
+                                               const CORBA::Long     theDirFace1,
+                                               const CORBA::Long     theDirFace2,
+                                               const CORBA::Long     theNbTimes)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
-   //Set a not done flag
+  //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theBlock == NULL) return aGEOMObject._retn();
+  //Get the object itself and the vector of translation
+  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theBlock);
+  if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
-   //Get the object itself and the vector of translation
-   Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
-     (theBlock->GetStudyID(), theBlock->GetEntry());
+  //Perform the transformation
+  Handle(GEOM_Object) anObject = GetOperations()->MakeMultiTransformation1D
+    (aBasicObject, theDirFace1, theDirFace2, theNbTimes);
+  if (!GetOperations()->IsDone() || anObject.IsNull())  return aGEOMObject._retn();
 
-   if (aBasicObject.IsNull()) return aGEOMObject._retn();
-
-   //Perform the transformation
-   Handle(GEOM_Object) anObject = GetOperations()->MakeMultiTransformation1D
-     (aBasicObject, theDirFace1, theDirFace2, theNbTimes);
-   if (!GetOperations()->IsDone() || anObject.IsNull())  return aGEOMObject._retn();
-
-   return GetObject(anObject);
+  return GetObject(anObject);
 }
 
 //=============================================================================
@@ -993,24 +874,20 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation1D
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::MakeMultiTransformation2D
                                            (GEOM::GEOM_Object_ptr theBlock,
-					    const CORBA::Long     theDirFace1U,
-					    const CORBA::Long     theDirFace2U,
-					    const CORBA::Long     theNbTimesU,
-					    const CORBA::Long     theDirFace1V,
-					    const CORBA::Long     theDirFace2V,
-					    const CORBA::Long     theNbTimesV)
+                                            const CORBA::Long     theDirFace1U,
+                                            const CORBA::Long     theDirFace2U,
+                                            const CORBA::Long     theNbTimesU,
+                                            const CORBA::Long     theDirFace1V,
+                                            const CORBA::Long     theDirFace2V,
+                                            const CORBA::Long     theNbTimesV)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theBlock == NULL) return aGEOMObject._retn();
-
   //Get the object itself
-  Handle(GEOM_Object) aBasicObject = GetOperations()->GetEngine()->GetObject
-    (theBlock->GetStudyID(), theBlock->GetEntry());
-
+  Handle(GEOM_Object) aBasicObject = GetObjectImpl(theBlock);
   if (aBasicObject.IsNull()) return aGEOMObject._retn();
 
   //Perform the transformation
@@ -1035,12 +912,8 @@ GEOM::ListOfGO* GEOM_IBlocksOperations_i::Propagate (GEOM::GEOM_Object_ptr theSh
   //Set a not done flag
   GetOperations()->SetNotDone();
 
-  if (theShape == NULL) return aSeq._retn();
-
   //Get the reference Shape
-  Handle(GEOM_Object) aShape = GetOperations()->GetEngine()->GetObject
-    (theShape->GetStudyID(), theShape->GetEntry());
-
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return aSeq._retn();
 
   //Get the Propagation chains
