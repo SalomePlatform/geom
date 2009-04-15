@@ -652,7 +652,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theVec Vector, normal to the plane of the ellipse.
         #  @param theRMajor Major ellipse radius.
         #  @param theRMinor Minor ellipse radius.
-        #  @param theVecMaj Vector, direction by the main exis.
+        #  @param theVecMaj Vector, direction of the ellipse's main axis.
         #  @return New GEOM_Object, containing the created ellipse.
         #
         #  @ref tui_creation_ellipse "Example"
