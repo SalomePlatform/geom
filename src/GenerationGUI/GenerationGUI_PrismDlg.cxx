@@ -146,7 +146,7 @@ void GenerationGUI_PrismDlg::Init()
   GroupPoints3->SpinBox_DY->setValue(0.0);
   GroupPoints3->SpinBox_DZ->setValue(0.0);
 
-  initSpinBox(GroupPoints->SpinBox_DX, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupPoints->SpinBox_DX->setValue(100.0);
 
   // init variables
