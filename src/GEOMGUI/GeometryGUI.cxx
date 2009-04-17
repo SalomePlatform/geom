@@ -162,7 +162,8 @@ char* GeometryGUI::JoinObjectParameters(const QStringList& theParametersList)
 // purpose  : Constructor
 //=======================================================================
 GeometryGUI::GeometryGUI() :
-  SalomeApp_Module( "GEOM" )
+  SalomeApp_Module( "GEOM" ),
+  LightApp_Module( "GEOM" )
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
