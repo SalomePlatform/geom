@@ -2351,7 +2351,8 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCopy
-    << " = geompy.RemoveExtraEdges(" << theObject << ")";
+                               << " = geompy.RemoveExtraEdges(" << theObject
+                               << ", " << theOptimumNbFaces << ")";
 
   SetErrorCode(OK);
   return aCopy;
