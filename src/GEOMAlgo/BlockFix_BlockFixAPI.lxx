@@ -18,11 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <BlockFix_BlockFixAPI.hxx>
 
 //=======================================================================
-//function : Shape
+//function : SetShape
 //purpose  : 
 //=======================================================================
 
@@ -40,7 +40,7 @@ inline TopoDS_Shape BlockFix_BlockFixAPI::Shape() const
 {
   return myShape;
 }
-  
+
 //=======================================================================
 //function : Context
 //purpose  : 
@@ -50,7 +50,7 @@ inline Handle(ShapeBuild_ReShape)& BlockFix_BlockFixAPI::Context()
 {
   return myContext;
 }
-  
+
 //=======================================================================
 //function : Tolerance
 //purpose  : 
@@ -60,4 +60,13 @@ inline Standard_Real& BlockFix_BlockFixAPI::Tolerance()
 {
   return myTolerance;
 }
-  
+
+//=======================================================================
+//function : OptimumNbFaces
+//purpose  : 
+//=======================================================================
+
+inline Standard_Integer& BlockFix_BlockFixAPI::OptimumNbFaces()
+{
+  return myOptimumNbFaces;
+}

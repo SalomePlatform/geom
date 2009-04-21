@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef _GEOM_IBlocksOperations_i_HeaderFile
 #define _GEOM_IBlocksOperations_i_HeaderFile
 
@@ -112,7 +112,8 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
   char* PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 		       const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors);
 
-  GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape);
+  GEOM::GEOM_Object_ptr RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape,
+                                          CORBA::Long           theOptimumNbFaces);
 
   GEOM::GEOM_Object_ptr CheckAndImprove (GEOM::GEOM_Object_ptr theCompound);
 

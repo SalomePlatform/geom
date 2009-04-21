@@ -687,7 +687,9 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
  *  RemoveExtraEdges
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges (GEOM::GEOM_Object_ptr theShape)
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges
+                                      (GEOM::GEOM_Object_ptr theShape,
+                                       CORBA::Long           theOptimumNbFaces)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -699,8 +701,7 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::RemoveExtraEdges (GEOM::GEOM_Obj
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   //Get the result
-  Handle(GEOM_Object) anObject =
-    GetOperations()->RemoveExtraEdges(aShape);
+  Handle(GEOM_Object) anObject = GetOperations()->RemoveExtraEdges(aShape, theOptimumNbFaces);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

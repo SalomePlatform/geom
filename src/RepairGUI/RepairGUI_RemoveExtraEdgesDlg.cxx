@@ -22,7 +22,7 @@
 //  GEOM RepairGUI : GUI for Geometry component
 //  File   : RepairGUI_RemoveExtraEdgesDlg.cxx
 //  Author : Michael Zorin, Open CASCADE S.A.S.
-//
+
 #include "RepairGUI_RemoveExtraEdgesDlg.h"
 
 #include <DlgRef.h>
@@ -63,11 +63,14 @@ RepairGUI_RemoveExtraEdgesDlg::RepairGUI_RemoveExtraEdgesDlg( GeometryGUI* theGe
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  GroupPoints = new DlgRef_1Sel1Check( centralWidget() );
+
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_REMOVE_EXTRA_EDGES" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_SELECTED_SHAPE" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  GroupPoints->CheckButton1->setText( tr( "GEOM_RMEE_UNION_FACES" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -100,6 +103,8 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   
   myOkObject = false;
+
+  GroupPoints->CheckButton1->setChecked( false );
 
   activateSelection();
   
@@ -278,11 +283,15 @@ bool RepairGUI_RemoveExtraEdgesDlg::isValid( QString& msg )
 bool RepairGUI_RemoveExtraEdgesDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_Object_var anObj;
-  
-  anObj = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->RemoveExtraEdges( myObject );
-  
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+
+  int nbFacesOptimum = -1; // -1 means do not union faces
+  if (GroupPoints->CheckButton1->isChecked())
+    nbFacesOptimum = 0; // 0 means union all faces, that possible
+  anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->RemoveExtraEdges
+    (myObject, nbFacesOptimum);
+
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return true;
 }

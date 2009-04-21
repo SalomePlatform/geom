@@ -19,8 +19,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//NOTE: This is an interface to a function for the Blocks Multi-Transformations.
-//
+//NOTE: This is an interface to a functions for the Blocks Multi-Transformations and repairing
+
 #include "GEOM_Function.hxx"
 
 #define TRSF_ORIGIN  1
@@ -31,6 +31,8 @@
 #define TRSF_FACE_1_V  5
 #define TRSF_FACE_2_V  6
 #define TRSF_NBITER_V  7
+
+#define TRSF_NB_FACES  8
 
 class GEOMImpl_IBlockTrsf
 {
@@ -49,12 +51,16 @@ class GEOMImpl_IBlockTrsf
   void SetNbIterU (int theNbIter) { _func->SetInteger(TRSF_NBITER_U, theNbIter); }
   void SetNbIterV (int theNbIter) { _func->SetInteger(TRSF_NBITER_V, theNbIter); }
 
+  void SetOptimumNbFaces (int theNbFaces) { _func->SetInteger(TRSF_NB_FACES, theNbFaces); }
+
   int GetFace1U () { return _func->GetInteger(TRSF_FACE_1_U); }
   int GetFace2U () { return _func->GetInteger(TRSF_FACE_2_U); }
   int GetFace1V () { return _func->GetInteger(TRSF_FACE_1_V); }
   int GetFace2V () { return _func->GetInteger(TRSF_FACE_2_V); }
   int GetNbIterU() { return _func->GetInteger(TRSF_NBITER_U); }
   int GetNbIterV() { return _func->GetInteger(TRSF_NBITER_V); }
+
+  int GetOptimumNbFaces() { return _func->GetInteger(TRSF_NB_FACES); }
 
  private:
 

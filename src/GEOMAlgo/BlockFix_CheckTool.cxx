@@ -25,9 +25,11 @@
 
 #include <BlockFix_CheckTool.ixx>
 
+//#include <BlockFix_UnionEdges.hxx>
+//#include <BlockFix_UnionFaces.hxx>
+
 #include <BRep_Tool.hxx>
-#include <BlockFix_UnionEdges.hxx>
-#include <BlockFix_UnionFaces.hxx>
+
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>

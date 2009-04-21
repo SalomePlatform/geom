@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef _BlockFix_UnionFaces_HeaderFile
 #define _BlockFix_UnionFaces_HeaderFile
 
@@ -28,10 +28,6 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
-class TopoDS_Shape;
-class TopoDS_Face;
-
-
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
@@ -39,63 +35,55 @@ class TopoDS_Face;
 #include <Standard_Macro.hxx>
 #endif
 
-class BlockFix_UnionFaces  {
+class TopoDS_Shape;
+class TopoDS_Face;
 
+class BlockFix_UnionFaces
+{
 public:
+  void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size) 
+  { 
+    return Standard::Allocate(size); 
+  }
+  void  operator delete(void *anAddress) 
+  { 
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-Standard_EXPORT BlockFix_UnionFaces();
-Standard_EXPORT   Standard_Real& GetTolerance() ;
-Standard_EXPORT   TopoDS_Shape Perform(const TopoDS_Shape& Shape) ;
-Standard_EXPORT virtual  Standard_Boolean IsSameDomain(const TopoDS_Face& aFace,const TopoDS_Face& aChekedFace) const;
-Standard_EXPORT virtual  void MovePCurves(TopoDS_Face& aTarget,const TopoDS_Face& aSource) const;
+  // Methods PUBLIC
+  // 
+  Standard_EXPORT BlockFix_UnionFaces();
 
+  Standard_EXPORT   Standard_Real& GetTolerance();
 
+  /* \brief To get/set the OptimumNbFaces parameter
+   *
+   * If a being processed solid has less than OptimumNbFaces
+   *    faces, no union will be performed.
+   * By default this parameter is set to 6 (to correctly
+   *    process blocks - hexahedral solids)
+   * Special values: 0 - do all possible unions, regardless the faces quantity,
+   *                 negative - do not perform any unions, regardless the faces quantity.
+   *
+   */
+  Standard_EXPORT   Standard_Integer& GetOptimumNbFaces();
 
+  Standard_EXPORT   TopoDS_Shape Perform(const TopoDS_Shape& Shape);
 
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+  Standard_EXPORT virtual  Standard_Boolean IsSameDomain(const TopoDS_Face& aFace,
+                                                         const TopoDS_Face& aChekedFace) const;
+  Standard_EXPORT virtual  void MovePCurves(TopoDS_Face& aTarget,
+                                            const TopoDS_Face& aSource) const;
 
 private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-Standard_Real myTolerance;
-
-
+  // Fields PRIVATE
+  //
+  Standard_Real myTolerance;
+  Standard_Integer myOptimumNbFaces;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

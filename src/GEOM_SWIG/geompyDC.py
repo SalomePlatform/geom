@@ -3407,12 +3407,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Unite faces and edges, sharing one surface. It means that
         #  this faces must have references to one C++ surface object (handle).
         #  @param theShape The compound or single solid to remove irregular edges from.
+        #  @param theOptimumNbFaces If more than zero, unite faces only for those solids,
+        #         that have more than theOptimumNbFaces faces. If zero, unite faces always,
+        #         regardsless their quantity in the solid. If negative (the default value),
+        #         do not unite faces at all. For blocks repairing recommended value is 6.
         #  @return Improved shape.
         #
         #  @ref swig_RemoveExtraEdges "Example"
-        def RemoveExtraEdges(self,theShape):
+        def RemoveExtraEdges(self,theShape,theOptimumNbFaces=-1):
             # Example: see GEOM_TestOthers.py
-            anObj = self.BlocksOp.RemoveExtraEdges(theShape)
+            anObj = self.BlocksOp.RemoveExtraEdges(theShape,theOptimumNbFaces)
             RaiseIfFailed("RemoveExtraEdges", self.BlocksOp)
             return anObj
 

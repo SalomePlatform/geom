@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <BRepOffsetAPI_MakeFilling.hxx>
@@ -506,6 +506,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       // 1. Improve solids with seam and/or degenerated edges
       BlockFix_BlockFixAPI aTool;
       //aTool.Tolerance() = toler;
+      aTool.OptimumNbFaces() = aCI.GetOptimumNbFaces();
       aTool.SetShape(aBlockOrComp);
       aTool.Perform();
 

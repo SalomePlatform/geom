@@ -286,41 +286,58 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
 						     gp_Pnt& aP2,
 						     IntTools_Context& aCtx)
 {
-  Standard_Boolean bIsDone=Standard_False;
+  Standard_Boolean bIsDone = Standard_False;
   Standard_Real aT2;
   TopAbs_ShapeEnum aType;
   //
-  aType=aS.ShapeType();
-  switch(aType) {
-    case TopAbs_EDGE: {
-      const TopoDS_Edge& aE2=TopoDS::Edge(aS);
-      //
-      bIsDone=aCtx.ProjectPointOnEdge(aP1, aE2, aT2);
-      if (!bIsDone) {
-	return bIsDone;
+  aType = aS.ShapeType();
+  switch (aType)
+    {
+    case TopAbs_EDGE:
+      {
+        cout << "$$$ case TopAbs_EDGE" << endl;
+        const TopoDS_Edge& aE2 = TopoDS::Edge(aS);
+        //
+        if (BRep_Tool::Degenerated(aE2)) { // jfa
+          cout << "$$$ Degenerated" << endl;
+          return Standard_True;
+        }
+        else {
+          Standard_Real f, l;
+          Handle(Geom_Curve) aC3D = BRep_Tool::Curve (aE2, f, l);
+          if (aC3D.IsNull()) {
+            cout << "$$$ aC3D.IsNull()" << endl;
+            return Standard_True;
+          }
+          bIsDone = aCtx.ProjectPointOnEdge(aP1, aE2, aT2);
+        }
+        if (!bIsDone) {
+          cout << "$$$ !bIsDone" << endl;
+          return bIsDone;
+        }
+        //
+        GEOMAlgo_Tools::PointOnEdge(aE2, aT2, aP2);
       }
-      //
-      GEOMAlgo_Tools::PointOnEdge(aE2, aT2, aP2);
-    }
       break;
       //
-    case TopAbs_FACE: {
-      const TopoDS_Face& aF2=TopoDS::Face(aS);
-      GeomAPI_ProjectPointOnSurf& aProj=aCtx.ProjPS(aF2);
-      //
-      aProj.Perform(aP1);
-      bIsDone=aProj.IsDone();
-      if (!bIsDone) {
-	return bIsDone;
+    case TopAbs_FACE:
+      {
+        const TopoDS_Face& aF2 = TopoDS::Face(aS);
+        GeomAPI_ProjectPointOnSurf& aProj = aCtx.ProjPS(aF2);
+        //
+        aProj.Perform(aP1);
+        bIsDone = aProj.IsDone();
+        if (!bIsDone) {
+          return bIsDone;
+        }
+        //
+        aP2 = aProj.NearestPoint(); 
       }
-      //
-      aP2=aProj.NearestPoint(); 
-    }
       break;
       //  
     default:
       break; // Err
-  }
+    }
   return bIsDone;
 }
 //=======================================================================

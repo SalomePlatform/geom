@@ -19,16 +19,16 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
+//  GEOM GEOMGUI : GUI for Geometry component
 //  File   : RepairGUI_RemoveExtraEdgesDlg.h
 //  Author : Michael ZORIN, Open CASCADE S.A.S.
-//
+
 #ifndef REPAIRGUI_REMOVEEXTRAEDGESDLG_H
 #define REPAIRGUI_REMOVEEXTRAEDGESDLG_H
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_1Sel;
+class DlgRef_1Sel1Check;
 
 //=================================================================================
 // class    : RepairGUI_RemoveExtraEdgesDlg
@@ -58,7 +58,7 @@ private:
   GEOM::GEOM_Object_var              myObject;
   bool                               myOkObject;
 
-  DlgRef_1Sel*                       GroupPoints;
+  DlgRef_1Sel1Check*                       GroupPoints;
 
 private slots:
   void                               ClickOnOk();

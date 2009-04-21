@@ -3528,6 +3528,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Object to remove extra edges</translation>
         </message>
         <message>
+            <source>GEOM_RMEE_UNION_FACES</source>
+            <translation>Union faces, laying on common surface</translation>
+        </message>
+        <message>
             <source>REMOVE_EXTRA_EDGES_NEW_OBJ_NAME</source>
             <translation>NoExtraEdges</translation>
         </message>

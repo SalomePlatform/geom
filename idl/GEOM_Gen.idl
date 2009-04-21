@@ -21,7 +21,7 @@
 //
 //  File   : GEOM_Gen.idl
 //  Author : Sergey RUIN
-//
+
 #ifndef __GEOM_GEN__
 #define __GEOM_GEN__
 
@@ -1869,9 +1869,14 @@ module GEOM
      *  Remove all seam and degenerated edges from \a theShape.
      *  Unite faces and edges, sharing one surface.
      *  \param theShape The compound or single solid to remove irregular edges from.
+     *  \param theOptimumNbFaces If more than zero, unite faces only for those solids,
+     *         that have more than theOptimumNbFaces faces. If zero, unite faces always,
+     *         regardsless their quantity in the solid. If negative, do not unite faces at all.
+     *         For blocks repairing recommended value is 6.
      *  \return Improved shape.
      */
-    GEOM_Object RemoveExtraEdges (in GEOM_Object theShape);
+    GEOM_Object RemoveExtraEdges (in GEOM_Object theShape,
+                                  in long        theOptimumNbFaces);
 
     /*!
      *  Check, if the given shape is a blocks compound.

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	BlockFix_BlockFixAPI.cxx
-// Created:	Tue Dec  7 11:59:05 2004
-// Author:	Pavel DURANDIN
-//
+//  File:    BlockFix_BlockFixAPI.cxx
+//  Created: Tue Dec  7 11:59:05 2004
+//  Author:  Pavel DURANDIN
+
 #include <BlockFix_BlockFixAPI.ixx>
 #include <BlockFix.hxx>
 #include <BlockFix_UnionFaces.hxx>
@@ -31,37 +31,35 @@
 
 //=======================================================================
 //function : ShapeConvert_CanonicAPI
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 BlockFix_BlockFixAPI::BlockFix_BlockFixAPI()
 {
   myTolerance = Precision::Confusion();
+  myOptimumNbFaces = 6;
 }
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-void BlockFix_BlockFixAPI::Perform() 
+void BlockFix_BlockFixAPI::Perform()
 {
-
   // processing spheres with degenerativities
   TopoDS_Shape aShape = Shape();
   myShape = BlockFix::RotateSphereSpace(aShape,myTolerance);
-  
+
   // faces unification
   BlockFix_UnionFaces aFaceUnifier;
   aFaceUnifier.GetTolerance() = myTolerance;
-  TopoDS_Shape aResult;
-  aResult = aFaceUnifier.Perform(myShape);
-  
-  
+  aFaceUnifier.GetOptimumNbFaces() = myOptimumNbFaces;
+  TopoDS_Shape aResult = aFaceUnifier.Perform(myShape);
+
   BlockFix_UnionEdges anEdgeUnifier;
   myShape = anEdgeUnifier.Perform(aResult,myTolerance);
-  
+
   TopoDS_Shape aRes = BlockFix::FixRanges(myShape,myTolerance);
   myShape = aRes;
-  
 }

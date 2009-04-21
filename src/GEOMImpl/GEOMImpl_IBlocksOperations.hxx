@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef _GEOMImpl_IBlocksOperations_HXX_
 #define _GEOMImpl_IBlocksOperations_HXX_
 
@@ -125,7 +125,8 @@ class GEOMImpl_IBlocksOperations : public GEOM_IOperations {
   Standard_EXPORT TCollection_AsciiString PrintBCErrors (Handle(GEOM_Object)  theCompound,
                                          const std::list<BCError>& theErrors);
 
-  Standard_EXPORT Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape);
+  Standard_EXPORT Handle(GEOM_Object) RemoveExtraEdges (Handle(GEOM_Object) theShape,
+                                                        const Standard_Integer theOptimumNbFaces = 6);
 
   Standard_EXPORT Handle(GEOM_Object) CheckAndImprove (Handle(GEOM_Object) theCompound);
 
