@@ -90,7 +90,7 @@ OperationGUI_Fillet2dDlg::OperationGUI_Fillet2dDlg (GeometryGUI* theGeometryGUI,
 
   // Initialisation
   Init();
-  resize(0,0);
+  resize(100,100);
 }
 
 //=================================================================================

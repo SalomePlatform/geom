@@ -112,7 +112,7 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
 
   setHelpFileName( "create_3dsketcher_page.html" );
 
-  resize(0,0);
+  resize(100,100);
   Init();
 }  
 

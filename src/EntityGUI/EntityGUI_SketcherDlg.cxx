@@ -326,7 +326,7 @@ void EntityGUI_SketcherDlg::Init()
 
   MainWidget->RadioButton1->setChecked( true );
 
-  resize( 0, 0 );
+  resize(100,100);
   TypeClicked( 0 );
 
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
@@ -347,7 +347,7 @@ void EntityGUI_SketcherDlg::InitClick()
   Group3Spin->hide();
   Group4Spin->hide();
 
-  resize( 0, 0 );
+  resize(100,100);
 }
 
 
