@@ -104,6 +104,8 @@ def TestOtherOperations (geompy, math):
   vy = geompy.MakeVectorDXDYDZ( 0,  1,  0)
   vz = geompy.MakeVectorDXDYDZ( 0,  0,  1)
 
+  v_y = geompy.MakeVectorDXDYDZ( 0, -1,  0)
+
   p11 = geompy.MakeVertex( 0,  0, 0)
   p12 = geompy.MakeVertex(30,  0, 0)
   p13 = geompy.MakeVertex(30, 30, 0)
@@ -320,18 +322,17 @@ def TestOtherOperations (geompy, math):
 
   v_0pp = geompy.MakeVectorDXDYDZ( 0,  1,  1)
   #v_0np = geompy.MakeVectorDXDYDZ( 0, -1,  1)
-  #v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
-  #v_n0p = geompy.MakeVectorDXDYDZ(-1,  0,  1)
-  #v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
-  #v_np0 = geompy.MakeVectorDXDYDZ(-1,  1,  0)
-  v_0n0 = geompy.MakeVectorDXDYDZ( 0, -1,  0)
+  v_p0p = geompy.MakeVectorDXDYDZ( 1,  0,  1)
+  v_p0n = geompy.MakeVectorDXDYDZ(1,  0,  -1)
+  v_pp0 = geompy.MakeVectorDXDYDZ( 1,  1,  0)
+  v_pn0 = geompy.MakeVectorDXDYDZ(1,  -1,  0)
 
   #pln_0pp = geompy.MakePlane(p0, v_0pp, 300)
   #pln_0np = geompy.MakePlane(p0, v_0np, 300)
-  #pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
-  #pln_n0p = geompy.MakePlane(p0, v_n0p, 300)
-  #pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
-  #pln_np0 = geompy.MakePlane(p0, v_np0, 300)
+  pln_p0p = geompy.MakePlane(p0, v_p0p, 300)
+  pln_p0n = geompy.MakePlane(p0, v_p0n, 300)
+  pln_pp0 = geompy.MakePlane(p0, v_pp0, 300)
+  pln_pn0 = geompy.MakePlane(p0, v_pn0, 300)
   #
   #part_objs = [b0, pln_0pp, pln_0np, pln_p0p, pln_n0p, pln_pp0, pln_np0]
   #part_tool_1 = geompy.MakePartition(part_objs, [], [], [b0])
@@ -410,6 +411,49 @@ def TestOtherOperations (geompy, math):
 
   geompy.addToStudy(freeFaces, "freeFaces")
 
+  # RemoveExtraEdges with union of all faces, sharing common surfaces
+  tools = [pln_pp0, pln_pn0, pln_p0p, pln_p0n]
+
+  Partition_1 = geompy.MakePartition([Sphere], tools, [], [], geompy.ShapeType["SOLID"], 0, [])
+  geompy.addToStudy(Partition_1, "Partition_1")
+
+  faces = geompy.SubShapeAllSorted(Partition_1, geompy.ShapeType["FACE"])
+
+  Face_1 = faces[0]
+  Face_2 = faces[39]
+  Face_3 = faces[40]
+
+  geompy.addToStudyInFather(Partition_1, Face_1, "Face_1")
+  geompy.addToStudyInFather(Partition_1, Face_2, "Face_2")
+  geompy.addToStudyInFather(Partition_1, Face_3, "Face_3")
+
+  Vector_5 = geompy.MakeVectorDXDYDZ(0, 20, 0)
+  geompy.addToStudy(Vector_5, "Vector_5")
+
+  Rotation_1 = geompy.MakeRotation(Face_1, Vector_5, 90*math.pi/180.0)
+  Rotation_2 = geompy.MakeRotation(Face_1, Vector_5, 180*math.pi/180.0)
+  Rotation_3 = geompy.MakeRotation(Face_1, Vector_5, 270*math.pi/180.0)
+
+  geompy.addToStudy(Rotation_1, "Rotation_1")
+  geompy.addToStudy(Rotation_2, "Rotation_2")
+  geompy.addToStudy(Rotation_3, "Rotation_3")
+
+  Vector_6 = geompy.MakeVectorDXDYDZ(0, 0, 20)
+  geompy.addToStudy(Vector_6, "Vector_6")
+
+  Rotation_4 = geompy.MakeRotation(Face_1, Vector_6, 90*math.pi/180.0)
+  Rotation_5 = geompy.MakeRotation(Face_1, Vector_6, -90*math.pi/180.0)
+  geompy.addToStudy(Rotation_4, "Rotation_4")
+  geompy.addToStudy(Rotation_5, "Rotation_5")
+
+  Shell_1 = geompy.MakeShell([Face_1, Rotation_1, Rotation_2, Rotation_3, Rotation_4, Rotation_5])
+  Solid_1 = geompy.MakeSolid([Shell_1])
+  NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, 0)
+
+  geompy.addToStudy(Shell_1, "Shell_1")
+  geompy.addToStudy(Solid_1, "Solid_1")
+  geompy.addToStudy(NoExtraEdges_1, "NoExtraEdges_1")
+
   # RemoveExtraEdges
   freeFacesWithoutExtra = geompy.RemoveExtraEdges(freeFaces)
 
@@ -474,13 +518,13 @@ def TestOtherOperations (geompy, math):
   # GetShapesOnPlaneWithLocation
   Loc = geompy.MakeVertex(0, -50, 0)
   edges_on_pln = geompy.GetShapesOnPlaneWithLocation(blocksComp, geompy.ShapeType["EDGE"],
-                                                     v_0n0, Loc, geompy.GEOM.ST_ON)
+                                                     v_y, Loc, geompy.GEOM.ST_ON)
   for edge_i in edges_on_pln:
     geompy.addToStudy(edge_i, "Edge on Plane (N = (0, -1, 0) & Location = (0, -50, 0)")
     
   # GetShapesOnPlaneWithLocationIDs
   edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(
-           blocksComp, geompy.ShapeType["EDGE"], v_0n0, Loc, geompy.GEOM.ST_ON)
+           blocksComp, geompy.ShapeType["EDGE"], v_y, Loc, geompy.GEOM.ST_ON)
   group_edges_on_pln = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(group_edges_on_pln, edges_on_pln_ids)
   grname = "Group of edges on Plane (N = (0, -1, 0) & Location = (0, -50, 0))"

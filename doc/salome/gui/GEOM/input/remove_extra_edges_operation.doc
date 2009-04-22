@@ -7,9 +7,11 @@
 \n This operation removes all seam and degenerated edges from a given
 shape and unites faces and edges, sharing one surface.
 
-\n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape)</em>,
-there <em>theShape</em> is a compound or a single solid to remove irregular edges from.
-\n <b>Arguments:</b> Name + one shape.
+\n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape,theOptimumNbFaces)</em>,
+there <em>theShape</em> is a compound or a single solid to remove irregular edges from
+and <em>theOptimumNbFaces</em> is an integer parameter, that regulates,
+whether the faces, sharing common surface, should be united, or not.
+\n <b>Arguments:</b> Name + one shape + a flag.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
@@ -22,5 +24,8 @@ there <em>theShape</em> is a compound or a single solid to remove irregular edge
 
 \image html remove_extra_edges2.png
 <center><em>Improved shape</em></center>
+
+Our <b>TUI Scripts</b> provide you with useful examples of the
+\ref swig_RemoveExtraEdges "Remove Extra Edges" functionality usage.
 
 */
