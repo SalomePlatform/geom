@@ -632,7 +632,8 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
           if (!anObj->_is_nil()) {
 	    if(!IsPreview()) {
 	      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
-	      updateAttributes(anObj, aParameters);
+	      if (!toCreateCopy)
+		updateAttributes(anObj, aParameters);
 	    }
             objects.push_back(anObj._retn());
           }
