@@ -403,6 +403,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
             return anObj
+	    
+	## Create a tangent plane to specified face in the point with specified parameters.
+	#  @param theFace - face for which tangent plane shuold be built.
+	#  @param theParameterU - value of parameter by U
+	#  @param theParameterV - value of parameter Vthe
+	#  @param theTrimSize - defines sizes of created face
+	#  Values of parameters should be between 0. and 1.0
+	#  return New GEOM_Object, containing the face built on tangent plane.
+	def MakeTangentPlaneOnFace(self, theFace, theParameterU, theParameterV, theTrimSize):
+	    anObj = self.BasicOp.MakeTangentPlaneOnFace(theFace, theParameterU, theParameterV, theTrimSize)
+	    RaiseIfFailed("MakeTangentPlaneOnFace", self.BasicOp)
+            return anObj
 
         ## Create a vector with the given components.
         #  @param theDX X component of the vector.
