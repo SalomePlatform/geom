@@ -29,6 +29,9 @@
 \anchor swig_MakeTangentOnCurve
 \until tan_on_arc
 
+\anchor swig_MakeTangentPlaneOnFace
+\until tan_on_face
+
 \until MakeCompound
 
 \anchor swig_MakeVertexOnSurface

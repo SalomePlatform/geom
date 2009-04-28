@@ -112,6 +112,15 @@ def TestAll (geompy, math):
 
   #Test tangent on curve creation
   tan_on_arc = geompy.MakeTangentOnCurve(Arc, 0.7) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  
+  #Test tangent on face creation
+  tan_vertex_1 = geompy.MakeVertex(0, 0, 0)
+  tan_vertex_2 = geompy.MakeVertex(0, 90, 30)
+  tan_vertex_3 = geompy.MakeVertex(100, 90, 0)
+  tan_vertex_4 = geompy.MakeVertex(-100, 90, 0)
+  tan_curve = geompy.MakeInterpol([tan_vertex_4, tan_vertex_2, tan_vertex_3, tan_vertex_1])
+  tan_extrusion = geompy.MakePrismDXDYDZ(tan_curve, 0, 30, -60)
+  tan_on_face = geompy.MakeTangentPlaneOnFace(tan_extrusion, 0.7, 0.5, 150)
 
   #Create base geometry 3D
   Box      = geompy.MakeBoxTwoPnt(p0, p200)                   #(2 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -311,7 +320,8 @@ def TestAll (geompy, math):
   id_p_on_arc  = geompy.addToStudy(p_on_arc,  "Vertex on Arc (0.25)")
   id_p_on_l1l2 = geompy.addToStudy(p_on_l1l2, "Vertex on Lines Intersection")
 
-  id_tan_on_arc = geompy.addToStudy(tan_on_arc, "Tangent on Arc (0.7)")
+  id_tan_on_arc  = geompy.addToStudy(tan_on_arc, "Tangent on Arc (0.7)")
+  id_tan_on_face = geompy.addToStudy(tan_on_face, "Tangent on Face")
 
   id_Box      = geompy.addToStudy(Box,      "Box")
   id_Box1     = geompy.addToStudy(Box1,     "Box 10x20x30")
