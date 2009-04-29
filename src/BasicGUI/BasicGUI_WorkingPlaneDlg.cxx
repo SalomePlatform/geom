@@ -363,7 +363,10 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
 
   if (send == Group1->PushButton1) {
     myEditCurrentArgument = Group1->LineEdit1;
-    globalSelection( GEOM_PLANE );
+    TColStd_MapOfInteger aMap;
+    aMap.Add(GEOM_PLANE);
+    aMap.Add(GEOM_MARKER);
+    globalSelection(aMap);    
   }
   else if (send == Group2->PushButton1) {
     myEditCurrentArgument = Group2->LineEdit1;
