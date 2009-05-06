@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
@@ -19,18 +20,30 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-# -* Makefile *- 
-# Author : Guillaume Boulant (CSSI)
-# Module : GEOM
-#
-include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-# non-distributed files 
-nodist_salomescript_DATA = VERSION
+import os
+from salome_utils import getTmpDir, generateFileName, uniteFiles
+from setenv import salome_subdir
 
-# python files
-dist_salomescript_PYTHON = \
-	geom_setenv.py
+# -----------------------------------------------------------------------------
 
-# distributed files
-dist_salomescript_SCRIPTS =
+def set_env( args ):
+    """Add to the PATH-variables modules specific paths"""
+    
+    tmp_dir = getTmpDir()
+    env_dir = generateFileName( tmp_dir, prefix="env", with_port=True )
+    res_dir = os.path.join( os.getenv( "GEOM_ROOT_DIR" ), "share", salome_subdir, "resources", "geom" )
+
+    csf_list = ["Plugin", "GEOMDS_Resources", "ShHealing"]
+
+    for csf_file in csf_list:
+       uniteFiles( os.path.join( res_dir, csf_file ), os.path.join( env_dir, csf_file ) )
+       pass
+
+    for csf_string in csf_list:
+        csf_var = "CSF_" + csf_string + "Defaults"
+        if not os.getenv( csf_var ):
+            os.environ[ csf_var ] = env_dir
+            pass
+        pass
+
