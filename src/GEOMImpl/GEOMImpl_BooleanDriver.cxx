@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_IBoolean.hxx>
 #include <GEOMImpl_Types.hxx>
@@ -55,7 +55,6 @@ const Standard_GUID& GEOMImpl_BooleanDriver::GetID()
   static Standard_GUID aBooleanDriver("FF1BBB21-5D14-4df2-980B-3A668264EA16");
   return aBooleanDriver;
 }
-
 
 //=======================================================================
 //function : GEOMImpl_BooleanDriver
@@ -409,6 +408,15 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   }
 
   if (aShape.IsNull()) return 0;
+
+  // as boolean operations always produce compound, lets simplify it
+  // for the case, if it contans only one sub-shape
+  TopTools_ListOfShape listShapeRes;
+  AddSimpleShapes(aShape, listShapeRes);
+  if (listShapeRes.Extent() == 1) {
+    aShape = listShapeRes.First();
+    if (aShape.IsNull()) return 0;
+  }
 
   // 08.07.2008 skl for bug 19761 from Mantis
   BRepCheck_Analyzer ana (aShape, Standard_True);
