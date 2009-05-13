@@ -5,7 +5,10 @@
 \n To <b>Remove extra edges</b> in the <b>Main Menu</b> select
 <b>Repair - > Remove extra edges</b>.
 \n This operation removes all seam and degenerated edges from a given
-shape and unites faces and edges, sharing one surface.
+shape. Its main purpose is healing of solids and compounds to obtain
+hexahedral solids and compounds of hexahedral solids.
+At the same time, it has an option to unite all faces, sharing one
+surface. With this option not only hexahedral solids could be obtained.
 
 \n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape,theOptimumNbFaces)</em>,
 there <em>theShape</em> is a compound or a single solid to remove irregular edges from
