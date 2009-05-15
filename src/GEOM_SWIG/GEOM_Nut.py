@@ -65,7 +65,7 @@ for i in range(0, len(CommonExplodedListEdges)):
 
 #Fillet applying
 #ID = geompy.GetSubShapeID(Common_1, CommonExplodedListEdges[0])
-Fillet_1 = geompy.MakeFillet(Common_1, 10, geompy.ShapeType["EDGE"], [6])
+Fillet_1 = geompy.MakeFillet(Common_1, 10, geompy.ShapeType["EDGE"], [5])
 geompy.addToStudy(Fillet_1, "Fillet_1")
 
 #Chamfer applying
