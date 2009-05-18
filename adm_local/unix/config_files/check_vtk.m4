@@ -131,20 +131,24 @@ else
         AC_MSG_RESULT(trying ${d})
         VTKHOME="${d}"
         break
-      else
-        if test -f ${d}/include/vtk-5.0/vtkPlane.h ; then
-          AC_MSG_RESULT(trying ${d})
-          VTKHOME="${d}"
-          VTKSUFFIX="-5.0"
-          break
-        else
-          if test -f ${d}/include/vtk/vtkPlane.h ; then
-            AC_MSG_RESULT(trying ${d})
-            VTKHOME="${d}"
-            VTKSUFFIX=""
-            break
-          fi
-        fi
+      fi
+      if test -f ${d}/include/vtk-5.0/vtkPlane.h ; then
+        AC_MSG_RESULT(trying ${d})
+        VTKHOME="${d}"
+        VTKSUFFIX="-5.0"
+        break
+      fi
+      if test -f ${d}/include/vtk-5.2/vtkPlane.h ; then
+        AC_MSG_RESULT(trying ${d})
+        VTKHOME="${d}"
+        VTKSUFFIX="-5.2"
+        break
+      fi
+      if test -f ${d}/include/vtk/vtkPlane.h ; then
+        AC_MSG_RESULT(trying ${d})
+        VTKHOME="${d}"
+        VTKSUFFIX=""
+        break
       fi
     done
   fi
