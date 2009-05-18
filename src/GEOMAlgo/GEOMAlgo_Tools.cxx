@@ -295,24 +295,24 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
     {
     case TopAbs_EDGE:
       {
-        cout << "$$$ case TopAbs_EDGE" << endl;
+        // cout << "$$$ case TopAbs_EDGE" << endl;
         const TopoDS_Edge& aE2 = TopoDS::Edge(aS);
         //
         if (BRep_Tool::Degenerated(aE2)) { // jfa
-          cout << "$$$ Degenerated" << endl;
+          // cout << "$$$ Degenerated" << endl;
           return Standard_True;
         }
         else {
           Standard_Real f, l;
           Handle(Geom_Curve) aC3D = BRep_Tool::Curve (aE2, f, l);
           if (aC3D.IsNull()) {
-            cout << "$$$ aC3D.IsNull()" << endl;
+            // cout << "$$$ aC3D.IsNull()" << endl;
             return Standard_True;
           }
           bIsDone = aCtx.ProjectPointOnEdge(aP1, aE2, aT2);
         }
         if (!bIsDone) {
-          cout << "$$$ !bIsDone" << endl;
+          // cout << "$$$ !bIsDone" << endl;
           return bIsDone;
         }
         //
