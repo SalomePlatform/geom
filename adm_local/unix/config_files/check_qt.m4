@@ -94,6 +94,15 @@ else
   else
     dnl Using QTDIR environment variable
     AC_MSG_RESULT(QTDIR is $QTDIR)
+    dnl 
+    if test $QTDIR = /usr/lib/qt3 ; then
+      if test -d /usr/lib/qt4 ; then
+        AC_MSG_RESULT(it is strange for a qt4 installation !)
+        AC_MSG_RESULT(/usr/lib/qt4 is present)
+        AC_MSG_RESULT(replacing QTDIR by /usr/lib/qt4)
+        QTDIR=/usr/lib/qt4
+      fi
+    fi
   fi
 fi
 
@@ -323,7 +332,7 @@ then
   CXXFLAGS="$CXXFLAGS $QT_INCLUDES"
 
   LIBS_old=$LIBS
-  if test "x$QTDIR" = "x/usr"
+  if test "x$QTDIR" = "x/usr" || test "x$QTDIR" = "x/usr/lib/qt4"
   then
     QT_LIB_DIR=""
   elif test -d ${QTDIR}/lib; then
