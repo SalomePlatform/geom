@@ -98,16 +98,14 @@
 #include <NMTTools_CommonBlock.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
 
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
+
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <BRepBndLib.hxx>
 #include <BOPTools_CArray1OfVSInterference.hxx>
 #include <BOPTools_VSInterference.hxx>
-// Contribution of Samtech www.samcef.com END
-//
-//
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_MapIteratorOfMapOfInteger.hxx>
 
 
 static
@@ -294,7 +292,6 @@ static
 		//
 		BOPTools_Tools::MakeNewVertex(aEWhat, aT1, aEWith, aT2, aNewVertex);
 		//
-		//modified by NIZNHY-PKV Mon Jun 19 11:40:09 2007f
 		{
 		  Standard_Integer nV11, nV12, nV21, nV22, nVS[2], k, j, iFound;
 		  Standard_Real aTolVx, aTolVnew, aD2, aDT2;
@@ -340,7 +337,6 @@ static
 		    continue;
 		  }
 		}
-		//modified by NIZNHY-PKV Mon Jun 19 11:40:16 2007t
 		//
 		// Add Interference to the Pool
 		BOPTools_EEInterference anInterf (aWhat, aWith, aCPart);
@@ -409,14 +405,107 @@ static
     } // for (; anIt1.More(); anIt1.Next()) 
   }// for (; myDSIt.More(); myDSIt.Next()) 
   //
-  EENewVertices (aMapVI);
-  EECommonBlocks(aMapCB);
-  // Modified to invoke new nethod Thu Sep 14 14:35:18 2006 
-  // Contribution of Samtech www.samcef.com BEGIN
+  //modified by NIZNHY-PKV Thu Mar 19 14:13:34 2009f
+  //
+  //EENewVertices (aMapVI);
+  //EECommonBlocks(aMapCB);
+  
+  {
+    NMTTools_ListOfCommonBlock aLCB;
+    //
+    FindChains(aMapCB, aLCB);
+    EENewVertices (aMapVI);
+    //TreatPaveBlocks(*this, aLCB);
+    TreatPaveBlocks(aLCB);
+    ReplaceCommonBlocks(aLCB);
+  }
+  //modified by NIZNHY-PKV Thu Mar 19 14:13:42 2009t
+  //
   PerformVF1();
-  // Contribution of Samtech www.samcef.com BEGIN
+  //
   myIsDone=Standard_True;
 }
+//modified by NIZNHY-PKV Thu Mar 19 14:13:52 2009f
+//=======================================================================
+// function:TreatPaveBlocks
+// purpose: 
+//=======================================================================
+  void NMTTools_PaveFiller::TreatPaveBlocks (NMTTools_ListOfCommonBlock& theLCB)
+{
+  Standard_Boolean bFound;
+  Standard_Integer nE, nV, nVp, iFlag;
+  Standard_Real aT;
+  TColStd_MapOfInteger aMI;
+  TColStd_MapIteratorOfMapOfInteger aItMI;
+  NMTTools_ListIteratorOfListOfCommonBlock aItLCB;
+  BOPTools_ListIteratorOfListOfPaveBlock aItLPB;
+  BOPTools_ListIteratorOfListOfPave aItLP;
+  //
+  aItLCB.Initialize(theLCB);
+  for (; aItLCB.More(); aItLCB.Next()) {
+    const NMTTools_CommonBlock& aCB=aItLCB.Value();
+    //
+    aMI.Clear();
+    const BOPTools_ListOfPaveBlock& aLPB=aCB.PaveBlocks();
+    //
+    // 1 -> aMI
+    aItLPB.Initialize(aLPB);
+    for (; aItLPB.More(); aItLPB.Next()) {
+      const BOPTools_PaveBlock& aPB=aItLPB.Value();
+      nE=aPB.OriginalEdge();
+      BOPTools_PaveSet& aPaveSet=myPavePoolNew(myDS->RefEdge(nE));
+      BOPTools_ListOfPave& aLP=aPaveSet.ChangeSet();
+      //
+      aItLP.Initialize(aLP);
+      for (; aItLP.More(); aItLP.Next()) {
+	const BOPTools_Pave& aPave=aItLP.Value();
+	nV=aPave.Index();
+	aMI.Add(nV);
+      }
+    }//for (; anItLPB.More(); anItLPB.Next()) {
+    //
+    // 2
+    aItLPB.Initialize(aLPB);
+    for (; aItLPB.More(); aItLPB.Next()) {
+      const BOPTools_PaveBlock& aPB=aItLPB.Value();
+      nE=aPB.OriginalEdge();
+      BOPTools_PaveSet& aPaveSet=myPavePoolNew(myDS->RefEdge(nE));
+      BOPTools_ListOfPave& aLP=aPaveSet.ChangeSet();
+      //
+      aItMI.Initialize(aMI);
+      for (; aItMI.More(); aItMI.Next()) {
+	nV=aItMI.Key();
+	bFound=Standard_False;
+	aItLP.Initialize(aLP);
+	for (; aItLP.More(); aItLP.Next()) {
+	  const BOPTools_Pave& aPave=aItLP.Value();
+	  nVp=aPave.Index();
+	  if (nVp==nV) {
+	    bFound=!bFound;
+	    break;
+	  }
+	}
+	//
+	if (!bFound) {
+	  // Append Pave of nV to rhe edge nE
+	  const TopoDS_Edge& aE=*(TopoDS_Edge*)(&myDS->Shape(nE));
+	  const TopoDS_Vertex& aV= *(TopoDS_Vertex*)(&myDS->Shape(nV));
+	  iFlag=myContext.ComputeVE (aV, aE, aT);
+	  if (!iFlag) {
+	    BOPTools_Pave aPave;
+	    //
+	    aPave.SetInterference(-1);
+	    aPave.SetType (BooleanOperations_EdgeEdge);
+	    aPave.SetIndex(nV);
+	    aPave.SetParam(aT);
+	    aPaveSet.Append(aPave);
+	  }
+	}
+      }//for (; aItMI.More(); aItMI.Next()) {
+    }//for (; anItLPB.More(); anItLPB.Next()) {
+  }
+}
+//modified by NIZNHY-PKV Thu Mar 19 14:14:13 2009t
 //=======================================================================
 // function:EECommonBlocks
 // purpose: 
@@ -971,10 +1060,7 @@ void MakeNewVertex(const TopTools_ListOfShape& aLV,
       tNV=tV+aCoeff*(tNV-tV);
       aNewRange.SetFirst(tNV);
       aNewRange.SetLast (aSR.Last());
-      //modified by NIZNHY-PKV Tue Jan 23 14:07:55 2007f
-      //if(aNewRange.First() > aNewRange.Last()) {
       if(aNewRange.First() < aNewRange.Last()) {
-      //modified by NIZNHY-PKV Tue Jan 23 14:08:02 2007t
 	aShrunkRange.SetShrunkRange(aNewRange);
       }
     }

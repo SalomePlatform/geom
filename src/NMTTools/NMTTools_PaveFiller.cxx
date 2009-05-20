@@ -154,6 +154,14 @@
   return myPavePool;
 }
 //=======================================================================
+// function: ChangePavePoolNew
+// purpose: 
+//=======================================================================
+  BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePoolNew()
+{
+  return myPavePoolNew;
+}
+//=======================================================================
 // function:  CommonBlockPool
 // purpose: 
 //=======================================================================
@@ -227,10 +235,7 @@
   //----------------
   try {
     // 0.
-    // Modified Thu Sep 14 14:35:18 2006 
-    // Contribution of Samtech www.samcef.com BEGIN
     Init();
-    // Contribution of Samtech www.samcef.com END
     //1.VV
     //
     PerformVV();
@@ -285,10 +290,7 @@
     NMTTools_DEProcessor aDEP(*this);
     aDEP.Do();
     //
-    // Modified to treat Alone Vertices Thu Sep 14 14:35:18 2006 
-    // Contribution of Samtech www.samcef.com BEGIN
     MakeAloneVertices();
-    // Contribution of Samtech www.samcef.com END
     //
     myIsDone=Standard_True;
   }
