@@ -580,6 +580,14 @@ Please, select face, shell or solid and try again</translation>
             <translation>Face</translation>
         </message>
 	<message>
+            <source>GEOM_CS</source>
+            <translation>Coordinate system</translation>
+        </message>
+	<message>
+            <source>GEOM_GCS</source>
+            <translation>Global coordinate system</translation>
+        </message>
+	<message>
             <source>GEOM_LCS</source>
             <translation>Local coordinate system</translation>
         </message>
@@ -1062,6 +1070,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_PARTITION</source>
             <translation>Partition</translation>
+        </message>
+	<message>
+            <source>GEOM_WRN_PARTITION_RESULT_EMPTY</source>
+            <translation>The partition result is empty, please verify the reconstruction limit parameter.</translation>
         </message>
         <message>
             <source>GEOM_PARTITION_HALFSPACE</source>

@@ -34,8 +34,12 @@
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_MessageBox.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+
+#include <TopoDS_Iterator.hxx>
+#include <TopoDS_Shape.hxx>
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg()
@@ -404,8 +408,21 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
     res = true;
   }
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if ( !anObj->_is_nil() ) {
+    TopoDS_Shape aShape;
+    GEOMBase::GetShape(anObj, aShape, TopAbs_SHAPE);
+    TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+    int nbSubshapes=0;
+    for (; It.More(); It.Next())
+      nbSubshapes++;
+
+    if (nbSubshapes)
+      objects.push_back( anObj._retn() );
+    else
+      SUIT_MessageBox::warning(this,
+                               QObject::tr("GEOM_ERROR"),
+                               QObject::tr("GEOM_WRN_PARTITION_RESULT_EMPTY"));
+  }
 
   return res;
 }
