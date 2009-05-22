@@ -94,6 +94,12 @@ module GEOM
 				 in double      theTrimSize) ;
     GEOM_Object MakePlaneFace (in GEOM_Object theFace,
 			       in double      theTrimSize) ;
+    GEOM_Object MakePlane2Vec (in GEOM_Object theVec1,
+			       in GEOM_Object theVec2,
+			       in double      theTrimSize) ;
+    GEOM_Object MakePlaneLCS (in GEOM_Object theLCS,
+			      in double      theTrimSize,
+			      in double      theOrientation) ;
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
 			    in double theXDX, in double theXDY, in double theXDZ,
 			    in double theYDX, in double theYDY, in double theYDZ) ;

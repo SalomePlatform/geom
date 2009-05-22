@@ -166,6 +166,12 @@ public:
 					 CORBA::Double theTrimSize);
   GEOM::GEOM_Object_ptr MakePlaneFace (GEOM::GEOM_Object_ptr theFace,
 				       CORBA::Double theTrimSize);
+  GEOM::GEOM_Object_ptr MakePlane2Vec (GEOM::GEOM_Object_ptr theVec1,
+				       GEOM::GEOM_Object_ptr theVec2,
+				       CORBA::Double theTrimSize);
+  GEOM::GEOM_Object_ptr MakePlaneLCS (GEOM::GEOM_Object_ptr theLCS,
+				      CORBA::Double theTrimSize,
+				      CORBA::Double theOrientation);
   GEOM::GEOM_Object_ptr MakeMarker (CORBA::Double theOX , CORBA::Double theOY , CORBA::Double theOZ,
 				    CORBA::Double theXDX, CORBA::Double theXDY, CORBA::Double theXDZ,
 				    CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ);

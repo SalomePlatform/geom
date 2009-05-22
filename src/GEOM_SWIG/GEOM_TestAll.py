@@ -89,6 +89,8 @@ def TestAll (geompy, math):
   Line2  = geompy.MakeLineTwoPnt(pxyz, pz)                  #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Plane  = geompy.MakePlane(pz, vxyz, trimsize)             #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
   Plane1 = geompy.MakePlaneThreePnt(px, pz, p200, trimsize) #(4 Doubles)->GEOM_Object_ptr
+  Plane2 = geompy.MakePlane2Vec(vx, vz, trimsize)	    #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Plane3 = geompy.MakePlaneLCS(cs1, trimsize, 3)	    #(1 GEOM_Object_ptr, 2 Double)->GEOM_Object_ptr
 
   Arc      = geompy.MakeArc(py, pz, px)                   #(3 GEOM_Object_ptr)->GEOM_Object_ptr
   Arc2     = geompy.MakeArcCenter(py, pz, px,0)           #(3 GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
@@ -303,6 +305,8 @@ def TestAll (geompy, math):
   id_Line3  = geompy.addToStudy(Line3,  "Line on Two Faces Intersection")
   id_Plane  = geompy.addToStudy(Plane,  "Plane")
   id_Plane1 = geompy.addToStudy(Plane1,  "Plane by 3 points")
+  id_Plane2 = geompy.addToStudy(Plane2,  "Plane by 2 vectors")
+  id_Plane3 = geompy.addToStudy(Plane3,  "Plane by LCS")
 
   id_Arc      = geompy.addToStudy(Arc,      "Arc")
   id_Arc2     = geompy.addToStudy(Arc2,     "Arc2")

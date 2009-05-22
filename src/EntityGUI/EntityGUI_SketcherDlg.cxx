@@ -30,6 +30,8 @@
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 #include <GEOMImpl_Types.hxx>
+#include <Geom_Surface.hxx>
+#include <Geom_Plane.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
@@ -49,6 +51,10 @@
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <Sketcher_Profile.hxx>
+
+#include <SalomeApp_Study.h>
+
+#include <gp_Pln.hxx>
 
 //=================================================================================
 // class    : EntityGUI_SketcherDlg()
@@ -75,7 +81,6 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   MainWidget = new EntityGUI_Skeleton( this );
   QVBoxLayout* topLayout = new QVBoxLayout( this );
   topLayout->setMargin( 9 ); topLayout->setSpacing( 6 );
-  topLayout->addWidget( MainWidget );
 
   MainWidget->buttonCancel->setText( tr( "GEOM_BUT_CANCEL" ) );
   MainWidget->buttonEnd->setText( tr( "GEOM_BUT_END_SKETCH" ) );
@@ -97,6 +102,18 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   MainWidget->RB_Dest2->setText( tr( "GEOM_SKETCHER_DIR" ) );
 
   /***************************************************************/
+
+  GroupBox1 = new QGroupBox(tr("GEOM_CS"), this);
+  QGridLayout* OwnLayout = new QGridLayout(GroupBox1);
+  OwnLayout->setSpacing(6);
+  OwnLayout->setMargin(11);
+
+  ComboBox1 = new QComboBox(GroupBox1);
+  OwnLayout->addWidget(ComboBox1);
+
+  topLayout->addWidget(GroupBox1);
+  topLayout->addWidget( MainWidget );
+
   GroupPt = new EntityGUI_Point( MainWidget->DestCnt );
 
   GroupPt->GroupPoint->setTitle( tr( "GEOM_SKETCHER_POINT" ) );
@@ -214,6 +231,8 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   connect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
+  connect( ComboBox1, SIGNAL( activated( int ) ), this, SLOT( SelectionIntoArgument() ) );
+
   connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
@@ -328,6 +347,8 @@ void EntityGUI_SketcherDlg::Init()
 
   resize(100,100);
   TypeClicked( 0 );
+
+  FindLocalCS();
 
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
@@ -879,7 +900,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
 	gp_Trsf aTrans;
-	gp_Ax3 aWPlane = myGeometryGUI->GetWorkingPlane();
+	gp_Ax3 aWPlane = GetActiveLocalCS();
 
 	aTrans.SetTransformation(aWPlane);
 	BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
@@ -1445,7 +1466,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     }
   }
 
-  gp_Ax3 myWPlane = myGeometryGUI->GetWorkingPlane();
+  gp_Ax3 myWPlane = GetActiveLocalCS();
   GEOM::ListOfDouble_var WPlane = new GEOM::ListOfDouble;
   WPlane->length( 9 );
   WPlane[0] = myWPlane.Location().X();
@@ -1606,4 +1627,86 @@ void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
   Group4Spin->SpinBox_DY->setSingleStep(step);
   Group4Spin->SpinBox_DZ->setSingleStep(step);
   Group4Spin->SpinBox_DS->setSingleStep(step);
+}
+
+//=================================================================================
+// function : FindLocalCS()
+// purpose  : Find All Coordinates systems in study
+//=================================================================================
+void EntityGUI_SketcherDlg::FindLocalCS()
+{
+  ComboBox1->clear();
+  myLCSList.clear();
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !appStudy )
+    return;
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+
+  //add Global CS
+  ComboBox1->addItem(tr("GEOM_GCS"));
+  gp_Pnt aOrigin = gp_Pnt(0, 0, 0);
+  gp_Dir aDirZ = gp_Dir(0, 0, 1);
+  gp_Dir aDirX = gp_Dir(1, 0, 0);
+  gp_Ax3 globalCS = gp_Ax3(aOrigin, aDirZ, aDirX);
+  myLCSList.push_back(globalCS);
+
+  // get GEOM component
+  CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
+  _PTR(SObject) obj = aStudy->FindObjectIOR( geomIOR.in() );
+  if (!obj)
+    return;
+  _PTR(SComponent) fc = obj->GetFatherComponent();
+  QString geomComp = fc->GetID().c_str();
+  _PTR(SObject) comp = aStudy->FindObjectID( geomComp.toLatin1().data() );
+  if ( !comp )
+    return;
+
+  // browse through all GEOM data tree
+  _PTR(ChildIterator) it ( aStudy->NewChildIterator( comp ) );
+  for ( it->InitEx( true ); it->More(); it->Next() ) {
+    _PTR(SObject) child( it->Value() );
+    CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
+    GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
+    if( CORBA::is_nil( geomObj ) ) 
+      continue;
+    if (geomObj->GetType() == GEOM_MARKER) {
+      ComboBox1->addItem(geomObj->GetName());
+      TopoDS_Shape aShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), geomObj);
+      
+      gp_Ax3 aLCS;
+      aLCS.Transform(aShape.Location().Transformation());
+      if (aShape.ShapeType() == TopAbs_FACE) {
+	Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aShape));
+	if (!aGS.IsNull() && aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
+	  Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
+	  gp_Pln aPln = aGPlane->Pln();
+	  aLCS = aPln.Position();
+	}
+      }
+      myLCSList.push_back(aLCS);
+    }
+  }
+}
+
+//=================================================================================
+// function : GetActiveLocalCS()
+// purpose  : Find All Coordinates systems in study
+//=================================================================================
+gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
+{
+  int ind = ComboBox1->currentIndex();
+  if (ind == -1)
+    return myGeometryGUI->GetWorkingPlane();
+
+  gp_Ax3 aLCS = myLCSList.at(ind);
+
+  myGeometryGUI->SetWorkingPlane( aLCS );
+  myGeometryGUI->ActiveWorkingPlane();
+  return aLCS;
 }

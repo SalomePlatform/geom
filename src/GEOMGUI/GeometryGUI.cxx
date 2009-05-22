@@ -417,7 +417,7 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 4015 ||  // MENU BASIC - ARC
 	   id == 4016 ||  // MENU BASIC - VECTOR
 	   id == 4017 ||  // MENU BASIC - PLANE
-	   id == 4018 ||  // MENU BASIC - WPLANE
+//	   id == 4018 ||  // MENU BASIC - WPLANE // DEPRECATED
 	   id == 4019 ||  // MENU BASIC - CURVE
 	   id == 4020 ) { // MENU BASIC - REPAIR
 #ifndef WNT
@@ -783,7 +783,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 4019, "CURVE" );
   createGeomAction( 4016, "VECTOR" );
   createGeomAction( 4017, "PLANE" );
-  createGeomAction( 4018, "WORK_PLANE" );
+//  createGeomAction( 4018, "WORK_PLANE" ); DEPRECATED
   createGeomAction( 4020, "LOCAL_CS" );
 
   createGeomAction( 4021, "BOX" );
@@ -928,7 +928,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), basicId, -1 );
   createMenu( 4016, basicId, -1 );
   createMenu( 4017, basicId, -1 );
-  createMenu( 4018, basicId, -1 );
+//  createMenu( 4018, basicId, -1 ); DEPRECATED
   createMenu( 4020, basicId, -1 );
 
   int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
@@ -1086,7 +1086,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( 4019, basicTbId );
   createTool( 4016, basicTbId );
   createTool( 4017, basicTbId );
-  createTool( 4018, basicTbId );
+//  createTool( 4018, basicTbId ); DEPRECATED
   createTool( 4020, basicTbId );
 
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );

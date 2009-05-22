@@ -174,6 +174,58 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     if(aTool.IsDone())
       aShape = aTool.Shape();
   }
+  else if (aType == PLANE_2_VEC) {
+    Handle(GEOM_Function) aRefVec1 = aPI.GetVector1();
+    Handle(GEOM_Function) aRefVec2 = aPI.GetVector2();
+    TopoDS_Shape aShape1 = aRefVec1->GetValue();
+    TopoDS_Shape aShape2 = aRefVec2->GetValue();
+    if (aShape1.ShapeType() != TopAbs_EDGE ||
+        aShape2.ShapeType() != TopAbs_EDGE) return 0;
+    TopoDS_Edge aVectX = TopoDS::Edge(aShape1);
+    TopoDS_Edge aVectZ = TopoDS::Edge(aShape2);
+
+    TopoDS_Vertex VX1, VX2, VZ1, VZ2;
+    TopExp::Vertices( aVectX, VX1, VX2, Standard_True );
+    TopExp::Vertices( aVectZ, VZ1, VZ2, Standard_True );
+
+    gp_Vec aVX = gp_Vec( BRep_Tool::Pnt( VX1 ), BRep_Tool::Pnt( VX2 ) );
+    gp_Vec aVZ = gp_Vec( BRep_Tool::Pnt( VZ1 ), BRep_Tool::Pnt( VZ2 ) );
+
+    if ( aVX.Magnitude() < Precision::Confusion() || aVZ.Magnitude() < Precision::Confusion())
+      Standard_TypeMismatch::Raise("Invalid vector selected");
+
+    gp_Dir aDirX = gp_Dir( aVX.X(), aVX.Y(), aVX.Z() );
+    gp_Dir aDirZ = gp_Dir( aVZ.X(), aVZ.Y(), aVZ.Z() );
+
+    if ( aDirX.IsParallel( aDirZ, Precision::Angular() ) )
+      Standard_TypeMismatch::Raise("Parallel vectors selected");
+
+    gp_Ax3 aPlane = gp_Ax3( BRep_Tool::Pnt( VX1 ), aDirZ, aDirX );
+    BRepBuilderAPI_MakeFace aTool(aPlane, -aSize, +aSize, -aSize, +aSize);
+    if(aTool.IsDone())
+      aShape = aTool.Shape();
+  }   else if (aType == PLANE_LCS) {
+    Handle(GEOM_Function) aRef = aPI.GetLCS();
+    double anOrientation = aPI.GetOrientation();    
+    gp_Ax3 anAx3;
+    if (aRef.IsNull()) {
+      gp_Ax2 anAx2 = gp::XOY();
+      anAx3 = gp_Ax3( anAx2 );
+    } else {
+      TopoDS_Shape aRefShape = aRef->GetValue();
+      if (aRefShape.ShapeType() != TopAbs_FACE)
+	return 0;
+      anAx3 = GEOMImpl_IMeasureOperations::GetPosition(aRefShape);
+    }
+
+    if ( anOrientation == 2)
+      anAx3 = gp_Ax3(anAx3.Location(), anAx3.XDirection(), anAx3.YDirection() );
+    else if ( anOrientation == 3 )
+      anAx3 = gp_Ax3(anAx3.Location(), anAx3.YDirection(), anAx3.XDirection() );
+
+    gp_Pln aPln(anAx3);
+    aShape = BRepBuilderAPI_MakeFace(aPln, -aSize, +aSize, -aSize, +aSize).Shape();
+  }
   else {
   }
 

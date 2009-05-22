@@ -422,6 +422,59 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlaneFace
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  MakePlane2Vec
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlane2Vec
+                 (GEOM::GEOM_Object_ptr theVec1, GEOM::GEOM_Object_ptr theVec2,
+                  CORBA::Double theTrimSize)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the references
+  Handle(GEOM_Object) aRef1 = GetObjectImpl(theVec1);
+  Handle(GEOM_Object) aRef2 = GetObjectImpl(theVec2);
+  if (aRef1.IsNull() || aRef2.IsNull()) return aGEOMObject._retn();
+
+  //Create the plane
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePlane2Vec(aRef1, aRef2, theTrimSize);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePlaneLCS
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePlaneLCS
+                 (GEOM::GEOM_Object_ptr theLCS, CORBA::Double theTrimSize,
+		  CORBA::Double theOrientation)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the references
+  Handle(GEOM_Object) aRef1 = GetObjectImpl(theLCS);
+
+  //Create the plane
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePlaneLCS(aRef1, theTrimSize, theOrientation);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
 
 //=============================================================================
 /*!

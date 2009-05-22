@@ -840,6 +840,117 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneFace
   return aPlane;
 }
 
+//=============================================================================
+/*!
+ *  MakePlane2Vec
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlane2Vec
+                       (Handle(GEOM_Object) theVec1, Handle(GEOM_Object) theVec2,
+                        double theSize)
+{
+  SetErrorCode(KO);
+
+  if (theVec1.IsNull() || theVec2.IsNull()) return NULL;
+
+  //Add a new Plane object
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+
+  //Add a new Plane function
+  Handle(GEOM_Function) aFunction =
+    aPlane->AddFunction(GEOMImpl_PlaneDriver::GetID(), PLANE_2_VEC);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PlaneDriver::GetID()) return NULL;
+
+  GEOMImpl_IPlane aPI (aFunction);
+
+  Handle(GEOM_Function) aRefVec1 = theVec1->GetLastFunction();
+  Handle(GEOM_Function) aRefVec2 = theVec2->GetLastFunction();
+  if (aRefVec1.IsNull() || aRefVec2.IsNull()) return NULL;
+
+  aPI.SetVector1(aRefVec1);
+  aPI.SetVector2(aRefVec2);
+  aPI.SetSize(theSize);
+
+  //Compute the Plane value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Plane driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPlane << " = geompy.MakePlane2Vec("
+    << theVec1 << ", " << theVec2 << ", " << theSize << ")";
+
+  SetErrorCode(OK);
+  return aPlane;
+}
+
+//=============================================================================
+/*!
+ *  MakePlaneLCS
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePlaneLCS
+                       (Handle(GEOM_Object) theLCS, double theSize, int theOrientation)
+{
+  SetErrorCode(KO);
+
+  //Add a new Plane object
+  Handle(GEOM_Object) aPlane = GetEngine()->AddObject(GetDocID(), GEOM_PLANE);
+
+  //Add a new Plane function
+  Handle(GEOM_Function) aFunction =
+    aPlane->AddFunction(GEOMImpl_PlaneDriver::GetID(), PLANE_LCS);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PlaneDriver::GetID()) return NULL;
+
+  GEOMImpl_IPlane aPI (aFunction);
+
+  if ( !theLCS.IsNull() ) {
+    Handle(GEOM_Function) aRef = theLCS->GetLastFunction();
+    aPI.SetLCS(aRef);
+  }
+
+  aPI.SetSize(theSize);
+  aPI.SetOrientation(theOrientation);
+
+  //Compute the Plane value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Plane driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aPlane << " = geompy.MakePlaneLCS("
+                               << theLCS << ", " << theSize << ", " << theOrientation << ")";
+
+  SetErrorCode(OK);
+  return aPlane;
+}
+
 
 //=============================================================================
 /*!

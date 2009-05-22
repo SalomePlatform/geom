@@ -691,6 +691,36 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneFace (GEOM::GEOM_Object_ptr theFac
 }
 
 //=============================================================================
+//  MakePlane2Vec:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlane2Vec (GEOM::GEOM_Object_ptr theVec1,
+						    GEOM::GEOM_Object_ptr theVec2,
+						    CORBA::Double theTrimSize)
+{ 
+  beginService( " GEOM_Superv_i::MakePlane2Vec" );
+  MESSAGE("GEOM_Superv_i::MakePlane2Vec");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePlane2Vec(theVec1, theVec2, theTrimSize);
+  endService( " GEOM_Superv_i::MakePlane2Vec" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePlaneLCS:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneLCS (GEOM::GEOM_Object_ptr theLCS,
+					           CORBA::Double theTrimSize,
+						   CORBA::Double theOrientation)
+{ 
+  beginService( " GEOM_Superv_i::MakePlaneLCS" );
+  MESSAGE("GEOM_Superv_i::MakePlaneLCS");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePlaneLCS(theLCS, theTrimSize, theOrientation);
+  endService( " GEOM_Superv_i::MakePlaneLCS" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeMarker:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker 

@@ -28,7 +28,11 @@
 
 #include <GEOMBase_Helper.h>
 
+#include <QGroupBox>
+#include <QComboBox>
 #include <QDialog>
+
+#include <gp_Ax3.hxx>
 
 class QLineEdit;
 class SalomeApp_DoubleSpinBox;
@@ -138,11 +142,16 @@ private:
   EntityGUI_3Spin*                   Group3Spin;
   EntityGUI_4Spin*                   Group4Spin;
 
+  QGroupBox*                         GroupBox1;
+  QComboBox*                         ComboBox1;
+
   GeometryGUI*                       myGeometryGUI;
 
   QString                            myHelpFileName;
   
   double                             myLineWidth;
+
+  QList<gp_Ax3>                      myLCSList;
 
 private:
   enum SketchState { FIRST_POINT, NEXT_POINT };
@@ -172,6 +181,8 @@ private slots:
   void                               Dir2Clicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
+  void                               FindLocalCS();
+  gp_Ax3                             GetActiveLocalCS();
 };
 
 #endif // ENTITYGUI_SKETCHERDLG_H

@@ -11,9 +11,8 @@ only) or destination direction coupled with length of a segment or
 angle and radius of an arc.
 
 \n Sketcher is able to create planar curves only. Therefore, it is
-necessary to select a working plane before starting a sketch (by
-default, XOY plane is used). Sketcher creates curves lying in the
-current working plane (New Entity -> Basic -> Working Plane).
+necessary to select coordinate system (Global or Local) before starting 
+a sketch. Sketcher creates curves lying in the XOY plane of the selected Coordinate System.
 
 \n This functionality is available from the main menu via <em>New
 Entity / Sketch</em>.
@@ -26,13 +25,14 @@ textual description, passed through the Command argument. The edges of
 the resulting wire or face will be arcs of circles and/or linear
 segments.
 \n \em Command is a string, defining the sketcher by the coordinates of
-points in the local working plane.
-\n <em>WorkingPlane</em> can be a plane or a planar face. The plane is
+points in the current LCS.
+\n <em>WorkingPlane</em> can be a Local CS, a plane, or a planar face. The plane is
 defined by the XYZ coordinates of three non-coincident points. The
 planar face is an existing GEOM_Object.
 
 \n <b>Arguments:</b>
 <ol>
+<li>Coordinate system (Local or Global CS can be selected)</li>
 <li>Element type (segment or arc).</li>
 <li>Destination type (point or direction).</li>
 <li>Destination point by means of:</li>

@@ -26,14 +26,24 @@ of the plane).
 
 \image html plane2.png
 
-\n Finally, you can define a \b Plane by another \b Plane or <b>Local
-Coordinate System</b> and a <b>Size of the Plane</b>. To change selection type cilck the corresponding
-radio button "Face" or "Local Coordinate System".
+\n Also, you can define a \b Plane by another \b Plane or <b>Face</b> and a <b>Size of the Plane</b>.
 \n <b>TUI Command:</b> <em>geompy.MakePlaneFace(Face, TrimSize)</em>
-\n <b>Arguments:</b> Name + 1 face + 1 value (to define the size of
-the plane).
+\n <b>Arguments:</b> Name + 1 face + 1 value (to define the size of the plane).
 
 \image html plane3.png
+
+\n Also, you can define a \b Plane by two Vectors. The first vector defines the center point and the direction, 
+the second vector defines the normal to the Plane.
+\n <b>TUI Command:</b> <em>geompy.MakePlane2Vec(Vec1, Vec2, TrimSize)</em>
+\n <b>Arguments:</b> Name + 2 vectors + 1 value (to define the size of the plane).
+
+\image html plane4.png
+
+\n Finally, you can define a \b Plane by the Local Coordinate System and the orientation (OXY, OYZ, OZX). 
+\n <b>TUI Command:</b> <em>geompy.MakePlaneLCS(LCS, TrimSize, [1, 2, or 3])</em>
+\n <b>Arguments:</b> Name + LCS + 1 value (to define the size of the plane) + 1 value (to define the orientation)
+
+\image html plane5.png
 
 <b>Examples:</b>
 

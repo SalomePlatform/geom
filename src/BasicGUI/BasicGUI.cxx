@@ -102,9 +102,9 @@ bool BasicGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case 4017: // PLANE
     aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent );
     break;
-  case 4018: // WORKING PLANE
+/*  case 4018: // WORKING PLANE
     aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent );
-    break;
+    break;*/ // DEPRECATED!
   case 4019: // CURVE
     aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent );
     break;

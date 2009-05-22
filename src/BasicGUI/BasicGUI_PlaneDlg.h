@@ -57,13 +57,16 @@ private:
   void                               enterEvent( QEvent* );
   double                             getSize() const;
   QString                            getSizeAsString() const; 
+  int                                myOriginType;
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace;
+  GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace, myVec1, myVec2, myLCS;
 
   DlgRef_2Sel1Spin*                  GroupPntDir;
   DlgRef_3Sel1Spin*                  Group3Pnts;
-  DlgRef_3Radio1Sel1Spin*            GroupFace;
+  DlgRef_1Sel1Spin*                  GroupFace;
+  DlgRef_2Sel1Spin*                  Group2Vec;
+  DlgRef_3Radio1Sel1Spin*            GroupLCS;
 
 private slots:
   void                               ClickOnOk();
@@ -79,6 +82,7 @@ private slots:
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               SelectionTypeClicked();
+  void                               GroupClicked();
 };
 
 #endif // BASICGUI_PLANEDLG_H

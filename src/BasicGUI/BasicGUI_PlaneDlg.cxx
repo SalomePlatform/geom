@@ -60,6 +60,8 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_PLANE_3PNTS" ) ) );
   QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_PLANE_FACE" ) ) );
   QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
+  QPixmap image4( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_WPLANE_VECTOR" ) ) );
+  QPixmap image5( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_WPLANE_ORIGIN" ) ) );
 
   setWindowTitle( tr( "GEOM_PLANE_TITLE" ) );
 
@@ -68,6 +70,10 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   mainFrame()->RadioButton1->setIcon( image0 );
   mainFrame()->RadioButton2->setIcon( image1 );
   mainFrame()->RadioButton3->setIcon( image2 );
+  mainFrame()->RadioButton4->show();
+  mainFrame()->RadioButton4->setIcon( image4 );
+  mainFrame()->RadioButton5->show();
+  mainFrame()->RadioButton5->setIcon( image5 );
 
   GroupPntDir = new DlgRef_2Sel1Spin( centralWidget() );
   GroupPntDir->GroupBox1->setTitle( tr( "GEOM_PLANE_PV" ) );
@@ -100,12 +106,8 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   Group3Pnts->LineEdit2->setEnabled( false );
   Group3Pnts->LineEdit3->setEnabled( false );
 
-  GroupFace = new DlgRef_3Radio1Sel1Spin( centralWidget() );
-  GroupFace->RadioButton1->setText(tr("GEOM_FACE"));
-  GroupFace->RadioButton2->setText(tr("GEOM_LCS"));
-  GroupFace->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  GroupFace->RadioButton3->close();
-  GroupFace->GroupBox1->setTitle( tr( "GEOM_FACE_OR_LCS" ) );
+  GroupFace = new DlgRef_1Sel1Spin( centralWidget() );
+  GroupFace->GroupBox1->setTitle( tr( "GEOM_FACE" ) );
   GroupFace->TextLabel1->setText( tr( "GEOM_SELECTION" ) );
   GroupFace->TextLabel2->setText( tr( "GEOM_PLANE_SIZE" ) );
   GroupFace->PushButton1->setIcon( image3 );
@@ -113,11 +115,37 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   GroupFace->LineEdit1->setReadOnly( true );
 
+  Group2Vec = new DlgRef_2Sel1Spin( centralWidget() );
+
+  Group2Vec->GroupBox1->setTitle( tr( "GEOM_WPLANE_VECTOR" ) );
+  Group2Vec->TextLabel1->setText( tr( "GEOM_WPLANE_VX" ) );
+  Group2Vec->TextLabel2->setText( tr( "GEOM_WPLANE_VZ" ) );
+  Group2Vec->PushButton1->setIcon( image3 );
+  Group2Vec->PushButton2->setIcon( image3 );
+  Group2Vec->LineEdit1->setReadOnly( true );
+  Group2Vec->LineEdit2->setReadOnly( true );
+  Group2Vec->PushButton1->setDown( true );
+  Group2Vec->LineEdit1->setEnabled( true );
+  Group2Vec->LineEdit2->setEnabled( false );
+  Group2Vec->TextLabel3->setText( tr( "GEOM_PLANE_SIZE" ) );
+
+  GroupLCS = new DlgRef_3Radio1Sel1Spin( centralWidget() );
+  GroupLCS->GroupBox1->setTitle( tr( "GEOM_LCS" ) );
+  GroupLCS->TextLabel1->setText( tr( "GEOM_SELECTION" ) );
+  GroupLCS->TextLabel2->setText( tr( "GEOM_PLANE_SIZE" ) );
+  GroupLCS->RadioButton1->setText( tr( "GEOM_WPLANE_OXY" ) );
+  GroupLCS->RadioButton2->setText( tr( "GEOM_WPLANE_OYZ" ) );
+  GroupLCS->RadioButton3->setText( tr( "GEOM_WPLANE_OZX" ) );
+  GroupLCS->PushButton1->setIcon( image3 );
+  GroupLCS->PushButton1->setDown( true );
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupPntDir );
   layout->addWidget( Group3Pnts );
   layout->addWidget( GroupFace );
+  layout->addWidget( Group2Vec );
+  layout->addWidget( GroupLCS );
   /***************************************************************/
 
   setHelpFileName( "create_plane_page.html" );
@@ -143,11 +171,11 @@ void BasicGUI_PlaneDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPntDir->LineEdit1;
-  GroupFace->RadioButton1->setChecked(true);
 
   myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
 
   // myGeomGUI->SetState( 0 );
+  myOriginType = 1;
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -162,6 +190,10 @@ void BasicGUI_PlaneDlg::Init()
   Group3Pnts->SpinBox_DX->setValue( aTrimSize );
   initSpinBox( GroupFace->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupFace->SpinBox_DX->setValue( aTrimSize );
+  initSpinBox( Group2Vec->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  Group2Vec->SpinBox_DX->setValue( aTrimSize );
+  initSpinBox( GroupLCS->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  GroupLCS->SpinBox_DX->setValue( aTrimSize );
 
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
@@ -178,6 +210,12 @@ void BasicGUI_PlaneDlg::Init()
   connect( Group3Pnts->PushButton2,  SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( Group3Pnts->PushButton3,  SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupFace->PushButton1,   SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2Vec->PushButton1,   SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2Vec->PushButton2,   SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+
+  connect( GroupLCS->RadioButton1,   SIGNAL( clicked() ), this, SLOT( GroupClicked() ) );
+  connect( GroupLCS->RadioButton2,   SIGNAL( clicked() ), this, SLOT( GroupClicked() ) );
+  connect( GroupLCS->RadioButton3,   SIGNAL( clicked() ), this, SLOT( GroupClicked() ) );
 
   connect( GroupPntDir->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupPntDir->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
@@ -185,12 +223,14 @@ void BasicGUI_PlaneDlg::Init()
   connect( Group3Pnts->LineEdit2,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( Group3Pnts->LineEdit3,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupFace->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupFace->RadioButton1,SIGNAL( clicked() ), this, SLOT( SelectionTypeClicked() ) );
-  connect( GroupFace->RadioButton2,SIGNAL( clicked() ), this, SLOT( SelectionTypeClicked() ) );
+  connect( Group2Vec->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+  connect( Group2Vec->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPntDir->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3Pnts->SpinBox_DX,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupFace->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2Vec->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupLCS->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -210,27 +250,9 @@ void BasicGUI_PlaneDlg::SetDoubleSpinBoxStep( double step )
   GroupPntDir->SpinBox_DX->setSingleStep(step);
   Group3Pnts->SpinBox_DX->setSingleStep(step);
   GroupFace->SpinBox_DX->setSingleStep(step);
+  Group2Vec->SpinBox_DX->setSingleStep(step);
+  GroupLCS->SpinBox_DX->setSingleStep(step);
 }
-
-//=================================================================================
-// function : SelectionTypeClicked()
-// purpose  : Selection type radio buttons managment
-//=================================================================================
-void BasicGUI_PlaneDlg::SelectionTypeClicked()
-{
-  myFace   = GEOM::GEOM_Object::_nil();
-  if ( GroupFace->RadioButton1->isChecked()) {
-    globalSelection(); // close local contexts, if any
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
-  } else if ( GroupFace->RadioButton2->isChecked()) {
-    TColStd_MapOfInteger aMap;
-    aMap.Add( GEOM_PLANE );
-    aMap.Add( GEOM_MARKER );
-    globalSelection( aMap );
-  }
-  displayPreview();
-}
-
 
 //=================================================================================
 // function : ConstructorsClicked()
@@ -247,6 +269,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->hide();
       GroupFace->hide();
       GroupPntDir->show();
+      Group2Vec->hide();
+      GroupLCS->hide();
       
       myEditCurrentArgument = GroupPntDir->LineEdit1;
       GroupPntDir->LineEdit1->setText( "" );
@@ -266,6 +290,8 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       GroupPntDir->hide();
       GroupFace->hide();
       Group3Pnts->show();
+      Group2Vec->hide();
+      GroupLCS->hide();
       
       myEditCurrentArgument = Group3Pnts->LineEdit1;
       Group3Pnts->LineEdit1->setText( "" );
@@ -283,25 +309,53 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       break;
     }
-  case 2: /* plane from a planar face or LSC selection */
+  case 2: /* plane from a planar face */
     {
       GroupPntDir->hide();
       Group3Pnts->hide();
       GroupFace->show();
+      Group2Vec->hide();
+      GroupLCS->hide();
       
       myEditCurrentArgument = GroupFace->LineEdit1;
       GroupFace->LineEdit1->setText( "" );
       GroupFace->PushButton1->setDown( true );
       
-      if ( GroupFace->RadioButton1->isChecked()) {
-	globalSelection(); // close local contexts, if any
-	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
-      } else if ( GroupFace->RadioButton2->isChecked()) {
-	TColStd_MapOfInteger aMap;
-	aMap.Add( GEOM_PLANE );
-	aMap.Add( GEOM_MARKER );
-	globalSelection( aMap );
-      }
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+      break;
+    }
+  case 3: /* plane from a 2 Vectors */
+    {
+      GroupPntDir->hide();
+      Group3Pnts->hide();
+      GroupFace->hide();
+      Group2Vec->show();
+      GroupLCS->hide();
+      
+      myEditCurrentArgument = Group2Vec->LineEdit1;
+      Group2Vec->LineEdit1->setText( "" );
+      Group2Vec->PushButton1->setDown( true );
+      
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      break;
+    }
+  case 4: /* plane from a LCS */
+    {
+      GroupPntDir->hide();
+      Group3Pnts->hide();
+      GroupFace->hide();
+      Group2Vec->hide();
+      GroupLCS->show();
+      
+      myEditCurrentArgument = GroupLCS->LineEdit1;
+      GroupLCS->LineEdit1->setText( "" );
+      GroupLCS->PushButton1->setDown( true );
+      GroupLCS->RadioButton1->setChecked( true );
+      myOriginType = 1;
+      
+      globalSelection(GEOM_MARKER);
       break;
     }
   }
@@ -313,6 +367,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
 	   this, SLOT( SelectionIntoArgument() ) );
+  displayPreview();
 }
 
 
@@ -342,6 +397,23 @@ bool BasicGUI_PlaneDlg::ClickOnApply()
 }
 
 //=================================================================================
+// function : GroupClicked()
+// purpose  : OX OY OZ Radio button management
+//=================================================================================
+void BasicGUI_PlaneDlg::GroupClicked()
+{
+  QRadioButton* send = (QRadioButton*)sender();
+
+  if ( send == GroupLCS->RadioButton1 )
+    myOriginType = 1;
+  else if ( send == GroupLCS->RadioButton2 )
+    myOriginType = 2;
+  else if ( send == GroupLCS->RadioButton3 )
+    myOriginType = 3;
+  displayPreview();
+}
+
+//=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection has changed
 //=================================================================================
@@ -360,6 +432,10 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3 = GEOM::GEOM_Object::_nil();
     else if ( myEditCurrentArgument == GroupFace->LineEdit1 )   myFace   = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group2Vec->LineEdit1 )   myVec1   = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == Group2Vec->LineEdit2 )   myVec2   = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )    myLCS   = GEOM::GEOM_Object::_nil();
+    displayPreview();
     return;
   }
 
@@ -369,9 +445,11 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
     TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if ( myEditCurrentArgument == GroupPntDir->LineEdit2 )
+    if ( myEditCurrentArgument == GroupPntDir->LineEdit2 || myEditCurrentArgument == Group2Vec->LineEdit1 || myEditCurrentArgument == Group2Vec->LineEdit2)
       aNeedType = TopAbs_EDGE;
     else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
+      aNeedType = TopAbs_FACE;
+    else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )
       aNeedType = TopAbs_FACE;
 
     TopoDS_Shape aShape;
@@ -447,6 +525,17 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
     }
     else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
       myFace   = aSelectedObject;
+    else if ( myEditCurrentArgument == Group2Vec->LineEdit1 ) {
+      myVec1 = aSelectedObject;
+      if ( !myVec1->_is_nil() && myVec2->_is_nil() )
+	Group2Vec->PushButton2->click();
+    } else if ( myEditCurrentArgument == Group2Vec->LineEdit2 ) {
+      myVec2 = aSelectedObject;
+      if ( !myVec2->_is_nil() && myVec1->_is_nil() )
+	Group2Vec->PushButton1->click();
+    } else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )
+      myLCS = aSelectedObject;
+
   }
 
   displayPreview();
@@ -501,18 +590,34 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
   else if ( send == GroupFace->PushButton1 ) {
     myEditCurrentArgument = GroupFace->LineEdit1;
     GroupFace->PushButton1->setDown( true );
+  } else if ( send == Group2Vec->PushButton1 ) {
+    myEditCurrentArgument = Group2Vec->LineEdit1;
+    Group2Vec->PushButton2->setDown( false );
+    Group2Vec->LineEdit1->setEnabled( true );
+    Group2Vec->LineEdit2->setEnabled( false );
+  } else if ( send == Group2Vec->PushButton2 ) {
+    myEditCurrentArgument = Group2Vec->LineEdit2;
+    Group2Vec->PushButton1->setDown( false );
+    Group2Vec->LineEdit1->setEnabled( false );
+    Group2Vec->LineEdit2->setEnabled( true );
+  } else if ( send == GroupLCS->PushButton1 ) {
+    myEditCurrentArgument = GroupLCS->LineEdit1;
+    GroupLCS->LineEdit1->setEnabled( true );
   }
 
   myEditCurrentArgument->setFocus();
 
-  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
+  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 || 
+       myEditCurrentArgument == Group2Vec->LineEdit1   ||
+       myEditCurrentArgument == Group2Vec->LineEdit2 ) {
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
-  }
-  else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
+  } else if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
     TColStd_MapOfInteger aMap;
     aMap.Add( GEOM_PLANE );
     aMap.Add( GEOM_MARKER );
     globalSelection( aMap );
+  } else if ( myEditCurrentArgument == GroupLCS->LineEdit1 ) {
+    globalSelection( GEOM_MARKER );
   }
   else { // 3 Pnts
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
@@ -537,7 +642,10 @@ void BasicGUI_PlaneDlg::LineEditReturnPressed()
        send == Group3Pnts->LineEdit1 ||
        send == Group3Pnts->LineEdit2 ||
        send == Group3Pnts->LineEdit3 ||
-       send == GroupFace->LineEdit1 ) {
+       send == GroupFace->LineEdit1  ||
+       send == Group2Vec->LineEdit1  ||
+       send == Group2Vec->LineEdit2  ||
+       send == GroupLCS->LineEdit1  ) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
@@ -555,6 +663,7 @@ void BasicGUI_PlaneDlg::ActivateThisDialog()
 	   this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
+  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -596,6 +705,8 @@ double BasicGUI_PlaneDlg::getSize() const
   case 0 : return GroupPntDir->SpinBox_DX->value();
   case 1 : return Group3Pnts->SpinBox_DX->value();
   case 2 : return GroupFace->SpinBox_DX->value();
+  case 3 : return Group2Vec->SpinBox_DX->value();
+  case 4 : return GroupLCS->SpinBox_DX->value();
   }
   return 0.;
 }
@@ -610,6 +721,7 @@ QString BasicGUI_PlaneDlg::getSizeAsString() const
   case 0 : return GroupPntDir->SpinBox_DX->text();
   case 1 : return Group3Pnts->SpinBox_DX->text();
   case 2 : return GroupFace->SpinBox_DX->text();
+  case 3 : return Group2Vec->SpinBox_DX->text();
   }
   return QString();
 }
@@ -656,6 +768,12 @@ bool BasicGUI_PlaneDlg::isValid( QString& msg )
   else if ( id == 2 ) {
     bool ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() );
     return !CORBA::is_nil( myFace ) && ok;
+  }   else if ( id == 3 ) {
+    bool ok = Group2Vec->SpinBox_DX->isValid( msg, !IsPreview() );
+    return !CORBA::is_nil( myVec1  ) && !CORBA::is_nil( myVec2 ) && !isEqual( myVec1, myVec2 ) && ok;
+  } else if ( id == 4 ) {
+    bool ok = GroupLCS->SpinBox_DX->isValid( msg, !IsPreview() );
+    return ok;
   }
   return false;
 }
@@ -681,6 +799,14 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
     break;
   case 2 :
     anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneFace( myFace, getSize() );
+    res = true;
+    break;
+  case 3 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlane2Vec( myVec1, myVec2, getSize() );
+    res = true;
+    break;
+  case 4 :
+    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneLCS( myLCS, getSize(), myOriginType );
     res = true;
     break;
   }
@@ -712,6 +838,10 @@ void BasicGUI_PlaneDlg::addSubshapesToStudy()
     break;
   case 2:
     objMap[GroupFace->LineEdit1->text()] = myFace;
+    break;
+  case 3:
+    objMap[Group2Vec->LineEdit1->text()] = myVec1;
+    objMap[Group2Vec->LineEdit2->text()] = myVec2;
     break;
   }
   addSubshapesToFather( objMap );

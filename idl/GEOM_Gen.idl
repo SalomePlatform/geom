@@ -435,6 +435,28 @@ module GEOM
      */
     GEOM_Object MakePlaneFace (in GEOM_Object theFace,
 			       in double theTrimSize);
+			       
+    /*!
+     *  Create a plane, by two vectors.
+     *  \param theVec1 Vector1, the plane has to pass through first point of this vector.
+     *  \param theVec Vector2, defining the plane normal direction.
+     *  \param theTrimSize Half size of a side of quadrangle face, representing the plane.
+     *  \return New GEOM_Object, containing the created plane.
+     */
+    GEOM_Object MakePlane2Vec (in GEOM_Object theVec1,
+			       in GEOM_Object theVec2,
+			       in double theTrimSize);
+			       
+    /*!
+     *  Create a plane, defined by local coordinate system.
+     *  \param theLCS Referenced LCS(Marker).
+     *  \param theTrimSize Half size of a side of quadrangle face, representing the plane.
+     *  \param theOrientation OXY, OYZ or OZX orientation = (1, 2 or 3).
+     *  \return New GEOM_Object, containing the created plane.
+     */
+    GEOM_Object MakePlaneLCS (in GEOM_Object theLCS,
+			      in double theTrimSize,
+			      in double theOrientation);
 
     /*!
      *  Create a local coordinate system.

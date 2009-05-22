@@ -525,6 +525,37 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
+	    
+	## Create a plane, passing through the 2 vectors
+        #  with center in a start point of the first vector.
+        #  @param theVec1 Vector, defining center point and plane direction.
+        #  @param theVec2 Vector, defining the plane normal direction.
+        #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
+        #  @return New GEOM_Object, containing the created plane.
+        #
+        #  @ref tui_creation_plane "Example"
+        def MakePlane2Vec(self,theVec1, theVec2, theTrimSize):
+            # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
+            anObj = self.BasicOp.MakePlane2Vec(theVec1, theVec2, theTrimSize)
+            RaiseIfFailed("MakePlane2Vec", self.BasicOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+	    
+	## Create a plane, based on a Local coordinate system.
+        #  @param theLCS  coordinate system, defining plane.
+        #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
+	#  @param theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
+        #  @return New GEOM_Object, containing the created plane.
+        #
+        #  @ref tui_creation_plane "Example"
+        def MakePlaneLCS(self,theLCS, theTrimSize, theOrientation):
+            # Example: see GEOM_TestAll.py
+            theTrimSize, Parameters = ParseParameters(theTrimSize);
+            anObj = self.BasicOp.MakePlaneLCS(theLCS, theTrimSize, theOrientation)
+            RaiseIfFailed("MakePlaneLCS", self.BasicOp)
+            anObj.SetParameters(Parameters)
+            return anObj
 
         ## Create a local coordinate system.
         #  @param OX,OY,OZ Three coordinates of coordinate system origin.
