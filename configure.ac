@@ -30,7 +30,7 @@ AC_INIT([Salome2 Project GEOM module], [5.1.1], [webmaster.salome@opencascade.co
 AC_CONFIG_AUX_DIR(salome_adm/unix/config_files)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
-AM_INIT_AUTOMAKE([tar-pax])
+AM_INIT_AUTOMAKE([tar-pax -Wno-portability])
 
 
 XVERSION=`echo $VERSION | awk -F. '{printf("0x%02x%02x%02x",$1,$2,$3)}'`
@@ -374,65 +374,65 @@ echo
 # autoscan, the Makefile list is generated in the output file configure.scan.
 # This could be helpfull to update de configuration.
 AC_OUTPUT([ \
-  ./salome_adm/unix/SALOMEconfig.h \
-  ./adm_local/Makefile \
-  ./adm_local/cmake_files/Makefile \
-  ./adm_local/unix/Makefile \
-  ./adm_local/unix/config_files/Makefile \
-  ./bin/VERSION \
-  ./bin/Makefile \
-  ./GEOM_version.h \
-  ./doc/Makefile \
-  ./doc/salome/Makefile \
-  ./doc/salome/gui/Makefile \
-  ./doc/salome/gui/GEOM/Makefile \
-  ./doc/salome/gui/GEOM/doxyfile \
-  ./doc/salome/gui/GEOM/doxyfile_py \
-  ./doc/salome/gui/GEOM/doxyfile_tui \
-  ./doc/salome/tui/Makefile \
-  ./doc/salome/tui/doxyfile \
-  ./src/Makefile \
-  ./src/ARCHIMEDE/Makefile \
-  ./src/BREPExport/Makefile \
-  ./src/BREPImport/Makefile \
-  ./src/BasicGUI/Makefile \
-  ./src/BlocksGUI/Makefile \
-  ./src/BooleanGUI/Makefile \
-  ./src/BuildGUI/Makefile \
-  ./src/DisplayGUI/Makefile \
-  ./src/DlgRef/Makefile \
-  ./src/EntityGUI/Makefile \
-  ./src/GEOM/Makefile \
-  ./src/GEOMAlgo/Makefile \
-  ./src/GEOMBase/Makefile \
-  ./src/GEOMClient/Makefile \
-  ./src/GEOMFiltersSelection/Makefile \
-  ./src/GEOMGUI/Makefile \
-  ./src/GEOMImpl/Makefile \
-  ./src/GEOMToolsGUI/Makefile \
-  ./src/GEOM_I/Makefile \
-  ./src/GEOM_I_Superv/Makefile \
-  ./src/GEOM_SWIG/Makefile \
-  ./src/GEOM_SWIG_WITHIHM/Makefile \
-  ./src/GenerationGUI/Makefile \
-  ./src/GroupGUI/Makefile \
-  ./src/IGESExport/Makefile \
-  ./src/IGESImport/Makefile \
-  ./src/MeasureGUI/Makefile \
-  ./src/NMTDS/Makefile \
-  ./src/NMTTools/Makefile \
-  ./src/OBJECT/Makefile \
-  ./src/OperationGUI/Makefile \
-  ./src/PrimitiveGUI/Makefile \
-  ./src/RepairGUI/Makefile \
-  ./src/SKETCHER/Makefile \
-  ./src/STEPExport/Makefile \
-  ./src/STEPImport/Makefile \
-  ./src/STLExport/Makefile \
-  ./src/ShHealOper/Makefile \
-  ./src/TransformationGUI/Makefile \
-  ./resources/Makefile \
-  ./resources/GEOMCatalog.xml \
-  ./idl/Makefile \
+  salome_adm/unix/SALOMEconfig.h \
+  adm_local/Makefile \
+  adm_local/cmake_files/Makefile \
+  adm_local/unix/Makefile \
+  adm_local/unix/config_files/Makefile \
+  bin/VERSION \
+  bin/Makefile \
+  GEOM_version.h \
+  doc/Makefile \
+  doc/salome/Makefile \
+  doc/salome/gui/Makefile \
+  doc/salome/gui/GEOM/Makefile \
+  doc/salome/gui/GEOM/doxyfile \
+  doc/salome/gui/GEOM/doxyfile_py \
+  doc/salome/gui/GEOM/doxyfile_tui \
+  doc/salome/tui/Makefile \
+  doc/salome/tui/doxyfile \
+  src/Makefile \
+  src/ARCHIMEDE/Makefile \
+  src/BREPExport/Makefile \
+  src/BREPImport/Makefile \
+  src/BasicGUI/Makefile \
+  src/BlocksGUI/Makefile \
+  src/BooleanGUI/Makefile \
+  src/BuildGUI/Makefile \
+  src/DisplayGUI/Makefile \
+  src/DlgRef/Makefile \
+  src/EntityGUI/Makefile \
+  src/GEOM/Makefile \
+  src/GEOMAlgo/Makefile \
+  src/GEOMBase/Makefile \
+  src/GEOMClient/Makefile \
+  src/GEOMFiltersSelection/Makefile \
+  src/GEOMGUI/Makefile \
+  src/GEOMImpl/Makefile \
+  src/GEOMToolsGUI/Makefile \
+  src/GEOM_I/Makefile \
+  src/GEOM_I_Superv/Makefile \
+  src/GEOM_SWIG/Makefile \
+  src/GEOM_SWIG_WITHIHM/Makefile \
+  src/GenerationGUI/Makefile \
+  src/GroupGUI/Makefile \
+  src/IGESExport/Makefile \
+  src/IGESImport/Makefile \
+  src/MeasureGUI/Makefile \
+  src/NMTDS/Makefile \
+  src/NMTTools/Makefile \
+  src/OBJECT/Makefile \
+  src/OperationGUI/Makefile \
+  src/PrimitiveGUI/Makefile \
+  src/RepairGUI/Makefile \
+  src/SKETCHER/Makefile \
+  src/STEPExport/Makefile \
+  src/STEPImport/Makefile \
+  src/STLExport/Makefile \
+  src/ShHealOper/Makefile \
+  src/TransformationGUI/Makefile \
+  resources/Makefile \
+  resources/GEOMCatalog.xml \
+  idl/Makefile \
   Makefile \
 ])
