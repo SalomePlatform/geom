@@ -81,7 +81,6 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
-  void                               SelectionTypeClicked();
   void                               GroupClicked();
 };
 
