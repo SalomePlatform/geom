@@ -29,6 +29,7 @@
 #include "GEOM_Object_i.hh"
 
 #include <strstream>
+//#include <sstream>
 
 #include "Utils_CorbaException.hxx"
 #include "OpUtil.hxx"
@@ -326,7 +327,8 @@ SALOMEDS::TMPFile* GEOM_Gen_i::Save(SALOMEDS::SComponent_ptr theComponent,
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
-    aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL())).c_str());
+    aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
+                                                   (theComponent->GetStudy()->URL())).c_str());
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   aSeq[0] = CORBA::string_dup(aNameWithExt.ToCString());
   // Build a full file name of temporary file
@@ -389,7 +391,8 @@ CORBA::Boolean GEOM_Gen_i::Load(SALOMEDS::SComponent_ptr theComponent,
   // Prepare a file name to open
   TCollection_AsciiString aNameWithExt("");
   if (isMultiFile)
-    aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath(theComponent->GetStudy()->URL())).c_str());
+    aNameWithExt = TCollection_AsciiString((char*)(SALOMEDS_Tool::GetNameFromPath
+                                                   (theComponent->GetStudy()->URL())).c_str());
   aNameWithExt += TCollection_AsciiString("_GEOM.sgd");
   TCollection_AsciiString aFullName = (TCollection_AsciiString((char*)aTmpDir.c_str()) + aNameWithExt);
 
@@ -448,14 +451,16 @@ CORBA::Boolean GEOM_Gen_i::CanCopy(SALOMEDS::SObject_ptr theObject) {
 // function : CopyFrom()
 // purpose  :
 //============================================================================
-SALOMEDS::TMPFile* GEOM_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID) {
+SALOMEDS::TMPFile* GEOM_Gen_i::CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID)
+{
   // Declare a sequence of the byte to store the copied object
   SALOMEDS::TMPFile_var aStreamFile = new SALOMEDS::TMPFile;
 
   // Try to get GEOM_Object object by given SObject
   SALOMEDS::GenericAttribute_var anAttr;
   if (!theObject->FindAttribute(anAttr, "AttributeIOR")) return aStreamFile._retn();
-  GEOM::GEOM_Object_var anObject =  GEOM::GEOM_Object::_narrow(_orb->string_to_object(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value()));
+  GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow
+    (_orb->string_to_object(SALOMEDS::AttributeIOR::_narrow(anAttr)->Value()));
   if (anObject->_is_nil()) return aStreamFile._retn();
 
   aStreamFile = anObject->GetShapeStream();
@@ -1360,7 +1365,7 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
     aGeomObject = GEOM::GEOM_Object::_narrow(anObject);
   }
   
-  char* aTypeInfo = "Object";
+  const char* aTypeInfo = "Object";
   if ( !aGeomObject->_is_nil() ) {
     GEOM::GEOM_IKindOfShape::shape_kind aKind;
     GEOM::ListOfLong_var anInts;

@@ -360,7 +360,8 @@ module GEOM
     //-----------------------------------------------------------//
     GEOM_Object MakeEdge (in GEOM_Object thePnt1, 
 			  in GEOM_Object thePnt2) ;
-    GEOM_Object MakeWire (in GEOM_List theEdgesAndWires) ;
+    GEOM_Object MakeWire (in GEOM_List theEdgesAndWires,
+                          in double    theTolerance) ;
     GEOM_Object MakeFace (in GEOM_Object theWire, 
 			  in boolean     isPlanarWanted) ;
     GEOM_Object MakeFaceWires (in GEOM_List theWires, 

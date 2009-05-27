@@ -40,11 +40,8 @@
 \anchor swig_MakeChamfer
 \until id_MakeChamfer
 
-\anchor swig_NumberOfFaces
-\until Bad number of faces
-
-\anchor swig_NumberOfEdges
-\until Bad number of edges
+\anchor swig_NumberOf
+\until Bad number of shapes
 
 \anchor swig_MakeBlockExplode
 \until id_MakeBlockExplode

@@ -22,7 +22,7 @@
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_WireDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BuildGUI_WireDlg.h"
 
 #include <GEOMImpl_Types.hxx>
@@ -37,6 +37,7 @@
 #include <LightApp_SelectionMgr.h>
 
 #include <TColStd_MapOfInteger.hxx>
+#include <Precision.hxx>
 
 //=================================================================================
 // class    : BuildGUI_WireDlg()
@@ -61,16 +62,22 @@ BuildGUI_WireDlg::BuildGUI_WireDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
   mainFrame()->RadioButton3->close();
 
-  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  GroupArgs = new DlgRef_1Sel1Spin( centralWidget() );
 
-  GroupPoints->GroupBox1->setTitle( tr( "GEOM_WIRE_CONNECT" ) );
-  GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
-  GroupPoints->PushButton1->setIcon( image1 );
-  GroupPoints->LineEdit1->setReadOnly( true );
+  GroupArgs->GroupBox1->setTitle( tr( "GEOM_WIRE_CONNECT" ) );
+  GroupArgs->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
+  GroupArgs->PushButton1->setIcon( image1 );
+  GroupArgs->LineEdit1->setReadOnly( true );
+
+  GroupArgs->TextLabel2->setText( tr( "GEOM_TOLERANCE" ) );
+  double SpecificStep = 0.0001;
+  double prec = Precision::Confusion();
+  initSpinBox(GroupArgs->SpinBox_DX, prec, MAX_NUMBER, SpecificStep, 9);
+  GroupArgs->SpinBox_DX->setValue(prec);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( GroupPoints );
+  layout->addWidget( GroupArgs );
   /***************************************************************/
 
   setHelpFileName( "create_wire_page.html" );
@@ -97,8 +104,8 @@ BuildGUI_WireDlg::~BuildGUI_WireDlg()
 void BuildGUI_WireDlg::Init()
 {
   /* init variables */
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  GroupPoints->LineEdit1->setReadOnly( true );
+  myEditCurrentArgument = GroupArgs->LineEdit1;
+  GroupArgs->LineEdit1->setReadOnly( true );
   
   myOkEdgesAndWires = false;
   
@@ -110,7 +117,7 @@ void BuildGUI_WireDlg::Init()
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupArgs->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
@@ -180,14 +187,14 @@ void BuildGUI_WireDlg::SelectionIntoArgument()
 void BuildGUI_WireDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  if ( send != GroupPoints->PushButton1 )
+  if ( send != GroupArgs->PushButton1 )
     return;
 
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_WIRE );
   aMap.Add( GEOM_EDGE );
   globalSelection( aMap );
-  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument = GroupArgs->LineEdit1;
 
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
@@ -233,25 +240,25 @@ GEOM::GEOM_IOperations_ptr BuildGUI_WireDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BuildGUI_WireDlg::isValid( QString& )
+bool BuildGUI_WireDlg::isValid (QString& msg)
 {
-  return myOkEdgesAndWires;
+  bool ok = GroupArgs->SpinBox_DX->isValid(msg, !IsPreview());
+  return myOkEdgesAndWires && ok;
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool BuildGUI_WireDlg::execute( ObjectList& objects )
+bool BuildGUI_WireDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeWire( myEdgesAndWires );
+  anObj = GEOM::GEOM_IShapesOperations::_narrow(getOperation())->
+    MakeWire(myEdgesAndWires, GroupArgs->SpinBox_DX->value());
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil())
+    objects.push_back(anObj._retn());
 
   return true;
 }
-

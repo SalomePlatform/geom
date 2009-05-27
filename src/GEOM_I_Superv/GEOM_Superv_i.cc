@@ -1886,14 +1886,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
 //=============================================================================
 //  MakeWire:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires,
+                                               CORBA::Double       theTolerance)
 {
   beginService( " GEOM_Superv_i::MakeWire" );
   MESSAGE("GEOM_Superv_i::MakeWire");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplEW = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theEdgesAndWires, myPOA).in())) {
     getShapesOp();
-    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeWire(aListImplEW->GetList());
+    GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeWire(aListImplEW->GetList(), theTolerance);
     endService( " GEOM_Superv_i::MakeWire" );
     return anObj;
   }

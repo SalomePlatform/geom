@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef _GEOM_IShapesOperations_i_HeaderFile
 #define _GEOM_IShapesOperations_i_HeaderFile
 
@@ -45,7 +45,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
 				  GEOM::GEOM_Object_ptr thePnt2);
 
-  GEOM::GEOM_Object_ptr MakeWire (const GEOM::ListOfGO& theEdgesAndWires);
+  GEOM::GEOM_Object_ptr MakeWire (const GEOM::ListOfGO& theEdgesAndWires,
+                                  const CORBA::Double   theTolerance);
 
   GEOM::GEOM_Object_ptr MakeFace (GEOM::GEOM_Object_ptr theWire,
 				  CORBA::Boolean  isPlanarWanted);
@@ -63,7 +64,7 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
 				       CORBA::Double         theTolerance,
-					   CORBA::Boolean  doKeepNonSolids);
+                                       CORBA::Boolean        doKeepNonSolids);
 
   GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 			        CORBA::Double         theTolerance);
@@ -95,6 +96,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   CORBA::Long NumberOfFaces (GEOM::GEOM_Object_ptr theShape);
   CORBA::Long NumberOfEdges (GEOM::GEOM_Object_ptr theShape);
+  CORBA::Long NumberOfSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                 const CORBA::Long     theShapeType);
 
   GEOM::GEOM_Object_ptr ChangeOrientation (GEOM::GEOM_Object_ptr theShape);
 

@@ -18,17 +18,17 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_OStream.hxx>
 
 #include <GEOM_Object_i.hh>
-//#include <GEOM_Gen_i.hh>
 #include <GEOM_ISubShape.hxx>
 #include <GEOMImpl_Types.hxx>
 
 #include "utilities.h"
 #include <fstream>
 #include <strstream>
+//#include <sstream>
 
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>

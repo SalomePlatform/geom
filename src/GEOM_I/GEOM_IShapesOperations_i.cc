@@ -30,6 +30,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
+#include <TopAbs.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 
@@ -90,7 +91,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
-                                      (const GEOM::ListOfGO& theEdgesAndWires)
+                           (const GEOM::ListOfGO& theEdgesAndWires,
+                            const CORBA::Double   theTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -110,7 +112,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
 
   // Make Solid
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeWire(aShapes);
+    GetOperations()->MakeWire(aShapes, theTolerance);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -554,13 +556,7 @@ char* GEOM_IShapesOperations_i::GetShapeTypeString (GEOM::GEOM_Object_ptr theSha
 //=============================================================================
 CORBA::Long GEOM_IShapesOperations_i::NumberOfFaces (GEOM::GEOM_Object_ptr theShape)
 {
-  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
-  if (aShape.IsNull()) return -1;
-
-  CORBA::Long aNb = GetOperations()->NumberOfFaces(aShape);
-  if (!GetOperations()->IsDone()) return -1;
-
-  return aNb;
+  return NumberOfSubShapes(theShape, Standard_Integer(TopAbs_FACE));
 }
 
 //=============================================================================
@@ -570,10 +566,21 @@ CORBA::Long GEOM_IShapesOperations_i::NumberOfFaces (GEOM::GEOM_Object_ptr theSh
 //=============================================================================
 CORBA::Long GEOM_IShapesOperations_i::NumberOfEdges (GEOM::GEOM_Object_ptr theShape)
 {
+  return NumberOfSubShapes(theShape, Standard_Integer(TopAbs_EDGE));
+}
+
+//=============================================================================
+/*!
+ *  NumberOfSubShapes
+ */
+//=============================================================================
+CORBA::Long GEOM_IShapesOperations_i::NumberOfSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                                         const CORBA::Long     theShapeType)
+{
   Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
   if (aShape.IsNull()) return -1;
 
-  CORBA::Long aNb = GetOperations()->NumberOfEdges(aShape);
+  CORBA::Long aNb = GetOperations()->NumberOfSubShapes(aShape, theShapeType);
   if (!GetOperations()->IsDone()) return -1;
 
   return aNb;

@@ -203,15 +203,22 @@ def TestOtherOperations (geompy, math):
                                    [f_ind_1, f_ind_2, f_ind_3])
   id_MakeChamfer = geompy.addToStudy(MakeChamfer, "MakeChamfer")
 
-  # NumberOfFaces
+  # NumberOf
   NumberOfFaces = geompy.NumberOfFaces(Box)
   if NumberOfFaces != 6:
     print "Bad number of faces in BOX!"
 
-  # NumberOfEdges
   NumberOfEdges = geompy.NumberOfEdges(Box)
   if NumberOfEdges != 12:
     print "Bad number of edges in BOX!"
+
+  NumberOfSolids = geompy.NumberOfSolids(Box)
+  if NumberOfSolids != 1:
+    print "Bad number of solids in BOX!"
+
+  NumberOfShapes = geompy.NumberOfSubShapes(Box, geompy.ShapeType["SHAPE"])
+  if NumberOfShapes != 34:
+    print "Bad number of shapes in BOX!"
 
   # MakeBlockExplode
   Compound = geompy.MakeCompound([Box, Sphere])

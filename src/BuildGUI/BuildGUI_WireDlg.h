@@ -22,13 +22,13 @@
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_WireDlg.h
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #ifndef BUILDGUI_WIREDLG_H
 #define BUILDGUI_WIREDLG_H
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_1Sel;
+class DlgRef_1Sel1Spin;
 
 //=================================================================================
 // class    : BuildGUI_WireDlg
@@ -56,7 +56,7 @@ private:
   GEOM::ListOfGO                     myEdgesAndWires;
   bool                               myOkEdgesAndWires;   /* to check when arguments is defined */
   
-  DlgRef_1Sel*                       GroupPoints;
+  DlgRef_1Sel1Spin*                  GroupArgs;
 
 private slots:
   void                               ClickOnOk();

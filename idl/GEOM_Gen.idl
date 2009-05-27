@@ -1202,9 +1202,12 @@ module GEOM
     /*!
      *  Create a wire from the set of edges and wires.
      *  \param theEdgesAndWires List of edge and/or wires.
+     *  \param theTolerance Maximum distance between vertices, that will be merged.
+     *                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
      *  \return New GEOM_Object, containing the created wire.
      */
-    GEOM_Object MakeWire (in ListOfGO theEdgesAndWires);
+    GEOM_Object MakeWire (in ListOfGO theEdgesAndWires,
+                          in double   theTolerance);
 
     /*!
      *  Create a face on the given wire.
@@ -1357,6 +1360,15 @@ module GEOM
      *  \return Number of edges in theShape.
      */
     long NumberOfEdges (in GEOM_Object theShape);
+
+    /*!
+     *  Count number of subshapes of type \a theShapeType in the given shape.
+     *  \param theShape Shape to count subshapes in.
+     *  \param theShapeType The type of subshapes to count.
+     *  \return Number of subshapes of type \a theShapeType in \a theShape.
+     */
+    long NumberOfSubShapes (in GEOM_Object theShape,
+                            in long        theShapeType);
 
     /*!
      *  Reverses an orientation the given shape.

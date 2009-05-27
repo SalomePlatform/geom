@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <GEOMImpl_ShapeDriver.hxx>
 
 #include <GEOMImpl_IShapes.hxx>
@@ -29,6 +29,7 @@
 
 // OCCT Includes
 #include <ShapeFix_Wire.hxx>
+#include <ShapeFix_Edge.hxx>
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -152,15 +153,35 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
       } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
         Standard_ConstructionError::Raise("Wire construction failed");
-      } else if (aFW->StatusReorder(ShapeExtend_DONE2)) {
-        Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
+      //} else if (aFW->StatusReorder(ShapeExtend_DONE2)) {
+      //  Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
       } else {
       }
 
+      // IMP 0019766: Building a Wire from unconnected edges by introducing a tolerance
+      Standard_Real aTolerance = aCI.GetTolerance();
+      if (aTolerance < Precision::Confusion())
+        aTolerance = Precision::Confusion();
+
       aFW->ClosedWireMode() = Standard_False;
-      aFW->FixConnected();
+      aFW->FixConnected(aTolerance);
       if (aFW->StatusConnected(ShapeExtend_FAIL)) {
         Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
+      }
+
+      // IMP 0019766
+      aFW->FixGapsByRangesMode() = Standard_True;
+      if (aFW->FixGaps3d()) {
+        Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
+        Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
+        for (Standard_Integer iedge = 1; iedge <= sbwd->NbEdges(); iedge++) {
+          TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(iedge));
+          aFe->FixVertexTolerance(aEdge);
+          aFe->FixSameParameter(aEdge);
+        }
+      }
+      else if (aFW->StatusGaps3d(ShapeExtend_FAIL)) {
+        Standard_ConstructionError::Raise("Wire construction failed: cannot fix 3d gaps");
       }
 
       aShape = aFW->WireAPIMake();
@@ -446,7 +467,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   // Check shape validity
   BRepCheck_Analyzer ana (aShape, false);
   if (!ana.IsValid()) {
-    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
   aFunction->SetValue(aShape);

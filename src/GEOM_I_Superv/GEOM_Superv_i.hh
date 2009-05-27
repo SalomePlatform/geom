@@ -438,7 +438,8 @@ public:
   //-----------------------------------------------------------//
   GEOM::GEOM_Object_ptr MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
 				  GEOM::GEOM_Object_ptr thePnt2);
-  GEOM::GEOM_Object_ptr MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires);
+  GEOM::GEOM_Object_ptr MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires,
+                                  CORBA::Double       theTolerance);
   GEOM::GEOM_Object_ptr MakeFace (GEOM::GEOM_Object_ptr theWire,
 				  CORBA::Boolean isPlanarWanted);
   GEOM::GEOM_Object_ptr MakeFaceWires (GEOM::GEOM_List_ptr theWires,

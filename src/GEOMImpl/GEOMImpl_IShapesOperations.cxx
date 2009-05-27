@@ -214,9 +214,71 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
-                             (std::list<Handle(GEOM_Object)> theShapes)
+                             (std::list<Handle(GEOM_Object)> theShapes,
+                              const Standard_Real            theTolerance)
 {
-  return MakeShape(theShapes, GEOM_WIRE, WIRE_EDGES, "MakeWire");
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aWire = GetEngine()->AddObject(GetDocID(), GEOM_WIRE);
+
+  //Add a new function
+  Handle(GEOM_Function) aFunction =
+    aWire->AddFunction(GEOMImpl_ShapeDriver::GetID(), WIRE_EDGES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
+
+  GEOMImpl_IShapes aCI (aFunction);
+  aCI.SetTolerance(theTolerance);
+
+  Handle(TColStd_HSequenceOfTransient) aShapesSeq = new TColStd_HSequenceOfTransient;
+
+  // Shapes
+  std::list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
+  for (; it != theShapes.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    aShapesSeq->Append(aRefSh);
+  }
+  aCI.SetShapes(aShapesSeq);
+
+  //Compute the shape
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aWire << " = geompy.MakeWire([";
+
+  // Shapes
+  it = theShapes.begin();
+  if (it != theShapes.end()) {
+    pd << (*it++);
+    while (it != theShapes.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aWire;
 }
 
 //=============================================================================
@@ -442,7 +504,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeCompound
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeShape
-                             (std::list<Handle(GEOM_Object)>      theShapes,
+                             (std::list<Handle(GEOM_Object)> theShapes,
                               const Standard_Integer         theObjectType,
                               const Standard_Integer         theFunctionType,
                               const TCollection_AsciiString& theMethodName)
@@ -1103,54 +1165,83 @@ TCollection_AsciiString GEOMImpl_IShapesOperations::GetShapeTypeString (Handle(G
 
 //=============================================================================
 /*!
- *  NumberOfFaces
+ *  NumberOfSubShapes
  */
 //=============================================================================
-Standard_Integer GEOMImpl_IShapesOperations::NumberOfFaces (Handle(GEOM_Object) theShape)
+Standard_Integer GEOMImpl_IShapesOperations::NumberOfSubShapes
+                                          (Handle(GEOM_Object)    theShape,
+                                           const Standard_Integer theShapeType)
 {
   SetErrorCode(KO);
-
-  Standard_Integer nb = 0;
+  Standard_Integer nbShapes = 0;
 
   if (theShape.IsNull()) return -1;
   TopoDS_Shape aShape = theShape->GetValue();
   if (aShape.IsNull()) return -1;
 
+  /*
   TopTools_MapOfShape mapShape;
 
-  TopExp_Explorer exp (aShape, TopAbs_FACE);
-  for (; exp.More(); exp.Next())
-    if (mapShape.Add(exp.Current()))
-      nb++;
+  if (aShape.ShapeType() == TopAbs_COMPOUND &&
+      (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
+       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPSOLID ||
+       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND)) {
+    TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+    for (; It.More(); It.Next()) {
+      if (mapShape.Add(It.Value())) {
+        if (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
+            TopAbs_ShapeEnum(theShapeType) == It.Value().ShapeType()) {
+          nbShapes++;
+        }
+      }
+    }
+  } else {
+    TopExp_Explorer exp (aShape, TopAbs_ShapeEnum(theShapeType));
+    for (; exp.More(); exp.Next())
+      if (mapShape.Add(exp.Current()))
+	nbShapes++;
+  }
+  */
+
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    int iType, nbTypes [TopAbs_SHAPE];
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypes[iType] = 0;
+    nbTypes[aShape.ShapeType()]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add(aShape);
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append(aShape);
+
+    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+    for (; itL.More(); itL.Next()) {
+      TopoDS_Iterator it (itL.Value());
+      for (; it.More(); it.Next()) {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add(s)) {
+          aListOfShape.Append(s);
+          nbTypes[s.ShapeType()]++;
+        }
+      }
+    }
+
+    if (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE)
+      nbShapes = aMapOfShape.Extent();
+    else
+      nbShapes = nbTypes[theShapeType];
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return -1;
+  }
 
   SetErrorCode(OK);
-  return nb;
-}
-
-//=============================================================================
-/*!
- *  NumberOfEdges
- */
-//=============================================================================
-Standard_Integer GEOMImpl_IShapesOperations::NumberOfEdges (Handle(GEOM_Object) theShape)
-{
-  SetErrorCode(KO);
-
-  Standard_Integer nb = 0;
-
-  if (theShape.IsNull()) return -1;
-  TopoDS_Shape aShape = theShape->GetValue();
-  if (aShape.IsNull()) return -1;
-
-  TopTools_MapOfShape mapShape;
-
-  TopExp_Explorer exp (aShape, TopAbs_EDGE);
-  for (; exp.More(); exp.Next())
-    if (mapShape.Add(exp.Current()))
-      nb++;
-
-  SetErrorCode(OK);
-  return nb;
+  return nbShapes;
 }
 
 //=============================================================================

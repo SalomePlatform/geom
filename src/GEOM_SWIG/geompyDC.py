@@ -1388,12 +1388,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a wire from the set of edges and wires.
         #  @param theEdgesAndWires List of edges and/or wires.
+        #  @param theTolerance Maximum distance between vertices, that will be merged.
+        #                      Values less than 1e-07 are equivalent to 1e-07 (Precision::Confusion()).
         #  @return New GEOM_Object, containing the created wire.
         #
         #  @ref tui_creation_wire "Example"
-        def MakeWire(self,theEdgesAndWires):
+        def MakeWire(self, theEdgesAndWires, theTolerance = 1e-07):
             # Example: see GEOM_TestAll.py
-            anObj = self.ShapesOp.MakeWire(theEdgesAndWires)
+            anObj = self.ShapesOp.MakeWire(theEdgesAndWires, theTolerance)
             RaiseIfFailed("MakeWire", self.ShapesOp)
             return anObj
 
@@ -1475,8 +1477,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to count faces of.
         #  @return Quantity of faces.
         #
-        #  @ref swig_NumberOfFaces "Example"
-        def NumberOfFaces(self,theShape):
+        #  @ref swig_NumberOf "Example"
+        def NumberOfFaces(self, theShape):
             # Example: see GEOM_TestOthers.py
             nb_faces = self.ShapesOp.NumberOfFaces(theShape)
             RaiseIfFailed("NumberOfFaces", self.ShapesOp)
@@ -1486,12 +1488,35 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to count edges of.
         #  @return Quantity of edges.
         #
-        #  @ref swig_NumberOfEdges "Example"
-        def NumberOfEdges(self,theShape):
+        #  @ref swig_NumberOf "Example"
+        def NumberOfEdges(self, theShape):
             # Example: see GEOM_TestOthers.py
             nb_edges = self.ShapesOp.NumberOfEdges(theShape)
             RaiseIfFailed("NumberOfEdges", self.ShapesOp)
             return nb_edges
+
+        ## Gives quantity of subshapes of type theShapeType in the given shape.
+        #  @param theShape Shape to count subshapes of.
+        #  @param theShapeType Type of subshapes to count.
+        #  @return Quantity of subshapes of given type.
+        #
+        #  @ref swig_NumberOf "Example"
+        def NumberOfSubShapes(self, theShape, theShapeType):
+            # Example: see GEOM_TestOthers.py
+            nb_ss = self.ShapesOp.NumberOfSubShapes(theShape, theShapeType)
+            RaiseIfFailed("NumberOfSubShapes", self.ShapesOp)
+            return nb_ss
+
+        ## Gives quantity of solids in the given shape.
+        #  @param theShape Shape to count solids in.
+        #  @return Quantity of solids.
+        #
+        #  @ref swig_NumberOf "Example"
+        def NumberOfSolids(self, theShape):
+            # Example: see GEOM_TestOthers.py
+            nb_solids = self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["SOLID"])
+            RaiseIfFailed("NumberOfSolids", self.ShapesOp)
+            return nb_solids
 
         # end of l2_measure
         ## @}
