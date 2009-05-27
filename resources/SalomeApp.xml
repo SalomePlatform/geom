@@ -41,5 +41,7 @@
     <parameter name="line_color"          value="255, 0, 0" />
     <parameter name="point_color"         value="255, 255, 0" />
     <parameter name="isos_color"          value="200, 200, 200" />
+    <parameter name="type_of_marker"      value="1"  />
+    <parameter name="marker_scale"        value="1"  />
   </section>
 </document>
