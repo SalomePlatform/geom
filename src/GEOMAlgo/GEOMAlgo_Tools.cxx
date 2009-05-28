@@ -266,7 +266,8 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
     else {
       bIsDone=GEOMAlgo_Tools::ProjectPointOnShape(aP1, aE2, aP2, aCtx);
       if (!bIsDone) {
-	return 1; 
+	//return 1; 
+	continue; // jfa BUG 20361
       }
       aD2=aP1.SquareDistance(aP2);
       if(aD2<aTol2) {
@@ -295,24 +296,20 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
     {
     case TopAbs_EDGE:
       {
-        // cout << "$$$ case TopAbs_EDGE" << endl;
         const TopoDS_Edge& aE2 = TopoDS::Edge(aS);
         //
         if (BRep_Tool::Degenerated(aE2)) { // jfa
-          // cout << "$$$ Degenerated" << endl;
           return Standard_True;
         }
         else {
           Standard_Real f, l;
           Handle(Geom_Curve) aC3D = BRep_Tool::Curve (aE2, f, l);
           if (aC3D.IsNull()) {
-            // cout << "$$$ aC3D.IsNull()" << endl;
             return Standard_True;
           }
           bIsDone = aCtx.ProjectPointOnEdge(aP1, aE2, aT2);
         }
         if (!bIsDone) {
-          // cout << "$$$ !bIsDone" << endl;
           return bIsDone;
         }
         //
