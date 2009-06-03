@@ -125,6 +125,10 @@ public:
 				       CORBA::Object_ptr theObject,
 				       const char* theName) throw (SALOME::SALOME_Exception) ;
 
+  GEOM::ListOfGO* PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
+					    //SALOMEDS::SObject_ptr theSObject,
+					    CORBA::Object_ptr theObject);
+
   CORBA::Boolean CanCopy(SALOMEDS::SObject_ptr theObject);
   SALOMEDS::TMPFile* CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID);
   CORBA::Boolean CanPaste(const char* theComponentName, CORBA::Long theObjectID);

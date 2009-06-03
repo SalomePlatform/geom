@@ -694,6 +694,7 @@ bool GEOMToolsGUI::Import()
       continue;
     }
 
+
     GEOM_Operation* anOp = new GEOM_Operation( app, aInsOp.in() );
     try {
       app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, /*withExten=*/true ) ) );
@@ -701,6 +702,26 @@ bool GEOMToolsGUI::Import()
 
       CORBA::String_var fileN = fileName.toLatin1().constData();
       CORBA::String_var fileT = aCurrentType.toLatin1().constData();
+
+      // skl 29.05.2009
+      if( aCurrentType == "IGES" ) {
+	GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, "IGES_UNIT" );
+	TCollection_AsciiString aUnitName = aInsOp->GetErrorCode();
+	//cout<<"GUI: aUnitName = "<<aUnitName.ToCString()<<endl;
+	if( aUnitName.SubString(1,4) == "UNIT" ) {
+	  aUnitName = aUnitName.SubString(6,aUnitName.Length());
+	  if( aUnitName != "M" ) {
+	    if( SUIT_MessageBox::question( app->desktop(),
+					   "Question",//tr("WRN_WARNING"),
+					   "Length unit in given file is not a 'meter'. Is it needed to scale a model?",
+					   SUIT_MessageBox::Yes | SUIT_MessageBox::No,
+					   SUIT_MessageBox::No) == SUIT_MessageBox::Yes ) {
+	      fileT = "IGES_SCALE";
+	    }
+	  }
+	}
+      }
+
       GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
 
       if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
@@ -715,6 +736,16 @@ bool GEOMToolsGUI::Import()
 
 	objsForDisplay.append( anObj );
 	
+	if( aCurrentType == "ACIS" ) {
+	  if( SUIT_MessageBox::question( app->desktop(),
+					 "Question",//tr("WRN_WARNING"),
+					 "Given file contents some names. Is it needed to create groups for named shapes?",
+					 SUIT_MessageBox::Yes | SUIT_MessageBox::No,
+					 SUIT_MessageBox::No) == SUIT_MessageBox::Yes ) {
+	    GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy(aDSStudy, anObj);
+	  }
+	}
+
 	anOp->commit();
       }
       else {

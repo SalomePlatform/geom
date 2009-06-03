@@ -129,11 +129,19 @@ GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::Import
   char* aFileName   = strdup(theFileName);
   char* aFormatName = strdup(theFormatName);
   Handle(GEOM_Object) anObject = GetOperations()->Import(aFileName, aFormatName);
+
+  if( strcmp(aFormatName,"IGES_UNIT")==0 && !anObject.IsNull() ) {
+    free(aFileName);
+    free(aFormatName);
+    return GetObject(anObject);
+  }
+
   free(aFileName);
   free(aFormatName);
 
-  if (!GetOperations()->IsDone() || anObject.IsNull())
+  if (!GetOperations()->IsDone() || anObject.IsNull()) {
     return aGEOMObject._retn();
+  }
 
   return GetObject(anObject);
 }

@@ -50,6 +50,8 @@
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
 
+#include <TopTools_IndexedMapOfShape.hxx>
+
 //#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 
@@ -119,6 +121,9 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 				       SALOMEDS::SObject_ptr theSObject,
 				       CORBA::Object_ptr theObject,
 				       const char* theName) throw (SALOME::SALOME_Exception) ;
+
+  GEOM::ListOfGO* PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
+					    CORBA::Object_ptr theObject);
 
   CORBA::Boolean CanCopy(SALOMEDS::SObject_ptr theObject);
   SALOMEDS::TMPFile* CopyFrom(SALOMEDS::SObject_ptr theObject, CORBA::Long& theObjectID);
@@ -256,6 +261,15 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 				   const GEOM::ListOfGO&   theArgs,
 				   GEOM::find_shape_method theFindMethod,
 				   CORBA::Boolean          theInheritFirstArg);
+
+  // auxilary for PublishNamedShapesInStudy
+  void CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
+			     GEOM::GEOM_Object_var theMainShape,
+			     const TopTools_IndexedMapOfShape& anIndices,
+			     const TopTools_SequenceOfShape& SeqS,
+			     const TColStd_SequenceOfAsciiString& SeqN,
+			     const Standard_CString& GrName,
+			     GEOM::ListOfGO_var aResList);
 
  private:
 

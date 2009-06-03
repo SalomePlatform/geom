@@ -39,6 +39,7 @@
 #include "GEOM_Object_i.hh"
 #include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
+#include "GEOM_ISubShape.hxx"
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_CopyDriver.hxx"
 
@@ -47,9 +48,14 @@
 #include <BRepTools.hxx>
 #include <TDF_Label.hxx>
 #include <TDF_Tool.hxx>
+#include <TDF_ChildIDIterator.hxx>
+#include <TNaming_NamedShape.hxx>
+#include <TDataStd_Name.hxx>
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
+//#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
 #include <OSD.hxx>
 
 #include "SALOMEDS_Tool.hxx"
@@ -248,24 +254,57 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
-
-  // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
-  //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
-  //       of objects in the study, but compute a number of objects with the same prefix
-  //       and build a new name as Prefix_N+1
-  if ( strlen( theName ) == 0 ) { // MOST PROBABLY CALLED FROM BATCHMODE OR SUPERVISOR
-    int i = 0;                    // (WITH EMPTY NEW NAME)
-    SALOMEDS::SObject_var obj;
-    TCollection_AsciiString aNewShapeName;
-    do {
-      aNewShapeName = aShapeName + TCollection_AsciiString(++i);
-      obj = theStudy->FindObject( aNewShapeName.ToCString() );
-    }
-    while ( !obj->_is_nil() );
-    aShapeName = aNewShapeName;
+  
+  // try to find existed name for current shape
+  bool HasName = false;
+  // recieve current TopoDS shape
+  CORBA::String_var entry = aShape->GetEntry();
+  Handle(GEOM_Object) aGShape = _impl->GetObject(aShape->GetStudyID(), entry);
+  TopoDS_Shape TopoSh = aGShape->GetValue();
+  // find label of main shape
+  GEOM::GEOM_Object_var aMainShVar = aShape;
+  GEOM::GEOM_Object_ptr aMainSh = aMainShVar._retn();
+  while( !aMainSh->IsMainShape() ) {
+    aMainSh = aMainSh->GetMainShape();
   }
-  else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
-    aShapeName = TCollection_AsciiString((char*)theName);
+  entry = aMainSh->GetEntry();
+  Handle(GEOM_Object) anObj = _impl->GetObject(aMainSh->GetStudyID(), entry);
+  TDF_Label aMainLbl = anObj->GetEntry();
+  // check all named shapes using iterator
+  TDF_ChildIDIterator anIt(aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
+  for(; anIt.More(); anIt.Next()) {
+    Handle(TNaming_NamedShape) anAttr =
+      Handle(TNaming_NamedShape)::DownCast(anIt.Value());
+    if(anAttr.IsNull()) continue;
+    TopoDS_Shape S = anAttr->Get();
+    if( !S.IsEqual(TopoSh) ) continue;
+    TDF_Label L = anAttr->Label();
+    Handle(TDataStd_Name) aName;
+    if(L.FindAttribute(TDataStd_Name::GetID(),aName)) {
+      aShapeName = aName->Get();
+      HasName = true;
+    }
+  }
+
+  if(!HasName) {
+    // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
+    //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
+    //       of objects in the study, but compute a number of objects with the same prefix
+    //       and build a new name as Prefix_N+1
+    if ( strlen( theName ) == 0 ) { // MOST PROBABLY CALLED FROM BATCHMODE OR SUPERVISOR
+      int i = 0;                    // (WITH EMPTY NEW NAME)
+      SALOMEDS::SObject_var obj;
+      TCollection_AsciiString aNewShapeName;
+      do {
+	aNewShapeName = aShapeName + TCollection_AsciiString(++i);
+	obj = theStudy->FindObject( aNewShapeName.ToCString() );
+      }
+      while ( !obj->_is_nil() );
+      aShapeName = aNewShapeName;
+    }
+    else // MOST PROBABLY CALLED FROM GEOM GUI (ALREADY WITH VALID NAME)
+      aShapeName = TCollection_AsciiString((char*)theName);
+  }
 
   //Set the study entry as a name of  the published GEOM_Object
   aShape->SetStudyEntry(aResultSO->GetID());
@@ -297,6 +336,126 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aShape->SetName(theName);
 
   return aResultSO._retn();
+}
+
+
+//============================================================================
+// function : CreateAndPublishGroup
+// purpose  : auxilary for PublishNamedShapesInStudy
+//============================================================================
+void GEOM_Gen_i::CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
+				       GEOM::GEOM_Object_var theMainShape,
+				       const TopTools_IndexedMapOfShape& anIndices,
+				       const TopTools_SequenceOfShape& SeqS,
+				       const TColStd_SequenceOfAsciiString& SeqN,
+				       const Standard_CString& GrName,
+				       GEOM::ListOfGO_var aResList)
+{
+  CORBA::String_var entry = theMainShape->GetEntry();
+  Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
+  Handle(TColStd_HArray1OfInteger) anArray;
+  if(SeqS.Length()>0) {
+    // create a group
+    GEOM::GEOM_IGroupOperations_var GOp = GetIGroupOperations(theStudy->StudyId());
+    GEOM::GEOM_Object_ptr GrObj =
+      GOp->CreateGroup( theMainShape, SeqS.Value(1).ShapeType() );
+    AddInStudy(theStudy, GrObj, GrName, theMainShape._retn());
+    // add named objects
+    Handle(GEOM_Object) anObj;
+    for(int i=1; i<=SeqS.Length(); i++) {
+      TopoDS_Shape aValue = SeqS.Value(i);
+      anArray = new TColStd_HArray1OfInteger(1,1);
+      Standard_Integer anIndex = anIndices.FindIndex(aValue);
+      anArray->SetValue(1, anIndex);
+      anObj = GEOM_Engine::GetEngine()->AddObject(aMainShape->GetDocID(), GEOM_SUBSHAPE);
+      if (anObj.IsNull()) continue;
+      Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
+      if (aFunction.IsNull()) continue;
+      GEOM_ISubShape aSSI(aFunction);
+      aSSI.SetMainShape(aMainShape->GetLastFunction());
+      aSSI.SetIndices(anArray);
+      aFunction->SetValue(aValue);
+      GOp->UnionIDs(GrObj, anIndex);
+      SALOMEDS::SObject_var aResultSO;
+      TCollection_AsciiString anEntry;
+      TDF_Tool::Entry(anObj->GetEntry(),anEntry);
+      GEOM::GEOM_Object_var aGObj = GetObject(anObj->GetDocID(), anEntry.ToCString());
+      AddInStudy(theStudy, aGObj._retn(), SeqN.Value(i).ToCString(), GrObj);
+    }
+  }
+}
+
+
+//============================================================================
+// function : PublishNamedShapesInStudy
+// purpose  :
+//============================================================================
+GEOM::ListOfGO* GEOM_Gen_i::
+            PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
+				      //SALOMEDS::SObject_ptr theSObject,
+				      CORBA::Object_ptr theObject)
+{
+  //Unexpect aCatch(SALOME_SalomeException);
+  GEOM::ListOfGO_var aResList = new GEOM::ListOfGO;
+
+  //CORBA::Object_var theObject = theSObject->GetObject();
+  GEOM::GEOM_Object_var theMainShape = GEOM::GEOM_Object::_narrow(theObject);
+  if(theMainShape->_is_nil()) return aResList._retn();
+
+  CORBA::String_var entry = theMainShape->GetEntry();
+  Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
+  if (aMainShape.IsNull()) return aResList._retn();
+  TopoDS_Shape MainSh = aMainShape->GetValue();
+
+  TDF_Label aMainLbl = aMainShape->GetEntry();
+  TopTools_SequenceOfShape SolidSeqS, FaceSeqS, EdgeSeqS, VertSeqS;
+  TColStd_SequenceOfAsciiString SolidSeqN, FaceSeqN, EdgeSeqN, VertSeqN;
+  TDF_ChildIDIterator anIt(aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
+  for(; anIt.More(); anIt.Next()) {
+    Handle(TNaming_NamedShape) anAttr =
+      Handle(TNaming_NamedShape)::DownCast(anIt.Value());
+    if(anAttr.IsNull()) continue;
+    TopoDS_Shape S = anAttr->Get();
+    TDF_Label L = anAttr->Label();
+    //if(S.IsEqual(MainSh)) continue;
+    Handle(TDataStd_Name) aName;
+    if(L.FindAttribute(TDataStd_Name::GetID(),aName)) {
+      TCollection_ExtendedString EName = aName->Get();
+      if(S.ShapeType()==TopAbs_SOLID) {
+	SolidSeqS.Append(S);
+	SolidSeqN.Append(aName->Get());
+      }
+      else if(S.ShapeType()==TopAbs_FACE) {
+	FaceSeqS.Append(S);
+	FaceSeqN.Append(aName->Get());
+      }
+      else if(S.ShapeType()==TopAbs_EDGE) {
+	EdgeSeqS.Append(S);
+	EdgeSeqN.Append(aName->Get());
+      }
+      else if(S.ShapeType()==TopAbs_VERTEX) {
+	VertSeqS.Append(S);
+	VertSeqN.Append(aName->Get());
+      }
+    }
+  }
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(MainSh, anIndices);
+
+  CreateAndPublishGroup(theStudy, theMainShape, anIndices, SolidSeqS, SolidSeqN,
+			"Group_Of_Named_Solids", aResList);
+
+  CreateAndPublishGroup(theStudy, theMainShape, anIndices, FaceSeqS, FaceSeqN,
+			"Group_Of_Named_Faces", aResList);
+
+  CreateAndPublishGroup(theStudy, theMainShape, anIndices, EdgeSeqS, EdgeSeqN,
+			"Group_Of_Named_Edges", aResList);
+
+  CreateAndPublishGroup(theStudy, theMainShape, anIndices, VertSeqS, VertSeqN,
+			"Group_Of_Named_Vertices", aResList);
+
+  return aResList._retn();
 }
 
 

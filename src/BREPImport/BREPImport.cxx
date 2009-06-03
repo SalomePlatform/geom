@@ -31,6 +31,7 @@
 
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TDF_Label.hxx>
 
 #ifdef WNT
  #if defined BREPIMPORT_EXPORTS || defined BREPImport_EXPORTS
@@ -61,7 +62,8 @@ extern "C"
 BREPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
-                       TCollection_AsciiString&       theError)
+                       TCollection_AsciiString&       theError,
+		       const TDF_Label&)
   {
     MESSAGE("Import BREP from file " << theFileName);
     TopoDS_Shape aShape;

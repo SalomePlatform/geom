@@ -44,6 +44,11 @@
 
 #include <GEOMImpl_Types.hxx>
 
+#include <TopoDS.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <BRep_Tool.hxx>
+#include <gp_Pnt.hxx>
+
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
@@ -206,7 +211,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   if (aFunction->GetDriverGUID() != GEOMImpl_ImportDriver::GetID()) return result;
 
   Handle(TCollection_HAsciiString) aHLibName;
-  if (!IsSupported(Standard_True, theFormatName, aHLibName)) {
+  if (!IsSupported(Standard_True, theFormatName.SubString(1,4), aHLibName)) {
     return result;
   }
   TCollection_AsciiString aLibName = aHLibName->String();
@@ -216,6 +221,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   aCI.SetFileName(theFileName);
   aCI.SetFormatName(theFormatName);
   aCI.SetPluginName(aLibName);
+  //cout<<"IIO: theFormatName = "<<theFormatName.ToCString()<<endl;
 
   //Perform the Import
   try {
@@ -238,6 +244,21 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
     << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
 
   SetErrorCode(OK);
+
+  if( theFormatName == "IGES_UNIT" ) {
+    TopoDS_Shape S = aFunction->GetValue();
+    TopoDS_Vertex V = TopoDS::Vertex(S);
+    gp_Pnt P = BRep_Tool::Pnt(V);
+    double scale = P.X();
+    TCollection_AsciiString aUnitName = "UNIT_M";
+    if( fabs(scale-0.01) < 1.e-6 )
+      aUnitName = "UNIT_CM";
+    else if( fabs(scale-0.001) < 1.e-6 )
+      aUnitName = "UNIT_MM";
+    //cout<<"IIO: aUnitName = "<<aUnitName.ToCString()<<endl;
+    SetErrorCode(aUnitName);
+  }
+
   return result;
 }
 
@@ -411,7 +432,6 @@ Standard_Boolean GEOMImpl_IInsertOperations::IsSupported
   if (isImport) aMode = "Import";
   else aMode = "Export";
 
-  
   // Read supported formats for the certain mode from install directory
   if (myResMgr->Find(aMode.ToCString())) {
     TCollection_AsciiString aFormats (myResMgr->Value(aMode.ToCString()));

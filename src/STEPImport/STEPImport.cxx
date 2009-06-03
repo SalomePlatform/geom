@@ -35,6 +35,7 @@
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TDF_Label.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -68,7 +69,8 @@ extern "C"
 STEPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
-                       TCollection_AsciiString&       theError)
+                       TCollection_AsciiString&       theError,
+		       const TDF_Label&)
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());
     TopoDS_Shape aResShape;

@@ -474,6 +474,20 @@ SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::Study_ptr theStudy
 }
 
 //============================================================================
+// function : PublishNamedShapesInStudy
+// purpose  : 
+//============================================================================
+GEOM::ListOfGO*
+GEOM_Superv_i::PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
+					 //SALOMEDS::SObject_ptr theSObject,
+					 CORBA::Object_ptr theObject)
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  return myGeomEngine->PublishNamedShapesInStudy(theStudy, theObject);
+}
+
+//============================================================================
 // function : CanCopy()
 // purpose  :
 //============================================================================

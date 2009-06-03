@@ -28,9 +28,15 @@
 
 #include <IFSelect_ReturnStatus.hxx>
 #include <IGESControl_Reader.hxx>
+#include <IGESData_IGESModel.hxx>
 
-#include <TCollection_AsciiString.hxx>
+#include <TCollection_HAsciiString.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TDF_Label.hxx>
+
+#include <TopoDS_Vertex.hxx>
+#include <BRep_Builder.hxx>
+#include <gp_Pnt.hxx>
 
 #ifdef WNT
  #if defined IGESIMPORT_EXPORTS || defined IGESImport_EXPORTS
@@ -60,8 +66,9 @@ extern "C"
 {
 IGESIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
-                       const TCollection_AsciiString& /*theFormatName*/,
-                       TCollection_AsciiString&       theError)
+                       const TCollection_AsciiString& theFormatName,
+                       TCollection_AsciiString&       theError,
+		       const TDF_Label&)
   {
     IGESControl_Reader aReader;
     TopoDS_Shape aResShape;
@@ -69,6 +76,41 @@ IGESIMPORT_EXPORT
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {
+
+	if( theFormatName == "IGES_UNIT" ) {
+	  Handle(IGESData_IGESModel) aModel = 
+	    Handle(IGESData_IGESModel)::DownCast(aReader.Model());
+	  gp_Pnt P(1.0,0.0,0.0);
+	  if(!aModel.IsNull()) {
+	    Handle(TCollection_HAsciiString) aUnitName = 
+	      aModel->GlobalSection().UnitName();
+	    //cout<<"aUnitName = "<<aUnitName->ToCString()<<endl;
+	    //cout<<"aUnitFlag = "<<aModel->GlobalSection().UnitFlag()<<endl;
+	    if( aUnitName->String()=="MM" ) {
+	      P = gp_Pnt(0.001,0.0,0.0);
+	    }
+	    else if( aUnitName->String()=="CM" ) {
+	      P = gp_Pnt(0.01,0.0,0.0);
+	    }
+	  }
+	  BRep_Builder B;
+	  TopoDS_Vertex V;
+	  B.MakeVertex(V,P,1.e-7);
+	  aResShape = V;
+	  return aResShape;
+	}
+	if( theFormatName == "IGES_SCALE" ) {
+	  //cout<<"need re-scale a model"<<endl;
+	  // set UnitFlag to 'meter'
+	  Handle(IGESData_IGESModel) aModel = 
+	    Handle(IGESData_IGESModel)::DownCast(aReader.Model());
+	  if(!aModel.IsNull()) {
+	    IGESData_GlobalSection aGS = aModel->GlobalSection();
+	    aGS.SetUnitFlag(6);
+	    aModel->SetGlobalSection(aGS);
+	  }
+	}
+
         MESSAGE("ImportIGES : all Geometry Transfer");
         //OCC 5.1.2 porting
         //     aReader.Clear();

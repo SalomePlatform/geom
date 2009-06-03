@@ -3204,6 +3204,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFileName The file, containing the shape.
         #  @param theFormatName Specify format for the file reading.
         #         Available formats can be obtained with InsertOp.ImportTranslators() method.
+        #         If format 'IGES_SCALE' is used instead 'IGES' length unit will be
+        #         set to 'meter' and result model will be scaled.
         #  @return New GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
@@ -3226,6 +3228,24 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def ImportIGES(self,theFileName):
             # Example: see GEOM_TestOthers.py
             return self.Import(theFileName, "IGES")
+
+        ## Return length unit from given IGES file
+        #
+        #  @ref swig_Import_Export "Example"
+        def GetIGESUnit(self,theFileName):
+            # Example: see GEOM_TestOthers.py
+            anObj = self.InsertOp.Import(theFileName, "IGES_UNIT")
+            #RaiseIfFailed("Import", self.InsertOp)
+            # recieve name using returned vertex
+            UnitName = "M"
+            vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
+            if len(vertices)>0:
+                p = self.PointCoordinates(vertices[0])
+                if abs(p[0]-0.01) < 1.e-6:
+                    UnitName = "CM"
+                elif abs(p[0]-0.001) < 1.e-6:
+                    UnitName = "MM"
+            return UnitName
 
         ## Shortcut to Import() for STEP format
         #

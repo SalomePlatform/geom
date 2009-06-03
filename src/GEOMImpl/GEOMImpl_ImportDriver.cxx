@@ -53,7 +53,8 @@
 
 typedef TopoDS_Shape (*funcPoint)(const TCollection_AsciiString&,
                                   const TCollection_AsciiString&,
-                                  TCollection_AsciiString&);
+                                  TCollection_AsciiString&,
+				  const TDF_Label&);
 
 //=======================================================================
 //function : GetID
@@ -100,14 +101,14 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
     fp = (funcPoint)GetProc( anImportLib, "Import" );
 
   if ( !fp ) {
-    TCollection_AsciiString aMsg = aFormatName;
+    TCollection_AsciiString aMsg = aFormatName.SubString(1,4);
     aMsg += " plugin was not installed";
     Standard_Failure::Raise(aMsg.ToCString());
   }
 
   // perform the import
   TCollection_AsciiString anError;
-  TopoDS_Shape aShape = fp( aFileName, aFormatName, anError );
+  TopoDS_Shape aShape = fp( aFileName, aFormatName, anError, aFunction->GetEntry() );
 
   // unload plugin library
   // commented by enk:
