@@ -22,6 +22,24 @@ Select the required file and click \b Open. Your file will be imported in
 the module and its contents (geometrical object) will be displayed in
 the <b>Object Browser</b>.
 
+\note If type of selected file is IGES and length unit in this file is not
+equal to meter following question will be offer to user:
+
+\image html iges_unit.png
+
+\par
+If answer is <b>Yes</b> result will be scaled from file unit to meter.
+
+\note If type of selected file is ACIS (optionally - for users with
+special license) and this file contains names for some shapes
+following question will be offer to user:
+
+\image html sat_named_shapes.png
+
+\par
+If answer is <b>Yes</b> needed groups by types (solid, face, edge and
+vertex) for all named shapes will be created.
+
 \note It is possible to re-open from the initial file a previously imported shape if
 the file has been changed on disk. For this, select
 <b>Reload From Disk</b> in the context menu of the imported
@@ -42,6 +60,9 @@ the name and the location of the file for exportation.
 
 \par
 Click \b Save to confirm your exportation.
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_import_export_page
 
 */
 

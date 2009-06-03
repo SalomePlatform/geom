@@ -13,6 +13,7 @@ By the links below you can find sample scripts for all operations
 provided by Geometry module.
 
 <ul>
+  <li>\subpage tui_import_export_page</li>
   <li>\subpage tui_viewing_geom_objs_page</li>
   <li>\subpage tui_creating_geom_objs_page</li>
   <ul>
