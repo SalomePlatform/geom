@@ -2584,6 +2584,8 @@ module GEOM
      *  \param theFileName The file, containing the shape.
      *  \param theFormatName Specify format for the file reading.
      *         Available formats can be obtained with <VAR>ImportTranslators()</VAR> method.
+     *         If format 'IGES_SCALE' is used instead 'IGES' length unit will be
+     *         set to 'meter' and result model will be scaled.
      *  \return New GEOM_Object, containing the imported shape.
      */
     GEOM_Object Import (in string theFileName, in string theFormatName);
@@ -3077,6 +3079,15 @@ module GEOM
      *  into python script to avoid the same names in SMESH script
      */
     string_array GetAllDumpNames();
+
+    /*!
+     *  Publishes the named subshapes of given object in the study.
+     *  \param theStudy    The study in which the object is published
+     *  \param theObject   The object which named subshapes are published
+     */
+    ListOfGO PublishNamedShapesInStudy(in SALOMEDS::Study theStudy,
+					     //in SObject theSObject,
+					     in Object theObject);
   };
 };
 
