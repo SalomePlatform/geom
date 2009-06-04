@@ -168,20 +168,22 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aFW->StatusConnected(ShapeExtend_FAIL)) {
         Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
       }
-
       // IMP 0019766
-      aFW->FixGapsByRangesMode() = Standard_True;
-      if (aFW->FixGaps3d()) {
-        Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
-        Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
-        for (Standard_Integer iedge = 1; iedge <= sbwd->NbEdges(); iedge++) {
-          TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(iedge));
-          aFe->FixVertexTolerance(aEdge);
-          aFe->FixSameParameter(aEdge);
+      if (aFW->StatusConnected(ShapeExtend_DONE3)) {
+        // Confused with <prec> but not Analyzer.Precision(), set the same
+        aFW->FixGapsByRangesMode() = Standard_True;
+        if (aFW->FixGaps3d()) {
+          Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
+          Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
+          for (Standard_Integer iedge = 1; iedge <= sbwd->NbEdges(); iedge++) {
+            TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(iedge));
+            aFe->FixVertexTolerance(aEdge);
+            aFe->FixSameParameter(aEdge);
+          }
         }
-      }
-      else if (aFW->StatusGaps3d(ShapeExtend_FAIL)) {
-        Standard_ConstructionError::Raise("Wire construction failed: cannot fix 3d gaps");
+        else if (aFW->StatusGaps3d(ShapeExtend_FAIL)) {
+          Standard_ConstructionError::Raise("Wire construction failed: cannot fix 3d gaps");
+        }
       }
 
       aShape = aFW->WireAPIMake();
