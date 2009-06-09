@@ -118,6 +118,7 @@ void RepairGUI_SuppressFacesDlg::Init()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "SUPRESS_FACE_NEW_OBJ_NAME" ) );
+  resize(100,100);
 }
 
 

@@ -134,6 +134,7 @@ void RepairGUI_RemoveHolesDlg::Init()
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================

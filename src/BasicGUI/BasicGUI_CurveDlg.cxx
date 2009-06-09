@@ -129,6 +129,7 @@ void BasicGUI_CurveDlg::Init()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) ) ;
  
   initName( tr( "GEOM_CURVE" ) );
+  resize(100,100);
   ConstructorsClicked( 0 );
 }
 

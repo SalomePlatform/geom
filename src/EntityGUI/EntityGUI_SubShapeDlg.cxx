@@ -143,7 +143,7 @@ void EntityGUI_SubShapeDlg::Init()
 	   SIGNAL( currentSelectionChanged( )), this, SLOT( SelectionIntoArgument() ) );
 
   updateButtonState();
-
+  resize(100,100);
   SelectionIntoArgument();
 }
 

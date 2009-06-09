@@ -134,6 +134,7 @@ void RepairGUI_SewingDlg::Init()
   connect( myFreeBoundBtn, SIGNAL( clicked() ), this, SLOT( onDetect() ) );
 
   initName( tr( "SEWING_NEW_OBJ_NAME" ) );
+  resize(100,100);
 }
 
 

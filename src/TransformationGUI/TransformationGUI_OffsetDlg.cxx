@@ -128,6 +128,7 @@ void TransformationGUI_OffsetDlg::Init()
   initName( tr( "GEOM_OFFSET" ) );
 
   globalSelection( GEOM_ALLSHAPES );
+  resize(100,100);
 }
 
 

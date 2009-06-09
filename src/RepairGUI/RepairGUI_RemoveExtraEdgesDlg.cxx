@@ -121,6 +121,7 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
 	   this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME" ) );
+  resize(100,100);
 }
 
 

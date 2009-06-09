@@ -161,6 +161,7 @@ void BooleanGUI_Dialog::Init()
 
   myGroup->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================

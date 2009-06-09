@@ -116,6 +116,7 @@ void RepairGUI_ChangeOrientationDlg::Init()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "CHANGE_ORIENTATION_NEW_OBJ_NAME" ) );
+  resize(100,100);
 }
 
 

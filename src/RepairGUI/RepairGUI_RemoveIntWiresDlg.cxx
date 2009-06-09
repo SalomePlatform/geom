@@ -122,6 +122,7 @@ void RepairGUI_RemoveIntWiresDlg::Init()
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 //=================================================================================

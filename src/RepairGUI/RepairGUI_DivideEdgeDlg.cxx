@@ -144,6 +144,7 @@ void RepairGUI_DivideEdgeDlg::Init()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "DEVIDE_EDGE_NEW_OBJECT_NAME" ) );
+  resize(100,100);
 }
 
 //=================================================================================
