@@ -28,6 +28,7 @@
 #include "GEOM_Gen_i.hh"
 #include "GEOM_Object_i.hh"
 
+#include <set>
 #include <strstream>
 //#include <sstream>
 
@@ -40,6 +41,7 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
+#include <GEOM_PythonDump.hxx>
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_CopyDriver.hxx"
 
@@ -750,22 +752,26 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
 // purpose  : Publish sub-shapes, standing for arguments and sub-shapes of arguments.
 //            To be used from python scripts out of geompy.addToStudy (non-default usage)
 //============================================================================
-CORBA::Boolean GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
-					      GEOM::GEOM_Object_ptr   theObject,
-					      const GEOM::ListOfGO&   theArgs,
-					      GEOM::find_shape_method theFindMethod,
-					      CORBA::Boolean          theInheritFirstArg)
+GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
+					       GEOM::GEOM_Object_ptr   theObject,
+                                               const GEOM::ListOfGO&   theArgs,
+                                               GEOM::find_shape_method theFindMethod,
+                                               CORBA::Boolean          theInheritFirstArg)
 {
+  GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
   if (CORBA::is_nil(theStudy) || CORBA::is_nil(theObject))
-    return false;
+    return aParts._retn();
 
-  // find SObject in the study
+  // find SObject in the study if it is already published
   CORBA::String_var anIORo = _orb->object_to_string(theObject);
   SALOMEDS::SObject_var aSO = theStudy->FindObjectIOR(anIORo.in());
-  if (CORBA::is_nil(aSO))
-    return false;
+  //PTv, IMP 0020001, The salome object <aSO>
+  // is not obligatory in case of invokation from script
+  // if (CORBA::is_nil(aSO))
+  //  return aParts._retn();
 
-  return RestoreSubShapes(theStudy, theObject, aSO, theArgs, theFindMethod, theInheritFirstArg);
+  aParts = RestoreSubShapes(theStudy, theObject, aSO, theArgs, theFindMethod, theInheritFirstArg);
+  return aParts._retn();
 }
 
 //============================================================================
@@ -773,18 +779,19 @@ CORBA::Boolean GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
 // purpose  : Publish sub-shapes, standing for arguments and sub-shapes of arguments.
 //            To be used from GUI and from geompy.addToStudy
 //============================================================================
-CORBA::Boolean GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
+GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
 					       SALOMEDS::SObject_ptr   theSObject,
 					       const GEOM::ListOfGO&   theArgs,
 					       GEOM::find_shape_method theFindMethod,
 					       CORBA::Boolean          theInheritFirstArg)
 {
+  GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
   if (CORBA::is_nil(theStudy) || CORBA::is_nil(theSObject))
-    return false;
+    return aParts._retn();
 
   SALOMEDS::GenericAttribute_var anAttr;
   if (!theSObject->FindAttribute(anAttr, "AttributeIOR"))
-    return false;
+    return aParts._retn();
 
   SALOMEDS::AttributeIOR_var anAttrIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
   CORBA::String_var anIORso = anAttrIOR->Value();
@@ -792,9 +799,36 @@ CORBA::Boolean GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
   // get Object from SObject
   GEOM::GEOM_Object_var anO = GEOM::GEOM_Object::_narrow(_orb->string_to_object(anIORso));
   if (CORBA::is_nil(anO))
-    return false;
+    return aParts._retn();
 
-  return RestoreSubShapes(theStudy, anO, theSObject, theArgs, theFindMethod, theInheritFirstArg);
+  aParts = RestoreSubShapes(theStudy, anO, theSObject, theArgs, theFindMethod, theInheritFirstArg);
+  aParts._retn();
+}
+
+//============================================================================
+// function : addToListOfGO
+// purpose  : static local function
+//============================================================================
+static void addToListOfGO( const GEOM::GEOM_Object_var& theObject,
+                           GEOM::ListOfGO_var& theList )
+{
+  const int oldLen = theList->length();
+  theList->length(oldLen + 1);
+  theList[ oldLen ] = theObject;
+}
+
+//============================================================================
+// function : addToListOfGO
+// purpose  : static local function
+//============================================================================
+static void addToListOfGO( GEOM::ListOfGO_var& theSrcList,
+                           GEOM::ListOfGO_var& theTrgList )
+{
+  const int oldLen = theTrgList->length();
+  const int srcLen = theSrcList->length();
+  theTrgList->length(oldLen + srcLen);
+  for( int i = 0; i < srcLen; i++ )
+    theTrgList[ oldLen + i ] = theSrcList[ i ];
 }
 
 //============================================================================
@@ -802,15 +836,18 @@ CORBA::Boolean GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
 // purpose  : Private method. Works only if both theObject and theSObject
 //            are defined, and does not check, if they correspond to each other.
 //============================================================================
-CORBA::Boolean GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
+GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
 					     GEOM::GEOM_Object_ptr   theObject,
 					     SALOMEDS::SObject_ptr   theSObject,
 					     const GEOM::ListOfGO&   theArgs,
 					     GEOM::find_shape_method theFindMethod,
 					     CORBA::Boolean          theInheritFirstArg)
 {
-  if (CORBA::is_nil(theStudy) || CORBA::is_nil(theObject) || CORBA::is_nil(theSObject))
-    return false;
+  GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
+  //PTv, IMP 0020001, The salome object <theSObject>
+  //     is not obligatory in case of invokation from script
+  if (CORBA::is_nil(theStudy) || CORBA::is_nil(theObject) /*|| CORBA::is_nil(theSObject)*/)
+    return aParts._retn();
 
   // Arguments to be published
   GEOM::ListOfGO_var aList;
@@ -834,7 +871,7 @@ CORBA::Boolean GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
   }
 
   if (aLength < 1)
-    return false;
+    return aParts._retn();
 
   if (theInheritFirstArg || (nbArgsActual == 1)) {
     // Do not publish argument's reflection,
@@ -844,139 +881,214 @@ CORBA::Boolean GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
     CORBA::String_var anIOR = _orb->object_to_string(anArgO);
     SALOMEDS::SObject_var anArgSO = theStudy->FindObjectIOR(anIOR.in());
 
-    GEOM::ListOfGO_var aParts =
-      RestoreSubShapesOneLevel(theStudy, anArgSO, theSObject, theObject, theFindMethod);
+    aParts = RestoreSubShapesOneLevel(theStudy, anArgSO, theSObject, theObject, theFindMethod);
 
     // set the color of the transformed shape to the color of initial shape
     theObject->SetColor(aList[0]->GetColor());
-
-    return (aParts->length() > 0);
   }
+  else {
+    // Get interface, containing method, which we will use to reconstruct sub-shapes
+    GEOM::GEOM_IShapesOperations_var aShapesOp = GetIShapesOperations(theStudy->StudyId());
+    GEOM::GEOM_IGroupOperations_var  aGroupOp  = GetIGroupOperations(theStudy->StudyId());
 
-  // Get interface, containing method, which we will use to reconstruct sub-shapes
-  GEOM::GEOM_IShapesOperations_var aShapesOp = GetIShapesOperations(theStudy->StudyId());
-  GEOM::GEOM_IGroupOperations_var  aGroupOp  = GetIGroupOperations(theStudy->StudyId());
+    // Reconstruct arguments and tree of sub-shapes of the arguments
+    CORBA::String_var anIOR;
+    SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
+    for (Standard_Integer i = 0; i < aLength; i++)
+    {
+      GEOM::GEOM_Object_var anArgO = aList[i];
+      if (!CORBA::is_nil(anArgO)) {
+        anIOR = _orb->object_to_string(anArgO);
+        SALOMEDS::SObject_var anArgSO = theStudy->FindObjectIOR(anIOR.in());
+        TCollection_AsciiString anArgName;
+        if (CORBA::is_nil(anArgSO)) {
+          anArgName = "arg_";
+          anArgName += TCollection_AsciiString(i);
+        }
+        else {
+          anArgName = anArgSO->GetName();
+        }
 
-  // Reconstruct arguments and tree of sub-shapes of the arguments
-  CORBA::String_var anIOR;
-  SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
-  for (Standard_Integer i = 0; i < aLength; i++)
-  {
-    GEOM::GEOM_Object_var anArgO = aList[i];
-    if (!CORBA::is_nil(anArgO)) {
-      anIOR = _orb->object_to_string(anArgO);
-      SALOMEDS::SObject_var anArgSO = theStudy->FindObjectIOR(anIOR.in());
-      TCollection_AsciiString anArgName;
-      if (CORBA::is_nil(anArgSO)) {
-	anArgName = "arg_";
-	anArgName += TCollection_AsciiString(i);
+        // Find a sub-shape of theObject in place of the argument
+        GEOM::GEOM_Object_var aSubO;
+        switch (theFindMethod) {
+        case GEOM::FSM_GetInPlace:
+          {
+            // Use GetInPlace
+            aSubO = aShapesOp->GetInPlace(theObject, anArgO);
+          }
+          break;
+        case GEOM::FSM_Transformed:
+          {
+            // transformation, cannot use GetInPlace, operate with indices
+            GEOM::ListOfLong_var anIDs = anArgO->GetSubShapeIndices();
+            if (anIDs->length() > 1) {
+              // group
+              aSubO = aGroupOp->CreateGroup(theObject, aGroupOp->GetType(anArgO));
+              if (!CORBA::is_nil(aSubO))
+                aGroupOp->UnionIDs(aSubO, anIDs);
+            }
+            else {
+              // single sub-shape
+              aSubO = aShapesOp->GetSubShape(theObject, anIDs[0]);
+            }
+          }
+          break;
+        case GEOM::FSM_GetSame:
+          {
+            // Use GetSame
+            aSubO = aShapesOp->GetSame(theObject, anArgO);
+          }
+          break;
+        case GEOM::FSM_GetShapesOnShape:
+          {
+            // Use GetShapesOnShape. Can work only on solids, so it has sense to search only solids
+            aSubO = aShapesOp->GetShapesOnShapeAsCompound(anArgO, theObject,
+              (short)GEOM::SOLID, GEOM::ST_ONIN);
+          }
+          break;
+        case GEOM::FSM_GetInPlaceByHistory:
+          {
+            // Use GetInPlaceByHistory
+            aSubO = aShapesOp->GetInPlaceByHistory(theObject, anArgO);
+          }
+          break;
+        default:
+          {}
+        }
+
+        if (!CORBA::is_nil(aSubO)) {
+          // add to parts list
+          addToListOfGO( aSubO, aParts );
+
+          // Publish the sub-shape
+          SALOMEDS::SObject_var aSubSO;
+	  if (!CORBA::is_nil(theSObject)) {
+            TCollection_AsciiString aSubName ("from_");
+            aSubName += anArgName;
+            aSubSO = aStudyBuilder->NewObject(theSObject);
+            aSubSO = PublishInStudy(theStudy, aSubSO, aSubO, aSubName.ToCString());
+            // Restore color
+            aSubO->SetColor(anArgO->GetColor());
+          }
+
+          if (!CORBA::is_nil(anArgSO)) {
+            // Restore published sub-shapes of the argument
+            GEOM::ListOfGO_var aSubParts;
+            if (theFindMethod == GEOM::FSM_GetInPlaceByHistory)
+              // pass theObject, because only it has the history
+              aSubParts = RestoreSubShapesOneLevel(theStudy, anArgSO, aSubSO, theObject, theFindMethod);
+            else
+              aSubParts = RestoreSubShapesOneLevel(theStudy, anArgSO, aSubSO, aSubO, theFindMethod);
+            // add to parts list
+            addToListOfGO( aSubParts, aParts );
+          }
+        }
+        else { // GetInPlace failed, try to build from published parts
+          if (!CORBA::is_nil(anArgSO)) {
+            SALOMEDS::SObject_var aSubSO;
+	    if (!CORBA::is_nil(theSObject))
+              aSubSO = aStudyBuilder->NewObject(theSObject);
+
+            // Restore published sub-shapes of the argument
+            GEOM::ListOfGO_var aSubParts =
+              RestoreSubShapesOneLevel(theStudy, anArgSO, aSubSO, theObject, theFindMethod);
+
+            // add to parts list
+            addToListOfGO( aSubParts, aParts );
+
+            if (aSubParts->length() > 0) {
+              // try to build an argument from a set of its sub-shapes,
+              // that published and will be reconstructed
+              if (aSubParts->length() > 1) {
+                aSubO = aShapesOp->MakeCompound(aSubParts);
+                // add to parts list
+                addToListOfGO( aSubO, aParts );
+              }
+              else {
+                aSubO = aSubParts[0];
+              }
+              if (!CORBA::is_nil(aSubO) && !CORBA::is_nil(aSubSO)) {
+                // Publish the sub-shape
+                TCollection_AsciiString aSubName ("from_parts_of_");
+                aSubName += anArgName;
+                aSubSO = PublishInStudy(theStudy, aSubSO, aSubO, aSubName.ToCString());
+                // Restore color
+                aSubO->SetColor(anArgO->GetColor());
+              }
+            }
+            else if (!CORBA::is_nil(aSubSO)) {
+              // remove created aSubSO, because no parts have been found
+              aStudyBuilder->RemoveObject(aSubSO);
+            }
+          }
+        } // try to build from published parts
       }
-      else {
-	anArgName = anArgSO->GetName();
-      }
-
-      // Find a sub-shape of theObject in place of the argument
-      GEOM::GEOM_Object_var aSubO;
-      switch (theFindMethod) {
-      case GEOM::FSM_GetInPlace:
-	{
-	  // Use GetInPlace
-	  aSubO = aShapesOp->GetInPlace(theObject, anArgO);
-	}
-	break;
-      case GEOM::FSM_Transformed:
-	{
-	  // transformation, cannot use GetInPlace, operate with indices
-	  GEOM::ListOfLong_var anIDs = anArgO->GetSubShapeIndices();
-	  if (anIDs->length() > 1) {
-	    // group
-	    aSubO = aGroupOp->CreateGroup(theObject, aGroupOp->GetType(anArgO));
-	    if (!CORBA::is_nil(aSubO))
-	      aGroupOp->UnionIDs(aSubO, anIDs);
-	  }
-	  else {
-	    // single sub-shape
-	    aSubO = aShapesOp->GetSubShape(theObject, anIDs[0]);
-	  }
-	}
-	break;
-      case GEOM::FSM_GetSame:
-	{
-	  // Use GetSame
-	  aSubO = aShapesOp->GetSame(theObject, anArgO);
-	}
-	break;
-      case GEOM::FSM_GetShapesOnShape:
-	{
-	  // Use GetShapesOnShape. Can work only on solids, so it has sense to search only solids
-	  aSubO = aShapesOp->GetShapesOnShapeAsCompound(anArgO, theObject,
-							(short)GEOM::SOLID, GEOM::ST_ONIN);
-	}
-	break;
-      case GEOM::FSM_GetInPlaceByHistory:
-	{
-	  // Use GetInPlaceByHistory
-	  aSubO = aShapesOp->GetInPlaceByHistory(theObject, anArgO);
-	}
-	break;
-      default:
-	{}
-      }
-
-      if (!CORBA::is_nil(aSubO)) {
-	// Publish the sub-shape
-	TCollection_AsciiString aSubName ("from_");
-	aSubName += anArgName;
-	SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(theSObject);
-	aSubSO = PublishInStudy(theStudy, aSubSO, aSubO, aSubName.ToCString());
-	// Restore color
-	aSubO->SetColor(anArgO->GetColor());
-
-	if (!CORBA::is_nil(anArgSO)) {
-	  // Restore published sub-shapes of the argument
-	  if (theFindMethod == GEOM::FSM_GetInPlaceByHistory)
-	    // pass theObject, because only it has the history
-	    RestoreSubShapesOneLevel(theStudy, anArgSO, aSubSO, theObject, theFindMethod);
-	  else
-	    RestoreSubShapesOneLevel(theStudy, anArgSO, aSubSO, aSubO, theFindMethod);
-	}
-      }
-      else { // GetInPlace failed, try to build from published parts
-	if (!CORBA::is_nil(anArgSO)) {
-	  SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(theSObject);
-
-	  // Restore published sub-shapes of the argument
-	  GEOM::ListOfGO_var aParts =
-	    RestoreSubShapesOneLevel(theStudy, anArgSO, aSubSO, theObject, theFindMethod);
-
-	  if (aParts->length() > 0) {
-	    // try to build an argument from a set of its sub-shapes,
-	    // that published and will be reconstructed
-	    if (aParts->length() > 1) {
-	      aSubO = aShapesOp->MakeCompound(aParts);
-	    }
-	    else {
-	      aSubO = aParts[0];
-	    }
-	    if (!CORBA::is_nil(aSubO)) {
-	      // Publish the sub-shape
-	      TCollection_AsciiString aSubName ("from_parts_of_");
-	      aSubName += anArgName;
-	      aSubSO = PublishInStudy(theStudy, aSubSO, aSubO, aSubName.ToCString());
-	      // Restore color
-	      aSubO->SetColor(anArgO->GetColor());
-	    }
-	  }
-	  else {
-	    // remove created aSubSO, because no parts have been found
-	    aStudyBuilder->RemoveObject(aSubSO);
-	  }
-	}
-      } // try to build from published parts
+    } // process arguments
+  }
+ set<string> anObjEntryMap;
+ GEOM::ListOfGO_var aResParts = new GEOM::ListOfGO;
+ int nbRes = 0;
+ int nb = aParts->length();
+ aResParts->length(nb);
+ if (nb > 0)
+ {
+    Handle(GEOM_Object) aMainObj = _impl->GetObject(theObject->GetStudyID(), theObject->GetEntry());
+    Handle(GEOM_Function) aFunction = aMainObj->GetLastFunction();
+    GEOM::TPythonDump pd (aFunction, true);
+    pd <<"[";
+    int i = 0, j = 0;
+    for ( ; i < nb; i++ )
+    {
+      const GEOM::GEOM_Object_var& anObj = aParts[ i ];
+      if (CORBA::is_nil(anObj))
+        continue;
+      char* anEntry = anObj->GetEntry();
+      if (anObjEntryMap.count(anEntry))
+        continue; // already treated
+      anObjEntryMap.insert(anEntry);
+      aResParts[nbRes++] = anObj;
+      // clear python dump of object
+      Handle(GEOM_Object) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anEntry);
+      Handle(GEOM_Function) anObjFun = aGeomObj->GetLastFunction();
+      if ( !anObjFun.IsNull() )
+        anObjFun->SetDescription( "" );
+      if ( j > 0 )
+        pd << ", ";
+      pd << aGeomObj;
+      j++;
     }
-  } // process arguments
-
-  return true;
+    pd <<"]" << " = geompy.RestoreSubShapes(" << aMainObj << ", " << "[";
+    i = 0; nb = theArgs.length(); j = 0;
+    for ( ; i < nb; i++ )
+    {
+      GEOM::GEOM_Object_var anObj = theArgs[ i ];
+      if (CORBA::is_nil(anObj))
+        continue;
+      Handle(GEOM_Object) aGeomObj = _impl->GetObject(anObj->GetStudyID(), anObj->GetEntry());
+      if ( j > 0 )
+        pd << ", ";
+      pd << aGeomObj;
+      j++;
+    }
+    pd <<"]" << ", " <<"geompy.GEOM.";
+    switch (theFindMethod) {
+    case GEOM::FSM_GetInPlace:
+      pd << "FSM_GetInPlace"; break;
+    case GEOM::FSM_Transformed:
+      pd << "FSM_Transformed"; break;
+    case GEOM::FSM_GetSame:
+      pd << "FSM_GetSame"; break;
+    case GEOM::FSM_GetShapesOnShape:
+      pd << "FSM_GetShapesOnShape"; break;
+    case GEOM::FSM_GetInPlaceByHistory:
+    default:
+      pd << "FSM_GetInPlaceByHistory"; break;
+    }
+    pd << ", " << theInheritFirstArg << ")";
+  }
+  aResParts->length(nbRes);
+  return aResParts._retn();
 }
 
 //============================================================================
@@ -991,8 +1103,9 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
 {
   int i = 0;
   GEOM::ListOfGO_var aParts = new GEOM::ListOfGO;
+  GEOM::ListOfGO_var aNewParts = new GEOM::ListOfGO;
   if (CORBA::is_nil(theStudy) || CORBA::is_nil(theOldSO) ||
-      CORBA::is_nil(theNewO) || CORBA::is_nil(theNewSO))
+      CORBA::is_nil(theNewO) /*|| CORBA::is_nil(theNewSO)*/)
     return aParts._retn();
 
   SALOMEDS::StudyBuilder_var aStudyBuilder = theStudy->NewBuilder();
@@ -1073,53 +1186,68 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
 	  // add the part to the list
 	  aParts[i] = aNewSubO;
 	  i++;
+          // add to parts list
+          addToListOfGO( aNewSubO, aNewParts );
 
-	  // Publish the sub-shape
-	  TCollection_AsciiString aSubName ("from_");
-	  aSubName += anArgName;
-	  SALOMEDS::SObject_var aNewSubSO = aStudyBuilder->NewObject(theNewSO);
-	  aNewSubSO = PublishInStudy(theStudy, aNewSubSO, aNewSubO, aSubName.ToCString());
-	  // Restore color
-	  aNewSubO->SetColor(anOldSubO->GetColor());
-
+          SALOMEDS::SObject_var aNewSubSO;
+          if (!CORBA::is_nil(theNewSO)) {
+  	    // Publish the sub-shape
+	    TCollection_AsciiString aSubName ("from_");
+	    aSubName += anArgName;
+	    aNewSubSO = aStudyBuilder->NewObject(theNewSO);
+	    aNewSubSO = PublishInStudy(theStudy, aNewSubSO, aNewSubO, aSubName.ToCString());
+	    // Restore color
+	    aNewSubO->SetColor(anOldSubO->GetColor());
+          }
 	  // Restore published sub-shapes of the argument
+	  GEOM::ListOfGO_var aSubParts;
 	  if (theFindMethod == GEOM::FSM_GetInPlaceByHistory)
 	    // pass the main shape as Object, because only it has the history
-	    RestoreSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO, theNewO, theFindMethod);
+	    aSubParts = RestoreSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO, theNewO, theFindMethod);
 	  else
-	    RestoreSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO, aNewSubO, theFindMethod);
+	    aSubParts = RestoreSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO, aNewSubO, theFindMethod);
+          // add to parts list
+          addToListOfGO( aSubParts, aNewParts );
 	}
 	else { // GetInPlace failed, try to build from published parts
-	  SALOMEDS::SObject_var aNewSubSO = aStudyBuilder->NewObject(theNewSO);
+	  SALOMEDS::SObject_var aNewSubSO;
+          if (!CORBA::is_nil(theNewSO))
+            aNewSubSO = aStudyBuilder->NewObject(theNewSO);
 
 	  // Restore published sub-shapes of the argument
-	  GEOM::ListOfGO_var aParts =
+	  GEOM::ListOfGO_var aSubParts =
 	    RestoreSubShapesOneLevel(theStudy, anOldSubSO, aNewSubSO, theNewO, theFindMethod);
+          // add to parts list
+          addToListOfGO( aSubParts, aNewParts );
 
-	  if (aParts->length() > 0) {
+	  if (aSubParts->length() > 0) {
 	    // try to build an object from a set of its sub-shapes,
 	    // that published and will be reconstructed
-	    if (aParts->length() > 1) {
-	      aNewSubO = aShapesOp->MakeCompound(aParts);
+	    if (aSubParts->length() > 1) {
+	      aNewSubO = aShapesOp->MakeCompound(aSubParts);
+              // add to parts list
+              addToListOfGO( aNewSubO, aNewParts );
 	    }
 	    else {
-	      aNewSubO = aParts[0];
+	      aNewSubO = aSubParts[0];
 	    }
 
 	    if (!CORBA::is_nil(aNewSubO)) {
 	      // add the part to the list
-	      aParts[i] = aNewSubO;
+	      aSubParts[i] = aNewSubO;
 	      i++;
 
 	      // Publish the sub-shape
-	      TCollection_AsciiString aSubName = "from_parts_of_";
-	      aSubName += anArgName;
-	      aNewSubSO = PublishInStudy(theStudy, aNewSubSO, aNewSubO, aSubName.ToCString());
-	      // Restore color
-	      aNewSubO->SetColor(anOldSubO->GetColor());
+	      if (!CORBA::is_nil(aNewSubSO)) {
+	        TCollection_AsciiString aSubName = "from_parts_of_";
+	        aSubName += anArgName;
+	        aNewSubSO = PublishInStudy(theStudy, aNewSubSO, aNewSubO, aSubName.ToCString());
+	        // Restore color
+	        aNewSubO->SetColor(anOldSubO->GetColor());
+              }
 	    }
 	  }
-	  else {
+	  else if (!CORBA::is_nil(aNewSubSO)) {
 	    // remove created aSubSO, because no parts have been found
 	    aStudyBuilder->RemoveObject(aNewSubSO);
 	  }
@@ -1129,6 +1257,8 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesOneLevel (SALOMEDS::Study_ptr     th
   } // iterate on published sub-shapes
 
   aParts->length(i);
+  // add to parts list
+  addToListOfGO( aNewParts, aParts );
   return aParts._retn();
 }
 

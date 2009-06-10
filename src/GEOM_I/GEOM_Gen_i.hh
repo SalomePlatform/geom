@@ -143,20 +143,20 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
    *         To be used from python scripts out of geompy.addToStudy (non-default usage)
    */
-  CORBA::Boolean RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
-				    GEOM::GEOM_Object_ptr   theObject,
-				    const GEOM::ListOfGO&   theArgs,
-				    GEOM::find_shape_method theFindMethod,
-				    CORBA::Boolean          theInheritFirstArg);
+  GEOM::ListOfGO* RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
+				     GEOM::GEOM_Object_ptr   theObject,
+                                     const GEOM::ListOfGO&   theArgs,
+                                     GEOM::find_shape_method theFindMethod,
+                                     CORBA::Boolean          theInheritFirstArg);
 
   /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
    *         To be used from GUI and from geompy.addToStudy
    */
-  CORBA::Boolean RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
-				     SALOMEDS::SObject_ptr   theSObject,
-				     const GEOM::ListOfGO&   theArgs,
-				     GEOM::find_shape_method theFindMethod,
-				     CORBA::Boolean          theInheritFirstArg);
+  GEOM::ListOfGO* RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
+				      SALOMEDS::SObject_ptr   theSObject,
+                                      const GEOM::ListOfGO&   theArgs,
+                                      GEOM::find_shape_method theFindMethod,
+                                      CORBA::Boolean          theInheritFirstArg);
 
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
@@ -255,12 +255,12 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 					    GEOM::GEOM_Object_ptr   theNewO,
 					    GEOM::find_shape_method theFindMethod);
 
-  CORBA::Boolean RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
-				   GEOM::GEOM_Object_ptr   theObject,
-				   SALOMEDS::SObject_ptr   theSObject,
-				   const GEOM::ListOfGO&   theArgs,
-				   GEOM::find_shape_method theFindMethod,
-				   CORBA::Boolean          theInheritFirstArg);
+  GEOM::ListOfGO* RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
+				    GEOM::GEOM_Object_ptr   theObject,
+                                    SALOMEDS::SObject_ptr   theSObject,
+                                    const GEOM::ListOfGO&   theArgs,
+                                    GEOM::find_shape_method theFindMethod,
+                                    CORBA::Boolean          theInheritFirstArg);
 
   // auxilary for PublishNamedShapesInStudy
   void CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,

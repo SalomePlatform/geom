@@ -2991,11 +2991,11 @@ module GEOM
      *                            considered as True, not regarding really passed value.
      *  \return True in case of success, False otherwise.
      */
-    boolean RestoreSubShapesO (in SALOMEDS::Study   theStudy,
-			       in GEOM_Object       theObject,
-			       in ListOfGO          theArgs,
-			       in find_shape_method theFindMethod,
-			       in boolean           theInheritFirstArg);
+    ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
+		 	        in GEOM_Object       theObject,
+			        in ListOfGO          theArgs,
+			        in find_shape_method theFindMethod,
+			        in boolean           theInheritFirstArg);
 
     /*!
      *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
@@ -3003,11 +3003,11 @@ module GEOM
      *  Work like the above method, but accepts study object theSObject instead of GEOM_Object.
      *  \param theSObject study object, referencing GEOM object, arguments of which will be published
      */
-    boolean RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
-				in SALOMEDS::SObject theSObject,
-				in ListOfGO          theArgs,
-				in find_shape_method theFindMethod,
-				in boolean           theInheritFirstArg);
+    ListOfGO RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
+				 in SALOMEDS::SObject theSObject,
+				 in ListOfGO          theArgs,
+				 in find_shape_method theFindMethod,
+				 in boolean           theInheritFirstArg);
 
     /*!
      *  Methods to access interfaces for objects creation and transformation
