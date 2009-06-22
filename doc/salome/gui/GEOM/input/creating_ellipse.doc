@@ -16,8 +16,8 @@ corresponds to the OZ axis of the global coordinate system and <b>Major Axis</b>
 corresponds to the OX axis of the global coordinate system.
 
 
-\note Actual direction of the major axis vector is defined as
-<EM> Vmaj' = (Vn * Vmaj) * Vn</em> where \em Vn is a normal vector and
+\note The actual direction of the major axis vector is defined as
+<EM> Vmaj' = (Vn * Vmaj) * Vn</em>, where \em Vn is a normal vector and
 \em Vmaj is an original vector of the major axis.
 
 \n <b>TUI Command (no major axis):</b> <em>geompy.MakeEllipse(Point, Vector, RadiusMajor, RadiusMinor)</em>

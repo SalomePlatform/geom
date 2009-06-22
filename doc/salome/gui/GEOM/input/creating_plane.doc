@@ -26,13 +26,13 @@ of the plane).
 
 \image html plane2.png
 
-\n Also, you can define a \b Plane by another \b Plane or <b>Face</b> and a <b>Size of the Plane</b>.
+\n Thirdly, you can define a \b Plane by another \b Plane or <b>Face</b> and a <b>Size of the Plane</b>.
 \n <b>TUI Command:</b> <em>geompy.MakePlaneFace(Face, TrimSize)</em>
 \n <b>Arguments:</b> Name + 1 face + 1 value (to define the size of the plane).
 
 \image html plane3.png
 
-\n Also, you can define a \b Plane by two Vectors. The first vector defines the center point and the direction, 
+\n Fourthly, you can define a \b Plane by two Vectors. The first vector defines the center point and the direction, 
 the second vector defines the normal to the Plane.
 \n <b>TUI Command:</b> <em>geompy.MakePlane2Vec(Vec1, Vec2, TrimSize)</em>
 \n <b>Arguments:</b> Name + 2 vectors + 1 value (to define the size of the plane).

@@ -6,9 +6,10 @@
 
 \n You can create a \b Wire from several connected edges and wires by
 selecting them in the object browser or in the viewer holding Shift
-button. Select \b Tolerance which will be used to check
-connections. If you use \b Tolerance more than 1e-07, and gap,
-covered by this tolerance, is detected, edges will be modified to
+button. 
+\n Select \b Tolerance which will be used to check the
+connections. If the \b Tolerance value is more than 1e-07, and a gap
+within this tolerance is detected, the corresponding edges will be modified to
 connect in the middle of the gap.
 \n The \b Result will be a \b GEOM_Object (WIRE).
 
