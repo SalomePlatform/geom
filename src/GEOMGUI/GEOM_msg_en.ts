@@ -3775,6 +3775,14 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_IMPORT_ERRORS</source>
             <translation>Import operation has finished with errors:</translation>
         </message>
+        <message>
+            <source>GEOM_PUBLISH_NAMED_SHAPES</source>
+            <translation>Create groups for named shapes (if there are any)?</translation>
+        </message>
+        <message>
+            <source>GEOM_SCALE_DIMENSIONS</source>
+            <translation>Length unit in the file is not a 'meter'. Do you want to scale a model?</translation>
+        </message>
     </context>
     <context>
         <name>BasicGUI_EllipseDlg</name>

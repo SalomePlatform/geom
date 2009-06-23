@@ -713,7 +713,7 @@ bool GEOMToolsGUI::Import()
 	  if( aUnitName != "M" ) {
 	    if( SUIT_MessageBox::question( app->desktop(),
 					   "Question",//tr("WRN_WARNING"),
-					   "Length unit in given file is not a 'meter'. Is it needed to scale a model?",
+					   QObject::tr("GEOM_SCALE_DIMENSIONS"),
 					   SUIT_MessageBox::Yes | SUIT_MessageBox::No,
 					   SUIT_MessageBox::No) == SUIT_MessageBox::Yes ) {
 	      fileT = "IGES_SCALE";
@@ -739,7 +739,7 @@ bool GEOMToolsGUI::Import()
 	if( aCurrentType == "ACIS" ) {
 	  if( SUIT_MessageBox::question( app->desktop(),
 					 "Question",//tr("WRN_WARNING"),
-					 "Given file contents some names. Is it needed to create groups for named shapes?",
+					 tr("GEOM_PUBLISH_NAMED_SHAPES"),
 					 SUIT_MessageBox::Yes | SUIT_MessageBox::No,
 					 SUIT_MessageBox::No) == SUIT_MessageBox::Yes ) {
 	    GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy(aDSStudy, anObj);
