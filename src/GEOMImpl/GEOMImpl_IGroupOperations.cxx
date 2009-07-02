@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IGroupOperations.hxx>
@@ -733,8 +733,8 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::GetMainShape (Handle(GEOM_Object)
   if (aMainShape.IsNull()) return NULL;
 
   //Make a Python command
-  GEOM::TPythonDump(aGroupFunction, /*append=*/true)
-    << aMainShape << " = geompy.GetMainShape(" << theGroup << ")";
+  //GEOM::TPythonDump(aGroupFunction, /*append=*/true)
+  //  << aMainShape << " = geompy.GetMainShape(" << theGroup << ")";
 
   SetErrorCode(OK);
   return aMainShape;
