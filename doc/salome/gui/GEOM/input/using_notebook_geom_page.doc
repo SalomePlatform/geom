@@ -14,5 +14,14 @@ limitations:
 <li> \ref color_page "Select color" dialog box.
 <li> \ref isolines_page "Select Number of Isos" dialog box.
 </ul>
+
+Here is an example of using of variables, which were previously set by
+SALOME NoteBook, in Geometry GUI:
+
+\image html box3.png "Box creation in Geometry module"
+
+Our <b>TUI Scripts</b> provide you with useful examples of 
+\ref tui_notebook_geom "Using SALOME NoteBook".
+
 */
 
