@@ -24,7 +24,7 @@
 // Created:	Fri Dec 19 10:27:31 2003
 // Author:	Peter KURNEV
 //		<pkv@irinox>
-//
+
 #include <NMTTools_PaveFiller.ixx>
 
 #include <Precision.hxx>
@@ -100,10 +100,12 @@
 #include <NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx>
 #include <NMTTools_MapOfPaveBlock.hxx>
 
+/*
 static
   void SharedEdges1(const TopoDS_Face& aF1,
 		    const TopoDS_Face& aF2,
 		    TopTools_ListOfShape& aLS);
+*/
 static
   Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE, 
 			       IntTools_Context& aCtx);
@@ -116,15 +118,15 @@ static
 {
   myIsDone=Standard_False;
   //
-  Standard_Boolean bJustAdd;//, bIsComputed, bIsFound;
-  Standard_Integer n1, n2, anIndexIn, nF1, nF2, aBlockLength, aNbFFs;
   Standard_Boolean bToApproxC3d, bToApproxC2dOnS1, bToApproxC2dOnS2, bIsDone;
+  Standard_Boolean bJustAdd;
+  Standard_Integer n1, n2, anIndexIn, nF1, nF2, aBlockLength, aNbFFs;
   Standard_Integer aNbCurves, aNbPoints;
   Standard_Real anApproxTol, aTolR3D, aTolR2D;
   BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger aMapWhat, aMapWith;
   IntTools_SequenceOfPntOn2Faces aPnts;
   IntTools_SequenceOfCurves aCvs;
-  BooleanOperations_KindOfInterference aTypeFF=BooleanOperations_SurfaceSurface;
+  //BooleanOperations_KindOfInterference aTypeFF=BooleanOperations_SurfaceSurface;
   //
   BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
   //
@@ -170,18 +172,11 @@ static
     //
     bIsDone=aFF.IsDone();
     //
-
     if (!bIsDone) {
-      /*
-      if (!bIsFound) {
-	myIntrPool->AddInterference (nF1, nF2, aTypeFF, anIndexIn);
-      }
-      else {
-	BOPTools_SSInterference anInterf (nF1, nF2, 1.e-07, 1.e-07, aCvs, aPnts);
-	anIndexIn=aFFs.Append(anInterf);
-	myIntrPool->AddInterference (nF1, nF2, aTypeFF, anIndexIn);
-      }
-      */
+      //modified by NIZNHY-PKV Tue Jun 30 09:36:28 2009f 
+      BOPTools_SSInterference anInterf (nF1, nF2, 1.e-07, 1.e-07, aCvs, aPnts);
+      anIndexIn=aFFs.Append(anInterf);
+      //modified by NIZNHY-PKV Tue Jun 30 09:36:31 2009t
       continue;
     }
     //
@@ -224,7 +219,7 @@ static
   //
   Standard_Boolean bIsExistingPaveBlock, bIsValidIn2D, bIsCoincided;
   Standard_Boolean bIsMicroEdge, bHasES;
-  Standard_Integer i, aNbFFs, nF1, nF2, aBid=0;
+  Standard_Integer i, aNbFFs, nF1, nF2;
   Standard_Integer nV1, nV2, j, aNbCurves;
   Standard_Real aTolR3D, aTol2D, aT1, aT2, aTolPPC=Precision::PConfusion();
   NMTTools_IndexedDataMapOfShapePaveBlock aMEPB;
@@ -672,7 +667,7 @@ static
 	TopoDS_Face aF1FWD, aF2FWD;
 	//
 	NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
-	const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
+	//const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
 	//
 	aPB=aCB.PaveBlock1();
 	mE=aPB.Edge(); // index of edge in tDS
@@ -791,7 +786,6 @@ static
   } 
   // Check common blocks between edges and faces
   // Build P-Curves if they were not built in previos block.
-  //
   // The main case is :arguments for e.g aEdge, aFace -> no FFs, 
   // but p-curves are needed.
   //
@@ -894,15 +888,12 @@ static
   anIt.Initialize(aLSE);
   for (; anIt.More(); anIt.Next()) {
     const TopoDS_Edge& aE=TopoDS::Edge(anIt.Value());
-    //modified by NIZNHY-PKV Mon Nov 17 09:54:43 2008f //0019974
     aTolE=BRep_Tool::Tolerance(aE);
     aTol=aTolR3D;
     if (aTolE>aTol) {
       aTol=aTolE;
     }
     iC=CheckIntermediatePoint(aPBNew, aE, aTol);
-    //iC=CheckIntermediatePoint(aPBNew, aE, aTolR3D);
-    //modified by NIZNHY-PKV Mon Nov 17 09:54:45 2008t
     if (!iC) {
       return !bFlag;
     }
@@ -1162,6 +1153,7 @@ static
 //function : SharedEdges1
 //purpose  : 
 //=======================================================================
+/*
 void SharedEdges1(const TopoDS_Face& aF1,
 		  const TopoDS_Face& aF2,
 		  TopTools_ListOfShape& aLS)
@@ -1189,6 +1181,7 @@ void SharedEdges1(const TopoDS_Face& aF1,
     }
   }
 }
+*/
 
 //=======================================================================
 // function: CheckCoincidence
