@@ -170,6 +170,7 @@ tree_group_face.png		\
 tree_group_solid.png		\
 tree_lcs.png			\
 vector.png			\
+vector_mode.png                 \
 vector2points.png		\
 vectordxyz.png			\
 whatis.png			\

@@ -909,6 +909,10 @@
             <source>ICO_SHADING</source>
             <translation>shading.png</translation>
         </message>
+	<message>
+            <source>ICO_VECTOR_MODE</source>
+            <translation>vector_mode.png</translation>
+        </message>
         <message>
             <source>ICO_SHAPE_PROCESS</source>
             <translation>shapeprocess.png</translation>

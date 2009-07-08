@@ -402,8 +402,10 @@ void GeometryGUI::OnGUIEvent( int id )
 	   id == 214  ||  // MENU VIEW - ERASE ALL
 	   id == 215  ||  // MENU VIEW - ERASE
 	   id == 216  ||  // MENU VIEW - DISPLAY
+	   id == 218  ||  // MENU VIEW - VECTOR MODE
 	   id == 80311 ||  // POPUP VIEWER - WIREFRAME
-	   id == 80312 ) { // POPUP VIEWER - SHADING
+	   id == 80312 ||  // POPUP VIEWER - SHADING
+	   id == 80313 ) { // POPUP VIEWER - VECTORS
 #ifndef WNT
 	library = getLibrary( "libDisplayGUI.so" );
 #else
@@ -880,6 +882,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 212, "DISPLAY_ALL" );
   createGeomAction( 214, "ERASE_ALL" );
   createGeomAction( 216, "DISPLAY" );
+  createGeomAction( 218, "VECTOR_MODE");
   createGeomAction( 2171, "VERTEX_SEL_ONLY" ,"", 0, true );
   createGeomAction( 2172, "EDGE_SEL_ONLY", "", 0, true );
   createGeomAction( 2173, "WIRE_SEL_ONLY", "",  0, true );
@@ -894,6 +897,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 901, "POP_RENAME", "", Qt::Key_F2 );
   createGeomAction( 80311, "POP_WIREFRAME", "", 0, true );
   createGeomAction( 80312, "POP_SHADING", "", 0, true );
+  createGeomAction( 80313, "POP_VECTORS", "", 0, true );
   createGeomAction( 8032, "POP_COLOR" );
   createGeomAction( 8033, "POP_TRANSPARENCY" );
   createGeomAction( 8034, "POP_ISOS" );
@@ -1059,6 +1063,8 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   int dispmodeId = createMenu( tr( "MEN_DISPLAY_MODE" ), viewId, -1 );
   createMenu( 211, dispmodeId, -1 );
+  createMenu( separator(), dispmodeId, -1 );
+  createMenu( 218, dispmodeId, -1 );
 
   createMenu( separator(), viewId, -1 );
   createMenu( 212, viewId, -1 );
@@ -1149,6 +1155,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  80312 ), dispmodeId, -1 ); // shading
   mgr->setRule( action( 80312 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( 80312 ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
+  mgr->insert( separator(), dispmodeId, -1 );
+  mgr->insert( action(  80313 ), dispmodeId, -1 ); // vectors
+  mgr->setRule( action( 80313 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( 80313 ), clientOCCorVTK + " and isVectorsMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8032 ), -1, -1 ); // color
   mgr->setRule( action( 8032 ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
@@ -1281,6 +1291,10 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   sm->setSelectedObjects( selected, true );   //NPAL 19674
 
+  QMenu* viewMenu = menuMgr()->findMenu( STD_Application::MenuViewId );
+  if ( viewMenu )
+    connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ) );
+
   return true;
 }
 
@@ -1291,6 +1305,10 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 //=======================================================================
 bool GeometryGUI::deactivateModule( SUIT_Study* study )
 {
+  QMenu* viewMenu = menuMgr()->findMenu( STD_Application::MenuViewId );
+  if ( viewMenu )
+    disconnect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ) );
+
   setMenuShown( false );
   setToolShown( false );
 
@@ -2043,5 +2061,19 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       if (occVMod)
         occVMod->Repaint();
     }
+  }
+}
+
+void GeometryGUI::onViewAboutToShow()
+{
+  SUIT_ViewWindow* window = application()->desktop()->activeWindow();
+  QAction* a = action( 218 );
+  if ( window ) {
+    a->setEnabled(true);
+    bool vmode = window->getCustomData("VectorsMode").toBool();
+    a->setText ( vmode == 1 ? tr( "MEN_VECTOR_MODE_OFF" ) : tr("MEN_VECTOR_MODE_ON") );
+  } else {
+    a->setText ( tr("MEN_VECTOR_MODE_ON") );
+    a->setEnabled(false);
   }
 }

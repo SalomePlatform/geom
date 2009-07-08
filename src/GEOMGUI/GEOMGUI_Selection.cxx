@@ -41,11 +41,14 @@
 #include <SOCC_Prs.h>
 #include <SVTK_Prs.h>
 #include <SALOME_Actor.h>
+#include <GEOM_Actor.h>
 
 #include <OCCViewer_ViewModel.h>
 #include <SVTK_ViewModel.h>
 
 #include <GEOMImpl_Types.hxx>
+
+#include <GEOM_AISShape.hxx>
 
 // OCCT Includes
 #include <AIS.hxx>
@@ -84,6 +87,8 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
     return QVariant( displayMode( ind ) );
   else if ( p == "isAutoColor" )
     return QVariant( isAutoColor( ind ) );
+  else if ( p == "isVectorsMode" )
+    return QVariant( isVectorsMode( ind ) );
   else
     return LightApp_Selection::parameter( ind, p );
 }
@@ -175,6 +180,42 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
     }
   }
   return "";
+}
+
+bool GEOMGUI_Selection::isVectorsMode( const int index ) const
+{
+  bool ret = false;
+  SALOME_View* view = GEOM_Displayer::GetActiveView();
+  QString viewType = activeViewType();
+  if ( view && ( viewType == OCCViewer_Viewer::Type() || viewType == SVTK_Viewer::Type() ) ) {
+    SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+    if ( prs ) {
+      if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+	AIS_ListOfInteractive lst;
+	occPrs->GetObjects( lst );
+	if ( lst.Extent() ) {
+	  Handle(AIS_InteractiveObject) io = lst.First();
+	  if ( !io.IsNull() ) {
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+	    ret = aSh->isShowVectors();
+	  }
+	}
+      } else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+	if ( lst ) {
+	  lst->InitTraversal();
+	  vtkActor* actor = lst->GetNextActor();
+	  if ( actor ) {
+	    GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
+	    ret = aGeomActor->GetVectorMode();
+	  }
+	}
+      }
+    }
+  }
+  return ret;
 }
 
 bool GEOMGUI_Selection::isComponent( const int index ) const

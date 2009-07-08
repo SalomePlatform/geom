@@ -94,11 +94,14 @@ public:
 
 	void SetTransparency(const Standard_Real aValue);
 	void SetShadingColor(const Quantity_Color &aCol);
+	void SetDisplayVectors(bool isShow);
 
 	virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
 				      const Handle(Prs3d_Presentation)& aPresentation,
 				      const Standard_Integer aMode = 0) ;
 
+	virtual  bool isShowVectors () { return myDisplayVectors; }
+	
  // Type management
  //
 	friend Handle_Standard_Type& GEOM_AISShape_Type_();
@@ -110,6 +113,7 @@ protected:
 
 private: 
   TCollection_AsciiString myName;
+  bool                    myDisplayVectors;
 };
 
 

@@ -110,7 +110,7 @@ if not isinstance(gg, type(salome_ComponentGUI)):
     
     gg.setDisplayMode(id_torus1,1)
     gg.setDisplayMode(id_torus2,1)
-    gg.setDisplayMode(id_acyl,1)
+    gg.setVectorsMode(id_acyl,1,1)
     #gg.setDisplayMode(id_cage,1)
     
     gg.setColor(id_torus1,0,0,255)

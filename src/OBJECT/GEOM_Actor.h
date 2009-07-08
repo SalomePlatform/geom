@@ -162,6 +162,15 @@ public:
   virtual
   void
   GetNbIsos(int &theNbU,int &theNbV);
+  
+  //! Vector mode management
+  virtual
+  void
+  SetVectorMode(const bool theMode);
+
+  virtual
+  bool
+  GetVectorMode();
 
 protected:
   void SetShape(const TopoDS_Shape& theShape,
@@ -186,6 +195,7 @@ private:
 
   //  EDisplayMode myDisplayMode;
   bool myIsSelected;
+  bool myVectorMode;
 
   PDeviceActor myVertexActor;
   PVertexSource myVertexSource;

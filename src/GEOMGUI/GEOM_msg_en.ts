@@ -2343,6 +2343,10 @@ Please, select face, shell or solid and try again</translation>
             <source>MEN_POP_WIREFRAME</source>
             <translation>Wireframe</translation>
         </message>
+	<message>
+            <source>MEN_POP_VECTORS</source>
+            <translation>Show Edge Direction</translation>
+        </message>
         <message>
             <source>MEN_PREFERENCES</source>
             <translation>Preferences</translation>
@@ -2488,6 +2492,14 @@ Please, select face, shell or solid and try again</translation>
             <translation>Wire</translation>
         </message>
         <message>
+            <source>MEN_VECTOR_MODE_ON</source>
+            <translation>Show Edge Direction</translation>
+        </message>
+	<message>
+            <source>MEN_VECTOR_MODE_OFF</source>
+            <translation>Hide Edge Direction</translation>
+        </message>
+	<message>
             <source>MEN_WIREFRAME</source>
             <translation>Wireframe</translation>
         </message>
@@ -2902,6 +2914,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>STB_SHADING</source>
             <translation>Shading</translation>
+        </message>
+	<message>
+            <source>STB_VECTOR_MODE</source>
+            <translation>Change Edge Presentation Mode</translation>
         </message>
         <message>
             <source>STB_SHADING_COLOR</source>

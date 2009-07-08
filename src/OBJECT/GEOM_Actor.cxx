@@ -17,8 +17,7 @@
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+//  See http://ww
 //  GEOM OBJECT : interactive object for Geometry entities visualization
 //  File   : GEOM_Actor.cxx
 //  Author : Christophe ATTANASIO
@@ -68,6 +67,8 @@
 
 #include "utilities.h"
 
+#include "SALOME_InteractiveObject.hxx"
+
 //vtkStandardNewMacro(GEOM_Actor);
 
 #ifndef MYDEBUG
@@ -77,7 +78,7 @@
 GEOM_Actor::GEOM_Actor(): 
   //  myDisplayMode(eWireframe), 
   myIsSelected(false), 
- 
+  myVectorMode(false),
   myVertexActor(GEOM_DeviceActor::New(),true), 
   myVertexSource(GEOM_VertexSource::New(),true), 
  
@@ -331,6 +332,24 @@ GEOM_Actor
 ::GetNbIsos(int &theNbU,int &theNbV)
 {
   myWireframeFaceSource->GetNbIso(theNbU, theNbV);
+}
+
+void
+GEOM_Actor
+::SetVectorMode(bool theMode)
+{
+  myVectorMode = theMode;
+  myIsolatedEdgeSource->SetVectorMode(theMode);
+  myOneFaceEdgeSource->SetVectorMode(theMode);
+  mySharedEdgeSource->SetVectorMode(theMode);
+  SetModified();
+}
+
+bool
+GEOM_Actor
+::GetVectorMode()
+{
+  return myVectorMode;
 }
 
 static 
@@ -749,7 +768,12 @@ GEOM_Actor
     switch(aSelectionMode){
     case ActorSelection : 
     {
+      //      cout << "=============== " << myIO->getEntry() << endl;
+      int nbio = mySelector->IObjectCount();
+      //      cout << " nbio = " << nbio << endl;
+
       if( !mySelector->IsSelected( myIO ) ) {
+	//	printf ("!!!!!!!!!!!!!!!!\n");
 	SetPreSelected( true );
       }
     }

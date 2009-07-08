@@ -53,6 +53,8 @@ protected:
                         const Handle(Prs3d_Presentation)& thePresentation,
                         const Standard_Integer theMode = 0);
 
+  virtual bool isShowVectors() {return true;}
+
 public:
   DEFINE_STANDARD_RTTI (GEOM_AISVector)
 };

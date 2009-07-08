@@ -31,13 +31,16 @@
 #include <Poly_Triangulation.hxx>
 #include <TColStd_Array1OfInteger.hxx>
 #include <Poly_PolygonOnTriangulation.hxx>
+#include <GeomAdaptor_Curve.hxx>
+#include <GCPnts_AbscissaPoint.hxx>
  
 #include <vtkStripper.h>  
 #include <vtkPolyData.h>  
- 
+
 vtkStandardNewMacro(GEOM_EdgeSource);
  
-GEOM_EdgeSource::GEOM_EdgeSource() 
+GEOM_EdgeSource::GEOM_EdgeSource() :
+  myIsVector(false)
 { 
 } 
  
@@ -129,8 +132,8 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     const TColStd_Array1OfInteger& aNodeIds = aEdgePoly->Nodes();
     const TColgp_Array1OfPnt& anId2Pnts = T->Nodes();
 
-    aP1 = anId2Pnts(1);
-    aP2 = anId2Pnts(aNbNodes);
+    aP1 = anId2Pnts(aNodeIds(1));
+    aP2 = anId2Pnts(aNodeIds(aNbNodes));
 
     for(int j = 1; j < aNbNodes; j++) {
       Standard_Integer id1 = aNodeIds(j);
@@ -156,6 +159,7 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     }
   }
 
+  
   // vector representation has an arrow on its end
   if (theIsVector)
   {
@@ -166,9 +170,17 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     }
 
     // draw an arrow
-    gp_Vec aDirVec (aP1, aP2);
-    Standard_Real aDist = aDirVec.Magnitude();
+
+    double fp,lp;
+    gp_Vec aDirVec;
+    Handle(Geom_Curve) C = BRep_Tool::Curve(theEdge,fp,lp);
+    C->D1(lp, aP2, aDirVec);
+
+    GeomAdaptor_Curve aAdC;
+    aAdC.Load(C, fp, lp);
+    Standard_Real aDist = GCPnts_AbscissaPoint::Length(aAdC, fp, lp); 
     if (aDist < gp::Resolution()) return;
+
     gp_Dir aDirection (aDirVec);
 
     Standard_Real anAngle = PI/180.*5.;
@@ -177,14 +189,14 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     Standard_Real dx,dy,dz;
     aDirection.Coord(dx,dy,dz);
 
-    // Pointe de la fleche
+    // Arrow Point
     Standard_Real xo,yo,zo;
     aP2.Coord(xo,yo,zo);
 
-    // Centre du cercle base de la fleche
+    // Center of circle that arrow based
     gp_XYZ aPc = aP2.XYZ() - aDirection.XYZ() * aLength;
 
-    // Construction d'un repere i,j pour le cercle
+    // Construction of the base vectors for the arrow circle
     gp_Dir aDirN;
     if      (Abs(dx) <= Abs(dy) && Abs(dx) <= Abs(dz)) aDirN = gp::DX();
     else if (Abs(dy) <= Abs(dz) && Abs(dy) <= Abs(dx)) aDirN = gp::DY();
@@ -239,4 +251,14 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     pts[1] = ptFirst;
     thePolyData->InsertNextCell(VTK_LINE,2,pts);
   }
+}
+
+void GEOM_EdgeSource::SetVectorMode (bool theMode)
+{
+  myIsVector = theMode;
+}
+
+bool GEOM_EdgeSource::GetVectorMode ()
+{
+  return myIsVector;
 }

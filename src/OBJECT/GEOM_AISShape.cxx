@@ -52,6 +52,20 @@
 #include <TopoDS_Shape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#include <BRep_Tool.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Vec.hxx>
+#include <Prs3d_Arrow.hxx>
+#include <GeomAdaptor_Curve.hxx>
+#include <GCPnts_AbscissaPoint.hxx>
+
 using namespace std;
 
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
@@ -110,7 +124,7 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
 
 GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 			     const Standard_CString aName)
-  : SALOME_AISShape(shape), myName(aName)
+  : SALOME_AISShape(shape), myName(aName), myDisplayVectors(false)
 {
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
 }
@@ -189,6 +203,32 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       break;
     }
   }
+
+  if (isShowVectors())
+  {
+    TopExp_Explorer Exp ( myshape, TopAbs_EDGE );
+    for ( ; Exp.More(); Exp.Next() ) {
+      TopoDS_Vertex aV1, aV2;
+      TopoDS_Edge anEdgeE = TopoDS::Edge(Exp.Current());
+      TopExp::Vertices(anEdgeE, aV1, aV2);
+      gp_Pnt aP1 = BRep_Tool::Pnt(aV1);
+      gp_Pnt aP2 = BRep_Tool::Pnt(aV2);
+
+      double fp,lp;
+      gp_Vec aDirVec;
+      Handle(Geom_Curve) C = BRep_Tool::Curve(anEdgeE,fp,lp);
+      C->D1(lp, aP2, aDirVec);
+
+      GeomAdaptor_Curve aAdC;
+      aAdC.Load(C, fp, lp);
+      Standard_Real aDist = GCPnts_AbscissaPoint::Length(aAdC, fp, lp); 
+     
+      if (aDist > gp::Resolution()) {
+	gp_Dir aDir (aDirVec);
+	Prs3d_Arrow::Draw(aPrs, aP2, aDir, PI/180.*5., aDist/10.);
+      }
+    }
+  }
   //  aPrs->ReCompute(); // for hidden line recomputation if necessary...
 }
 
@@ -244,4 +284,9 @@ void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndex
 
   anIC->SetAutomaticHilight( isAutoHilight );
   anIC->HilightSelected( false );
+}
+
+void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
+{
+  myDisplayVectors = isDisplayed;
 }

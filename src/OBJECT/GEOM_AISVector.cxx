@@ -28,18 +28,8 @@
 
 // OCCT Includes
 #include <Prs3d_Presentation.hxx>
-#include <Prs3d_Arrow.hxx>
 #include <PrsMgr_PresentationManager3d.hxx>
-#include <Graphic3d_Group.hxx>
-#include <BRep_Tool.hxx>
-#include <TopExp.hxx>
-#include <TopoDS.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Dir.hxx>
-#include <gp_Vec.hxx>
+
 
 IMPLEMENT_STANDARD_HANDLE(GEOM_AISVector, GEOM_AISShape)
 IMPLEMENT_STANDARD_RTTIEXT(GEOM_AISVector, GEOM_AISShape)
@@ -62,28 +52,4 @@ void GEOM_AISVector::Compute (const Handle(PrsMgr_PresentationManager3d)& thePre
                               const Standard_Integer theMode)
 {
   GEOM_AISShape::Compute(thePresentationManager, thePrs, theMode);
-
-  if (myshape.ShapeType() == TopAbs_EDGE)
-  {
-    TopoDS_Vertex aV1, aV2;
-    TopoDS_Edge anEdgeE = TopoDS::Edge(myshape);
-    TopExp::Vertices(anEdgeE, aV1, aV2);
-    gp_Pnt aP1 = BRep_Tool::Pnt(aV1);
-    gp_Pnt aP2 = BRep_Tool::Pnt(aV2);
-
-    gp_Vec aVec (aP1, aP2);
-    Standard_Real aDist = aVec.Magnitude();
-    if (aDist > gp::Resolution())
-    {
-      gp_Dir aDir (aVec);
-
-      Handle(Graphic3d_Group) aG = Prs3d_Root::CurrentGroup(thePrs);
-
-      //thePrs->Color(myShadingColor.Name());
-      //aG->BeginPrimitives();
-      Prs3d_Arrow::Draw(thePrs, aP2, aDir, PI/180.*5., aDist/10.);
-      //aG->EndPrimitives();
-    }
-  }
-  //thePrs->ReCompute(); // for hidden line recomputation if necessary...
 }

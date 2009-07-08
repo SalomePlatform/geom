@@ -27,6 +27,7 @@
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
 #include <GEOM_AISShape.hxx>
+#include <GEOM_Actor.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
@@ -52,6 +53,9 @@
 #include <SalomeApp_Study.h>
 
 #include <AIS_ListIteratorOfListOfInteractive.hxx>
+
+#include <vtkActorCollection.h>
+#include <vtkRenderer.h>
 
 #include <QAction>
 
@@ -123,6 +127,15 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
       Display();
       break;
     }
+  case 218: // MENU VIEW - VECTORS MODE
+    {
+      bool mode = GetVectorMode();
+      SetVectorMode(!mode);
+      getGeometryGUI()->action( 218 )->setText
+      ( mode == false ? tr( "MEN_VECTOR_MODE_OFF" ) : tr("MEN_VECTOR_MODE_ON") );
+      getGeometryGUI()->menuMgr()->update();
+      break;
+    }
   case 80311: // POPUP VIEWER - WIREFRAME
     {
       ChangeDisplayMode( 0 );
@@ -131,6 +144,11 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case 80312: // POPUP VIEWER - SHADING
     {
       ChangeDisplayMode( 1 );
+      break;
+    }
+  case 80313: // POPUP VIEWER - VECTORS
+    {
+      ChangeDisplayMode( 2 );
       break;
     }
   default:
@@ -393,13 +411,62 @@ int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
 }
 
 //=====================================================================================
-// function : DisplayGUI::InvertDisplayMode()
-// purpose  : Invert display mode ( shadin <-> wireframe ) for the viewer 
-//            (current viewer if <viewWindow> = 0 )
+// function : DisplayGUI::SetVectorsMode()
+// purpose  : Set vector mode for the viewer
 //=====================================================================================
-void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
+void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
 {
-  SetDisplayMode( 1 - GetDisplayMode( viewWindow ) );
+  SUIT_OverrideCursor();
+
+  if ( !viewWindow ) 
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
+  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
+    viewWindow->setCustomData( "VectorsMode", QVariant( mode ) );
+    SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
+    vtkActorCollection* allActors = vw->getRenderer()->GetActors();
+    allActors->InitTraversal();
+    while (vtkActor* actor = allActors->GetNextActor()) {
+      if (actor->GetVisibility()) { // only for visible actors
+	GEOM_Actor* aGeomActor = 0;
+	if ( actor->IsA( "GEOM_Actor" ) ) {
+	  aGeomActor = GEOM_Actor::SafeDownCast( actor );
+	  if ( aGeomActor )
+	    aGeomActor->SetVectorMode( mode );
+	}
+      }
+    }
+  }
+  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
+    viewWindow->setCustomData( "VectorsMode", QVariant( mode ) );
+    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
+    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
+    AIS_ListOfInteractive List;
+    ic->DisplayedObjects( List );
+    AIS_ListOfInteractive List1;
+    ic->ObjectsInCollector( List1 );
+    List.Append( List1 );
+
+    AIS_ListIteratorOfListOfInteractive ite( List );
+    while( ite.More() ) {
+      if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
+	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
+	aSh->SetDisplayVectors(mode);
+	ic->RecomputePrsOnly(ite.Value());
+      }
+      ite.Next();
+    }
+  }
+}
+
+//=====================================================================================
+// function : DisplayGUI::GetVectorMode()
+// purpose  : Get the "show edge direction" mode of the viewer
+//=====================================================================================
+int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
+{
+  if ( !viewWindow ) 
+    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
+  return viewWindow->getCustomData( "VectorsMode" ).toBool();
 }
 
 //=====================================================================================
@@ -438,6 +505,14 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 	  aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
 	else if ( mode == 1 )
 	  aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
+	else if ( mode == 2 ) {
+	  vtkActorCollection* anActors = vtkPrs->GetObjects();
+	  anActors->InitTraversal();
+	  while (vtkActor* anAct = anActors->GetNextActor()) {
+	    GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
+	    aGeomActor->SetVectorMode(!aGeomActor->GetVectorMode());
+	  }
+	}
       }
     }
     aView->Repaint();
@@ -460,6 +535,11 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 	    ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
 	  else if ( mode == 1 )
 	    ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
+	  if (mode == 2 ) {
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+	    aSh->SetDisplayVectors(!aSh->isShowVectors());
+	    ic->RecomputePrsOnly(interIter.Value());
+	  }
 	}
       }
     }

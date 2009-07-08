@@ -139,6 +139,7 @@ protected slots:
 private slots:
   void                        OnGUIEvent();
   void                        onWindowActivated( SUIT_ViewWindow* );
+  void                        onViewAboutToShow();
 
 signals :
   void                        SignalDeactivateActiveDialog();

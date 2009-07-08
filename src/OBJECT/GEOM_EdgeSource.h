@@ -40,7 +40,11 @@ public:
  
   void AddEdge (const TopoDS_Edge& theEdge,
                 bool theIsVector = false);
-  void Clear(){ myEdgeSet.Clear();} 
+  void Clear(){ myEdgeSet.Clear();}
+  
+  void SetVectorMode(bool);
+
+  bool GetVectorMode();
  
   static  
   void OCC2VTK(const TopoDS_Edge& theEdge,  

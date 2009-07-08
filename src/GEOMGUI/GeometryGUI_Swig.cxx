@@ -1,5 +1,6 @@
 //  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
+
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
@@ -37,11 +38,13 @@
 #include "OCCViewer_ViewWindow.h"
 #include "OCCViewer_ViewManager.h"
 #include "SOCC_ViewModel.h"
+#include <SOCC_Prs.h>
 
 #include "SVTK_ViewModel.h"
 #include "SVTK_ViewWindow.h"
 #include "SVTK_View.h"
 #include "SVTK_Renderer.h"
+#include <SVTK_Prs.h>
 
 #include "GEOM_Actor.h"
 #include "GEOM_Client.hxx"
@@ -391,6 +394,58 @@ void GEOM_Swig::setDisplayMode(const char* theEntry, int theMode, bool isUpdated
   };
 
   ProcessVoidEvent(new TEvent (theEntry, theMode, isUpdated));
+}
+
+void GEOM_Swig::setVectorsMode(const char* theEntry, bool isOn, bool isUpdated)
+{
+  class TEvent: public SALOME_Event {
+    std::string myEntry;
+    bool myOn;
+    bool myUpdateViewer;
+  public:
+    TEvent(const char* theEntryArg, bool theOn, bool theUpdated):
+      myEntry(theEntryArg), myOn(theOn), myUpdateViewer(theUpdated)
+    {}
+    virtual void Execute() {
+      SUIT_Application* anApp = SUIT_Session::session()->activeApplication();
+      if (!anApp) return;
+
+      Handle(SALOME_InteractiveObject) anIO =
+        new SALOME_InteractiveObject(myEntry.c_str(), "GEOM", "");
+
+      if (SVTK_ViewWindow* aViewWindow = GetSVTKViewWindow(anApp)) {
+	SVTK_View* aView = aViewWindow->getView();
+	SVTK_Viewer* stvkViewer = dynamic_cast<SVTK_Viewer*>(aViewWindow->getViewManager()->getViewModel());
+	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( myEntry.c_str()  ) );
+	vtkActorCollection* anActors = vtkPrs->GetObjects();
+	anActors->InitTraversal();
+	while (vtkActor* anAct = anActors->GetNextActor()) {
+	  GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
+	  aGeomActor->SetVectorMode(!aGeomActor->GetVectorMode());
+	}
+	if (myUpdateViewer)
+	  aView->Repaint();
+      }
+      else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
+	Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
+	SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
+	if (soccViewer) {
+	  SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( myEntry.c_str() ) );
+	  if ( occPrs && !occPrs->IsNull() ) {
+	    AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
+	    AIS_ListIteratorOfListOfInteractive interIter( shapes );
+	    for ( ; interIter.More(); interIter.Next() ) {
+	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+	      aSh->SetDisplayVectors(myOn);
+	      ic->RecomputePrsOnly(interIter.Value());
+	    }
+	  }
+	}
+      }
+    }
+  };
+
+  ProcessVoidEvent(new TEvent (theEntry, isOn, isUpdated));
 }
 
 void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, bool isUpdated)

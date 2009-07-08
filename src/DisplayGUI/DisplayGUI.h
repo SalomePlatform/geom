@@ -64,6 +64,13 @@ public:
   // (current viewer if <viewWindow> = 0 )
   void InvertDisplayMode( SUIT_ViewWindow* = 0 );
 
+  // VECTOR MODE methods
+  // Set vectror mode for the viewer
+  void SetVectorMode( const bool, SUIT_ViewWindow* = 0 );
+  // Get vector mode of the viewer
+  int  GetVectorMode( SUIT_ViewWindow* = 0 );
+  // Invert vector mode ( shadin <-> wireframe ) for the viewer 
+
   // Set display mode for selected objects in the viewer given
   // (current viewer if <viewWindow> = 0 )
   void ChangeDisplayMode( const int, SUIT_ViewWindow* = 0 );

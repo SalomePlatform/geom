@@ -12,13 +12,20 @@ Wireframe</b> or <b>Shading</b>.
 
 \n <b>TUI Command:</b> <em>gg.setDisplayMode(ID, Short)</em>
 
-\n <b>Examples:</b>
-
 \image html disp_mode1sn.png
 <center><em>Wireframe</em></center>
 
 \image html /disp_mode2sn.png
 <center><em>Shading</em></center>
+
+\n There is an option to show the direction of edges on the selected shape from popup menu <b> Display mode
+-> Show Edge Direction</b> or it possible to apply this functionality for all objects in the current view from
+the main menu <b> View -> Display Mode -> Show/Hide Edge Direction.</b>
+
+\image html vectors_mode.png
+<center><em>Vectors Mode (Show Edge Direction)</em></center>
+
+\n <b>TUI Command:</b> <em>gg.setVectorsMode(ID, Bool)</em>
 
 Our <b>TUI Scripts</b> provide you with useful examples of 
 \ref tui_change_disp_mode "Changing Display Parameters".
