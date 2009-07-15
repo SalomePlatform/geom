@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -248,17 +248,12 @@ Handle(GEOM_Object) GEOM_Engine::AddObject(int theDocID, int theType)
   //            if this label has been freed (object deleted)
   bool useExisting = false;
   TDF_Label aChild;
-  if (!_lastCleared.IsNull()) {
-    if (_lastCleared.Root() == aDoc->Main().Root()) {
+  if (_freeLabels.find(theDocID) != _freeLabels.end()) {
+    std::list<TDF_Label>& aFreeLabels = _freeLabels[theDocID];
+    if (!aFreeLabels.empty()) {
       useExisting = true;
-      aChild = _lastCleared;
-      // 0020229: if next label exists and is empty, try to reuse it
-      Standard_Integer aNextTag = aChild.Tag() + 1;
-      TDF_Label aNextL = aDoc->Main().FindChild(aNextTag, Standard_False);
-      if (!aNextL.IsNull() && !aNextL.HasAttribute())
-        _lastCleared = aNextL;
-      else
-        _lastCleared.Nullify();
+      aChild = aFreeLabels.front();
+      aFreeLabels.pop_front();
     }
   }
   if (!useExisting) {
@@ -294,6 +289,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   //            if this label has been freed (object deleted)
   bool useExisting = false;
   TDF_Label aChild;
+  /*
   if (!_lastCleared.IsNull()) {
     if (_lastCleared.Root() == aDoc->Main().Root()) {
       useExisting = true;
@@ -305,6 +301,16 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
         _lastCleared = aNextL;
       else
         _lastCleared.Nullify();
+    }
+  }
+  */
+  int aDocID = theMainShape->GetDocID();
+  if (_freeLabels.find(aDocID) != _freeLabels.end()) {
+    std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
+    if (!aFreeLabels.empty()) {
+      useExisting = true;
+      aChild = aFreeLabels.front();
+      aFreeLabels.pop_front();
     }
   }
   if (!useExisting) {
@@ -366,6 +372,8 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
 {
   if (!theObject) return false;
 
+  int aDocID = theObject->GetDocID();
+
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
@@ -380,7 +388,10 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
 
   TDF_Label aLabel = theObject->GetEntry();
   aLabel.ForgetAllAttributes(Standard_True);
-  _lastCleared = aLabel;
+
+  // Remember the label to reuse it then
+  std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
+  aFreeLabels.push_back(aLabel);
 
   theObject.Nullify();
 
@@ -464,7 +475,11 @@ void GEOM_Engine::Close(int theDocID)
     }
     for (Standard_Integer i=1; i<=aSeq.Length(); i++) _objects.UnBind(aSeq.Value(i));
 
-    _lastCleared.Nullify();
+    // Forget free labels for this document
+    TFreeLabelsList::iterator anIt = _freeLabels.find(theDocID);
+    if (anIt != _freeLabels.end()) {
+      _freeLabels.erase(anIt);
+    }
 
     _mapIDDocument.UnBind(theDocID);
     _OCAFApp->Close(aDoc);

@@ -49,7 +49,6 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-  virtual void                       addSubshapesToStudy();
   
 private:
   void                               Init();
@@ -57,6 +56,7 @@ private:
   void                               initSelection();
   
   bool                               getIsByParameter() const;
+  int                                myIndex;
   
 private:
   GEOM::GEOM_Object_var              myObject;

@@ -23,10 +23,9 @@ the module and its contents (geometrical object) will be displayed in
 the <b>Object Browser</b>.
 
 \note If the selected file is in IGES format and the length is not
-expressed in meters, it will be sussested to scale the model into the
+expressed in meters, it will be suggested to scale the model into the
 metric system:
-y types (solid, face, edge and
-vertex) for all named shapes
+
 \image html iges_unit.png
 
 \par

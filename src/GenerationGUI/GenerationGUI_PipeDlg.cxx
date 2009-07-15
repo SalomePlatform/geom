@@ -135,6 +135,7 @@ void GenerationGUI_PipeDlg::Init()
   connect(GroupPoints->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(SelectionTypeButtonClicked()));
 
   initName(tr("GEOM_PIPE"));
+  resize(100,100);
 
   GroupPoints->TextLabel3->hide();
   GroupPoints->PushButton3->hide();

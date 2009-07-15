@@ -263,6 +263,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
+  GEOM::GEOM_Object_var aSelectedObject;
 
   QString aName;
 
@@ -274,8 +275,6 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
     GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
     if (!myObjects.length())
       return;
-    else
-      myEditCurrentArgument->setText(aName);
   }
   else {
     if (aSelList.Extent() != 1)
@@ -283,7 +282,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
 
     // nbSel == 1
     Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
 
     if (!testResult || CORBA::is_nil(aSelectedObject))
       return;
@@ -328,29 +327,35 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
         }
       }
     }
+  }
+  
+  myEditCurrentArgument->setText(aName);
 
-    myEditCurrentArgument->setText(aName);
-
-    if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0) {
-      myAxis = aSelectedObject;
-      if (!myAxis->_is_nil() && !myObjects.length())
-        GroupPoints->PushButton1->click();
+  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+    if (myObjects.length()) {
+      if (getConstructorId() == 0 && myAxis->_is_nil() || getConstructorId() == 1 && myCentPoint->_is_nil() )
+	GroupPoints->PushButton2->click();
     }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1) {
-      myCentPoint = aSelectedObject;
-      if (!myCentPoint->_is_nil() && myPoint1->_is_nil())
-        GroupPoints->PushButton4->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit4) {
-      myPoint1 = aSelectedObject;
-      if (!myPoint1->_is_nil() && myPoint2->_is_nil())
-        GroupPoints->PushButton5->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit5) {
-      myPoint2 = aSelectedObject;
-      if (!myPoint2->_is_nil() && !myObjects.length())
-        GroupPoints->PushButton1->click();
-    }
+  }
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0) {
+    myAxis = aSelectedObject;
+    if (!myAxis->_is_nil() && !myObjects.length())
+      GroupPoints->PushButton1->click();
+  }
+  else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1) {
+    myCentPoint = aSelectedObject;
+    if (!myCentPoint->_is_nil() && myPoint1->_is_nil())
+      GroupPoints->PushButton4->click();
+  }
+  else if (myEditCurrentArgument == GroupPoints->LineEdit4) {
+    myPoint1 = aSelectedObject;
+    if (!myPoint1->_is_nil() && myPoint2->_is_nil())
+      GroupPoints->PushButton5->click();
+  }
+  else if (myEditCurrentArgument == GroupPoints->LineEdit5) {
+    myPoint2 = aSelectedObject;
+    if (!myPoint2->_is_nil() && !myObjects.length())
+      GroupPoints->PushButton1->click();
   }
 
   // clear selection
@@ -377,7 +382,11 @@ void TransformationGUI_RotationDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit1;
 
     GroupPoints->PushButton2->setDown(false);
+    GroupPoints->PushButton4->setDown(false);
+    GroupPoints->PushButton5->setDown(false);
     GroupPoints->LineEdit2->setEnabled(false);
+    GroupPoints->LineEdit4->setEnabled(false);
+    GroupPoints->LineEdit5->setEnabled(false);
   }
   else if (send == GroupPoints->PushButton2) {
     myEditCurrentArgument = GroupPoints->LineEdit2;

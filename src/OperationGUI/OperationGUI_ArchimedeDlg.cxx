@@ -130,6 +130,7 @@ void OperationGUI_ArchimedeDlg::Init()
   globalSelection( GEOM_ALLSHAPES );
 
   SelectionIntoArgument();
+  resize(100,100);
 }
 
 

@@ -7,8 +7,8 @@
 \n This operation removes all seam and degenerated edges from a given
 shape. Its main purpose is healing of solids and compounds to obtain
 hexahedral solids and compounds of hexahedral solids.
-However, there is an option to unite all faces, sharing one
-surface, which allows obaining not only hexahedral solids.
+However, there is an option to unite all faces sharing one
+surface, which produces not only hexahedral solids.
 
 \n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape,theOptimumNbFaces)</em>,
 where <em>theShape</em> is a compound or a single solid

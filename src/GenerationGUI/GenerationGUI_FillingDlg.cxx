@@ -149,6 +149,7 @@ void GenerationGUI_FillingDlg::Init()
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_FILLING" ) );
+  resize(100,100);
 }
 
 //=================================================================================

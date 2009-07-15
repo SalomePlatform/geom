@@ -138,6 +138,7 @@ void GenerationGUI_RevolDlg::Init()
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   initName(tr("GEOM_REVOLUTION"));
+  resize(100,100);
 
   GroupPoints->PushButton1->click();
   SelectionIntoArgument();

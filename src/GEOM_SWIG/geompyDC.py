@@ -407,7 +407,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a tangent plane, corresponding to the given parameter on the given face.
         #  @param theFace The face for which tangent plane should be built.
         #  @param theParameterV vertical value of the center point (0.0 - 1.0).
-	#  @param theParameterU horisontal value of the center point (0.0 - 1.0).
+        #  @param theParameterU horisontal value of the center point (0.0 - 1.0).
 	#  @param theTrimSize the size of plane.
         #  @return New GEOM_Object, containing the created tangent.
         #

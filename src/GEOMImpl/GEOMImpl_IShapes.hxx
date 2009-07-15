@@ -72,7 +72,7 @@ class GEOMImpl_IShapes
   void SetTolerance(const Standard_Real theValue)
   { _func->SetReal(SHAPE_ARG_TOLERANCE, theValue); }
 
-  Standard_Integer GetTolerance() { return _func->GetReal(SHAPE_ARG_TOLERANCE); }
+  Standard_Real GetTolerance() { return _func->GetReal(SHAPE_ARG_TOLERANCE); }
 
  private:
 
