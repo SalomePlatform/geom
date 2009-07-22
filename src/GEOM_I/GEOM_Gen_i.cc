@@ -802,18 +802,18 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy
     return aParts._retn();
 
   aParts = RestoreSubShapes(theStudy, anO, theSObject, theArgs, theFindMethod, theInheritFirstArg);
-  aParts._retn();
+  return aParts._retn();
 }
 
 //============================================================================
 // function : addToListOfGO
 // purpose  : static local function
 //============================================================================
-static void addToListOfGO( const GEOM::GEOM_Object_var& theObject,
-                           GEOM::ListOfGO_var& theList )
+static void addToListOfGO( const GEOM::GEOM_Object_ptr& theObject,
+                           GEOM::ListOfGO& theList )
 {
-  const int oldLen = theList->length();
-  theList->length(oldLen + 1);
+  const int oldLen = theList.length();
+  theList.length(oldLen + 1);
   theList[ oldLen ] = theObject;
 }
 
@@ -821,12 +821,12 @@ static void addToListOfGO( const GEOM::GEOM_Object_var& theObject,
 // function : addToListOfGO
 // purpose  : static local function
 //============================================================================
-static void addToListOfGO( GEOM::ListOfGO_var& theSrcList,
-                           GEOM::ListOfGO_var& theTrgList )
+static void addToListOfGO( const GEOM::ListOfGO& theSrcList,
+                           GEOM::ListOfGO& theTrgList )
 {
-  const int oldLen = theTrgList->length();
-  const int srcLen = theSrcList->length();
-  theTrgList->length(oldLen + srcLen);
+  const int oldLen = theTrgList.length();
+  const int srcLen = theSrcList.length();
+  theTrgList.length(oldLen + srcLen);
   for( int i = 0; i < srcLen; i++ )
     theTrgList[ oldLen + i ] = theSrcList[ i ];
 }
