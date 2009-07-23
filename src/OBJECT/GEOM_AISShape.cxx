@@ -217,14 +217,23 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       double fp,lp;
       gp_Vec aDirVec;
       Handle(Geom_Curve) C = BRep_Tool::Curve(anEdgeE,fp,lp);
-      C->D1(lp, aP2, aDirVec);
+      if ( anEdgeE.Orientation() == TopAbs_FORWARD )
+	C->D1(lp, aP2, aDirVec);
+      else {
+	C->D1(fp, aP1, aDirVec);
+	aP2 = aP1;
+      }
 
       GeomAdaptor_Curve aAdC;
       aAdC.Load(C, fp, lp);
       Standard_Real aDist = GCPnts_AbscissaPoint::Length(aAdC, fp, lp); 
      
       if (aDist > gp::Resolution()) {
-	gp_Dir aDir (aDirVec);
+	gp_Dir aDir;
+	if ( anEdgeE.Orientation() == TopAbs_FORWARD )
+	  aDir = aDirVec;
+	else
+	  aDir = -aDirVec;
 	Prs3d_Arrow::Draw(aPrs, aP2, aDir, PI/180.*5., aDist/10.);
       }
     }

@@ -73,11 +73,14 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     }
     myResultShape.Reverse();
   }
-  else if (myInitShape.ShapeType() == TopAbs_WIRE) {
-    myResultShape = myInitShape.Reversed();
-  }
-  else if (myInitShape.ShapeType() == TopAbs_EDGE) {
-    myResultShape = myInitShape.Reversed();
+  else if ( myInitShape.ShapeType() == TopAbs_WIRE || myInitShape.ShapeType() == TopAbs_EDGE) {
+    myResultShape = myInitShape.EmptyCopied();
+    TopoDS_Iterator itr(myInitShape);
+    while (itr.More()) {
+      B.Add(myResultShape,itr.Value());
+      itr.Next();
+    }
+    myResultShape.Reverse();
   }
   else {
     return false;

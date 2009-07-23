@@ -174,14 +174,24 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
     double fp,lp;
     gp_Vec aDirVec;
     Handle(Geom_Curve) C = BRep_Tool::Curve(theEdge,fp,lp);
-    C->D1(lp, aP2, aDirVec);
+    if ( theEdge.Orientation() == TopAbs_FORWARD ) {
+      C->D1(lp, aP2, aDirVec);
+    } else {
+      C->D1(fp, aP1, aDirVec);
+      aP2 = aP1;
+    }
 
     GeomAdaptor_Curve aAdC;
     aAdC.Load(C, fp, lp);
     Standard_Real aDist = GCPnts_AbscissaPoint::Length(aAdC, fp, lp); 
     if (aDist < gp::Resolution()) return;
 
-    gp_Dir aDirection (aDirVec);
+    gp_Dir aDirection;
+
+    if ( theEdge.Orientation() == TopAbs_FORWARD )
+      aDirection = aDirVec;
+    else
+      aDirection = -aDirVec;
 
     Standard_Real anAngle = PI/180.*5.;
     Standard_Real aLength = aDist/10.;
