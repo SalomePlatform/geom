@@ -779,7 +779,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
 // purpose  : Publish sub-shapes, standing for arguments and sub-shapes of arguments.
 //            To be used from GUI and from geompy.addToStudy
 //============================================================================
-GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy,
+GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr    theStudy,
 					       SALOMEDS::SObject_ptr   theSObject,
 					       const GEOM::ListOfGO&   theArgs,
 					       GEOM::find_shape_method theFindMethod,
@@ -809,12 +809,12 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesSO (SALOMEDS::Study_ptr     theStudy
 // function : addToListOfGO
 // purpose  : static local function
 //============================================================================
-static void addToListOfGO( const GEOM::GEOM_Object_ptr& theObject,
+static void addToListOfGO( GEOM::GEOM_Object_ptr theObject,
                            GEOM::ListOfGO& theList )
 {
   const int oldLen = theList.length();
   theList.length(oldLen + 1);
-  theList[ oldLen ] = theObject;
+  theList[ oldLen ] = GEOM::GEOM_Object::_duplicate( theObject );
 }
 
 //============================================================================
@@ -828,7 +828,7 @@ static void addToListOfGO( const GEOM::ListOfGO& theSrcList,
   const int srcLen = theSrcList.length();
   theTrgList.length(oldLen + srcLen);
   for( int i = 0; i < srcLen; i++ )
-    theTrgList[ oldLen + i ] = theSrcList[ i ];
+    theTrgList[ oldLen + i ] = GEOM::GEOM_Object::_duplicate( theSrcList[ i ] );
 }
 
 //============================================================================
@@ -836,7 +836,7 @@ static void addToListOfGO( const GEOM::ListOfGO& theSrcList,
 // purpose  : Private method. Works only if both theObject and theSObject
 //            are defined, and does not check, if they correspond to each other.
 //============================================================================
-GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
+GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
 					     GEOM::GEOM_Object_ptr   theObject,
 					     SALOMEDS::SObject_ptr   theSObject,
 					     const GEOM::ListOfGO&   theArgs,
@@ -860,7 +860,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
     aList = new GEOM::ListOfGO;
     aList->length(aLength);
     for (int i = 0; i < aLength; i++) {
-      aList[i] = theArgs[i];
+      aList[i] = GEOM::GEOM_Object::_duplicate( theArgs[i] );
     }
   }
   else {
@@ -877,8 +877,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
     // Do not publish argument's reflection,
     // but only reconstruct its published sub-shapes
 
-    GEOM::GEOM_Object_var anArgO = aList[0];
-    CORBA::String_var anIOR = _orb->object_to_string(anArgO);
+    CORBA::String_var anIOR = _orb->object_to_string(aList[0]);
     SALOMEDS::SObject_var anArgSO = theStudy->FindObjectIOR(anIOR.in());
 
     aParts = RestoreSubShapesOneLevel(theStudy, anArgSO, theSObject, theObject, theFindMethod);
@@ -928,7 +927,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
               if (!CORBA::is_nil(aSubO))
                 aGroupOp->UnionIDs(aSubO, anIDs);
             }
-            else {
+            else if (anIDs->length() > 0) {
               // single sub-shape
               aSubO = aShapesOp->GetSubShape(theObject, anIDs[0]);
             }
@@ -1040,7 +1039,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
     int i = 0, j = 0;
     for ( ; i < nb; i++ )
     {
-      const GEOM::GEOM_Object_var& anObj = aParts[ i ];
+      GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aParts[ i ] );
       if (CORBA::is_nil(anObj))
         continue;
       char* anEntry = anObj->GetEntry();
