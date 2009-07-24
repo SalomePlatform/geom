@@ -30,7 +30,8 @@
 # ! documentation generation to identify certain places of this file
 #
 def TestAll (geompy, math):
-
+  import GEOM
+  
   #Create base Variables
   nbtimes1  = 5      #Short
   nbtimes2  = 5
@@ -450,5 +451,11 @@ def TestAll (geompy, math):
     ind_e = geompy.GetSubShapeID(SubFace, edge)
     if ind_e != ind:
       print "Error in GetSubShape or GetSubShapeID"
+
+  # RestoreSubShapes
+  geompy.RestoreSubShapes(Copy)
+  geompy.RestoreSubShapes(RotatPnt, [], GEOM.FSM_Transformed)
+  geompy.RestoreSubShapes(Partition, [Box])
+  geompy.RestoreSubShapes(Partition1)
 
   print "DONE"

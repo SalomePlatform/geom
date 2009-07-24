@@ -85,6 +85,7 @@ gg.setDisplayMode(id_archimede,1)
 \code
 import geompy
 import GEOM
+import SALOMEDS
 
 # create a box and a cylinder
 box = geompy.MakeBoxDXDYDZ(200, 200, 200)

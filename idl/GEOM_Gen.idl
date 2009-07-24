@@ -2989,7 +2989,7 @@ module GEOM
      *                            operations, where only the first argument has to be considered.
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
-     *  \return True in case of success, False otherwise.
+     *  \return list of published sub-shapes
      */
     ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
 		 	        in GEOM_Object       theObject,

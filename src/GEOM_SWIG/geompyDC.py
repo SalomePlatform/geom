@@ -305,7 +305,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                            operations, where only the first argument has to be considered.
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
-        #  \return True in case of success, False otherwise.
+        #  \return list of published sub-shapes
         #
         #  @ref tui_restore_prs_params "Example"
         def RestoreSubShapes (self, theObject, theArgs=[],
