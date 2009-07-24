@@ -4,7 +4,7 @@
 
 \n To <b>Change Orientation</b> in the <b>Main Menu</b> select <b>Repair - > Change Orientation</b>.
 \n This operation reverses the normals of selected faces or the normal
-of faces composing the selected opened shell. Or, reverses the edge or wire orientation (direction).
+of faces composing the selected opened shell. For edge or wire the operation reverses its direction.
 
 \n <b>TUI Command:</b> <em>geompy.ChangeOrientation(shape)</em>
 \n <b>Arguments:</b> Name + one or several objects (face(s)), opened shell(s).
