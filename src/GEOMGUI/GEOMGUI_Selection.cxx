@@ -209,7 +209,8 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
 	  vtkActor* actor = lst->GetNextActor();
 	  if ( actor ) {
 	    GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
-	    ret = aGeomActor->GetVectorMode();
+	    if ( aGeomActor )
+	      ret = aGeomActor->GetVectorMode();
 	  }
 	}
       }
