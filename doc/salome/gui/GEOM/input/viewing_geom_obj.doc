@@ -26,6 +26,11 @@ the standard <b>Select Color</b> menu.</li>
 transparency of geometrical objects.</li>
 <li>\subpage isolines_page "Isos" - allows to change the number of
 isolines displayed within a shape.</li>
+<li><b>Auto color</b> / <b>Disable auto color</b> - toggle auto color
+mode. When auto color mode is enabled, the groups created on the
+sub-shapes of the selected geometrical object are automatically
+coloured by the unique colors. TUI Commands :
+<em>go.SetAutoColor(enable)</em>, <em>enabled = go.GetAutoColor()</em></li>
 <li><b>Hide</b> - allows to hide the selected geometrical object from the
 viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
 \n \image html image18.png
@@ -38,8 +43,6 @@ Command: <em>sg.EraseAll()</em>
 geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em>
 \n \image html image33.png
 </li>
-<li><b>Update</b> - refreshes the presentation of your geometrical object in the
-Object Browser, applying all recent changes.</li>
 <li><b>Dump view</b> - exports an object from the viewer in bmp, png,
 jpg or jpeg image format.</li>
 <li><b>Change background</b> - allows to redefine the background
