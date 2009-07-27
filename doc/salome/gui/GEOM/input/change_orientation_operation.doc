@@ -7,7 +7,7 @@
 of faces composing the selected opened shell. For edge or wire the operation reverses its direction.
 
 \n <b>TUI Command:</b> <em>geompy.ChangeOrientation(shape)</em>
-\n <b>Arguments:</b> Name + one or several objects (face(s)), opened shell(s).
+\n <b>Arguments:</b> Name + one or several objects (edge(s), wire(s), face(s), opened shell(s)).
 \n Uncheck <b>Create a copy</b> checkbox if you don't wish to leave
 the initial object in the project (<b>Result name</b> field will be
 locked).
