@@ -15,8 +15,11 @@ limitations:
 <li> \ref isolines_page "Select Number of Isos" dialog box.
 </ul>
 
-Here is an example of using of variables, which were previously set by
-SALOME NoteBook, in Geometry GUI:
+Here is an example of setting of variables in SALOME NoteBook:
+
+\image html using_notebook_geom.png "Setting of variables in SALOME NoteBook"
+
+Example of using of these variables in Geometry GUI:
 
 \image html box3.png "Box creation in Geometry module"
 
