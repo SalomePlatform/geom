@@ -609,7 +609,7 @@ void GEOMToolsGUI::OnEditCopy()
 bool GEOMToolsGUI::Import()
 {
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( getGeometryGUI()->getApp() );
-  if (! app) return false;
+  if ( !app ) return false;
 
   SalomeApp_Study* stud = dynamic_cast<SalomeApp_Study*> ( app->activeStudy() );
   if ( !stud ) {
@@ -662,10 +662,15 @@ bool GEOMToolsGUI::Import()
   QStringList errors;
 
   QList< GEOM::GEOM_Object_var > objsForDisplay;
+
   
   // iterate through all selected files
-  for ( QStringList::ConstIterator it = fileNames.begin(); it != fileNames.end(); ++it ) {
-    QString fileName = *it;
+
+  SUIT_MessageBox::StandardButton igesAnswer = SUIT_MessageBox::NoButton;
+  SUIT_MessageBox::StandardButton acisAnswer = SUIT_MessageBox::NoButton;
+
+  for ( int i = 0; i < fileNames.count(); i++ ) {
+    QString fileName = fileNames[i];
 
     if ( fileName.isEmpty() )
       continue;
@@ -694,7 +699,6 @@ bool GEOMToolsGUI::Import()
       continue;
     }
 
-
     GEOM_Operation* anOp = new GEOM_Operation( app, aInsOp.in() );
     try {
       app->putInfo( tr( "GEOM_PRP_LOADING" ).arg( SUIT_Tools::file( fileName, /*withExten=*/true ) ) );
@@ -704,24 +708,55 @@ bool GEOMToolsGUI::Import()
       CORBA::String_var fileT = aCurrentType.toLatin1().constData();
 
       // skl 29.05.2009
-      if( aCurrentType == "IGES" ) {
+      if ( aCurrentType == "IGES" ) {
 	GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, "IGES_UNIT" );
+	bool needConvert = false;
 	TCollection_AsciiString aUnitName = aInsOp->GetErrorCode();
-	//cout<<"GUI: aUnitName = "<<aUnitName.ToCString()<<endl;
-	if( aUnitName.SubString(1,4) == "UNIT" ) {
-	  aUnitName = aUnitName.SubString(6,aUnitName.Length());
-	  if( aUnitName != "M" ) {
-	    if( SUIT_MessageBox::question( app->desktop(),
-					   "Question",//tr("WRN_WARNING"),
-					   QObject::tr("GEOM_SCALE_DIMENSIONS"),
-					   SUIT_MessageBox::Yes | SUIT_MessageBox::No,
-					   SUIT_MessageBox::No) == SUIT_MessageBox::Yes ) {
-	      fileT = "IGES_SCALE";
-	    }
-	  }
-	}
-      }
+	if ( aUnitName.SubString( 1, 4 ) == "UNIT" )
+	  needConvert = aUnitName.SubString( 6, aUnitName.Length() ) != "M";
 
+	if ( needConvert ) {
+	  if ( igesAnswer == SUIT_MessageBox::YesToAll ) {
+	    // converting for all files is already approved
+	    fileT = "IGES_SCALE";
+	  }
+	  else if ( igesAnswer != SUIT_MessageBox::NoToAll ) {
+	    SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+	    if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+	    igesAnswer = SUIT_MessageBox::question( app->desktop(),
+						    "Question",//tr("WRN_WARNING"),
+						    tr("GEOM_SCALE_DIMENSIONS"),
+						    btns | SUIT_MessageBox::Cancel,
+						    SUIT_MessageBox::No );
+	    switch ( igesAnswer ) {
+	    case SUIT_MessageBox::Cancel:
+	      return false;                // cancel (break) import operation
+	    case SUIT_MessageBox::Yes:
+	    case SUIT_MessageBox::YesToAll:
+	      fileT = "IGES_SCALE";
+	      break;                       // scaling is confirmed
+	    case SUIT_MessageBox::No:
+	    case SUIT_MessageBox::NoAll:
+	    default:
+	      break;                       // scaling is rejected
+	    } // switch ( igesAnswer )
+	  } // if ( igeAnswer != NoToAll )
+	} // if ( needConvert )
+      } // if ( aCurrentType == "IGES" )
+      else if ( aCurrentType == "ACIS" ) {
+	if ( acisAnswer != SUIT_MessageBox::YesToAll && acisAnswer != SUIT_MessageBox::NoToAll ) {
+	  SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+	  if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+	  acisAnswer = SUIT_MessageBox::question( app->desktop(),
+						  "Question",//tr("WRN_WARNING"),
+						  tr("GEOM_PUBLISH_NAMED_SHAPES"),
+						  btns | SUIT_MessageBox::Cancel,
+						  SUIT_MessageBox::No );
+	  if ( acisAnswer == SUIT_MessageBox::Cancel )
+	    return false; // cancel (break) import operation
+	} // if ( acisAnswer != YesToAll && acisAnswer != NoToAll )
+      } // else if ( aCurrentType == "ACIS" )
+      
       GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
 
       if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
@@ -733,17 +768,12 @@ bool GEOMToolsGUI::Import()
 						   SALOMEDS::SObject::_nil(),
 						   anObj,
 						   aPublishObjName.toLatin1().constData() );
-
+	
 	objsForDisplay.append( anObj );
 	
-	if( aCurrentType == "ACIS" ) {
-	  if( SUIT_MessageBox::question( app->desktop(),
-					 "Question",//tr("WRN_WARNING"),
-					 tr("GEOM_PUBLISH_NAMED_SHAPES"),
-					 SUIT_MessageBox::Yes | SUIT_MessageBox::No,
-					 SUIT_MessageBox::No) == SUIT_MessageBox::Yes ) {
-	    GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy(aDSStudy, anObj);
-	  }
+	if ( aCurrentType == "ACIS" ) {
+	  if ( acisAnswer == SUIT_MessageBox::Yes || acisAnswer == SUIT_MessageBox::YesToAll )
+	    GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy( aDSStudy, anObj );
 	}
 
 	anOp->commit();
