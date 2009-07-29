@@ -362,27 +362,30 @@ void GEOM_Gen_i::CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,
     GEOM::GEOM_Object_ptr GrObj =
       GOp->CreateGroup( theMainShape, SeqS.Value(1).ShapeType() );
     AddInStudy(theStudy, GrObj, GrName, theMainShape._retn());
+    CORBA::String_var GrEntry = GrObj->GetEntry();
+    Handle(GEOM_Object) HGrObj = _impl->GetObject(GrObj->GetStudyID(), GrEntry);
     // add named objects
-    Handle(GEOM_Object) anObj;
+    //Handle(GEOM_Object) anObj;
     for(int i=1; i<=SeqS.Length(); i++) {
       TopoDS_Shape aValue = SeqS.Value(i);
-      anArray = new TColStd_HArray1OfInteger(1,1);
+      //anArray = new TColStd_HArray1OfInteger(1,1);
       Standard_Integer anIndex = anIndices.FindIndex(aValue);
-      anArray->SetValue(1, anIndex);
-      anObj = GEOM_Engine::GetEngine()->AddObject(aMainShape->GetDocID(), GEOM_SUBSHAPE);
-      if (anObj.IsNull()) continue;
-      Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
-      if (aFunction.IsNull()) continue;
-      GEOM_ISubShape aSSI(aFunction);
-      aSSI.SetMainShape(aMainShape->GetLastFunction());
-      aSSI.SetIndices(anArray);
-      aFunction->SetValue(aValue);
-      GOp->UnionIDs(GrObj, anIndex);
-      SALOMEDS::SObject_var aResultSO;
-      TCollection_AsciiString anEntry;
-      TDF_Tool::Entry(anObj->GetEntry(),anEntry);
-      GEOM::GEOM_Object_var aGObj = GetObject(anObj->GetDocID(), anEntry.ToCString());
-      AddInStudy(theStudy, aGObj._retn(), SeqN.Value(i).ToCString(), GrObj);
+      //anArray->SetValue(1, anIndex);
+      GOp->AddObject(GrObj,anIndex);
+      //anObj = GEOM_Engine::GetEngine()->AddObject(aMainShape->GetDocID(), GEOM_SUBSHAPE);
+      //if (anObj.IsNull()) continue;
+      //Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
+      //if (aFunction.IsNull()) continue;
+      //GEOM_ISubShape aSSI(aFunction);
+      //aSSI.SetMainShape(aMainShape->GetLastFunction());
+      //aSSI.SetIndices(anArray);
+      //aFunction->SetValue(aValue);
+      //GOp->UnionIDs(GrObj, anIndex);
+      //SALOMEDS::SObject_var aResultSO;
+      //TCollection_AsciiString anEntry;
+      //TDF_Tool::Entry(anObj->GetEntry(),anEntry);
+      //GEOM::GEOM_Object_var aGObj = GetObject(anObj->GetDocID(), anEntry.ToCString());
+      //AddInStudy(theStudy, aGObj._retn(), SeqN.Value(i).ToCString(), GrObj);
     }
   }
 }
