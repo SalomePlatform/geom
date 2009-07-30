@@ -805,7 +805,7 @@ void DumpPosition(const gp_Ax3& aAx3)
 //=======================================================================
 void DumpKindOfBounds(const GEOMAlgo_KindOfBounds aKB)
 {
-  char *pStr[]={
+  const char *pStr[]={
     "KB_UNKNOWN", 
     "KB_TRIMMED", 
     "KB_INFINITE"
@@ -822,7 +822,7 @@ void DumpKindOfBounds(const GEOMAlgo_KindOfBounds aKB)
 //=======================================================================
 void DumpKindOfClosed(const GEOMAlgo_KindOfClosed aKC)
 {
-  char *pStr[]={
+  const char *pStr[]={
     "KC_UNKNOWN", 
     "KC_CLOSED", 
     "KC_NOTCLOSED"
@@ -839,7 +839,7 @@ void DumpKindOfClosed(const GEOMAlgo_KindOfClosed aKC)
 //=======================================================================
 void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
 {
-  char *pStr[]={
+  const char *pStr[]={
     "KS_UNKNOWN", 
     "KS_SPHERE",
     "KS_CYLINDER",
@@ -863,7 +863,7 @@ void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
 //=======================================================================
 void DumpKindOfName(const GEOMAlgo_KindOfName aKS)
 {
-  char *pStr[]={
+  const char *pStr[]={
     "KN_UNKNOWN", 
     "KN_SPHERE",
     "KN_CYLINDER",

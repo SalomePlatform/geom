@@ -623,7 +623,7 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
       }
     }
   }
-  return "";
+  return (char*)"";
 }
 
 //================================================================
