@@ -30,7 +30,6 @@
 
 // OCCT Includes
 #include <BRepBuilderAPI_Transform.hxx>
-#include <GCPnts_AbscissaPoint.hxx>
 #include <ShHealOper_EdgeDivide.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
