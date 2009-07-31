@@ -470,6 +470,16 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 }
 
 //=====================================================================================
+// function : DisplayGUI::InvertDisplayMode()
+// purpose  : Invert display mode ( shadin <-> wireframe ) for the viewer 
+//            (current viewer if <viewWindow> = 0 )
+//=====================================================================================
+void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
+{
+  SetDisplayMode( 1 - GetDisplayMode( viewWindow ) );
+}
+
+//=====================================================================================
 // function : DisplayGUI::ChangeDisplayMode()
 // purpose  : Set display mode for selected objects in the viewer given
 //            (current viewer if <viewWindow> = 0 )
