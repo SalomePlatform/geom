@@ -65,7 +65,7 @@ four edges from which the face is constructed.</li>
 \image html block3.png
 
 \n <b>Example:</b>
-\image html image185.jpg "Quadrangle face built by blocks"
+\image html image185.png "Quadrangle face built by blocks"
 
 
 <br><br>
@@ -104,10 +104,10 @@ automatically.</li>
 
 \n <b>Example:</b>
 
-\image html image180.jpg
+\image html image180.png
 <center>Hexahedral Solid built on the base of six Faces</center>
 
-\image html image181.jpg
+\image html image181.png
 <center>Hexahedral Solid built on the base of two Faces</center>
 
 

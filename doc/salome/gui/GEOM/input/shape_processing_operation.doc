@@ -140,15 +140,15 @@ curves not having the same parameter.</li>
 
 \n <b>Example:</b>
 
-\image html image154.jpg
+\image html image154.png
 <center><em>Shape before applying Shape Processing (FixShape
 operator). View # 1.</em></center>
 
-\image html image156.jpg
+\image html image156.png
 <center><em>Shape before applying Shape Processing (FixShape
 operator). View # 2.</em></center>
 
-\image html image160.jpg
+\image html image160.png
 <center><em>The same shape after applying Shape
 Processing.</em></center>
 

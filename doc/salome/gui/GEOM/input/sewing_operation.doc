@@ -23,9 +23,9 @@ your shape:
 
 \n <b>Example:</b>
 
-\image html image112.jpg "The initial faces"
+\image html image112.png "The initial faces"
 
-\image html image113.jpg "The sewn faces"
+\image html image113.png "The sewn faces"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sewing "Repairing Operations".

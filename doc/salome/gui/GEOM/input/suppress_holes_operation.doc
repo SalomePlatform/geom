@@ -25,9 +25,9 @@ your shape:
 
 \n <b>Example:</b>
 
-\image html image109.jpg "The cone with a hole"
+\image html image109.png "The cone with a hole"
 
-\image html image110.jpg "The hole has been suppressed"
+\image html image110.png "The hole has been suppressed"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_suppress_holes "Repairing Operations".

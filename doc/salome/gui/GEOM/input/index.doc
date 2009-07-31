@@ -20,7 +20,7 @@ various algorithms;</li>
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
 
-\image html image3.jpg "Example of Geometry module usage for engineering tasks"
+\image html image3.png "Example of Geometry module usage for engineering tasks"
 
 
 */

@@ -65,7 +65,7 @@ is predefined and is equal to 90 degrees);</li>
 
 \n <b>Example:</b>
 
-\image html image204.jpg "Creation of a circle with sketcher"
+\image html image204.png "Creation of a circle with sketcher"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sketcher_page "Sketcher".
