@@ -98,6 +98,16 @@ static
 			     const gp_Dir& ,
 			     const gp_Dir& );
 
+//modified by NIZNHY-PKV Tue Jul 14 07:24:10 2009f
+static
+  void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aE, 
+				    const TopoDS_Face& aF, 
+				    Standard_Real aT, 
+				    gp_Pnt& aPF, 
+				    gp_Dir& aDNF,
+				    IntTools_Context& aCtx);
+//modified by NIZNHY-PKV Tue Jul 14 07:24:15 2009t
+
 //=======================================================================
 //function : IsInternalFace
 //purpose  : 
@@ -132,7 +142,7 @@ static
     else if (aNbF==1) {
       // aE is internal edge on aLF.First()
       const TopoDS_Face& aF1=TopoDS::Face(aLF.First());
-      bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, aE, aF1, aF1);
+      bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, aE, aF1, aF1, theContext);
       return bRet;
     }
     else if (aNbF==2) {
@@ -141,7 +151,7 @@ static
       //
       if (aF2.IsSame(aF1) && BRep_Tool::IsClosed(aE, aF1)) {
 	// treat as it was for 1 face
-	bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, aE, aF1, aF2);
+	bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, aE, aF1, aF2, theContext);
 	return bRet;
       }
     }
@@ -149,7 +159,7 @@ static
       return bRet; // it can not be so
     }
     else { // aNbF=2,4,6,8,...
-      bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, aE, aLF);
+      bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, aE, aLF, theContext);
       return bRet;
     }
   }//for(; aExp.More(); aExp.Next()) {
@@ -171,7 +181,8 @@ static
 //=======================================================================
   Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
 						    const TopoDS_Edge& theEdge,
-						    const TopTools_ListOfShape& theLF)
+						    const TopTools_ListOfShape& theLF,
+						    IntTools_Context& theContext)
 {
   Standard_Boolean bRet;
   Standard_Boolean aNbF;
@@ -182,7 +193,7 @@ static
   if (aNbF==2) {
     const TopoDS_Face& aF1=TopoDS::Face(theLF.First());
     const TopoDS_Face& aF2=TopoDS::Face(theLF.Last());
-    bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, theEdge, aF1, aF2);
+    bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, theEdge, aF1, aF2, theContext);
     return bRet;
   }
   //
@@ -198,7 +209,7 @@ static
       //
       const TopoDS_Face& aF1=TopoDS::Face(aCSFF.Shape1());
       const TopoDS_Face& aF2=TopoDS::Face(aCSFF.Shape2());
-      bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, theEdge, aF1, aF2);
+      bRet=GEOMAlgo_Tools3D::IsInternalFace(theFace, theEdge, aF1, aF2, theContext);
       if (bRet) {
 	return bRet;
       }
@@ -211,12 +222,14 @@ static
 //purpose  : 
 //=======================================================================
   Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
-						   const TopoDS_Edge& theEdge,
-						   const TopoDS_Face& theFace1,
-						   const TopoDS_Face& theFace2)
+						    const TopoDS_Edge& theEdge,
+						    const TopoDS_Face& theFace1,
+						    const TopoDS_Face& theFace2,
+						    IntTools_Context& theContext)
 {
   Standard_Boolean bRet;
-  Standard_Real aT1, aT2, aT, aDt2D, aDt2Dx;//aD1, aD2,
+  Standard_Real aT1, aT2, aT, aDt2D, aDt2Dx;
+  Standard_Real aA12, aA1x, aTwoPI;
   gp_Pnt aPx, aPF, aPF1, aPF2;
   gp_Pnt2d aP2D, aPF2D;
   gp_Dir aDNF1, aDNF2;
@@ -251,64 +264,40 @@ static
   // 3
   bRet=Standard_False;
   //
-  //modified by NIZNHY-PKV Mon Nov 13 12:12:53 2006f
+  //modified by NIZNHY-PKV Tue Jul 14 07:22:38 2009f
+  GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1, theContext);
+  GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2, theContext);
+
+  //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
+  //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
+  //modified by NIZNHY-PKV Tue Jul 14 07:22:42 2009t
   //
-  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
-  BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
+  aTwoPI=2.*PI;
+  gp_Vec aVBF (aPx, aPF );
+  gp_Vec aVBF1(aPx, aPF1);
+  gp_Vec aVBF2(aPx, aPF2);
   //
-  {
-    Standard_Real aA12, aA1x, aTwoPI;
-    //
-    aTwoPI=2.*PI;
-    gp_Vec aVBF (aPx, aPF );
-    gp_Vec aVBF1(aPx, aPF1);
-    gp_Vec aVBF2(aPx, aPF2);
-    //
-    gp_Dir aDTF1;
-    gp_Dir aDBF (aVBF);
-    gp_Dir aDBF1(aVBF1);
-    gp_Dir aDBF2(aVBF2);
-    //
-    aDTF1=aDNF1^aDBF1;
-    //aA12=aDBF1.AngleWithRef(aDBF2, aDTF1);
-    aA12=AngleWithRef(aDBF1, aDBF2, aDTF1);
-    if (aA12<0.) {
-      aA12=aA12+aTwoPI;
-    }
-    //aA1x=aDBF1.AngleWithRef(aDBF , aDTF1);
-    aA1x=AngleWithRef(aDBF1, aDBF , aDTF1);
-    if (aA1x<0.) {
-      aA1x=aA1x+aTwoPI;
-    }
-    //
-    if (aA1x<aA12) {
-      bRet=!bRet; //TopAbs_IN;
-    }
+  gp_Dir aDTF1;
+  gp_Dir aDBF (aVBF);
+  gp_Dir aDBF1(aVBF1);
+  gp_Dir aDBF2(aVBF2);
+  //
+  aDTF1=aDNF1^aDBF1;
+  aA12=AngleWithRef(aDBF1, aDBF2, aDTF1);
+  if (aA12<0.) {
+    aA12=aA12+aTwoPI;
+  }
+  
+  aA1x=AngleWithRef(aDBF1, aDBF , aDTF1);
+  if (aA1x<0.) {
+    aA1x=aA1x+aTwoPI;
   }
   //
-  /*
-  {
-    Standard_Real aD1, aD2;
-    //
-    //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
-    gp_Pln aPlnF1(aPx, aDNF1);
-    //
-    aD1=BOPTools_Tools3D::SignDistance(aPF, aPlnF1);
-    if (aD1<=0.) {
-      //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
-      gp_Pln aPlnF2(aPx, aDNF2);
-      //
-      aD2=BOPTools_Tools3D::SignDistance(aPF, aPlnF2);
-      if (aD2<=0.) {
-	bRet=!bRet; //TopAbs_IN;
-      }
-    }
+  if (aA1x<aA12) {
+    bRet=!bRet; //TopAbs_IN;
   }
-  */
-  //modified by NIZNHY-PKV Mon Nov 13 12:12:55 2006t
   //
   return bRet;
-  
 }
 //=======================================================================
 //function : GetFaceOff
@@ -352,15 +341,12 @@ static
       BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, aF2, aT, aPn2, aDN2);
       aDN2.Reverse();
       // Angle
-      //
-      //aAngle=aDN1.AngleWithRef(aDN2, aDTtgt);
       aAngle=AngleWithRef(aDN1, aDN2, aDTtgt);
-      //
       if(aAngle<0.) {
 	aAngle=aTwoPI+aAngle;
       }
     }
-
+    //
     if (aAngle<aAngleMin){
       aAngleMin=aAngle;
       theFOff=aF2;
@@ -934,7 +920,6 @@ static
     theLCB.Append(aF);
   }
 }
-
 //=======================================================================
 //function : FindFacePairs
 //purpose  : 
@@ -1060,98 +1045,71 @@ Standard_Real AngleWithRef(const gp_Dir& theD1,
   }
   return aBeta;
 }
-//
-/*
-static
-  void Path(const TopoDS_Shape& ,
-	  const TopoDS_Shape& ,
-	  const TopTools_IndexedDataMapOfShapeListOfShape& ,
-	  const TopTools_IndexedMapOfShape& ,
-	  TopTools_IndexedMapOfShape& );
-
+//modified by NIZNHY-PKV Tue Jul 14 07:49:55 2009f
 //=======================================================================
-// function: MakeConnexityBlock.
-// purpose: 
+//function : GetApproxNormalToFaceOnEdge
+//purpose  : 
 //=======================================================================
-  void GEOMAlgo_Tools3D::MakeConnexityBlock (const TopTools_ListOfShape& theLFIn,
-					    const TopTools_IndexedMapOfShape& theMEAvoid,
-					    TopTools_ListOfShape& theLCB)
+void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx, 
+				  const TopoDS_Face& aFx, 
+				  Standard_Real aT, 
+				  gp_Pnt& aPF, 
+				  gp_Dir& aDNF,
+				  IntTools_Context& aCtx)
 {
-  Standard_Integer  j, aNbF;
-  TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
-  TopTools_IndexedMapOfShape aMFP, aCBMap;
-  TopTools_ListIteratorOfListOfShape aIt;
-  TopExp_Explorer aExp;
-  TopAbs_ShapeEnum aType;
+  Standard_Boolean bReverse;
+  Standard_Real aT1, aT2, dT, aU, aV;
+  gp_Dir aDTT, aDNFT, aDBT;
+  gp_Pnt aPFT, aPFx;
+  Handle(Geom_Curve) aC3D;
+  TopoDS_Face aF;
+  TopoDS_Edge aE;
   //
-  aIt.Initialize(theLFIn);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Shape& aF=aIt.Value();      
-    aType=aF.ShapeType();
-    TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, aEFMap);
-  }
-  //
-  aCBMap.Clear();
-  const TopoDS_Shape& aF=theLFIn.First();
-  //
-  aCBMap.Add(aF);
-  //
-  aExp.Init(aF, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()){
-    const TopoDS_Shape& aE=aExp.Current();
-    if (theMEAvoid.Contains(aE)){
-      continue;
-    }
+  bReverse=Standard_False;
+  aF=aFx;
+  aE=aEx;
+  if (aF.Orientation()==TopAbs_REVERSED){
+    bReverse=!bReverse;
+    aE.Reverse();
     //
-    const TopTools_ListOfShape& aLF=aEFMap.FindFromKey(aE);
-    aIt.Initialize(aLF);
-    for (; aIt.More(); aIt.Next()) {
-      const TopoDS_Shape& aF1=aIt.Value();
-      if (!aF1.IsSame(aF)) {
-	Path (aE, aF1, aEFMap, theMEAvoid,  aCBMap);
-      }
-    }
+    aF.Orientation(TopAbs_FORWARD);
+    //GEOMAlgo_Tools3D::GetEdgeOnFace(aEx, aF, aE);
   }
   //
-  aNbF=aCBMap.Extent();
-  for (j=1; j<=aNbF; ++j) {
-    const TopoDS_Shape& aFx=aCBMap(j);
-    theLCB.Append(aFx);
-  }
-}
-//=======================================================================
-// function: Path
-// purpose: 
-//=======================================================================
-void Path(const TopoDS_Shape& theE1,
-	  const TopoDS_Shape& theF1,
-	  const TopTools_IndexedDataMapOfShapeListOfShape& theEFMap,
-	  const TopTools_IndexedMapOfShape& theMEAvoid,
-	  TopTools_IndexedMapOfShape& theCBMap)
-{
-  TopTools_ListIteratorOfListOfShape aIt;
-  TopExp_Explorer aExp;
+  // Point at aT
+  aC3D =BRep_Tool::Curve(aE, aT1, aT2);
+  aC3D->D0(aT, aPFT);
   //
-  if (theCBMap.Contains(theF1)){
-    return;
-  }
-  theCBMap.Add(theF1);
+  // Normal at aT
+  BOPTools_Tools3D::GetNormalToFaceOnEdge (aE, aF, aT, aDNFT);
+  
+  // Tangent at aT
+  BOPTools_Tools3D::GetTangentToEdge(aE, aT, aDTT);
   //
-  aExp.Init(theF1, TopAbs_EDGE);
-  for (; aExp.More(); aExp.Next()){
-    const TopoDS_Shape& aE=aExp.Current();
-    if (!aE.IsSame(theE1)){
-      if (theMEAvoid.Contains(aE)) {
-	continue;
-      }
-      //
-      const TopTools_ListOfShape& aLF=theEFMap.FindFromKey(aE);
-      aIt.Initialize(aLF);
-      for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aF=aIt.Value();
-	  Path (aE, aF, theEFMap, theMEAvoid, theCBMap);
-      }
+  // Binormal at aT
+  aDBT=aDNFT^aDTT;
+  //
+  dT=BOPTools_Tools3D::MinStepIn2d();//~1.e-5;
+  aPFx.SetXYZ(aPFT.XYZ()+dT*aDBT.XYZ());
+  //
+  aPF=aPFx;
+  aDNF=aDNFT;
+  if (bReverse) {
+    aDNF.Reverse();
+  }
+  //
+  GeomAPI_ProjectPointOnSurf& aProjector=aCtx.ProjPS(aF);
+  aProjector.Perform(aPFx);
+  if(aProjector.IsDone()) {
+    Handle(Geom_Surface) aS;
+    //
+    aProjector.LowerDistanceParameters (aU, aV);
+    aS=BRep_Tool::Surface(aF);
+    aS->D0(aU, aV, aPF);
+    BOPTools_Tools3D::GetNormalToSurface (aS, aU, aV, aDNF);
+    if (bReverse){
+      aDNF.Reverse();
     }
   }
 }
-*/
+//modified by NIZNHY-PKV Tue Jul 14 07:49:58 2009t

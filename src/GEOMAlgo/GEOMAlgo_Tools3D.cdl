@@ -172,7 +172,8 @@ is
     	    	theFace  :Face from TopoDS; 
     	    	theEdge  :Edge from TopoDS; 
     	    	theFace1 :Face from TopoDS; 
-    	    	theFace2 :Face from TopoDS) 
+    	    	theFace2 :Face from TopoDS; 
+    	    	theContext:out Context from IntTools) 
     	---Purpose: Returns True if the face theFace is inside of the  
 	--          couple of faces theFace1, theFace2. 
 	--          The faces theFace, theFace1, theFace2  must 
@@ -182,7 +183,8 @@ is
     IsInternalFace(myclass; 
     	    	theFace :Face  from TopoDS; 
     	    	theEdge :Edge  from TopoDS; 
-    	    	theLF   :ListOfShape from TopTools)  
+    	    	theLF   :ListOfShape from TopTools; 
+    	    	theContext:out Context from IntTools)  
     	---Purpose: Returns True if the face theFace is inside of the  
 	--          appropriate couple of faces (from the set theLF)    . 
 	--          The faces of the set theLF and theFace  must 
