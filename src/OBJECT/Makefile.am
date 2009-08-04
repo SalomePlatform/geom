@@ -84,7 +84,7 @@ libGEOMObject_la_CPPFLAGS =	\
 	
 libGEOMObject_la_LDFLAGS  =			\
 	$(QT_MT_LIBS) \
-	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKV3d -lTKMesh -lTKGeomAlgo -lTKTopAlgo -lTKService \
+	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKV3d -lTKMesh -lTKGeomBase -lTKGeomAlgo -lTKTopAlgo -lTKService \
 	$(VTK_LIBS) \
 	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace \
 	$(GUI_LDFLAGS) -lsuit -lqtx -lVTKViewer -lSVTK -lSalomeObject
