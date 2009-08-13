@@ -76,8 +76,7 @@ libGEOM_la_CPPFLAGS =				\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(srcdir)/../GEOMImpl			\
-	-I$(top_builddir)/idl			\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOM_la_LDFLAGS =						\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\

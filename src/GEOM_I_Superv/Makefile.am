@@ -56,8 +56,7 @@ libGEOM_SupervEngine_la_CPPFLAGS =	\
 	-I$(srcdir)/../GEOM		\
 	-I$(srcdir)/../GEOM_I		\
 	-I$(srcdir)/../GEOMAlgo		\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOM_SupervEngine_la_LDFLAGS  =	\
         ../GEOM_I/libGEOMEngine.la      \

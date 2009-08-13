@@ -218,8 +218,7 @@ libGEOMimpl_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
 	../GEOM/libGEOMbasic.la			\

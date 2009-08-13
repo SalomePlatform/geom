@@ -79,8 +79,7 @@ libGenerationGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(top_builddir)/src/DlgRef		\
-	-I$(top_builddir)/idl			\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGenerationGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\

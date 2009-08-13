@@ -46,8 +46,7 @@ libGEOMClient_la_CPPFLAGS =	\
         $(CORBA_INCLUDES)	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
-	-I$(top_builddir)/idl	\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOMClient_la_LDFLAGS  =				\
 	../../idl/libSalomeIDLGEOM.la			\

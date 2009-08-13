@@ -41,7 +41,6 @@ nodist_libSalomeIDLGEOM_la_SOURCES = GEOM_GenSK.cc GEOM_SupervSK.cc
 nodist_salomeinclude_HEADERS = $(BASEIDL_FILES:%.idl=%.hh)
 
 libSalomeIDLGEOM_la_CPPFLAGS =			\
-	-I$(top_builddir)/salome_adm/unix	\
 	-I$(top_builddir)/idl			\
 	@CORBA_CXXFLAGS@ @CORBA_INCLUDES@ @KERNEL_CXXFLAGS@
 libSalomeIDLGEOM_la_LDFLAGS = -no-undefined -version-info=0:0:0
@@ -51,7 +50,7 @@ libSalomeIDLGEOM_la_LIBADD  = $(STDLIB) @CORBA_LIBS@ $(KERNEL_LDFLAGS) -lSalomeI
 OMNIORB_IDL         = @OMNIORB_IDL@
 OMNIORB_IDLCXXFLAGS = @OMNIORB_IDLCXXFLAGS@
 OMNIORB_IDLPYFLAGS  = @OMNIORB_IDLPYFLAGS@ -I$(top_builddir)/idl/salome -I$(KERNEL_ROOT_DIR)/idl/salome 
-IDLCXXFLAGS = -bcxx @IDLCXXFLAGS@ -I$(top_builddir)/idl/salome -I$(KERNEL_ROOT_DIR)/idl/salome -I$(top_builddir)/salome_adm/unix
+IDLCXXFLAGS = -bcxx @IDLCXXFLAGS@ -I$(top_builddir)/idl/salome -I$(KERNEL_ROOT_DIR)/idl/salome
 IDLPYFLAGS  = @IDLPYFLAGS@ -I$(KERNEL_ROOT_DIR)/idl/salome
 
 # potential problem on parallel make on the following - multiple outputs

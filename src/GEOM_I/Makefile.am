@@ -81,8 +81,7 @@ libGEOMEngine_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMImpl		\
 	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../GEOM		\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 
 libGEOMEngine_la_LDFLAGS  =			\

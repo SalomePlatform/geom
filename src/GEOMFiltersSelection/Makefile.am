@@ -62,8 +62,7 @@ libGEOMFiltersSelection_la_CPPFLAGS =	\
 	$(CORBA_CXXFLAGS)		\
 	$(CORBA_INCLUDES)		\
 	-I$(srcdir)/../GEOMClient	\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOMFiltersSelection_la_LDFLAGS  = \
 	$(QT_MT_LIBS) \

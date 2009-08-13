@@ -53,8 +53,7 @@ libDisplayGUI_la_CPPFLAGS =		\
 	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMImpl		\
 	-I$(srcdir)/../GEOMClient	\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libDisplayGUI_la_LDFLAGS =		\
 	../GEOMGUI/libGEOM.la		\

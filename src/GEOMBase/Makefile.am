@@ -67,8 +67,7 @@ libGEOMBase_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMGUI		\
 	-I$(srcdir)/../DlgRef		\
 	-I$(top_builddir)/src/DlgRef	\
-	-I$(top_builddir)/idl		\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOMBase_la_LDFLAGS  =		\
 	../../idl/libSalomeIDLGEOM.la	\

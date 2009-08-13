@@ -71,8 +71,7 @@ libGEOMbasic_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
 	$(BOOST_CPPFLAGS)	\
-	-I$(top_builddir)/idl	\
-	-I$(top_builddir)/salome_adm/unix
+	-I$(top_builddir)/idl
 
 libGEOMbasic_la_LDFLAGS  =			\
 	$(CORBA_LIBS)				\
