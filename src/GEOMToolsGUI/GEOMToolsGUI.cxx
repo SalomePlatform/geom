@@ -401,6 +401,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	OnDisableAutoColor();
 	break;
       }
+    case 8037: // SHOW CHILDREN - POPUP VIEWER
+    case 8038: // HIDE CHILDREN - POPUP VIEWER
+      {
+	OnShowHideChildren( theCommandID == 8037 );
+	break;
+      }
     case 9024 : // OPEN - OBJBROSER POPUP
       {
 	OnOpen();

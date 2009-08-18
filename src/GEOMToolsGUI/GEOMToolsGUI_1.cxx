@@ -606,3 +606,42 @@ void GEOMToolsGUI::OnSelectOnly(int mode)
     getGeometryGUI()->setLocalSelectionMode(mode);
   }
 }
+
+void GEOMToolsGUI::OnShowHideChildren( bool show )
+{
+  SALOME_ListIO selected;
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( app ) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( aSelMgr && appStudy ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+	_PTR(Study) aStudy = appStudy->studyDS();
+	_PTR(StudyBuilder) B = aStudy->NewBuilder();
+
+	bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+	if ( aLocked ) {
+	  SUIT_MessageBox::warning( app->desktop(),
+				    QObject::tr( "WRN_WARNING" ),
+				    QObject::tr( "WRN_STUDY_LOCKED" ) );
+	  return;
+	}
+
+	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+	  Handle(SALOME_InteractiveObject) IObject = It.Value();
+
+	  _PTR(SObject) obj ( aStudy->FindObjectID( IObject->getEntry() ) );
+	  _PTR(GenericAttribute) anAttr;
+	  if ( obj ) {
+	    _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
+	    aExp->SetExpandable( show );
+	  } // if ( obj )
+	} // iterator
+      }
+    }
+    app->updateObjectBrowser( false );
+    app->updateActions();
+  }
+}

@@ -71,7 +71,8 @@ private:
   void         OnNbIsos();
   void         OnOpen();
   void         OnSelectOnly(int mode);
-  
+  void         OnShowHideChildren( bool );
+
   // Recursive deletion of object with children
   void         removeObjectWithChildren( _PTR(SObject),
 					 _PTR(Study),

@@ -28,6 +28,7 @@
 #include "GEOM_GEOMGUI.hxx"
 
 #include <LightApp_Selection.h>
+#include <SALOMEDSClient.hxx>
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
@@ -50,6 +51,11 @@ private:
   QString               displayMode( const int ) const;
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;
+  bool                  hasHiddenChildren( const int ) const;
+  bool                  hasShownChildren( const int ) const;
+
+  static bool           hasChildren( const _PTR(SObject)& );
+  static bool           expandable( const _PTR(SObject)& );
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;

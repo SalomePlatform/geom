@@ -386,6 +386,8 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 8034 ||  // POPUP VIEWER - ISOS
       id == 8035 ||  // POPUP VIEWER - AUTO COLOR
       id == 8036 ||  // POPUP VIEWER - DISABLE AUTO COLOR
+      id == 8037 ||  // POPUP VIEWER - SHOW CHILDREN
+      id == 8038 ||  // POPUP VIEWER - HIDE CHILDREN
       id == 804  ||  // POPUP VIEWER - ADD IN STUDY
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
@@ -904,6 +906,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 8035, "POP_AUTO_COLOR" );
   createGeomAction( 8036, "POP_DISABLE_AUTO_COLOR" );
   createGeomAction( 8001, "POP_CREATE_GROUP" );
+  createGeomAction( 8037, "POP_SHOW_CHILDREN" );
+  createGeomAction( 8038, "POP_HIDE_CHILDREN" );
 
   // make wireframe-shading items to be exclusive (only one at a time is selected)
   //QActionGroup* dispModeGr = new QActionGroup( this, "", true );
@@ -1145,6 +1149,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action(  33 ), QString("$type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8001 ), -1, -1 ); // create group
   mgr->setRule( action( 8001 ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  8037 ), -1, -1 ); // show children
+  mgr->setRule( action( 8037 ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasHiddenChildren=true"), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  8038 ), -1, -1 ); // hide children
+  mgr->setRule( action( 8038 ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasShownChildren=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  801 ), -1, -1 );  // edit group
   mgr->setRule( action( 801 ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------

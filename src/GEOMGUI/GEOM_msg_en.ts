@@ -2324,6 +2324,14 @@ Please, select face, shell or solid and try again</translation>
             <translation>Create Group</translation>
         </message>
         <message>
+            <source>MEN_POP_SHOW_CHILDREN</source>
+            <translation>Show Children</translation>
+        </message>
+        <message>
+            <source>MEN_POP_HIDE_CHILDREN</source>
+            <translation>Hide Children</translation>
+        </message>
+        <message>
             <source>MEN_POP_ISOS</source>
             <translation>Isos</translation>
         </message>
@@ -2864,6 +2872,14 @@ Please, select face, shell or solid and try again</translation>
             <translation>Create Group</translation>
         </message>
         <message>
+            <source>STB_POP_SHOW_CHILDREN</source>
+            <translation>Show child objects</translation>
+        </message>
+        <message>
+            <source>STB_POP_HIDE_CHILDREN</source>
+            <translation>Hide child objects</translation>
+        </message>
+        <message>
             <source>STB_POP_ISOS</source>
             <translation>Isolines</translation>
         </message>
@@ -3334,6 +3350,14 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>TOP_POP_CREATE_GROUP</source>
             <translation>Create Group</translation>
+        </message>
+        <message>
+            <source>TOP_POP_SHOW_CHILDREN</source>
+            <translation>Show Children</translation>
+        </message>
+        <message>
+            <source>TOP_POP_HIDE_CHILDREN</source>
+            <translation>Hide Children</translation>
         </message>
         <message>
             <source>TOP_POP_ISOS</source>

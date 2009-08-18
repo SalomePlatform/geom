@@ -89,6 +89,10 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
     return QVariant( isAutoColor( ind ) );
   else if ( p == "isVectorsMode" )
     return QVariant( isVectorsMode( ind ) );
+  else if ( p == "hasHiddenChildren" )
+    return QVariant( hasHiddenChildren( ind ) );
+  else if ( p == "hasShownChildren" )
+    return QVariant( hasShownChildren( ind ) );
   else
     return LightApp_Selection::parameter( ind, p );
 }
@@ -217,6 +221,70 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
     }
   }
   return ret;
+}
+
+bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
+{
+  bool ok = false;
+  if ( obj ) {
+    _PTR(ChildIterator) it ( obj->GetStudy()->NewChildIterator( obj ) );
+    for ( ; it->More() && !ok; it->Next() ) {
+      _PTR(SObject) child = it->Value();
+      if ( child ) {
+	_PTR(SObject) refObj;
+	if ( child->ReferencedObject( refObj ) ) continue; // omit references
+	if ( child->GetName() != "" ) ok = true;
+      }
+    }
+  }
+  return ok;
+}
+
+bool GEOMGUI_Selection::expandable( const _PTR(SObject)& obj )
+{
+  bool exp = true;
+  _PTR(GenericAttribute) anAttr;
+  if ( obj && obj->FindAttribute( anAttr, "AttributeExpandable" ) ) {
+    _PTR(AttributeExpandable) aAttrExp = anAttr;
+    exp = aAttrExp->IsExpandable();
+  }
+  return exp;
+}
+
+bool GEOMGUI_Selection::hasHiddenChildren( const int index ) const
+{
+  bool OK = false;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
+    (SUIT_Session::session()->activeApplication()->activeStudy());
+
+  if ( appStudy && index >= 0 && index < count() )  {
+    _PTR(Study) study = appStudy->studyDS();
+    QString anEntry = entry( index );
+
+    if ( study && !anEntry.isEmpty() ) {
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
+      OK = !expandable( aSO ) && hasChildren( aSO );
+    }
+  }
+  return OK;
+}
+
+bool GEOMGUI_Selection::hasShownChildren( const int index ) const
+{
+  bool OK = false;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
+    (SUIT_Session::session()->activeApplication()->activeStudy());
+
+  if ( appStudy && index >= 0 && index < count() )  {
+    _PTR(Study) study = appStudy->studyDS();
+    QString anEntry = entry( index );
+
+    if ( study && !anEntry.isEmpty() ) {
+      _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
+      OK = expandable( aSO ) && hasChildren( aSO );
+    }
+  }
+  return OK;
 }
 
 bool GEOMGUI_Selection::isComponent( const int index ) const

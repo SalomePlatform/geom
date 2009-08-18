@@ -2,12 +2,13 @@
 
 \page view_geom_obj_page Viewing geometrical objects
 
-\n Newly created geometrical objects are automatically displayed in
+Newly created geometrical objects are automatically displayed in
 the <b>OCC 3D Viewer</b>.
 
-\n <b>OCC 3D Viewer</b> is described in the documentation on <b>GUI
+<b>OCC 3D Viewer</b> is described in the documentation on <b>GUI
 module</b>.
-\n After the object has appeared in the Viewer, you can select it with
+
+After the object has appeared in the Viewer, you can select it with
 left mouse click to change its presentation parameters and access to
 other useful options by right-clicking on the selected object.
 
@@ -32,27 +33,47 @@ sub-shapes of the selected geometrical object are automatically
 coloured by the unique colors. TUI Commands :
 <em>go.SetAutoColor(enable)</em>, <em>enabled = go.GetAutoColor()</em></li>
 <li><b>Hide</b> - allows to hide the selected geometrical object from the
-viewer. TUI Command : <em>sg.EraseOnly(ID)</em>
-\n \image html image18.png
-</li>
+viewer. TUI Command : <em>sg.EraseOnly(ID)</em></li>
+
+\image html image18.png
+
 <li><b>Hide all</b> - allows to hide all objects from the viewer. TUI
-Command: <em>sg.EraseAll()</em>
-\n \image html image26.png
-</li>
+Command: <em>sg.EraseAll()</em></li>
+
+\image html image26.png
+
 <li><b>Show Only</b> - allows to display only the selected
-geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em>
-\n \image html image33.png
-</li>
+geometrical object. TUI Command: <em>sg.DisplayOnly(ID)</em></li>
+
+\image html image33.png
+
 <li><b>Dump view</b> - exports an object from the viewer in bmp, png,
 jpg or jpeg image format.</li>
 <li><b>Change background</b> - allows to redefine the background
-color. By default it is black.
-\n\n Some of these functionalities are available through right-clicking
+color. By default it is black.</li>
+</ul>
+
+Some of these functionalities are available through right-clicking
 on the viewer background:
 
-\image html image22.png <br></li>
+\image html image22.png <br>
 
+<ul>
 <li><b>Select Only</b> provides a filter for exclusive selection of objects of a certain type.</li>
+</ul>
+
+The Object browser's popup menu can include some other commands:
+
+\image html ob_popup_menu.png <br>
+
+<ul>
+<li>\subpage work_with_groups_page "Create Group" - invokes dialog box
+that allows creating groups of geometrical objects.</li>
+<li><b>Hide Children</b> / <b>Show Children</b> - hide / show child
+sub-objects in the Object Browser. These commands are available only
+if the selected geometry object has any children. Note: when some
+children are hidden, the object name is hilghlighted with the bold
+font.</li>
 </ul>
 
 */
