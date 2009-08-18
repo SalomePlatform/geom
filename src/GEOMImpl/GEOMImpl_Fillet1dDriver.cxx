@@ -119,8 +119,7 @@ static Standard_Boolean takePlane( const TopoDS_Edge& theE1,
     if ( fabs(anAngle) <= gp::Resolution() || 
          fabs(anAngle - PI) <= gp::Resolution() )
       return false;
-    //thePlane = gp_Pln( gp_Pnt(aXYZ), aDir1^ aDir2);
-    thePlane = gp_Pln( gp_Pnt(aXYZ), gp_Dir(0,0,1));
+    thePlane = gp_Pln( gp_Pnt(aXYZ), aDir1^ aDir2);
   }
   catch (Standard_Failure) {
     return false;
