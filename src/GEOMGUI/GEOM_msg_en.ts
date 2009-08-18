@@ -623,6 +623,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_FILLET_2D</source>
             <translation>Fillet 2D</translation>
         </message>
+	<message>
+            <source>GEOM_FILLET_1D</source>
+            <translation>Fillet 1D</translation>
+        </message>
         <message>
             <source>GEOM_FILLET_ABORT</source>
             <translation>Fillet can't be computed with radius %1</translation>
@@ -634,6 +638,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_FILLET_EDGES</source>
             <translation>Fillet On Edges From Shape</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLET_WIRES</source>
+            <translation>Fillet On Wires From Shape</translation>
         </message>
         <message>
             <source>GEOM_FILLET_FACES</source>
@@ -650,6 +658,10 @@ Please, select face, shell or solid and try again</translation>
 	<message>
             <source>GEOM_FILLET_2D_TITLE</source>
             <translation>2D Fillet Construction</translation>
+        </message>
+	<message>
+            <source>GEOM_FILLET_1D_TITLE</source>
+            <translation>1D Fillet Construction</translation>
         </message>
         <message>
             <source>GEOM_FILLING</source>
@@ -2188,6 +2200,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Fillet</translation>
         </message>
 	<message>
+            <source>MEN_FILLET_1D</source>
+            <translation>Fillet 1D</translation>
+        </message>
+	<message>
             <source>MEN_FILLET_2D</source>
             <translation>Fillet 2D</translation>
         </message>
@@ -3706,6 +3722,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_PLANAR_FACE</source>
             <translation>Planar Face</translation>
+        </message>
+        <message>
+            <source>GEOM_PLANAR_EDGE_WIRE</source>
+            <translation>Wire with Planar Edges</translation>
         </message>
         <message>
             <source>GEOM_POLYGON</source>

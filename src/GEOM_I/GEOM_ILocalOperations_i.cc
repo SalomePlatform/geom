@@ -239,6 +239,38 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
 
 //=============================================================================
 /*!
+ *  MakeFillet1D
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
+                      (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+                       const GEOM::ListOfLong& theVertexes)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Get the reference shape (wire)
+  Handle(GEOM_Object) aShapeRef = GetObjectImpl(theShape);
+  if (aShapeRef.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference vertex
+  int ind = 0;
+  int aLen = theVertexes.length();
+  list<int> aVertexes;
+  for (; ind < aLen; ind++) {
+    aVertexes.push_back(theVertexes[ind]);
+  }
+
+  //Create the Fillet
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeFillet1D(aShapeRef, theR, aVertexes);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeChamferAll
  */
 //=============================================================================

@@ -86,9 +86,11 @@ eraseall.png			\
 face_hw.png			\
 face_vechw.png			\
 fillet.png			\
+fillet1d.png			\
 fillet2d.png			\
 filletall.png			\
 filletedge.png			\
+filletwire.png			\
 filletface.png			\
 filling.png			\
 fuse.png			\

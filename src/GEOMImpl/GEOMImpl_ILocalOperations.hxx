@@ -48,6 +48,8 @@ class GEOMImpl_ILocalOperations : public GEOM_IOperations {
                                                            std::list<int> theFaces);
   Standard_EXPORT Handle(GEOM_Object) MakeFillet2D (Handle(GEOM_Object) theShape, double theR,
                                                     std::list<int> theVertexes);
+  Standard_EXPORT Handle(GEOM_Object) MakeFillet1D (Handle(GEOM_Object) theShape, double theR,
+                                                    std::list<int> theVertexes);
 
   Standard_EXPORT Handle(GEOM_Object) MakeChamferAll   (Handle(GEOM_Object) theShape, double theD);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferEdge  (Handle(GEOM_Object) theShape,

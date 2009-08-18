@@ -2334,6 +2334,21 @@ module GEOM
 			      in ListOfLong  theVertexes);
 
     /*!
+     *  Perform a fillet on edges of the specified vertexes of the given wire.
+     *  \param theShape Shape, to perform fillet on.
+     *  \param theR Fillet radius.
+     *  \param theVertexes Global indices of vertexes to perform fillet on.
+     *    \note Global index of sub-shape can be obtained, using method
+     *          <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR>.
+     *    \note The list of vertices coudl be empty, in this case fillet fill be done
+     *          at all vertices in given wire
+     *  \return New GEOM_Object, containing the result shape.
+     */
+    GEOM_Object MakeFillet1D (in GEOM_Object theShape,
+			      in double      theR,
+			      in ListOfLong  theVertexes);
+
+    /*!
      *  Perform a symmetric chamfer on all edges of the given shape.
      *  \param theShape Shape, to perform chamfer on.
      *  \param theD Chamfer size along each face.

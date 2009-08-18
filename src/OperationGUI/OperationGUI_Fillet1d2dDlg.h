@@ -19,12 +19,12 @@
 // 
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File   : OperationGUI_Fillet2dDlg.h
+// File   : OperationGUI_Fillet1d2dDlg.h
 // Author : DMV, OCN
 //
 
-#ifndef OPERATIONGUI_FILLET2DDLG_H
-#define OPERATIONGUI_FILLET2DDLG_H
+#ifndef OPERATIONGUI_Fillet1d2dDLG_H
+#define OPERATIONGUI_Fillet1d2dDLG_H
 
 #include <GEOMBase_Skeleton.h>
 
@@ -33,16 +33,16 @@
 class DlgRef_2Sel1Spin;
 
 //=================================================================================
-// class    : OperationGUI_Fillet2dDlg
+// class    : OperationGUI_Fillet1d2dDlg
 // purpose  :
 //=================================================================================
-class OperationGUI_Fillet2dDlg : public GEOMBase_Skeleton
+class OperationGUI_Fillet1d2dDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
       
 public:
-  OperationGUI_Fillet2dDlg( GeometryGUI*, QWidget* );
-  ~OperationGUI_Fillet2dDlg();
+  OperationGUI_Fillet1d2dDlg( GeometryGUI*, QWidget*, bool theIs1D );
+  ~OperationGUI_Fillet1d2dDlg();
   
 protected:
   // redefined from GEOMBase_Helper
@@ -66,10 +66,11 @@ private:
   double                              getRadius() const;
 
 private:
+  bool                                myIs1D;
   GEOM::GEOM_Object_var               myShape;
   TColStd_IndexedMapOfInteger         myVertexes;
 
   DlgRef_2Sel1Spin*                   GroupVertexes;
 };
 
-#endif // OPERATIONGUI_FILLET2DDLG_H
+#endif // OPERATIONGUI_Fillet1d2dDLG_H

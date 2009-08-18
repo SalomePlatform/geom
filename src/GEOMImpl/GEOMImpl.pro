@@ -108,6 +108,7 @@ SOURCES += GEOMImpl_ArcDriver.cxx
 SOURCES += GEOMImpl_SplineDriver.cxx
 SOURCES += GEOMImpl_SketcherDriver.cxx
 SOURCES += GEOMImpl_FilletDriver.cxx
+SOURCES += GEOMImpl_Fillet1dDriver.cxx
 SOURCES += GEOMImpl_Fillet2dDriver.cxx
 SOURCES += GEOMImpl_ChamferDriver.cxx
 SOURCES += GEOMImpl_BooleanDriver.cxx

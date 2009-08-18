@@ -398,6 +398,10 @@
             <translation>Cong sur Edges de la Shape</translation>
         </message>
         <message>
+            <source>GEOM_FILLET_WIRES</source>
+            <translation>Cong sur Wires de la Shape</translation>
+        </message>
+        <message>
             <source>GEOM_FILLET_FACES</source>
             <translation>Cong sur Faces de la Shape</translation>
         </message>

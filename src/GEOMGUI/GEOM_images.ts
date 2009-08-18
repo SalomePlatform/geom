@@ -226,6 +226,10 @@
             <translation>fillet.png</translation>
         </message>
 	<message>
+            <source>ICON_DLG_FILLET_1D</source>
+            <translation>fillet1d.png</translation>
+        </message>
+	<message>
             <source>ICON_DLG_FILLET_2D</source>
             <translation>fillet2d.png</translation>
         </message>
@@ -236,6 +240,10 @@
         <message>
             <source>ICON_DLG_FILLET_EDGE</source>
             <translation>filletedge.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_FILLET_WIRE</source>
+            <translation>filletwire.png</translation>
         </message>
         <message>
             <source>ICON_DLG_FILLET_FACE</source>
@@ -764,6 +772,10 @@
         <message>
             <source>ICO_FILLET</source>
             <translation>fillet.png</translation>
+        </message>
+	<message>
+            <source>ICO_FILLET_1D</source>
+            <translation>fillet1d.png</translation>
         </message>
 	<message>
             <source>ICO_FILLET_2D</source>

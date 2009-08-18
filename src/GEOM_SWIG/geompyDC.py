@@ -2716,6 +2716,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 	    
+        ## Perform a fillet on the specified edges of the given wire shape
+        #  @param theShape - Wire Shape(with planar edges) to perform fillet on.
+        #  @param theR - Fillet radius.
+        #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
+        #    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
+        #  @return New GEOM_Object, containing the result shape.
+        #
+        #  @ref tui_fillet1d "Example"
+        def MakeFillet1D(self,theShape, theR, theListOfVertexes):
+            # Example: see GEOM_TestAll.py
+            anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
+            RaiseIfFailed("MakeFillet1D", self.LocalOp)
+            return anObj
+
         ## Perform a fillet on the specified edges/faces of the given shape
         #  @param theShape - Face Shape to perform fillet on.
         #  @param theR - Fillet radius.
@@ -2728,6 +2742,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet2D", self.LocalOp)
+            return anObj
+
+        ## Perform a fillet on the specified edges of the given shape
+        #  @param theShape - Wire Shape to perform fillet on.
+        #  @param theR - Fillet radius.
+        #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
+        #    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
+        #    \note The list of vertices could be empty,
+        #          in this case fillet will done done at all vertices in wire
+        #  @return New GEOM_Object, containing the result shape.
+        #
+        #  @ref tui_fillet2d "Example"
+        def MakeFillet1D(self,theShape, theR, theListOfVertexes):
+            # Example: see GEOM_TestAll.py
+            anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
+            RaiseIfFailed("MakeFillet1D", self.LocalOp)
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.

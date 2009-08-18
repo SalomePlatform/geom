@@ -63,6 +63,9 @@ class GEOM_I_EXPORT GEOM_ILocalOperations_i :
   GEOM::GEOM_Object_ptr MakeFillet2D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
 				      const GEOM::ListOfLong& theVertexes);
 
+  GEOM::GEOM_Object_ptr MakeFillet1D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
+				      const GEOM::ListOfLong& theVertexes);
+
   GEOM::GEOM_Object_ptr MakeChamferAll   (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
 
   GEOM::GEOM_Object_ptr MakeChamferEdge  (GEOM::GEOM_Object_ptr theShape,

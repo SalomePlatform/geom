@@ -14,7 +14,7 @@ vertexes on this face in the OCC Viewer and define the \b Radius of the Fillet.
 
 \b Note: This Operation Works for the <b>Planar 2D</b> Faces Only.
 
-<b>TUI Command:</b> <em>geompy.MakeFillet(Shape, R, ListVertexes)</em>
+<b>TUI Command:</b> <em>geompy.MakeFillet2D(Shape, R, ListVertexes)</em>
 \n <b>Arguments:</b> Name + 1 shape + one or several vertexes + 1 value (Fillet radius).
 
 <b>Examples:</b>

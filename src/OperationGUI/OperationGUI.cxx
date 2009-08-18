@@ -38,7 +38,7 @@
 #include "OperationGUI_PartitionDlg.h"   // Method PARTITION
 #include "OperationGUI_ArchimedeDlg.h"   // Method ARCHIMEDE
 #include "OperationGUI_FilletDlg.h"      // Method FILLET
-#include "OperationGUI_Fillet2dDlg.h"    // Method FILLET 2D
+#include "OperationGUI_Fillet1d2dDlg.h"  // Method FILLET 2D and FILLET 1D
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
 #include "OperationGUI_ClippingDlg.h"    // Clipping dialog box
 #include "OperationGUI_GetShapesOnShapeDlg.h"
@@ -79,7 +79,8 @@ bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case 506: ( new OperationGUI_ChamferDlg         ( getGeometryGUI(), parent ) )->show(); break;
   case 507: ( new OperationGUI_ClippingDlg        ( getGeometryGUI(), parent ) )->show(); break;
   case 508: ( new OperationGUI_GetShapesOnShapeDlg( getGeometryGUI(), parent ) )->show(); break;
-  case 509: ( new OperationGUI_Fillet2dDlg        ( getGeometryGUI(), parent ) )->show(); break;
+  case 510: ( new OperationGUI_Fillet1d2dDlg      ( getGeometryGUI(), parent,true ) )->show(); break;
+  case 509: ( new OperationGUI_Fillet1d2dDlg      ( getGeometryGUI(), parent,false ) )->show(); break;
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
   }

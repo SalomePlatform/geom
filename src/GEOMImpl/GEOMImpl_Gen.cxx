@@ -62,6 +62,7 @@
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_ChamferDriver.hxx>
 #include <GEOMImpl_FilletDriver.hxx>
+#include <GEOMImpl_Fillet1dDriver.hxx>
 #include <GEOMImpl_Fillet2dDriver.hxx>
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
@@ -134,6 +135,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    // Local Operations
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ChamferDriver::GetID(), new GEOMImpl_ChamferDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_FilletDriver::GetID(), new GEOMImpl_FilletDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_Fillet1dDriver::GetID(), new GEOMImpl_Fillet1dDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_Fillet2dDriver::GetID(), new GEOMImpl_Fillet2dDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ArchimedeDriver::GetID(), new GEOMImpl_ArchimedeDriver());
 
