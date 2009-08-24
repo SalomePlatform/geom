@@ -41,9 +41,12 @@
 #include <ShapeFix_Wire.hxx>
 #include <ShapeFix_Edge.hxx>
 
+#include <IntPatch_TheIIIntOfIntersection.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepTools.hxx>
+#include <BRepTopAdaptor_TopolTool.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -66,13 +69,21 @@
 
 #include <TColGeom_HArray2OfSurface.hxx>
 
+#include <GeomAdaptor_HSurface.hxx>
+#include <GeomLib_IsPlanarSurface.hxx>
+
+#include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_OffsetSurface.hxx>
-#include <Geom_CylindricalSurface.hxx>
 #include <Geom_SphericalSurface.hxx>
-#include <Geom_Surface.hxx>
-#include <Geom_Curve.hxx>
+#include <Geom_CylindricalSurface.hxx>
+#include <Geom_SurfaceOfRevolution.hxx>
+#include <Geom_SurfaceOfLinearExtrusion.hxx>
 #include <Geom_RectangularTrimmedSurface.hxx>
+
+#include <Geom_Curve.hxx>
+#include <Geom_Line.hxx>
+#include <Geom_Circle.hxx>
 
 #include <Geom2d_Line.hxx>
 
@@ -504,10 +515,64 @@ TopoDS_Shape BlockFix_UnionFaces::Perform(const TopoDS_Shape& Shape)
 //purpose  :
 //=======================================================================
 
+bool getCylinder (Handle(Geom_Surface)& theInSurface, gp_Cylinder& theOutCylinder)
+{
+  bool isCylinder = false;
+
+  if (theInSurface->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {
+    Handle(Geom_CylindricalSurface) aGC = Handle(Geom_CylindricalSurface)::DownCast(theInSurface);
+
+    theOutCylinder = aGC->Cylinder();
+    isCylinder = true;
+  }
+  else if (theInSurface->IsKind(STANDARD_TYPE(Geom_SurfaceOfRevolution))) {
+    Handle(Geom_SurfaceOfRevolution) aRS =
+      Handle(Geom_SurfaceOfRevolution)::DownCast(theInSurface);
+    Handle(Geom_Curve) aBasis = aRS->BasisCurve();
+    if (aBasis->IsKind(STANDARD_TYPE(Geom_Line))) {
+      Handle(Geom_Line) aBasisLine = Handle(Geom_Line)::DownCast(aBasis);
+      gp_Dir aDir = aRS->Direction();
+      gp_Dir aBasisDir = aBasisLine->Position().Direction();
+      if (aBasisDir.IsParallel(aDir, Precision::Confusion())) {
+        // basis line is parallel to the revolution axis: it is a cylinder
+        gp_Pnt aLoc = aRS->Location();
+        Standard_Real aR = aBasisLine->Lin().Distance(aLoc);
+        gp_Ax3 aCylAx (aLoc, aDir);
+
+        theOutCylinder = gp_Cylinder(aCylAx, aR);
+        isCylinder = true;
+      }
+    }
+  }
+  else if (theInSurface->IsKind(STANDARD_TYPE(Geom_SurfaceOfLinearExtrusion))) {
+    Handle(Geom_SurfaceOfLinearExtrusion) aLES =
+      Handle(Geom_SurfaceOfLinearExtrusion)::DownCast(theInSurface);
+    Handle(Geom_Curve) aBasis = aLES->BasisCurve();
+    if (aBasis->IsKind(STANDARD_TYPE(Geom_Circle))) {
+      Handle(Geom_Circle) aBasisCircle = Handle(Geom_Circle)::DownCast(aBasis);
+      gp_Dir aDir = aLES->Direction();
+      gp_Dir aBasisDir = aBasisCircle->Position().Direction();
+      if (aBasisDir.IsParallel(aDir, Precision::Confusion())) {
+        // basis circle is normal to the extrusion axis: it is a cylinder
+        gp_Pnt aLoc = aBasisCircle->Location();
+        Standard_Real aR = aBasisCircle->Radius();
+        gp_Ax3 aCylAx (aLoc, aDir);
+
+        theOutCylinder = gp_Cylinder(aCylAx, aR);
+        isCylinder = true;
+      }
+    }
+  }
+  else {
+  }
+
+  return isCylinder;
+}
+
 Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
                                                    const TopoDS_Face& aCheckedFace) const
 {
-  //checking the same handless
+  //checking the same handles
   TopLoc_Location L1, L2;
   Handle(Geom_Surface) S1, S2;
 
@@ -517,86 +582,80 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
   if (S1 == S2 && L1 == L2)
     return true;
 
-  // begin: planar case (improvement 20052)
+  // planar and cylindrical cases (IMP 20052)
+  Standard_Real aPrec = Precision::Confusion();
+
   S1 = BRep_Tool::Surface(aFace);
   S2 = BRep_Tool::Surface(aCheckedFace);
 
-  Handle(Geom_Plane) aGP1, aGP2;
-  Handle(Geom_RectangularTrimmedSurface) aGRTS1, aGRTS2;
-  Handle(Geom_OffsetSurface) aGOFS1, aGOFS2;
+  S1 = ClearRts(S1);
+  S2 = ClearRts(S2);
 
-  aGRTS1 = Handle(Geom_RectangularTrimmedSurface)::DownCast(S1);
-  aGRTS2 = Handle(Geom_RectangularTrimmedSurface)::DownCast(S2);
+  //Handle(Geom_OffsetSurface) aGOFS1, aGOFS2;
+  //aGOFS1 = Handle(Geom_OffsetSurface)::DownCast(S1);
+  //aGOFS2 = Handle(Geom_OffsetSurface)::DownCast(S2);
+  //if (!aGOFS1.IsNull()) S1 = aGOFS1->BasisSurface();
+  //if (!aGOFS2.IsNull()) S2 = aGOFS2->BasisSurface();
 
-  aGOFS1 = Handle(Geom_OffsetSurface)::DownCast(S1);
-  aGOFS2 = Handle(Geom_OffsetSurface)::DownCast(S2);
+  // case of two elementary surfaces: use OCCT tool
+  // elementary surfaces: ConicalSurface, CylindricalSurface,
+  //                      Plane, SphericalSurface and ToroidalSurface
+  if (S1->IsKind(STANDARD_TYPE(Geom_ElementarySurface)) &&
+      S2->IsKind(STANDARD_TYPE(Geom_ElementarySurface)))
+  {
+    Handle(GeomAdaptor_HSurface) aGA1 = new GeomAdaptor_HSurface(S1);
+    Handle(GeomAdaptor_HSurface) aGA2 = new GeomAdaptor_HSurface(S2);
 
-  if (!aGOFS1.IsNull()) {
-    aGP1 = Handle(Geom_Plane)::DownCast(aGOFS1->BasisSurface());
-  }
-  else if (!aGRTS1.IsNull()) {
-    aGP1 = Handle(Geom_Plane)::DownCast(aGRTS1->BasisSurface());
-  }
-  else {
-    aGP1 = Handle(Geom_Plane)::DownCast(S1);
-  }
+    Handle(BRepTopAdaptor_TopolTool) aTT1 = new BRepTopAdaptor_TopolTool();
+    Handle(BRepTopAdaptor_TopolTool) aTT2 = new BRepTopAdaptor_TopolTool();
 
-  if (!aGOFS2.IsNull()) {
-    aGP2 = Handle(Geom_Plane)::DownCast(aGOFS2->BasisSurface());
-  }
-  else if (!aGRTS2.IsNull()) {
-    aGP2 = Handle(Geom_Plane)::DownCast(aGRTS2->BasisSurface());
-  }
-  else {
-    aGP2 = Handle(Geom_Plane)::DownCast(S2);
+    IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
+    if (!anIIInt.IsDone() || anIIInt.IsEmpty())
+      return false;
+
+    return anIIInt.TangentFaces();
   }
 
-  if (!aGP1.IsNull() && !aGP2.IsNull()) {
-    // both surfaces are planar, check equality
-    Standard_Real A1, B1, C1, D1;
-    Standard_Real A2, B2, C2, D2;
-    aGP1->Coefficients(A1, B1, C1, D1);
-    aGP2->Coefficients(A2, B2, C2, D2);
+  // case of two planar surfaces:
+  // all kinds of surfaces checked, including b-spline and bezier
+  GeomLib_IsPlanarSurface aPlanarityChecker1 (S1, aPrec);
+  if (aPlanarityChecker1.IsPlanar()) {
+    GeomLib_IsPlanarSurface aPlanarityChecker2 (S2, aPrec);
+    if (aPlanarityChecker2.IsPlanar()) {
+      gp_Pln aPln1 = aPlanarityChecker1.Plan();
+      gp_Pln aPln2 = aPlanarityChecker2.Plan();
 
-    if (fabs(A1) > Precision::Confusion()) {
-      A1 = 1.0;
-      B1 /= A1;
-      C1 /= A1;
-      D1 /= A1;
+      if (aPln1.Position().Direction().IsParallel(aPln2.Position().Direction(), aPrec) &&
+          aPln1.Distance(aPln2) < aPrec) {
+        return true;
+      }
     }
-    else if (fabs(B1) > Precision::Confusion()) {
-      B1 = 1.0;
-      C1 /= B1;
-      D1 /= B1;
-    }
-    else {
-      C1 = 1.0;
-      D1 /= C1;
-    }
-
-    if (fabs(A2) > Precision::Confusion()) {
-      A2 = 1.0;
-      B2 /= A2;
-      C2 /= A2;
-      D2 /= A2;
-    }
-    else if (fabs(B2) > Precision::Confusion()) {
-      B2 = 1.0;
-      C2 /= B2;
-      D2 /= B2;
-    }
-    else {
-      C2 = 1.0;
-      D2 /= C2;
-    }
-
-    if (fabs(A1 - A2) < Precision::Confusion() &&
-        fabs(B1 - B2) < Precision::Confusion() &&
-        fabs(C1 - C2) < Precision::Confusion() &&
-        fabs(D1 - D2) < Precision::Confusion())
-      return true;
   }
-  // end: planar case (improvement 20052)
+
+  // case of two cylindrical surfaces, at least one of which is a swept surface
+  // swept surfaces: SurfaceOfLinearExtrusion, SurfaceOfRevolution
+  if ((S1->IsKind(STANDARD_TYPE(Geom_CylindricalSurface)) ||
+       S1->IsKind(STANDARD_TYPE(Geom_SweptSurface))) &&
+      (S2->IsKind(STANDARD_TYPE(Geom_CylindricalSurface)) ||
+       S2->IsKind(STANDARD_TYPE(Geom_SweptSurface))))
+  {
+    gp_Cylinder aCyl1, aCyl2;
+    if (getCylinder(S1, aCyl1) && getCylinder(S2, aCyl2)) {
+      if (fabs(aCyl1.Radius() - aCyl2.Radius()) < aPrec) {
+        gp_Dir aDir1 = aCyl1.Position().Direction();
+        gp_Dir aDir2 = aCyl2.Position().Direction();
+        if (aDir1.IsParallel(aDir2, aPrec)) {
+          gp_Pnt aLoc1 = aCyl1.Location();
+          gp_Pnt aLoc2 = aCyl2.Location();
+          gp_Vec aVec12 (aLoc1, aLoc2);
+          if (aVec12.SquareMagnitude() < aPrec*aPrec ||
+              aVec12.IsParallel(aDir1, aPrec)) {
+            return true;
+          }
+        }
+      }
+    }
+  }
 
   return false;
 }
