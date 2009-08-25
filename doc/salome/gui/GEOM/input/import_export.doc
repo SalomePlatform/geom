@@ -24,8 +24,8 @@ the <b>Object Browser</b>.
 
 \note If the selected file is in IGES format and the length is not
 expressed in meters, it will be suggested to scale the model into the
-metric system (see the picture below). This feature can be helpful in the
-case if wrong units have been written to the IGES file by some
+metric system (see the picture below). This feature can be helpful if
+some wrong units have been written to the IGES file by a
 3rd-party software.
 
 \image html iges_unit.png

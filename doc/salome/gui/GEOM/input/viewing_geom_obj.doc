@@ -27,8 +27,8 @@ the standard <b>Select Color</b> menu.</li>
 transparency of geometrical objects.</li>
 <li>\subpage isolines_page "Isos" - allows to change the number of
 isolines displayed within a shape.</li>
-<li><b>Auto color</b> / <b>Disable auto color</b> - toggle auto color
-mode. When auto color mode is enabled, the groups created on the
+<li><b>Auto color</b> / <b>Disable auto color</b> - activates the auto color
+mode. When the auto color mode is enabled, the groups created on the
 sub-shapes of the selected geometrical object are automatically
 coloured by the unique colors. TUI Commands :
 <em>go.SetAutoColor(enable)</em>, <em>enabled = go.GetAutoColor()</em></li>
@@ -62,18 +62,17 @@ on the viewer background:
 <li><b>Select Only</b> provides a filter for exclusive selection of objects of a certain type.</li>
 </ul>
 
-The Object browser's popup menu can include some other commands:
+The the following commands appear in the Object Browser context menu
+under certain conditions:
 
 \image html ob_popup_menu.png <br>
 
 <ul>
-<li>\subpage work_with_groups_page "Create Group" - invokes dialog box
-that allows creating groups of geometrical objects.</li>
-<li><b>Hide Children</b> / <b>Show Children</b> - hide / show child
-sub-objects in the Object Browser. These commands are available only
-if the selected geometry object has any children. Note: when some
-children are hidden, the object name is hilghlighted with the bold
-font.</li>
+<li>\subpage work_with_groups_page "Create Group" - allows creating groups of geometrical objects.</li>
+<li><b>Hide Children</b> / <b>Show Children</b> - hides / shows child
+sub-objects in the Object Browser, if the selected geometr object has
+child objects. When some child objects are hidden, the name of the
+parent object is hilghlighted with bold font.</li>
 </ul>
 
 */

@@ -18,9 +18,11 @@ Wireframe</b> or <b>Shading</b>.
 \image html /disp_mode2sn.png
 <center><em>Shading</em></center>
 
-\n There is an option to show the direction of edges on the selected shape from popup menu <b> Display mode
--> Show Edge Direction</b> or it possible to apply this functionality for all objects in the current view from
-the main menu <b> View -> Display Mode -> Show/Hide Edge Direction.</b>
+\n It is possible to show the direction of edges of the selected
+shape. For this, choose in the context menu of the shape
+<b>Display mode -> Show Edge Direction</b>, or apply this
+functionality for all objects in the current view via the main menu
+<b> View -> Display Mode -> Show/Hide Edge Direction.</b>
 
 \image html vectors_mode.png
 <center><em>Vectors Mode (Show Edge Direction)</em></center>
