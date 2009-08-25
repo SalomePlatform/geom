@@ -22,7 +22,7 @@
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BasicGUI_CurveDlg.h"
 
 #include <DlgRef.h>
@@ -48,13 +48,13 @@
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg()
-// purpose  : Constructs a BasicGUI_CurveDlg which is a child of 'parent', with the 
+// purpose  : Constructs a BasicGUI_CurveDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				      bool modal, Qt::WindowFlags fl )
+                                      bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POLYLINE" ) ) );
@@ -69,7 +69,7 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   mainFrame()->RadioButton2->setIcon( image3 );
   mainFrame()->RadioButton3->setIcon( image2 );
 
-  GroupPoints = new DlgRef_1Sel( centralWidget() );
+  GroupPoints = new DlgRef_1Sel1Check( centralWidget() );
 
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_POINTS" ) );
@@ -77,6 +77,10 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints->PushButton1->setDown( true );
 
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+  GroupPoints->CheckButton1->setChecked(false);
+  GroupPoints->CheckButton1->hide();
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -116,7 +120,7 @@ void BasicGUI_CurveDlg::Init()
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
-  
+
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
@@ -125,9 +129,11 @@ void BasicGUI_CurveDlg::Init()
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) ) ;
- 
+  connect( GroupPoints->CheckButton1,SIGNAL( toggled(bool) ),   this, SLOT( CheckButtonToggled() ) );
+
+  connect( myGeomGUI->getApp()->selectionMgr(),
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
   initName( tr( "GEOM_CURVE" ) );
   resize(100,100);
   ConstructorsClicked( 0 );
@@ -141,9 +147,14 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
 {
   QString aTitle = tr( id == 0 ? "GEOM_POLYLINE" : id == 1 ? "GEOM_BEZIER" : "GEOM_INTERPOL" );
   mainFrame()->GroupConstructors->setTitle( aTitle );
-	
+
+  if (id == 2) // b-spline
+    GroupPoints->CheckButton1->show();
+  else
+    GroupPoints->CheckButton1->hide();
+
   myPoints = new GEOM::ListOfGO();
-  myPoints->length( 0 );  
+  myPoints->length( 0 );
 
   myEditCurrentArgument->setText( "" );
 }
@@ -155,7 +166,7 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
 //=================================================================================
 void BasicGUI_CurveDlg::SetEditCurrentArgument()
 {
-  if ( sender() == GroupPoints->PushButton1 ) 
+  if ( sender() == GroupPoints->PushButton1 )
     myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
@@ -168,11 +179,20 @@ void BasicGUI_CurveDlg::SetEditCurrentArgument()
 //=================================================================================
 void BasicGUI_CurveDlg::LineEditReturnPressed()
 {
-  if ( sender() == GroupPoints->LineEdit1 ) 
+  if ( sender() == GroupPoints->LineEdit1 )
   {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GEOMBase_Skeleton::LineEditReturnPressed();
   }
+}
+
+//=================================================================================
+// function : CheckButtonToggled()
+// purpose  :
+//=================================================================================
+void BasicGUI_CurveDlg::CheckButtonToggled()
+{
+  displayPreview();
 }
 
 //=================================================================================
@@ -208,14 +228,14 @@ bool BasicGUI_CurveDlg::ClickOnApply()
  */
 //=================================================================================
 static int isPointInList( std::list<GEOM::GEOM_Object_var>& thePoints,
-			  GEOM::GEOM_Object_var& theObject )
+                          GEOM::GEOM_Object_var& theObject )
 {
   int len = thePoints.size();
-  
+
   if ( len < 1 ) {
     return -1;
   }
-  
+
   for ( std::list<GEOM::GEOM_Object_var>::iterator i = thePoints.begin(); i != thePoints.end(); i++ ) {
     if ( std::string( (*i)->GetEntry() ) == std::string( theObject->GetEntry() ) ) {
       return 1;
@@ -233,14 +253,14 @@ static int isPointInList( std::list<GEOM::GEOM_Object_var>& thePoints,
  */
 //=================================================================================
 static void removeUnnecessaryPnt( std::list<GEOM::GEOM_Object_var>& theOldPoints,
-				  GEOM::ListOfGO_var& theNewPoints )
+                                  GEOM::ListOfGO_var& theNewPoints )
 {
   std::list<GEOM::GEOM_Object_var> objs_to_remove;
   for ( std::list<GEOM::GEOM_Object_var>::iterator i = theOldPoints.begin(); i != theOldPoints.end(); i++ ) {
     bool found = false;
     for ( int j = 0; j < theNewPoints->length() && !found ; j++ ) {
       if ( std::string( (*i)->GetEntry() ) == std::string( theNewPoints[j]->GetEntry() ) ) {
-	found = true;
+        found = true;
       }
     }
     if ( !found ) {
@@ -281,56 +301,56 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
   // bool is_append = myPoints->length() < IOC; // if true - add point, else remove
   // myPoints->length( IOC ); // this length may be greater than number of objects,
                            // that will actually be put into myPoints
-  
+
   for (SALOME_ListIteratorOfListIO anIt (selected); anIt.More(); anIt.Next()) {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIt.Value(), aRes);
     if (!CORBA::is_nil(aSelectedObject) && aRes) {
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-	aSelMgr->GetIndexes(anIt.Value(), aMapIndexes);
-	
-	if (aMapIndexes.Extent() > 0) {
-	  for (int ii = 1; ii <= aMapIndexes.Extent(); ii++) {
-	    anIndex = aMapIndexes(ii);
-	    QString aName = GEOMBase::GetName( aSelectedObject );
-	    aName = aName + ":vertex_" + QString::number( anIndex );
-	    anObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	    //Find Object in study
-	    _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
-	    bool inStudy = false;
+        aSelMgr->GetIndexes(anIt.Value(), aMapIndexes);
+
+        if (aMapIndexes.Extent() > 0) {
+          for (int ii = 1; ii <= aMapIndexes.Extent(); ii++) {
+            anIndex = aMapIndexes(ii);
+            QString aName = GEOMBase::GetName( aSelectedObject );
+            aName = aName + ":vertex_" + QString::number( anIndex );
+            anObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+            //Find Object in study
+            _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
+            bool inStudy = false;
             _PTR(ChildIterator) iit( aDStudy->NewChildIterator( obj ) );
             for (; iit->More() && !inStudy; iit->Next()) {
-	      _PTR(SObject) child( iit->Value() );
-	      QString aChildName = child->GetName().c_str();
-	      if ( aChildName == aName ) {
-		inStudy = true;
-		CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( iit->Value() );
-		anObject = GEOM::GEOM_Object::_narrow( corbaObj );
-	      }
-	    }
-	    
-	    if ( !inStudy )
-	      GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( aDStudy ),
-						     anObject, aName.toLatin1().data(), aSelectedObject );
-	    
-	    int pos = isPointInList( myOrderedSel, anObject );
-	    if ( pos == -1 ) {
-	      myOrderedSel.push_back( anObject );
-	    }
-	    //		    if (!inStudy)
-	    aList.push_back(anObject);
-	  }
-	} 
-	else { // aMap.Extent() == 0
-	  int pos = isPointInList( myOrderedSel, aSelectedObject );
-	  if ( pos == -1 )
-	    myOrderedSel.push_back( aSelectedObject );
-	  aList.push_back( aSelectedObject );
-	} 
+              _PTR(SObject) child( iit->Value() );
+              QString aChildName = child->GetName().c_str();
+              if ( aChildName == aName ) {
+                inStudy = true;
+                CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( iit->Value() );
+                anObject = GEOM::GEOM_Object::_narrow( corbaObj );
+              }
+            }
+
+            if ( !inStudy )
+              GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( aDStudy ),
+                                                     anObject, aName.toLatin1().data(), aSelectedObject );
+
+            int pos = isPointInList( myOrderedSel, anObject );
+            if ( pos == -1 ) {
+              myOrderedSel.push_back( anObject );
+            }
+            //              if (!inStudy)
+            aList.push_back(anObject);
+          }
+        }
+        else { // aMap.Extent() == 0
+          int pos = isPointInList( myOrderedSel, aSelectedObject );
+          if ( pos == -1 )
+            myOrderedSel.push_back( aSelectedObject );
+          aList.push_back( aSelectedObject );
+        }
       }
     }
   }
-  
-  myPoints->length( aList.size()  );  
+
+  myPoints->length( aList.size()  );
 
   int k = 0;
   for ( std::list<GEOM::GEOM_Object_var>::iterator j = aList.begin(); j != aList.end(); j++ )
@@ -342,7 +362,7 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
     removeUnnecessaryPnt( myOrderedSel, myPoints );
 
   // if ( myOrderedSel.size() == myPoints->length() ) {
-  myPoints->length( myOrderedSel.size()  );  
+  myPoints->length( myOrderedSel.size()  );
   k = 0;
   for ( std::list<GEOM::GEOM_Object_var>::iterator j = myOrderedSel.begin(); j != myOrderedSel.end(); j++ )
     myPoints[k++] = *j;
@@ -350,8 +370,8 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 
   if ( myPoints->length() > 0  )
     GroupPoints->LineEdit1->setText( QString::number( myPoints->length() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
-   
-displayPreview(); 
+
+  displayPreview();
 }
 
 
@@ -363,7 +383,7 @@ void BasicGUI_CurveDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
@@ -429,7 +449,8 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
     res = true;
     break;
   case 2 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSplineInterpolation( myPoints );
+    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->
+      MakeSplineInterpolation( myPoints, GroupPoints->CheckButton1->isChecked() );
     res = true;
     break;
   }

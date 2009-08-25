@@ -199,7 +199,7 @@ polyline = geompy.MakePolyline([p0, p1, p2, p3, p4])
 bezier = geompy.MakeBezier([p0, p1, p2, p3, p4])
 
 #create a b-spline curve from a list of points
-interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4])
+interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4], False)
 
 # add objects in the study
 id_p0       = geompy.addToStudy(p0,       "Point1")

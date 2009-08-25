@@ -2209,9 +2209,11 @@ module GEOM
     /*!
      *  Create B-Spline curve on the set of points.
      *  \param thePoints Sequence of points for the B-Spline curve.
+     *  \param theIsClosed If TRUE, build a closed curve.
      *  \return New GEOM_Object, containing the created B-Spline curve.
      */
-    GEOM_Object MakeSplineInterpolation (in ListOfGO thePoints);
+    GEOM_Object MakeSplineInterpolation (in ListOfGO thePoints,
+                                         in boolean  theIsClosed);
 
     /*!
      *  Create a sketcher (wire or face), following the textual description,

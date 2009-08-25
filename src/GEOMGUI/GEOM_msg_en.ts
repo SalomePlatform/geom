@@ -3845,6 +3845,13 @@ Please, select face, shell or solid and try again</translation>
         </message>
     </context>
     <context>
+        <name>BasicGUI_CurveDlg</name>
+        <message>
+            <source>GEOM_IS_CLOSED</source>
+            <translation>Build a closed edge</translation>
+        </message>
+    </context>
+    <context>
         <name>BasicGUI_EllipseDlg</name>
         <message>
             <source>GEOM_VECTOR_MAJOR</source>

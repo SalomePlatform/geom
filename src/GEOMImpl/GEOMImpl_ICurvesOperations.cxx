@@ -664,7 +664,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
-                                          (list<Handle(GEOM_Object)> thePoints)
+                                          (list<Handle(GEOM_Object)> thePoints,
+                                           bool                      theIsClosed)
 {
   SetErrorCode(KO);
 
@@ -693,6 +694,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
     aCI.SetPoint(ind, aRefPnt);
   }
+
+  aCI.SetIsClosed(theIsClosed);
 
   //Compute the Spline value
   try {

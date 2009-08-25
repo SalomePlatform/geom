@@ -397,7 +397,8 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
-                                              (const GEOM::ListOfGO& thePoints)
+                                              (const GEOM::ListOfGO& thePoints,
+                                               CORBA::Boolean        theIsClosed)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -416,7 +417,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
 
   // Make Polyline
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSplineInterpolation(aPoints);
+    GetOperations()->MakeSplineInterpolation(aPoints, theIsClosed);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

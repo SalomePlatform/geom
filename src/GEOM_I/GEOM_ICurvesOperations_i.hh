@@ -79,7 +79,8 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints);
 
-  GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints,
+                                                 CORBA::Boolean        theIsClosed);
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
   

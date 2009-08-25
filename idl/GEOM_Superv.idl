@@ -502,7 +502,8 @@ module GEOM
 			         in GEOM_Object thePnt2) ;
     GEOM_Object MakePolyline (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineBezier (in GEOM_List thePoints) ;
-    GEOM_Object MakeSplineInterpolation (in GEOM_List thePoints) ;
+    GEOM_Object MakeSplineInterpolation (in GEOM_List thePoints,
+                                         in boolean   theIsClosed) ;
     GEOM_Object MakeSketcher (in string    theCommand, 
 			      in GEOM_List theWorkingPlane) ;
     

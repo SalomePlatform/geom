@@ -15,9 +15,10 @@ possible types of curves: Polyline, Besier or B-spline (Interpolated).
 <ul>
 <li><em>geompy.MakePolyline(ListOfShapes)</em></li>
 <li><em>geompy.MakeBezier(ListOfShapes)</em></li>
-<li><em>geompy.MakeInterpol(ListOfShapes)</em></li>
+<li><em>geompy.MakeInterpol(ListOfShapes,isClosed)</em></li>
 </ul>
 ListOfShape is a list of points through which the curve passes.
+If isClosed is True, MakeInterpol builds a closed edge.
 
 <b>Arguments:</b> Name + at least 2 points which will serve as nodes
 on the curve.

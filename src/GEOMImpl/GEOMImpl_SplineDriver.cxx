@@ -107,13 +107,14 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
       Handle(Geom_BezierCurve) GBC = new Geom_BezierCurve(CurvePoints);
       aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
     } else {
-//      GeomAPI_PointsToBSpline GBC (CurvePoints);
-//      aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
+      //GeomAPI_PointsToBSpline GBC (CurvePoints);
+      //aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
       Handle(TColgp_HArray1OfPnt) aHCurvePoints = new TColgp_HArray1OfPnt(1, aLen);
       for (ind = 1; ind <= aLen; ind++) {
  	aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
       }
-      GeomAPI_Interpolate GBC (aHCurvePoints, Standard_False, gp::Resolution());
+      int isClosed = aCI.GetIsClosed();
+      GeomAPI_Interpolate GBC (aHCurvePoints, isClosed, gp::Resolution());
       GBC.Perform();
       if (GBC.IsDone())
         aShape = BRepBuilderAPI_MakeEdge(GBC.Curve()).Edge();

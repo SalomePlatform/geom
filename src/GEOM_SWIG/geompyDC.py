@@ -747,12 +747,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create B-Spline curve on the set of points.
         #  @param thePoints Sequence of points for the B-Spline curve.
+        #  @param theIsClosed If True, build a closed curve.
         #  @return New GEOM_Object, containing the created B-Spline curve.
         #
         #  @ref tui_creation_curve "Example"
-        def MakeInterpol(self,thePoints):
+        def MakeInterpol(self, thePoints, theIsClosed=False):
             # Example: see GEOM_TestAll.py
-            anObj = self.CurvesOp.MakeSplineInterpolation(thePoints)
+            anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed)
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             return anObj
 

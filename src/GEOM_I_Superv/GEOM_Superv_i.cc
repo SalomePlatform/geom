@@ -2679,14 +2679,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePo
 //=============================================================================
 //  MakeSplineInterpolation:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints,
+                                                              CORBA::Boolean      theIsClosed)
 {
   beginService( " GEOM_Superv_i::MakeSplineInterpolation" );
   MESSAGE("GEOM_Superv_i::MakeSplineInterpolation");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
-    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineInterpolation(aListImplP->GetList());
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineInterpolation(aListImplP->GetList(), theIsClosed);
     endService( " GEOM_Superv_i::MakeSplineInterpolation" );
     return anObj;
   }

@@ -22,7 +22,7 @@
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.h
 // Author : Alexander SLADKOV, Open CASCADE S.A.S. (alexander.sladkov@opencascade.com)
-//
+
 #ifndef BASICGUI_CURVEDLG_H
 #define BASICGUI_CURVEDLG_H
 
@@ -30,20 +30,20 @@
 
 #include <list>
 
-class DlgRef_1Sel;
+class DlgRef_1Sel1Check;
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
 // purpose  :
 //=================================================================================
 class BasicGUI_CurveDlg : public GEOMBase_Skeleton
-{ 
+{
   Q_OBJECT
 
 public:
   BasicGUI_CurveDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0 );
   ~BasicGUI_CurveDlg();
-  
+
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -55,19 +55,20 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  DlgRef_1Sel*                       GroupPoints;
+  DlgRef_1Sel1Check*                 GroupPoints;
   GEOM::ListOfGO_var                 myPoints;
   std::list<GEOM::GEOM_Object_var>   myOrderedSel; //!< This list used for managing orderes selection
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
-  
+
   void                               ActivateThisDialog();
-  void                               DeactivateActiveDialog();    
-  
+  void                               DeactivateActiveDialog();
+
   void                               ConstructorsClicked( int );
   void                               LineEditReturnPressed();
+  void                               CheckButtonToggled();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
 };

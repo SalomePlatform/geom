@@ -584,7 +584,8 @@ public:
 					  GEOM::GEOM_Object_ptr thePnt3);
   GEOM::GEOM_Object_ptr MakePolyline (GEOM::GEOM_List_ptr thePoints);
   GEOM::GEOM_Object_ptr MakeSplineBezier (GEOM::GEOM_List_ptr thePoints);
-  GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints,
+                                                 CORBA::Boolean      theIsClosed);
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, 
 						GEOM::GEOM_List_ptr theWorkingPlane);
   GEOM::GEOM_Object_ptr Make3DSketcher (GEOM::GEOM_List_ptr theCoordinates);

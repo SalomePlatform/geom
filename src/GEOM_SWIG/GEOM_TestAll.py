@@ -102,7 +102,7 @@ def TestAll (geompy, math):
   Ellipse  = geompy.MakeEllipse(p0, vy, radius2, radius1) #(2 GEOM_Object_ptr, 2 Doubles)->GEOM_Object_ptr
   Polyline = geompy.MakePolyline([p0, pz, py, p200])      #(List of GEOM_Object_ptr)->GEOM_Object_ptr
   Bezier   = geompy.MakeBezier([p0, pz, p200, px])        #(List of GEOM_Object_ptr)->GEOM_Object_ptr
-  Interpol = geompy.MakeInterpol([px, py, p200, pxyz])    #(List of GEOM_Object_ptr)->GEOM_Object_ptr
+  Interpol = geompy.MakeInterpol([px, py, p200, pxyz], True) #(List of GEOM_Object_ptr,Boolean)->GEOM_Object_ptr
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object_ptr
   Sketcher3d = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
@@ -121,7 +121,7 @@ def TestAll (geompy, math):
   tan_vertex_2 = geompy.MakeVertex(0, 90, 30)
   tan_vertex_3 = geompy.MakeVertex(100, 90, 0)
   tan_vertex_4 = geompy.MakeVertex(-100, 90, 0)
-  tan_curve = geompy.MakeInterpol([tan_vertex_4, tan_vertex_2, tan_vertex_3, tan_vertex_1])
+  tan_curve = geompy.MakeInterpol([tan_vertex_4, tan_vertex_2, tan_vertex_3, tan_vertex_1], False)
   tan_extrusion = geompy.MakePrismDXDYDZ(tan_curve, 0, 30, -60)
   tan_on_face = geompy.MakeTangentPlaneOnFace(tan_extrusion, 0.7, 0.5, 150)
 
