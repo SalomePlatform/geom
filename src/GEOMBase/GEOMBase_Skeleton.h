@@ -81,6 +81,9 @@ protected:
     /*! set selected "constructor" radio button id
      */
     void                setConstructorId( const int );
+    /*! unset selection on all "constructor" radio buttons
+     */
+    void                unsetConstructorId();
 
     void                setHelpFileName( const QString& );
 

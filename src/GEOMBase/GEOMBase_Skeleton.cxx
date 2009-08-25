@@ -289,10 +289,35 @@ int GEOMBase_Skeleton::getConstructorId() const
   return -1;
 }
 
+//=================================================================================
+// function : setConstructorId( id )
+// purpose  :
+//=================================================================================
 void GEOMBase_Skeleton::setConstructorId( const int id )
 {
   if ( myRBGroup && myRBGroup->button( id ) )
     myRBGroup->button( id )->setChecked( true );
+}
+
+//=================================================================================
+// function : unsetConstructorId
+// purpose  :
+//=================================================================================
+void GEOMBase_Skeleton::unsetConstructorId()
+{
+  // 0020428: EDF 906 GEOM : Performance for Group creation in GEOM
+  // uncheck all buttons
+  // workaround, because setChecked( false ) does not result in Qt4
+  bool isExclusive = myRBGroup->exclusive();
+  myRBGroup->setExclusive( false );
+  QList<QAbstractButton*> btnList = myRBGroup->buttons();
+  for ( int j = 0; j < 2; j++ )
+  {
+    QList<QAbstractButton*>::const_iterator it = btnList.constBegin();
+    for ( ; it != btnList.constEnd(); ++it )
+      (*it)->setCheckable( j == 1 );
+  }
+  myRBGroup->setExclusive( isExclusive );
 }
 
 //=================================================================================

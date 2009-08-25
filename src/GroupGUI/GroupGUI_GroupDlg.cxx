@@ -53,7 +53,8 @@ enum { ALL_SUBSHAPES = 0, GET_IN_PLACE, SUBSHAPES_OF_SHAPE2, SUBSHAPES_OF_INVISI
 GroupGUI_GroupDlg::GroupGUI_GroupDlg( Mode mode, GeometryGUI* theGeometryGUI, QWidget* parent )
   : GEOMBase_Skeleton( theGeometryGUI, parent, false ),
     myMode( mode ),
-    myBusy( false )
+    myBusy( false ),
+    myIsShapeType( false )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -163,6 +164,11 @@ void GroupGUI_GroupDlg::Init()
   // san -- TODO: clear selected sub-shapes...
   //mySelSubBtn->setChecked( true );
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+
+  //unset shape type to avoid preparation of selection before exact user shape type selection
+  //setConstructorId( -1 ); //non valid shape type
+  unsetConstructorId();
+  myIsShapeType = false;
 
   if ( myMode == CreateGroup ) {
     initName( tr( "GROUP_PREFIX" ) );
@@ -470,16 +476,16 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
       if ( aResult && !anObj->_is_nil() && GEOMBase::IsShape( anObj ) ) {
-	myMainObj = anObj;
-	myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
-	// activate subshapes selection by default
-	myEditCurrentArgument = 0;
-	activateSelection();
-	updateState();
-	return;
+        myMainObj = anObj;
+        myEditCurrentArgument->setText( GEOMBase::GetName( anObj ) );
+        // activate subshapes selection by default
+        myEditCurrentArgument = 0;
+        activateSelection();
+        updateState();
+        return;
       }
     }
 
@@ -548,8 +554,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           TopoDS_Shape aShape;
           if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
           {
-	    CORBA::Long anIndex;
-	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+            CORBA::Long anIndex;
+            anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
             if ( anIndex >= 0 ) {
               //if ( myPlaceCheckBox->isChecked() && ! myMain2InPlaceIndices.IsBound( anIndex ))
               if ( subSelectionWay() != ALL_SUBSHAPES &&
@@ -560,7 +566,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           }
         }
       }
-      if ( !myMainObj->_is_nil() /*&& mySelSubBtn->isChecked()*/)
+      if ( !myMainObj->_is_nil()  && myIsShapeType/*&& mySelSubBtn->isChecked()*/)
         if ( subSelectionWay() == ALL_SUBSHAPES )
           localSelection( myMainObj, getShapeType() );
         else if ( !myInPlaceObj->_is_nil() )
@@ -589,6 +595,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 //=================================================================================
 void GroupGUI_GroupDlg::ConstructorsClicked( int constructorId )
 {
+  myIsShapeType = true;
   myIdList->clear();
   activateSelection();
   updateState();
@@ -608,6 +615,8 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
 //   if ( !myPlaceCheckBox->isChecked() )
   if ( subSelectionWay() == ALL_SUBSHAPES )
   {
+    if ( !myIsShapeType )
+      return;
     myIdList->clear();
     GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
     aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
@@ -713,8 +722,8 @@ void GroupGUI_GroupDlg::add()
         TopoDS_Shape aShape;
         if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
         {
-	  CORBA::Long anIndex;
-	    anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+          CORBA::Long anIndex;
+            anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
           if ( anIndex >= 0 )
             aMapIndex.Add( anIndex );
         }
@@ -798,6 +807,7 @@ void GroupGUI_GroupDlg::setShapeType( const TopAbs_ShapeEnum theType )
   case TopAbs_SOLID:  anId = 3; break;
   }
   setConstructorId( anId );
+  myIsShapeType = true;
 }
 
 
@@ -810,7 +820,9 @@ void GroupGUI_GroupDlg::activateSelection()
   globalSelection( GEOM_ALLSHAPES );
 
   // local selection
-  if ( !myMainObj->_is_nil() && !myEditCurrentArgument/* && mySelSubBtn->isChecked()*/) {
+  if ( !myMainObj->_is_nil() && !myEditCurrentArgument/* && mySelSubBtn->isChecked()*/
+       && myIsShapeType) { // check if shape type is already choosen by user
+  
 //     if ( !myPlaceCheckBox->isChecked() )
     if ( subSelectionWay() == ALL_SUBSHAPES )
       localSelection( myMainObj, getShapeType() );
@@ -877,8 +889,8 @@ void GroupGUI_GroupDlg::updateState()
         aSubObjects[i];
         if ( GEOMBase::GetShape(aSubObjects[i], aShape, getShapeType()) )
         {
-	  CORBA::Long anIndex;
-	  anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
+          CORBA::Long anIndex;
+          anIndex = aLocOp->GetSubShapeIndex( myMainObj, aSubObjects[i] );
           if ( anIndex >= 0 )
             aMapIndex.Add( anIndex );
           else
