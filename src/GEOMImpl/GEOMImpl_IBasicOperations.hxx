@@ -40,7 +40,12 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                               double theX, double theY, double theZ);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurve (Handle(GEOM_Object) theCurve,
-                                        double theParameter);
+                                                        double theParameter);
+
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByCoord (Handle(GEOM_Object) theCurve,
+                                                               double theXParam,
+                                                               double theYParam,
+                                                               double theZParam);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnLinesIntersection
                                       (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
@@ -49,6 +54,11 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                                           double theUParameter,
                                                           double theVParameter);
 
+  Standard_EXPORT Handle(GEOM_Object) MakePointOnSurfaceByCoord (Handle(GEOM_Object) theSurface,
+                                                                 double theXParam,
+                                                                 double theYParam,
+                                                                 double theZParam);
+
   // Vector
   Standard_EXPORT Handle(GEOM_Object) MakeVectorDXDYDZ (double theDX, double theDY, double theDZ);
 
@@ -56,7 +66,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                         Handle(GEOM_Object) thePnt2);
 
   Standard_EXPORT Handle(GEOM_Object) MakeTangentOnCurve(const Handle(GEOM_Object)& theCurve, 
-							 double theParameter);
+                                                         double theParameter);
 
   // Line
   Standard_EXPORT Handle(GEOM_Object) MakeLineTwoPnt (Handle(GEOM_Object) thePnt1,
@@ -82,8 +92,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   
   Standard_EXPORT Handle(GEOM_Object) MakePlane2Vec (Handle(GEOM_Object) theVec1,
                                                      Handle(GEOM_Object) theVec2,
-						     double theSize);
-						     
+                                                     double theSize);
+                                                     
   Standard_EXPORT Handle(GEOM_Object) MakePlaneLCS (Handle(GEOM_Object) theFace, double theSize, int theOrientation);
 
   // Marker
@@ -92,10 +102,28 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                   double theYDX, double theYDY, double theYDZ);
 
   Standard_EXPORT Handle(GEOM_Object) MakeTangentPlaneOnFace(const Handle(GEOM_Object)& theFace,
-							     double theParamU,
-							     double theParamV,
-							     double theSize);
+                                                             double theParamU,
+                                                             double theParamV,
+                                                             double theSize);
 
+  private:
+  // Private methods
+
+  //! Enumeration describes point position on geometric object (curve or surface)
+  //! Point location can be determined by parameter (or U, V parameters) or 3D coordinates
+  enum PointLocation
+  { 
+    PointOn_CurveByParam,
+    PointOn_CurveByCoord,
+    PointOn_SurfaceByParam,
+    PointOn_SurfaceByCoord
+  };
+
+  Handle(GEOM_Object) makePointOnGeom (Handle(GEOM_Object) theGeomObj,
+                                       double theParam1,
+                                       double theParam2,
+                                       double theParam3,
+                                       const PointLocation theLocation);
 };
 
 #endif

@@ -182,33 +182,68 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointWithReference
 
 //=============================================================================
 /*!
- *  MakePointOnCurve
+ *  makePointOnGeom
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
-                            (Handle(GEOM_Object) theCurve, double theParameter)
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
+                    (Handle(GEOM_Object) theGeomObj,
+                     double theParam1,
+                     double theParam2,
+                     double theParam3,
+                     const PointLocation theLocation)
 {
   SetErrorCode(KO);
 
-  if (theCurve.IsNull()) return NULL;
+  if (theGeomObj.IsNull()) return NULL;
 
   //Add a new Point object
   Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
 
   //Add a new Point function for creation a point relativley another point
-  Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(), POINT_CURVE_PAR);
+  int fType = POINT_CURVE_PAR;
+  switch( theLocation )
+    {
+    case PointOn_CurveByParam:   fType = POINT_CURVE_PAR; break;
+    case PointOn_CurveByCoord:   fType = POINT_CURVE_COORD; break;
+    case PointOn_SurfaceByParam: fType = POINT_SURFACE_PAR; break;
+    case PointOn_SurfaceByCoord: fType = POINT_SURFACE_COORD; break;
+    default: break;
+    }
+  Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(), fType);
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_PointDriver::GetID()) return NULL;
 
   GEOMImpl_IPoint aPI (aFunction);
 
-  Handle(GEOM_Function) aRefFunction = theCurve->GetLastFunction();
+  Handle(GEOM_Function) aRefFunction = theGeomObj->GetLastFunction();
   if (aRefFunction.IsNull()) return NULL;
 
-  aPI.SetCurve(aRefFunction);
-  aPI.SetParameter(theParameter);
-
+  switch( theLocation )
+    {
+    case PointOn_CurveByParam:
+      aPI.SetCurve(aRefFunction);
+      aPI.SetParameter(theParam1);
+      break;
+    case PointOn_CurveByCoord:
+      aPI.SetCurve(aRefFunction);
+      aPI.SetX(theParam1);
+      aPI.SetY(theParam2);
+      aPI.SetZ(theParam3);
+      break;
+    case PointOn_SurfaceByParam:
+      aPI.SetSurface(aRefFunction);
+      aPI.SetParameter(theParam1);
+      aPI.SetParameter2(theParam2);
+      break;
+    case PointOn_SurfaceByCoord:
+      aPI.SetSurface(aRefFunction);
+      aPI.SetX(theParam1);
+      aPI.SetY(theParam2);
+      aPI.SetZ(theParam3);
+    default: break;
+    }
+  
   //Compute the point value
   try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
@@ -226,13 +261,57 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurve("
-                               << theCurve << ", " << theParameter << ")";
+  switch( theLocation )
+    {
+    case PointOn_CurveByParam:
+      GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurve("
+                                   << theGeomObj << ", " << theParam1 << ")";
+      break;
+    case PointOn_CurveByCoord:
+  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByCoord("
+                               << theGeomObj << ", " << theParam1 
+                               << ", " << theParam2 << ", " << theParam3 << ")";
+      break;
+    case PointOn_SurfaceByParam:
+  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurface("
+                               << theGeomObj << ", " << theParam1 
+                               << ", " << theParam2 << ")";
+      break;
+    case PointOn_SurfaceByCoord:
+  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurfaceByCoord("
+                               << theGeomObj << ", " << theParam1 
+                               << ", " << theParam2 << ", " << theParam3 << ")";
+    default: break;
+    }
 
   SetErrorCode(OK);
   return aPoint;
 }
 
+//=============================================================================
+/*!
+ *  MakePointOnCurve
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
+                            (Handle(GEOM_Object) theCurve, double theParameter)
+{
+  return makePointOnGeom(theCurve, theParameter, 0.0, 0.0, PointOn_CurveByParam);
+}
+
+//=============================================================================
+/*!
+ *  MakePointOnCurveByCoord
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByCoord
+                    (Handle(GEOM_Object) theCurve,
+                     double theXParam,
+                     double theYParam,
+                     double theZParam)
+{
+  return makePointOnGeom(theCurve, theXParam, theYParam, theZParam, PointOn_CurveByCoord);
+}
 
 //=============================================================================
 /*!
@@ -240,54 +319,25 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurface
-   (Handle(GEOM_Object) theSurface, double theUParameter, double theVParameter)
+                    (Handle(GEOM_Object) theSurface,
+                     double theUParameter,
+                     double theVParameter)
 {
-  SetErrorCode(KO);
+  return makePointOnGeom(theSurface, theUParameter, theVParameter, 0., PointOn_SurfaceByParam);
+}
 
-  if (theSurface.IsNull()) return NULL;
-
-  //Add a new Point object
-  Handle(GEOM_Object) aPoint = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
-
-  //Add a new Point function for creation a point relativley another point
-  Handle(GEOM_Function) aFunction = aPoint->AddFunction(GEOMImpl_PointDriver::GetID(),
-                                                        POINT_SURFACE_PAR);
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_PointDriver::GetID()) return NULL;
-
-  GEOMImpl_IPoint aPI (aFunction);
-
-  Handle(GEOM_Function) aRefFunction = theSurface->GetLastFunction();
-  if (aRefFunction.IsNull()) return NULL;
-
-  aPI.SetSurface(aRefFunction);
-  aPI.SetParameter(theUParameter);
-  aPI.SetParameter2(theVParameter);
-
-  //Compute the point value
-  try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
-    OCC_CATCH_SIGNALS;
-#endif
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Point driver failed");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnSurface("
-                               << theSurface << ", " << theUParameter 
-                               << ", " << theVParameter << ")";
-
-  SetErrorCode(OK);
-  return aPoint;
+//=============================================================================
+/*!
+ *  MakePointOnSurfaceByCoord
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurfaceByCoord
+                    (Handle(GEOM_Object) theSurface,
+                     double theXParam,
+                     double theYParam,
+                     double theZParam)
+{
+  return makePointOnGeom(theSurface, theXParam, theYParam, theZParam, PointOn_SurfaceByCoord);
 }
 
 
@@ -1014,9 +1064,9 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
 //=============================================================================
 
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeTangentPlaneOnFace(const Handle(GEOM_Object)& theFace,
-							              double theParamU,
-								      double theParamV,
-								      double theSize)
+                                                                      double theParamU,
+                                                                      double theParamV,
+                                                                      double theSize)
 {
    SetErrorCode(KO);
 

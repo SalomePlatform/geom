@@ -328,6 +328,19 @@ module GEOM
 				  in double theParameter);
 
     /*!
+     *  Create a point on the given curve, projecting given point
+     *  \param theRefCurve The referenced curve.
+     *  \param theXParameter X co-ordinate of point to project on curve
+     *  \param theYParameter Y co-ordinate of point to project on curve
+     *  \param theZParameter Z co-ordinate of point to project on curve
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnCurveByCoord (in GEOM_Object theRefCurve,
+                                         in double theXParameter,
+                                         in double theYarameter,
+                                         in double theZPameter);
+
+    /*!
      *  Create a point, corresponding to the given parameters on the
      *    given surface.
      *  \param theRefSurf The referenced surface.
@@ -338,6 +351,20 @@ module GEOM
     GEOM_Object MakePointOnSurface (in GEOM_Object theRefSurf,
 				    in double theUParameter,
 				    in double theVParameter);
+
+    /*!
+     *  Create a point on the given surface, projecting given point
+     *  \param theRefSurf The referenced surface.
+     *  \param theXParameter X co-ordinate of point to project on curve
+     *  \param theYParameter Y co-ordinate of point to project on curve
+     *  \param theZParameter Z co-ordinate of point to project on curve
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnSurfaceByCoord (in GEOM_Object theRefSurf,
+                                           in double theXParameter,
+                                           in double theYarameter,
+                                           in double theZPameter);
+
 
     /*!
      *  Create a point, on two lines intersection.

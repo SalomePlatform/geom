@@ -270,6 +270,10 @@
             <translation>Coordonnes</translation>
         </message>
         <message>
+            <source>GEOM_COORDINATES_RES</source>
+            <translation>Resultats coordonnes</translation>
+        </message>
+        <message>
             <source>GEOM_CREATE_COPY</source>
             <translation>Create a copy</translation>
         </message>
@@ -726,8 +730,20 @@
             <translation>Paramtre :</translation>
         </message>
         <message>
-            <source>GEOM_PARAM_POINT</source>
-            <translation>Point paramtrique</translation>
+            <source>GEOM_POINT_ON_EDGE</source>
+            <translation>Point sur la Edge</translation>
+        </message>
+        <message>
+            <source>GEOM_POINT_ON_FACE</source>
+            <translation>Point sur la Face</translation>
+        </message>
+        <message>
+            <source>GEOM_PARAM_VALUE</source>
+            <translation>By paramtrique</translation>
+        </message>
+        <message>
+            <source>GEOM_COORD_VALUE</source>
+            <translation>By Coordonnes</translation>
         </message>
         <message>
             <source>GEOM_PARTITION</source>

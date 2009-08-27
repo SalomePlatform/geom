@@ -29,6 +29,8 @@
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+#include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <Precision.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -105,6 +107,23 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aP = aFP + (aLP - aFP) * aPI.GetParameter();
     aPnt = aCurve->Value(aP);
   }
+  else if (aType == POINT_CURVE_COORD) {
+    Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
+    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise
+        ("Point On Curve creation aborted : curve shape is not an edge");
+    }
+    Standard_Real aFP, aLP;
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), aFP, aLP);
+    gp_Pnt anInitPnt( aPI.GetX(), aPI.GetY(), aPI.GetZ() );
+    GeomAPI_ProjectPointOnCurve aProj(anInitPnt, aCurve/*, aFP, aLP*/);
+    if ( aProj.NbPoints() <= 0 ) {
+      Standard_ConstructionError::Raise
+        ("Point On Curve creation aborted : cannot project point");
+    }
+    aPnt = aProj.NearestPoint();
+  }
   else if (aType == POINT_SURFACE_PAR) {
     Handle(GEOM_Function) aRefCurve = aPI.GetSurface();
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
@@ -120,6 +139,28 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     Standard_Real U = U1 + (U2-U1) * aPI.GetParameter();
     Standard_Real V = V1 + (V2-V1) * aPI.GetParameter2();
     aPnt = aSurf->Value(U,V);
+  }
+  else if (aType == POINT_SURFACE_COORD) {
+    Handle(GEOM_Function) aRefCurve = aPI.GetSurface();
+    TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_FACE) {
+      Standard_TypeMismatch::Raise
+        ("Point On Surface creation aborted : surface shape is not a face");
+    }
+    TopoDS_Face F = TopoDS::Face(aRefShape);
+    Handle(Geom_Surface) aSurf = BRep_Tool::Surface(F);
+    Standard_Real U1,U2,V1,V2;
+    //aSurf->Bounds(U1,U2,V1,V2);
+    ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
+    
+    gp_Pnt anInitPnt( aPI.GetX(), aPI.GetY(), aPI.GetZ() );
+    GeomAPI_ProjectPointOnSurf aProj( anInitPnt, aSurf/*,
+                                                        U1,U2,V1,V2, Precision::Confusion()*/ );
+    if ( !aProj.IsDone() ) {
+      Standard_ConstructionError::Raise
+        ("Point On Surface creation aborted : cannot project point");
+    }
+    aPnt = aProj.NearestPoint();
   }
   else if (aType == POINT_LINES_INTERSECTION) {
     Handle(GEOM_Function) aRef1 = aPI.GetLine1();

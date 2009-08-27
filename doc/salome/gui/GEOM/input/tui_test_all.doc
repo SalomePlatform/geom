@@ -23,6 +23,12 @@
 
 \until MakeVertexOnCurve
 
+\until MakeVertexOnCurveByCoord
+
+\until MakeVertexOnSurface
+
+\until MakeVertexOnSurfaceByCoord
+
 \anchor swig_MakeVertexOnLinesIntersection
 \until p_on_l1l2
 

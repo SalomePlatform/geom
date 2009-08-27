@@ -36,6 +36,7 @@ class DlgRef_1Sel2Spin;
 
 class QLineEdit;
 class QGroupBox;
+class QButtonGroup;
 
 class gp_Pnt;
 
@@ -68,6 +69,7 @@ private:
   double                             getParameter() const;
   double                             getUParameter() const;
   double                             getVParameter() const;
+  void                               updateParamCoord(bool theIsUpdate);
 
 private:
   GEOM::GEOM_Object_var              myEdge;
@@ -86,6 +88,7 @@ private:
   QLineEdit*                         myX;
   QLineEdit*                         myY;
   QLineEdit*                         myZ;
+  QButtonGroup*                      myParamCoord;
   
 private slots:
   void                               ClickOnOk();
@@ -98,6 +101,7 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
+  void                               ClickParamCoord();
 };
 
 #endif // BASICGUI_POINTDLG_H

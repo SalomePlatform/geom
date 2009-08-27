@@ -428,6 +428,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Coordinates</translation>
         </message>
         <message>
+            <source>GEOM_COORDINATES_RES</source>
+            <translation>Result coordinates</translation>
+        </message>
+        <message>
             <source>GEOM_CREATE_COPY</source>
             <translation>Create a copy</translation>
         </message>
@@ -1076,8 +1080,20 @@ Please, select face, shell or solid and try again</translation>
             <translation>Parameters</translation>
         </message>
         <message>
-            <source>GEOM_PARAM_POINT</source>
-            <translation>Parametric point</translation>
+            <source>GEOM_POINT_ON_EDGE</source>
+            <translation>Point on Edge</translation>
+        </message>
+        <message>
+            <source>GEOM_POINT_ON_FACE</source>
+            <translation>Point on Face</translation>
+        </message>
+        <message>
+            <source>GEOM_PARAM_VALUE</source>
+            <translation>By parameter</translation>
+        </message>
+        <message>
+            <source>GEOM_COORD_VALUE</source>
+            <translation>By coordinate</translation>
         </message>
         <message>
             <source>GEOM_PARTITION</source>
