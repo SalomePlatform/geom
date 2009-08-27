@@ -148,6 +148,17 @@ public:
 						CORBA::Double theZ);
   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					  CORBA::Double theParameter);
+  GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theRefCurve,
+                                                 CORBA::Double theXParameter,
+                                                 CORBA::Double theYParameter,
+                                                 CORBA::Double theZParameter);
+  GEOM::GEOM_Object_ptr MakePointOnSurface (GEOM::GEOM_Object_ptr theRefSurface,
+                                            CORBA::Double theUParameter,
+                                            CORBA::Double theVParameter);
+  GEOM::GEOM_Object_ptr MakePointOnSurfaceByCoord (GEOM::GEOM_Object_ptr theRefSurface,
+                                                   CORBA::Double theXParameter,
+                                                   CORBA::Double theYParameter,
+                                                   CORBA::Double theZParameter);
   GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theRefLine1,
 						      GEOM::GEOM_Object_ptr theRefLine2);
   GEOM::GEOM_Object_ptr MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,

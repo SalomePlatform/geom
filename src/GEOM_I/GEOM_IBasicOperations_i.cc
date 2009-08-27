@@ -156,6 +156,36 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
 
 //=============================================================================
 /*!
+ *  MakePointOnCurveByCoord
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByCoord
+                  (GEOM::GEOM_Object_ptr theCurve, 
+                   CORBA::Double theXParameter,
+                   CORBA::Double theYParameter,
+                   CORBA::Double theZParameter)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference curve
+  Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
+  if (aReference.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePointOnCurveByCoord(aReference, theXParameter,
+                                             theYParameter, theZParameter);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePointOnSurface
  */
 //=============================================================================
@@ -176,6 +206,36 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurface
   //Create the point
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePointOnSurface(aReference, theUParameter, theVParameter);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePointOnSurfaceByCoord
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnSurfaceByCoord
+                                             (GEOM::GEOM_Object_ptr theSurface,
+                                              CORBA::Double theXParameter,
+                                              CORBA::Double theYParameter,
+                                              CORBA::Double theZParameter)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference surface
+  Handle(GEOM_Object) aReference = GetObjectImpl(theSurface);
+  if (aReference.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePointOnSurfaceByCoord(aReference, theXParameter,
+                                               theYParameter, theZParameter);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

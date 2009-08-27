@@ -109,6 +109,7 @@ def TestAll (geompy, math):
 
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  p_on_arc2 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10 ) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
 
   #Test point on lines intersection
   p_on_l1l2 = geompy.MakeVertexOnLinesIntersection(Line1, Line2) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
@@ -176,6 +177,7 @@ def TestAll (geompy, math):
 
   #Test point on surface creation
   p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object_ptr, Double, Double)->GEOM_Object_ptr
+  p_on_face2 = geompy.MakeVertexOnSurface(Face, 0., 0., 0.) #(GEOM_Object_ptr, Double, Double)->GEOM_Object_ptr
 
   # Test plane from existing face creation
   Plane2 = geompy.MakePlaneFace(Face, trimsize)      #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
@@ -323,6 +325,8 @@ def TestAll (geompy, math):
   id_Sketcher3d = geompy.addToStudy(Sketcher3d, "Sketcher 3D")
 
   id_p_on_arc  = geompy.addToStudy(p_on_arc,  "Vertex on Arc (0.25)")
+  id_p_on_arc2 =  geompy.addToStudy(p_on_arc2, "Vertex on Arc at(100, -10, 10)" )
+  
   id_p_on_l1l2 = geompy.addToStudy(p_on_l1l2, "Vertex on Lines Intersection")
 
   id_tan_on_arc  = geompy.addToStudy(tan_on_arc, "Tangent on Arc (0.7)")
@@ -359,6 +363,7 @@ def TestAll (geompy, math):
   id_Shell    = geompy.addToStudy(Shell,    "Shell")
 
   id_p_on_face = geompy.addToStudy(p_on_face, "Vertex on Face (0.1, 0.8)")
+  id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on Face at(0., 0., 0.)")
 
   id_Prism1   = geompy.addToStudy(Prism1,     "Prism by Two Pnt")
   id_Shell1   = geompy.addToStudy(Shell1,   "Shell from Prism1 faces")

@@ -575,6 +575,58 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 }
 
 //=============================================================================
+//  MakePointOnCurveByCoord
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theRefCurve,
+                                                              CORBA::Double theXParameter,
+                                                              CORBA::Double theYParameter,
+                                                              CORBA::Double theZParameter)
+{
+  beginService( " GEOM_Superv_i::MakePointOnCurveByCoord" );
+  MESSAGE("GEOM_Superv_i::MakePointOnCurveByCoord");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj =
+    myBasicOp->MakePointOnCurveByCoord(theRefCurve, theXParameter,
+                                theYParameter, theZParameter);
+  endService( " GEOM_Superv_i::MakePointOnCurveByCoord" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePointOnSurface:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnSurface (GEOM::GEOM_Object_ptr theRefSurface,
+                                                         CORBA::Double theUParameter,
+                                                         CORBA::Double theVParameter)
+{
+  beginService( " GEOM_Superv_i::MakePointOnSurface" );
+  MESSAGE("GEOM_Superv_i::MakePointOnSurface");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj =
+    myBasicOp->MakePointOnSurface(theRefSurface, theUParameter, theVParameter);
+  endService( " GEOM_Superv_i::MakePointOnSurface" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakePointOnSurfaceByCoord
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnSurfaceByCoord (GEOM::GEOM_Object_ptr theRefSurface,
+                                                                CORBA::Double theXParameter,
+                                                                CORBA::Double theYParameter,
+                                                                CORBA::Double theZParameter)
+{
+  beginService( " GEOM_Superv_i::MakePointOnSurfaceByCoord" );
+  MESSAGE("GEOM_Superv_i::MakePointOnSurfaceByCoord");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj =
+    myBasicOp->MakePointOnSurfaceByCoord(theRefSurface, theXParameter,
+                                theYParameter, theZParameter);
+  endService( " GEOM_Superv_i::MakePointOnSurfaceByCoord" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakePointOnLinesIntersection:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theRefLine1,

@@ -366,6 +366,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
+        ## Create a point by projection give coordinates on the given curve
+        #  @param theRefCurve The referenced curve.
+        #  @param theX X-coordinate in 3D space
+        #  @param theY Y-coordinate in 3D space
+        #  @param theZ Z-coordinate in 3D space
+        #  @return New GEOM_Object, containing the created point.
+        #
+        #  @ref tui_creation_point "Example"
+        def MakeVertexOnCurveByCoord(self,theRefCurve, theX, theY, theZ):
+            # Example: see GEOM_TestAll.py
+            theX, theY, theZ, Parameters = ParseParameters(theX, theY, theZ)
+            anObj = self.BasicOp.MakePointOnCurveByCoord(theRefCurve, theX, theY, theZ)
+            RaiseIfFailed("MakeVertexOnCurveByCoord", self.BasicOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
         ## Create a point, corresponding to the given parameters on the
         #    given surface.
         #  @param theRefSurf The referenced surface.
@@ -379,6 +395,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.BasicOp.MakePointOnSurface(theRefSurf, theUParameter, theVParameter)
             RaiseIfFailed("MakePointOnSurface", self.BasicOp)
+            anObj.SetParameters(Parameters);
+            return anObj
+
+        ## Create a point by projection give coordinates on the given surface
+        #  @param theRefSurf The referenced surface.
+        #  @param theX X-coordinate in 3D space
+        #  @param theY Y-coordinate in 3D space
+        #  @param theZ Z-coordinate in 3D space
+        #  @return New GEOM_Object, containing the created point.
+        #
+        #  @ref swig_MakeVertexOnSurfaceByCoord "Example"
+        def MakeVertexOnSurfaceByCoord(self, theRefSurf, theX, theY, theZ):
+            theX, theY, theZ, Parameters = ParseParameters(theX, theY, theZ)
+            # Example: see GEOM_TestAll.py
+            anObj = self.BasicOp.MakePointOnSurfaceByCoord(theRefSurf, theX, theY, theZ)
+            RaiseIfFailed("MakeVertexOnSurfaceByCoord", self.BasicOp)
             anObj.SetParameters(Parameters);
             return anObj
 

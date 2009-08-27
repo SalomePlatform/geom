@@ -54,9 +54,19 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theCurve,
+                                                  CORBA::Double theXParameter,
+                                                  CORBA::Double theYParameter,
+                                                  CORBA::Double theZParameter);
+
    GEOM::GEOM_Object_ptr MakePointOnSurface (GEOM::GEOM_Object_ptr theSurface,
 					     CORBA::Double theUParameter,
 					     CORBA::Double theVParameter);
+
+   GEOM::GEOM_Object_ptr MakePointOnSurfaceByCoord (GEOM::GEOM_Object_ptr theSurface,
+                                                    CORBA::Double theXParameter,
+                                                    CORBA::Double theYParameter,
+                                                    CORBA::Double theZParameter);
 
    GEOM::GEOM_Object_ptr MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theLine1,
 						       GEOM::GEOM_Object_ptr theLine2);
