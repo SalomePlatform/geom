@@ -870,7 +870,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), theObject->GetType() );
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
