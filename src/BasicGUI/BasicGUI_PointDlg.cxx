@@ -935,6 +935,7 @@ void BasicGUI_PointDlg::addSubshapesToStudy()
 void BasicGUI_PointDlg::ClickParamCoord()
 {
   updateParamCoord( true );
+  displayPreview();
 }
 
 //=================================================================================
