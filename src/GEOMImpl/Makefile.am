@@ -48,7 +48,6 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_IMeasureOperations.hxx		\
 	GEOMImpl_IGroupOperations.hxx		\
 	GEOMImpl_IGlue.hxx			\
-	GEOMImpl_Gen.hxx			\
 	GEOMImpl_PointDriver.hxx		\
 	GEOMImpl_IPoint.hxx			\
 	GEOMImpl_IPolyline.hxx			\
@@ -143,7 +142,6 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_HealingDriver.hxx		\
 	GEOMImpl_FillingDriver.hxx		\
 	GEOMImpl_GlueDriver.hxx			\
-	GEOMImpl_CopyDriver.hxx			\
 	GEOMImpl_Types.hxx			\
 	GEOM_GEOMImpl.hxx
 

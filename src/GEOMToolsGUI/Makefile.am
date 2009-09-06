@@ -34,8 +34,7 @@ salomeinclude_HEADERS =				\
 	GEOM_ToolsGUI.hxx			\
 	GEOMToolsGUI_NbIsosDlg.h		\
 	GEOMToolsGUI_TransparencyDlg.h		\
-	GEOMToolsGUI_DeleteDlg.h		\
-	GEOMToolsGUI_NbIsosDlg.h
+	GEOMToolsGUI_DeleteDlg.h
 
 dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI.cxx			\
