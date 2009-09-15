@@ -177,7 +177,7 @@ def TestAll (geompy, math):
 
   #Test point on surface creation
   p_on_face = geompy.MakeVertexOnSurface(Face, 0.1, 0.8) #(GEOM_Object_ptr, Double, Double)->GEOM_Object_ptr
-  p_on_face2 = geompy.MakeVertexOnSurface(Face, 0., 0., 0.) #(GEOM_Object_ptr, Double, Double)->GEOM_Object_ptr
+  p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face, 0., 0., 0.) #(GEOM_Object_ptr, Double, Double, Double)->GEOM_Object_ptr
 
   # Test plane from existing face creation
   Plane2 = geompy.MakePlaneFace(Face, trimsize)      #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
