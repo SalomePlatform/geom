@@ -77,7 +77,7 @@ IGESEXPORT_EXPORT
       IGESControl_Controller::Init();
       //IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"),
       //			Interface_Static::IVal("write.iges.brep.mode"));
-      IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"), aBrepMode);
+      IGESControl_Writer ICW ("M", aBrepMode); // "write.iges.unit" ->> VSR 15.09.09: export explicitly in meters
 
       // perform shape writing
       ICW.AddShape( theShape );
