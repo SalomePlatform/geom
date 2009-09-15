@@ -3857,7 +3857,8 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_SCALE_DIMENSIONS</source>
-            <translation>Length unit in the file is not a 'meter'. Do you want to scale a model?</translation>
+            <translation>Would you like to take into account the units?
+Otherwise the dimensions will be kept without modifications.</translation>
         </message>
     </context>
     <context>

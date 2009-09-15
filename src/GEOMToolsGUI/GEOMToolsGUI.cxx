@@ -722,11 +722,11 @@ bool GEOMToolsGUI::Import()
 	  needConvert = aUnitName.SubString( 6, aUnitName.Length() ) != "M";
 
 	if ( needConvert ) {
-	  if ( igesAnswer == SUIT_MessageBox::YesToAll ) {
+	  if ( igesAnswer == SUIT_MessageBox::NoToAll ) {
 	    // converting for all files is already approved
 	    fileT = "IGES_SCALE";
 	  }
-	  else if ( igesAnswer != SUIT_MessageBox::NoToAll ) {
+	  else if ( igesAnswer != SUIT_MessageBox::YesToAll ) {
 	    SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
 	    if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
 	    igesAnswer = SUIT_MessageBox::question( app->desktop(),
@@ -739,10 +739,10 @@ bool GEOMToolsGUI::Import()
 	      return false;                // cancel (break) import operation
 	    case SUIT_MessageBox::Yes:
 	    case SUIT_MessageBox::YesToAll:
-	      fileT = "IGES_SCALE";
 	      break;                       // scaling is confirmed
 	    case SUIT_MessageBox::No:
 	    case SUIT_MessageBox::NoAll:
+	      fileT = "IGES_SCALE";
 	    default:
 	      break;                       // scaling is rejected
 	    } // switch ( igesAnswer )
