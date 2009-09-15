@@ -24,7 +24,7 @@
 //  Author : Yves FRICAUD/Lucien PIGNOLONI
 //  Module : GEOM
 //  $Header$
-//
+
 #include <Standard_Stream.hxx>
 
 #include <Standard_Stream.hxx>
@@ -58,35 +58,33 @@
 #define HST_CLIENT_LEN 256
 
 
-
 //=======================================================================
 // function : Load()
-// purpose  : 
+// purpose  :
 //=======================================================================
 TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
-    std::string hst_client = Kernel_Utils::GetHostname();
+  std::string hst_client = Kernel_Utils::GetHostname();
 
-    Engines::Container_var ctn_server = geom->GetContainerRef();
-    long                   pid_server = ctn_server->getPID();
- 
-   if ( (pid_client==pid_server) && (strcmp(hst_client.c_str(), ctn_server->getHostName())==0) ) {
-        TopoDS_Shape* S = (TopoDS_Shape*)(aShape->getShape());
-        return(*S);
-    } else {
-        /* get sequence of bytes of resulting brep shape from GEOM server */
-        TopoDS_Shape S;
-        SALOMEDS::TMPFile_var SeqFile = aShape->GetShapeStream();
-        int sizebuf = SeqFile->length();
-        char* buf;
-        buf = (char*) &SeqFile[0];
-        std::istrstream streamBrep(buf,sizebuf);
-        BRep_Builder aBuilder;
-        BRepTools::Read(S, streamBrep, aBuilder);
-        return(S);
-    };
+  Engines::Container_var ctn_server = geom->GetContainerRef();
+  long                   pid_server = ctn_server->getPID();
+
+  if ( (pid_client==pid_server) && (strcmp(hst_client.c_str(), ctn_server->getHostName())==0) ) {
+    TopoDS_Shape* S = (TopoDS_Shape*)(aShape->getShape());
+    return(*S);
+  } else {
+    /* get sequence of bytes of resulting brep shape from GEOM server */
+    TopoDS_Shape S;
+    SALOMEDS::TMPFile_var SeqFile = aShape->GetShapeStream();
+    int sizebuf = SeqFile->length();
+    char* buf;
+    buf = (char*) &SeqFile[0];
+    std::istrstream streamBrep(buf,sizebuf);
+    BRep_Builder aBuilder;
+    BRepTools::Read(S, streamBrep, aBuilder);
+    return(S);
+  }
 }
-
 
 //=======================================================================
 // function : Create()
@@ -94,7 +92,7 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
 //=======================================================================
 GEOM_Client::GEOM_Client()
 {
-  pid_client = 
+  pid_client =
 #ifdef WNT
     (long)_getpid();
 #else
@@ -104,7 +102,7 @@ GEOM_Client::GEOM_Client()
 
 //=======================================================================
 // function : Create()
-// purpose  : 
+// purpose  :
 //=======================================================================
 GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 {
@@ -113,7 +111,7 @@ GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 
 //=======================================================================
 // function : Find()
-// purpose  : 
+// purpose  :
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
 {
@@ -128,7 +126,7 @@ Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_S
 
 //=======================================================================
 // function : Find()
-// purpose  : 
+// purpose  :
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR )
 {
@@ -158,17 +156,16 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 {
   if( myIORs.IsEmpty() )
-    return ;
-  
-  TopoDS_Shape S ;
-  Standard_Integer anIndex = Find( IOR, S ) ;
-  if( anIndex != 0 ) {
-    myIORs.Remove(anIndex) ;
-    myShapes.Remove(anIndex) ;
-  }
-  return ;
-}
+    return;
 
+  TopoDS_Shape S;
+  Standard_Integer anIndex = Find( IOR, S );
+  if( anIndex != 0 ) {
+    myIORs.Remove(anIndex);
+    myShapes.Remove(anIndex);
+  }
+  return;
+}
 
 //=======================================================================
 // function : ClearClientBuffer()
@@ -177,10 +174,10 @@ void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 void GEOM_Client::ClearClientBuffer()
 {
   if( myIORs.IsEmpty() )
-    return ;
-  myIORs.Clear() ;
-  myShapes.Clear() ;
-  return ;
+    return;
+  myIORs.Clear();
+  myShapes.Clear();
+  return;
 }
 
 //=======================================================================
@@ -189,18 +186,18 @@ void GEOM_Client::ClearClientBuffer()
 //=======================================================================
 unsigned int GEOM_Client::BufferLength()
 {
-  return myIORs.Length() ;
+  return myIORs.Length();
 }
-
 
 //=======================================================================
 // function : GetShape()
-// purpose  : 
+// purpose  :
 //=======================================================================
 TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape )
 {
   TopoDS_Shape S;
-  TCollection_AsciiString IOR = geom->GetStringFromIOR(aShape);
+  CORBA::String_var anIOR = geom->GetStringFromIOR(aShape);
+  TCollection_AsciiString IOR = (char*)anIOR.in();
   Standard_Integer anIndex = Find(IOR, S);
 
   if (anIndex != 0) return S;
