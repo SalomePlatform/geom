@@ -37,6 +37,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <BRep_Builder.hxx>
 #include <gp_Pnt.hxx>
+#include <Interface_Static.hxx>
 
 #ifdef WNT
  #if defined IGESIMPORT_EXPORTS || defined IGESImport_EXPORTS
@@ -72,6 +73,7 @@ IGESIMPORT_EXPORT
   {
     IGESControl_Reader aReader;
     TopoDS_Shape aResShape;
+    Interface_Static::SetCVal("xstep.cascade.unit","M");
     try {
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
