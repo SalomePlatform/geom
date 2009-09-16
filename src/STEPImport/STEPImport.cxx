@@ -36,6 +36,7 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
+#include <Interface_Static.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -76,6 +77,8 @@ STEPIMPORT_EXPORT
     TopoDS_Shape aResShape;
     //VRV: OCC 4.0 migration
     STEPControl_Reader aReader;
+    //VSR: 16/09/09: Convert to METERS
+    Interface_Static::SetCVal("xstep.cascade.unit","M");
     //VRV: OCC 4.0 migration
     TopoDS_Compound compound;
     BRep_Builder B;

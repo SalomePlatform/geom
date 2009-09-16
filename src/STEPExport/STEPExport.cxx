@@ -29,6 +29,7 @@
 #include <IFSelect_ReturnStatus.hxx>
 
 #include <STEPControl_Writer.hxx>
+#include <Interface_Static.hxx>
 
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Shape.hxx>
@@ -69,6 +70,8 @@ STEPEXPORT_EXPORT
       IFSelect_ReturnStatus status ;
       //VRV: OCC 4.0 migration
       STEPControl_Writer aWriter;
+      //VSR: 16/09/09: Convert to METERS
+      Interface_Static::SetCVal("xstep.cascade.unit","M");
 //JFA: PAL6162      status = aWriter.Transfer( theShape, STEPControl_ManifoldSolidBrep );
       status = aWriter.Transfer( theShape, STEPControl_AsIs );
       //VRV: OCC 4.0 migration
