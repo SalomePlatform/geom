@@ -595,6 +595,8 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 //=================================================================================
 void GroupGUI_GroupDlg::ConstructorsClicked( int constructorId )
 {
+  if (!myIsShapeType && getConstructorId() != constructorId)
+    setConstructorId( constructorId );
   myIsShapeType = true;
   myIdList->clear();
   activateSelection();
