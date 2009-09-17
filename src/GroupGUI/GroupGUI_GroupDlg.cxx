@@ -809,7 +809,12 @@ void GroupGUI_GroupDlg::setShapeType( const TopAbs_ShapeEnum theType )
   case TopAbs_SOLID:  anId = 3; break;
   }
   setConstructorId( anId );
-  myIsShapeType = true;
+  if (!myIsShapeType)
+  {
+    myIsShapeType = true;
+    // workaround top avoid set checked button 0
+    setConstructorId( anId );
+  }
 }
 
 
