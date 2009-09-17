@@ -210,6 +210,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     for ( ; Exp.More(); Exp.Next() ) {
       TopoDS_Vertex aV1, aV2;
       TopoDS_Edge anEdgeE = TopoDS::Edge(Exp.Current());
+
+      if ( anEdgeE.IsNull() ) continue;
+
       TopExp::Vertices(anEdgeE, aV1, aV2);
       gp_Pnt aP1 = BRep_Tool::Pnt(aV1);
       gp_Pnt aP2 = BRep_Tool::Pnt(aV2);
@@ -217,6 +220,9 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       double fp,lp;
       gp_Vec aDirVec;
       Handle(Geom_Curve) C = BRep_Tool::Curve(anEdgeE,fp,lp);
+
+      if ( C.IsNull() ) continue;
+
       if ( anEdgeE.Orientation() == TopAbs_FORWARD )
 	C->D1(lp, aP2, aDirVec);
       else {
@@ -234,6 +240,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
 	  aDir = aDirVec;
 	else
 	  aDir = -aDirVec;
+
 	Prs3d_Arrow::Draw(aPrs, aP2, aDir, PI/180.*5., aDist/10.);
       }
     }
