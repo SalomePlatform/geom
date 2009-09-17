@@ -21,7 +21,7 @@
 //
 // File   : GEOMGUI_OCCSelector.cxx
 // Author : Alexander SOLOVYOV, Open CASCADE S.A.S. (alexander.solovyov@opencascade.com)
-//
+
 #include "GEOMGUI_OCCSelector.h"
 
 #include <LightApp_DataSubOwner.h>
@@ -50,7 +50,7 @@
 
 //================================================================
 // Function : GEOMGUI_OCCSelector
-// Purpose  : 
+// Purpose  :
 //================================================================
 GEOMGUI_OCCSelector::GEOMGUI_OCCSelector( OCCViewer_Viewer* viewer, SUIT_SelectionMgr* mgr )
 : LightApp_OCCSelector( viewer, mgr )
@@ -59,7 +59,7 @@ GEOMGUI_OCCSelector::GEOMGUI_OCCSelector( OCCViewer_Viewer* viewer, SUIT_Selecti
 
 //================================================================
 // Function : ~GEOMGUI_OCCSelector
-// Purpose  : 
+// Purpose  :
 //================================================================
 GEOMGUI_OCCSelector::~GEOMGUI_OCCSelector()
 {
@@ -67,7 +67,7 @@ GEOMGUI_OCCSelector::~GEOMGUI_OCCSelector()
 
 //================================================================
 // Function : getSelection
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 {
@@ -149,11 +149,11 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 
 //================================================================
 // Function : getEntityOwners
-// Purpose  : 
+// Purpose  :
 //================================================================
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
-			     const Handle(AIS_InteractiveContext)& theIC,
-			     SelectMgr_IndexedMapOfOwner& theMap )
+                             const Handle(AIS_InteractiveContext)& theIC,
+                             SelectMgr_IndexedMapOfOwner& theMap )
 {
   if ( theObj.IsNull() || theIC.IsNull() )
     return;
@@ -172,19 +172,19 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
     for ( sel->Init(); sel->More(); sel->Next() ) {
       Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
       if ( entity.IsNull() )
-	continue;
+        continue;
 
       Handle(SelectMgr_EntityOwner) owner =
-	Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
+        Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
       if ( !owner.IsNull() )
-	theMap.Add( owner );
+        theMap.Add( owner );
     }
   }
 }
 
 //================================================================
 // Function : setSelection
-// Purpose  : 
+// Purpose  :
 //================================================================
 void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
 {
@@ -221,15 +221,15 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       if ( indexesMap.IsBound( entry.toLatin1().data() ) )
 #endif
       {
-	TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
-	subIndexes.Add( subOwner->index() );
-	//indexesMap.replace( entry, subIndexes );
+        TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
+        subIndexes.Add( subOwner->index() );
+        //indexesMap.replace( entry, subIndexes );
       }
       else
       {
-	TColStd_IndexedMapOfInteger subIndexes;
-	subIndexes.Add( subOwner->index() );
-	indexesMap.Bind(entry.toLatin1().data(), subIndexes);
+        TColStd_IndexedMapOfInteger subIndexes;
+        subIndexes.Add( subOwner->index() );
+        indexesMap.Bind(entry.toLatin1().data(), subIndexes);
       }
     }
     else // the owner is NOT a sub owner, maybe it is a DataOwner == GLOBAL selection
@@ -237,11 +237,11 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr).operator->() );
       if ( owner )
       {
-	SalomeApp_Study* appStudy =
+        SalomeApp_Study* appStudy =
           dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-	QString anEntry = appStudy->referencedToEntry( owner->entry() );
+        QString anEntry = appStudy->referencedToEntry( owner->entry() );
 
-	globalSelMap[anEntry] = 1;
+        globalSelMap[anEntry] = 1;
       }
     }
   }
@@ -355,10 +355,10 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
       const LightApp_DataOwner* owner = dynamic_cast<const LightApp_DataOwner*>( (*itr2).operator->() );
       if ( owner )
       {
-	SalomeApp_Study* appStudy =
+        SalomeApp_Study* appStudy =
           dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-	QString anEntry = appStudy->referencedToEntry( owner->entry() );
-	if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2);
+        QString anEntry = appStudy->referencedToEntry( owner->entry() );
+        if (globalSelMap[anEntry] == 1) mySelectedExternals.append(*itr2);
       }
     }
   }
