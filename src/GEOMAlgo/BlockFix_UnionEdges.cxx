@@ -194,7 +194,22 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
         gp_Dir D1(gp_Vec(P0,PV1));
         gp_Dir D2(gp_Vec(P0,PV2));
         Standard_Real fpar = C->XAxis().Direction().Angle(D1);
+        if(fabs(fpar)>Precision::Confusion()) {
+          // check orientation
+          gp_Dir ND =  C->XAxis().Direction().Crossed(D1);
+          if(ND.IsOpposite(C->Axis().Direction(),Precision::Confusion())) {
+            fpar = -fpar;
+          }
+        }
         Standard_Real lpar = C->XAxis().Direction().Angle(D2);
+        if(fabs(lpar)>Precision::Confusion()) {
+          // check orientation
+          gp_Dir ND =  C->XAxis().Direction().Crossed(D2);
+          if(ND.IsOpposite(C->Axis().Direction(),Precision::Confusion())) {
+            lpar = -lpar;
+          }
+        }
+        if(lpar<fpar) lpar += 2*PI;
         Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(C,fpar,lpar);
         B.MakeEdge (E,tc,Precision::Confusion());
         B.Add(E,V1);
