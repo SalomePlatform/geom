@@ -18,19 +18,24 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ChamferDriver.hxx>
 #include <GEOMImpl_IChamfer.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_ILocalOperations.hxx>
-#include <GEOM_Function.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 
+#include <GEOM_Function.hxx>
+
+#include <BRepLib.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
 #include <BRepFilletAPI_MakeChamfer.hxx>
+
+#include <ShapeFix_Shape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -133,46 +138,47 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
           M.FindFromIndex(i).Extent() == 2)
         fill.Add(aD, E, F);
     }
-  }else if (aType == CHAMFER_SHAPE_EDGE || aType == CHAMFER_SHAPE_EDGE_AD) {
+  }
+  else if (aType == CHAMFER_SHAPE_EDGE || aType == CHAMFER_SHAPE_EDGE_AD) {
     // chamfer on edges, common to two faces, with D1 on the first face
-   
+
     TopoDS_Shape aFace1, aFace2;
     if (GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace1(), aFace1) &&
         GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace2(), aFace2))
-      {
-	TopoDS_Face F = TopoDS::Face(aFace1);
+    {
+      TopoDS_Face F = TopoDS::Face(aFace1);
 
-	// fill map of edges of the second face
-	TopTools_MapOfShape aMap;
-	TopExp_Explorer Exp2 (aFace2, TopAbs_EDGE);
-	for (; Exp2.More(); Exp2.Next()) {
-	  aMap.Add(Exp2.Current());
-	}
-	
-	// find edges of the first face, common with the second face
-	TopExp_Explorer Exp (aFace1, TopAbs_EDGE);
-	for (; Exp.More(); Exp.Next()) {
-	  if (aMap.Contains(Exp.Current())) {
-	    TopoDS_Edge E = TopoDS::Edge(Exp.Current());
-	    if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
-	      {
-		if ( aType == CHAMFER_SHAPE_EDGE )
-		  {
-		    double aD1 = aCI.GetD1();
-		    double aD2 = aCI.GetD2();
-		    fill.Add(aD1, aD2, E, F);
-		  }
-		else
-		  {
-		    double aD = aCI.GetD();
-		    double anAngle = aCI.GetAngle();
-		    if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
-		      fill.AddDA(aD, anAngle, E, F);
-		  }
-	      }
-	  }
-	}
+      // fill map of edges of the second face
+      TopTools_MapOfShape aMap;
+      TopExp_Explorer Exp2 (aFace2, TopAbs_EDGE);
+      for (; Exp2.More(); Exp2.Next()) {
+        aMap.Add(Exp2.Current());
       }
+
+      // find edges of the first face, common with the second face
+      TopExp_Explorer Exp (aFace1, TopAbs_EDGE);
+      for (; Exp.More(); Exp.Next()) {
+        if (aMap.Contains(Exp.Current())) {
+          TopoDS_Edge E = TopoDS::Edge(Exp.Current());
+          if (!BRepTools::IsReallyClosed(E, F) && !BRep_Tool::Degenerated(E))
+          {
+            if ( aType == CHAMFER_SHAPE_EDGE )
+            {
+              double aD1 = aCI.GetD1();
+              double aD2 = aCI.GetD2();
+              fill.Add(aD1, aD2, E, F);
+            }
+            else
+            {
+              double aD = aCI.GetD();
+              double anAngle = aCI.GetAngle();
+              if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
+                fill.AddDA(aD, anAngle, E, F);
+            }
+          }
+        }
+      }
+    }
   }
   else if (aType == CHAMFER_SHAPE_FACES || aType == CHAMFER_SHAPE_FACES_AD) {
     // chamfer on all edges of the selected faces, with D1 on the selected face
@@ -187,35 +193,37 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
     {
       TopoDS_Shape aShapeFace;
       if (GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetFace(ind), aShapeFace))
-	{
-	  TopoDS_Face F = TopoDS::Face(aShapeFace);
-	  TopExp_Explorer Exp (F, TopAbs_EDGE);
-	  for (; Exp.More(); Exp.Next()) {
-	    if (!aMap.Contains(Exp.Current()))
-	      {
-		TopoDS_Edge E = TopoDS::Edge(Exp.Current());
-		if (!BRepTools::IsReallyClosed(E, F) &&
-		    !BRep_Tool::Degenerated(E) &&
-		    M.FindFromKey(E).Extent() == 2)
-		  if (aType == CHAMFER_SHAPE_FACES)
-		    {
-		      double aD1 = aCI.GetD1();
-		      double aD2 = aCI.GetD2();
-		      fill.Add(aD1, aD2, E, F);
-		    }
-		  else
-		    {
-		      double aD = aCI.GetD();
-		      double anAngle = aCI.GetAngle();
-		      if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
-			fill.AddDA(aD, anAngle, E, F);
-		    }
-	      }
-	  }
-	}
+      {
+        TopoDS_Face F = TopoDS::Face(aShapeFace);
+        TopExp_Explorer Exp (F, TopAbs_EDGE);
+        for (; Exp.More(); Exp.Next()) {
+          if (!aMap.Contains(Exp.Current()))
+          {
+            TopoDS_Edge E = TopoDS::Edge(Exp.Current());
+            if (!BRepTools::IsReallyClosed(E, F) &&
+                !BRep_Tool::Degenerated(E) &&
+                M.FindFromKey(E).Extent() == 2)
+            {
+              if (aType == CHAMFER_SHAPE_FACES)
+              {
+                double aD1 = aCI.GetD1();
+                double aD2 = aCI.GetD2();
+                fill.Add(aD1, aD2, E, F);
+              }
+              else
+              {
+                double aD = aCI.GetD();
+                double anAngle = aCI.GetAngle();
+                if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
+                  fill.AddDA(aD, anAngle, E, F);
+              }
+            }
+          }
+        }
+      }
     }
-  }  
-else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
+  }
+  else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
   {
     // chamfer on selected edges with lenght param D1 & D2.
 
@@ -228,25 +236,25 @@ else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
     {
       TopoDS_Shape aShapeEdge;
       if (GEOMImpl_ILocalOperations::GetSubShape(aShapeBase, aCI.GetEdge(ind), aShapeEdge))
-	{
-  	  TopoDS_Edge E = TopoDS::Edge(aShapeEdge);
-	  const TopTools_ListOfShape& aFacesList = M.FindFromKey(E);
-	  TopoDS_Face F = TopoDS::Face( aFacesList.First() );
-	  if (aType == CHAMFER_SHAPE_EDGES)
-	    {
-	      double aD1 = aCI.GetD1();
-	      double aD2 = aCI.GetD2();
-	      fill.Add(aD1, aD2, E, F);
-	    }
-	  else
-	    {
-	      double aD = aCI.GetD();
-	      double anAngle = aCI.GetAngle();
-	      if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
-		fill.AddDA(aD, anAngle, E, F);
-	    }
-	} 
-    } 
+      {
+        TopoDS_Edge E = TopoDS::Edge(aShapeEdge);
+        const TopTools_ListOfShape& aFacesList = M.FindFromKey(E);
+        TopoDS_Face F = TopoDS::Face( aFacesList.First() );
+        if (aType == CHAMFER_SHAPE_EDGES)
+        {
+          double aD1 = aCI.GetD1();
+          double aD2 = aCI.GetD2();
+          fill.Add(aD1, aD2, E, F);
+        }
+        else
+        {
+          double aD = aCI.GetD();
+          double anAngle = aCI.GetAngle();
+          if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
+            fill.AddDA(aD, anAngle, E, F);
+        }
+      }
+    }
   }
   else {
   }
@@ -258,6 +266,17 @@ else if (aType == CHAMFER_SHAPE_EDGES || aType == CHAMFER_SHAPE_EDGES_AD)
   aShape = fill.Shape();
 
   if (aShape.IsNull()) return 0;
+
+  // reduce tolerances
+  ShapeFix_ShapeTolerance aSFT;
+  aSFT.LimitTolerance(aShape, Precision::Confusion(),
+                      Precision::Confusion(), TopAbs_SHAPE);
+  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+  aSfs->Perform();
+  aShape = aSfs->Shape();
+
+  // fix SameParameter flag
+  BRepLib::SameParameter(aShape, 1.E-5, Standard_True);
 
   aFunction->SetValue(aShape);
 
@@ -284,10 +303,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_ChamferDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ChamferDriver",
-			                                 sizeof(GEOMImpl_ChamferDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_ChamferDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }
@@ -306,5 +325,5 @@ const Handle(GEOMImpl_ChamferDriver) Handle(GEOMImpl_ChamferDriver)::DownCast(co
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
