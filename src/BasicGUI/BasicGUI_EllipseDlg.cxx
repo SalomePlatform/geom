@@ -459,12 +459,13 @@ bool BasicGUI_EllipseDlg::execute( ObjectList& objects )
   aParameters<<GroupPoints->SpinBox_DX->text();
   aParameters<<GroupPoints->SpinBox_DY->text();
   
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
   GEOM::GEOM_Object_var anObj = myMajor->_is_nil() ? 
-    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipse   ( myPoint, myDir, aMajorR, aMinorR )         :
-    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeEllipseVec( myPoint, myDir, aMajorR, aMinorR, myMajor );
+    anOper->MakeEllipse   ( myPoint, myDir, aMajorR, aMinorR )         :
+    anOper->MakeEllipseVec( myPoint, myDir, aMajorR, aMinorR, myMajor );
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back( anObj._retn() );
   }
   return true;

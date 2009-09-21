@@ -55,11 +55,11 @@
 #define PARAM_VALUE 0
 #define COORD_VALUE 1
 
-#define POINT_XYZ    0
-#define POINT_REF    1
-#define POINT_EDGE   2
-#define POINT_INTINT 3
-#define POINT_SURF   4
+#define GEOM_POINT_XYZ    0
+#define GEOM_POINT_REF    1
+#define GEOM_POINT_EDGE   2
+#define GEOM_POINT_INTINT 3
+#define GEOM_POINT_SURF   4
 
 
 //=================================================================================
@@ -310,7 +310,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   globalSelection(); // close local contexts, if any
 
   switch ( constructorId ) {
-  case POINT_XYZ:
+  case GEOM_POINT_XYZ:
     {
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       
@@ -326,7 +326,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       GroupXYZ->show();
       break;
     }
-  case POINT_REF:
+  case GEOM_POINT_REF:
     {
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText( "" );
@@ -346,7 +346,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myCoordGrp->show();
       break;
     }
-  case POINT_EDGE:
+  case GEOM_POINT_EDGE:
     {
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       myEditCurrentArgument->setText( "" );
@@ -366,7 +366,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       updateParamCoord( false );
       break;
     }
-  case POINT_INTINT:
+  case GEOM_POINT_INTINT:
     {
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
       GroupLineIntersection->LineEdit1->setText( "" );
@@ -392,7 +392,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       GroupLineIntersection->show();
       break;
     }
-  case POINT_SURF:
+  case GEOM_POINT_SURF:
     {
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
       myEditCurrentArgument->setText( "" );
@@ -460,7 +460,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 {
   const int id = getConstructorId();
 
-  if ( ( id == POINT_REF || id == POINT_EDGE || id == POINT_SURF ) && myEditCurrentArgument != 0 )
+  if ( ( id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF ) && myEditCurrentArgument != 0 )
   {
     myEditCurrentArgument->setText( "" );
     myX->setText( "" );
@@ -482,9 +482,9 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-        if ( id == POINT_EDGE || id == POINT_INTINT )
+        if ( id == GEOM_POINT_EDGE || id == GEOM_POINT_INTINT )
           aNeedType = TopAbs_EDGE;
-        else if ( id == POINT_SURF )
+        else if ( id == GEOM_POINT_SURF )
           aNeedType = TopAbs_FACE;
 
         TColStd_IndexedMapOfInteger aMap;
@@ -513,7 +513,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
           if ( aShape.ShapeType() != aNeedType ) {
             aSelectedObject = GEOM::GEOM_Object::_nil();
             aName = "";
-            if ( id == POINT_XYZ ) return;
+            if ( id == GEOM_POINT_XYZ ) return;
           }
         }
       }
@@ -521,21 +521,21 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       if ( aShape.IsNull() || aShape.ShapeType() != aNeedType)
 	return;
 
-      if ( id == POINT_XYZ ) {
+      if ( id == GEOM_POINT_XYZ ) {
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
         GroupXYZ->SpinBox_DX->setValue( aPnt.X() );
         GroupXYZ->SpinBox_DY->setValue( aPnt.Y() );
         GroupXYZ->SpinBox_DZ->setValue( aPnt.Z() );
       }
-      else if ( id == POINT_REF ) {
+      else if ( id == GEOM_POINT_REF ) {
         myRefPoint = aSelectedObject;
         GroupRefPoint->LineEdit1->setText( aName );
       }
-      else if ( id == POINT_EDGE ) {
+      else if ( id == GEOM_POINT_EDGE ) {
         myEdge = aSelectedObject;
         GroupOnCurve->LineEdit1->setText( aName );
       }
-      else if ( id == POINT_INTINT ) {
+      else if ( id == GEOM_POINT_INTINT ) {
 	myEditCurrentArgument->setText( aName );
 	globalSelection();
 	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
@@ -550,7 +550,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 	    GroupLineIntersection->PushButton1->click();
         }
       }
-      else if ( id == POINT_SURF )
+      else if ( id == GEOM_POINT_SURF )
       {
 	myFace = aSelectedObject;
 	GroupOnSurface->LineEdit1->setText( aName );
@@ -710,7 +710,7 @@ double BasicGUI_PointDlg::getVParameter() const
 //=================================================================================
 void BasicGUI_PointDlg::OnPointSelected( const gp_Pnt& thePnt )
 {
-  if ( getConstructorId() == POINT_XYZ ) {
+  if ( getConstructorId() == GEOM_POINT_XYZ ) {
     GroupXYZ->SpinBox_DX->setValue( thePnt.X() );
     GroupXYZ->SpinBox_DY->setValue( thePnt.Y() );
     GroupXYZ->SpinBox_DZ->setValue( thePnt.Z() );
@@ -735,14 +735,14 @@ GEOM::GEOM_IOperations_ptr BasicGUI_PointDlg::createOperation()
 bool BasicGUI_PointDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
-  if ( id == POINT_XYZ ) {
+  if ( id == GEOM_POINT_XYZ ) {
     bool ok = true;
     ok = GroupXYZ->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
     ok = GroupXYZ->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
     ok = GroupXYZ->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
     return ok;
   }
-  else if ( id == POINT_REF ) {
+  else if ( id == GEOM_POINT_REF ) {
     bool ok = true;
     ok = GroupRefPoint->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
     ok = GroupRefPoint->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
@@ -750,7 +750,7 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
 
     return !myRefPoint->_is_nil() && ok;
   }
-  else if ( id == POINT_EDGE ) {
+  else if ( id == GEOM_POINT_EDGE ) {
     bool ok = true;
     if ( myParamCoord->checkedId() == PARAM_VALUE )
       ok = GroupOnCurve->SpinBox_DX->isValid( msg, !IsPreview() );
@@ -761,9 +761,9 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
     }
     return !myEdge->_is_nil() && ok;
   }
-  else if ( id == POINT_INTINT )
+  else if ( id == GEOM_POINT_INTINT )
     return ( !myLine1->_is_nil() && !myLine2->_is_nil() );
-  else if ( id == POINT_SURF ) {
+  else if ( id == GEOM_POINT_SURF ) {
     bool ok = true;
     if ( myParamCoord->checkedId() == PARAM_VALUE ) {
       ok = GroupOnSurface->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
@@ -791,8 +791,10 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   GEOM::GEOM_Object_var anObj;
   QStringList aParameters;
 
+  GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
+
   switch ( getConstructorId() ) {
-  case POINT_XYZ :
+  case GEOM_POINT_XYZ :
     {
       double x = GroupXYZ->SpinBox_DX->value();
       double y = GroupXYZ->SpinBox_DY->value();
@@ -802,11 +804,11 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       aParameters << GroupXYZ->SpinBox_DY->text();
       aParameters << GroupXYZ->SpinBox_DZ->text();
       
-      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePointXYZ( x, y, z );
+      anObj = anOper->MakePointXYZ( x, y, z );
       res = true;
       break;
     }
-  case POINT_REF :
+  case GEOM_POINT_REF :
     {
       double dx = GroupRefPoint->SpinBox_DX->value();
       double dy = GroupRefPoint->SpinBox_DY->value();
@@ -816,17 +818,14 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       aParameters << GroupRefPoint->SpinBox_DY->text();
       aParameters << GroupRefPoint->SpinBox_DZ->text();
       
-      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
-	MakePointWithReference( myRefPoint, dx, dy, dz );
+      anObj = anOper->MakePointWithReference( myRefPoint, dx, dy, dz );
       res = true;
       break;
     }
-  case POINT_EDGE :
+  case GEOM_POINT_EDGE :
     {
-      GEOM::GEOM_IBasicOperations_ptr anOp =
-        GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
       if ( myParamCoord->checkedId() == PARAM_VALUE ) {
-        anObj = anOp->MakePointOnCurve( myEdge, getParameter() );
+        anObj = anOper->MakePointOnCurve( myEdge, getParameter() );
         aParameters<<GroupOnCurve->SpinBox_DX->text();
       } else {
         double x = GroupXYZ->SpinBox_DX->value();
@@ -837,22 +836,19 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
         aParameters << GroupXYZ->SpinBox_DY->text();
         aParameters << GroupXYZ->SpinBox_DZ->text();
         
-        anObj = anOp->MakePointOnCurveByCoord( myEdge, x, y, z );
+        anObj = anOper->MakePointOnCurveByCoord( myEdge, x, y, z );
       }
       res = true;
       break;
     }
-  case POINT_INTINT :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->
-      MakePointOnLinesIntersection( myLine1, myLine2 );
+  case GEOM_POINT_INTINT :
+    anOper->MakePointOnLinesIntersection( myLine1, myLine2 );
     res = true;
     break;
-  case POINT_SURF :
+  case GEOM_POINT_SURF :
     {
-      GEOM::GEOM_IBasicOperations_ptr anOp =
-        GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
       if ( myParamCoord->checkedId() == PARAM_VALUE ) {
-        anObj = anOp->MakePointOnSurface( myFace, getUParameter(), getVParameter() );
+        anObj = anOper->MakePointOnSurface( myFace, getUParameter(), getVParameter() );
         aParameters<<GroupOnSurface->SpinBox_DX->text();
         aParameters<<GroupOnSurface->SpinBox_DY->text();
       } else {
@@ -864,7 +860,7 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
         aParameters << GroupXYZ->SpinBox_DY->text();
         aParameters << GroupXYZ->SpinBox_DZ->text();
         
-        anObj = anOp->MakePointOnSurfaceByCoord( myFace, x, y, z );
+        anObj = anOper->MakePointOnSurfaceByCoord( myFace, x, y, z );
       }
       res = true;
       break;
@@ -872,15 +868,15 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   }
   
   const int id = getConstructorId();
-  if(!anObj->_is_nil() && !IsPreview() && (id ==  POINT_XYZ || 
-					   id == POINT_REF ||
-					   id == POINT_EDGE ||
-					   id == POINT_SURF) ) {
-    anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+  if(!anObj->_is_nil() && !IsPreview() && (id ==  GEOM_POINT_XYZ || 
+					   id == GEOM_POINT_REF ||
+					   id == GEOM_POINT_EDGE ||
+					   id == GEOM_POINT_SURF) ) {
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
   }
   
 
-  if ( id == POINT_REF || id == POINT_EDGE || id == POINT_SURF ) {
+  if ( id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF ) {
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() &&
          aShape.ShapeType() == TopAbs_VERTEX ) {
@@ -912,19 +908,19 @@ void BasicGUI_PointDlg::addSubshapesToStudy()
   QMap<QString, GEOM::GEOM_Object_var> objMap;
 
   switch ( getConstructorId() ) {
-  case POINT_XYZ:
+  case GEOM_POINT_XYZ:
     break;
-  case POINT_REF:
+  case GEOM_POINT_REF:
     objMap[GroupRefPoint->LineEdit1->text()] = myRefPoint;
     break;
-  case POINT_EDGE:
+  case GEOM_POINT_EDGE:
     objMap[GroupOnCurve->LineEdit1->text()] = myEdge;
     break;
-  case POINT_INTINT:
+  case GEOM_POINT_INTINT:
     objMap[GroupLineIntersection->LineEdit1->text()] = myLine1;
     objMap[GroupLineIntersection->LineEdit2->text()] = myLine2;
     break;
-  case POINT_SURF:
+  case GEOM_POINT_SURF:
     objMap[GroupOnSurface->LineEdit1->text()] = myFace;
     break;
   }
@@ -951,11 +947,11 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
   GroupXYZ->setShown( !isParam );
   
   const int id = getConstructorId();
-  if ( id == POINT_EDGE ) {
+  if ( id == GEOM_POINT_EDGE ) {
     GroupOnCurve->TextLabel2->setShown( isParam );
     GroupOnCurve->SpinBox_DX->setShown( isParam );
   }
-  else if ( id == POINT_SURF ) {
+  else if ( id == GEOM_POINT_SURF ) {
     GroupOnSurface->TextLabel2->setShown( isParam );
     GroupOnSurface->TextLabel3->setShown( isParam );
     GroupOnSurface->SpinBox_DX->setShown( isParam );

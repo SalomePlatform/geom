@@ -571,11 +571,13 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   bool res = false;
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
+
   switch ( getConstructorId() ) {
   case 0:
     {
       if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-	anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeArc( myPoint1, myPoint2, myPoint3 );
+	anObj = anOper->MakeArc( myPoint1, myPoint2, myPoint3 );
 	res = true;
       }
       break;
@@ -584,7 +586,7 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
     {
       bool Sense = Group3Pnts2->CheckButton1->isChecked();
       if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-	anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeArcCenter( myPoint1, myPoint2, myPoint3, Sense );
+	anObj = anOper->MakeArcCenter( myPoint1, myPoint2, myPoint3, Sense );
 	res = true;
       }
       break;
@@ -592,7 +594,7 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   case 2:
     {
       if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-	anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeArcOfEllipse( myPoint1, myPoint2, myPoint3 );
+	anObj = anOper->MakeArcOfEllipse( myPoint1, myPoint2, myPoint3 );
 	res = true;
       }
       break;

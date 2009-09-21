@@ -643,23 +643,25 @@ bool BasicGUI_CircleDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_Object_var anObj;
   
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
+
   switch ( getConstructorId() ) {
   case 0 :
     {
       QStringList aParameters;
       aParameters << GroupPntVecR->SpinBox_DX->text();
-      anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCirclePntVecR( myPoint, myDir, getRadius() );
+      anObj = anOper->MakeCirclePntVecR( myPoint, myDir, getRadius() );
       if ( !anObj->_is_nil() && !IsPreview() )
-        anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       res = true;
       break;
     }
   case 1 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCircleThreePnt( myPoint1, myPoint2, myPoint3 );
+    anObj = anOper->MakeCircleThreePnt( myPoint1, myPoint2, myPoint3 );
     res = true;
     break;
   case 2:
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeCircleCenter2Pnt( myPoint4, myPoint5, myPoint6 );
+    anObj = anOper->MakeCircleCenter2Pnt( myPoint4, myPoint5, myPoint6 );
     res = true;
     break;
   }

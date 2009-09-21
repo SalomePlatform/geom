@@ -720,10 +720,16 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
 //=================================================================================
 bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IBasicOperations::_narrow(
-    getOperation() )->MakeMarker( myData[ X   ]->value(), myData[ Y   ]->value(), myData[ Z   ]->value(),
-                                  myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value(),
-                                  myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
+  GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeMarker( myData[ X   ]->value(), 
+						    myData[ Y   ]->value(), 
+						    myData[ Z   ]->value(),
+						    myData[ DX1 ]->value(),
+						    myData[ DY1 ]->value(), 
+						    myData[ DZ1 ]->value(),
+						    myData[ DX2 ]->value(),
+						    myData[ DY2 ]->value(),
+						    myData[ DZ2 ]->value() );
   QStringList aParameters;
   aParameters<<myData[X]->text();
   aParameters<<myData[Y]->text();
@@ -737,7 +743,7 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
   
   if ( !anObj->_is_nil() ) {
     if ( !IsPreview() )
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back( anObj._retn() );
   }
 

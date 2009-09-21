@@ -476,10 +476,12 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
+
   switch ( getConstructorId() ) {
   case 0 :
     {
-      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorTwoPnt( myPoint1, myPoint2 );
+      anObj = anOper->MakeVectorTwoPnt( myPoint1, myPoint2 );
       res = true;
       break;
     }
@@ -493,10 +495,10 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
       aParameters << GroupDimensions->SpinBox_DZ->text();
-      anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeVectorDXDYDZ( dx, dy, dz );
+      anObj = anOper->MakeVectorDXDYDZ( dx, dy, dz );
 
       if ( !anObj->_is_nil() && !IsPreview() )
-        anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       
       res = true;
       break;

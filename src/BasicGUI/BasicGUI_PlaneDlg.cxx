@@ -788,25 +788,27 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
+
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlanePntVec( myPoint, myDir, getSize() );
+    anObj = anOper->MakePlanePntVec( myPoint, myDir, getSize() );
     res = true;
     break;
   case 1 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneThreePnt( myPoint1, myPoint2, myPoint3, getSize() );
+    anObj = anOper->MakePlaneThreePnt( myPoint1, myPoint2, myPoint3, getSize() );
     res = true;
     break;
   case 2 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneFace( myFace, getSize() );
+    anObj = anOper->MakePlaneFace( myFace, getSize() );
     res = true;
     break;
   case 3 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlane2Vec( myVec1, myVec2, getSize() );
+    anObj = anOper->MakePlane2Vec( myVec1, myVec2, getSize() );
     res = true;
     break;
   case 4 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakePlaneLCS( myLCS, getSize(), myOriginType );
+    anObj = anOper->MakePlaneLCS( myLCS, getSize(), myOriginType );
     res = true;
     break;
   }

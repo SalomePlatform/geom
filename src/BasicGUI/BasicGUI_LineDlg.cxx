@@ -448,13 +448,14 @@ bool BasicGUI_LineDlg::execute( ObjectList& objects )
 {
   bool res = false;
   GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeLineTwoPnt( myPoint1, myPoint2 );
+    anObj = anOper->MakeLineTwoPnt( myPoint1, myPoint2 );
     res = true;
     break;
   case 1 :
-    anObj = GEOM::GEOM_IBasicOperations::_narrow( getOperation() )->MakeLineTwoFaces( myFace1, myFace2 );
+    anObj = anOper->MakeLineTwoFaces( myFace1, myFace2 );
     res = true;
     break;
   }

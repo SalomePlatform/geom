@@ -439,18 +439,19 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
+
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakePolyline( myPoints );
+    anObj = anOper->MakePolyline( myPoints );
     res = true;
     break;
   case 1 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSplineBezier( myPoints );
+    anObj = anOper->MakeSplineBezier( myPoints );
     res = true;
     break;
   case 2 :
-    anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->
-      MakeSplineInterpolation( myPoints, GroupPoints->CheckButton1->isChecked() );
+    anObj = anOper->MakeSplineInterpolation( myPoints, GroupPoints->CheckButton1->isChecked() );
     res = true;
     break;
   }
