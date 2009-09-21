@@ -1481,15 +1481,15 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   WPlane[7] = myWPlane.XDirection().Y();
   WPlane[8] = myWPlane.XDirection().Z();
 
-  GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->MakeSketcher( cmd.toLatin1(), WPlane );
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->MakeSketcher( cmd.toLatin1().constData(), WPlane );
 
   if ( !anObj->_is_nil() )
   {
     if( !IsPreview() ) {
       QStringList aCurrentParameters = myParameters;
       aCurrentParameters << aParameters;
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aCurrentParameters));
+      anObj->SetParameters(aCurrentParameters.join(":").toLatin1().constData());
     }
 
     objects.push_back( anObj._retn() );

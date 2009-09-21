@@ -401,10 +401,10 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   }
 
   if ( isValid( msg ) ) {
-    anObj = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() )->
-      MakePartition( myListShapes, myListTools,
-		     myListKeepInside, myListRemoveInside,
-		     aLimit, false, myListMaterials, aKeepNonlimitShapes );
+    GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
+    anObj = anOper->MakePartition( myListShapes, myListTools,
+				   myListKeepInside, myListRemoveInside,
+				   aLimit, false, myListMaterials, aKeepNonlimitShapes );
     res = true;
   }
 

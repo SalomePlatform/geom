@@ -264,14 +264,12 @@ bool OperationGUI_ArchimedeDlg::isValid( QString& msg )
 //=================================================================================
 bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
   double aWeight         = GroupPoints->SpinBox_DX->value();
   double aWaterDensity   = GroupPoints->SpinBox_DY->value();
   double aMeshDeflection = GroupPoints->SpinBox_DZ->value();
   
-  anObj = GEOM::GEOM_ILocalOperations::_narrow(
-    getOperation() )->MakeArchimede( myShape, aWeight, aWaterDensity, aMeshDeflection );
+  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->MakeArchimede( myShape, aWeight, aWaterDensity, aMeshDeflection );
 
   if ( !anObj->_is_nil() )
   {
@@ -281,7 +279,7 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
       aParameters << GroupPoints->SpinBox_DX->text();
       aParameters << GroupPoints->SpinBox_DY->text();
       aParameters << GroupPoints->SpinBox_DZ->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     objects.push_back( anObj._retn() );
   }

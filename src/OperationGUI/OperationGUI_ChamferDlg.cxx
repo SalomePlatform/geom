@@ -801,20 +801,21 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
                myRadioButton[ RadioButton41 ]->isChecked());
 
   int anId = getConstructorId();
+
+  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
+
   if (anId == 0) {
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-      MakeChamferAll(myShape, mySpinBox[ SpinBox1 ]->value());
+    anObj = anOper->MakeChamferAll(myShape, mySpinBox[ SpinBox1 ]->value());
     if (!anObj->_is_nil())
       aParameters << mySpinBox[ SpinBox1 ]->text();
   }
   else if (anId == 1) {
     if (flag) {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeChamferEdge(myShape,
-                        mySpinBox[ SpinBox21 ]->value(),
-                        mySpinBox[ SpinBox22 ]->value(),
-                        myFace[ Face1 ],
-                        myFace[ Face2 ]);
+      anObj = anOper->MakeChamferEdge(myShape,
+				      mySpinBox[ SpinBox21 ]->value(),
+				      mySpinBox[ SpinBox22 ]->value(),
+				      myFace[ Face1 ],
+				      myFace[ Face2 ]);
       if (!anObj->_is_nil())
       {
 	aParameters << mySpinBox[ SpinBox21 ]->text();
@@ -822,12 +823,11 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
       }
     }
     else {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeChamferEdgeAD(myShape,
-                          mySpinBox[ SpinBox23 ]->value(),
-                          mySpinBox[ SpinBox24 ]->value() * PI180,
-                          myFace[ Face1 ],
-                          myFace[ Face2 ]);
+      anObj = anOper->MakeChamferEdgeAD(myShape,
+					mySpinBox[ SpinBox23 ]->value(),
+					mySpinBox[ SpinBox24 ]->value() * PI180,
+					myFace[ Face1 ],
+					myFace[ Face2 ]);
       if (!anObj->_is_nil())
       {
 	aParameters << mySpinBox[ SpinBox23 ]->text();
@@ -844,11 +844,10 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
       anArray[ i - 1 ] = myFaces(i);
 
     if (flag) {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-	MakeChamferFaces(myShape,
-			 mySpinBox[ SpinBox31 ]->value(),
-			 mySpinBox[ SpinBox32 ]->value(),
-			 anArray);
+      anObj = anOper->MakeChamferFaces(myShape,
+				       mySpinBox[ SpinBox31 ]->value(),
+				       mySpinBox[ SpinBox32 ]->value(),
+				       anArray);
       if (!anObj->_is_nil())
       {
 	aParameters << mySpinBox[ SpinBox31 ]->text();
@@ -856,11 +855,10 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
       }
     }
     else {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-	MakeChamferFacesAD(myShape,
-			   mySpinBox[ SpinBox33 ]->value(),
-			   mySpinBox[ SpinBox34 ]->value() * PI180,
-			   anArray);
+      anObj = anOper->MakeChamferFacesAD(myShape,
+					 mySpinBox[ SpinBox33 ]->value(),
+					 mySpinBox[ SpinBox34 ]->value() * PI180,
+					 anArray);
       if (!anObj->_is_nil())
       {
 	aParameters << mySpinBox[ SpinBox33 ]->text();
@@ -874,11 +872,10 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
     for (int i = 1, n = myEdges.Extent(); i <= n; i++)
       anArray[ i - 1 ] = myEdges(i);
     if (flag) {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeChamferEdges(myShape,
-                         mySpinBox[ SpinBox41 ]->value(),
-                         mySpinBox[ SpinBox42 ]->value(),
-                         anArray);
+      anObj = anOper->MakeChamferEdges(myShape,
+				       mySpinBox[ SpinBox41 ]->value(),
+				       mySpinBox[ SpinBox42 ]->value(),
+				       anArray);
       if (!anObj->_is_nil())
       {
 	aParameters << mySpinBox[ SpinBox41 ]->text();
@@ -886,11 +883,10 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
       }
     }
     else {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeChamferEdgesAD(myShape,
-                           mySpinBox[ SpinBox43 ]->value(),
-                           mySpinBox[ SpinBox44 ]->value() * PI180,
-                           anArray);
+      anObj = anOper->MakeChamferEdgesAD(myShape,
+					 mySpinBox[ SpinBox43 ]->value(),
+					 mySpinBox[ SpinBox44 ]->value() * PI180,
+					 anArray);
       if (!anObj->_is_nil())
       {
 	aParameters << mySpinBox[ SpinBox43 ]->text();
@@ -902,7 +898,7 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
   if (!anObj->_is_nil())
   {
     if (!IsPreview())
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back(anObj._retn());
   }
 

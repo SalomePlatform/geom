@@ -381,18 +381,16 @@ bool OperationGUI_Fillet1d2dDlg::isValid (QString&)
 //=================================================================================
 bool OperationGUI_Fillet1d2dDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
-
   GEOM::ListOfLong_var aListOfIndexes = new GEOM::ListOfLong;
   aListOfIndexes->length(myVertexes.Extent());
 
   for (int i = 1, n = myVertexes.Extent(); i <= n; i++)
     aListOfIndexes[ i - 1 ] = myVertexes(i);
 
-  GEOM::GEOM_ILocalOperations_ptr op =
-    GEOM::GEOM_ILocalOperations::_narrow(getOperation());
-  anObj = (myIs1D ? op->MakeFillet1D(myShape, getRadius(), aListOfIndexes)
-                  : op->MakeFillet2D(myShape, getRadius(), aListOfIndexes));
+  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = myIs1D ?
+    anOper->MakeFillet1D(myShape, getRadius(), aListOfIndexes) : 
+    anOper->MakeFillet2D(myShape, getRadius(), aListOfIndexes);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

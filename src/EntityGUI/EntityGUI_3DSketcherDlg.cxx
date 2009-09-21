@@ -446,7 +446,8 @@ bool EntityGUI_3DSketcherDlg::execute( ObjectList& objects )
     aCoordsArray[i+2] = z;
   } 
 
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() )->Make3DSketcher( aCoordsArray );
+  GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->Make3DSketcher( aCoordsArray );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

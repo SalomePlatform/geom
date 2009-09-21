@@ -626,9 +626,11 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   int anId = getConstructorId();
+
+  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
+
   if (anId == 0) {
-    anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-      MakeFilletAll(myShape, getRadius());
+    anObj = anOper->MakeFilletAll(myShape, getRadius());
     if (!anObj->_is_nil())
       aParameters << Group1->SpinBox_DX->text();
   }
@@ -641,18 +643,16 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
 
     if (Group2->RadioButton1->isChecked())
     {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletEdges(myShape, getRadius(), aList);
+      anObj = anOper->MakeFilletEdges(myShape, getRadius(), aList);
       if (!anObj->_is_nil())
 	aParameters << Group2->SpinBox_DX->text();
     }
     else
     {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletEdgesR1R2(myShape,
-                            Group2->SpinBox_DY->value(),
-                            Group2->SpinBox_DZ->value(),
-                            aList);
+      anObj = anOper->MakeFilletEdgesR1R2(myShape,
+					  Group2->SpinBox_DY->value(),
+					  Group2->SpinBox_DZ->value(),
+					  aList);
       if (!anObj->_is_nil())
       {
 	aParameters << Group2->SpinBox_DY->text();
@@ -668,16 +668,14 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
       aList[ i - 1 ] = myFaces(i);
 
     if (Group3->RadioButton1->isChecked()) {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletFaces(myShape, getRadius(), aList);
+      anObj = anOper->MakeFilletFaces(myShape, getRadius(), aList);
       if (!anObj->_is_nil())
 	aParameters << Group3->SpinBox_DX->text();
     }
     else {
-      anObj = GEOM::GEOM_ILocalOperations::_narrow(getOperation())->
-        MakeFilletFacesR1R2(myShape,
-                            Group3->SpinBox_DY->value(),
-                            Group3->SpinBox_DZ->value(), aList);
+      anObj = anOper->MakeFilletFacesR1R2(myShape,
+					  Group3->SpinBox_DY->value(),
+					  Group3->SpinBox_DZ->value(), aList);
       if (!anObj->_is_nil())
       {
 	aParameters << Group3->SpinBox_DY->text();
@@ -689,7 +687,7 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
   if (!anObj->_is_nil())
   {
     if (!IsPreview())
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back(anObj._retn());
   }
 
