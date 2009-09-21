@@ -194,14 +194,14 @@ void GroupGUI_GroupDlg::Init()
 
         mainFrame()->ResultName->setText( GEOMBase::GetName( myGroup ) );
 
-        GEOM::GEOM_IGroupOperations_var anOp = GEOM::GEOM_IGroupOperations::_narrow( getOperation() );
-        myMainObj = anOp->GetMainShape( myGroup );
+        GEOM::GEOM_IGroupOperations_var anOper = GEOM::GEOM_IGroupOperations::_narrow( getOperation() );
+        myMainObj = anOper->GetMainShape( myGroup );
         if ( !CORBA::is_nil( myMainObj ) )
           myMainName->setText( GEOMBase::GetName( myMainObj ) );
 
-        setShapeType( (TopAbs_ShapeEnum)anOp->GetType( myGroup ) );
+        setShapeType( (TopAbs_ShapeEnum)anOper->GetType( myGroup ) );
 
-        GEOM::ListOfLong_var aCurrList = anOp->GetObjects( myGroup );
+        GEOM::ListOfLong_var aCurrList = anOper->GetObjects( myGroup );
         for ( int i = 0, n = aCurrList->length(); i < n; i++ )
           myIdList->addItem( new QListWidgetItem( QString( "%1" ).arg( aCurrList[i] ) ) );
 
@@ -1052,25 +1052,25 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
 {
   setInPlaceObj( GEOM::GEOM_Object::_nil() );
 
-  GEOM::GEOM_IGroupOperations_var anOp = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
+  GEOM::GEOM_IGroupOperations_var anOper = GEOM::GEOM_IGroupOperations::_narrow(getOperation());
 
   GEOM::GEOM_Object_var aGroup;
   if (myMode == CreateGroup)
-    aGroup = anOp->CreateGroup(myMainObj, getShapeType());
+    aGroup = anOper->CreateGroup(myMainObj, getShapeType());
   else if (myMode == EditGroup)
     aGroup = myGroup;
 
-  if (CORBA::is_nil(aGroup) || (myMode == CreateGroup && !anOp->IsDone()))
+  if (CORBA::is_nil(aGroup) || (myMode == CreateGroup && !anOper->IsDone()))
     return false;
 
-  GEOM::ListOfLong_var aCurrList = anOp->GetObjects(aGroup);
-  if (!anOp->IsDone())
+  GEOM::ListOfLong_var aCurrList = anOper->GetObjects(aGroup);
+  if (!anOper->IsDone())
     return false;
 
   if (aCurrList->length() > 0)
   {
-    anOp->DifferenceIDs(aGroup, aCurrList);
-    if (!anOp->IsDone())
+    anOper->DifferenceIDs(aGroup, aCurrList);
+    if (!anOper->IsDone())
       return false;
   }
 
@@ -1082,8 +1082,8 @@ bool GroupGUI_GroupDlg::execute( ObjectList& objects )
     for (ii = 0; ii < nn; ii++) {
       aNewList[ii] = myIdList->item(ii)->text().toInt();
     }
-    anOp->UnionIDs(aGroup, aNewList);
-    if (!anOp->IsDone())
+    anOper->UnionIDs(aGroup, aNewList);
+    if (!anOper->IsDone())
       return false;
   }
 
@@ -1115,8 +1115,8 @@ GEOM::GEOM_Object_ptr GroupGUI_GroupDlg::getFather( GEOM::GEOM_Object_ptr theObj
 {
   GEOM::GEOM_Object_var aFatherObj;
   if ( theObj->GetType() == GEOM_GROUP ) {
-    GEOM::GEOM_IGroupOperations_var anOp = GEOM::GEOM_IGroupOperations::_narrow( getOperation() );
-    aFatherObj = anOp->GetMainShape( theObj );
+    GEOM::GEOM_IGroupOperations_var anOper = GEOM::GEOM_IGroupOperations::_narrow( getOperation() );
+    aFatherObj = anOper->GetMainShape( theObj );
   }
   return aFatherObj._retn();
 }

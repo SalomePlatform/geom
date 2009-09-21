@@ -448,11 +448,13 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+  
   switch (getConstructorId()) {
   case 0:
     {
       if (!CORBA::is_nil(myPoint1) && !CORBA::is_nil(myPoint2)) {
-        anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxTwoPnt(myPoint1, myPoint2);
+        anObj = anOper->MakeBoxTwoPnt(myPoint1, myPoint2);
         res = true;
       }
     }
@@ -463,14 +465,14 @@ bool PrimitiveGUI_BoxDlg::execute (ObjectList& objects)
       double y = GroupDimensions->SpinBox_DY->value();
       double z = GroupDimensions->SpinBox_DZ->value();
 
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakeBoxDXDYDZ(x, y, z);
+      anObj = anOper->MakeBoxDXDYDZ(x, y, z);
       if (!anObj->_is_nil() && !IsPreview())
       {
 	QStringList aParameters;
 	aParameters << GroupDimensions->SpinBox_DX->text();
 	aParameters << GroupDimensions->SpinBox_DY->text();
 	aParameters << GroupDimensions->SpinBox_DZ->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;
     }

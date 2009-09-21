@@ -492,31 +492,30 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
   bool res = false;
   QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
+
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
-                 GroupDimensions->SpinBox_DY->value(), myOrientationType);
+    anObj = anOper->MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
+			       GroupDimensions->SpinBox_DY->value(), myOrientationType);
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
   case 1:
-    if (GroupType->RadioButton1->isChecked())
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakeFaceObjHW(myEdge, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
-    else if (GroupType->RadioButton2->isChecked())
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
+    anObj = GroupType->RadioButton1->isChecked() ? 
+      anOper->MakeFaceObjHW(myEdge, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value()) : 
+      anOper->MakeFaceObjHW(myFace, GroupPlane->SpinBox_DX->value(), GroupPlane->SpinBox_DY->value());
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPlane->SpinBox_DX->text();
       aParameters << GroupPlane->SpinBox_DY->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;

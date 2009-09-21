@@ -572,30 +572,29 @@ bool PrimitiveGUI_DiskDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeDiskR(getRadius(), myOrientationType);
+    anObj = anOper->MakeDiskR(getRadius(), myOrientationType);
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
   case 1:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeDiskPntVecR(myPoint, myDir, getRadius());
+    anObj = anOper->MakeDiskPntVecR(myPoint, myDir, getRadius());
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPntVecR->SpinBox_DX->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
   case 2:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeDiskThreePnt(myPoint1, myPoint2, myPoint3);
+    anObj = anOper->MakeDiskThreePnt(myPoint1, myPoint2, myPoint3);
     res = true;
     break;
   }

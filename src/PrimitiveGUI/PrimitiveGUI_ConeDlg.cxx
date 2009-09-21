@@ -470,32 +470,32 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakeConePntVecR1R2H(myPoint, myDir, getRadius1(), getRadius2(), getHeight());
+      anObj = anOper->MakeConePntVecR1R2H(myPoint, myDir, getRadius1(), getRadius2(), getHeight());
       if (!anObj->_is_nil() && !IsPreview())
       {
 	QStringList aParameters;
 	aParameters << GroupPoints->SpinBox_DX->text();
 	aParameters << GroupPoints->SpinBox_DY->text();
 	aParameters << GroupPoints->SpinBox_DZ->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;
     }
     break;
   case 1:
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeConeR1R2H(getRadius1(), getRadius2(), getHeight());
+    anObj = anOper->MakeConeR1R2H(getRadius1(), getRadius2(), getHeight());
     if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << GroupDimensions->SpinBox_DX->text();
       aParameters << GroupDimensions->SpinBox_DY->text();
       aParameters << GroupDimensions->SpinBox_DZ->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
