@@ -307,8 +307,8 @@ bool RepairGUI_FreeFacesDlg::isValid( QString& )
 bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
 {
   bool aResult = false;
-  GEOM::ListOfLong_var aFaceLst = 
-    GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->GetFreeFacesIDs( myObj );
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::ListOfLong_var aFaceLst = anOper->GetFreeFacesIDs( myObj );
   TopoDS_Shape aSelShape;
   TopoDS_Shape aFace; 
   TopTools_IndexedMapOfShape anIndices;

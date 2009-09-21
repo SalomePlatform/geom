@@ -621,8 +621,8 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
   QStringList anErrorObjNames;
   for ( int i = 0; i < myObjects->length(); i++ ) {
     GEOM::GEOM_Object_var obj = myObjects[i];
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->
-      ProcessShape( obj, anOperators, aParams, aValues );
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+    GEOM::GEOM_Object_var anObj = anOper->ProcessShape( obj, anOperators, aParams, aValues );
     if ( anObj->_is_nil() )
       anErrorObjNames << GEOMBase::GetName( obj );
     else
@@ -638,7 +638,7 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 	  aParameters << QString( aParams[i] );
 
 	aParameters << getTexts( aParams );
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       objects.push_back( anObj._retn() );
     }

@@ -329,8 +329,8 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
     // highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
-    aResult = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-      GetFreeBoundary(myObject, aClosed, anOpen);
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+    aResult = anOper->GetFreeBoundary(myObject, aClosed, anOpen);
 
     if (aResult) {
       myClosed = aClosed->length();
@@ -345,8 +345,8 @@ bool RepairGUI_RemoveHolesDlg::execute (ObjectList& objects)
       myClosed = -1;
   }
   else {
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-      FillHoles(myObject, myWiresInd);
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+    GEOM::GEOM_Object_var anObj = anOper->FillHoles(myObject, myWiresInd);
     aResult = !anObj->_is_nil();
     if (aResult)
       objects.push_back(anObj._retn());

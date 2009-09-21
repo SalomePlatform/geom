@@ -288,8 +288,8 @@ bool RepairGUI_RemoveExtraEdgesDlg::execute( ObjectList& objects )
   int nbFacesOptimum = -1; // -1 means do not union faces
   if (GroupPoints->CheckButton1->isChecked())
     nbFacesOptimum = 0; // 0 means union all faces, that possible
-  anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->RemoveExtraEdges
-    (myObject, nbFacesOptimum);
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+  anObj = anOper->RemoveExtraEdges(myObject, nbFacesOptimum);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

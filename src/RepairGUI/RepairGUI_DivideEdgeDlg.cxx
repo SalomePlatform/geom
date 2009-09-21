@@ -362,8 +362,8 @@ bool RepairGUI_DivideEdgeDlg::isValid( QString& msg )
 //=================================================================================
 bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->DivideEdge
-    ( myObject, myIndex, myValEdt->value(), getIsByParameter() );
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->DivideEdge( myObject, myIndex, myValEdt->value(), getIsByParameter() );
   bool aResult = !anObj->_is_nil();
   if ( aResult )
   {
@@ -373,7 +373,7 @@ bool RepairGUI_DivideEdgeDlg::execute( ObjectList& objects )
       aParameters << "";
       aParameters << myValEdt->text();
       aParameters << "";
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     objects.push_back( anObj._retn() );
   }

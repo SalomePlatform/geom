@@ -475,13 +475,14 @@ bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->MakePipe(myBase, myPath);
+    anObj = anOper->MakePipe(myBase, myPath);
     break;
   case 1 :
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakePipeBiNormalAlongVector(myBase, myPath, myVec);
+    anObj = anOper->MakePipeBiNormalAlongVector(myBase, myPath, myVec);
     break;
   }
 

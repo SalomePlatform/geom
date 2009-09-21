@@ -278,10 +278,12 @@ bool RepairGUI_SewingDlg::isValid( QString& msg )
 bool RepairGUI_SewingDlg::execute( ObjectList& objects )
 {
   bool aResult = false;
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+
   if ( IsPreview() ) { // called from onDetect(): detect free boundary edges, highlight them (add to objects), display message dialog
     GEOM::ListOfGO_var aClosed, anOpen;
 
-    aResult = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->GetFreeBoundary( myObject, aClosed, anOpen );
+    aResult = anOper->GetFreeBoundary( myObject, aClosed, anOpen );
 
     if ( aResult ) {
       myClosed = aClosed->length();
@@ -296,7 +298,7 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
       myClosed = -1;
   }
   else {
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->Sew( myObject, myTolEdt->value() );
+    GEOM::GEOM_Object_var anObj = anOper->Sew( myObject, myTolEdt->value() );
     aResult = !anObj->_is_nil();
     if ( aResult )
     {
@@ -304,7 +306,7 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
       {
 	QStringList aParameters;
 	aParameters << myTolEdt->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       objects.push_back( anObj._retn() );
     }

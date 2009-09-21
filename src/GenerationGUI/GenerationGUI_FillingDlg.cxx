@@ -355,10 +355,9 @@ bool GenerationGUI_FillingDlg::isValid( QString& msg )
 //=================================================================================
 bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation() )->MakeFilling(
-    myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D, myNbIter, myIsApprox );
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, 
+						     myTol2D, myTol3D, myNbIter, myIsApprox );
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )
@@ -369,7 +368,7 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
       aParameters << GroupPoints->SpinBox3->text();
       aParameters << GroupPoints->SpinBox4->text();
       aParameters << GroupPoints->SpinBox5->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     objects.push_back( anObj._retn() );
   }

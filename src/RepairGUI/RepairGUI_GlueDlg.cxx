@@ -407,17 +407,17 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
   bool aResult = false;
   objects.clear();
 
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
   switch ( getConstructorId() ) {
   case 0:
     {
-      GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
-        ( getOperation() )->MakeGlueFaces( myObject, myTolEdt->value(), true );
+      GEOM::GEOM_Object_var anObj = anOper->MakeGlueFaces( myObject, myTolEdt->value(), true );
       aResult = !anObj->_is_nil();
       if ( aResult && !IsPreview() )
       {
 	QStringList aParameters;
 	aParameters << myTolEdt->text();
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 
         objects.push_back( anObj._retn() );
       }
@@ -461,8 +461,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       ObjectList::iterator anIter3 = toGlue.begin();
       for ( int i = 0; anIter3 != toGlue.end(); ++anIter3, ++i )
         aListForGlue[ i ] = *anIter3;
-      GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow
-        ( getOperation() )->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue, true );
+      GEOM::GEOM_Object_var anObj = anOper->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue, true );
 
       aResult = !anObj->_is_nil();
 
@@ -472,7 +471,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
 	{
 	  QStringList aParameters;
 	  aParameters << myTolEdt2->text();
-	  anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+          anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 	}
         objects.push_back( anObj._retn() );
       }
@@ -607,12 +606,11 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
         }
 
         // JFA 28.12.2004 BEGIN // To enable warnings
-        if ( !getOperation()->_is_nil() ) {
-          if ( !getOperation()->IsDone() ) {
-            wc.suspend();
-      	    QString msgw = QObject::tr( getOperation()->GetErrorCode() );
-            SUIT_MessageBox::warning( this, tr( "WRN_WARNING" ), msgw, tr( "BUT_OK" ) );
-          }
+	GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+        if ( !CORBA::is_nil(anOper) && !anOper->IsDone() ) {
+	  wc.suspend();
+	  QString msgw = QObject::tr( anOper->GetErrorCode() );
+	  SUIT_MessageBox::warning( this, tr( "WRN_WARNING" ), msgw, tr( "BUT_OK" ) );
         }
         // JFA 28.12.2004 END
       }
@@ -648,8 +646,8 @@ void RepairGUI_GlueDlg::onDetect()
   buttonApply()->setEnabled( false );
   globalSelection( GEOM_ALLSHAPES );
 
-  GEOM::ListOfGO_var aList = GEOM::GEOM_IShapesOperations::_narrow
-    ( getOperation() )->GetGlueFaces( myObject, myTolEdt2->value() );
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::ListOfGO_var aList = anOper->GetGlueFaces( myObject, myTolEdt2->value() );
   
   for ( int i = 0, n = aList->length(); i < n; i++ ) 
     myTmpObjs.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));

@@ -405,13 +405,13 @@ bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   if (!myBothway) {
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeRevolutionAxisAngle(myBase, myAxis, getAngle() * PI180);
+    anObj = anOper->MakeRevolutionAxisAngle(myBase, myAxis, getAngle() * PI180);
   }
   else {
-    anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-      MakeRevolutionAxisAngle2Ways(myBase, myAxis, getAngle() * PI180);
+    anObj = anOper->MakeRevolutionAxisAngle2Ways(myBase, myAxis, getAngle() * PI180);
   }
 
   if (!anObj->_is_nil())
@@ -420,7 +420,7 @@ bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
     {
       QStringList aParameters;
       aParameters << GroupPoints->SpinBox_DX->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     objects.push_back(anObj._retn());
   }

@@ -653,32 +653,30 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
   QStringList aParameters;
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     if (!myBothway) {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakePrismVecH(myBase, myVec, getHeight());
+      anObj = anOper->MakePrismVecH(myBase, myVec, getHeight());
     }
     else {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakePrismVecH2Ways(myBase, myVec, getHeight());
+      anObj = anOper->MakePrismVecH2Ways(myBase, myVec, getHeight());
     }
 
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupPoints->SpinBox_DX->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
 
     break;
   case 1:
     if (!myBothway2) {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakePrismTwoPnt(myBase, myPoint1, myPoint2);
+      anObj = anOper->MakePrismTwoPnt(myBase, myPoint1, myPoint2);
     }
     else {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakePrismTwoPnt2Ways(myBase, myPoint1, myPoint2);
+      anObj = anOper->MakePrismTwoPnt2Ways(myBase, myPoint1, myPoint2);
     }
     break;
   case 2:
@@ -687,12 +685,10 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
     double dz = GroupPoints3->SpinBox_DZ->value();
 
     if (!myBothway3) {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakePrismDXDYDZ(myBase, dx, dy, dz);
+      anObj = anOper->MakePrismDXDYDZ(myBase, dx, dy, dz);
     }
     else {
-      anObj = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation())->
-        MakePrismDXDYDZ2Ways(myBase, dx, dy, dz);
+      anObj = anOper->MakePrismDXDYDZ2Ways(myBase, dx, dy, dz);
     }
 
     if (!anObj->_is_nil() && !IsPreview())
@@ -700,7 +696,7 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
       aParameters << GroupPoints3->SpinBox_DX->text();
       aParameters << GroupPoints3->SpinBox_DY->text();
       aParameters << GroupPoints3->SpinBox_DZ->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
 
     break;

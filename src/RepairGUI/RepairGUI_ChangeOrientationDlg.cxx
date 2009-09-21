@@ -269,11 +269,12 @@ bool RepairGUI_ChangeOrientationDlg::execute( ObjectList& objects )
   bool toCreateCopy = GroupPoints->CheckButton1->isChecked();
 
   GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
   if ( toCreateCopy ) {
-    anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->ChangeOrientationCopy( myObject );
+    anObj = anOper->ChangeOrientationCopy( myObject );
   }
   else {
-    anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->ChangeOrientation( myObject );
+    anObj = anOper->ChangeOrientation( myObject );
   }
 
   if ( !anObj->_is_nil() )

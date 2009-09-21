@@ -319,8 +319,8 @@ bool RepairGUI_CloseContourDlg::isValid (QString&)
 //=================================================================================
 bool RepairGUI_CloseContourDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-    CloseContour(myObject, myWiresInd, getIsByVertex());
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->CloseContour(myObject, myWiresInd, getIsByVertex());
 
   bool aResult = !anObj->_is_nil();
   if (aResult)

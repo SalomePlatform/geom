@@ -306,8 +306,8 @@ bool RepairGUI_RemoveIntWiresDlg::isValid (QString&)
 //=================================================================================
 bool RepairGUI_RemoveIntWiresDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow(getOperation())->
-    RemoveIntWires(myObject, myWiresInd);
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj = anOper->RemoveIntWires(myObject, myWiresInd);
 
   bool aResult = !anObj->_is_nil();
   if (aResult)

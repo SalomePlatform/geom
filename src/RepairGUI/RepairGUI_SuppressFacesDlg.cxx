@@ -295,7 +295,8 @@ bool RepairGUI_SuppressFacesDlg::execute( ObjectList& objects )
     GEOM::GEOM_Object_var obj = myObjects[i];
     GEOM::short_array faces = myFaces[i];
     //MESSAGE(">>>> Dlg, passing faces.. len = " << faces.length());
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IHealingOperations::_narrow( getOperation() )->SuppressFaces( obj, faces );
+    GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow( getOperation() );
+    GEOM::GEOM_Object_var anObj = anOper->SuppressFaces( obj, faces );
     if ( anObj->_is_nil() )
       anErrorObjNames << GEOMBase::GetName( obj );
     else
