@@ -292,10 +292,12 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   
   GEOM::GEOM_Object_var anObj;
   
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   if ( GroupPoints->CheckButton1->isChecked() || IsPreview() ) {
     for ( int i = 0; i < myObjects.length(); i++ ) {
       
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShapeCopy( myObjects[i], GetOffset() );
+      anObj = anOper->OffsetShapeCopy( myObjects[i], GetOffset() );
       if ( !anObj->_is_nil() ) {
         if(!IsPreview()) {
           anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
@@ -306,7 +308,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   }
   else {
     for ( int i = 0; i < myObjects.length(); i++ ) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow( getOperation() )->OffsetShape( myObjects[i], GetOffset() );
+      anObj = anOper->OffsetShape( myObjects[i], GetOffset() );
       if ( !anObj->_is_nil() )
 	objects.push_back( anObj._retn() );
     }

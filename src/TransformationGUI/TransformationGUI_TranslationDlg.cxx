@@ -554,6 +554,8 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     {
@@ -569,11 +571,10 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            TranslateDXDYDZCopy(myObjects[i], dx, dy, dz);
+          anObj = anOper->TranslateDXDYDZCopy(myObjects[i], dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview())
-              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    	      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
             objects.push_back(anObj._retn());
           }
         }
@@ -581,11 +582,10 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       else {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            TranslateDXDYDZ(myObjects[i], dx, dy, dz);
+          anObj = anOper->TranslateDXDYDZ(myObjects[i], dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+    	      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 	      updateAttributes(anObj, aParameters);
 	    }
             objects.push_back(anObj._retn());
@@ -600,8 +600,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            TranslateTwoPointsCopy(myObjects[i], myPoint1, myPoint2);
+          anObj = anOper->TranslateTwoPointsCopy(myObjects[i], myPoint1, myPoint2);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -609,8 +608,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       else {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            TranslateTwoPoints(myObjects[i], myPoint1, myPoint2);
+          anObj = anOper->TranslateTwoPoints(myObjects[i], myPoint1, myPoint2);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -627,11 +625,10 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
         double aDistance = GroupPoints->SpinBox3->value();
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            TranslateVectorDistance(myObjects[i], myVector, aDistance, toCreateCopy);
+          anObj = anOper->TranslateVectorDistance(myObjects[i], myVector, aDistance, toCreateCopy);
           if (!anObj->_is_nil()) {
 	    if(!IsPreview()) {
-	      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 	      if (!toCreateCopy)
 		updateAttributes(anObj, aParameters);
 	    }
@@ -643,8 +640,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
         if (toCreateCopy) {
           for (int i = 0; i < myObjects.length(); i++) {
             myCurrObject = myObjects[i];
-            anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-              TranslateVectorCopy(myObjects[i], myVector);
+            anObj = anOper->TranslateVectorCopy(myObjects[i], myVector);
             if (!anObj->_is_nil())
               objects.push_back(anObj._retn());
           }
@@ -652,8 +648,7 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
         else {
           for (int i = 0; i < myObjects.length(); i++) {
             myCurrObject = myObjects[i];
-            anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-              TranslateVector(myObjects[i], myVector);
+            anObj = anOper->TranslateVector(myObjects[i], myVector);
             if (!anObj->_is_nil())
               objects.push_back(anObj._retn());
           }

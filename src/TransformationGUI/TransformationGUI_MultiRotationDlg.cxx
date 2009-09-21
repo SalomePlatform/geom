@@ -565,11 +565,12 @@ bool TransformationGUI_MultiRotationDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
   QStringList aParameters;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVector)) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-        MultiRotate1D(myBase, myVector, myNbTimes1);
+      anObj = anOper->MultiRotate1D(myBase, myVector, myNbTimes1);
       if(!IsPreview())
         aParameters<<GroupPoints->SpinBox_DX->text();
       res = true;
@@ -577,8 +578,7 @@ bool TransformationGUI_MultiRotationDlg::execute (ObjectList& objects)
     break;
   case 1:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVector)) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-        MultiRotate2D(myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2);
+      anObj = anOper->MultiRotate2D(myBase, myVector, myAng, myNbTimes1, myStep, myNbTimes2);
       if(!IsPreview()) {
         aParameters<<GroupDimensions->SpinBox_DX1->text();
         aParameters<<GroupDimensions->SpinBox_DY1->text();
@@ -592,7 +592,7 @@ bool TransformationGUI_MultiRotationDlg::execute (ObjectList& objects)
 
   if (!anObj->_is_nil()) {
     if(!IsPreview())
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back(anObj._retn());
   }
 

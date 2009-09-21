@@ -537,6 +537,8 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     {
@@ -545,11 +547,10 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            RotateCopy(myObjects[i], myAxis, GetAngle() * PI180);
+          anObj = anOper->RotateCopy(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
             }
             objects.push_back(anObj._retn());
           }
@@ -558,11 +559,10 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
       else {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            Rotate(myObjects[i], myAxis, GetAngle() * PI180);
+          anObj = anOper->Rotate(myObjects[i], myAxis, GetAngle() * PI180);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
-              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 	      updateAttributes(anObj, aParameters);
 	    }
             objects.push_back(anObj._retn());
@@ -577,8 +577,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            RotateThreePointsCopy(myObjects[i], myCentPoint, myPoint1, myPoint2);
+          anObj = anOper->RotateThreePointsCopy(myObjects[i], myCentPoint, myPoint1, myPoint2);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -586,8 +585,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
       else {
         for (int i = 0; i < myObjects.length(); i++) {
           myCurrObject = myObjects[i];
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            RotateThreePoints(myObjects[i], myCentPoint, myPoint1, myPoint2);
+          anObj = anOper->RotateThreePoints(myObjects[i], myCentPoint, myPoint1, myPoint2);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }

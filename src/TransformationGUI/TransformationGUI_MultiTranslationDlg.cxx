@@ -670,11 +670,12 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
 
   QStringList aParameters;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVectorU)) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-        MultiTranslate1D(myBase, myVectorU, myStepU, myNbTimesU);
+      anObj = anOper->MultiTranslate1D(myBase, myVectorU, myStepU, myNbTimesU);
       if(!IsPreview()) {
         aParameters<<GroupPoints->SpinBox_DX->text();
         aParameters<<GroupPoints->SpinBox_DY->text();
@@ -685,9 +686,9 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
   case 1:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVectorU) &&
         !CORBA::is_nil(myVectorV)) {
-      anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-        MultiTranslate2D(myBase, myVectorU, myStepU, myNbTimesU,
-                          myVectorV, myStepV, myNbTimesV);
+      anObj = anOper->MultiTranslate2D(myBase,
+				       myVectorU, myStepU, myNbTimesU,
+				       myVectorV, myStepV, myNbTimesV);
       if(!IsPreview()) {
         aParameters<<GroupDimensions->SpinBox_DX1->text();
         aParameters<<GroupDimensions->SpinBox_DY1->text();
@@ -701,7 +702,7 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
 
   if (!anObj->_is_nil()) {
     if(!IsPreview())
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back(anObj._retn());
   }
 

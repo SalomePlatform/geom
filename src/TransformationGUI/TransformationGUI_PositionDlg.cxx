@@ -607,16 +607,15 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   bool toCreateCopy = IsPreview() || Group1->CheckButton1->isChecked();
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     {
       for (int i = 0; i < myObjects.length(); i++) {
-        if (toCreateCopy)
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShapeCopy(myObjects[i], myObjects[i], myEndLCS);
-        else
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShape(myObjects[i], myObjects[i], myEndLCS);
+	anObj = toCreateCopy ? 
+	  anOper->PositionShapeCopy(myObjects[i], myObjects[i], myEndLCS) :
+	  anOper->PositionShape(myObjects[i], myObjects[i], myEndLCS);
 
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
@@ -628,11 +627,9 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
     {
       for (int i = 0; i < myObjects.length(); i++) {
         if (toCreateCopy)
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS);
-        else
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            PositionShape(myObjects[i], myStartLCS, myEndLCS);
+          anObj = toCreateCopy ? 
+	    anOper->PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS) :
+	    anOper->PositionShape(myObjects[i], myStartLCS, myEndLCS);
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
       }
@@ -644,8 +641,7 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
       double aDistance = Group1->SpinBox_DX->value();
       bool toReverse = Group1->CheckButton3->isChecked();
       for (int i = 0; i < myObjects.length(); i++) {
-	anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-	  PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
+	anObj = anOper->PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
 	if (!anObj->_is_nil())
 	  objects.push_back(anObj._retn());
       }

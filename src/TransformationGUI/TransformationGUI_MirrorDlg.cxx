@@ -411,21 +411,21 @@ bool  TransformationGUI_MirrorDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     {
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            MirrorPointCopy(myObjects[i], myArgument);
+          anObj = anOper->MirrorPointCopy(myObjects[i], myArgument);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
       }
       else {
         for (int i = 0; i < myObjects.length(); i++) {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            MirrorPoint(myObjects[i], myArgument);
+          anObj = anOper->MirrorPoint(myObjects[i], myArgument);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -437,16 +437,14 @@ bool  TransformationGUI_MirrorDlg::execute (ObjectList& objects)
     {
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            MirrorAxisCopy(myObjects[i], myArgument);
+          anObj = anOper->MirrorAxisCopy(myObjects[i], myArgument);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
       }
       else {
         for (int i = 0; i < myObjects.length(); i++) {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            MirrorAxis(myObjects[i], myArgument);
+          anObj = anOper->MirrorAxis(myObjects[i], myArgument);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -458,16 +456,14 @@ bool  TransformationGUI_MirrorDlg::execute (ObjectList& objects)
     {
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.length(); i++) {
-            anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-              MirrorPlaneCopy(myObjects[i], myArgument);
+            anObj = anOper->MirrorPlaneCopy(myObjects[i], myArgument);
             if (!anObj->_is_nil())
               objects.push_back(anObj._retn());
         }
       }
       else {
         for (int i = 0; i < myObjects.length(); i++) {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            MirrorPlane(myObjects[i], myArgument);
+          anObj = anOper->MirrorPlane(myObjects[i], myArgument);
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }

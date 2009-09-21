@@ -488,6 +488,8 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
+
   switch (getConstructorId())
   {
   case 0:
@@ -496,8 +498,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
       {
         for (int i = 0; i < myObjects.length(); i++)
         {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            ScaleShapeCopy(myObjects[i], myPoint, SpinBox_FX->value());
+          anObj = anOper->ScaleShapeCopy(myObjects[i], myPoint, SpinBox_FX->value());
           if (!anObj->_is_nil()) {
             if(!IsPreview()) 
               anObj->SetParameters(SpinBox_FX->text().toLatin1().constData());
@@ -509,8 +510,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
       {
         for (int i = 0; i < myObjects.length(); i++)
         {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            ScaleShape(myObjects[i], myPoint, SpinBox_FX->value());
+          anObj = anOper->ScaleShape(myObjects[i], myPoint, SpinBox_FX->value());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -523,16 +523,15 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
       {
         for (int i = 0; i < myObjects.length(); i++)
         {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            ScaleShapeAlongAxesCopy(myObjects[i], myPoint, SpinBox_FX->value(),
-                                     SpinBox_FY->value(), SpinBox_FZ->value());
+          anObj = anOper->ScaleShapeAlongAxesCopy(myObjects[i], myPoint, SpinBox_FX->value(),
+						  SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             if(!IsPreview()) {
               QStringList aParameters;
               aParameters<<SpinBox_FX->text();
               aParameters<<SpinBox_FY->text();
               aParameters<<SpinBox_FZ->text();
-              anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+              anObj->SetParameters(aParameters.join(":").toLatin1().constData());
             }
             objects.push_back(anObj._retn());
         }
@@ -541,9 +540,8 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
       {
         for (int i = 0; i < myObjects.length(); i++)
         {
-          anObj = GEOM::GEOM_ITransformOperations::_narrow(getOperation())->
-            ScaleShapeAlongAxes(myObjects[i], myPoint, SpinBox_FX->value(),
-                                 SpinBox_FY->value(), SpinBox_FZ->value());
+          anObj = anOper->ScaleShapeAlongAxes(myObjects[i], myPoint, SpinBox_FX->value(),
+					      SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
