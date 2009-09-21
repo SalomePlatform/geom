@@ -354,8 +354,8 @@ bool MeasureGUI_NormaleDlg::isValid (QString&)
 //=================================================================================
 bool MeasureGUI_NormaleDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj =
-    GEOM::GEOM_IMeasureOperations::_narrow(getOperation())->GetNormal(myFace, myPoint);
+  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->GetNormal(myFace, myPoint);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

@@ -169,13 +169,14 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       double x, y, z;
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetInertia( myObj,
-        I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
-        I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
-        I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
-        x, y, z );
+      anOper->GetInertia( myObj,
+			  I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
+			  I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
+			  I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
+			  x, y, z );
 
         theIXYZ.SetCoord( x, y, z );
     }
@@ -184,6 +185,6 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }

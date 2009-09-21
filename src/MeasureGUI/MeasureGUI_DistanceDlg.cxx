@@ -207,10 +207,11 @@ bool MeasureGUI_DistanceDlg::getParameters (double& theDistance,
 {
   QString msg;
   if (isValid(msg)) {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+
     try {
       double x1, y1, z1, x2, y2, z2;
-      theDistance = GEOM::GEOM_IMeasureOperations::_narrow(getOperation())->
-        GetMinDistance(myObj, myObj2, x1, y1, z1, x2, y2, z2);
+      theDistance = anOper->GetMinDistance(myObj, myObj2, x1, y1, z1, x2, y2, z2);
 
       thePnt1.SetCoord(x1, y1, z1);
       thePnt2.SetCoord(x2, y2, z2);
@@ -220,7 +221,7 @@ bool MeasureGUI_DistanceDlg::getParameters (double& theDistance,
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 
   return false;

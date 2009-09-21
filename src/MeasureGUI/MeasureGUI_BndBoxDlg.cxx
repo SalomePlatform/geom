@@ -162,6 +162,7 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       Handle(Poly_Triangulation) Trtn = 0; 
 
@@ -198,8 +199,7 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
 	}
       }
 
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBoundingBox(
-        myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
+      anOper->GetBoundingBox( myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
       
       if (!Trtn.IsNull())
       {
@@ -227,7 +227,7 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 

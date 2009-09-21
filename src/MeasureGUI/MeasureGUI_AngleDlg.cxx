@@ -215,17 +215,18 @@ bool MeasureGUI_AngleDlg::getParameters (double& theAngle)
 {
   QString msg;
   if (isValid(msg)) {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      theAngle = GEOM::GEOM_IMeasureOperations::_narrow(getOperation())->GetAngle(myObj, myObj2);
+      theAngle = anOper->GetAngle(myObj, myObj2);
     }
     catch(const SALOME::SALOME_Exception& e) {
       SalomeApp_Tools::QtCatchCorbaException(e);
       return false;
     }
 
-    bool isDone = getOperation()->IsDone();
+    bool isDone = anOper->IsDone();
     if (!isDone) {
-      CORBA::String_var aMsg = getOperation()->GetErrorCode();
+      CORBA::String_var aMsg = anOper->GetErrorCode();
       SUIT_MessageBox::warning(this,
                                QObject::tr("WRN_WARNING"),
                                QObject::tr(aMsg.in()));

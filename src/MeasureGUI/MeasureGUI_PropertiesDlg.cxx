@@ -155,16 +155,16 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetBasicProperties(
-        myObj, theLength, theArea, theVolume );
+      anOper->GetBasicProperties( myObj, theLength, theArea, theVolume );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 

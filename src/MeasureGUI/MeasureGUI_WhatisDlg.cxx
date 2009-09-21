@@ -208,9 +208,10 @@ bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
   if ( myObj->_is_nil() )
     return false;
 
+  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
   try
   {
-    theText = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->WhatIs( myObj );
+    theText = anOper->WhatIs( myObj );
   }
   catch( const SALOME::SALOME_Exception& e )
   {
@@ -218,7 +219,7 @@ bool MeasureGUI_WhatisDlg::getParameters( QString& theText )
     return false;
   }
 
-  return getOperation()->IsDone();
+  return anOper->IsDone();
 }
 
 //=================================================================================
@@ -237,18 +238,18 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   GEOM::ListOfLong_var anInts;
   GEOM::ListOfDouble_var aDbls;
 
-  GEOM::GEOM_IMeasureOperations_var anOp = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
 
   try
   {
-    aKind = anOp->KindOfShape( myObj, anInts, aDbls );
+    aKind = anOper->KindOfShape( myObj, anInts, aDbls );
   }
   catch( const SALOME::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     return aKindStr;
   }
 
-  if ( !anOp->IsDone() )
+  if ( !anOper->IsDone() )
     return aKindStr;
 
 #define PRINT_DOUBLE(val) QString(" %1").arg( DlgRef::PrintDoubleValue( val ) )

@@ -156,16 +156,17 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
-      GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetTolerance( myObj,
-        theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
-        theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
+      anOper->GetTolerance( myObj, 
+			    theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
+			    theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }

@@ -290,9 +290,9 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
     return false;
   else {
     try {
-      GEOM::GEOM_Object_var anObj;
-      anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
-      if ( !getOperation()->IsDone() )
+      GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+      GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj );
+      if ( !anOper->IsDone() )
         return false;
 
       TopoDS_Shape aShape;
@@ -324,9 +324,8 @@ bool MeasureGUI_CenterMassDlg::getParameters( double& theX, double& theY, double
 //=================================================================================
 bool MeasureGUI_CenterMassDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() )->GetCentreOfMass( myObj );
+  GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->GetCentreOfMass( myObj );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

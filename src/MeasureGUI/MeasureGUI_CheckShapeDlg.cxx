@@ -110,15 +110,14 @@ bool MeasureGUI_CheckShapeDlg::getParameters ( bool& theIsValid, QString& theMsg
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       char* aMsg;
       bool isCheckGeometry = myGrp->CheckBox1->isChecked();
-      GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-        GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
       if ( isCheckGeometry )
-        theIsValid = aMeasureOp->CheckShapeWithGeometry( myObj, aMsg );
+        theIsValid = anOper->CheckShapeWithGeometry( myObj, aMsg );
       else
-        theIsValid = aMeasureOp->CheckShape( myObj, aMsg );
+        theIsValid = anOper->CheckShape( myObj, aMsg );
       theMsg = aMsg;
     }
     catch( const SALOME::SALOME_Exception& e ) {
@@ -126,7 +125,7 @@ bool MeasureGUI_CheckShapeDlg::getParameters ( bool& theIsValid, QString& theMsg
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 

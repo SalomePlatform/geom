@@ -241,10 +241,10 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBloc
   if ( myObj->_is_nil() )
     return false;
   else {
+    GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() );
     try {
       GEOM::GEOM_IBlocksOperations::BCErrors_var aErrs;
-      theIsCompoundOfBlocks =
-	GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->CheckCompoundOfBlocks( myObj, aErrs );
+      theIsCompoundOfBlocks = anOper->CheckCompoundOfBlocks( myObj, aErrs );
       theErrors = aErrs;
     }
     catch ( const SALOME::SALOME_Exception& e ) {
@@ -252,7 +252,7 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBloc
       return false;
     }
 
-    return getOperation()->IsDone();
+    return anOper->IsDone();
   }
 }
 
@@ -472,9 +472,8 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::isValid( QString& )
 //=================================================================================
 bool MeasureGUI_CheckCompoundOfBlocksDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->CheckAndImprove( myObj );
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->CheckAndImprove( myObj );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
