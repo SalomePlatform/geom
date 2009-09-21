@@ -69,7 +69,8 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
   Engines::Container_var ctn_server = geom->GetContainerRef();
   long                   pid_server = ctn_server->getPID();
 
-  if ( (pid_client==pid_server) && (strcmp(hst_client.c_str(), ctn_server->getHostName())==0) ) {
+  CORBA::String_var hostname = ctn_server->getHostName();
+  if ( pid_client == pid_server && !strcmp(hst_client.c_str(), hostname.in()) ) {
     TopoDS_Shape* S = (TopoDS_Shape*)(aShape->getShape());
     return(*S);
   } else {

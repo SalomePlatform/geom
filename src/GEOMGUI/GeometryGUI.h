@@ -81,8 +81,6 @@ public:
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
 
-  static char*                JoinObjectParameters(const QStringList& theParametersList);
-
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }
   Standard_CString&           GetFatherior()      { return myFatherior; }
   //void                        SetState( const int state ) { myState = state; }

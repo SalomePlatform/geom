@@ -182,9 +182,12 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributeName");
     SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
     aName->SetValue("Geometry");
+    aName->Destroy();
     anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributePixMap");
-    SALOMEDS::AttributePixMap::_narrow(anAttr)->SetPixMap("ICON_OBJBROWSER_Geometry");
-    aStudyBuilder->DefineComponentInstance(aFather, GEOM_Gen::_this());
+    SALOMEDS::AttributePixMap_var aPixMap=SALOMEDS::AttributePixMap::_narrow(anAttr);
+    aPixMap->SetPixMap("ICON_OBJBROWSER_Geometry");
+    aPixMap->Destroy();
+    aStudyBuilder->DefineComponentInstance(aFather, (GEOM::GEOM_Gen_var)GEOM_Gen::_this());
   }
   if (aFather->_is_nil()) return aResultSO;
 
@@ -197,10 +200,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeIOR");
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
-  //char *aGeomObjIOR = _orb->object_to_string(theObject);
-   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
-  //anIOR->SetValue(CORBA::string_dup(aGeomObjIOR));
+  CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
   anIOR->SetValue(aGeomObjIOR);
+  anIOR->Destroy();
 
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributePixMap");
   SALOMEDS::AttributePixMap_var aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
@@ -254,6 +256,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     aPixmap->SetPixMap( "ICON_OBJBROWSER_VERTEX" );
     aShapeName = "Vertex_";
   }
+  aPixmap->Destroy();
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
   
@@ -264,8 +267,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   Handle(GEOM_Object) aGShape = _impl->GetObject(aShape->GetStudyID(), entry);
   TopoDS_Shape TopoSh = aGShape->GetValue();
   // find label of main shape
-  GEOM::GEOM_Object_var aMainShVar = aShape;
-  GEOM::GEOM_Object_ptr aMainSh = aMainShVar._retn();
+  GEOM::GEOM_Object_var aMainSh = aShape;
   while( !aMainSh->IsMainShape() ) {
     aMainSh = aMainSh->GetMainShape();
   }
@@ -309,16 +311,19 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
 
   //Set the study entry as a name of  the published GEOM_Object
-  aShape->SetStudyEntry(aResultSO->GetID());
+  CORBA::String_var anID =aResultSO->GetID();
+  aShape->SetStudyEntry(anID.in());
 
   //Set a name of the added shape
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
   SALOMEDS::AttributeName_var aNameAttrib = SALOMEDS::AttributeName::_narrow(anAttr);
   aNameAttrib->SetValue(aShapeName.ToCString());
+  aNameAttrib->Destroy();
 
   //Set NoteBook variables used in the object creation
   TCollection_AsciiString aVars;
-  SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aShape->GetParameters());
+  CORBA::String_var aString=aShape->GetParameters();
+  SALOMEDS::ListOfListOfStrings_var aSections = theStudy->ParseVariables(aString);
   for(int i = 0, n = aSections->length(); i < n; i++) {
     SALOMEDS::ListOfStrings aListOfVars = aSections[i];
     for(int j = 0, m = aListOfVars.length(); j < m; j++) {
@@ -333,6 +338,9 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
   SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
   aStringAttrib->SetValue(aVars.ToCString());
+  aStringAttrib->Destroy();
+
+  aFather->Destroy();
 
   //Set a name of the GEOM object
   aShape->SetName(theName);
@@ -591,7 +599,8 @@ CORBA::Boolean GEOM_Gen_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================
 void GEOM_Gen_i::Close(SALOMEDS::SComponent_ptr theComponent)
 {
-  _impl->Close(theComponent->GetStudy()->StudyId());
+  SALOMEDS::Study_var aStudy= theComponent->GetStudy();
+  _impl->Close(aStudy->StudyId());
 }
 
 //============================================================================
@@ -605,7 +614,10 @@ CORBA::Boolean GEOM_Gen_i::CanCopy(SALOMEDS::SObject_ptr theObject) {
 
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 
-  GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow(_orb->string_to_object(anIOR->Value()));
+  CORBA::String_var aString=anIOR->Value();
+  anIOR->Destroy();
+  CORBA::Object_var anObj = _orb->string_to_object(aString);
+  GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow(anObj);
   // If the object is null one it can't be copied: return false
   if (anObject->_is_nil()) return false;
   return true;
@@ -692,6 +704,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
   CORBA::String_var objStr = _orb->object_to_string(obj);
   anIOR->SetValue(objStr.in());
+  anIOR->Destroy();
 
   // Return the created in the Study SObject
   return aNewSO._retn();
@@ -726,6 +739,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR.in());
     if(aFatherSO->_is_nil()) return aResultSO._retn();
     aResultSO = aStudyBuilder->NewObject(aFatherSO);
+    aFatherSO->Destroy();
     //aStudyBuilder->Addreference(aResultSO, aResultSO);
   }
 
@@ -745,6 +759,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     if(aSO->_is_nil()) continue;
     SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
+    aSO->Destroy();
+    aSubSO->Destroy();
   }
 
   return aResultSO._retn();
@@ -774,6 +790,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
   //  return aParts._retn();
 
   aParts = RestoreSubShapes(theStudy, theObject, aSO, theArgs, theFindMethod, theInheritFirstArg);
+  aSO->Destroy();
   return aParts._retn();
 }
 
@@ -887,6 +904,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
 
     // set the color of the transformed shape to the color of initial shape
     theObject->SetColor(aList[0]->GetColor());
+    anArgSO->Destroy();
   }
   else {
     // Get interface, containing method, which we will use to reconstruct sub-shapes
@@ -965,7 +983,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
 
           // Publish the sub-shape
           SALOMEDS::SObject_var aSubSO;
-	  if (!CORBA::is_nil(theSObject)) {
+          if (!CORBA::is_nil(theSObject)) {
             TCollection_AsciiString aSubName ("from_");
             aSubName += anArgName;
             aSubSO = aStudyBuilder->NewObject(theSObject);
@@ -989,7 +1007,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
         else { // GetInPlace failed, try to build from published parts
           if (!CORBA::is_nil(anArgSO)) {
             SALOMEDS::SObject_var aSubSO;
-	    if (!CORBA::is_nil(theSObject))
+            if (!CORBA::is_nil(theSObject))
               aSubSO = aStudyBuilder->NewObject(theSObject);
 
             // Restore published sub-shapes of the argument
@@ -1025,6 +1043,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
             }
           }
         } // try to build from published parts
+        anArgSO->Destroy();
       }
     } // process arguments
   }
@@ -1308,6 +1327,7 @@ GEOM::GEOM_IBasicOperations_ptr GEOM_Gen_i::GetIBasicOperations(CORBA::Long theS
   GEOM_IBasicOperations_i* aServant =
     new GEOM_IBasicOperations_i(_poa, engine, _impl->GetIBasicOperations(theStudyID));
 
+  PortableServer::ObjectId_var id = _poa->activate_object(aServant);
   // activate the CORBA servant
   GEOM::GEOM_IBasicOperations_var operations = aServant->_this();
   return operations._retn();
@@ -1347,6 +1367,7 @@ GEOM::GEOM_I3DPrimOperations_ptr GEOM_Gen_i::GetI3DPrimOperations(CORBA::Long th
 
   GEOM_I3DPrimOperations_i* aServant =
     new GEOM_I3DPrimOperations_i(_poa, engine, _impl->GetI3DPrimOperations(theStudyID));
+  PortableServer::ObjectId_var id = _poa->activate_object(aServant);
 
   // activate the CORBA servant
   GEOM::GEOM_I3DPrimOperations_var operations = aServant->_this();
@@ -1614,7 +1635,9 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::GetObject (CORBA::Long theStudyID, const char*
   }
 
   GEOM::GEOM_Gen_ptr engine = _this();
+  //transfer the reference to GEOM_Object_i
   GEOM_Object_i* servant = new GEOM_Object_i (_poa, engine, handle_object);
+  PortableServer::ObjectId_var id = _poa->activate_object(servant);
 
   obj = servant->_this();
   CORBA::String_var objStr = _orb->object_to_string(obj);
@@ -1652,9 +1675,12 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
   if (!aSObj->_is_nil() && aSObj->FindAttribute(anAttr, "AttributeIOR")) {
     SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
     CORBA::String_var aVal = anIOR->Value();
+    anIOR->Destroy();
     CORBA::Object_var anObject = aStudy->ConvertIORToObject(aVal);
     aGeomObject = GEOM::GEOM_Object::_narrow(anObject);
   }
+  if (!aSObj->_is_nil() )
+    aSObj->Destroy();
   
   const char* aTypeInfo = "Object";
   if ( !aGeomObject->_is_nil() ) {
@@ -1782,6 +1808,8 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
 //=====================================================================================
 extern "C"
 {
+PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB*, PortableServer::POA*, PortableServer::ObjectId*, const char*, const char*);
+
 GEOM_I_EXPORT
   PortableServer::ObjectId * GEOMEngine_factory(CORBA::ORB_ptr orb,
 						PortableServer::POA_ptr poa,

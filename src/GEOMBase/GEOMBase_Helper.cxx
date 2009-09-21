@@ -106,6 +106,7 @@ GEOMBase_Helper::~GEOMBase_Helper()
   
   if (myDisplayer)
     delete myDisplayer;
+  myOperation->Destroy();
 }
 
 //================================================================
@@ -264,9 +265,10 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
     else {
       for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it )
       {
-        displayPreview( *it, true, activate, false, lineWidth, displayMode, color );
+	    GEOM::GEOM_Object_var obj=*it;
+        displayPreview( obj, true, activate, false, lineWidth, displayMode, color );
         if ( toRemoveFromEngine )
-          getGeomEngine()->RemoveObject( *it );
+	      obj->Destroy();
       }
     }
   }
@@ -524,6 +526,7 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
   // Each dialog is responsible for this method implementation,
   // default implementation does nothing
   restoreSubShapes(aStudyDS, aSO);
+  aSO->Destroy();
 }
 
 //================================================================
@@ -699,6 +702,7 @@ bool GEOMBase_Helper::abortCommand()
     return false;
 
   myCommand->abort();
+  delete myCommand; // I don't know where to delete this object here ?
   myCommand = 0;
 
   return true;
@@ -714,6 +718,7 @@ bool GEOMBase_Helper::commitCommand( const char* )
     return false;
 
   myCommand->commit();
+  delete myCommand; // I don't know where to delete this object here ?
   myCommand = 0;
 
   return true;
@@ -806,11 +811,12 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	const int nbObjs = objects.size();
         int aNumber = 1;
 	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
+	  GEOM::GEOM_Object_var obj=*it;
 	  if ( publish ) {
 	    QString aName = getNewObjectName();
 	    if ( nbObjs > 1 ) {
               if (aName.isEmpty())
-                aName = getPrefix(*it);
+                aName = getPrefix(obj);
               if (nbObjs <= 30) {
                 // Try to find a unique name
                 aName = GEOMBase::GetDefaultName(aName);
@@ -821,18 +827,22 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	    } else {
 	      // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
 	      if ( aName.isEmpty() )
-		aName = GEOMBase::GetDefaultName( getPrefix( *it ) );
+		aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
 	    }
-	    addInStudy( *it, aName.toLatin1().constData() );
+	    addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
-	    display( *it, false );
+	    display( obj, false );
+	    // obj has been published in study. Its refcount has been incremented.
+	    // It is safe to decrement its refcount
+	    // so that it will be destroyed when the entry in study will be removed
+	    obj->Destroy();
 	  }
 	  else {
             // asv : fix of PAL6454. If publish==false, then the original shape
             // was modified, and need to be re-cached in GEOM_Client before redisplay
-	    clearShapeBuffer( *it );
+	    clearShapeBuffer( obj );
             // withChildren=true, updateView=false
-	    redisplay( *it, true, false );
+	    redisplay( obj, true, false );
           }
 	}
 

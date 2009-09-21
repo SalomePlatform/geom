@@ -950,7 +950,10 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
 	  disp->Erase(geomObj, true, view);
       
       // Remove object from Engine
-      GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
+      // We can't directly remove object from engine. All we can do is to unpublish the object
+      // from the study. Another client could be using the object.
+      // Unpublishing is done just after in aStudyBuilder->RemoveObjectWithChildren( child );
+      //GeometryGUI::GetGeomGen()->RemoveObject( geomObj );
     }
   }
 }

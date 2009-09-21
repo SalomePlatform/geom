@@ -150,14 +150,6 @@ SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
 }
 
 //=======================================================================
-// function : JoinObjectParameters
-// purpose  :
-//=======================================================================
-char* GeometryGUI::JoinObjectParameters(const QStringList& theParametersList)
-{
-  return theParametersList.join(":").toLatin1().data();
-}
-//=======================================================================
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor
 //=======================================================================
@@ -167,8 +159,7 @@ GeometryGUI::GeometryGUI() :
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
-    SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( getApp()->namingService() );
-    Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    Engines::Component_var comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
     myComponentGeom  = GEOM::GEOM_Gen::_narrow( comp );
   }
 
@@ -195,6 +186,8 @@ GeometryGUI::~GeometryGUI()
 
   while (!myVTKSelectors.isEmpty())
     delete myVTKSelectors.takeFirst();
+
+  qDeleteAll(myGUIMap);
 }
 
 //=======================================================================

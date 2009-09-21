@@ -64,6 +64,7 @@ GEOM_Object_i::GEOM_Object_i (PortableServer::POA_ptr thePOA, GEOM::GEOM_Gen_ptr
 
 GEOM_Object_i::~GEOM_Object_i()
 {
+  MESSAGE("GEOM_Object_i::~GEOM_Object_i");
   GEOM_Engine::GetEngine()->RemoveObject(_impl);
 }
 
@@ -230,7 +231,7 @@ GEOM::ListOfGO* GEOM_Object_i::GetDependency()
     Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(aSeq->Value(i));
     if (anObj.IsNull()) continue;
     TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-    GEOM::GEOM_Object_var obj = GEOM::GEOM_Object::_duplicate(_engine->GetObject(anObj->GetDocID(), anEntry.ToCString()));
+    GEOM::GEOM_Object_var obj = _engine->GetObject(anObj->GetDocID(), anEntry.ToCString());
     aList[i-1] = obj;
   }
 
@@ -352,7 +353,7 @@ GEOM::GEOM_Object_ptr GEOM_Object_i::GetMainShape()
     if(aLabel.IsNull()) return obj._retn();
     TCollection_AsciiString anEntry;
     TDF_Tool::Entry(aLabel, anEntry);
-    return GEOM::GEOM_Object::_duplicate(_engine->GetObject(_impl->GetDocID(), anEntry.ToCString()));
+    return _engine->GetObject(_impl->GetDocID(), anEntry.ToCString());
   }
 
   return obj._retn();
