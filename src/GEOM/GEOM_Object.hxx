@@ -156,7 +156,7 @@ class GEOM_Object : public MMgt_TShared
 
  public:
   Standard_EXPORT GEOM_Object(TDF_Label& theEntry, int theType);
-  Standard_EXPORT ~GEOM_Object() {;}
+  Standard_EXPORT ~GEOM_Object();
 
   //Finds a GEOM_Object on the label theLabel
   Standard_EXPORT static Handle(GEOM_Object) GetObject(TDF_Label& theLabel);

@@ -21,6 +21,8 @@
 //
 #include <Standard_Stream.hxx>
 
+#include "utilities.h"
+
 #include <GEOM_Object.hxx>
 #include <GEOM_Engine.hxx>
 #include <GEOM_Solver.hxx>
@@ -160,6 +162,16 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
   TDataStd_Integer::Set(theEntry.FindChild(TYPE_LABEL), theType);
 
   TDataStd_UAttribute::Set(theEntry, GetObjectID());
+}
+
+//=============================================================================
+/*!
+ *  Destructor
+ */
+//=============================================================================
+GEOM_Object::~GEOM_Object()
+{
+  MESSAGE("GEOM_Object::~GEOM_Object()");
 }
 
 //=============================================================================
