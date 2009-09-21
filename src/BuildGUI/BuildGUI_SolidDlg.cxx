@@ -267,9 +267,7 @@ bool BuildGUI_SolidDlg::isClosed(int i)
     return false;
   }
 
-  GEOM::GEOM_IMeasureOperations_ptr anOp = myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
-
-  //  GEOM::GEOM_IMeasureOperations_var anOp = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
+  GEOM::GEOM_IMeasureOperations_var anOp = myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
 
   // Detect kind of shape and parameters
   aKind = anOp->KindOfShape(aShape, anInts, aDbls);
@@ -295,17 +293,17 @@ bool BuildGUI_SolidDlg::execute( ObjectList& objects )
 {
   bool toCreateSingleSolid = GroupSolid->CheckButton1->isChecked();
   
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+    
   if ( toCreateSingleSolid ) {
-    GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow(
-      getOperation() )->MakeSolidShells( myShells );
+    GEOM::GEOM_Object_var anObj = anOper->MakeSolidShells( myShells );
 
     if ( !anObj->_is_nil() )
       objects.push_back( anObj._retn() );
   }
   else {
     for ( int i = 0, n = myShells.length(); i< n; i++ ) {
-      GEOM::GEOM_Object_var anObj = GEOM::GEOM_IShapesOperations::_narrow(
-        getOperation() )->MakeSolidShell( myShells[ i ] );
+      GEOM::GEOM_Object_var anObj = anOper->MakeSolidShell( myShells[ i ] );
 
      if ( !anObj->_is_nil() )
        objects.push_back( anObj._retn() );

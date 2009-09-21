@@ -293,9 +293,8 @@ bool BuildGUI_EdgeDlg::isValid (QString&)
 //=================================================================================
 bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(getOperation())->MakeEdge(myPoint1, myPoint2);
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeEdge(myPoint1, myPoint2);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

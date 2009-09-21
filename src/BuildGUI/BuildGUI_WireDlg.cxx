@@ -252,10 +252,8 @@ bool BuildGUI_WireDlg::isValid (QString& msg)
 //=================================================================================
 bool BuildGUI_WireDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(getOperation())->
-    MakeWire(myEdgesAndWires, GroupArgs->SpinBox_DX->value());
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeWire(myEdgesAndWires, GroupArgs->SpinBox_DX->value());
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

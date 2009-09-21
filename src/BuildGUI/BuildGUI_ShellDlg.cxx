@@ -259,10 +259,8 @@ bool BuildGUI_ShellDlg::isValid( QString& )
 //=================================================================================
 bool BuildGUI_ShellDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeShell( myFacesAndShells );
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeShell( myFacesAndShells );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

@@ -230,9 +230,8 @@ bool BuildGUI_CompoundDlg::isValid( QString& )
 //=================================================================================
 bool BuildGUI_CompoundDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  anObj = GEOM::GEOM_IShapesOperations::_narrow( getOperation() )->MakeCompound( myShapes );
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeCompound( myShapes );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

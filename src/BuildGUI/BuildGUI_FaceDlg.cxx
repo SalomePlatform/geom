@@ -245,11 +245,8 @@ bool BuildGUI_FaceDlg::isValid( QString& )
 //=================================================================================
 bool BuildGUI_FaceDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_Object_var anObj;
-
-  bool isPlanarWanted = GroupWire->CheckButton1->isChecked();
-  anObj = GEOM::GEOM_IShapesOperations::_narrow(
-    getOperation() )->MakeFaceWires( myWires, isPlanarWanted );
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_Object_var anObj = anOper->MakeFaceWires( myWires, GroupWire->CheckButton1->isChecked() );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );
