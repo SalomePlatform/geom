@@ -239,7 +239,8 @@ bool BlocksGUI_PropagateDlg::isValid( QString& )
 //=================================================================================
 bool BlocksGUI_PropagateDlg::execute( ObjectList& objects )
 {
-  GEOM::ListOfGO_var aList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->Propagate( myObject );
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+  GEOM::ListOfGO_var aList = anOper->Propagate( myObject );
   mainFrame()->ResultName->setText( "" );
 
   if ( !aList->length() )

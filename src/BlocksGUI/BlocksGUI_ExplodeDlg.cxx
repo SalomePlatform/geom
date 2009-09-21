@@ -332,11 +332,11 @@ void BlocksGUI_ExplodeDlg::updateButtonState()
     myGrp1->TextBrowser1->setText( "" );
   } 
   else {
-    bool isOnlyBlocks = GEOM::GEOM_IBlocksOperations::_narrow
-      ( getOperation() )->IsCompoundOfBlocks( myObject,
-					      myGrp1->SpinBox1->value(),
-					      myGrp1->SpinBox2->value(),
-					      myNbBlocks );
+    GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+    bool isOnlyBlocks = anOper->IsCompoundOfBlocks( myObject,
+						    myGrp1->SpinBox1->value(),
+						    myGrp1->SpinBox2->value(),
+						    myNbBlocks );
     if ( isOnlyBlocks )
       myGrp1->TextBrowser1->setText( tr( "GEOM_NB_BLOCKS_NO_OTHERS" ).arg( myNbBlocks ) );
     else
@@ -401,12 +401,13 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
 {
   GEOM::ListOfGO_var aList;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch ( getConstructorId() ) {
   case 0:
-    aList = GEOM::GEOM_IBlocksOperations::_narrow( getOperation() )->ExplodeCompoundOfBlocks
-      ( myObject,
-	myGrp1->SpinBox1->value(),
-	myGrp1->SpinBox2->value() );
+    aList = anOper->ExplodeCompoundOfBlocks( myObject,
+					     myGrp1->SpinBox1->value(),
+					     myGrp1->SpinBox2->value() );
     break;
   }
   
@@ -452,7 +453,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
       if ( selected.contains( QString( objStr.in() ) ) )
       {
 	if ( !IsPreview() )
-	  (*anIter)->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+          (*anIter)->SetParameters(aParameters.join(":").toLatin1().constData());
         objects.push_back( *anIter );
       }
       else
@@ -472,7 +473,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
     {
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_duplicate( aList[i] );
       if ( !IsPreview() )
-	anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       objects.push_back( anObj._retn() );
     }
   }

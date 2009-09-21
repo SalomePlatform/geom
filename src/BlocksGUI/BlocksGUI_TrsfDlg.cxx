@@ -576,28 +576,28 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeMultiTransformation1D(myShape,
-                                myFaces[Face1], myFaces[Face2],
-                                mySpinBox[SpinBox1]->value());
+    anObj = anOper->MakeMultiTransformation1D(myShape,
+					      myFaces[Face1], myFaces[Face2],
+					      mySpinBox[SpinBox1]->value());
     if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
       aParameters << "" << "";
       aParameters << mySpinBox[SpinBox1]->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;
   case 1:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeMultiTransformation2D (myShape,
-                                 myFaces[Face1U], myFaces[Face2U],
-                                 mySpinBox[SpinBox2U]->value(),
-                                 myFaces[Face1V], myFaces[Face2V],
-                                 mySpinBox[SpinBox2V]->value());
+    anObj = anOper->MakeMultiTransformation2D (myShape,
+					       myFaces[Face1U], myFaces[Face2U],
+					       mySpinBox[SpinBox2U]->value(),
+					       myFaces[Face1V], myFaces[Face2V],
+					       mySpinBox[SpinBox2V]->value());
     if (!anObj->_is_nil() && !IsPreview())
     {
       QStringList aParameters;
@@ -605,7 +605,7 @@ bool BlocksGUI_TrsfDlg::execute (ObjectList& objects)
       aParameters << mySpinBox[SpinBox2U]->text();
       aParameters << "" << "";
       aParameters << mySpinBox[SpinBox2V]->text();
-      anObj->SetParameters(GeometryGUI::JoinObjectParameters(aParameters));
+      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     }
     res = true;
     break;

@@ -329,8 +329,8 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
 {
   GEOM::GEOM_Object_var anObj;
 
-  anObj = GEOM::GEOM_IBooleanOperations::_narrow(getOperation())->
-    MakeBoolean(myObject1, myObject2, myOperation);
+  GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
+  anObj = anOper->MakeBoolean(myObject1, myObject2, myOperation);
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 

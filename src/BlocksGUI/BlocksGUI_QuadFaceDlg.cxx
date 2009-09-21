@@ -532,20 +532,19 @@ bool BlocksGUI_QuadFaceDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeQuad4Vertices(myShape1, myShape2, myShape3, myShape4);
+    anObj = anOper->MakeQuad4Vertices(myShape1, myShape2, myShape3, myShape4);
     res = true;
     break;
   case 1:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeQuad2Edges(myShape1, myShape2);
+    anObj = anOper->MakeQuad2Edges(myShape1, myShape2);
     res = true;
     break;
   case 2:
-    anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-      MakeQuad(myShape1, myShape2, myShape3, myShape4);
+    anObj = anOper->MakeQuad(myShape1, myShape2, myShape3, myShape4);
     res = true;
     break;
   default:

@@ -477,11 +477,12 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_Object_var anObj;
 
+  GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
+
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2)) {
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-        MakeHexa2Faces(myFace1, myFace2);
+      anObj = anOper->MakeHexa2Faces(myFace1, myFace2);
       res = true;
     }
     break;
@@ -489,8 +490,7 @@ bool BlocksGUI_BlockDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myFace1) && !CORBA::is_nil(myFace2) &&
         !CORBA::is_nil(myFace3) && !CORBA::is_nil(myFace4) &&
         !CORBA::is_nil(myFace5) && !CORBA::is_nil(myFace6)) {
-      anObj = GEOM::GEOM_IBlocksOperations::_narrow(getOperation())->
-        MakeHexa(myFace1, myFace2, myFace3, myFace4, myFace5, myFace6);
+      anObj = anOper->MakeHexa(myFace1, myFace2, myFace3, myFace4, myFace5, myFace6);
       res = true;
     }
     break;
