@@ -106,7 +106,8 @@ GEOMBase_Helper::~GEOMBase_Helper()
   
   if (myDisplayer)
     delete myDisplayer;
-  myOperation->Destroy();
+  if ( !CORBA::is_nil( myOperation ) )
+    myOperation->Destroy();
 }
 
 //================================================================
