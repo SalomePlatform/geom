@@ -1808,6 +1808,7 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
 //=====================================================================================
 extern "C"
 {
+GEOM_I_EXPORT
 PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB*, PortableServer::POA*, PortableServer::ObjectId*, const char*, const char*);
 
 GEOM_I_EXPORT
