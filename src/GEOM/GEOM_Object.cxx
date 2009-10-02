@@ -338,9 +338,9 @@ SALOMEDS::Color GEOM_Object::GetColor()
   bool isFound = _label.FindChild(COLOR_LABEL).FindAttribute(TDataStd_RealArray::GetID(), anArray);
 
   SALOMEDS::Color aColor;
-  aColor.R = isFound ? anArray->Value( 1 ) : 0.f;
-  aColor.G = isFound ? anArray->Value( 2 ) : 0.f;
-  aColor.B = isFound ? anArray->Value( 3 ) : 0.f;
+  aColor.R = isFound ? anArray->Value( 1 ) : -1;
+  aColor.G = isFound ? anArray->Value( 2 ) : -1;
+  aColor.B = isFound ? anArray->Value( 3 ) : -1;
 
   return aColor;
 }

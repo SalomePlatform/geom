@@ -680,7 +680,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		  if ( !aGeomObject->_is_nil() )
 		  {
 		    SALOMEDS::Color aSColor = aGeomObject->GetColor();
-		    bool hasColor = aSColor.R > 0 || aSColor.G > 0 || aSColor.B > 0;
+		    bool hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
 		    if( !hasColor && aGeomObject->GetType() == GEOM_GROUP ) // auto color for group
 		    {
 		      GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
@@ -723,6 +723,13 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		      Quantity_Color aQuanColor( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
 		      AISShape->SetColor( aQuanColor );
 		      AISShape->SetShadingColor( aQuanColor );
+                      if ( myShape.ShapeType() == TopAbs_VERTEX ) {
+                        Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+                        anAspect->SetColor( aQuanColor );
+                        anAspect->SetScale( myScaleOfMarker );
+                        anAspect->SetTypeOfMarker( myTypeOfMarker );
+                        AISShape->Attributes()->SetPointAspect( anAspect );
+                      }
 		    }
 		  }
 		}
