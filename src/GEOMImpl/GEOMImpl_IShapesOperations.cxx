@@ -699,12 +699,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
   }
 
   //Make a Python command
-  if(anAsciiList.Length()>0)
+  if( anAsciiList.Length() > 0 ) {
     anAsciiList.Trunc(anAsciiList.Length() - 1);
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-  GEOM::TPythonDump pd (aFunction, /*append=*/true);
-  pd << "[" << anAsciiList.ToCString();
-  pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
+    Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+    GEOM::TPythonDump pd (aFunction, /*append=*/true);
+    pd << "[" << anAsciiList.ToCString();
+    pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
+  }
 
   SetErrorCode(OK);
 
