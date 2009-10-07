@@ -610,15 +610,13 @@ void GroupGUI_GroupDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void GroupGUI_GroupDlg::selectAllSubShapes()
 {
-  if ( CORBA::is_nil( myMainObj ) )
+  if ( CORBA::is_nil( myMainObj ) || !myIsShapeType )
     return;
 
   GEOM::ListOfLong_var aSubShapes;
 //   if ( !myPlaceCheckBox->isChecked() )
   if ( subSelectionWay() == ALL_SUBSHAPES )
   {
-    if ( !myIsShapeType )
-      return;
     myIdList->clear();
     GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
     aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
