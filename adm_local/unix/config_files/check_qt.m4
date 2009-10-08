@@ -75,35 +75,33 @@ fi
 if test "x$with_qt" != "x" ; then
   dnl Using "--with-qt" prefix path
   QTDIR="$with_qt"
-else
-  if test -z $QTDIR ; then
-    AC_MSG_WARN(undefined QTDIR variable which specify where Qt product was installed)
-    for d in /usr/local/lib/qt4 /usr/lib/qt4 ; do
-      if test -f ${d}/include/Qt/qconfig.h ; then
-        AC_MSG_RESULT(trying ${d})
-        QTDIR="${d}"
-        break
-      else
-        if test -f ${d}/include/qconfig.h ; then
-          AC_MSG_RESULT(trying ${d})
-          QTDIR="${d}"
-          break
-        fi
-      fi
-    done
-  else
-    dnl Using QTDIR environment variable
-    AC_MSG_RESULT(QTDIR is $QTDIR)
-    dnl 
-    if test $QTDIR = /usr/lib/qt3 ; then
-      if test -d /usr/lib/qt4 ; then
-        AC_MSG_RESULT(it is strange for a qt4 installation !)
-        AC_MSG_RESULT(/usr/lib/qt4 is present)
-        AC_MSG_RESULT(replacing QTDIR by /usr/lib/qt4)
-        QTDIR=/usr/lib/qt4
-      fi
-    fi
+elif test "$QTDIR" = "/usr/lib/qt3" ; then
+  dnl Using QTDIR environment variable
+  AC_MSG_RESULT(current QTDIR is $QTDIR)
+  dnl 
+  if test -d /usr/lib/qt4 ; then
+    AC_MSG_RESULT(it is strange for a qt4 installation !)
+    AC_MSG_RESULT(/usr/lib/qt4 is present)
+    AC_MSG_RESULT(replacing QTDIR by /usr/lib/qt4)
+    QTDIR=/usr/lib/qt4
   fi
+elif test -z $QTDIR ; then
+  AC_MSG_WARN(undefined QTDIR variable which specify where Qt product was installed)
+  for d in /usr/local/lib/qt4 /usr/lib/qt4 /usr ; do
+    if test -f ${d}/lib/libQtCore.so ; then
+      AC_MSG_RESULT(trying ${d})
+      QTDIR="${d}"
+      break
+    elif test -f ${d}/lib64/libQtCore.so ; then
+      AC_MSG_RESULT(trying ${d})
+      QTDIR="${d}"
+      break
+    elif test -f ${d}/libQtCore.so ; then
+      AC_MSG_RESULT(trying ${d})
+      QTDIR="${d}"
+      break
+    fi
+  done
 fi
 
 #
@@ -178,7 +176,7 @@ then
       AC_MSG_RESULT(yes)
       qt_ok=yes
     else
-      AC_MSG_RESULT(moc tool and Qt product are inpompatible $MOC_VERSION)
+      AC_MSG_RESULT(moc tool and Qt product are incompatible $MOC_VERSION)
       qt_ok=no
     fi
   fi
@@ -235,7 +233,7 @@ then
       AC_MSG_RESULT(yes)
       qt_ok=yes
     else
-      AC_MSG_RESULT(rcc tool and Qt product are inpompatible)
+      AC_MSG_RESULT(rcc tool and Qt product are incompatible)
       qt_ok=no
     fi
   fi
@@ -271,7 +269,7 @@ then
       AC_MSG_RESULT(yes)
       qt_ok=yes
     else
-      AC_MSG_RESULT(lrelease tool and Qt product are inpompatible)
+      AC_MSG_RESULT(lrelease tool and Qt product are incompatible)
       qt_ok=no
     fi
   fi
@@ -332,7 +330,7 @@ then
   CXXFLAGS="$CXXFLAGS $QT_INCLUDES"
 
   LIBS_old=$LIBS
-  if test "x$QTDIR" = "x/usr" || test "x$QTDIR" = "x/usr/lib/qt4"
+  if test "x$QTDIR" = "x/usr"
   then
     QT_LIB_DIR=""
   elif test -d ${QTDIR}/lib; then
