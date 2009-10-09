@@ -330,13 +330,14 @@ then
   CXXFLAGS="$CXXFLAGS $QT_INCLUDES"
 
   LIBS_old=$LIBS
-  if test "x$QTDIR" = "x/usr"
-  then
+  if test "x$QTDIR" = "x/usr" ; then
     QT_LIB_DIR=""
   elif test -d ${QTDIR}/lib; then
     QT_LIB_DIR="-L$QTDIR/lib"
   elif test -d ${QTDIR}/lib64; then
     QT_LIB_DIR="-L$QTDIR/lib64"
+  elif test "x$QTDIR" = "x/usr/lib/qt4" ; then
+    QT_LIB_DIR=""
   else
     AC_MSG_ERROR(Can't detect of Qt library directory )
     qt_ok=no
