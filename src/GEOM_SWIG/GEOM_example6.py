@@ -1,4 +1,3 @@
-#! /usr/bin/python
 #  -*- coding: iso-8859-1 -*-
 #  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 #
@@ -23,7 +22,7 @@
 #
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : GEOM_example6.py
-#  Author : Dmitry MATVEITCHEV
+#  Author : Dmitry MATVEITChEV
 #  Module : GEOM
 #  $Header$
 #

@@ -1,4 +1,3 @@
-#! /usr/bin/python
 #  -*- coding: iso-8859-1 -*-
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #
