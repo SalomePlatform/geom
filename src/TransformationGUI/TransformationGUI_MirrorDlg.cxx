@@ -139,7 +139,7 @@ void TransformationGUI_MirrorDlg::Init()
   initName(tr("GEOM_MIRROR"));
 
   ConstructorsClicked(0);
-  resize(0,0);
+  resize(minimumSizeHint());
 }
 
 //=================================================================================
