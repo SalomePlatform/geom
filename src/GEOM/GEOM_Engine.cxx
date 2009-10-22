@@ -370,7 +370,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
 //=============================================================================
 bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
 {
-  if (!theObject) return false;
+  if (theObject.IsNull()) return false;
 
   int aDocID = theObject->GetDocID();
 
