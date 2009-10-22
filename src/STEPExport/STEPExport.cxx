@@ -67,6 +67,10 @@ STEPEXPORT_EXPORT
 
   try 
     {
+      // Set "C" numeric locale to save numbers correctly
+      std::string aCurLocale = setlocale(LC_NUMERIC, 0);
+      setlocale(LC_NUMERIC, "C");
+
       IFSelect_ReturnStatus status ;
       //VRV: OCC 4.0 migration
       STEPControl_Writer aWriter;
@@ -76,7 +80,10 @@ STEPEXPORT_EXPORT
       status = aWriter.Transfer( theShape, STEPControl_AsIs );
       //VRV: OCC 4.0 migration
       if ( status == IFSelect_RetDone ) 
-	  status = aWriter.Write( theFileName.ToCString() ) ;
+	  status = aWriter.Write( theFileName.ToCString() );
+
+      // Return previous locale
+      setlocale(LC_NUMERIC, aCurLocale.data());
       if ( status == IFSelect_RetDone ) 
 	return 1;
     }
