@@ -511,18 +511,18 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       SVTK_Prs* vtkPrs =
         stvkViewer ? dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) ) : 0;
       if ( vtkPrs && !vtkPrs->IsNull() ) {
-	if ( mode == 0 )
-	  aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
-	else if ( mode == 1 )
-	  aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
-	else if ( mode == 2 ) {
-	  vtkActorCollection* anActors = vtkPrs->GetObjects();
-	  anActors->InitTraversal();
-	  while (vtkActor* anAct = anActors->GetNextActor()) {
-	    GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
-	    aGeomActor->SetVectorMode(!aGeomActor->GetVectorMode());
-	  }
-	}
+        if ( mode == 0 )
+          aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
+        else if ( mode == 1 )
+          aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
+        else if ( mode == 2 ) {
+          vtkActorCollection* anActors = vtkPrs->GetObjects();
+          anActors->InitTraversal();
+          while (vtkActor* anAct = anActors->GetNextActor()) {
+            GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
+            aGeomActor->SetVectorMode(!aGeomActor->GetVectorMode());
+          }
+        }
       }
     }
     aView->Repaint();
@@ -538,19 +538,21 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       SOCC_Viewer* soccViewer = (SOCC_Viewer*)(viewWindow->getViewManager()->getViewModel());
       SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( It.Value()->getEntry() ) );
       if ( occPrs && !occPrs->IsNull() ) {
-	AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
-	AIS_ListIteratorOfListOfInteractive interIter( shapes );
-	for ( ; interIter.More(); interIter.Next() ) {
-	  if ( mode == 0 )
-	    ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
-	  else if ( mode == 1 )
-	    ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
-	  if (mode == 2 ) {
-	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
-	    aSh->SetDisplayVectors(!aSh->isShowVectors());
-	    ic->RecomputePrsOnly(interIter.Value());
-	  }
-	}
+        AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
+        AIS_ListIteratorOfListOfInteractive interIter( shapes );
+        for ( ; interIter.More(); interIter.Next() ) {
+          if ( mode == 0 )
+            ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
+          else if ( mode == 1 )
+            ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
+          if (mode == 2 ) {
+            Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+            if ( !aSh.IsNull() ) {
+              aSh->SetDisplayVectors(!aSh->isShowVectors());
+              ic->RecomputePrsOnly(interIter.Value());
+            }
+          }
+        }
       }
     }
     ic->UpdateCurrentViewer();
