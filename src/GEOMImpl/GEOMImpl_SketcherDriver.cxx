@@ -78,8 +78,15 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape aShape;
 
+  // Set "C" numeric locale to save numbers correctly
+  std::string aCurLocale = setlocale(LC_NUMERIC, 0);
+  setlocale(LC_NUMERIC, "C");
+
   // create sketcher
   Sketcher_Profile aProfile (aCommand.ToCString());
+
+  // Return previous locale
+  setlocale(LC_NUMERIC, aCurLocale.data());
 
   if (!aProfile.IsDone()) {
     Standard_ConstructionError::Raise("Sketcher creation failed");
