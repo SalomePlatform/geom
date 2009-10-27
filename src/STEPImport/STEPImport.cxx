@@ -74,6 +74,9 @@ STEPIMPORT_EXPORT
 		       const TDF_Label&)
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());
+    // Set "C" numeric locale to save numbers correctly
+    std::string aCurLocale = setlocale(LC_NUMERIC, 0);
+    setlocale(LC_NUMERIC, "C");
     TopoDS_Shape aResShape;
     //VRV: OCC 4.0 migration
     STEPControl_Reader aReader;
@@ -152,6 +155,8 @@ STEPIMPORT_EXPORT
       theError = aFail->GetMessageString();
       aResShape.Nullify();
     }
+    // Return previous locale
+    setlocale(LC_NUMERIC, aCurLocale.data());
     return aResShape;
   }
 }
