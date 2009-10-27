@@ -614,49 +614,50 @@ void GroupGUI_GroupDlg::selectAllSubShapes()
     return;
 
   GEOM::ListOfLong_var aSubShapes;
-  GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-  aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
-  if ( aSubShapes->length() > 0) {
-    //   if ( !myPlaceCheckBox->isChecked() )
-    if ( subSelectionWay() == ALL_SUBSHAPES )
-      {
-        myIdList->clear();
-        
-        if ( !aShOp->IsDone() )
-          return;
-      }
-    else
-      {
-        aSubShapes = new GEOM::ListOfLong();
-        aSubShapes->length( myMain2InPlaceIndices.Extent() );
-        TColStd_DataMapIteratorOfDataMapOfIntegerInteger m2ip( myMain2InPlaceIndices );
-        for ( int i = 0; m2ip.More(); i++, m2ip.Next() )
-          aSubShapes[ i ] = m2ip.Key();
-      }
-    bool isBlocked = myIdList->signalsBlocked();
-    myIdList->blockSignals( true );
-    
-    for ( int i = 0, n = aSubShapes->length(); i < n; i++ ) {
-      CORBA::Long anIndex = aSubShapes[i];
-      if ( anIndex < 0 )
-        continue;
-      
-      QListWidgetItem* anItem = 0;
-      QString text = QString( "%1" ).arg( anIndex );
-      if ( !myInPlaceObj->_is_nil() ) {
-        QList<QListWidgetItem*> found = myIdList->findItems( text, Qt::MatchExactly );
-        if ( found.count() ) anItem = found[0];
-      }
-      if ( !anItem ) {
-        anItem = new QListWidgetItem( text );
-        myIdList->addItem( anItem );
-      }
-      anItem->setSelected( true );
-    }
 
-    myIdList->blockSignals( isBlocked );
-    highlightSubShapes();
+  //   if ( !myPlaceCheckBox->isChecked() )
+  if ( subSelectionWay() == ALL_SUBSHAPES )
+    {
+      if ( !myIsShapeType )
+        return;
+      myIdList->clear();
+      GEOM::GEOM_IShapesOperations_var aShOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+      aSubShapes = aShOp->SubShapeAllIDs(myMainObj, getShapeType(), false);
+      
+      if ( !aShOp->IsDone() )
+        return;
+    }
+  else
+    {
+      aSubShapes = new GEOM::ListOfLong();
+      aSubShapes->length( myMain2InPlaceIndices.Extent() );
+      TColStd_DataMapIteratorOfDataMapOfIntegerInteger m2ip( myMain2InPlaceIndices );
+      for ( int i = 0; m2ip.More(); i++, m2ip.Next() )
+        aSubShapes[ i ] = m2ip.Key();
+    }
+  bool isBlocked = myIdList->signalsBlocked();
+  myIdList->blockSignals( true );
+  
+  for ( int i = 0, n = aSubShapes->length(); i < n; i++ ) {
+    CORBA::Long anIndex = aSubShapes[i];
+    if ( anIndex < 0 )
+      continue;
+    
+    QListWidgetItem* anItem = 0;
+    QString text = QString( "%1" ).arg( anIndex );
+    if ( !myInPlaceObj->_is_nil() ) {
+      QList<QListWidgetItem*> found = myIdList->findItems( text, Qt::MatchExactly );
+      if ( found.count() ) anItem = found[0];
+    }
+    if ( !anItem ) {
+      anItem = new QListWidgetItem( text );
+      myIdList->addItem( anItem );
+    }
+    anItem->setSelected( true );
   }
+  
+  myIdList->blockSignals( isBlocked );
+  highlightSubShapes();
 }
 
 //=================================================================================
@@ -680,6 +681,17 @@ void GroupGUI_GroupDlg::add()
       aSelMgr->selectedSubOwners( aMap );
       if ( aMap.Size() == 1 )
         aMapIndex = LightApp_SelectionMgr::MapEntryOfMapOfInteger::Iterator( aMap ).Value();
+      else { // selected the same subshape as the main object
+        SALOME_ListIO aSelList;
+        TColStd_IndexedMapOfInteger aMap;
+        aSelMgr->selectedObjects(aSelList);
+        if (aSelList.Extent() == 1) {
+          Standard_Boolean aRes = Standard_False;
+          GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+          if ( aSelectedObject->_is_equivalent(myMainObj) )
+            aMapIndex.Add(1); // add index of the only subshape of selected type
+        }
+      }
     }
   }
   GEOM::ListOfGO anObjects;
@@ -859,6 +871,22 @@ void GroupGUI_GroupDlg::updateState()
       aSelMgr->selectedSubOwners( aMap );
       if ( aMap.Size() == 1 )
         aMapIndex = LightApp_SelectionMgr::MapEntryOfMapOfInteger::Iterator( aMap ).Value();
+      else { // selected the same subshape as the main object
+        SALOME_ListIO aSelList;
+        aSelMgr->selectedObjects(aSelList);
+        if (aSelList.Extent() == 1) {
+          myBusy = true;
+          Standard_Boolean aRes = Standard_False;
+          GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
+          if ( aSelectedObject->_is_equivalent(myMainObj) ) {
+            aMapIndex.Add(1); // add index of the only subshape of selected type
+            TColStd_MapOfInteger anIds; // higlight selected index
+            anIds.Add(1);
+            aSelMgr->AddOrRemoveIndex(aSelList.First(), anIds, false);
+          }
+          myBusy = false;
+        }
+      }
     }
   }
 
