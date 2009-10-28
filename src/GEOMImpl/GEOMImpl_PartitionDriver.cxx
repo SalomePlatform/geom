@@ -261,6 +261,15 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   aShape = PS.Shape();
   if (aShape.IsNull()) return 0;
 
+  //Alternative case to check not valid partition IPAL21418
+  TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+  int nbSubshapes=0;
+  for (; It.More(); It.Next())
+    nbSubshapes++;
+  if (!nbSubshapes)
+    Standard_ConstructionError::Raise("Partition aborted : non valid shape result");
+  //end of IPAL21418
+
   if (!BRepAlgo::IsValid(aShape)) {
     // 08.07.2008 added by skl during fixing bug 19761 from Mantis
     ShapeFix_ShapeTolerance aSFT;
