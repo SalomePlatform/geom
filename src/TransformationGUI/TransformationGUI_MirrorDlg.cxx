@@ -289,10 +289,11 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
   }
 
   // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  /*  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   myGeomGUI->getApp()->selectionMgr()->clearSelected();
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
+  this, SLOT(SelectionIntoArgument()));*/
+  // here commented, because multiple objects can be selected IPAL 21437
 
   displayPreview();
 }
