@@ -240,8 +240,10 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
-    << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
+  if( theFormatName != "IGES_UNIT" ) {
+    GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
+      << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
+  }
 
   SetErrorCode(OK);
 
