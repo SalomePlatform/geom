@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <BRep_Builder.hxx>
 
 #include <IFSelect_ReturnStatus.hxx>
@@ -75,8 +77,7 @@ STEPIMPORT_EXPORT
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());
     // Set "C" numeric locale to save numbers correctly
-    std::string aCurLocale = setlocale(LC_NUMERIC, 0);
-    setlocale(LC_NUMERIC, "C");
+    Kernel_Utils::Localizer loc;
     TopoDS_Shape aResShape;
     //VRV: OCC 4.0 migration
     STEPControl_Reader aReader;
@@ -156,7 +157,6 @@ STEPIMPORT_EXPORT
       aResShape.Nullify();
     }
     // Return previous locale
-    setlocale(LC_NUMERIC, aCurLocale.data());
     return aResShape;
   }
 }

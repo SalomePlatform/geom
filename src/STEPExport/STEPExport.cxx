@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <IFSelect_ReturnStatus.hxx>
 
 #include <STEPControl_Writer.hxx>
@@ -68,8 +70,7 @@ STEPEXPORT_EXPORT
   try 
     {
       // Set "C" numeric locale to save numbers correctly
-      std::string aCurLocale = setlocale(LC_NUMERIC, 0);
-      setlocale(LC_NUMERIC, "C");
+      Kernel_Utils::Localizer loc;
 
       IFSelect_ReturnStatus status ;
       //VRV: OCC 4.0 migration
@@ -83,7 +84,6 @@ STEPEXPORT_EXPORT
 	  status = aWriter.Write( theFileName.ToCString() );
 
       // Return previous locale
-      setlocale(LC_NUMERIC, aCurLocale.data());
       if ( status == IFSelect_RetDone ) 
 	return 1;
     }

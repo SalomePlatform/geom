@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <IGESControl_Controller.hxx>
 #include <IGESControl_Writer.hxx>
 #include <Interface_Static.hxx>
@@ -74,8 +76,7 @@ IGESEXPORT_EXPORT
         aBrepMode = 1;
 
       // Set "C" numeric locale to save numbers correctly
-      std::string aCurLocale = setlocale(LC_NUMERIC, 0);
-      setlocale(LC_NUMERIC, "C");
+      Kernel_Utils::Localizer loc;
 
       // initialize writer
       IGESControl_Controller::Init();
@@ -90,7 +91,6 @@ IGESEXPORT_EXPORT
       bool ok = ICW.Write( theFileName.ToCString() );
       
       // Return previous locale
-      setlocale(LC_NUMERIC, aCurLocale.data());
       if ( ok )
         return 1;
     }

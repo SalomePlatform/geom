@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <IFSelect_ReturnStatus.hxx>
 #include <IGESControl_Reader.hxx>
 #include <IGESData_IGESModel.hxx>
@@ -72,8 +74,7 @@ IGESIMPORT_EXPORT
 		       const TDF_Label&)
   {
     // Set "C" numeric locale to save numbers correctly
-    std::string aCurLocale = setlocale(LC_NUMERIC, 0);
-    setlocale(LC_NUMERIC, "C");
+    Kernel_Utils::Localizer loc;
 
     IGESControl_Reader aReader;
     TopoDS_Shape aResShape;
@@ -103,8 +104,6 @@ IGESIMPORT_EXPORT
 	  TopoDS_Vertex V;
 	  B.MakeVertex(V,P,1.e-7);
 	  aResShape = V;
-          // Return previous locale before return from import
-          setlocale(LC_NUMERIC, aCurLocale.data());
 	  return aResShape;
 	}
 	if( theFormatName == "IGES_SCALE" ) {
@@ -155,8 +154,6 @@ IGESIMPORT_EXPORT
       theError = aFail->GetMessageString();
       aResShape.Nullify();
     }
-    // Return previous locale
-    setlocale(LC_NUMERIC, aCurLocale.data());
     return aResShape;
   }
 }
