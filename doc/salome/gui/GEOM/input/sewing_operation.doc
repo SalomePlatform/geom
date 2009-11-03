@@ -4,7 +4,7 @@
 
 \n To produce a \b Sewing operation in the <b>Main Menu</b> select <b>Repair - > Sewing</b>.
 
-\n It is possible to sew only compounds or shells.
+\n It is possible to sew only compounds of faces or shells.
 
 \n The \b Result will be a \b GEOM_Object. 
 
