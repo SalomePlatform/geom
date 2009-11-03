@@ -1589,39 +1589,30 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "precision", 3 );
 
   // Set property for type of vertex marker
-  QStringList aTypeOfMarkerList;
   QList<QVariant> anTypeOfMarkerIndexesList;
+  QList<QVariant> anTypeOfMarkerIconsList;
 
-  aTypeOfMarkerList.append( tr("TOM_PLUS") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_PLUS);
-
-  aTypeOfMarkerList.append( tr("TOM_POINT") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_POINT);
-
-  aTypeOfMarkerList.append( tr("TOM_STAR") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_STAR);
-
-  aTypeOfMarkerList.append( tr("TOM_O") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O);
-
-  aTypeOfMarkerList.append( tr("TOM_X") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_X);
-
-  aTypeOfMarkerList.append( tr("TOM_O_POINT") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_POINT);
-
-  aTypeOfMarkerList.append( tr("TOM_O_PLUS") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_PLUS);
-
-  aTypeOfMarkerList.append( tr("TOM_O_STAR") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_STAR);
-
-  aTypeOfMarkerList.append( tr("TOM_O_X") );
   anTypeOfMarkerIndexesList.append(Aspect_TOM_O_X);
 
+  // Create icons list
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  for (int i = 1; i<=9; i++) {
+    QString str = "ICON_VERTEX_MARKER_";
+    str.append( QString::number(i) );
+    QPixmap pixmap (resMgr->loadPixmap("GEOM", tr( str.toLatin1().data() )));
+    anTypeOfMarkerIconsList.append(pixmap);
+  }
 
-  setPreferenceProperty( typeOfMarker, "strings", aTypeOfMarkerList );
   setPreferenceProperty( typeOfMarker, "indexes", anTypeOfMarkerIndexesList );
+  setPreferenceProperty( typeOfMarker, "icons", anTypeOfMarkerIconsList );
 
   // Set property for Vertex Marker scale
   setPreferenceProperty( markerScale, "min", 1. );

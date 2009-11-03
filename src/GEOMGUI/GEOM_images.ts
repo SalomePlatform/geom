@@ -629,6 +629,42 @@
             <source>ICON_SELECT</source>
             <translation>select1.png</translation>
         </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_1</source>
+            <translation>marker_1.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_2</source>
+            <translation>marker_2.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_3</source>
+            <translation>marker_3.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_4</source>
+            <translation>marker_4.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_5</source>
+            <translation>marker_5.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_6</source>
+            <translation>marker_6.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_7</source>
+            <translation>marker_7.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_8</source>
+            <translation>marker_8.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_9</source>
+            <translation>marker_9.png</translation>
+        </message>
         <message>
             <source>ICO_ARC</source>
             <translation>arc.png</translation>

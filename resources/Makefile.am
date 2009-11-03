@@ -186,6 +186,15 @@ suppressintwires.png		\
 marker.png			\
 marker2.png			\
 marker3.png			\
+marker_1.png			\
+marker_2.png			\
+marker_3.png			\
+marker_4.png			\
+marker_5.png			\
+marker_6.png			\
+marker_7.png			\
+marker_8.png			\
+marker_9.png			\
 position.png			\
 position2.png			\
 position3.png                   \
