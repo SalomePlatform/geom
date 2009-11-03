@@ -168,6 +168,84 @@ def ParseSketcherCommand(command):
     Result = Result[:len(Result)-1]
     return Result, StringResult
 
+## Helper function which can be used to pack the passed string to the byte data.
+## Only '1' an '0' symbols are valid for the string. The missing bits are replaced by zeroes.
+## If the string contains invalid symbol (neither '1' not '0'), the function raises an exception.
+## For example,
+## \code
+## val = PackData("10001110") # val = 0xAE
+## val = PackData("1")        # val = 0x80
+## \endcode
+## @ingroup l1_geompy_auxiliary    
+def PackData(data):
+    bytes = len(data)/8
+    if len(data)%8: bytes += 1
+    res = ""
+    for b in range(bytes):
+        d = data[b*8:(b+1)*8]
+        val = 0
+        for i in range(8):
+            val *= 2
+            if i < len(d):
+                if d[i] == "1": val += 1
+                elif d[i] != "0":
+                    raise "Invalid symbol %s" % d[i]
+                pass
+            pass
+        res += chr(val)
+        pass
+    return res
+
+## Read bitmap texture from the text file.
+## In that file, any non-zero symbol represents '1' opaque pixel of the bitmap.
+## A zero symbol ('0') represents transparent pixel of the texture bitmap.
+## The function returns width and height of the pixmap in pixels and byte stream representing
+## texture bitmap itself.
+## 
+## This function can be used to read the texture to the byte stream in order to pass it to
+## the AddTexture() function of geompy class.
+## For example,
+## \code
+## import geompy
+## geompy.init_geom(salome.myStudy)
+## texture = geompy.readtexture('mytexture.dat')
+## texture = geompy.AddTexture(*texture)
+## obj.SetMarkerTexture(texture)
+## \endcode
+## @ingroup l1_geompy_auxiliary    
+def ReadTexture(fname):
+    try:
+        f = open(fname)
+        lines = [ l.strip() for l in f.readlines()]
+        f.close()
+        maxlen = 0
+        if lines: maxlen = max([len(x) for x in lines])
+        lenbytes = maxlen/8
+        if maxlen%8: lenbytes += 1
+        bytedata=""
+        for line in lines:
+            if len(line)%8:
+                lenline = (len(line)/8+1)*8
+                pass
+            else:
+                lenline = (len(line)/8)*8
+                pass
+            for i in range(lenline/8):
+                byte=""
+                for j in range(8):
+                    if i*8+j < len(line) and line[i*8+j] != "0": byte += "1"
+                    else: byte += "0"
+                    pass
+                bytedata += PackData(byte)
+                pass
+            for i in range(lenline/8, lenbytes):
+                bytedata += PackData("0")
+            pass
+        return lenbytes*8, len(lines), bytedata
+    except:
+        pass
+    return 0, 0, ""
+
 ## Kinds of shape enumeration
 #  @ingroup l1_geompy_auxiliary
 kind = GEOM.GEOM_IKindOfShape
@@ -178,7 +256,6 @@ class info:
     UNKNOWN  = 0
     CLOSED   = 1
     UNCLOSED = 2
-
 
 class geompyDC(GEOM._objref_GEOM_Gen):
 
@@ -3876,6 +3953,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def addPath(self,Path):
             if (sys.path.count(Path) < 1):
                 sys.path.append(Path)
+                pass
+            pass
+
+        ## Load marker texture from the file
+        #  @ingroup l1_geompy_auxiliary
+        def LoadTexture(self, Path):
+            # Example: see GEOM_TestAll.py
+            ID = self.InsertOp.LoadTexture(Path)
+            RaiseIfFailed("LoadTexture", self.InsertOp)
+            return ID
+
+        ## Add marker texture. \a Width and \a Height parameters
+        #  specify width and height of the texture in pixels.
+        #  If \a RowData is True, \a Texture parameter should represent texture data
+        #  packed into the byte array. If \a RowData is False (default), \a Texture
+        #  parameter should be unpacked string, in which '1' symbols represent opaque
+        #  pixels and '0' represent transparent pixels of the texture bitmap.
+        #  @ingroup l1_geompy_auxiliary
+        def AddTexture(self, Width, Height, Texture, RowData=False):
+            # Example: see GEOM_TestAll.py
+            if not RowData: Texture = PackData(Texture)
+            ID = self.InsertOp.AddTexture(Width, Height, Texture)
+            RaiseIfFailed("AddTexture", self.InsertOp)
+            return ID
 
 import omniORB
 #Register the new proxy for GEOM_Gen

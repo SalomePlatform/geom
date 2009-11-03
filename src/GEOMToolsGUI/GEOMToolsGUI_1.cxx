@@ -70,6 +70,7 @@
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+#include <Graphic3d_HArray1OfBytes.hxx>
 
 // QT Includes
 #include <QColorDialog>
@@ -257,7 +258,15 @@ void GEOMToolsGUI::OnAutoColor()
       Standard_Real aCurScale;
       Aspect_TypeOfMarker aCurTypeOfMarker;
       aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-      aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
+      if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+	aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
+      }
+      else {
+	Standard_Integer aWidth, aHeight;
+	aCurPointAspect->GetTextureSize( aWidth, aHeight );
+	Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+	aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aQuanColor, 1, aWidth, aHeight, aTexture ) );
+      }
       ic->SetLocalAttributes( io, aCurDrawer );
 
       io->SetColor( aQuanColor );
@@ -348,7 +357,15 @@ void GEOMToolsGUI::OnColor()
 		  Standard_Real aCurScale;
 		  Aspect_TypeOfMarker aCurTypeOfMarker;
 		  aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-		  aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale) );
+		  if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+		    aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale) );
+		  }
+		  else {
+		    Standard_Integer aWidth, aHeight;
+		    aCurPointAspect->GetTextureSize( aWidth, aHeight );
+		    Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+		    aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aColor, 1, aWidth, aHeight, aTexture ) );
+		  }
 		  ic->SetLocalAttributes(io, aCurDrawer);
 		  
 		  io->SetColor( aColor );

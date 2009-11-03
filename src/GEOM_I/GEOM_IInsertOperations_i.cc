@@ -35,6 +35,7 @@
 #include "GEOM_Object.hxx"
 
 #include <TColStd_HSequenceOfAsciiString.hxx>
+#include <TDataStd_HArray1OfByte.hxx>
 
 //=============================================================================
 /*!
@@ -214,4 +215,53 @@ void GEOM_IInsertOperations_i::ExportTranslators
   // initialize out-parameters with local arrays
   theFormats  = aFormatsArray._retn();
   thePatterns = aPatternsArray._retn();
+}
+
+CORBA::Long GEOM_IInsertOperations_i::LoadTexture(const char* theTextureFile)
+{
+  GetOperations()->SetNotDone();
+  return GetOperations()->LoadTexture( theTextureFile );
+}
+
+CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Long theHeight,
+						 const SALOMEDS::TMPFile& theTexture)
+{
+  GetOperations()->SetNotDone();
+  Handle(TDataStd_HArray1OfByte) aTexture;
+  if ( theTexture.length() > 0 ) {
+    aTexture = new TDataStd_HArray1OfByte( 1, theTexture.length() );
+    for ( int i = 0; i < theTexture.length(); i++ )
+      aTexture->SetValue( i+1, (Standard_Byte)theTexture[i] );
+  }
+  return GetOperations()->AddTexture( theWidth, theHeight, aTexture );
+}
+
+SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID, 
+							CORBA::Long& theWidth,
+							CORBA::Long& theHeight)
+{
+  int aWidth, aHeight;
+  Handle(TDataStd_HArray1OfByte) aTextureImpl = GetOperations()->GetTexture( theID, aWidth, aHeight );
+  theWidth  = aWidth;
+  theHeight = aHeight;
+  SALOMEDS::TMPFile_var aTexture;
+  if ( !aTextureImpl.IsNull() ) {
+    aTexture = new SALOMEDS::TMPFile;
+    aTexture->length( aTextureImpl->Length() );
+    for ( int i = aTextureImpl->Lower(); i <= aTextureImpl->Upper(); i++ )
+      aTexture[i-aTextureImpl->Lower()] = aTextureImpl->Value( i );
+  }
+  return aTexture._retn();
+}
+
+GEOM::ListOfLong* GEOM_IInsertOperations_i::GetAllTextures()
+{
+  std::list<int> localIDs = GetOperations()->GetAllTextures();
+  GEOM::ListOfLong_var anIDs = new GEOM::ListOfLong(localIDs.size());
+  anIDs->length(localIDs.size());
+  std::list<int>::const_iterator anIt;
+  int i = 0;
+  for( anIt = localIDs.begin(); anIt != localIDs.end(); ++anIt, i++)
+    anIDs[i] = *anIt;
+  return anIDs._retn();
 }

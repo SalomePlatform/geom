@@ -62,6 +62,16 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual CORBA::Boolean GetAutoColor();
 
+  void SetMarkerStd(GEOM::marker_type theType, GEOM::marker_size theSize);
+  
+  void SetMarkerTexture(CORBA::Long theTextureId);
+  
+  GEOM::marker_type GetMarkerType();
+
+  GEOM::marker_size GetMarkerSize();
+
+  CORBA::Long GetMarkerTexture();
+  
   virtual void SetStudyEntry(const char* theEntry);
 
   virtual char* GetStudyEntry();

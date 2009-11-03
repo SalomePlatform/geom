@@ -42,6 +42,11 @@
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_DriverTable.hxx>
+#include <TDataStd_HArray1OfByte.hxx>
+#include <TDataStd_ByteArray.hxx>
+#include <TDataStd_UAttribute.hxx>
+#include <TDF_ChildIterator.hxx>
+#include <TDataStd_Comment.hxx>
 
 #include <TopExp.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
@@ -122,9 +127,11 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
 			    Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
                             TColStd_SequenceOfAsciiString&            theObjListToPublish);
 
-void AddObjectColors (const Handle(TDocStd_Document)&                 theDoc,
+void AddObjectColors (int                                             theDocID,
 		      TCollection_AsciiString&                        theScript,
 		      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames);
+
+void AddTextures (int theDocID, TCollection_AsciiString& theScript);
 
 void PublishObject (const TCollection_AsciiString&                  theEntry,
 		    const TCollection_AsciiString&                  theName,
@@ -134,6 +141,16 @@ void PublishObject (const TCollection_AsciiString&                  theEntry,
 		    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
 		    std::map< int, std::string >&                   theEntryToCommandMap,
 		    std::set<std::string>&                          theMapOfPublished);
+
+//=======================================================================
+//function : GetTextureGUID
+//purpose  :
+//=======================================================================
+const Standard_GUID& GEOM_Engine::GetTextureGUID()
+{
+  static Standard_GUID anID("FF1BBB01-5D14-4df2-980B-3A668264EA17");
+  return anID;
+}
 
 //=============================================================================
 /*!
@@ -503,11 +520,14 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   if (aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
 
-  aScript  = "import geompy\n";
+  aScript  = "import GEOM\n";
+  aScript += "import geompy\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
   aScript += "def RebuildData(theStudy):";
-  aScript += "\n\tgeompy.init_geom(theStudy)";
+  aScript += "\n\tgeompy.init_geom(theStudy)\n";
+
+  AddTextures(theDocID, aScript);
 
   Standard_Integer posToInsertGlobalVars = aScript.Length() + 1;
 
@@ -615,7 +635,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   aScript += aFuncScript;
 
   // ouv : NPAL12872
-  AddObjectColors( aDoc, aScript, theObjectNames );
+  AddObjectColors( theDocID, aScript, theObjectNames );
 
   // Make script to publish in study
   if ( isPublished )
@@ -695,6 +715,117 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
   return aRetSeq;
 }
 
+#define TEXTURE_LABEL_ID       1
+#define TEXTURE_LABEL_FILE     2
+#define TEXTURE_LABEL_WIDTH    3
+#define TEXTURE_LABEL_HEIGHT   4
+#define TEXTURE_LABEL_DATA     5
+
+int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight, 
+			    const Handle(TDataStd_HArray1OfByte)& theTexture,
+			    const TCollection_AsciiString& theFileName)
+{
+  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+  Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
+
+  // NPAL18604: use existing label to decrease memory usage,
+  //            if this label has been freed (object deleted)
+  bool useExisting = false;
+  TDF_Label aChild;
+  if (_freeLabels.find(theDocID) != _freeLabels.end()) {
+    std::list<TDF_Label>& aFreeLabels = _freeLabels[theDocID];
+    if (!aFreeLabels.empty()) {
+      useExisting = true;
+      aChild = aFreeLabels.front();
+      aFreeLabels.pop_front();
+    }
+  }
+  if (!useExisting) {
+    // create new label
+    aChild = TDF_TagSource::NewChild(aDoc->Main());
+  }
+
+  aChild.ForgetAllAttributes(Standard_True);
+  Handle(TDataStd_TreeNode) node;
+  if ( !aChild.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), node ) )
+    node = TDataStd_TreeNode::Set(aChild);
+  TDataStd_UAttribute::Set(aChild, GetTextureGUID());
+
+  static int aTextureID = 0;
+
+  TDataStd_Integer::Set(aChild.FindChild(TEXTURE_LABEL_ID),     ++aTextureID);
+  TDataStd_Comment::Set(aChild.FindChild(TEXTURE_LABEL_FILE),   theFileName);
+  TDataStd_Integer::Set(aChild.FindChild(TEXTURE_LABEL_WIDTH),  theWidth);
+  TDataStd_Integer::Set(aChild.FindChild(TEXTURE_LABEL_HEIGHT), theHeight);
+
+  Handle(TDataStd_ByteArray) anAttr =
+    TDataStd_ByteArray::Set(aChild.FindChild(TEXTURE_LABEL_DATA), 
+			    theTexture.IsNull() ? 0 : theTexture->Lower(),
+			    theTexture.IsNull() ? 0 : theTexture->Upper());
+  anAttr->ChangeArray(theTexture);
+
+  return aTextureID;
+}
+
+Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
+						       int& theWidth, int& theHeight,
+						       TCollection_AsciiString& theFileName)
+{
+  Handle(TDataStd_HArray1OfByte) anArray;
+  theWidth = theHeight = 0;
+
+  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+
+  TDF_ChildIterator anIterator(aDoc->Main(), Standard_True);
+  bool found = false;
+  for (; anIterator.More() && !found; anIterator.Next()) {
+    TDF_Label aTextureLabel = anIterator.Value();
+    if (aTextureLabel.IsAttribute( GetTextureGUID())) {
+      TDF_Label anIDLabel = aTextureLabel.FindChild(TEXTURE_LABEL_ID, Standard_False);
+      Handle(TDataStd_Integer) anIdAttr;
+      if(!anIDLabel.IsNull() && anIDLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr) && 
+	 anIdAttr->Get() == theTextureID) {
+	TDF_Label aFileLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_FILE,    Standard_False);
+	TDF_Label aWidthLabel  = aTextureLabel.FindChild(TEXTURE_LABEL_WIDTH,   Standard_False);
+	TDF_Label aHeightLabel = aTextureLabel.FindChild(TEXTURE_LABEL_HEIGHT,  Standard_False);
+	TDF_Label aDataLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_DATA,    Standard_False);
+	Handle(TDataStd_Integer) aWidthAttr, aHeightAttr;
+	Handle(TDataStd_ByteArray) aTextureAttr;
+	Handle(TDataStd_Comment) aFileAttr;
+	if (!aWidthLabel.IsNull()  && aWidthLabel.FindAttribute(TDataStd_Integer::GetID(),  aWidthAttr) &&
+	    !aHeightLabel.IsNull() && aHeightLabel.FindAttribute(TDataStd_Integer::GetID(), aHeightAttr) &&
+	    !aDataLabel.IsNull()   && aDataLabel.FindAttribute(TDataStd_ByteArray::GetID(), aTextureAttr)) {
+	  theWidth = aWidthAttr->Get();
+	  theHeight = aHeightAttr->Get();
+	  anArray = aTextureAttr->InternalArray();
+	}
+	if (!aFileLabel.IsNull() && aFileLabel.FindAttribute(TDataStd_Comment::GetID(), aFileAttr))
+	  theFileName = aFileAttr->Get();
+	found = true;
+      }
+    }
+  }
+  return anArray;
+}
+
+std::list<int> GEOM_Engine::getAllTextures(int theDocID)
+{
+  std::list<int> id_list;
+
+  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
+
+  TDF_ChildIterator anIterator(aDoc->Main(), Standard_True);
+  for (; anIterator.More(); anIterator.Next()) {
+    TDF_Label aTextureLabel = anIterator.Value();
+    if (aTextureLabel.IsAttribute( GetTextureGUID())) {
+      TDF_Label anIDLabel = aTextureLabel.FindChild(TEXTURE_LABEL_ID, Standard_False);
+      Handle(TDataStd_Integer) anIdAttr;
+      if(!anIDLabel.IsNull() && anIDLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr))
+	id_list.push_back((int)anIdAttr->Get());
+    }
+  }
+  return id_list;
+}
 
 //===========================================================================
 //                     Internal functions
@@ -1164,10 +1295,13 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
  *  AddObjectColors: Add color to objects
  */
 //=============================================================================
-void AddObjectColors (const Handle(TDocStd_Document)&                 theDoc,
+void AddObjectColors (int                                             theDocID,
 		      TCollection_AsciiString&                        theScript,
 		      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames)
 {
+  GEOM_Engine* engine = GEOM_Engine::GetEngine();
+  Handle(TDocStd_Document) aDoc = engine->GetDocument(theDocID);
+
   Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString anEntryToNameIt;
   for (anEntryToNameIt.Initialize( theObjectNames );
        anEntryToNameIt.More();
@@ -1177,7 +1311,7 @@ void AddObjectColors (const Handle(TDocStd_Document)&                 theDoc,
     const TCollection_AsciiString& aName = anEntryToNameIt.Value();
 
     TDF_Label L;
-    TDF_Tool::Label( theDoc->GetData(), aEntry, L );
+    TDF_Tool::Label( aDoc->GetData(), aEntry, L );
     if ( L.IsNull() )
       continue;
 
@@ -1200,6 +1334,108 @@ void AddObjectColors (const Handle(TDocStd_Document)&                 theDoc,
       aCommand += aName + ".SetColor(SALOMEDS.Color(" + aColor.R + "," + aColor.G + "," + aColor.B + "))";
       theScript += aCommand.ToCString();
     }
+    
+    Aspect_TypeOfMarker aMarkerType = obj->GetMarkerType();
+    if (aMarkerType >= Aspect_TOM_POINT && aMarkerType < Aspect_TOM_USERDEFINED) {
+      TCollection_AsciiString aCommand( "\n\t" );
+      aCommand += aName + ".SetMarkerStd(";
+      switch (aMarkerType) {
+      case Aspect_TOM_POINT:   aCommand += "GEOM.MT_POINT";   break;
+      case Aspect_TOM_PLUS:    aCommand += "GEOM.MT_PLUS";    break;
+      case Aspect_TOM_STAR:    aCommand += "GEOM.MT_STAR";    break;
+      case Aspect_TOM_O:       aCommand += "GEOM.MT_O";       break;
+      case Aspect_TOM_X:       aCommand += "GEOM.MT_X";       break;
+      case Aspect_TOM_O_POINT: aCommand += "GEOM.MT_O_POINT"; break;
+      case Aspect_TOM_O_PLUS:  aCommand += "GEOM.MT_O_PLUS";  break;
+      case Aspect_TOM_O_STAR:  aCommand += "GEOM.MT_O_STAR";  break;
+      case Aspect_TOM_O_X:     aCommand += "GEOM.MT_O_X";     break;
+      case Aspect_TOM_BALL:    aCommand += "GEOM.MT_BALL";    break;
+      case Aspect_TOM_RING1:   aCommand += "GEOM.MT_RING1";   break;
+      case Aspect_TOM_RING2:   aCommand += "GEOM.MT_RING2";   break;
+      case Aspect_TOM_RING3:   aCommand += "GEOM.MT_RING3";   break;
+      default:                 aCommand += "GEOM.MT_NONE";    break; // just for completeness, should not get here
+      }
+      aCommand += ", ";
+      int aSize = (int)( obj->GetMarkerSize()/0.5 ) - 1;
+      switch (aSize) {
+      case  1: aCommand += "GEOM.MS_10";   break;
+      case  2: aCommand += "GEOM.MS_15";   break;
+      case  3: aCommand += "GEOM.MS_20";   break;
+      case  4: aCommand += "GEOM.MS_25";   break;
+      case  5: aCommand += "GEOM.MS_30";   break;
+      case  6: aCommand += "GEOM.MS_35";   break;
+      case  7: aCommand += "GEOM.MS_40";   break;
+      case  8: aCommand += "GEOM.MS_45";   break;
+      case  9: aCommand += "GEOM.MS_50";   break;
+      case 10: aCommand += "GEOM.MS_55";   break;
+      case 11: aCommand += "GEOM.MS_60";   break;
+      case 12: aCommand += "GEOM.MS_65";   break;
+      case 13: aCommand += "GEOM.MS_70";   break;
+      default: aCommand += "GEOM.MS_NONE"; break;
+      }
+      aCommand += ");";
+      theScript += aCommand.ToCString();
+    }
+    else if (aMarkerType == Aspect_TOM_USERDEFINED) {
+      int aMarkerTextureID = obj->GetMarkerTexture();
+      if (aMarkerTextureID >= 0) {
+	TCollection_AsciiString aCommand( "\n\t" );
+	aCommand += aName + ".SetMarkerTexture(texture_map[";
+	aCommand += aMarkerTextureID;
+	aCommand += "]);";
+	theScript += aCommand.ToCString();
+      }
+    }
+  }
+}
+
+static TCollection_AsciiString pack_data(const Handle(TDataStd_HArray1OfByte)& aData )
+{
+  TCollection_AsciiString stream;
+  if (!aData.IsNull()) {
+    for (Standard_Integer i = aData->Lower(); i <= aData->Upper(); i++) {
+      Standard_Byte byte = aData->Value(i);
+      TCollection_AsciiString strByte = "";
+      for (int j = 0; j < 8; j++)
+	strByte.Prepend((byte & (1<<j)) ? "1" : "0");
+      stream += strByte;
+    }
+  }
+  return stream;
+}
+
+void AddTextures (int theDocID, TCollection_AsciiString& theScript)
+{
+  GEOM_Engine* engine = GEOM_Engine::GetEngine();
+  std::list<int> allTextures = engine->getAllTextures(theDocID);
+  std::list<int>::const_iterator it;
+
+  if (allTextures.size() > 0) {
+    theScript += "\n\ttexture_map = {}\n";
+    
+    for (it = allTextures.begin(); it != allTextures.end(); ++it) {
+      if (*it <= 0) continue;
+      Standard_Integer aWidth, aHeight;
+      TCollection_AsciiString aFileName;
+      Handle(TDataStd_HArray1OfByte) aTexture = engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
+      if (aWidth > 0 && aHeight > 0 && !aTexture.IsNull() && aTexture->Length() > 0 ) {
+	TCollection_AsciiString aCommand = "\n\t";
+	aCommand += "texture_map["; aCommand += *it; aCommand += "] = ";
+	if (aFileName != "" ) {
+	  aCommand += "geompy.LoadTexture(\"";
+	  aCommand += aFileName.ToCString();
+	  aCommand += "\")";
+	}
+	else {
+	  aCommand += "geompy.AddTexture(";
+	  aCommand += aWidth; aCommand += ", "; aCommand += aHeight; aCommand += ", \"";
+	  aCommand += pack_data(aTexture);
+	  aCommand += "\")";
+	}
+	theScript += aCommand;
+      }
+    }
+    theScript += "\n";
   }
 }
 

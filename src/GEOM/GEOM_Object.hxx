@@ -55,6 +55,9 @@
 #ifndef _TCollection_AsciiString_HeaderFile
 #include <TCollection_AsciiString.hxx>
 #endif
+#ifndef _Aspect_TypeOfMarker_HeaderFile
+#include <Aspect_TypeOfMarker.hxx>
+#endif
 
 #include "SALOMEconfig.h"
 #include CORBA_SERVER_HEADER(SALOMEDS)
@@ -214,6 +217,24 @@ class GEOM_Object : public MMgt_TShared
 
   //Returns a flag of auto color mode of this GEOM_Object
   Standard_EXPORT CORBA::Boolean GetAutoColor();
+
+  //Sets predefined point marker texture
+  Standard_EXPORT void SetMarkerStd(const Aspect_TypeOfMarker theType, double theSize);
+  
+  //Sets custom point marker texture
+  Standard_EXPORT void SetMarkerTexture(int theTextureId);
+
+  //Gets point marker type
+  Standard_EXPORT Aspect_TypeOfMarker GetMarkerType();
+
+  //Gets point marker scale factor / size
+  Standard_EXPORT double GetMarkerSize();
+
+  //Gets custom marker texture ID
+  Standard_EXPORT int GetMarkerTexture();
+
+  //Unsets point marker
+  Standard_EXPORT void UnsetMarker();
 
   //Sets an auxiliary data
   Standard_EXPORT void SetAuxData(const char* theData);

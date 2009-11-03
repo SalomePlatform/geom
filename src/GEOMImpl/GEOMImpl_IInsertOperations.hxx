@@ -30,6 +30,9 @@
 #include <TColStd_HSequenceOfAsciiString.hxx>
 #include <TCollection_HAsciiString.hxx>
 #include <Resource_Manager.hxx>
+#include <list>
+
+class Handle_TDataStd_HArray1OfByte;
 
 class GEOMImpl_IInsertOperations : public GEOM_IOperations {
  public:
@@ -56,6 +59,16 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
                                                 const TCollection_AsciiString& theFormat,
                                                 Handle(TCollection_HAsciiString)& theLibName);
 
+  Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
+  
+  Standard_EXPORT int AddTexture(int theWidth, int theHeight, 
+				 const Handle(TDataStd_HArray1OfByte)& theTexture);
+
+  Standard_EXPORT Handle(TDataStd_HArray1OfByte) GetTexture(int theTextureId, 
+							    int& theWidth, int& theHeight);
+
+  Standard_EXPORT std::list<int> GetAllTextures();
+  
  private:
   Standard_Boolean InitResMgr ();
 

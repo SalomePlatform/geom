@@ -80,6 +80,7 @@
 #include <Aspect_TypeOfMarker.hxx>
 #include <OSD_SharedLibrary.hxx>
 #include <NCollection_DataMap.hxx>
+#include <Graphic3d_HArray1OfBytes.hxx>
 
 #include <utilities.h>
 
@@ -96,7 +97,7 @@ extern "C" {
   }
 }
 
-
+GeometryGUI::StudyTextureMap GeometryGUI::myTextureMap;
 
 GEOM::GEOM_Gen_var GeometryGUI::myComponentGeom = GEOM::GEOM_Gen::_nil();
 
@@ -1460,6 +1461,32 @@ QString GeometryGUI::engineIOR() const
   if ( !CORBA::is_nil( GetGeomGen() ) )
     return QString( getApp()->orb()->object_to_string( GetGeomGen() ) );
   return "";
+}
+
+Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTextureAspect( SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight )
+{
+  theWidth = theHeight = 0;
+  Handle(Graphic3d_HArray1OfBytes) aTexture;
+  if ( theStudy ) {
+    TextureMap aTextureMap = myTextureMap[ theStudy->studyDS()->StudyId() ];
+    aTexture = aTextureMap[ theId ];
+    if ( aTexture.IsNull() ) {
+      GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGen()->GetIInsertOperations( theStudy->studyDS()->StudyId() );
+      if ( !aInsOp->_is_nil() ) {
+	CORBA::Long aWidth, aHeight;
+	SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
+	if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
+	  theWidth  = aWidth;
+	  theHeight = aHeight;
+	  aTexture  = new Graphic3d_HArray1OfBytes( 1, aStream->length() );
+	  for ( int i = 0; i < aStream->length(); i++ )
+	    aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
+	  aTextureMap[ theId ] = aTexture;
+	}
+      }
+    }
+  }
+  return aTexture;
 }
 
 LightApp_Selection* GeometryGUI::createSelection() const
