@@ -54,11 +54,13 @@ point is located in the middle of the face.
 \n <b>Arguments:</b> Name + 1 face + 2 Parameters defining the
 position of the point on the given face.
 
-Alternatively, it is possible to define 3D coordinates of the point projected on the given face.
 \image html point5.png
+
+Alternatively, it is possible to define 3D coordinates of the point projected on the given face.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurface(myFace,X,Y,Z).</em>
 \n <b>Arguments:</b> Name + 1 face  + 3 coordinate values
 to project point on the given face.
+
 \image html point5_2.png
 
 <b>Example:</b>
