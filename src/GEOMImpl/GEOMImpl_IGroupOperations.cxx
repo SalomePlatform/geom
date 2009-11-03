@@ -567,13 +567,17 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
   TopTools_IndexedMapOfShape mapIndices;
   TopExp::MapShapes(aMainShape, mapIndices);
 
+  // Get group type
+  TopAbs_ShapeEnum aType = GetType(theGroup);
+
   // Get IDs of sub-shapes to add
   Standard_Integer i, new_id;
   for (i = 1; i <= aLen; i++) {
     new_id = theSubShapes->Value(i);
 
     if (0 < new_id && new_id <= mapIndices.Extent()) {
-      if (mapIDs.Add(new_id)) {
+      //if (mapIDs.Add(new_id)) { IPAL21297. Why we ignore invalid ids silently?
+      if (mapIDs.Add(new_id) && mapIndices(new_id).ShapeType()==aType ) {
         aNewIDs.Append(new_id);
       }
     }
