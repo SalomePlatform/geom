@@ -170,12 +170,14 @@ def ParseSketcherCommand(command):
 
 ## Helper function which can be used to pack the passed string to the byte data.
 ## Only '1' an '0' symbols are valid for the string. The missing bits are replaced by zeroes.
-## If the string contains invalid symbol (neither '1' not '0'), the function raises an exception.
+## If the string contains invalid symbol (neither '1' nor '0'), the function raises an exception.
 ## For example,
 ## \code
 ## val = PackData("10001110") # val = 0xAE
 ## val = PackData("1")        # val = 0x80
 ## \endcode
+## @param data unpacked data - a string containing '1' and '0' symbols
+## @return data packed to the byte stream
 ## @ingroup l1_geompy_auxiliary    
 def PackData(data):
     bytes = len(data)/8
@@ -212,6 +214,8 @@ def PackData(data):
 ## texture = geompy.AddTexture(*texture)
 ## obj.SetMarkerTexture(texture)
 ## \endcode
+## @param fname texture file name
+## @return sequence of tree values: texture's width, height in pixels and its byte stream
 ## @ingroup l1_geompy_auxiliary    
 def ReadTexture(fname):
     try:
@@ -3957,6 +3961,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             pass
 
         ## Load marker texture from the file
+        #  @param Path a path to the texture file
+        #  @return unique texture identifier
         #  @ingroup l1_geompy_auxiliary
         def LoadTexture(self, Path):
             # Example: see GEOM_TestAll.py
@@ -3964,12 +3970,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("LoadTexture", self.InsertOp)
             return ID
 
-        ## Add marker texture. \a Width and \a Height parameters
+        ## Add marker texture. @a Width and @a Height parameters
         #  specify width and height of the texture in pixels.
-        #  If \a RowData is True, \a Texture parameter should represent texture data
-        #  packed into the byte array. If \a RowData is False (default), \a Texture
+        #  If @a RowData is @c True, @a Texture parameter should represent texture data
+        #  packed into the byte array. If @a RowData is @c False (default), @a Texture
         #  parameter should be unpacked string, in which '1' symbols represent opaque
         #  pixels and '0' represent transparent pixels of the texture bitmap.
+        #
+        #  @param Width texture width in pixels
+        #  @param Height texture height in pixels
+        #  @param Texture texture data 
+        #  @param RowData if @c True, @a Texture data are packed in the byte stream
         #  @ingroup l1_geompy_auxiliary
         def AddTexture(self, Width, Height, Texture, RowData=False):
             # Example: see GEOM_TestAll.py
