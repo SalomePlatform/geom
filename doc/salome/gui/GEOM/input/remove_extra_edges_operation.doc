@@ -10,9 +10,9 @@ hexahedral solids and compounds of hexahedral solids.
 However, there is an option to unite all faces sharing one
 surface, which produces not only hexahedral solids.
 
-\n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape,theOptimumNbFaces)</em>,
+\n <b>TUI Command:</b> <em>geompy.RemoveExtraEdges(theShape,doUnionFaces)</em>,
 where <em>theShape</em> is a compound or a single solid
-and <em>theOptimumNbFaces</em> is an integer parameter, that regulates,
+and <em>doUnionFaces</em> is a boolean parameter, that regulates,
 whether the faces, sharing a common surface, should be united.
 \n <b>Arguments:</b> Name + one shape + a flag.
 \n <b>Advanced option:</b>
