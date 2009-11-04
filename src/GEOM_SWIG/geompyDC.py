@@ -93,9 +93,9 @@ ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE"
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
-    
+
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ParseParameters(*parameters):
     Result = []
     StringResult = ""
@@ -108,16 +108,16 @@ def ParseParameters(*parameters):
         else:
             Result.append(parameter)
             pass
-        
+
         StringResult = StringResult + str(parameter)
         StringResult = StringResult + ":"
         pass
     StringResult = StringResult[:len(StringResult)-1]
     Result.append(StringResult)
     return Result
-    
+
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ParseList(list):
     Result = []
     StringResult = ""
@@ -128,15 +128,15 @@ def ParseList(list):
         else:
             Result.append(str(parameter))
             pass
-        
+
         StringResult = StringResult + str(parameter)
         StringResult = StringResult + ":"
         pass
     StringResult = StringResult[:len(StringResult)-1]
     return Result, StringResult
-    
+
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ParseSketcherCommand(command):
     Result = ""
     StringResult = ""
@@ -178,7 +178,7 @@ def ParseSketcherCommand(command):
 ## \endcode
 ## @param data unpacked data - a string containing '1' and '0' symbols
 ## @return data packed to the byte stream
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def PackData(data):
     bytes = len(data)/8
     if len(data)%8: bytes += 1
@@ -203,7 +203,7 @@ def PackData(data):
 ## A zero symbol ('0') represents transparent pixel of the texture bitmap.
 ## The function returns width and height of the pixmap in pixels and byte stream representing
 ## texture bitmap itself.
-## 
+##
 ## This function can be used to read the texture to the byte stream in order to pass it to
 ## the AddTexture() function of geompy class.
 ## For example,
@@ -216,7 +216,7 @@ def PackData(data):
 ## \endcode
 ## @param fname texture file name
 ## @return sequence of tree values: texture's width, height in pixels and its byte stream
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ReadTexture(fname):
     try:
         f = open(fname)
@@ -517,7 +517,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
             return anObj
-	    
+
         ## Create a tangent plane, corresponding to the given parameter on the given face.
         #  @param theFace The face for which tangent plane should be built.
         #  @param theParameterV vertical value of the center point (0.0 - 1.0).
@@ -640,7 +640,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a plane, passing through the 2 vectors
         #  with center in a start point of the first vector.
         #  @param theVec1 Vector, defining center point and plane direction.
@@ -656,7 +656,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePlane2Vec", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a plane, based on a Local coordinate system.
         #  @param theLCS  coordinate system, defining plane.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
@@ -681,7 +681,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_MakeMarker "Example"
         def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
             # Example: see GEOM_TestAll.py
-            OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);  
+            OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
             anObj.SetParameters(Parameters)
@@ -932,7 +932,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             return anObj
-	    
+
 	## Create a sketcher wire, following the numerical description,
         #  passed through <VAR>theCoordinates</VAR> argument. \n
 	#  @param theCoordinates double values, defining points to create a wire,
@@ -989,12 +989,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
             return anObj
-	    
+
         ## Create a face with specified dimensions along OX-OY coordinate axes,
         #  with edges, parallel to this coordinate axes.
         #  @param theH height of Face.
         #  @param theW width of Face.
-	#  @param theOrientation orientation belong axis OXY OYZ OZX 
+	#  @param theOrientation orientation belong axis OXY OYZ OZX
         #  @return New GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -1051,7 +1051,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a disk with specified dimensions along OX-OY coordinate axes.
         #  @param theR Radius of Face.
-	#  @param theOrientation set the orientation belong axis OXY or OYZ or OZX 
+	#  @param theOrientation set the orientation belong axis OXY or OYZ or OZX
         #  @return New GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_face "Example"
@@ -1254,7 +1254,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  @param theBase Base shape to be extruded.
         #  @param theDX, theDY, theDZ Directions of extrusion.
@@ -1268,7 +1268,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  i.e. all the space, transfixed by the base shape during its translation
         #  along the vector on the given distance in 2 Ways (forward/backward) .
@@ -2830,7 +2830,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
         ## Perform a fillet on the specified edges of the given shape
         #  @param theShape - Wire Shape to perform fillet on.
         #  @param theR - Fillet radius.
@@ -2846,7 +2846,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet1D", self.LocalOp)
             return anObj
-	    
+
         ## Perform a fillet on the specified edges/faces of the given shape
         #  @param theShape - Face Shape to perform fillet on.
         #  @param theR - Fillet radius.
@@ -3979,7 +3979,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @param Width texture width in pixels
         #  @param Height texture height in pixels
-        #  @param Texture texture data 
+        #  @param Texture texture data
         #  @param RowData if @c True, @a Texture data are packed in the byte stream
         #  @ingroup l1_geompy_auxiliary
         def AddTexture(self, Width, Height, Texture, RowData=False):
