@@ -300,6 +300,7 @@ class GEOM_Object : public MMgt_TShared
   TDF_Label                 _label;
   TCollection_AsciiString   _ior;
   TCollection_AsciiString   _parameters;
+  int                       _docID;
 };
 
 #endif

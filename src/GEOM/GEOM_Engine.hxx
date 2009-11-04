@@ -82,7 +82,7 @@ class GEOM_Engine
   Standard_EXPORT static GEOM_Engine* GetEngine();   
 
   //Returns the OCAF document by its ID, if document doesn't exists it will be created
-  Standard_EXPORT Handle(TDocStd_Document) GetDocument(int theDocID);
+  Standard_EXPORT Handle(TDocStd_Document) GetDocument(int theDocID, bool force=true);
 
   //Returns the ID of the given OCAF document
   Standard_EXPORT int GetDocID(Handle(TDocStd_Document) theDocument);
@@ -91,7 +91,7 @@ class GEOM_Engine
   Standard_EXPORT Handle(TDocStd_Application) GetApplication() { return _OCAFApp; }
 
   //Returns a pointer to GEOM_Object defined by a document and the entry
-  Standard_EXPORT Handle(GEOM_Object) GetObject(int theDocID, char* theEntry);
+  Standard_EXPORT Handle(GEOM_Object) GetObject(int theDocID, char* theEntry, bool force=true);
   
   //Adds a new object of the type theType in the OCAF document
   Standard_EXPORT Handle(GEOM_Object) AddObject(int theDocID, int theType);

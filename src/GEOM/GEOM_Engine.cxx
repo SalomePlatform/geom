@@ -203,17 +203,19 @@ GEOM_Engine::~GEOM_Engine()
  *  GetDocument
  */
 //=============================================================================
-Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID)
+Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
 {
   Handle(TDocStd_Document) aDoc;
-  if(!_mapIDDocument.IsBound(theDocID)) {
+  if(_mapIDDocument.IsBound(theDocID)) {
+    aDoc = Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
+  }
+  else if (force) {
     _OCAFApp->NewDocument("SALOME_GEOM", aDoc);
     aDoc->SetUndoLimit(_UndoLimit);
     _mapIDDocument.Bind(theDocID, aDoc);
     TDataStd_Integer::Set(aDoc->Main(), theDocID);
   }
-
-  return Handle(TDocStd_Document)::DownCast(_mapIDDocument(theDocID));
+  return aDoc;
 }
 
 //=============================================================================
@@ -236,17 +238,24 @@ int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
  *  GetObject
  */
 //=============================================================================
-Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry)
+Handle(GEOM_Object) GEOM_Engine::GetObject(int theDocID, char* theEntry, bool force)
 {
+  Handle(GEOM_Object) anObject;
+
   TCollection_AsciiString anID = BuildID(theDocID, theEntry);
-  if(_objects.IsBound(anID)) return Handle(GEOM_Object)::DownCast(_objects(anID));
 
-  TDF_Label aLabel;
-  Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
-  TDF_Tool::Label(aDoc->Main().Data(), theEntry, aLabel, Standard_True);
-  Handle(GEOM_Object) anObject = new GEOM_Object(aLabel);
-
-  _objects.Bind(anID, anObject);
+  if (_objects.IsBound(anID)) {
+    anObject = Handle(GEOM_Object)::DownCast(_objects(anID));
+  }
+  else if (force) {
+    Handle(TDocStd_Document) aDoc = GetDocument(theDocID, force);
+    if ( !aDoc.IsNull()) {
+      TDF_Label aLabel;
+      TDF_Tool::Label(aDoc->Main().Data(), theEntry, aLabel, Standard_True);
+      anObject = new GEOM_Object(aLabel);
+      _objects.Bind(anID, anObject);
+    }
+  }
 
   return anObject;
 }
@@ -390,7 +399,9 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   if (theObject.IsNull()) return false;
 
   int aDocID = theObject->GetDocID();
-
+  if(!_mapIDDocument.IsBound(aDocID))
+    return false;  // document is closed...
+  
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) _objects.UnBind(anID);

@@ -66,11 +66,11 @@
 // function : GEOM_Gen_i()
 // purpose  : constructor to be called for servant creation.
 //============================================================================
-GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr orb,
-		       PortableServer::POA_ptr poa,
-		       PortableServer::ObjectId * contId,
-		       const char *instanceName,
-		       const char *interfaceName) :
+GEOM_Gen_i::GEOM_Gen_i(CORBA::ORB_ptr            orb,
+		       PortableServer::POA_ptr   poa,
+		       PortableServer::ObjectId* contId,
+		       const char*               instanceName,
+		       const char*               interfaceName) :
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
 {
   _thisObj = this;
@@ -1587,7 +1587,7 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
 void GEOM_Gen_i::RemoveObject(GEOM::GEOM_Object_ptr theObject)
 {
   CORBA::String_var anEntry = theObject->GetEntry();
-  Handle(GEOM_Object) anObject = _impl->GetObject(theObject->GetStudyID(), anEntry);
+  Handle(GEOM_Object) anObject = _impl->GetObject(theObject->GetStudyID(), anEntry, false);
   if (anObject.IsNull()) return;
   _impl->RemoveObject(anObject);
   return;
@@ -1808,19 +1808,19 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
 //=====================================================================================
 extern "C"
 {
-GEOM_I_EXPORT
-PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB*, PortableServer::POA*, PortableServer::ObjectId*, const char*, const char*);
-
-GEOM_I_EXPORT
-  PortableServer::ObjectId * GEOMEngine_factory(CORBA::ORB_ptr orb,
-						PortableServer::POA_ptr poa,
-						PortableServer::ObjectId * contId,
-						const char *instanceName,
-						const char * interfaceName)
+  /*
+  GEOM_I_EXPORT
+  PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB*, PortableServer::POA*, PortableServer::ObjectId*, const char*, const char*);
+  */
+  
+  GEOM_I_EXPORT
+  PortableServer::ObjectId* GEOMEngine_factory(CORBA::ORB_ptr            orb,
+					       PortableServer::POA_ptr   poa,
+					       PortableServer::ObjectId* contId,
+					       const char*               instanceName,
+					       const char*               interfaceName)
   {
-   GEOM_Gen_i * myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
-   // Don't understand the reason of this register ????
-//   myGEOM_Gen_i->register_name("/myGEOM_Gen"); // NRI : 11/07/2002 : Add for Supervision example
-   return myGEOM_Gen_i->getId();
+    GEOM_Gen_i* myGEOM_Gen_i = new GEOM_Gen_i(orb, poa, contId, instanceName, interfaceName);
+    return myGEOM_Gen_i->getId();
   }
 }

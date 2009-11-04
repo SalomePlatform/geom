@@ -147,8 +147,14 @@ Handle(GEOM_Object) GEOM_Object::GetReferencedObject(TDF_Label& theLabel)
  */
 //=============================================================================
 GEOM_Object::GEOM_Object(TDF_Label& theEntry)
-: _label(theEntry), _ior("")
+  : _label(theEntry), _ior(""), _docID(-1)
 {
+  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
+  if(!aDoc.IsNull()) {
+    Handle(TDataStd_Integer) anID;
+    if(aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) _docID = anID->Get();
+  }
+
   if(!theEntry.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), _root))
     _root = TDataStd_TreeNode::Set(theEntry);
 }
@@ -159,8 +165,14 @@ GEOM_Object::GEOM_Object(TDF_Label& theEntry)
  */
 //=============================================================================
 GEOM_Object::GEOM_Object(TDF_Label& theEntry, int theType)
-: _label(theEntry), _ior("")
+: _label(theEntry), _ior(""), _docID(-1)
 {
+  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
+  if(!aDoc.IsNull()) {
+    Handle(TDataStd_Integer) anID;
+    if(aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) _docID = anID->Get();
+  }
+
   theEntry.ForgetAllAttributes(Standard_True);
 
   if(!theEntry.FindAttribute(TDataStd_TreeNode::GetDefaultTreeID(), _root))
@@ -262,13 +274,7 @@ void GEOM_Object::IncrementTic()
 //=============================================================================
 int GEOM_Object::GetDocID()
 {
-  Handle(TDocStd_Document) aDoc = TDocStd_Owner::GetDocument(_label.Data());
-  if(aDoc.IsNull()) return -1;
-
-  Handle(TDataStd_Integer) anID;
-  if(!aDoc->Main().FindAttribute(TDataStd_Integer::GetID(), anID)) return -1;
-
-  return anID->Get();
+  return _docID;
 }
 
 
