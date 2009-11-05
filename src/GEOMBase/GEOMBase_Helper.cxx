@@ -52,6 +52,10 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
 
+//To disable automatic genericobj management, the following line should be commented.
+//Otherwise, it should be uncommented. Refer to KERNEL_SRC/src/SALOMEDSImpl/SALOMEDSImpl_AttributeIOR.cxx
+//#define WITHGENERICOBJ
+
 //================================================================
 // Function : getActiveView
 // Purpose  : Get active view window, returns 0 if no open study frame
@@ -833,10 +837,12 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 	    addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
 	    display( obj, false );
+#ifdef WITHGENERICOBJ
 	    // obj has been published in study. Its refcount has been incremented.
 	    // It is safe to decrement its refcount
 	    // so that it will be destroyed when the entry in study will be removed
 	    obj->Destroy();
+#endif
 	  }
 	  else {
             // asv : fix of PAL6454. If publish==false, then the original shape
