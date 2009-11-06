@@ -132,13 +132,15 @@ class GEOM_Engine
 
   Standard_EXPORT Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
-  int addTexture(int theDocID, int theWidth, int theHeight,
-		 const Handle(TDataStd_HArray1OfByte)& theTexture,
-		 const TCollection_AsciiString& theFileName = "");
-  Handle(TDataStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
-					    int& theWidth, int& theHeight,
-					    TCollection_AsciiString& theFileName);
-  std::list<int> getAllTextures(int theDocID);
+  Standard_EXPORT int addTexture(int theDocID, int theWidth, int theHeight,
+				 const Handle(TDataStd_HArray1OfByte)& theTexture,
+				 const TCollection_AsciiString& theFileName = "");
+
+  Standard_EXPORT Handle(TDataStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
+							    int& theWidth, int& theHeight,
+							    TCollection_AsciiString& theFileName);
+
+  Standard_EXPORT std::list<int> getAllTextures(int theDocID);
 
   static const Standard_GUID& GetTextureGUID();
 
