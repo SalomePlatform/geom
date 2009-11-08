@@ -195,6 +195,10 @@ marker_6.png			\
 marker_7.png			\
 marker_8.png			\
 marker_9.png			\
+marker_10.png			\
+marker_11.png			\
+marker_12.png			\
+marker_13.png			\
 position.png			\
 position2.png			\
 position3.png                   \
