@@ -34,19 +34,22 @@ salomeinclude_HEADERS =				\
 	GEOM_ToolsGUI.hxx			\
 	GEOMToolsGUI_NbIsosDlg.h		\
 	GEOMToolsGUI_TransparencyDlg.h		\
-	GEOMToolsGUI_DeleteDlg.h
+	GEOMToolsGUI_DeleteDlg.h		\
+	GEOMToolsGUI_MarkerDlg.h
 
 dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI.cxx			\
 	GEOMToolsGUI_1.cxx			\
 	GEOMToolsGUI_TransparencyDlg.cxx	\
 	GEOMToolsGUI_NbIsosDlg.cxx		\
-	GEOMToolsGUI_DeleteDlg.cxx
+	GEOMToolsGUI_DeleteDlg.cxx		\
+	GEOMToolsGUI_MarkerDlg.cxx
 
 MOC_FILES = 					\
 	GEOMToolsGUI_TransparencyDlg_moc.cxx	\
 	GEOMToolsGUI_NbIsosDlg_moc.cxx		\
-	GEOMToolsGUI_DeleteDlg_moc.cxx
+	GEOMToolsGUI_DeleteDlg_moc.cxx		\
+	GEOMToolsGUI_MarkerDlg_moc.cxx
 
 nodist_libGEOMToolsGUI_la_SOURCES =		\
 	$(MOC_FILES)

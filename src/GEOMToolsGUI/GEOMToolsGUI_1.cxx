@@ -28,6 +28,7 @@
 #include "GEOMToolsGUI.h"
 #include "GEOMToolsGUI_TransparencyDlg.h"
 #include "GEOMToolsGUI_NbIsosDlg.h"
+#include "GEOMToolsGUI_MarkerDlg.h"
 
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
@@ -661,4 +662,10 @@ void GEOMToolsGUI::OnShowHideChildren( bool show )
     app->updateObjectBrowser( false );
     app->updateActions();
   }
+}
+
+void GEOMToolsGUI::OnPointMarker()
+{
+  GEOMToolsGUI_MarkerDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
+  dlg.exec();
 }
