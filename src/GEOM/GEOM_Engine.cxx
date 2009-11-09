@@ -1384,7 +1384,7 @@ void AddObjectColors (int                                             theDocID,
       case 13: aCommand += "GEOM.MS_70";   break;
       default: aCommand += "GEOM.MS_NONE"; break;
       }
-      aCommand += ");";
+      aCommand += ")";
       theScript += aCommand.ToCString();
     }
     else if (aMarkerType == Aspect_TOM_USERDEFINED) {
@@ -1393,7 +1393,7 @@ void AddObjectColors (int                                             theDocID,
 	TCollection_AsciiString aCommand( "\n\t" );
 	aCommand += aName + ".SetMarkerTexture(texture_map[";
 	aCommand += aMarkerTextureID;
-	aCommand += "]);";
+	aCommand += "])";
 	theScript += aCommand.ToCString();
       }
     }

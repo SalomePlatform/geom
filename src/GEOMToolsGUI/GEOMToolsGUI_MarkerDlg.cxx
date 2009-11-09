@@ -358,6 +358,6 @@ void GEOMToolsGUI_MarkerDlg::help()
 {
   if ( getStudy() ) {
     SalomeApp_Application* app = qobject_cast<SalomeApp_Application*>( getStudy()->application() );
-    app->onHelpContextModule( "GEOM", "point_marker.html" );
+    app->onHelpContextModule( "GEOM", "point_marker_page.html" );
   }
 }

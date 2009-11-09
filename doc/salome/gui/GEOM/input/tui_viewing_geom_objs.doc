@@ -61,4 +61,21 @@ gg.setColor(fuse_id,218,165,31)
 gg.setTransparency(fuse_id,0.5) 
 \endcode
 
+\anchor tui_point_marker
+<br><h2>Set Point Marker</h2>
+
+\code
+import salome
+import geompy
+
+texture = geompy.LoadTexture("/users/user/mytexture.dat")
+
+v1 = geompy.MakeVertex(0, 0, 0)
+v2 = geompy.MakeVertex(100, 0, 0)
+v3 = geompy.MakeVertex(0, 100, 0)
+
+v1.SetMarkerStd(GEOM.MT_O_PLUS, GEOM.MS_25)
+v2.SetMarkerStd(GEOM.MT_BALL,   GEOM.MS_40)
+v3.SetMarkerTexture(texture)
+\endcode
 */
