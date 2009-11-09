@@ -76,7 +76,7 @@ public:
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
 
-  static Handle(Graphic3d_HArray1OfBytes) getTextureAspect( SalomeApp_Study*, int, int&, int& );
+  static Handle(Graphic3d_HArray1OfBytes) getTexture( SalomeApp_Study*, int, int&, int& );
 
   static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts
 

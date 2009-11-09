@@ -89,6 +89,7 @@
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
 #include <GEOMImpl_Types.hxx>
+#include <Graphic3d_HArray1OfBytes.hxx>
 
 using namespace std;
 
@@ -257,13 +258,10 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myShadingColor = SalomeApp_Tools::color( col );
 
   myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
-  myTypeOfMarker = (Aspect_TypeOfMarker)resMgr->integerValue("Geometry", "type_of_marker", Aspect_TOM_PLUS);
-  myScaleOfMarker = resMgr->doubleValue("Geometry", "marker_scale", 1.);
-  if(myScaleOfMarker < 1.0)
-    myScaleOfMarker = 1.0;
-  if(myScaleOfMarker > 7.)
-    myScaleOfMarker = 7.;
-
+  int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
+  myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
+  myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
+  myScaleOfMarker = std::min(7.0, std::max(1., myScaleOfMarker));
 
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
@@ -752,7 +750,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 		      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
 		      if ( hasColor ) aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
 		      Standard_Integer aWidth, aHeight;
-		      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTextureAspect( getStudy(), aTextureId, aWidth, aHeight );
+		      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
 		      if ( !aTexture.IsNull() ) {
 			static int TextureId = 0;
 			Handle(Prs3d_PointAspect) aTextureAspect = new Prs3d_PointAspect(aQuanColor,

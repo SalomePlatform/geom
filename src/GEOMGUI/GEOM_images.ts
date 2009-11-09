@@ -665,6 +665,22 @@
             <source>ICON_VERTEX_MARKER_9</source>
             <translation>marker_9.png</translation>
         </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_10</source>
+            <translation>marker_10.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_11</source>
+            <translation>marker_11.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_12</source>
+            <translation>marker_12.png</translation>
+        </message>
+	<message>
+            <source>ICON_VERTEX_MARKER_13</source>
+            <translation>marker_13.png</translation>
+        </message>
         <message>
             <source>ICO_ARC</source>
             <translation>arc.png</translation>

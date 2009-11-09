@@ -83,6 +83,8 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
 //  else
   if( p == "type" )
     return QVariant( typeName( ind ) );
+  if( p == "typeid" )
+    return QVariant( typeId( ind ) );
   else if ( p == "displaymode" )
     return QVariant( displayMode( ind ) );
   else if ( p == "isAutoColor" )
@@ -110,6 +112,15 @@ QString GEOMGUI_Selection::typeName( const int index ) const
       return "Shape";
   }
   return "Unknown";
+}
+
+int GEOMGUI_Selection::typeId( const int index ) const
+{
+  int aType = -1;
+  GEOM::GEOM_Object_var anObj = getObject( index );
+  if ( !CORBA::is_nil( anObj ) )
+    aType = anObj->GetType();
+  return aType;
 }
 
 bool GEOMGUI_Selection::isVisible( const int index ) const

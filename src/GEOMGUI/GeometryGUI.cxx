@@ -382,6 +382,7 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 8036 ||  // POPUP VIEWER - DISABLE AUTO COLOR
       id == 8037 ||  // POPUP VIEWER - SHOW CHILDREN
       id == 8038 ||  // POPUP VIEWER - HIDE CHILDREN
+      id == 8039 ||  // POPUP VIEWER - POINT MARKER
       id == 804  ||  // POPUP VIEWER - ADD IN STUDY
       id == 901  ||  // OBJECT BROWSER - RENAME
       id == 9024 ) { // OBJECT BROWSER - OPEN
@@ -904,6 +905,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 8001, "POP_CREATE_GROUP" );
   createGeomAction( 8037, "POP_SHOW_CHILDREN" );
   createGeomAction( 8038, "POP_HIDE_CHILDREN" );
+  createGeomAction( 8039, "POP_POINT_MARKER" );
 
   // make wireframe-shading items to be exclusive (only one at a time is selected)
   //QActionGroup* dispModeGr = new QActionGroup( this, "", true );
@@ -1171,6 +1173,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
   mgr->setRule( action( 8034 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  8039 ), -1, -1 ); // point marker
+  mgr->setRule( action( 8039 ), QString( "selcount>0 and $typeid in {%1}" ).arg( GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  8035 ), -1, -1 ); // auto color
   mgr->setRule( action( 8035 ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
@@ -1463,7 +1467,7 @@ QString GeometryGUI::engineIOR() const
   return "";
 }
 
-Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTextureAspect( SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight )
+Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture( SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight )
 {
   theWidth = theHeight = 0;
   Handle(Graphic3d_HArray1OfBytes) aTexture;
@@ -1569,7 +1573,7 @@ void GeometryGUI::createPreferences()
                                     LightApp_Preferences::Selector, "Geometry", "type_of_marker" );
 
   int markerScale = addPreference( tr( "PREF_MARKER_SCALE" ), VertexGroup,
-                                   LightApp_Preferences::DblSpin, "Geometry", "marker_scale" );
+                                   LightApp_Preferences::Selector, "Geometry", "marker_scale" );
 
   // Set property for default display mode
   QStringList aModesList;
@@ -1588,38 +1592,32 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
 
-  // Set property for type of vertex marker
-  QList<QVariant> anTypeOfMarkerIndexesList;
-  QList<QVariant> anTypeOfMarkerIconsList;
+  // Set property vertex marker type
+  QList<QVariant> aMarkerTypeIndicesList;
+  QList<QVariant> aMarkerTypeIconsList;
 
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_PLUS);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_POINT);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_STAR);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_O);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_X);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_POINT);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_PLUS);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_STAR);
-  anTypeOfMarkerIndexesList.append(Aspect_TOM_O_X);
-
-  // Create icons list
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  for (int i = 1; i<=9; i++) {
-    QString str = "ICON_VERTEX_MARKER_";
-    str.append( QString::number(i) );
-    QPixmap pixmap (resMgr->loadPixmap("GEOM", tr( str.toLatin1().data() )));
-    anTypeOfMarkerIconsList.append(pixmap);
+  for ( int i = GEOM::MT_POINT; i < GEOM::MT_USER; i++ ) {
+    QString icoFile = QString( "ICON_VERTEX_MARKER_%1" ).arg( i );
+    QPixmap pixmap = resMgr->loadPixmap( "GEOM", tr( qPrintable( icoFile ) ) );
+    aMarkerTypeIndicesList << (i-1);
+    aMarkerTypeIconsList << pixmap;
   }
 
-  setPreferenceProperty( typeOfMarker, "indexes", anTypeOfMarkerIndexesList );
-  setPreferenceProperty( typeOfMarker, "icons", anTypeOfMarkerIconsList );
+  setPreferenceProperty( typeOfMarker, "indexes", aMarkerTypeIndicesList );
+  setPreferenceProperty( typeOfMarker, "icons",   aMarkerTypeIconsList );
 
-  // Set property for Vertex Marker scale
-  setPreferenceProperty( markerScale, "min", 1. );
-  setPreferenceProperty( markerScale, "max", 7. );
-  setPreferenceProperty( markerScale, "precision", 0.01 );
-  setPreferenceProperty( markerScale, "step", 0.5 );
+  // Set property for vertex marker scale
+  QList<QVariant> aMarkerScaleIndicesList;
+  QStringList     aMarkerScaleValuesList;
 
+  for ( int i = GEOM::MS_10; i <= GEOM::MS_70; i++ ) {
+    aMarkerScaleIndicesList << i;
+    aMarkerScaleValuesList  << QString::number( (i-(int)GEOM::MS_10)*0.5 + 1.0 );
+  }
+
+  setPreferenceProperty( markerScale, "strings", aMarkerScaleValuesList );
+  setPreferenceProperty( markerScale, "indexes", aMarkerScaleIndicesList );
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )

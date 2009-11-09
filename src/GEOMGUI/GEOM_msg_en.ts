@@ -2552,6 +2552,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Working Plane</translation>
         </message>
         <message>
+            <source>MEN_POP_POINT_MARKER</source>
+            <translation>Point Marker</translation>
+        </message>
+        <message>
             <source>NAME_LBL</source>
             <translation>Name: </translation>
         </message>
@@ -3052,6 +3056,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Create a working plane</translation>
         </message>
         <message>
+            <source>STB_POP_POINT_MARKER</source>
+            <translation>Set Point Marker</translation>
+        </message>
+        <message>
             <source>SUPPRESS_RESULT</source>
             <translation>Suppress Result</translation>
         </message>
@@ -3510,6 +3518,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>TOP_WORK_PLANE</source>
             <translation>Create a working plane</translation>
+        </message>
+        <message>
+            <source>TOP_POP_POINT_MARKER</source>
+            <translation>Point Marker</translation>
         </message>
         <message>
             <source>WRN_NOT_IMPLEMENTED</source>
@@ -4263,6 +4275,53 @@ Would you like to continue?</translation>
         <message>
             <source>GEOM_DELETE_OBJECTS</source>
             <translation>Delete objects</translation>
+        </message>
+    </context>
+    <context>
+        <name>GEOMToolsGUI_MarkerDlg</name>
+        <message>
+            <source>SET_MARKER_TLT</source>
+            <translation>Set Point Marker</translation>
+        </message>
+        <message>
+            <source>STANDARD_MARKER</source>
+            <translation>Standard</translation>
+        </message>
+        <message>
+            <source>CUSTOM_MARKER</source>
+            <translation>Custom</translation>
+        </message>
+        <message>
+            <source>TYPE</source>
+            <translation>Type:</translation>
+        </message>
+        <message>
+            <source>SCALE</source>
+            <translation>Scale:</translation>
+        </message>
+        <message>
+            <source>CUSTOM</source>
+            <translation>Texture:</translation>
+        </message>
+        <message>
+            <source>BROWSE</source>
+            <translation>Browse...</translation>
+        </message>
+        <message>
+            <source>OK_BTN</source>
+            <translation>&amp;OK</translation>
+        </message>
+        <message>
+            <source>CANCEL_BTN</source>
+            <translation>&amp;Cancel</translation>
+        </message>
+        <message>
+            <source>HELP_BTN</source>
+            <translation>&amp;Help</translation>
+        </message>
+        <message>
+            <source>LOAD_TEXTURE_TLT</source>
+            <translation>Load Texture</translation>
         </message>
     </context>
 </TS>
