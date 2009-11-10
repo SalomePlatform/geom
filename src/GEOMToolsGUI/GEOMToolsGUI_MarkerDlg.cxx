@@ -169,7 +169,11 @@ void GEOMToolsGUI_MarkerDlg::setStandardMarker( GEOM::marker_type type, GEOM::ma
     myTypeGroup->button( 0 )->setChecked( true );
     myWGStack->setCurrentIndex( 0 );
     myStdTypeCombo->setCurrentIndex( (int)type - 1 );
+#ifdef WNT
+    int asize = max( (int)GEOM::MS_10, min( (int)GEOM::MS_70, (int)size ) );
+#else
     int asize = std::max( (int)GEOM::MS_10, std::min( (int)GEOM::MS_70, (int)size ) );
+#endif
     myStdScaleCombo->setCurrentIndex( asize-1 );
   }
 }
@@ -309,6 +313,9 @@ void GEOMToolsGUI_MarkerDlg::init()
     setStandardMarker( aType, aSize );
   else if ( aType == GEOM::MT_USER )
     setCustomMarker( aTexture );
+  else
+    setStandardMarker((GEOM::marker_type)(resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS) + 1),
+		      (GEOM::marker_size)(resMgr->integerValue("Geometry", "marker_scale", 1)));
 }
 
 void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
