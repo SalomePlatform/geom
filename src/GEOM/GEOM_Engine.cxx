@@ -111,7 +111,7 @@ bool ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      TCollection_AsciiString& theScript,
                      TCollection_AsciiString& theAfterScript,
                      const TVariablesList&    theVariables,
-		     const bool               theIsPublished,
+                     const bool               theIsPublished,
                      TDF_LabelMap&            theProcessed,
                      std::set<std::string>&   theIgnoreObjs,
                      bool&                    theIsDumpCollected);
@@ -122,25 +122,25 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
 
 void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
-			    Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-			    const bool                                theIsPublished,
-			    Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
+                            Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                            const bool                                theIsPublished,
+                            Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
                             TColStd_SequenceOfAsciiString&            theObjListToPublish);
 
 void AddObjectColors (int                                             theDocID,
-		      TCollection_AsciiString&                        theScript,
-		      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames);
+                      TCollection_AsciiString&                        theScript,
+                      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames);
 
 void AddTextures (int theDocID, TCollection_AsciiString& theScript);
 
 void PublishObject (const TCollection_AsciiString&                  theEntry,
-		    const TCollection_AsciiString&                  theName,
-		    const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-		    const Resource_DataMapOfAsciiStringAsciiString& theEntry2StEntry,
-		    const Resource_DataMapOfAsciiStringAsciiString& theStEntry2Entry,
-		    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
-		    std::map< int, std::string >&                   theEntryToCommandMap,
-		    std::set<std::string>&                          theMapOfPublished);
+                    const TCollection_AsciiString&                  theName,
+                    const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                    const Resource_DataMapOfAsciiStringAsciiString& theEntry2StEntry,
+                    const Resource_DataMapOfAsciiStringAsciiString& theStEntry2Entry,
+                    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
+                    std::map< int, std::string >&                   theEntryToCommandMap,
+                    std::set<std::string>&                          theMapOfPublished);
 
 //=======================================================================
 //function : GetTextureGUID
@@ -587,32 +587,32 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       bool isDumpCollected = false;
       TCollection_AsciiString aCurScript, anAfterScript;
       if (!ProcessFunction(aFunction, aCurScript, anAfterScript, theVariables,
-			   isPublished, aCheckedFuncMap, anIgnoreObjMap,
-			   isDumpCollected ))
+                           isPublished, aCheckedFuncMap, anIgnoreObjMap,
+                           isDumpCollected ))
         continue;
       // add function description before dump
       if (!aCurScript.IsEmpty())
         aFuncScript += aCurScript;
       if (isDumpCollected ) {
-	// Replace entries by the names
+        // Replace entries by the names
         ReplaceEntriesByNames( aFuncScript, theObjectNames,
                                isPublished, anEntryToBadName, aObjListToPublish );
-	
-	// publish collected objects
-	std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
+        
+        // publish collected objects
+        std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
         int i = 1, n = aObjListToPublish.Length();
-	for ( ; i <= n; i++ )
+        for ( ; i <= n; i++ )
         {
           const TCollection_AsciiString& aEntry = aObjListToPublish.Value(i);
-	  if (!theObjectNames.IsBound( aEntry ))
+          if (!theObjectNames.IsBound( aEntry ))
             continue;
-	  PublishObject( aEntry, theObjectNames.Find(aEntry),
-			theObjectNames,	aEntry2StEntry, aStEntry2Entry,
-			anEntryToBadName, anEntryToCommandMap, anIgnoreObjMap );
+          PublishObject( aEntry, theObjectNames.Find(aEntry),
+                        theObjectNames, aEntry2StEntry, aStEntry2Entry,
+                        anEntryToBadName, anEntryToCommandMap, anIgnoreObjMap );
         }
-	// add publishing commands to the script
-	std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
-	for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
+        // add publishing commands to the script
+        std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
+        for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
           aFuncScript += (char*)anEntryToCommand->second.c_str();
         
         // PTv, 0020001 add result objects from RestoreSubShapes into ignore list,
@@ -630,9 +630,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
           }
         }
 
-	aObjListToPublish.Clear();
-	aScript += aFuncScript;
-	aFuncScript.Clear();
+        aObjListToPublish.Clear();
+        aScript += aFuncScript;
+        aFuncScript.Clear();
       }
       aFuncScript += anAfterScript;
     }
@@ -661,8 +661,8 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         continue; // should not be dumped
       const TCollection_AsciiString& aName = anEntryToNameIt.Value();
       PublishObject( aEntry, aName, theObjectNames,
-		    aEntry2StEntry, aStEntry2Entry,
-		    anEntryToBadName, anEntryToCommandMap, anIgnoreObjMap );
+                    aEntry2StEntry, aStEntry2Entry,
+                    anEntryToBadName, anEntryToCommandMap, anIgnoreObjMap );
     }
     // add publishing commands to the script
     std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
@@ -733,8 +733,8 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 #define TEXTURE_LABEL_DATA     5
 
 int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight, 
-			    const Handle(TDataStd_HArray1OfByte)& theTexture,
-			    const TCollection_AsciiString& theFileName)
+                            const Handle(TDataStd_HArray1OfByte)& theTexture,
+                            const TCollection_AsciiString& theFileName)
 {
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
@@ -771,16 +771,16 @@ int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
 
   Handle(TDataStd_ByteArray) anAttr =
     TDataStd_ByteArray::Set(aChild.FindChild(TEXTURE_LABEL_DATA), 
-			    theTexture.IsNull() ? 0 : theTexture->Lower(),
-			    theTexture.IsNull() ? 0 : theTexture->Upper());
+                            theTexture.IsNull() ? 0 : theTexture->Lower(),
+                            theTexture.IsNull() ? 0 : theTexture->Upper());
   anAttr->ChangeArray(theTexture);
 
   return aTextureID;
 }
 
 Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
-						       int& theWidth, int& theHeight,
-						       TCollection_AsciiString& theFileName)
+                                                       int& theWidth, int& theHeight,
+                                                       TCollection_AsciiString& theFileName)
 {
   Handle(TDataStd_HArray1OfByte) anArray;
   theWidth = theHeight = 0;
@@ -795,24 +795,24 @@ Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theText
       TDF_Label anIDLabel = aTextureLabel.FindChild(TEXTURE_LABEL_ID, Standard_False);
       Handle(TDataStd_Integer) anIdAttr;
       if(!anIDLabel.IsNull() && anIDLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr) && 
-	 anIdAttr->Get() == theTextureID) {
-	TDF_Label aFileLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_FILE,    Standard_False);
-	TDF_Label aWidthLabel  = aTextureLabel.FindChild(TEXTURE_LABEL_WIDTH,   Standard_False);
-	TDF_Label aHeightLabel = aTextureLabel.FindChild(TEXTURE_LABEL_HEIGHT,  Standard_False);
-	TDF_Label aDataLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_DATA,    Standard_False);
-	Handle(TDataStd_Integer) aWidthAttr, aHeightAttr;
-	Handle(TDataStd_ByteArray) aTextureAttr;
-	Handle(TDataStd_Comment) aFileAttr;
-	if (!aWidthLabel.IsNull()  && aWidthLabel.FindAttribute(TDataStd_Integer::GetID(),  aWidthAttr) &&
-	    !aHeightLabel.IsNull() && aHeightLabel.FindAttribute(TDataStd_Integer::GetID(), aHeightAttr) &&
-	    !aDataLabel.IsNull()   && aDataLabel.FindAttribute(TDataStd_ByteArray::GetID(), aTextureAttr)) {
-	  theWidth = aWidthAttr->Get();
-	  theHeight = aHeightAttr->Get();
-	  anArray = aTextureAttr->InternalArray();
-	}
-	if (!aFileLabel.IsNull() && aFileLabel.FindAttribute(TDataStd_Comment::GetID(), aFileAttr))
-	  theFileName = aFileAttr->Get();
-	found = true;
+         anIdAttr->Get() == theTextureID) {
+        TDF_Label aFileLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_FILE,    Standard_False);
+        TDF_Label aWidthLabel  = aTextureLabel.FindChild(TEXTURE_LABEL_WIDTH,   Standard_False);
+        TDF_Label aHeightLabel = aTextureLabel.FindChild(TEXTURE_LABEL_HEIGHT,  Standard_False);
+        TDF_Label aDataLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_DATA,    Standard_False);
+        Handle(TDataStd_Integer) aWidthAttr, aHeightAttr;
+        Handle(TDataStd_ByteArray) aTextureAttr;
+        Handle(TDataStd_Comment) aFileAttr;
+        if (!aWidthLabel.IsNull()  && aWidthLabel.FindAttribute(TDataStd_Integer::GetID(),  aWidthAttr) &&
+            !aHeightLabel.IsNull() && aHeightLabel.FindAttribute(TDataStd_Integer::GetID(), aHeightAttr) &&
+            !aDataLabel.IsNull()   && aDataLabel.FindAttribute(TDataStd_ByteArray::GetID(), aTextureAttr)) {
+          theWidth = aWidthAttr->Get();
+          theHeight = aHeightAttr->Get();
+          anArray = aTextureAttr->InternalArray();
+        }
+        if (!aFileLabel.IsNull() && aFileLabel.FindAttribute(TDataStd_Comment::GetID(), aFileAttr))
+          theFileName = aFileAttr->Get();
+        found = true;
       }
     }
   }
@@ -832,7 +832,7 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
       TDF_Label anIDLabel = aTextureLabel.FindChild(TEXTURE_LABEL_ID, Standard_False);
       Handle(TDataStd_Integer) anIdAttr;
       if(!anIDLabel.IsNull() && anIDLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr))
-	id_list.push_back((int)anIdAttr->Get());
+        id_list.push_back((int)anIdAttr->Get());
     }
   }
   return id_list;
@@ -851,7 +851,7 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
                      TCollection_AsciiString&   theScript,
                      TCollection_AsciiString&   theAfterScript,
                      const TVariablesList&      theVariables,
-		     const bool                 theIsPublished,
+                     const bool                 theIsPublished,
                      TDF_LabelMap&              theProcessed,
                      std::set<std::string>&     theIgnoreObjs,
                      bool&                      theIsDumpCollected)
@@ -1029,14 +1029,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     int aNbEntries = 1;
     if( anEntry.Value( 1 ) == O_SQR_BRACKET && anEntry.Value( anEntry.Length() ) == C_SQR_BRACKET ) {
       while(anEntry.Location(aNbEntries,COMMA,1,anEntry.Length()))
-	aNbEntries++;
+        aNbEntries++;
       TCollection_AsciiString aSeparator(COMMA);
       anEntry = anEntry.Token(aSeparator.ToCString(),1);
       anEntry.Remove( 1, 1 );
       anEntry.RightAdjust();
       anEntry.LeftAdjust();
       if(MYDEBUG)
-	cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
+        cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
     }
     
     //Find variables used for object construction
@@ -1047,7 +1047,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 
     if(!aStates) {
       if(MYDEBUG)
-	cout<<"Valiables list empty!!!"<<endl;
+        cout<<"Valiables list empty!!!"<<endl;
       aCommandIndex++;
       continue;
     }
@@ -1057,7 +1057,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
     if(MYDEBUG) {
       cout<<"Variables from SObject:"<<endl;
       for (int i = 0; i < aVariables.size();i++)
-	cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
+        cout<<"\t Variable["<<i<<"] = "<<aVariables[i].myVariable<<endl;
     }
 
     //Calculate total number of parameters
@@ -1079,136 +1079,136 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       //Replace first parameter (bettwen '(' character and first ',' character)
       if(i == aFirstParam)
       {
-	aStartPos = aCommand.Location(O_BRACKET, 1, aCommand.Length()) + 1;
-	if(aTotalNbParams - aNbEntries > 0 )
-	  aEndPos = aCommand.Location(aFirstParam, COMMA, 1, aCommand.Length());
-	else
-	  aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());	
+        aStartPos = aCommand.Location(O_BRACKET, 1, aCommand.Length()) + 1;
+        if(aTotalNbParams - aNbEntries > 0 )
+          aEndPos = aCommand.Location(aFirstParam, COMMA, 1, aCommand.Length());
+        else
+          aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length()); 
       }
       //Replace last parameter (bettwen ',' character and ')' character)
       else if(i == aTotalNbParams)
       {
-	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
-	aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
+        aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+        aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
       }
       //Replace other parameters (bettwen two ',' characters)
       else if(i != aFirstParam && i != aTotalNbParams )
       {
-	aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
-	aEndPos = aCommand.Location(i, COMMA, 1, aCommand.Length());
+        aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
+        aEndPos = aCommand.Location(i, COMMA, 1, aCommand.Length());
       }
 
       if( aCommand.Value( aStartPos ) == O_SQR_BRACKET )
-	aStartPos++;
+        aStartPos++;
       if( aCommand.Value( aEndPos-1 ) == C_SQR_BRACKET )
-	aEndPos--;
+        aEndPos--;
       if ( aStartPos == aEndPos )
         continue; // PAL20889: for "[]"
 
       if(MYDEBUG) 
-	cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
+        cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
 
       aVar = aCommand.SubString(aStartPos, aEndPos-1);
       aVar.RightAdjust();
       aVar.LeftAdjust();
     
       if(MYDEBUG) 
-	cout<<"Variable: '"<< aVar <<"'"<<endl;
+        cout<<"Variable: '"<< aVar <<"'"<<endl;
 
       // specific case for sketcher
       if(aVar.Location( TCollection_AsciiString("Sketcher:"), 1, aVar.Length() ) != 0) {
-	Standard_Integer aNbSections = 1;
-	while( aVar.Location( aNbSections, ':', 1, aVar.Length() ) )
-	  aNbSections++;
-	aNbSections--;
+        Standard_Integer aNbSections = 1;
+        while( aVar.Location( aNbSections, ':', 1, aVar.Length() ) )
+          aNbSections++;
+        aNbSections--;
 
-	int aStartSectionPos = 0, aEndSectionPos = 0;
-	TCollection_AsciiString aSection, aReplacedSection;
-	for(Standard_Integer aSectionIndex = 1; aSectionIndex <= aNbSections; aSectionIndex++) {
-	  aStartSectionPos = aVar.Location( aSectionIndex, ':', 1, aVar.Length() ) + 1;
-	  if( aSectionIndex != aNbSections )
-	    aEndSectionPos = aVar.Location( aSectionIndex + 1, ':', 1, aVar.Length() );
-	  else
-	    aEndSectionPos = aVar.Length();
+        int aStartSectionPos = 0, aEndSectionPos = 0;
+        TCollection_AsciiString aSection, aReplacedSection;
+        for(Standard_Integer aSectionIndex = 1; aSectionIndex <= aNbSections; aSectionIndex++) {
+          aStartSectionPos = aVar.Location( aSectionIndex, ':', 1, aVar.Length() ) + 1;
+          if( aSectionIndex != aNbSections )
+            aEndSectionPos = aVar.Location( aSectionIndex + 1, ':', 1, aVar.Length() );
+          else
+            aEndSectionPos = aVar.Length();
 
-	  aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
-	  if(MYDEBUG) 
-	    cout<<"aSection: "<<aSection<<endl;
+          aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
+          if(MYDEBUG) 
+            cout<<"aSection: "<<aSection<<endl;
 
-	  Standard_Integer aNbParams = 1;
-	  while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
-	    aNbParams++;
-	  aNbParams--;
+          Standard_Integer aNbParams = 1;
+          while( aSection.Location( aNbParams, ' ', 1, aSection.Length() ) )
+            aNbParams++;
+          aNbParams--;
 
-	  int aStartParamPos = 0, aEndParamPos = 0;
-	  TCollection_AsciiString aParameter, aReplacedParameter;
-	  for(Standard_Integer aParamIndex = 1; aParamIndex <= aNbParams; aParamIndex++) {
-	    aStartParamPos = aSection.Location( aParamIndex, ' ', 1, aSection.Length() ) + 1;
-	    if( aParamIndex != aNbParams )
-	      aEndParamPos = aSection.Location( aParamIndex + 1, ' ', 1, aSection.Length() );
-	    else
-	      aEndParamPos = aSection.Length() + 1;
+          int aStartParamPos = 0, aEndParamPos = 0;
+          TCollection_AsciiString aParameter, aReplacedParameter;
+          for(Standard_Integer aParamIndex = 1; aParamIndex <= aNbParams; aParamIndex++) {
+            aStartParamPos = aSection.Location( aParamIndex, ' ', 1, aSection.Length() ) + 1;
+            if( aParamIndex != aNbParams )
+              aEndParamPos = aSection.Location( aParamIndex + 1, ' ', 1, aSection.Length() );
+            else
+              aEndParamPos = aSection.Length() + 1;
 
-	    aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
-	    if(MYDEBUG) 
-	      cout<<"aParameter: "<<aParameter<<endl;
+            aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
+            if(MYDEBUG) 
+              cout<<"aParameter: "<<aParameter<<endl;
 
-	    if(iVar >= aVariables.size())
-	      continue;
+            if(iVar >= aVariables.size())
+              continue;
 
-	    aReplacedParameter = aVariables[iVar].myVariable;
-	    if(aReplacedParameter.IsEmpty()) {
-	      iVar++;
-	      continue;
-	    }
+            aReplacedParameter = aVariables[iVar].myVariable;
+            if(aReplacedParameter.IsEmpty()) {
+              iVar++;
+              continue;
+            }
 
-	    if(aVariables[iVar].isVariable) {
-	      aReplacedParameter.InsertBefore(1,"'");
-	      aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
-	    }
+            if(aVariables[iVar].isVariable) {
+              aReplacedParameter.InsertBefore(1,"'");
+              aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
+            }
 
-	    if(MYDEBUG) 
-	      cout<<"aSection before : "<<aSection<<endl;
-	    aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
-	    aSection.Insert(aStartParamPos, aReplacedParameter);
-	    if(MYDEBUG) 
-	      cout<<"aSection after  : "<<aSection<<endl<<endl;
-	    iVar++;
-	  }
-	  if(MYDEBUG) 
-	    cout<<"aVar before : "<<aVar<<endl;
-	  aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
-	  aVar.Insert(aStartSectionPos, aSection);
-	  if(MYDEBUG) 
-	    cout<<"aVar after  : "<<aVar<<endl<<endl;
-	}
+            if(MYDEBUG) 
+              cout<<"aSection before : "<<aSection<<endl;
+            aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
+            aSection.Insert(aStartParamPos, aReplacedParameter);
+            if(MYDEBUG) 
+              cout<<"aSection after  : "<<aSection<<endl<<endl;
+            iVar++;
+          }
+          if(MYDEBUG) 
+            cout<<"aVar before : "<<aVar<<endl;
+          aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
+          aVar.Insert(aStartSectionPos, aSection);
+          if(MYDEBUG) 
+            cout<<"aVar after  : "<<aVar<<endl<<endl;
+        }
 
-	if(MYDEBUG) 
-	  cout<<"aCommand before : "<<aCommand<<endl;
-	aCommand.Remove(aStartPos, aEndPos - aStartPos);
-	aCommand.Insert(aStartPos, aVar);
-	if(MYDEBUG) 
-	  cout<<"aCommand after  : "<<aCommand<<endl;
+        if(MYDEBUG) 
+          cout<<"aCommand before : "<<aCommand<<endl;
+        aCommand.Remove(aStartPos, aEndPos - aStartPos);
+        aCommand.Insert(aStartPos, aVar);
+        if(MYDEBUG) 
+          cout<<"aCommand after  : "<<aCommand<<endl;
 
-	break;
+        break;
       } // end of specific case for sketcher
 
       //If parameter is entry or 'None', skip it
       if(theVariables.find(aVar) != theVariables.end() || aVar.Search(":") != -1 || aVar == PY_NULL)
-	continue;
+        continue;
 
       if(iVar >= aVariables.size())
-	continue;
+        continue;
 
       aReplacedVar = aVariables[iVar].myVariable;
       if(aReplacedVar.IsEmpty()) {
-	iVar++;
-	continue;
+        iVar++;
+        continue;
       }
 
       if(aVariables[iVar].isVariable) {
-	aReplacedVar.InsertBefore(1,"\"");
-	aReplacedVar.InsertAfter(aReplacedVar.Length(),"\"");
+        aReplacedVar.InsertBefore(1,"\"");
+        aReplacedVar.InsertAfter(aReplacedVar.Length(),"\"");
       }
 
       aCommand.Remove(aStartPos, aEndPos - aStartPos);
@@ -1234,9 +1234,9 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
  */
 //=============================================================================
 void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
-			    Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-			    const bool                                theIsPublished,
-			    Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
+                            Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                            const bool                                theIsPublished,
+                            Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
                             TColStd_SequenceOfAsciiString&            theObjListToPublish)
 {
   Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(theScript);
@@ -1307,8 +1307,8 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
  */
 //=============================================================================
 void AddObjectColors (int                                             theDocID,
-		      TCollection_AsciiString&                        theScript,
-		      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames)
+                      TCollection_AsciiString&                        theScript,
+                      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames)
 {
   GEOM_Engine* engine = GEOM_Engine::GetEngine();
   Handle(TDocStd_Document) aDoc = engine->GetDocument(theDocID);
@@ -1390,11 +1390,11 @@ void AddObjectColors (int                                             theDocID,
     else if (aMarkerType == Aspect_TOM_USERDEFINED) {
       int aMarkerTextureID = obj->GetMarkerTexture();
       if (aMarkerTextureID >= 0) {
-	TCollection_AsciiString aCommand( "\n\t" );
-	aCommand += aName + ".SetMarkerTexture(texture_map[";
-	aCommand += aMarkerTextureID;
-	aCommand += "])";
-	theScript += aCommand.ToCString();
+        TCollection_AsciiString aCommand( "\n\t" );
+        aCommand += aName + ".SetMarkerTexture(texture_map[";
+        aCommand += aMarkerTextureID;
+        aCommand += "])";
+        theScript += aCommand.ToCString();
       }
     }
   }
@@ -1408,7 +1408,7 @@ static TCollection_AsciiString pack_data(const Handle(TDataStd_HArray1OfByte)& a
       Standard_Byte byte = aData->Value(i);
       TCollection_AsciiString strByte = "";
       for (int j = 0; j < 8; j++)
-	strByte.Prepend((byte & (1<<j)) ? "1" : "0");
+        strByte.Prepend((byte & (1<<j)) ? "1" : "0");
       stream += strByte;
     }
   }
@@ -1430,20 +1430,20 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
       TCollection_AsciiString aFileName;
       Handle(TDataStd_HArray1OfByte) aTexture = engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
       if (aWidth > 0 && aHeight > 0 && !aTexture.IsNull() && aTexture->Length() > 0 ) {
-	TCollection_AsciiString aCommand = "\n\t";
-	aCommand += "texture_map["; aCommand += *it; aCommand += "] = ";
-	if (aFileName != "" ) {
-	  aCommand += "geompy.LoadTexture(\"";
-	  aCommand += aFileName.ToCString();
-	  aCommand += "\")";
-	}
-	else {
-	  aCommand += "geompy.AddTexture(";
-	  aCommand += aWidth; aCommand += ", "; aCommand += aHeight; aCommand += ", \"";
-	  aCommand += pack_data(aTexture);
-	  aCommand += "\")";
-	}
-	theScript += aCommand;
+        TCollection_AsciiString aCommand = "\n\t";
+        aCommand += "texture_map["; aCommand += *it; aCommand += "] = ";
+        if (aFileName != "" ) {
+          aCommand += "geompy.LoadTexture(\"";
+          aCommand += aFileName.ToCString();
+          aCommand += "\")";
+        }
+        else {
+          aCommand += "geompy.AddTexture(";
+          aCommand += aWidth; aCommand += ", "; aCommand += aHeight; aCommand += ", \"";
+          aCommand += pack_data(aTexture);
+          aCommand += "\")";
+        }
+        theScript += aCommand;
       }
     }
     theScript += "\n";
@@ -1456,13 +1456,13 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
  */
 //=============================================================================
 void PublishObject (const TCollection_AsciiString&                  theEntry,
-		    const TCollection_AsciiString&                  theName,
-		    const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-		    const Resource_DataMapOfAsciiStringAsciiString& theEntry2StEntry,
-		    const Resource_DataMapOfAsciiStringAsciiString& theStEntry2Entry,
-		    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
-		    std::map< int, std::string >&                   theEntryToCommandMap,
-		    std::set<std::string>&                          theMapOfPublished)
+                    const TCollection_AsciiString&                  theName,
+                    const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                    const Resource_DataMapOfAsciiStringAsciiString& theEntry2StEntry,
+                    const Resource_DataMapOfAsciiStringAsciiString& theStEntry2Entry,
+                    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
+                    std::map< int, std::string >&                   theEntryToCommandMap,
+                    std::set<std::string>&                          theMapOfPublished)
 {
   if ( !theEntry2StEntry.IsBound( theEntry ))
     return; // was not published

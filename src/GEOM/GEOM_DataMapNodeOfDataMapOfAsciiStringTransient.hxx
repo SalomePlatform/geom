@@ -77,7 +77,7 @@ Standard_EXPORT ~GEOM_DataMapNodeOfDataMapOfAsciiStringTransient();
  //
  Standard_EXPORT friend Handle_Standard_Type& GEOM_DataMapNodeOfDataMapOfAsciiStringTransient_Type_();
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ Standard_EXPORT Standard_Boolean              IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

@@ -101,11 +101,11 @@ Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
       B.MakeCompound(aCompound);
 
       for (int i = anIndices->Lower(); i<= anIndices->Upper(); i++) {
-	if (aMapOfShapes.Extent() < anIndices->Value(i))
-	  Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute: Index is out of range");
-	TopoDS_Shape aSubShape = aMapOfShapes.FindKey(anIndices->Value(i));
-	if (aSubShape.IsNull()) continue;
-	B.Add(aCompound,aSubShape);
+        if (aMapOfShapes.Extent() < anIndices->Value(i))
+          Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute: Index is out of range");
+        TopoDS_Shape aSubShape = aMapOfShapes.FindKey(anIndices->Value(i));
+        if (aSubShape.IsNull()) continue;
+        B.Add(aCompound,aSubShape);
       }
 
       aShape = aCompound;
@@ -145,10 +145,10 @@ Standard_EXPORT Handle_Standard_Type& GEOM_SubShapeDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_SubShapeDriver",
-			                                 sizeof(GEOM_SubShapeDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOM_SubShapeDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

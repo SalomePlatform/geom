@@ -119,26 +119,26 @@ class GEOM_Engine
 
   //Adds a new sub shape object of the MainShape object
   Standard_EXPORT Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
-				  Handle(TColStd_HArray1OfInteger) theIndices,
-				  bool isStandaloneOperation = false);
+                                  Handle(TColStd_HArray1OfInteger) theIndices,
+                                  bool isStandaloneOperation = false);
 
   Standard_EXPORT TCollection_AsciiString DumpPython(int theDocID, 
-				     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                     Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
                                      TVariablesList theVariables,
-				     bool isPublished, 
-				     bool& aValidScript);
+                                     bool isPublished, 
+                                     bool& aValidScript);
 
   Standard_EXPORT const char* GetDumpName (const char* theStudyEntry) const;
 
   Standard_EXPORT Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
   Standard_EXPORT int addTexture(int theDocID, int theWidth, int theHeight,
-				 const Handle(TDataStd_HArray1OfByte)& theTexture,
-				 const TCollection_AsciiString& theFileName = "");
+                                 const Handle(TDataStd_HArray1OfByte)& theTexture,
+                                 const TCollection_AsciiString& theFileName = "");
 
   Standard_EXPORT Handle(TDataStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
-							    int& theWidth, int& theHeight,
-							    TCollection_AsciiString& theFileName);
+                                                            int& theWidth, int& theHeight,
+                                                            TCollection_AsciiString& theFileName);
 
   Standard_EXPORT std::list<int> getAllTextures(int theDocID);
 

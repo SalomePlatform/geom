@@ -455,7 +455,7 @@ int GEOM_Object::GetMarkerTexture()
       TDF_Label aTypeLabel = aMarkerLabel.FindChild(MARKER_LABEL_ID, Standard_False);
       Handle(TDataStd_Integer) anIdAttr;
       if (!aTypeLabel.IsNull() && aTypeLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr))
-	anId = anIdAttr->Get();
+        anId = anIdAttr->Get();
     }
   }
   return anId;
@@ -671,10 +671,10 @@ Standard_EXPORT Handle_Standard_Type& GEOM_Object_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_Object",
-			                                 sizeof(GEOM_Object),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOM_Object),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
   return _aType;
 }
 
