@@ -849,7 +849,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
   }
   else
   {
-    bool isVector;
+    bool isVector = false;
     if (myType == GEOM_VECTOR) isVector = true;
     theActors = GEOM_AssemblyBuilder::BuildActors( myShape, 0, 0, Standard_True, isVector );
   }
