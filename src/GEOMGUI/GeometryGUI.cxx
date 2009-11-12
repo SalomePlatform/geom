@@ -344,7 +344,7 @@ void GeometryGUI::OnGUIEvent( int id )
   bool ViewVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
-  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 );
+  bool NotViewerDependentCommand = ( id == 901 || id == 216 || id == 213 || id == 33 || id == 8037 || id == 8038 || id == 8039 );
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommand )
       return;
 
