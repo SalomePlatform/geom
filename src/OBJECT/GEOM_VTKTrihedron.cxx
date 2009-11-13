@@ -200,9 +200,18 @@ GEOM_VTKTrihedron::GEOM_VTKTrihedron()
   myMapper = vtkPolyDataMapper::New();
   myAxis[ 0 ] = myAxis[ 1 ] = myAxis[ 2 ] = 0;
   mySize = 100;
-  SetInfinitive( true );
-  myColor[ 0 ] = myColor[ 1 ] = myColor[ 1 ] = -1;
-  SetInfinitive( true );
+
+  myColor[ 0 ] = myColor[ 1 ] = myColor[ 2 ] = -1;
+
+  myDefaultColor[ 0 ] = myDefaultColor[ 1 ] = myDefaultColor[ 2 ] = 1;
+
+  myPreHighlightColor[ 0 ] = 0;
+  myPreHighlightColor[ 1 ] = myPreHighlightColor[ 2 ] = 1;
+
+  myHighlightColor[ 0 ] = myHighlightColor[ 1 ] = myHighlightColor[ 2 ] = 1;
+
+  //SetInfinitive( true );
+  SetPickable( true );
 }
 
 GEOM_VTKTrihedron::~GEOM_VTKTrihedron()
@@ -252,6 +261,12 @@ void GEOM_VTKTrihedron::SetSize( vtkFloatingPointType theSize )
   aSrcY->Delete();
   aSrcZ->Delete();
   aRes->Delete();
+}
+
+void GEOM_VTKTrihedron::SetVisibility( int theVisibility )
+{
+  Superclass::SetVisibility( theVisibility );
+  SetVisibility( theVisibility == 1 ? VTKViewer_Trihedron::eOn : VTKViewer_Trihedron::eOff );
 }
 
 void GEOM_VTKTrihedron::SetVisibility( VTKViewer_Trihedron::TVisibility theVis )
@@ -368,21 +383,48 @@ bool GEOM_VTKTrihedron::IsSetCamera() const
 
 bool GEOM_VTKTrihedron::IsResizable() const
 {
-  return true;
+  return false;
 }
 
+void GEOM_VTKTrihedron::Highlight( bool theIsHighlight )
+{
+  if( theIsHighlight )
+    SetAxesColors( myHighlightColor );
+  else
+    ResetAxesColors();
 
+  Superclass::Highlight( theIsHighlight );
+}
 
+bool GEOM_VTKTrihedron::PreHighlight( vtkInteractorStyle *theInteractorStyle, 
+                                      SVTK_SelectionEvent* theSelectionEvent,
+                                      bool theIsHighlight )
+{
+  if ( !GetPickable() )
+    return false;  
 
+  if ( !isHighlighted() )
+  {
+    if( theIsHighlight )
+      SetAxesColors( myPreHighlightColor );
+    else
+      ResetAxesColors();
+  }
 
+  return Superclass::PreHighlight( theInteractorStyle, theSelectionEvent, theIsHighlight );
+}
 
+void GEOM_VTKTrihedron::ResetAxesColors()
+{
+  if( myColor[0] != -1 )
+    SetAxesColors( myColor );
+  else
+    SetAxesColors( myDefaultColor, true );
+}
 
-
-
-
-
-
-
-
-
-
+void GEOM_VTKTrihedron::SetAxesColors( vtkFloatingPointType theColor[3], bool theIsDiffuse )
+{
+  myAxis[ 0 ]->SetColor( theColor[0], theIsDiffuse ? 0.0 : theColor[1], theIsDiffuse ? 0.0 : theColor[2] );
+  myAxis[ 1 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theColor[1], theIsDiffuse ? 0.0 : theColor[2] );
+  myAxis[ 2 ]->SetColor( theIsDiffuse ? 0.0 : theColor[0], theIsDiffuse ? 0.0 : theColor[1], theColor[2] );
+}

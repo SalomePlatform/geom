@@ -822,7 +822,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
   if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE )
   {
-    myToActivate = false;
+    //myToActivate = false; // ouv: commented to make the trihedron pickable (see IPAL18657)
     GEOM_VTKTrihedron* aTrh = GEOM_VTKTrihedron::New();
 
     if ( HasColor() )
