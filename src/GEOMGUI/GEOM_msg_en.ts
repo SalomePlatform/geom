@@ -336,6 +336,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Check and Improve Blocks Compound</translation>
         </message>
         <message>
+            <source>GEOM_CHECK_BLOCKS_COMPOUND_FAILED</source>
+            <translation>Check failed</translation>
+        </message>
+        <message>
             <source>GEOM_CHECK_BLOCKS_COMPOUND_ERRORS</source>
             <translation>Errors</translation>
         </message>
