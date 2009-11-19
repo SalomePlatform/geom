@@ -22,7 +22,7 @@
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "GEOMBase.h"
 
 #include <GeometryGUI.h>
@@ -126,12 +126,12 @@ bool GEOMBase::GetTopoFromSelection(const SALOME_ListIO& aList, TopoDS_Shape& td
     _PTR(GenericAttribute) anAttr;
     if( obj ) {
       if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-	_PTR(AttributeIOR) anIOR ( anAttr );
-	tds = GetShapeFromIOR(anIOR->Value().c_str());
-	if(tds.IsNull())
-	  return false;
-	else
-	  return true;
+        _PTR(AttributeIOR) anIOR ( anAttr );
+        tds = GetShapeFromIOR(anIOR->Value().c_str());
+        if(tds.IsNull())
+          return false;
+        else
+          return true;
       }
     }
   }
@@ -151,26 +151,26 @@ int GEOMBase::GetNameOfSelectedIObjects( const SALOME_ListIO& aList,
     {
       int nbSel = aList.Extent();
       if ( nbSel == 1 )
-	{
-	  Handle(SALOME_InteractiveObject) anIObj = aList.First();
-	  if(anIObj->hasEntry()) {
-	    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-	    if ( !appStudy ) return nbSel;
-	    _PTR(Study) aStudy = appStudy->studyDS();
+        {
+          Handle(SALOME_InteractiveObject) anIObj = aList.First();
+          if(anIObj->hasEntry()) {
+            SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+            if ( !appStudy ) return nbSel;
+            _PTR(Study) aStudy = appStudy->studyDS();
 
-	    _PTR(SObject) obj ( aStudy->FindObjectID(anIObj->getEntry()) );
+            _PTR(SObject) obj ( aStudy->FindObjectID(anIObj->getEntry()) );
 
-	    _PTR(GenericAttribute) anAttr;
+            _PTR(GenericAttribute) anAttr;
 
-	    if ( obj && obj->FindAttribute( anAttr, "AttributeName") )
-	      {
-		_PTR(AttributeName) aNameAttr ( anAttr );
-		theName = aNameAttr->Value().c_str();
-	      }
-	  }
-	}
+            if ( obj && obj->FindAttribute( anAttr, "AttributeName") )
+              {
+                _PTR(AttributeName) aNameAttr ( anAttr );
+                theName = aNameAttr->Value().c_str();
+              }
+          }
+        }
       else
-	theName = QObject::tr("%1_objects").arg(nbSel);
+        theName = QObject::tr("%1_objects").arg(nbSel);
 
       return nbSel;
     }
@@ -179,10 +179,10 @@ int GEOMBase::GetNameOfSelectedIObjects( const SALOME_ListIO& aList,
       GEOM::ListOfGO anObjs;
       ConvertListOfIOInListOfGO( aList, anObjs, theShapesOnly );
       if ( anObjs.length() == 1 ) {
-	theName = GetName( anObjs[ 0 ] );
+        theName = GetName( anObjs[ 0 ] );
       }
       else
-	theName = QString( "%1_objects" ).arg( anObjs.length() );
+        theName = QString( "%1_objects" ).arg( anObjs.length() );
 
       return anObjs.length();
     }
@@ -203,88 +203,88 @@ bool GEOMBase::GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& 
     {
     case TopAbs_COMPOUND:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUND").toLatin1().constData());
-	return true;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUND").toLatin1().constData());
+        return true;
       }
     case  TopAbs_COMPSOLID:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUNDSOLID").toLatin1().constData()) ;
-	return true ;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_COMPOUNDSOLID").toLatin1().constData()) ;
+        return true ;
       }
     case TopAbs_SOLID:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SOLID").toLatin1().constData()) ;
-	return true ;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_SOLID").toLatin1().constData()) ;
+        return true ;
       }
     case TopAbs_SHELL:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHELL").toLatin1().constData()) ;
-	return true ;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHELL").toLatin1().constData()) ;
+        return true ;
       }
     case TopAbs_FACE:
       {
-	BRepAdaptor_Surface surf(TopoDS::Face(aShape));
-	if(surf.GetType() == GeomAbs_Plane) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_PLANE").toLatin1().constData());
-	  return true;
-	}
-	else if(surf.GetType() == GeomAbs_Cylinder) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCYLINDER").toLatin1().constData());
-	  return true;
-	}
-	else if(surf.GetType() == GeomAbs_Sphere) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFSPHERE").toLatin1().constData());
-	  return true ;
-	}
-	else if(surf.GetType() == GeomAbs_Torus) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFTORUS").toLatin1().constData());
-	  return true ;
-	}
-	else if(surf.GetType() == GeomAbs_Cone) {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCONE").toLatin1().constData());
-	  return true ;
-	}
-	else {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_FACE").toLatin1().constData());
-	  return true;
-	}
+        BRepAdaptor_Surface surf(TopoDS::Face(aShape));
+        if(surf.GetType() == GeomAbs_Plane) {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_PLANE").toLatin1().constData());
+          return true;
+        }
+        else if(surf.GetType() == GeomAbs_Cylinder) {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCYLINDER").toLatin1().constData());
+          return true;
+        }
+        else if(surf.GetType() == GeomAbs_Sphere) {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFSPHERE").toLatin1().constData());
+          return true ;
+        }
+        else if(surf.GetType() == GeomAbs_Torus) {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFTORUS").toLatin1().constData());
+          return true ;
+        }
+        else if(surf.GetType() == GeomAbs_Cone) {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_SURFCONE").toLatin1().constData());
+          return true ;
+        }
+        else {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_FACE").toLatin1().constData());
+          return true;
+        }
       }
     case TopAbs_WIRE:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_WIRE").toLatin1().constData());
-	return true;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_WIRE").toLatin1().constData());
+        return true;
       }
     case TopAbs_EDGE:
       {
-	BRepAdaptor_Curve curv(TopoDS::Edge(aShape));
-	if(curv.GetType() == GeomAbs_Line) {
-	  if((Abs(curv.FirstParameter()) >= 1E6) || (Abs(curv.LastParameter()) >= 1E6))
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_LINE").toLatin1().constData());
-	  else
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
-	  return true;
-	}
-	else if(curv.GetType() == GeomAbs_Circle) {
-	  if(curv.IsClosed())
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_CIRCLE").toLatin1().constData());
-	  else
-	    aTypeString = CORBA::string_dup(QObject::tr("GEOM_ARC").toLatin1().constData());
-	return true;
+        BRepAdaptor_Curve curv(TopoDS::Edge(aShape));
+        if(curv.GetType() == GeomAbs_Line) {
+          if((Abs(curv.FirstParameter()) >= 1E6) || (Abs(curv.LastParameter()) >= 1E6))
+            aTypeString = CORBA::string_dup(QObject::tr("GEOM_LINE").toLatin1().constData());
+          else
+            aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
+          return true;
+        }
+        else if(curv.GetType() == GeomAbs_Circle) {
+          if(curv.IsClosed())
+            aTypeString = CORBA::string_dup(QObject::tr("GEOM_CIRCLE").toLatin1().constData());
+          else
+            aTypeString = CORBA::string_dup(QObject::tr("GEOM_ARC").toLatin1().constData());
+        return true;
       }
-	else {
-	  aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
-	  return true;
-	}
+        else {
+          aTypeString = CORBA::string_dup(QObject::tr("GEOM_EDGE").toLatin1().constData());
+          return true;
+        }
       }
     case TopAbs_VERTEX:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_VERTEX").toLatin1().constData());
-	return true;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_VERTEX").toLatin1().constData());
+        return true;
       }
     case TopAbs_SHAPE:
       {
-	aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHAPE").toLatin1().constData());
-	return true;
+        aTypeString = CORBA::string_dup(QObject::tr("GEOM_SHAPE").toLatin1().constData());
+        return true;
       }
     }
   return false;
@@ -324,21 +324,21 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIORinGEOMAISShape(const char * IOR, Stand
 
       AIS_ListIteratorOfListOfInteractive ite(List);
       while(ite.More()) {
-	if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-	  Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-	  if(aSh->hasIO()) {
-	    Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(aSh->getIO());
-	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
-	      if(!onlyInActiveView ||
-		 aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
-		testResult = true;
-		resultShape = aSh;
-		return resultShape;
-	      }
-	    }
-	  }
-	}
-	ite.Next();
+        if(ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
+          Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
+          if(aSh->hasIO()) {
+            Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(aSh->getIO());
+            if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
+              if(!onlyInActiveView ||
+                 aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
+                testResult = true;
+                resultShape = aSh;
+                return resultShape;
+              }
+            }
+          }
+        }
+        ite.Next();
       }
     }
   }
@@ -370,26 +370,26 @@ GEOM_Actor* GEOMBase::ConvertIORinGEOMActor(const char* IOR, Standard_Boolean& t
     if (aVW && aVW->getViewManager()->getType() == SVTK_Viewer::Type()) {
       SVTK_ViewWindow* aVTKViewWindow = dynamic_cast<SVTK_ViewWindow*>( aVW );
       if( !aVTKViewWindow )
-	continue;
+        continue;
       vtkRenderer* Renderer = aVTKViewWindow->getRenderer();
       vtkActorCollection* theActors = Renderer->GetActors();
       theActors->InitTraversal();
       vtkActor *ac = theActors->GetNextActor();
       while(!(ac==NULL)) {
-	if( ac->IsA("GEOM_Actor")) {
-	  GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(ac);
-	  if(anActor->hasIO()) {
-	    Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(anActor->getIO());
-	    if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
-	      if(!onlyInActiveView ||
-		 aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
-		testResult = true;
-		return anActor;
-	      }
-	    }
-	  }
-	}
-	ac = theActors->GetNextActor();
+        if( ac->IsA("GEOM_Actor")) {
+          GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(ac);
+          if(anActor->hasIO()) {
+            Handle(SALOME_InteractiveObject) GIO = Handle(SALOME_InteractiveObject)::DownCast(anActor->getIO());
+            if(GIO->hasEntry() && strcmp(GIO->getEntry(), anObj->GetID().c_str()) == 0) {
+              if(!onlyInActiveView ||
+                 aVW == SUIT_Session::session()->activeApplication()->desktop()->activeWindow()) {
+                testResult = true;
+                return anActor;
+              }
+            }
+          }
+        }
+        ac = theActors->GetNextActor();
       }
     }
   }
@@ -510,14 +510,16 @@ Handle(GEOM_AISShape) GEOMBase::ConvertIOinGEOMAISShape(const Handle(SALOME_Inte
 // function : ConvertIOinGEOMShape()
 // purpose  :
 //=======================================================================
-GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, Standard_Boolean& testResult)
+GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO,
+                                                     Standard_Boolean& testResult)
 {
   GEOM::GEOM_Object_var aShape;
   testResult = false;
 
   /* case SObject */
   if(IO->hasEntry()) {
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
+      (SUIT_Session::session()->activeApplication()->activeStudy());
     if ( !appStudy ) return GEOM::GEOM_Object::_nil();
     _PTR(Study) aStudy = appStudy->studyDS();
 
@@ -525,11 +527,11 @@ GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMShape(const Handle(SALOME_Interac
     _PTR(GenericAttribute) anAttr;
     if(obj) {
       if(obj->FindAttribute(anAttr, "AttributeIOR")) {
-	_PTR(AttributeIOR) anIOR ( anAttr );
-	aShape = GeometryGUI::GetGeomGen()->GetIORFromString(anIOR->Value().c_str());
-	if(!CORBA::is_nil(aShape))
-	  testResult = true;
-	return aShape._retn();
+        _PTR(AttributeIOR) anIOR ( anAttr );
+        aShape = GeometryGUI::GetGeomGen()->GetIORFromString(anIOR->Value().c_str());
+        if(!CORBA::is_nil(aShape))
+          testResult = true;
+        return aShape._retn();
       }
     }
   }
@@ -558,14 +560,14 @@ void GEOMBase::ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList, GEOM::stri
       _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
       _PTR(GenericAttribute) anAttr;
       if (obj && obj->FindAttribute(anAttr, "AttributeIOR")) {
-	_PTR(AttributeIOR) anIOR (anAttr);
+        _PTR(AttributeIOR) anIOR (anAttr);
         //CORBA::Object_var theObj = dynamic_cast<SALOMEDS_Study*>
         //  (aStudy.get())->ConvertIORToObject(anIOR->Value());
         CORBA::Object_var theObj = GeometryGUI::ClientSObjectToObject(obj);
-	if (!CORBA::is_nil(theObj) && theObj->_is_a("IDL:GEOM/GEOM_Object:1.0")) {
-	  listIOR[j] = CORBA::string_dup(anIOR->Value().c_str());
-	  j++;
-	}
+        if (!CORBA::is_nil(theObj) && theObj->_is_a("IDL:GEOM/GEOM_Object:1.0")) {
+          listIOR[j] = CORBA::string_dup(anIOR->Value().c_str());
+          j++;
+        }
       }
     }
   }
@@ -577,26 +579,27 @@ void GEOMBase::ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList, GEOM::stri
 // function : ConvertIOinGEOMObject()
 // purpose  :
 //=======================================================================
-GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMObject( const Handle(SALOME_InteractiveObject)& theIO,
-						       Standard_Boolean& theResult )
+GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMObject (const Handle(SALOME_InteractiveObject)& theIO,
+                                                       Standard_Boolean& theResult)
 {
   theResult = Standard_False;
   GEOM::GEOM_Object_var aReturnObject;
-  if ( !theIO.IsNull() )
+
+  if (!theIO.IsNull())
   {
     const char* anEntry = theIO->getEntry();
 
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
-      ( SUIT_Session::session()->activeApplication()->activeStudy() );
-    if ( !appStudy ) return  GEOM::GEOM_Object::_nil();
+      (SUIT_Session::session()->activeApplication()->activeStudy());
+    if (!appStudy) return  GEOM::GEOM_Object::_nil();
     _PTR(Study) aStudy = appStudy->studyDS();
 
-    _PTR(SObject) aSObj ( aStudy->FindObjectID( anEntry ) );
+    _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry));
 
     if (aSObj)
     {
       aReturnObject = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
-      theResult = !CORBA::is_nil( aReturnObject );
+      theResult = !CORBA::is_nil(aReturnObject);
     }
   }
   return aReturnObject._retn();
@@ -628,7 +631,7 @@ void GEOMBase::ConvertListOfIOInListOfGO( const SALOME_ListIO& theList,
     if ( aSObj )
     {
       GEOM::GEOM_Object_var aGeomObj =
-	GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
+        GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
       if ( !CORBA::is_nil( aGeomObj ) && ( !theShapesOnly || IsShape( aGeomObj ) ) )
         theListGO[ j++ ] = aGeomObj;
     }
@@ -852,7 +855,7 @@ void GEOMBase::ShowErrorMessage(const char* theErrorCode, const char* theComment
     aText.append("\n" + QString(theComment));
 
   SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(), QObject::tr( "GEOM_ERROR" ),
-			     QObject::tr("GEOM_PRP_ABORT") + aText, "OK" );
+                             QObject::tr("GEOM_PRP_ABORT") + aText, "OK" );
 }
 
 
@@ -920,7 +923,7 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr theObj )
       if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") )
       {
         _PTR(AttributeName) aNameAttr ( anAttr );
-	return QString( aNameAttr->Value().c_str() );
+        return QString( aNameAttr->Value().c_str() );
       }
     }
   }
