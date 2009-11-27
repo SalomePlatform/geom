@@ -1084,23 +1084,23 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
 
   GEOM::GEOM_IGroupOperations_var anOp = getGeomEngine()->GetIGroupOperations( getStudyId() );
  
-  for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ )
-    {
-      if ( !anOp->_is_nil() ) {
-	GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.value() );
-	if ( !aFatherObj->_is_nil() ) {	
-	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
-      
-	//Add Object to study if its not exist
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() )
-	  GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
-						it.value(), it.key().toLatin1().data(), aFatherObj );
-	}
+  for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ ) {
+    if ( !anOp->_is_nil() ) {
+      GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.value() );
+      if ( !aFatherObj->_is_nil() ) {
+        std::string aFatherEntry = getEntry( aFatherObj );      
+        if ( aFatherEntry != "") { // additional checking that object is valid 0020598 EDF 1191
+          GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
+          //Add Object to study if its not exist
+          if ( aFindedObject == GEOM::GEOM_Object::_nil() )
+            GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
+                                                  it.value(), it.key().toLatin1().data(), aFatherObj );
+        }
       }
-      else {
-	//cout << " anOperations is NULL! " << endl;
-      }
+    } else {
+      //cout << " anOperations is NULL! " << endl;
     }
-}  
+  }
+}
 
   
