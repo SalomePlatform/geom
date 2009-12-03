@@ -54,6 +54,7 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 
 #include <TopTools_MapOfShape.hxx>
@@ -196,6 +197,14 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Wire W;
     if (aShapeBase.ShapeType() == TopAbs_WIRE) {
       W = TopoDS::Wire(aShapeBase);
+      // check the wire is closed
+      TopoDS_Vertex aV1, aV2;
+      TopExp::Vertices(W, aV1, aV2);
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aShapeBase.Closed(true);
+      else
+        Standard_NullObject::Raise
+          ("Shape for face construction is not closed");
     }
     else if (aShapeBase.ShapeType() == TopAbs_EDGE && aShapeBase.Closed()) {
       BRepBuilderAPI_MakeWire MW;

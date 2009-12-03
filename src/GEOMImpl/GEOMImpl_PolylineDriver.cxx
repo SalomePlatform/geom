@@ -84,7 +84,20 @@ Standard_Integer GEOMImpl_PolylineDriver::Execute(TFunction_Logbook& log) const
 //        if (!aMakePoly.Added()) return 0;
       }
     }
-    if (false) aMakePoly.Close();
+    // Compare first and last point coordinates and close polyline if it's the same.
+    if ( aLen > 2 ) {
+      Handle(GEOM_Function) aFPoint = aCI.GetPoint(1);
+      TopoDS_Shape aFirstPnt = aFPoint->GetValue();
+      TopoDS_Vertex aV1 = TopoDS::Vertex(aFirstPnt);
+
+      Handle(GEOM_Function) aLPoint = aCI.GetPoint(aLen);
+      TopoDS_Shape aLastPnt = aLPoint->GetValue();
+      TopoDS_Vertex aV2 = TopoDS::Vertex(aLastPnt);
+
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aMakePoly.Close();
+    }
+
     if (aMakePoly.IsDone()) {
       aShape = aMakePoly.Wire();
     }

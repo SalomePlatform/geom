@@ -235,6 +235,13 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
       TopoDS_Wire aWire = *MW;
       delete MW; 
+
+      // check the wire closure
+      TopoDS_Vertex aV1, aV2;
+      TopExp::Vertices(aWire, aV1, aV2);
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aWire.Closed( true );
+
       if (!aWire.Closed()) {
         Standard_ConstructionError::Raise
           ("Impossible to build a closed wire from the given edges");
@@ -293,13 +300,27 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
 
       // build a wire
-      BRepBuilderAPI_MakeWire MW (anEdge1, anEdge3, anEdge2, anEdge4);
-      if (!MW.IsDone()) {
+      BRepBuilderAPI_MakeWire* MW;
+      MW = new BRepBuilderAPI_MakeWire(anEdge1, anEdge3, anEdge2, anEdge4);
+      if (!MW->IsDone()) {
         Standard_ConstructionError::Raise("Wire construction failed");
       }
 
+      TopoDS_Wire aWire = *MW;
+      delete MW;
+
+      TopoDS_Vertex aV1, aV2;
+      TopExp::Vertices(aWire, aV1, aV2);
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aWire.Closed( true );
+
+      if (!aWire.Closed()) {
+        Standard_ConstructionError::Raise
+          ("Impossible to build a closed wire from the given edges");
+      }
+
       // try to build face on the wire
-      GEOMImpl_Block6Explorer::MakeFace(MW, Standard_False, aShape);
+      GEOMImpl_Block6Explorer::MakeFace(aWire, Standard_False, aShape);
       if (aShape.IsNull()) {
         Standard_ConstructionError::Raise("Face construction failed");
       }
@@ -357,6 +378,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
 
       // try to build face on the wire
+      aMkPoly.Close();
       GEOMImpl_Block6Explorer::MakeFace(aMkPoly, Standard_False, aShape);
       if (aShape.IsNull()) {
         Standard_ConstructionError::Raise("Face construction failed");

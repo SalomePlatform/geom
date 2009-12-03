@@ -983,6 +983,19 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
     myEdges(edge_id(2, i)) = anEdges2(nb);
   }
 
+  // check the wires closure
+  TopoDS_Wire wire1 = TopoDS::Wire(aWire1);
+  TopoDS_Wire wire2 = TopoDS::Wire(aWire2);
+  TopoDS_Vertex aV1, aV2;
+  
+  TopExp::Vertices(wire1, aV1, aV2);
+  if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+    aWire1.Closed( true );
+  
+  TopExp::Vertices(wire2, aV1, aV2);
+  if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+    aWire2.Closed( true );
+  
   // 4. Generate side surface
   if (!aWire1.Closed() || !aWire2.Closed()) {
     // BRepOffsetAPI_ThruSections is not applicable on not closed wires
