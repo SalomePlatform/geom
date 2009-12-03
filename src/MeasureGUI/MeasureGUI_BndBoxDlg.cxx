@@ -26,6 +26,8 @@
 #include "MeasureGUI_BndBoxDlg.h"
 #include "MeasureGUI_Widgets.h"
 
+#include "GeometryGUI.h"
+
 #include <GEOMBase.h>
 
 #include <GEOM_Function.hxx>
@@ -166,61 +168,52 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
     try {
       Handle(Poly_Triangulation) Trtn = 0; 
 
-      Handle(GEOM_Object) anObject = GEOM_Engine::GetEngine()->GetObject(myObj->GetStudyID(), myObj->GetEntry());
-      if (!anObject.IsNull())
-      {
-	Handle(GEOM_Function) aRefShape = anObject->GetLastFunction();
-	if (!aRefShape.IsNull())
-	{
-	  TopoDS_Shape aShape = aRefShape->GetValue();
-	  if (!aShape.IsNull())
-	  {
-	    TopLoc_Location l;
-	    Handle(Poly_Triangulation) T;
-	    TopExp_Explorer ex;
-	    for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
-	      const TopoDS_Face& F = TopoDS::Face(ex.Current());
-	      
-	      BRepAdaptor_Surface surf(F);
-	      if (surf.GetType() == GeomAbs_Sphere)
-	      {
-		T = BRep_Tool::Triangulation(F, l);
-		if (!T.IsNull()) {
-		  Handle(Poly_Triangulation) NullTrtn = 0;
-		  (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(NullTrtn);
-		  Trtn = T;
-		  break;
-		}
-	      }
-	      else
-		break;
-	    }
-	  }
-	}
-      }
+      GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
+      if ( CORBA::is_nil(aGeomGen) )
+        return false;
 
+      char* IOR = GEOMBase::GetIORFromObject( myObj );
+      GEOM::GEOM_Object_var anObject = aGeomGen->GetIORFromString(IOR);
+      if ( CORBA::is_nil(anObject) )
+        return false;
+
+      TopoDS_Shape aShape;
+      GEOMBase::GetShape(anObject, aShape, TopAbs_SHAPE);
+      if ( aShape.IsNull() )
+        return false;
+      
+      TopLoc_Location l;
+      Handle(Poly_Triangulation) T;
+      TopExp_Explorer ex;
+      for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
+        const TopoDS_Face& F = TopoDS::Face(ex.Current());
+        BRepAdaptor_Surface surf(F);
+        if (surf.GetType() == GeomAbs_Sphere) {
+          T = BRep_Tool::Triangulation(F, l);
+          if (!T.IsNull()) {
+            Handle(Poly_Triangulation) NullTrtn = 0;
+            (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(NullTrtn);
+            Trtn = T;
+            break;
+          }
+        }
+        else
+          break;
+      }
+      
       anOper->GetBoundingBox( myObj, theXmin, theXmax, theYmin, theYmax, theZmin, theZmax );
       
-      if (!Trtn.IsNull())
-      {
-	Handle(GEOM_Function) aRefShape = anObject->GetLastFunction();
-	if (!aRefShape.IsNull())
-	{
-	  TopoDS_Shape aShape = aRefShape->GetValue();
-	  if (!aShape.IsNull())
-	  {
-	    TopLoc_Location l;
-	    Handle(Poly_Triangulation) T;
-	    TopExp_Explorer ex;
-	    for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
-	      const TopoDS_Face& F = TopoDS::Face(ex.Current());
-	      (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(Trtn);
-	      break;
-	    }
-	  }
-	}
+      if (!Trtn.IsNull()) {
+        TopLoc_Location l;
+        Handle(Poly_Triangulation) T;
+        TopExp_Explorer ex;
+        for (ex.Init(aShape,TopAbs_FACE); ex.More(); ex.Next()) {
+          const TopoDS_Face& F = TopoDS::Face(ex.Current());
+          (*((Handle(BRep_TFace)*)&F.TShape()))->Triangulation(Trtn);
+          break;
+        }
       }
-
+      
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
