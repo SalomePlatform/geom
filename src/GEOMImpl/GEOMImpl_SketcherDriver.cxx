@@ -28,6 +28,8 @@
 
 #include <GEOMImpl_IMeasureOperations.hxx>
 
+#include <Basics_Utils.hxx>
+
 // OCCT Includes
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
@@ -77,6 +79,9 @@ Standard_Integer GEOMImpl_SketcherDriver::Execute(TFunction_Logbook& log) const
     return 0;
 
   TopoDS_Shape aShape;
+
+  // Set "C" numeric locale to save numbers correctly
+  Kernel_Utils::Localizer loc;
 
   // create sketcher
   Sketcher_Profile aProfile (aCommand.ToCString());

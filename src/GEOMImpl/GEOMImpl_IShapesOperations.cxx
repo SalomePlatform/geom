@@ -941,7 +941,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   } else {
     TopExp_Explorer exp (aShape, TopAbs_ShapeEnum(theShapeType));
     for (; exp.More(); exp.Next())
-      if (!exp.Current().IsSame(aShape) && mapShape.Add(exp.Current()))
+      if (mapShape.Add(exp.Current()))
 	listShape.Append(exp.Current());
   }
 

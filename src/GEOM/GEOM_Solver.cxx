@@ -60,11 +60,11 @@ bool GEOM_Solver::ComputeFunction(Handle(GEOM_Function) theFunction)
       
   Handle(TFunction_Driver) aDriver;
   if(!TFunction_DriverTable::Get()->FindDriver(aGUID, aDriver)) return false;
-	  
+          
   aDriver->Init(theFunction->GetEntry());
-	    
+            
   TFunction_Logbook aLog;
   if(aDriver->Execute(aLog) == 0) return false;
-		
+                
   return true;     
 }

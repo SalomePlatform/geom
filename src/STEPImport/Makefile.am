@@ -43,6 +43,6 @@ libSTEPImport_la_CPPFLAGS =	\
 	$(KERNEL_CXXFLAGS)
 
 libSTEPImport_la_LDFLAGS  =			\
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics \
 	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKSTEP

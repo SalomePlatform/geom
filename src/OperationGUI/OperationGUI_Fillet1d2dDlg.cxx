@@ -139,6 +139,8 @@ void OperationGUI_Fillet1d2dDlg::Init()
 
   initName(myIs1D ? tr("GEOM_FILLET_1D") : tr("GEOM_FILLET_2D"));
   GroupVertexes->PushButton1->click();
+
+  SelectionIntoArgument();
 }
 
 //=================================================================================

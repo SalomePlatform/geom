@@ -79,6 +79,7 @@
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>
+#include <Graphic3d_AspectMarker3d.hxx>
 
 // VTK Includes
 #include <vtkActorCollection.h>
@@ -88,6 +89,7 @@
 #include CORBA_CLIENT_HEADER(SALOMEDS_Attributes)
 
 #include <GEOMImpl_Types.hxx>
+#include <Graphic3d_HArray1OfBytes.hxx>
 
 using namespace std;
 
@@ -256,13 +258,10 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myShadingColor = SalomeApp_Tools::color( col );
 
   myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
-  myTypeOfMarker = (Aspect_TypeOfMarker)resMgr->integerValue("Geometry", "type_of_marker", Aspect_TOM_PLUS);
-  myScaleOfMarker = resMgr->doubleValue("Geometry", "marker_scale", 1.);
-  if(myScaleOfMarker < 1.0)
-    myScaleOfMarker = 1.0;
-  if(myScaleOfMarker > 7.)
-    myScaleOfMarker = 7.;
-
+  int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
+  myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
+  myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
+  myScaleOfMarker = std::min(7.0, std::max(1., myScaleOfMarker));
 
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
@@ -588,54 +587,54 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
         }
 	else
+	{
+	  if ( myShape.ShapeType() == TopAbs_VERTEX )
 	  {
-	    if ( myShape.ShapeType() == TopAbs_VERTEX )
-	      {
-		col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
-		aColor = SalomeApp_Tools::color( col );
-
-		Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
-		anAspect->SetColor( aColor );
-                anAspect->SetScale( myScaleOfMarker );
-                anAspect->SetTypeOfMarker( myTypeOfMarker );
-                AISShape->Attributes()->SetPointAspect( anAspect );
-	      }
-	    else
-	      {
-		// Set line aspect
-		col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
-		aColor = SalomeApp_Tools::color( col );
-
-		Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
-		anAspect->SetColor( aColor );
-		AISShape->Attributes()->SetLineAspect( anAspect );
-
-		// Set unfree boundaries aspect
-		anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
-		anAspect->SetColor( aColor );
-		AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
-
-		// Set free boundaries aspect
-		col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
-		aColor = SalomeApp_Tools::color( col );
-
-		anAspect = AISShape->Attributes()->FreeBoundaryAspect();
-		anAspect->SetColor( aColor );
-		AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
-
-		// Set wire aspect
-		col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
-		aColor = SalomeApp_Tools::color( col );
-
-		anAspect = AISShape->Attributes()->WireAspect();
-		anAspect->SetColor( aColor );
-		AISShape->Attributes()->SetWireAspect( anAspect );
-
-                // bug [SALOME platform 0019868]
-                // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
-                AISShape->SetOwnDeviationAngle( 10*PI/180 );
-	      }
+	    col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
+	    aColor = SalomeApp_Tools::color( col );
+	    
+	    Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+	    anAspect->SetColor( aColor );
+	    anAspect->SetScale( myScaleOfMarker );
+	    anAspect->SetTypeOfMarker( myTypeOfMarker );
+	    AISShape->Attributes()->SetPointAspect( anAspect );
 	  }
+	  else
+	  {
+	    // Set line aspect
+	    col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
+	    aColor = SalomeApp_Tools::color( col );
+	    
+	    Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
+	    anAspect->SetColor( aColor );
+	    AISShape->Attributes()->SetLineAspect( anAspect );
+	    
+	    // Set unfree boundaries aspect
+	    anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
+	    anAspect->SetColor( aColor );
+	    AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
+	    
+	    // Set free boundaries aspect
+	    col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
+	    aColor = SalomeApp_Tools::color( col );
+	    
+	    anAspect = AISShape->Attributes()->FreeBoundaryAspect();
+	    anAspect->SetColor( aColor );
+	    AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
+	    
+	    // Set wire aspect
+	    col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
+	    aColor = SalomeApp_Tools::color( col );
+	    
+	    anAspect = AISShape->Attributes()->WireAspect();
+	    anAspect->SetColor( aColor );
+	    AISShape->Attributes()->SetWireAspect( anAspect );
+	    
+	    // bug [SALOME platform 0019868]
+	    // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
+	    AISShape->SetOwnDeviationAngle( 10*PI/180 );
+	  }
+	}
 
         if ( HasWidth() )
           AISShape->SetWidth( GetWidth() );
@@ -657,7 +656,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->SetOwner( anObj );
         }
 
-	// Get color from GEOM_Object
+	// Get color and other properties from GEOM_Object
 	SUIT_Session* session = SUIT_Session::session();
 	SUIT_Application* app = session->activeApplication();
 	if ( app )
@@ -731,6 +730,36 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                         AISShape->Attributes()->SetPointAspect( anAspect );
                       }
 		    }
+		    // ... marker type
+		    GEOM::marker_type aType = aGeomObject->GetMarkerType();
+		    GEOM::marker_size aSize = aGeomObject->GetMarkerSize();
+		    if ( aType > GEOM::MT_NONE && aType < GEOM::MT_USER && aSize > GEOM::MS_NONE && aSize <= GEOM::MS_70 ) {
+		      Aspect_TypeOfMarker aMType = (Aspect_TypeOfMarker)( (int)aType-1 );
+		      double aMSize = ((int)aSize+1)*0.5;
+		      Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+		      anAspect->SetScale( aMSize );
+		      anAspect->SetTypeOfMarker( aMType );
+		      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
+		      if ( hasColor )
+			aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
+		      anAspect->SetColor( aQuanColor );
+		      AISShape->Attributes()->SetPointAspect( anAspect );
+		    }
+		    else if ( aType == GEOM::MT_USER ) {
+		      int aTextureId = aGeomObject->GetMarkerTexture();
+		      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
+		      if ( hasColor ) aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
+		      Standard_Integer aWidth, aHeight;
+		      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
+		      if ( !aTexture.IsNull() ) {
+			static int TextureId = 0;
+			Handle(Prs3d_PointAspect) aTextureAspect = new Prs3d_PointAspect(aQuanColor,
+											 ++TextureId,
+											 aWidth, aHeight,
+											 aTexture );
+			AISShape->Attributes()->SetPointAspect( aTextureAspect );
+		      }
+		    }
 		  }
 		}
 	      }
@@ -793,7 +822,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
   if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE )
   {
-    myToActivate = false;
+    //myToActivate = false; // ouv: commented to make the trihedron pickable (see IPAL18657)
     GEOM_VTKTrihedron* aTrh = GEOM_VTKTrihedron::New();
 
     if ( HasColor() )
@@ -820,9 +849,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
   }
   else
   {
-    bool isVector = false;
-    if (myType == GEOM_VECTOR) isVector = true;
-    theActors = GEOM_AssemblyBuilder::BuildActors( myShape, 0, 0, Standard_True, isVector );
+    theActors = GEOM_AssemblyBuilder::BuildActors( myShape, 0, 0, Standard_True, myType == GEOM_VECTOR );
   }
 
   theActors->InitTraversal();

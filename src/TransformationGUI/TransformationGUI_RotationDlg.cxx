@@ -332,10 +332,10 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
   myEditCurrentArgument->setText(aName);
 
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    if (myObjects.length()) {
+    /*    if (myObjects.length()) {
       if (getConstructorId() == 0 && myAxis->_is_nil() || getConstructorId() == 1 && myCentPoint->_is_nil() )
 	GroupPoints->PushButton2->click();
-    }
+        }*/   // here commented, because multiple objects can be selected IPAL 21437
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0) {
     myAxis = aSelectedObject;
@@ -359,10 +359,11 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
   }
 
   // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  /*  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   myGeomGUI->getApp()->selectionMgr()->clearSelected();
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
+  this, SLOT(SelectionIntoArgument()));*/
+  // here commented, because multiple objects can be selected IPAL 21437
 
   displayPreview();
 }

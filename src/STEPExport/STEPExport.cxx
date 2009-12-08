@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <IFSelect_ReturnStatus.hxx>
 
 #include <STEPControl_Writer.hxx>
@@ -67,6 +69,9 @@ STEPEXPORT_EXPORT
 
   try 
     {
+      // Set "C" numeric locale to save numbers correctly
+      Kernel_Utils::Localizer loc;
+
       IFSelect_ReturnStatus status ;
       //VRV: OCC 4.0 migration
       STEPControl_Writer aWriter;
@@ -76,7 +81,9 @@ STEPEXPORT_EXPORT
       status = aWriter.Transfer( theShape, STEPControl_AsIs );
       //VRV: OCC 4.0 migration
       if ( status == IFSelect_RetDone ) 
-	  status = aWriter.Write( theFileName.ToCString() ) ;
+	  status = aWriter.Write( theFileName.ToCString() );
+
+      // Return previous locale
       if ( status == IFSelect_RetDone ) 
 	return 1;
     }

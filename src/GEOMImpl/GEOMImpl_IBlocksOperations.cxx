@@ -2350,9 +2350,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::RemoveExtraEdges
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aCopy
-                               << " = geompy.RemoveExtraEdges(" << theObject
-                               << ", " << theOptimumNbFaces << ")";
+  std::string doUnionFaces = (theOptimumNbFaces < 0) ? "False" : "True";
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.RemoveExtraEdges("
+                               << theObject << ", " << doUnionFaces.data() << ")";
 
   SetErrorCode(OK);
   return aCopy;

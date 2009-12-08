@@ -54,10 +54,10 @@ Standard_EXPORT Handle_Standard_Type& GEOM_DataMapNodeOfDataMapOfAsciiStringTran
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_DataMapNodeOfDataMapOfAsciiStringTransient",
-			                                 sizeof(GEOM_DataMapNodeOfDataMapOfAsciiStringTransient),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOM_DataMapNodeOfDataMapOfAsciiStringTransient),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

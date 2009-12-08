@@ -22,7 +22,7 @@
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : MeasureGUI_CheckCompoundOfBlocksDlg.cxx
 // Author : Vladimir KLYACHIN, Open CASCADE S.A.S. (vladimir.klyachin@opencascade.com)
-//
+
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"
 #include "MeasureGUI_Widgets.h"
 
@@ -123,8 +123,8 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::Init()
   connect( myGrp->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ), 
-	   this, SLOT( SelectionIntoArgument() ) );
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+           this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_BLOCKS_COMPOUND") );
   buttonOk()->setEnabled( false );
@@ -236,7 +236,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::ActivateThisDialog()
 // purpose  :
 //=================================================================================
 bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBlocks,
-						       GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
+                                                       GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
 {
   if ( myObj->_is_nil() )
     return false;
@@ -245,7 +245,9 @@ bool MeasureGUI_CheckCompoundOfBlocksDlg::getBCErrors( bool& theIsCompoundOfBloc
     try {
       GEOM::GEOM_IBlocksOperations::BCErrors_var aErrs;
       theIsCompoundOfBlocks = anOper->CheckCompoundOfBlocks( myObj, aErrs );
-      theErrors = aErrs;
+      if (anOper->IsDone() && aErrs->length() > 0)
+      //if (anOper->IsDone() && !aErrs._is_nil())
+        theErrors = aErrs;
     }
     catch ( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );
@@ -266,6 +268,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
   bool isCompoundOfBlocks;
   GEOM::GEOM_IBlocksOperations::BCErrors aErrs;
   if ( !getBCErrors( isCompoundOfBlocks, aErrs ) ) {
+    aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_FAILED" );
     myGrp->TextView1->setText( aMsg );
     myGrp->ListBox1->clear();
     myGrp->ListBox2->clear();
@@ -277,7 +280,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_HAS_NO_ERRORS" );
     buttonOk()->setEnabled( false );
     buttonApply()->setEnabled( false );
-  } 
+  }
   else {
     aMsg += tr( "GEOM_CHECK_BLOCKS_COMPOUND_HAS_ERRORS" );
     buttonOk()->setEnabled( true );
@@ -295,29 +298,29 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::processObject()
     aErrStr = "";
     switch ( aErrs[i].error ) {
       case GEOM::GEOM_IBlocksOperations::NOT_BLOCK :
-	aErrStr = "Not a Block";
+        aErrStr = "Not a Block";
         break;
       case GEOM::GEOM_IBlocksOperations::EXTRA_EDGE :
-	aErrStr = "Extra Edge";
+        aErrStr = "Extra Edge";
         break;
       case GEOM::GEOM_IBlocksOperations::INVALID_CONNECTION :
-	aErrStr = "Invalid Connection";
-	aErrStr += aConSfx;
-	aErrStr += QString::number( aConNum );
-	aConNum++;
+        aErrStr = "Invalid Connection";
+        aErrStr += aConSfx;
+        aErrStr += QString::number( aConNum );
+        aConNum++;
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_CONNECTED :
-	aErrStr = "Not Connected";
+        aErrStr = "Not Connected";
         break;
       case GEOM::GEOM_IBlocksOperations::NOT_GLUED :
-	aErrStr = "Not Glued";
-	aErrStr += aGluedSfx;
-	aErrStr += QString::number( aGluedNum );
-	aGluedNum++;
+        aErrStr = "Not Glued";
+        aErrStr += aGluedSfx;
+        aErrStr += QString::number( aGluedNum );
+        aGluedNum++;
         break;
       default :
-	aErrStr = "";
-	break;
+        aErrStr = "";
+        break;
     }
     if ( !aErrStr.isEmpty() )
       aErrList.append( aErrStr );
@@ -355,11 +358,11 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
     myGrp->ListBox2->clear();
     return;
   }
-  
+
   GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
   GEOM::ListOfLong aObjLst = aErr.incriminated;
   TopoDS_Shape aSelShape;
-  TopoDS_Shape aSubShape; 
+  TopoDS_Shape aSubShape;
   TopTools_IndexedMapOfShape anIndices;
   QStringList aSubShapeList;
   QString aSubShapeName( "" );
@@ -369,8 +372,8 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
     for ( int i = 0, n = aObjLst.length(); i < n; i++ ) {
       aSubShapeName = "";
       aSubShape = anIndices.FindKey(aObjLst[i]);
-      if ( GEOMBase::GetShapeTypeString( aSubShape, aTypeString ) )	
-	aSubShapeName = QString( aTypeString ) + QString( "_" ) + QString::number( aObjLst[i] );	
+      if ( GEOMBase::GetShapeTypeString( aSubShape, aTypeString ) )
+        aSubShapeName = QString( aTypeString ) + QString( "_" ) + QString::number( aObjLst[i] );
       if ( !aSubShapeName.isEmpty() )
       aSubShapeList.append( aSubShapeName );
     }
@@ -391,7 +394,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     return;
   QList<int> aIds;
   for ( int i = 0, n = myGrp->ListBox2->count(); i < n; i++ ) {
-    if ( myGrp->ListBox2->item( i )->isSelected() ) 
+    if ( myGrp->ListBox2->item( i )->isSelected() )
       aIds.append( i );
   }
   if ( aIds.count() < 1 )
@@ -404,11 +407,11 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     myGrp->ListBox2->clear();
     return;
   }
-  
+
   GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aErrCurItem];
   GEOM::ListOfLong aObjLst = aErr.incriminated;
   TopoDS_Shape aSelShape;
-  TopoDS_Shape aSubShape; 
+  TopoDS_Shape aSubShape;
   TopTools_IndexedMapOfShape anIndices;
   if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
     QString aMess;
@@ -426,7 +429,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
         getDisplayer()->SetToActivate( false );
         aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs( aSubShape ) : 0;
         if ( aPrs )
-	  displayPreview( aPrs, true );
+          displayPreview( aPrs, true );
       }
       catch ( const SALOME::SALOME_Exception& e ) {
         SalomeApp_Tools::QtCatchCorbaException( e );

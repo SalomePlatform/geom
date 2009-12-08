@@ -72,6 +72,7 @@ private:
   void         OnOpen();
   void         OnSelectOnly(int mode);
   void         OnShowHideChildren( bool );
+  void         OnPointMarker();
 
   // Recursive deletion of object with children
   void         removeObjectWithChildren( _PTR(SObject),

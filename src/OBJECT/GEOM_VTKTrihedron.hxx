@@ -57,6 +57,7 @@ public:
 
   virtual vtkFloatingPointType      GetSize() { return mySize;}
 
+  virtual void                      SetVisibility( int theVisibility );
   virtual void                      SetVisibility( VTKViewer_Trihedron::TVisibility theVis );
   virtual void                      VisibilityOff() { SetVisibility( VTKViewer_Trihedron::eOff ); }
   virtual void                      VisibilityOn() { SetVisibility( VTKViewer_Trihedron::eOn ); }
@@ -79,7 +80,16 @@ public:
   void                              SetColor( vtkFloatingPointType r, vtkFloatingPointType g, vtkFloatingPointType b );
   void                              GetColor( vtkFloatingPointType& r, vtkFloatingPointType& g, vtkFloatingPointType& b );
 
-  virtual bool                      hasHighlight() { return false; } 
+  virtual bool                      hasHighlight() { return true; } 
+
+  virtual void                      Highlight( bool theHighlight );
+  virtual bool                      PreHighlight( vtkInteractorStyle* theInteractorStyle,
+                                                  SVTK_SelectionEvent* theSelectionEvent,
+                                                  bool theIsHighlight );
+
+protected:
+  virtual void                      ResetAxesColors();
+  virtual void                      SetAxesColors( vtkFloatingPointType theColor[3], bool theIsDiffuse = false );
 
 protected:
   VTKViewer_Axis*                   myAxis[3];
@@ -88,6 +98,9 @@ protected:
   gp_Pnt                            myLocation;
   gp_Dir                            myDirX, myDirY, myDirZ;
   vtkFloatingPointType              myColor[ 3 ];
+  vtkFloatingPointType              myDefaultColor[ 3 ];
+  vtkFloatingPointType              myPreHighlightColor[ 3 ];
+  vtkFloatingPointType              myHighlightColor[ 3 ];
 };
 
 #endif

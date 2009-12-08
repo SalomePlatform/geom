@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <IGESControl_Controller.hxx>
 #include <IGESControl_Writer.hxx>
 #include <Interface_Static.hxx>
@@ -73,6 +75,9 @@ IGESEXPORT_EXPORT
       if (theFormatName.IsEqual("IGES_5_3"))
         aBrepMode = 1;
 
+      // Set "C" numeric locale to save numbers correctly
+      Kernel_Utils::Localizer loc;
+
       // initialize writer
       IGESControl_Controller::Init();
       //IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"),
@@ -83,7 +88,10 @@ IGESEXPORT_EXPORT
       // perform shape writing
       ICW.AddShape( theShape );
       ICW.ComputeModel();
-      if ( ICW.Write( theFileName.ToCString() ) )
+      bool ok = ICW.Write( theFileName.ToCString() );
+      
+      // Return previous locale
+      if ( ok )
         return 1;
     }
     catch(Standard_Failure)

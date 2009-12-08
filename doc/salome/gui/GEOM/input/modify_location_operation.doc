@@ -13,7 +13,7 @@ with the origin of the Local Coordinate System.
 will be removed.
 \n <b>Arguments:</b> Name + one or several objects + End Coordinate System.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation5.png
 
@@ -34,7 +34,7 @@ otherwise it will be removed.
 \n <b>Arguments:</b> Name + one or several objects + Start Coordinate System + End
 Coordinate System.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
 \image html transformation6.png
 
@@ -64,8 +64,7 @@ the other objects.
 
 <b>Arguments:</b> Name + one or several objects + Translation path.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation
-   parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
    
 \image html transformation13.png
 

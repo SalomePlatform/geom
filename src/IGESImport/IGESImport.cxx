@@ -26,6 +26,8 @@
 //
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <IFSelect_ReturnStatus.hxx>
 #include <IGESControl_Reader.hxx>
 #include <IGESData_IGESModel.hxx>
@@ -71,6 +73,9 @@ IGESIMPORT_EXPORT
                        TCollection_AsciiString&       theError,
 		       const TDF_Label&)
   {
+    // Set "C" numeric locale to save numbers correctly
+    Kernel_Utils::Localizer loc;
+
     IGESControl_Reader aReader;
     TopoDS_Shape aResShape;
     Interface_Static::SetCVal("xstep.cascade.unit","M");

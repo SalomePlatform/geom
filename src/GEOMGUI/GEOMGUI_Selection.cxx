@@ -83,6 +83,8 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
 //  else
   if( p == "type" )
     return QVariant( typeName( ind ) );
+  if( p == "typeid" )
+    return QVariant( typeId( ind ) );
   else if ( p == "displaymode" )
     return QVariant( displayMode( ind ) );
   else if ( p == "isAutoColor" )
@@ -110,6 +112,15 @@ QString GEOMGUI_Selection::typeName( const int index ) const
       return "Shape";
   }
   return "Unknown";
+}
+
+int GEOMGUI_Selection::typeId( const int index ) const
+{
+  int aType = -1;
+  GEOM::GEOM_Object_var anObj = getObject( index );
+  if ( !CORBA::is_nil( anObj ) )
+    aType = anObj->GetType();
+  return aType;
 }
 
 bool GEOMGUI_Selection::isVisible( const int index ) const
@@ -195,28 +206,29 @@ bool GEOMGUI_Selection::isVectorsMode( const int index ) const
     SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
-	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
-	AIS_ListOfInteractive lst;
-	occPrs->GetObjects( lst );
-	if ( lst.Extent() ) {
-	  Handle(AIS_InteractiveObject) io = lst.First();
-	  if ( !io.IsNull() ) {
-	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
-	    ret = aSh->isShowVectors();
-	  }
-	}
+        SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+        AIS_ListOfInteractive lst;
+        occPrs->GetObjects( lst );
+        if ( lst.Extent() ) {
+          Handle(AIS_InteractiveObject) io = lst.First();
+          if ( !io.IsNull() ) {
+            Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+            if ( !aSh.IsNull() )
+              ret = aSh->isShowVectors();
+          }
+        }
       } else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
-	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
-	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
-	if ( lst ) {
-	  lst->InitTraversal();
-	  vtkActor* actor = lst->GetNextActor();
-	  if ( actor ) {
-	    GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
-	    if ( aGeomActor )
-	      ret = aGeomActor->GetVectorMode();
-	  }
-	}
+        SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+        vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+        if ( lst ) {
+          lst->InitTraversal();
+          vtkActor* actor = lst->GetNextActor();
+          if ( actor ) {
+            GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(actor);
+            if ( aGeomActor )
+              ret = aGeomActor->GetVectorMode();
+          }
+        }
       }
     }
   }

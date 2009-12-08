@@ -407,6 +407,11 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 	OnShowHideChildren( theCommandID == 8037 );
 	break;
       }
+    case 8039: // POINT MARKER
+      {
+	OnPointMarker();
+	break;
+      }
     case 9024 : // OPEN - OBJBROSER POPUP
       {
 	OnOpen();

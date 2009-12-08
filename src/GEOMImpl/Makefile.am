@@ -229,7 +229,7 @@ libGEOMimpl_la_LDFLAGS  =			\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset
 

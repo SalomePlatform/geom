@@ -40,6 +40,17 @@ module GEOM
   enum shape_type { COMPOUND, COMPSOLID, SOLID, SHELL,
                     FACE, WIRE, EDGE, VERTEX, SHAPE };
 
+  /*!
+   * Marker type
+   */
+  enum marker_type { MT_NONE, MT_POINT, MT_PLUS, MT_STAR, MT_O, MT_X, MT_O_POINT, MT_O_PLUS,
+		     MT_O_STAR, MT_O_X, MT_BALL, MT_RING1, MT_RING2, MT_RING3, MT_USER };
+
+  /*!
+   * Marker size
+   */
+  enum marker_size { MS_NONE, MS_10, MS_15, MS_20, MS_25, MS_30, MS_35,
+		     MS_40, MS_45, MS_50, MS_55, MS_60, MS_65, MS_70 };
 
   /*!
    *  State of shape relatively geometrical surface like plane, sphere or cylinder.
@@ -173,6 +184,38 @@ module GEOM
     boolean GetAutoColor();
 
     /*!
+     * Set standard point marker for the object
+     * \param theType standard marker type
+     * \param theSize marker relative size
+     */
+    void SetMarkerStd(in marker_type theType, in marker_size theSize );
+
+    /*!
+     * Set custom point marker for the object. The texture can be added
+     * by LoadTexture() or AddTexture() functions.
+     * \param theTextureId texture ID
+     */
+    void SetMarkerTexture(in long theTextureId);
+
+    /*!
+     * Get type of the point marker assigned to the object
+     * \return current marker type (MT_NONE if no marker is set)
+     */
+    marker_type GetMarkerType();
+
+    /*!
+     * Get size of the point marker assigned to the object
+     * \return current marker relative size (MS_NONE if no marker is set)
+     */
+    marker_size GetMarkerSize();
+
+    /*!
+     * Get texture idenifier of the point marker assigned to the object
+     * \return marker texture ID (0 if no marker set)
+     */
+    long GetMarkerTexture();
+
+    /*!
      *  Set a Study entry where this object was published.
      */
     void SetStudyEntry (in string theEntry);
@@ -240,7 +283,7 @@ module GEOM
      *         used for object creation
      */
     void SetParameters (in string theParameters);
-			    
+
     /*!
      *  Return list of notebook variables used for object creation separated by ":" symbol
      */
@@ -462,7 +505,7 @@ module GEOM
      */
     GEOM_Object MakePlaneFace (in GEOM_Object theFace,
 			       in double theTrimSize);
-			       
+
     /*!
      *  Create a plane, by two vectors.
      *  \param theVec1 Vector1, the plane has to pass through first point of this vector.
@@ -473,7 +516,7 @@ module GEOM
     GEOM_Object MakePlane2Vec (in GEOM_Object theVec1,
 			       in GEOM_Object theVec2,
 			       in double theTrimSize);
-			       
+
     /*!
      *  Create a plane, defined by local coordinate system.
      *  \param theLCS Referenced LCS(Marker).
@@ -922,7 +965,7 @@ module GEOM
      *  vertical (H) and horisontal (W).
      *  \param theVec defines plane.
      *  \param theH vertical size (height).
-     *  \param theW horisontal size (width). 
+     *  \param theW horisontal size (width).
      *  \return New GEOM_Object, containing the created face.
      */
     GEOM_Object MakeFaceObjHW (in GEOM_Object theObj, in double theH, in double theW);
@@ -944,7 +987,7 @@ module GEOM
     GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
 				  in GEOM_Object thePnt2,
 				  in GEOM_Object thePnt3);
-				  
+
     /*!
      *  Create a disk specified dimensions along OX-OY coordinate axes,
      *  Center of the disk at point (0, 0, 0).
@@ -953,7 +996,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created disk.
      */
     GEOM_Object MakeDiskR (in double theR, in short theOrientation);
-    
+
     /*!
      *  Create a cylinder with given radius and height at
      *  the origin of coordinate system. Axis of the cylinder
@@ -1075,7 +1118,7 @@ module GEOM
     GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
 				      in GEOM_Object thePoint1,
 				      in GEOM_Object thePoint2);
-				    
+
     /*!
      *  Create a shape by extrusion of the base shape along a vector, defined by DX DY DZ.
      *  \param theBase Base shape to be extruded.
@@ -1144,7 +1187,7 @@ module GEOM
       /*!
      *  Create a shape by extrusion of the profile shape along
      *  the path shape. The path shape can be a wire or an edge.
-     *  the several profiles can be specified in the several locations of path.	
+     *  the several profiles can be specified in the several locations of path.
      *  \param theSeqBases - list of  Bases shape to be extruded.
      *  \param theLocations - list of locations on the path corresponding
      *                        specified list of the Bases shapes. Number of locations
@@ -1165,7 +1208,7 @@ module GEOM
     /*!
      *  Create a shape by extrusion of the profile shape along
      *  the path shape. The path shape can be a shell or a face.
-     *  the several profiles can be specified in the several locations of path.	
+     *  the several profiles can be specified in the several locations of path.
      *  \param theSeqBases - list of  Bases shape to be extruded.
      *  \param theSeqSubBases - list of corresponding subshapes of section shapes.
      *  \param theLocations - list of locations on the path corresponding
@@ -1196,7 +1239,7 @@ module GEOM
 
     /*!
      *  Create a shape by extrusion of the base shape along
-     *  the path shape with constant bi-normal direction along the given vector. 
+     *  the path shape with constant bi-normal direction along the given vector.
      *  The path shape can be a wire or an edge.
      *  \param theBase Base shape to be extruded.
      *  \param thePath Path shape to extrude the base shape along it.
@@ -1205,8 +1248,8 @@ module GEOM
      *                along the sweep surface.
      *  \return New GEOM_Object, containing the created pipe.
      */
-    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase, 
-					     in GEOM_Object thePath, 
+    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase,
+					     in GEOM_Object thePath,
 					     in GEOM_Object theVec);
 
   };
@@ -2206,7 +2249,7 @@ module GEOM
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense);
-			       
+
     /*!
      *  Create an arc of ellipse of center C and two points P1 P2.
      *  \param theCenter Center point of the arc.
@@ -2277,7 +2320,7 @@ module GEOM
      *  \return New GEOM_Object, containing the created wire.
      */
     GEOM_Object MakeSketcher (in string theCommand, in ListOfDouble theWorkingPlane);
-    
+
     /*!
      *  Create a 3D sketcher, following the numerical description,
      *  passed through points created by \a theCoordinates argument. \n
@@ -2285,7 +2328,7 @@ module GEOM
      *
      *  "Make3DSketcher[x1, y1, z1, x2, y2, z2, ..., xN, yN, zN]"
      */
-    
+
     GEOM_Object Make3DSketcher (in ListOfDouble theCoordinates);
 
       /*!
@@ -2343,12 +2386,12 @@ module GEOM
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
 				 in double      theR,
 				 in ListOfLong  theFaces);
-				 
+
     GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
 				     in double      theR1,
 				     in double      theR2,
 				     in ListOfLong  theFaces);
-				     
+
     /*!
      *  Perform a fillet on face of the specified vertexes of the given shape.
      *  \param theShape Shape, to perform fillet on.
@@ -2651,6 +2694,37 @@ module GEOM
      */
     void ExportTranslators (out string_array theFormats,
 			    out string_array thePatterns);
+
+    /*!
+     * Load texture from file
+     * \param theTextureFile texture file name
+     * \return unique texture identifier
+     */
+    long LoadTexture(in string theTextureFile);
+
+    /*!
+     * Add texture to the study
+     * \param theWidth texture width in pixels
+     * \param theHeight texture height in pixels
+     * \param theTexture texture byte array
+     * \return unique texture identifier
+     */
+    long AddTexture(in long theWidth, in long theHeight, in SALOMEDS::TMPFile theTexture);
+
+    /*!
+     * Get previously loaded texture data
+     * \param theID texture identifier
+     * \param theWidth texture width in pixels
+     * \param theHeight texture height in pixels
+     * \return texture byte array
+     */
+    SALOMEDS::TMPFile GetTexture(in long theID, out long theWidth, out long theHeight);
+
+    /*!
+     * Get list of all avaiable texture IDs
+     * \return list of all texture IDs avaiable for the current study
+     */
+    ListOfLong GetAllTextures();
   };
 
   /*!

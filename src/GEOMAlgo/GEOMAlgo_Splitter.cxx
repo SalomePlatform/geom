@@ -19,11 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Splitter.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
-//
+//  File:   GEOMAlgo_Splitter.cxx
+//  Author: Peter KURNEV
+
 #include <GEOMAlgo_Splitter.ixx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -45,13 +43,13 @@
 #include <BOP_CorrectTolerances.hxx>
 
 
-static 
-  void TreatCompound(const TopoDS_Shape& aC, 
-		     TopTools_ListOfShape& aLSX);
+static
+  void TreatCompound(const TopoDS_Shape& aC,
+                     TopTools_ListOfShape& aLSX);
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_Splitter::GEOMAlgo_Splitter()
 :
@@ -62,14 +60,14 @@ static
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_Splitter::~GEOMAlgo_Splitter()
 {
 }
 //=======================================================================
 //function : AddToolCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Splitter::AddToolCompound(const TopoDS_Shape& theShape)
 {
@@ -83,7 +81,7 @@ static
 }
 //=======================================================================
 //function : AddTool
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Splitter::AddTool(const TopoDS_Shape& theShape)
 {
@@ -95,7 +93,7 @@ static
 }
 //=======================================================================
 //function : Tools
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Splitter::Tools()const
 {
@@ -103,15 +101,15 @@ static
 }
 //=======================================================================
 //function : SetLimit
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_Splitter::SetLimit(const TopAbs_ShapeEnum aLimit) 
+  void GEOMAlgo_Splitter::SetLimit(const TopAbs_ShapeEnum aLimit)
 {
   myLimit=aLimit;
 }
 //=======================================================================
 //function : Limit
-//purpose  : 
+//purpose  :
 //=======================================================================
   TopAbs_ShapeEnum GEOMAlgo_Splitter::Limit()const
 {
@@ -119,7 +117,7 @@ static
 }
 //=======================================================================
 //function : SetLimitMode
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Splitter::SetLimitMode(const Standard_Integer aMode)
 {
@@ -127,7 +125,7 @@ static
 }
 //=======================================================================
 //function : LimitMode
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_Splitter::LimitMode()const
 {
@@ -135,7 +133,7 @@ static
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Splitter::Clear()
 {
@@ -146,7 +144,7 @@ static
 }
 //=======================================================================
 //function : BuildResult
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Splitter::BuildResult(const TopAbs_ShapeEnum theType)
 {
@@ -163,26 +161,26 @@ static
     aType=aS.ShapeType();
     if (aType==theType && !myMapTools.Contains(aS)) {
       if (myImages.HasImage(aS)) {
-	const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
-	aItIm.Initialize(aLSIm);
-	for (; aItIm.More(); aItIm.Next()) {
-	  const TopoDS_Shape& aSIm=aItIm.Value();
-	  if (aM.Add(aSIm)) {
-	    aBB.Add(myShape, aSIm);
-	  }
-	}
+        const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
+        aItIm.Initialize(aLSIm);
+        for (; aItIm.More(); aItIm.Next()) {
+          const TopoDS_Shape& aSIm=aItIm.Value();
+          if (aM.Add(aSIm)) {
+            aBB.Add(myShape, aSIm);
+          }
+        }
       }
       else {
-	if (aM.Add(aS)) {
-	  aBB.Add(myShape, aS);
-	}
+        if (aM.Add(aS)) {
+          aBB.Add(myShape, aS);
+        }
       }
     }
   }
 }
 //=======================================================================
 //function : PostTreat
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Splitter::PostTreat()
 {
@@ -200,7 +198,7 @@ static
       const TopoDS_Shape& aS=aMx(i);
       aBB.Add(aC, aS);
     }
-    //modified by NIZNHY-PKV Thu Feb 15 17:09:32 2007f
+    //
     if (myLimitMode) {
       Standard_Integer iType, iLimit, iTypeX;
       TopAbs_ShapeEnum aType, aTypeX;
@@ -208,63 +206,77 @@ static
       TopTools_ListIteratorOfListOfShape aIt, aItX, aItIm;
       TopTools_MapOfShape  aM;
       //
-      iLimit=(Standard_Integer)myLimit; 
+      iLimit=(Standard_Integer)myLimit;
       //
       // 1. Collect the shapes to process aLSP
       aIt.Initialize(myShapes);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value();
-	if (myMapTools.Contains(aS)) {
-	  continue;
-	}
-	//
-	aType=aS.ShapeType();
-	iType=(Standard_Integer)aType;
-	//
-	if (iType>iLimit) {
-	  aLSP.Append(aS);
-	}
-	//
-	else if (aType==TopAbs_COMPOUND) {
-	  aLSX.Clear();
-	  //
-	  TreatCompound(aS, aLSX);
-	  //
-	  aItX.Initialize(aLSX);
-	  for (; aItX.More(); aItX.Next()) {
-	    const TopoDS_Shape& aSX=aItX.Value();
-	    aTypeX=aSX.ShapeType();
-	    iTypeX=(Standard_Integer)aTypeX;
-	    //
-	    if (iTypeX>iLimit) {
-	      aLSP.Append(aSX);
-	    }
-	  }
-	}
+        const TopoDS_Shape& aS=aIt.Value();
+        if (myMapTools.Contains(aS)) {
+          continue;
+        }
+        //
+        aType=aS.ShapeType();
+        iType=(Standard_Integer)aType;
+        //
+        if (iType>iLimit) {
+          aLSP.Append(aS);
+        }
+        //
+        else if (aType==TopAbs_COMPOUND) {
+          aLSX.Clear();
+          //
+          TreatCompound(aS, aLSX);
+          //
+          aItX.Initialize(aLSX);
+          for (; aItX.More(); aItX.Next()) {
+            const TopoDS_Shape& aSX=aItX.Value();
+            aTypeX=aSX.ShapeType();
+            iTypeX=(Standard_Integer)aTypeX;
+            //
+            if (iTypeX>iLimit) {
+              aLSP.Append(aSX);
+            }
+          }
+        }
       }// for (; aIt.More(); aIt.Next()) {
+      //
+      //modified by NIZNHY-PKV Fri Oct 30 11:07:08 2009 f
+      aMx.Clear();
+      TopExp::MapShapes(aC, aMx);
+      //modified by NIZNHY-PKV Fri Oct 30 11:12:30 2009t
       //
       // 2. Add them to aC
       aIt.Initialize(aLSP);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aS=aIt.Value();
-	if (myImages.HasImage(aS)) {
-	  const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
-	  aItIm.Initialize(aLSIm);
-	  for (; aItIm.More(); aItIm.Next()) {
-	    const TopoDS_Shape& aSIm=aItIm.Value();
-	    if (aM.Add(aSIm)) {
-	      aBB.Add(aC, aSIm);
-	    }
-	  }
-	}
-	else {
-	  if (aM.Add(aS)) {
-	    aBB.Add(aC, aS);
-	  }
-	}
+        const TopoDS_Shape& aS=aIt.Value();
+        if (myImages.HasImage(aS)) {
+          const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
+          aItIm.Initialize(aLSIm);
+          for (; aItIm.More(); aItIm.Next()) {
+            const TopoDS_Shape& aSIm=aItIm.Value();
+            if (aM.Add(aSIm)) {
+              //modified by NIZNHY-PKV Fri Oct 30 11:09:57 2009f
+              if (!aMx.Contains(aSIm)) {
+                aBB.Add(aC, aSIm);
+              }
+              //aBB.Add(aC, aSIm);
+              //modified by NIZNHY-PKV Fri Oct 30 11:10:02 2009
+            }
+          }
+        }
+        else {
+          if (aM.Add(aS)) {
+            //modified by NIZNHY-PKV Fri Oct 30 11:10:46 2009f
+            if (!aMx.Contains(aS)) {
+              aBB.Add(aC, aS);
+            }
+            //aBB.Add(aC, aS);
+            //modified by NIZNHY-PKV Fri Oct 30 11:11:00 2009t
+          }
+        }
       }
     }// if (myLimitMode) {
-    //modified by NIZNHY-PKV Thu Feb 15 17:09:34 2007t
     myShape=aC;
   }//if (myLimit!=TopAbs_SHAPE) {
   //
@@ -272,10 +284,10 @@ static
 }
 //=======================================================================
 //function : TreatCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
-void TreatCompound(const TopoDS_Shape& aC1, 
-		   TopTools_ListOfShape& aLSX)
+void TreatCompound(const TopoDS_Shape& aC1,
+                   TopTools_ListOfShape& aLSX)
 {
   Standard_Integer aNbC1;
   TopAbs_ShapeEnum aType;
@@ -292,14 +304,14 @@ void TreatCompound(const TopoDS_Shape& aC1,
       //
       aItC.Initialize(aC);
       for (; aItC.More(); aItC.Next()) {
-	const TopoDS_Shape& aS=aItC.Value();
-	aType=aS.ShapeType();
-	if (aType==TopAbs_COMPOUND) {
-	  aLC1.Append(aS);
-	}
-	else {
-	  aLSX.Append(aS);
-	}
+        const TopoDS_Shape& aS=aItC.Value();
+        aType=aS.ShapeType();
+        if (aType==TopAbs_COMPOUND) {
+          aLC1.Append(aS);
+        }
+        else {
+          aLSX.Append(aS);
+        }
       }
     }
     //
@@ -318,7 +330,7 @@ void TreatCompound(const TopoDS_Shape& aC1,
 }
 //
 // myErrorStatus
-// 
+//
 // 0  - Ok
 // 1  - The object is just initialized
 // 2  - PaveFiller is failed

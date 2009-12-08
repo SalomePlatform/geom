@@ -421,15 +421,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     if ( ish == 0 ) return 0;
     BRepClass3d_SolidClassifier SC (Sol);
     SC.PerformInfinitePoint(Precision::Confusion());
-    switch (SC.State()) {
-    case TopAbs_IN:
-      aShape = Sol.Reversed(); break;
-    case TopAbs_OUT:
-      aShape = Sol; break;
-    default: // not closed shell?
-      return 0;
-    }
-
+    if (SC.State() == TopAbs_IN)
+      aShape = Sol.Reversed();
+    else
+      aShape = Sol;
   }
   else if (aType == COMPOUND_SHAPES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();

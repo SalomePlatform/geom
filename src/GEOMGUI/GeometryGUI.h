@@ -41,6 +41,7 @@
 
 // OCCT Includes
 #include <gp_Ax3.hxx>
+#include <Graphic3d_HArray1OfBytes.hxx>
 
 // IDL headers
 #include "SALOMEconfig.h"
@@ -54,6 +55,7 @@ class GEOMGUI_OCCSelector;
 class LightApp_VTKSelector;
 class LightApp_Selection;
 class SUIT_ViewManager;
+class SalomeApp_Study;
 
 //=================================================================================
 // class    : GeometryGUI
@@ -73,6 +75,8 @@ public:
   virtual LightApp_Displayer* displayer();
   virtual void                initialize( CAM_Application* );
   virtual QString             engineIOR() const;
+
+  static Handle(Graphic3d_HArray1OfBytes) getTexture( SalomeApp_Study*, int, int&, int& );
 
   static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts
 
@@ -159,7 +163,12 @@ private:
 
 public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!
+
 private:  
+
+  typedef QMap<long, Handle(Graphic3d_HArray1OfBytes)> TextureMap;
+  typedef QMap<long, TextureMap> StudyTextureMap;
+  
   GUIMap                      myGUIMap;          // GUI libraries map
   QDialog*                    myActiveDialogBox; // active dialog box
   GEOM_Client                 myShapeReader;     // geom shape reader
@@ -167,6 +176,7 @@ private:
   int                         myState;           // identify a method
   gp_Ax3                      myWorkingPlane;
   QMap<int,QString>           myRules;           // popup rules
+  static StudyTextureMap      myTextureMap;      // texture map
 
   QList<GEOMGUI_OCCSelector*>  myOCCSelectors;
   QList<LightApp_VTKSelector*> myVTKSelectors;
@@ -174,7 +184,7 @@ private:
   LightApp_Displayer*         myDisplayer;
   int                         myLocalSelectionMode; //Select Only
 
-friend class DisplayGUI;
+  friend class DisplayGUI;
 };
 
 #endif

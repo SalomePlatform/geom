@@ -456,13 +456,13 @@ def TestOtherOperations (geompy, math):
 
   Shell_1 = geompy.MakeShell([Face_1, Rotation_1, Rotation_2, Rotation_3, Rotation_4, Rotation_5])
   Solid_1 = geompy.MakeSolid([Shell_1])
-  NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, 0)
+  NoExtraEdges_1 = geompy.RemoveExtraEdges(Solid_1, True) # doUnionFaces = True
 
   geompy.addToStudy(Shell_1, "Shell_1")
   geompy.addToStudy(Solid_1, "Solid_1")
   geompy.addToStudy(NoExtraEdges_1, "NoExtraEdges_1")
 
-  # RemoveExtraEdges
+  # RemoveExtraEdges (by default, doUnionFaces = False)
   freeFacesWithoutExtra = geompy.RemoveExtraEdges(freeFaces)
 
   geompy.addToStudy(freeFacesWithoutExtra, "freeFacesWithoutExtra")
@@ -529,7 +529,7 @@ def TestOtherOperations (geompy, math):
                                                      v_y, Loc, geompy.GEOM.ST_ON)
   for edge_i in edges_on_pln:
     geompy.addToStudy(edge_i, "Edge on Plane (N = (0, -1, 0) & Location = (0, -50, 0)")
-    
+
   # GetShapesOnPlaneWithLocationIDs
   edges_on_pln_ids = geompy.GetShapesOnPlaneWithLocationIDs(
            blocksComp, geompy.ShapeType["EDGE"], v_y, Loc, geompy.GEOM.ST_ON)

@@ -48,6 +48,7 @@
 #include <TopoDS_Vertex.hxx>
 #include <BRep_Tool.hxx>
 #include <gp_Pnt.hxx>
+#include <TDataStd_HArray1OfByte.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -240,8 +241,10 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
-    << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
+  if( theFormatName != "IGES_UNIT" ) {
+    GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
+      << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
+  }
 
   SetErrorCode(OK);
 
@@ -540,4 +543,99 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
 
   return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
 	   myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
+}
+
+int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTextureFile)
+{
+  SetErrorCode(KO);
+
+  if (theTextureFile.IsEmpty()) return 0;
+
+  Handle(TDataStd_HArray1OfByte) aTexture;
+
+  FILE* fp = fopen(theTextureFile.ToCString(), "r");
+  if (!fp) return 0;
+
+  std::list<std::string> lines;
+  char buffer[4096];
+  int maxlen = 0;
+  while (!feof(fp)) {
+    if ((fgets(buffer, 4096, fp)) == NULL) break;
+    int aLen = strlen(buffer);
+    if (buffer[aLen-1] == '\n') buffer[aLen-1] = '\0';
+    lines.push_back(buffer);
+    maxlen = std::max(maxlen, (int)strlen(buffer));
+  }
+
+  fclose(fp);
+
+  int lenbytes = maxlen/8;
+  if (maxlen%8) lenbytes++;
+
+  if (lenbytes == 0 || lines.empty())
+    return 0;
+
+  std::list<unsigned char> bytedata;
+  std::list<std::string>::const_iterator it;
+  for (it = lines.begin(); it != lines.end(); ++it) {
+    std::string line = *it;
+    int lenline = (line.size()/8 + (line.size()%8 ? 1 : 0)) * 8;
+    for (int i = 0; i < lenline/8; i++) {
+      unsigned char byte = 0;
+      for (int j = 0; j < 8; j++)
+	byte = (byte << 1) + ( i*8+j < line.size() && line[i*8+j] != '0' ? 1 : 0 );
+      bytedata.push_back(byte);
+    }
+    for (int i = lenline/8; i < lenbytes; i++)
+      bytedata.push_back((unsigned char)0);
+  }
+
+  if (bytedata.empty() || bytedata.size() != lines.size()*lenbytes)
+    return 0;
+
+  aTexture = new TDataStd_HArray1OfByte(1, lines.size()*lenbytes);
+  std::list<unsigned char>::iterator bdit;
+  int i;
+  for (i = 1, bdit = bytedata.begin(); bdit != bytedata.end(); ++bdit, ++i)
+    aTexture->SetValue(i, (Standard_Byte)(*bdit));
+
+  int aTextureId = GetEngine()->addTexture(GetDocID(), lenbytes*8, lines.size(), aTexture, theTextureFile);
+  if (aTextureId > 0) SetErrorCode(OK);
+  return aTextureId;
+}
+  
+int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight, 
+					   const Handle(TDataStd_HArray1OfByte)& theTexture)
+{
+  SetErrorCode(KO);
+  int aTextureId = GetEngine()->addTexture(GetDocID(), theWidth, theHeight, theTexture);
+  if (aTextureId > 0) SetErrorCode(OK);
+  return aTextureId;
+}
+
+Handle(TDataStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theTextureId,
+								      int& theWidth, int& theHeight)
+{
+  SetErrorCode(KO);
+  
+  Handle(TDataStd_HArray1OfByte) aTexture;
+  theWidth = theHeight = 0;
+  TCollection_AsciiString aFileName;
+
+  if (theTextureId <= 0)
+    return aTexture;
+
+  aTexture = GetEngine()->getTexture(GetDocID(), theTextureId, theWidth, theHeight, aFileName);
+
+  if (theWidth > 0 && theHeight > 0 && aTexture->Length() > 0) SetErrorCode(OK);
+
+  return aTexture;
+}
+
+std::list<int> GEOMImpl_IInsertOperations::GetAllTextures()
+{
+  SetErrorCode(KO);
+  std::list<int> id_list = GetEngine()->getAllTextures(GetDocID());
+  SetErrorCode(OK);
+  return id_list;
 }

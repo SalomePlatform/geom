@@ -51,6 +51,8 @@ fi
 
 qt_ok=yes
 
+QTDIR=$(echo $QTDIR | sed 's%[/]\+$%%')
+
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
 

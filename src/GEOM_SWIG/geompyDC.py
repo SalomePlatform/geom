@@ -93,9 +93,9 @@ ShapeType = {"COMPOUND":0, "COMPSOLID":1, "SOLID":2, "SHELL":3, "FACE":4, "WIRE"
 def RaiseIfFailed (Method_name, Operation):
     if Operation.IsDone() == 0 and Operation.GetErrorCode() != "NOT_FOUND_ANY":
         raise RuntimeError, Method_name + " : " + Operation.GetErrorCode()
-    
+
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ParseParameters(*parameters):
     Result = []
     StringResult = ""
@@ -108,16 +108,16 @@ def ParseParameters(*parameters):
         else:
             Result.append(parameter)
             pass
-        
+
         StringResult = StringResult + str(parameter)
         StringResult = StringResult + ":"
         pass
     StringResult = StringResult[:len(StringResult)-1]
     Result.append(StringResult)
     return Result
-    
+
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ParseList(list):
     Result = []
     StringResult = ""
@@ -128,15 +128,15 @@ def ParseList(list):
         else:
             Result.append(str(parameter))
             pass
-        
+
         StringResult = StringResult + str(parameter)
         StringResult = StringResult + ":"
         pass
     StringResult = StringResult[:len(StringResult)-1]
     return Result, StringResult
-    
+
 ## Return list of variables value from salome notebook
-## @ingroup l1_geompy_auxiliary    
+## @ingroup l1_geompy_auxiliary
 def ParseSketcherCommand(command):
     Result = ""
     StringResult = ""
@@ -168,6 +168,88 @@ def ParseSketcherCommand(command):
     Result = Result[:len(Result)-1]
     return Result, StringResult
 
+## Helper function which can be used to pack the passed string to the byte data.
+## Only '1' an '0' symbols are valid for the string. The missing bits are replaced by zeroes.
+## If the string contains invalid symbol (neither '1' nor '0'), the function raises an exception.
+## For example,
+## \code
+## val = PackData("10001110") # val = 0xAE
+## val = PackData("1")        # val = 0x80
+## \endcode
+## @param data unpacked data - a string containing '1' and '0' symbols
+## @return data packed to the byte stream
+## @ingroup l1_geompy_auxiliary
+def PackData(data):
+    bytes = len(data)/8
+    if len(data)%8: bytes += 1
+    res = ""
+    for b in range(bytes):
+        d = data[b*8:(b+1)*8]
+        val = 0
+        for i in range(8):
+            val *= 2
+            if i < len(d):
+                if d[i] == "1": val += 1
+                elif d[i] != "0":
+                    raise "Invalid symbol %s" % d[i]
+                pass
+            pass
+        res += chr(val)
+        pass
+    return res
+
+## Read bitmap texture from the text file.
+## In that file, any non-zero symbol represents '1' opaque pixel of the bitmap.
+## A zero symbol ('0') represents transparent pixel of the texture bitmap.
+## The function returns width and height of the pixmap in pixels and byte stream representing
+## texture bitmap itself.
+##
+## This function can be used to read the texture to the byte stream in order to pass it to
+## the AddTexture() function of geompy class.
+## For example,
+## \code
+## import geompy
+## geompy.init_geom(salome.myStudy)
+## texture = geompy.readtexture('mytexture.dat')
+## texture = geompy.AddTexture(*texture)
+## obj.SetMarkerTexture(texture)
+## \endcode
+## @param fname texture file name
+## @return sequence of tree values: texture's width, height in pixels and its byte stream
+## @ingroup l1_geompy_auxiliary
+def ReadTexture(fname):
+    try:
+        f = open(fname)
+        lines = [ l.strip() for l in f.readlines()]
+        f.close()
+        maxlen = 0
+        if lines: maxlen = max([len(x) for x in lines])
+        lenbytes = maxlen/8
+        if maxlen%8: lenbytes += 1
+        bytedata=""
+        for line in lines:
+            if len(line)%8:
+                lenline = (len(line)/8+1)*8
+                pass
+            else:
+                lenline = (len(line)/8)*8
+                pass
+            for i in range(lenline/8):
+                byte=""
+                for j in range(8):
+                    if i*8+j < len(line) and line[i*8+j] != "0": byte += "1"
+                    else: byte += "0"
+                    pass
+                bytedata += PackData(byte)
+                pass
+            for i in range(lenline/8, lenbytes):
+                bytedata += PackData("0")
+            pass
+        return lenbytes*8, len(lines), bytedata
+    except:
+        pass
+    return 0, 0, ""
+
 ## Kinds of shape enumeration
 #  @ingroup l1_geompy_auxiliary
 kind = GEOM.GEOM_IKindOfShape
@@ -178,7 +260,6 @@ class info:
     UNKNOWN  = 0
     CLOSED   = 1
     UNCLOSED = 2
-
 
 class geompyDC(GEOM._objref_GEOM_Gen):
 
@@ -436,7 +517,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.BasicOp.MakeTangentOnCurve(theRefCurve, theParameter)
             RaiseIfFailed("MakeTangentOnCurve", self.BasicOp)
             return anObj
-	    
+
         ## Create a tangent plane, corresponding to the given parameter on the given face.
         #  @param theFace The face for which tangent plane should be built.
         #  @param theParameterV vertical value of the center point (0.0 - 1.0).
@@ -559,7 +640,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePlaneFace", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a plane, passing through the 2 vectors
         #  with center in a start point of the first vector.
         #  @param theVec1 Vector, defining center point and plane direction.
@@ -575,7 +656,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePlane2Vec", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a plane, based on a Local coordinate system.
         #  @param theLCS  coordinate system, defining plane.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
@@ -600,7 +681,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_MakeMarker "Example"
         def MakeMarker(self, OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ):
             # Example: see GEOM_TestAll.py
-            OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);  
+            OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ, Parameters = ParseParameters(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ);
             anObj = self.BasicOp.MakeMarker(OX,OY,OZ, XDX,XDY,XDZ, YDX,YDY,YDZ)
             RaiseIfFailed("MakeMarker", self.BasicOp)
             anObj.SetParameters(Parameters)
@@ -851,7 +932,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSketcherOnPlane(theCommand, theWorkingPlane)
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             return anObj
-	    
+
 	## Create a sketcher wire, following the numerical description,
         #  passed through <VAR>theCoordinates</VAR> argument. \n
 	#  @param theCoordinates double values, defining points to create a wire,
@@ -908,12 +989,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.PrimOp.MakeBoxTwoPnt(thePnt1, thePnt2)
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
             return anObj
-	    
+
         ## Create a face with specified dimensions along OX-OY coordinate axes,
         #  with edges, parallel to this coordinate axes.
         #  @param theH height of Face.
         #  @param theW width of Face.
-	#  @param theOrientation orientation belong axis OXY OYZ OZX 
+	#  @param theOrientation orientation belong axis OXY OYZ OZX
         #  @return New GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -970,7 +1051,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a disk with specified dimensions along OX-OY coordinate axes.
         #  @param theR Radius of Face.
-	#  @param theOrientation set the orientation belong axis OXY or OYZ or OZX 
+	#  @param theOrientation set the orientation belong axis OXY or OYZ or OZX
         #  @return New GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_face "Example"
@@ -1173,7 +1254,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePrismVecH2Ways", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  @param theBase Base shape to be extruded.
         #  @param theDX, theDY, theDZ Directions of extrusion.
@@ -1187,7 +1268,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
 	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  i.e. all the space, transfixed by the base shape during its translation
         #  along the vector on the given distance in 2 Ways (forward/backward) .
@@ -2749,15 +2830,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 RaiseIfFailed("MakeFilletFacesR1R2", self.LocalOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
-        ## Perform a fillet on the specified edges of the given wire shape
-        #  @param theShape - Wire Shape(with planar edges) to perform fillet on.
+
+        ## Perform a fillet on the specified edges of the given shape
+        #  @param theShape - Wire Shape to perform fillet on.
         #  @param theR - Fillet radius.
         #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
         #    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
+        #    \note The list of vertices could be empty,
+        #          in this case fillet will done done at all vertices in wire
         #  @return New GEOM_Object, containing the result shape.
         #
-        #  @ref tui_fillet1d "Example"
+        #  @ref tui_fillet2d "Example"
         def MakeFillet1D(self,theShape, theR, theListOfVertexes):
             # Example: see GEOM_TestAll.py
             anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
@@ -2776,22 +2859,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet2D", self.LocalOp)
-            return anObj
-
-        ## Perform a fillet on the specified edges of the given shape
-        #  @param theShape - Wire Shape to perform fillet on.
-        #  @param theR - Fillet radius.
-        #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
-        #    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
-        #    \note The list of vertices could be empty,
-        #          in this case fillet will done done at all vertices in wire
-        #  @return New GEOM_Object, containing the result shape.
-        #
-        #  @ref tui_fillet2d "Example"
-        def MakeFillet1D(self,theShape, theR, theListOfVertexes):
-            # Example: see GEOM_TestAll.py
-            anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
-            RaiseIfFailed("MakeFillet1D", self.LocalOp)
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.
@@ -3560,16 +3627,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  Unite faces and edges, sharing one surface. It means that
         #  this faces must have references to one C++ surface object (handle).
         #  @param theShape The compound or single solid to remove irregular edges from.
-        #  @param theOptimumNbFaces If more than zero, unite faces only for those solids,
-        #         that have more than theOptimumNbFaces faces. If zero, unite faces always,
-        #         regardsless their quantity in the solid. If negative (the default value),
-        #         do not unite faces at all. For blocks repairing recommended value is 6.
+        #  @param doUnionFaces If True, then unite faces. If False (the default value),
+        #         do not unite faces.
         #  @return Improved shape.
         #
         #  @ref swig_RemoveExtraEdges "Example"
-        def RemoveExtraEdges(self,theShape,theOptimumNbFaces=-1):
+        def RemoveExtraEdges(self, theShape, doUnionFaces=False):
             # Example: see GEOM_TestOthers.py
-            anObj = self.BlocksOp.RemoveExtraEdges(theShape,theOptimumNbFaces)
+            nbFacesOptimum = -1 # -1 means do not unite faces
+            if doUnionFaces is True: nbFacesOptimum = 0 # 0 means unite faces
+            anObj = self.BlocksOp.RemoveExtraEdges(theShape, nbFacesOptimum)
             RaiseIfFailed("RemoveExtraEdges", self.BlocksOp)
             return anObj
 
@@ -3890,6 +3957,37 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def addPath(self,Path):
             if (sys.path.count(Path) < 1):
                 sys.path.append(Path)
+                pass
+            pass
+
+        ## Load marker texture from the file
+        #  @param Path a path to the texture file
+        #  @return unique texture identifier
+        #  @ingroup l1_geompy_auxiliary
+        def LoadTexture(self, Path):
+            # Example: see GEOM_TestAll.py
+            ID = self.InsertOp.LoadTexture(Path)
+            RaiseIfFailed("LoadTexture", self.InsertOp)
+            return ID
+
+        ## Add marker texture. @a Width and @a Height parameters
+        #  specify width and height of the texture in pixels.
+        #  If @a RowData is @c True, @a Texture parameter should represent texture data
+        #  packed into the byte array. If @a RowData is @c False (default), @a Texture
+        #  parameter should be unpacked string, in which '1' symbols represent opaque
+        #  pixels and '0' represent transparent pixels of the texture bitmap.
+        #
+        #  @param Width texture width in pixels
+        #  @param Height texture height in pixels
+        #  @param Texture texture data
+        #  @param RowData if @c True, @a Texture data are packed in the byte stream
+        #  @ingroup l1_geompy_auxiliary
+        def AddTexture(self, Width, Height, Texture, RowData=False):
+            # Example: see GEOM_TestAll.py
+            if not RowData: Texture = PackData(Texture)
+            ID = self.InsertOp.AddTexture(Width, Height, Texture)
+            RaiseIfFailed("AddTexture", self.InsertOp)
+            return ID
 
 import omniORB
 #Register the new proxy for GEOM_Gen

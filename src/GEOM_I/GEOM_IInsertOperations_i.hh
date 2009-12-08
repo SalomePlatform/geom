@@ -27,6 +27,7 @@
 #include <SALOMEconfig.h>
 
 #include CORBA_SERVER_HEADER(GEOM_Gen)
+#include CORBA_CLIENT_HEADER(SALOMEDS)
 #include "GEOM_IOperations_i.hh"
 #include "GEOM_Object_i.hh"
 
@@ -55,6 +56,15 @@ class GEOM_I_EXPORT GEOM_IInsertOperations_i :
 
   void ExportTranslators (GEOM::string_array_out theFormats,
 			  GEOM::string_array_out thePatterns);
+
+  CORBA::Long LoadTexture(const char* theTextureFile);
+  CORBA::Long AddTexture(CORBA::Long theWidth, CORBA::Long theHeight, 
+			 const SALOMEDS::TMPFile& theTexture);
+  SALOMEDS::TMPFile* GetTexture(CORBA::Long theID, 
+				CORBA::Long& theWidth,
+				CORBA::Long& theHeight);
+
+  GEOM::ListOfLong* GetAllTextures();
 
   ::GEOMImpl_IInsertOperations* GetOperations()
   { return (::GEOMImpl_IInsertOperations*)GetImpl(); }

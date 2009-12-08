@@ -25,45 +25,43 @@ the position of this point regarding the reference one.
 
 \image html point2.png
 
-\n Thirdly, we can define a point by an \b Edge and a \b 
-[list]
-[*]Parameter
+\n Thirdly, we can define a point by an \b Edge and a \b Parameter
 indicating its position on the Edge, ranging from 0.0 to 1.0. For example, 0.5 means that the
 point is located in the middle of the edge.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurve(Edge,Parameter).</em>
 \n <b>Arguments:</b> Name + 1 edge  + 1 Parameter defining the
 position of the point on the given edge.
 \image html point3.png
-[*]3D co-ordinate of point to project on the given edge
-\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByCoord(Edge,X,Y,Z).</em>
-\n <b>Arguments:</b> Name + 1 edge  + 3 coordinate values
-to project point on the given edge.
-\image html point3_2.png
-[/list]
 
+Alternatively, it is possible to define 3D coordinates of the point
+projected on the given edge to produce the resulting point.
+\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByCoord(Edge,X,Y,Z).</em>
+\n <b>Arguments:</b> Name + 1 edge  + 3 coordinate values of the
+projected point.
+\image html point3_2.png
 
 \n Fourthly, we can define a point by intersection of two \b  Lines.
 \n <b>TUI Command:</b> <em>geompy.MakePointOnLinesIntersection(myLine1,myLine2).</em>
 \n <b>Arguments:</b> Name + 2 lines
 
 \image html point4.png
-<b>Example:</b>
 
 \n Finally, we can define a point by a \b Face and
-[list]
-[*]Two <b> Parameters: U </b> and \b V
+Two <b> Parameters: U </b> and \b V
 indicating its position on the Face, ranging from 0.0 to 1.0. For example, (0.5; 0.5) means that the
 point is located in the middle of the face.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurface(myFace,myUParameter,myVParameter).</em>
 \n <b>Arguments:</b> Name + 1 face + 2 Parameters defining the
 position of the point on the given face.
-[*] 3D co-ordinate of point to project on the given face.
+
 \image html point5.png
+
+Alternatively, it is possible to define 3D coordinates of the point projected on the given face.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnSurface(myFace,X,Y,Z).</em>
 \n <b>Arguments:</b> Name + 1 face  + 3 coordinate values
 to project point on the given face.
+
 \image html point5_2.png
-[/list]
 
 <b>Example:</b>
 

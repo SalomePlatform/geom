@@ -42,4 +42,4 @@ libIGESExport_la_CPPFLAGS =	\
 libIGESExport_la_LDFLAGS  =	\
 	$(STDLIB)		\
 	$(CAS_LDPATH) -lTKIGES	\
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics

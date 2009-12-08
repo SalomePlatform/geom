@@ -186,6 +186,69 @@ CORBA::Boolean GEOM_Object_i::GetAutoColor()
 
 //=============================================================================
 /*!
+ *  SetMarkerStd
+ */
+//=============================================================================
+void GEOM_Object_i::SetMarkerStd(GEOM::marker_type theType, GEOM::marker_size theSize)
+{
+  if ( theType == GEOM::MT_NONE || theSize == GEOM::MS_NONE ) {
+    _impl->UnsetMarker();
+  }
+  else {
+    Aspect_TypeOfMarker aType = (Aspect_TypeOfMarker)( (int)theType-1 );
+    double aSize = ((int)theSize+1)*0.5;
+    _impl->SetMarkerStd( aType, aSize );
+  }
+}
+
+
+//=============================================================================
+/*!
+ *  SetMarkerTexture
+ */
+//=============================================================================
+void GEOM_Object_i::SetMarkerTexture(CORBA::Long theTextureId)
+{
+  _impl->SetMarkerTexture( theTextureId );
+}
+
+
+//=============================================================================
+/*!
+ *  GetMarkerType
+ */
+//=============================================================================
+GEOM::marker_type GEOM_Object_i::GetMarkerType()
+{
+  return (GEOM::marker_type)( (int)_impl->GetMarkerType()+1 );
+}
+
+
+//=============================================================================
+/*!
+ *  GetMarkerSize
+ */
+//=============================================================================
+GEOM::marker_size GEOM_Object_i::GetMarkerSize()
+{
+  int aSize = (int)( _impl->GetMarkerSize()/0.5 ) - 1;
+  return aSize < GEOM::MS_10 || aSize > GEOM::MS_70 ? GEOM::MS_NONE : (GEOM::marker_size)aSize;
+}
+
+
+//=============================================================================
+/*!
+ *  GetMarkerTexture
+ */
+//=============================================================================
+CORBA::Long GEOM_Object_i::GetMarkerTexture()
+{
+  return _impl->GetMarkerTexture();
+}
+
+
+//=============================================================================
+/*!
  *  SetStudyEntry
  */
 //=============================================================================

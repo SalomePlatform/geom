@@ -48,6 +48,7 @@ private:
   bool                  isVisible( const int ) const;
   bool                  isAutoColor( const int ) const;
   QString               typeName( const int ) const;  
+  int                   typeId( const int ) const;  
   QString               displayMode( const int ) const;
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;

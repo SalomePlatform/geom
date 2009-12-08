@@ -42,4 +42,4 @@ libIGESImport_la_CPPFLAGS =	\
 libIGESImport_la_LDFLAGS  =	\
 	$(STDLIB)		\
 	$(CAS_LDPATH) -lTKIGES	\
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics
