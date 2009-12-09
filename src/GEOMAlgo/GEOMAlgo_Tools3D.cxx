@@ -86,7 +86,10 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 //
+#include <GeomAdaptor_Surface.hxx>
 
+
+//
 static
   Standard_Boolean FindFacePairs (const TopoDS_Edge& ,
 				  const TopTools_ListOfShape& ,
@@ -98,7 +101,6 @@ static
 			     const gp_Dir& ,
 			     const gp_Dir& );
 
-//modified by NIZNHY-PKV Tue Jul 14 07:24:10 2009f
 static
   void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aE, 
 				    const TopoDS_Face& aF, 
@@ -106,7 +108,6 @@ static
 				    gp_Pnt& aPF, 
 				    gp_Dir& aDNF,
 				    IntTools_Context& aCtx);
-//modified by NIZNHY-PKV Tue Jul 14 07:24:15 2009t
 
 //=======================================================================
 //function : IsInternalFace
@@ -264,13 +265,11 @@ static
   // 3
   bRet=Standard_False;
   //
-  //modified by NIZNHY-PKV Tue Jul 14 07:22:38 2009f
   GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1, theContext);
   GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2, theContext);
 
   //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
   //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
-  //modified by NIZNHY-PKV Tue Jul 14 07:22:42 2009t
   //
   aTwoPI=2.*PI;
   gp_Vec aVBF (aPx, aPF );
@@ -1045,7 +1044,6 @@ Standard_Real AngleWithRef(const gp_Dir& theD1,
   }
   return aBeta;
 }
-//modified by NIZNHY-PKV Tue Jul 14 07:49:55 2009f
 //=======================================================================
 //function : GetApproxNormalToFaceOnEdge
 //purpose  : 
@@ -1062,6 +1060,9 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
   gp_Dir aDTT, aDNFT, aDBT;
   gp_Pnt aPFT, aPFx;
   Handle(Geom_Curve) aC3D;
+  Handle(Geom_Surface) aS;
+  GeomAdaptor_Surface aGAS;
+  GeomAbs_SurfaceType aTS;
   TopoDS_Face aF;
   TopoDS_Edge aE;
   //
@@ -1073,7 +1074,6 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
     aE.Reverse();
     //
     aF.Orientation(TopAbs_FORWARD);
-    //GEOMAlgo_Tools3D::GetEdgeOnFace(aEx, aF, aE);
   }
   //
   // Point at aT
@@ -1090,6 +1090,30 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
   aDBT=aDNFT^aDTT;
   //
   dT=BOPTools_Tools3D::MinStepIn2d();//~1.e-5;
+  dT=10.*dT;
+  //----------------------------------------------
+  {
+    aS=BRep_Tool::Surface(aF);
+    aGAS.Load(aS);
+    aTS=aGAS.GetType();
+    if (aTS==GeomAbs_BSplineSurface ||
+	aTS==GeomAbs_BezierSurface ||
+	aTS==GeomAbs_Plane) {//modified by NIZNHY-PKV Fri Dec  4 08:23:24 2009ft
+      Standard_Real aTolEx, aTolFx, aTol, dUR, dVR, dR;
+      //
+      aTolEx=BRep_Tool::Tolerance(aEx);
+      aTolFx=BRep_Tool::Tolerance(aFx);
+      aTol=2.*aTolEx+aTolFx;
+      dUR=aGAS.UResolution(aTol);
+      dVR=aGAS.VResolution(aTol);
+      dR=(dUR>dVR)? dUR : dVR;
+      if (dR>dT) {
+	dT=dR;
+      }
+    }
+  }
+  //----------------------------------------------
+  //
   aPFx.SetXYZ(aPFT.XYZ()+dT*aDBT.XYZ());
   //
   aPF=aPFx;
@@ -1099,12 +1123,10 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
   }
   //
   GeomAPI_ProjectPointOnSurf& aProjector=aCtx.ProjPS(aF);
+  //
   aProjector.Perform(aPFx);
   if(aProjector.IsDone()) {
-    Handle(Geom_Surface) aS;
-    //
     aProjector.LowerDistanceParameters (aU, aV);
-    aS=BRep_Tool::Surface(aF);
     aS->D0(aU, aV, aPF);
     BOPTools_Tools3D::GetNormalToSurface (aS, aU, aV, aDNF);
     if (bReverse){
@@ -1112,4 +1134,3 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
     }
   }
 }
-//modified by NIZNHY-PKV Tue Jul 14 07:49:58 2009t
