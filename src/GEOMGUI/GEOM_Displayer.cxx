@@ -1027,6 +1027,44 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
 
 //=================================================================
 /*!
+ *  GEOM_Displayer::buildSubshapePresentation
+ *  Builds/finds object's presentation for the current viewer
+ *  Calls corresponding Update() method by means of double dispatch
+ *  For not published objects (for Mantis issue 0020435)
+ */
+//=================================================================
+SALOME_Prs* GEOM_Displayer::buildSubshapePresentation(const TopoDS_Shape& aShape,
+                                                      const QString& entry,
+                                                      SALOME_View* theViewFrame)
+{
+  SALOME_Prs* prs = 0;
+  internalReset();
+
+  myViewFrame = theViewFrame ? theViewFrame : GetActiveView();
+
+  if (myViewFrame)
+  {
+    prs = LightApp_Displayer::buildPresentation(entry, theViewFrame);
+    if (prs)
+    {
+      Handle(SALOME_InteractiveObject) theIO = new SALOME_InteractiveObject();
+      theIO->setEntry(entry.toLatin1().constData());
+      if (!theIO.IsNull())
+      {
+	// set interactive object
+	setIO(theIO);
+        // finally set shape
+        setShape(aShape);
+        myType = GEOM_SUBSHAPE;
+      }
+      UpdatePrs(prs);  // Update presentation by using of the double dispatch
+    }
+  }
+  return prs;
+}
+
+//=================================================================
+/*!
  *  GEOM_Displayer::internalReset
  *  Resets internal data
  *  [internal]

@@ -155,9 +155,14 @@ public:
 
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
 
+  /* Builds presentation of not published object */
+  virtual SALOME_Prs* buildSubshapePresentation(const TopoDS_Shape& aShape,
+                                                const QString&,
+                                                SALOME_View* = 0);
+
 protected:
   /* internal methods */
-  /* Builds presentation accordint to the current viewer type */
+  /* Builds presentation according to the current viewer type */
   virtual SALOME_Prs* buildPresentation( const QString&, SALOME_View* = 0 );
 
   /* Sets interactive object */

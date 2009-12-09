@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GroupGUI_GroupDlg.h
-// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GroupGUI_GroupDlg.h
+//  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
+
 #ifndef GROUPGUI_GROUPDLG_H
 #define GROUPGUI_GROUPDLG_H
 
@@ -30,6 +30,7 @@
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <TColStd_DataMapOfIntegerInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 class QGroupBox;
 class QLineEdit;
@@ -59,7 +60,7 @@ protected:
   virtual bool                        isValid( QString& );
   virtual bool                        execute( ObjectList& );
   virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr );
-  
+
   void                                closeEvent( QCloseEvent* );
 
 private slots:
@@ -70,23 +71,25 @@ private slots:
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
   void                                ConstructorsClicked( int );
-  
+
   void                                selectAllSubShapes();
   void                                add();
   void                                remove();
+  void                                showOnlySelected();
   void                                selectionChanged();
-  
+
 private:
   void                                Init();
   void                                enterEvent( QEvent* );
-  int                                 subSelectionWay() const;    
+  int                                 subSelectionWay() const;
   TopAbs_ShapeEnum                    getShapeType() const;
   void                                setShapeType( const TopAbs_ShapeEnum );
   void                                activateSelection();
-  void                                updateState();
+  void                                updateState(bool isAdd = false);
   void                                highlightSubShapes();
   void                                onGetInPlace();
   void                                setInPlaceObj( GEOM::GEOM_Object_var, const bool isVisible=1);
+  int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
 
 private:
   Mode                                myMode;
@@ -102,11 +105,14 @@ private:
   QLineEdit*                          myMainName;
   QPushButton*                        mySelBtn2;
   QLineEdit*                          myShape2Name;
-  QGroupBox*                          mySelectionWayGroupBox;
-  QButtonGroup*                       mySelectionWayGroup;
+  QGroupBox*                          myRestrictGroupBox;
+  QButtonGroup*                       myRestrictGroup;
   QPushButton*                        mySelAllBtn;
   QPushButton*                        myAddBtn;
   QPushButton*                        myRemBtn;
+  QPushButton*                        myShowOnlyBtn;
+  QPushButton*                        myHideSelBtn;
+  QPushButton*                        myShowAllBtn;
   QListWidget*                        myIdList;
 };
 
