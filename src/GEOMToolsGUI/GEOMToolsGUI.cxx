@@ -490,8 +490,11 @@ void GEOMToolsGUI::OnEditDelete()
 	
     // check if object is reference
     _PTR(SObject) refobj;
-    if ( obj && obj->ReferencedObject( refobj ) )
-      continue; // skip references
+    if ( obj && obj->ReferencedObject( refobj ) ) {
+      // get the main object by reference IPAL 21354
+      obj = refobj;
+      entry = obj->GetID().c_str();
+    }
     // ...
     QString aName = obj->GetName().c_str();
     if ( entry == geomComp ) {
