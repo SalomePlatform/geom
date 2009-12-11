@@ -141,7 +141,11 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       Handle(Geom_Line) L2 = Handle(Geom_Line)::DownCast(c3d2);
       gp_Dir Dir1 = L1->Position().Direction();
       gp_Dir Dir2 = L2->Position().Direction();
-      if(!Dir1.IsEqual(Dir2,Precision::Angular())) continue;
+      //if(!Dir1.IsEqual(Dir2,Precision::Angular())) { 
+      //if(!Dir1.IsParallel(Dir2,Precision::Angular())) { 
+      if(!Dir1.IsParallel(Dir2,Tol)) { 
+        continue;
+      }
       // can union lines => create new edge
       TopoDS_Vertex V1 = sae.FirstVertex(edge1);
       gp_Pnt PV1 = BRep_Tool::Pnt(V1);
@@ -156,9 +160,9 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       B.Add (E,V1);  B.Add (E,V2);
       B.UpdateVertex(V1, 0., E, 0.);
       B.UpdateVertex(V2, dist, E, 0.);
-      ShapeFix_Edge sfe;
-      sfe.FixAddPCurve(E,aFace,Standard_False);
-      sfe.FixSameParameter(E);
+      //ShapeFix_Edge sfe;
+      //sfe.FixAddPCurve(E,aFace,Standard_False);
+      //sfe.FixSameParameter(E);
       aChain.Remove(j);
       aChain.SetValue(j,E);
       j--;
