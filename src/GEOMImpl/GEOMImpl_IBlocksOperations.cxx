@@ -2126,7 +2126,7 @@ TCollection_AsciiString GEOMImpl_IBlocksOperations::PrintBCErrors
 //=============================================================================
 Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
                                               (Handle(GEOM_Object) theCompound,
-                                               std::list<BCError>&      theErrors)
+                                               std::list<BCError>& theErrors)
 {
   SetErrorCode(KO);
 
@@ -2222,7 +2222,7 @@ Standard_Boolean GEOMImpl_IBlocksOperations::CheckCompoundOfBlocks
   }
 
   // 3. Find not glued blocks
-  GEOMAlgo_GlueAnalyser aGD; 
+  GEOMAlgo_GlueAnalyser aGD;
 
   aGD.SetShape(aComp);
   aGD.SetTolerance(Precision::Confusion());
@@ -2385,6 +2385,9 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::CheckAndImprove
 
   GEOMImpl_IBlockTrsf aTI (aFunction);
   aTI.SetOriginal(aLastFunction);
+
+  // -1 means do not unite faces on common surface (?except case of seam edge between them?)
+  //aTI.SetOptimumNbFaces(-1);
   aTI.SetOptimumNbFaces(6);
 
   //Compute the fixed shape

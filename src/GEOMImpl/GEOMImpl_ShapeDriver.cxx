@@ -237,7 +237,6 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     TopTools_MapOfShape aMapEdges;
     Handle(TopTools_HSequenceOfShape) aSeqEdgesIn = new TopTools_HSequenceOfShape;
 
-    BRep_Builder B;
     for (ind = 1; ind <= nbshapes; ind++) {
       Handle(GEOM_Function) aRefSh_i = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aSh_i = aRefSh_i->GetValue();
