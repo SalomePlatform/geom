@@ -124,6 +124,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Angle</translation>
         </message>
         <message>
+            <source>GEOM_ARC_ELLIPSE</source>
+            <translation>Arc of ellipse</translation>
+        </message>
+        <message>
             <source>GEOM_ARC</source>
             <translation>Arc</translation>
         </message>
@@ -1130,6 +1134,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_PIPE_TITLE</source>
             <translation>Pipe Construction</translation>
+        </message>
+        <message>
+            <source>GEOM_SEGMENT</source>
+            <translation>Segment of straight line</translation>
         </message>
 	<message>
             <source>GEOM_SELECT_UNPUBLISHED_EDGES</source>
@@ -3762,6 +3770,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_POLYGON</source>
             <translation>Polygon</translation>
+        </message>
+        <message>
+            <source>GEOM_POLYHEDRON</source>
+            <translation>Polyhedron</translation>
         </message>
         <message>
             <source>GEOM_NORMAL</source>
