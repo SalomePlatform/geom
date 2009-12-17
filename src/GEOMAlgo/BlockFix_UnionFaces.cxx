@@ -90,6 +90,9 @@
 #include <gp_XY.hxx>
 #include <gp_Pnt2d.hxx>
 
+#include <Standard_Failure.hxx>
+#include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
+
 //=======================================================================
 //function : BlockFix_UnionFaces
 //purpose  :
@@ -609,11 +612,19 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
     Handle(BRepTopAdaptor_TopolTool) aTT1 = new BRepTopAdaptor_TopolTool();
     Handle(BRepTopAdaptor_TopolTool) aTT2 = new BRepTopAdaptor_TopolTool();
 
-    IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
-    if (!anIIInt.IsDone() || anIIInt.IsEmpty())
-      return false;
+    try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+      OCC_CATCH_SIGNALS;
+#endif
+      IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
+      if (!anIIInt.IsDone() || anIIInt.IsEmpty())
+        return false;
 
-    return anIIInt.TangentFaces();
+      return anIIInt.TangentFaces();
+    }
+    catch (Standard_Failure) {
+      return false;
+    }
   }
 
   // case of two planar surfaces:
