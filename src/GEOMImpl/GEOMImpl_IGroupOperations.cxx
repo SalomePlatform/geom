@@ -146,8 +146,8 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
     for(Standard_Integer i = 1; i<=aLength; i++) {
       aNewSeq->SetValue(i, aSeq->Value(i));
       if(aSeq->Value(i) == theSubShapeID) {
-	SetErrorCode(ALREADY_PRESENT);
-	return; //
+        SetErrorCode(ALREADY_PRESENT);
+        return; //
       }
     }
     aNewSeq->SetValue(aLength+1, theSubShapeID);
@@ -249,7 +249,8 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
 
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
-    SetErrorCode("The list is empty");
+    //SetErrorCode("The list is empty");
+    SetErrorCode(OK);
     return;
   }
 
