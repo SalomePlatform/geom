@@ -172,17 +172,11 @@ else
     PVHOME=${with_paraview}
   fi
 
-  if test -z $PVSRCHOME ; then
-    PVSRCHOME="$PVHOME/src"
-  fi
 
-  if test -z $PVINSTALLHOME ; then
-    PVINSTALLHOME="$PVHOME/bin"
-  fi
+  LOCAL_INCLUDES="-I$PVHOME/include/paraview-$PVVERSION $LOCAL_INCLUDES"
 
-  LOCAL_INCLUDES="-I$PVSRCHOME/VTK/Common -I$PVSRCHOME/VTK/Filtering -I$PVSRCHOME/VTK/GenericFiltering -I$PVSRCHOME/VTK/Graphics -I$PVSRCHOME/VTK/Hybrid -I$PVSRCHOME/VTK/Imaging -I$PVSRCHOME/VTK/Infovis -I$PVSRCHOME/VTK/IO -I$PVSRCHOME/VTK/Parallel -I$PVSRCHOME/VTK/Rendering -I$PVSRCHOME/VTK/Utilities -I$PVSRCHOME/VTK/Views -I$PVSRCHOME/VTK/VolumeRendering -I$PVSRCHOME/VTK/Widgets -I$PVINSTALLHOME/VTK -I$PVINSTALLHOME/VTK/Common -I$PVINSTALLHOME/VTK/Filtering -I$PVINSTALLHOME/VTK/GenericFiltering -I$PVINSTALLHOME/VTK/Graphics -I$PVINSTALLHOME/VTK/Hybrid -I$PVINSTALLHOME/VTK/Imaging -I$PVINSTALLHOME/VTK/Infovis -I$PVINSTALLHOME/VTK/IO -I$PVINSTALLHOME/VTK/Parallel -I$PVINSTALLHOME/VTK/Rendering -I$PVINSTALLHOME/VTK/Utilities -I$PVINSTALLHOME/VTK/Views -I$PVINSTALLHOME/VTK/VolumeRendering -I$PVINSTALLHOME/VTK/Widgets $LOCAL_INCLUDES"
-  LOCAL_LIBS="-L$PVINSTALLHOME/bin -lvtksys -lvtkzlib -lvtkpng -lvtkjpeg -lvtktiff -lvtkexpat -lvtksqlite -lvtkmetaio -lvtkverdict -lvtkNetCDF -lvtkDICOMParser -lvtkfreetype -lvtkftgl -lvtkexoIIc $LOCAL_LIBS"
-  TRY_LINK_LIBS="-L$PVINSTALLHOME/bin -lvtksys $TRY_LINK_LIBS"
+  LOCAL_LIBS="-L$PVHOME/lib/paraview-$PVVERSION -lvtksys -lvtkzlib -lvtkpng -lvtkjpeg -lvtktiff -lvtkexpat -lvtksqlite -lvtkmetaio -lvtkverdict -lvtkNetCDF -lvtkDICOMParser -lvtkfreetype -lvtkftgl -lvtkexoIIc $LOCAL_LIBS"
+  TRY_LINK_LIBS="-L$PVHOME/lib/paraview-$PVVERSION -lvtksys $TRY_LINK_LIBS"
 fi
 
 dnl vtk headers
