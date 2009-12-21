@@ -221,9 +221,6 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
         B.UpdateVertex(V1, fpar, E, 0.);
         B.UpdateVertex(V2, lpar, E, 0.);
       }
-      ShapeFix_Edge sfe;
-      sfe.FixAddPCurve(E,aFace,Standard_False);
-      sfe.FixSameParameter(E);
       aChain.Remove(j);
       aChain.SetValue(j,E);
       j--;
