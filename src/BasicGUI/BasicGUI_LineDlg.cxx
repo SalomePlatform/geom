@@ -50,7 +50,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_LineDlg::BasicGUI_LineDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				    bool modal, Qt::WindowFlags fl )
+                                    bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
@@ -124,7 +124,7 @@ void BasicGUI_LineDlg::Init()
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   GroupPoints->PushButton1->setDown(true);
   
-	
+        
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
@@ -145,7 +145,7 @@ void BasicGUI_LineDlg::Init()
   connect( GroupFaces->LineEdit2,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_LINE" ) );
 
@@ -258,7 +258,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     QString aName = GEOMBase::GetName( aSelectedObject );
     TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
     if ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
-	 myEditCurrentArgument == GroupFaces->LineEdit2 )
+         myEditCurrentArgument == GroupFaces->LineEdit2 )
       aNeedType = TopAbs_FACE;
     
     TopoDS_Shape aShape;
@@ -266,22 +266,22 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes(aSelList.First(), aMap);
       if ( aMap.Extent() == 1 ) { // Local Selection
-	int anIndex = aMap( 1 );
+        int anIndex = aMap( 1 );
         if ( aNeedType == TopAbs_FACE )
           aName += QString( ":face_%1" ).arg( anIndex );
         else
           aName += QString( ":vertex_%1" ).arg( anIndex );
 
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
 
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	}
-	else {
-	  aSelectedObject = aFindedObject; // get Object from study
-	}
+        if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+          aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+        }
+        else {
+          aSelectedObject = aFindedObject; // get Object from study
+        }
       }
       else { // Global Selection
         if ( aShape.ShapeType() != aNeedType ) {
@@ -301,22 +301,22 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
       myPoint1 = aSelectedObject;
       if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myPoint2 = aSelectedObject;
       if ( !myPoint2->_is_nil() && myPoint1->_is_nil() )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 ) {
       myFace1 = aSelectedObject;
       if ( !myFace1->_is_nil() && myFace2->_is_nil() )
-	GroupFaces->PushButton2->click();
+        GroupFaces->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupFaces->LineEdit2 ) {
       myFace2 = aSelectedObject;
       if ( !myFace2->_is_nil() && myFace1->_is_nil() )
-	GroupFaces->PushButton1->click();      
+        GroupFaces->PushButton1->click();      
     }
   }
   
@@ -393,7 +393,7 @@ void BasicGUI_LineDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }

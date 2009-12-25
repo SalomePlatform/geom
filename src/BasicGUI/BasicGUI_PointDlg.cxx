@@ -70,7 +70,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				      bool modal, Qt::WindowFlags fl )
+                                      bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT") ) );
@@ -275,7 +275,7 @@ void BasicGUI_PointDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this,  SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
-	   this,  SLOT(SelectionIntoArgument() ) );
+           this,  SLOT(SelectionIntoArgument() ) );
 
   
   initName( tr( "GEOM_VERTEX" ) );
@@ -496,18 +496,18 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
           else
             aName += QString( ":vertex_%1" ).arg( anIndex );
 
-	  //Find SubShape Object in Father
-	  GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-	  
-	  if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	    GEOM::GEOM_IShapesOperations_var aShapesOp =
+          //Find SubShape Object in Father
+          GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+          
+          if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+            GEOM::GEOM_IShapesOperations_var aShapesOp =
               getGeomEngine()->GetIShapesOperations(getStudyId());
-	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	  }
-	  else {
-	    aSelectedObject = aFindedObject; // get Object from study
-	  }
-	  GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE );
+            aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+          }
+          else {
+            aSelectedObject = aFindedObject; // get Object from study
+          }
+          GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE );
         }
         else { // Global Selection
           if ( aShape.ShapeType() != aNeedType ) {
@@ -519,7 +519,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       }
 
       if ( aShape.IsNull() || aShape.ShapeType() != aNeedType)
-	return;
+        return;
 
       if ( id == GEOM_POINT_XYZ ) {
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
@@ -536,24 +536,24 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         GroupOnCurve->LineEdit1->setText( aName );
       }
       else if ( id == GEOM_POINT_INTINT ) {
-	myEditCurrentArgument->setText( aName );
-	globalSelection();
-	localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+        myEditCurrentArgument->setText( aName );
+        globalSelection();
+        localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
         if ( myEditCurrentArgument == GroupLineIntersection->LineEdit1 ) {
           myLine1 = aSelectedObject;
-	  if ( !myLine1->_is_nil() && myLine2->_is_nil() )
-	    GroupLineIntersection->PushButton2->click();
+          if ( !myLine1->_is_nil() && myLine2->_is_nil() )
+            GroupLineIntersection->PushButton2->click();
         }
         else if ( myEditCurrentArgument == GroupLineIntersection->LineEdit2 ) {
           myLine2 = aSelectedObject;
-	  if ( !myLine2->_is_nil() && myLine1->_is_nil() )
-	    GroupLineIntersection->PushButton1->click();
+          if ( !myLine2->_is_nil() && myLine1->_is_nil() )
+            GroupLineIntersection->PushButton1->click();
         }
       }
       else if ( id == GEOM_POINT_SURF )
       {
-	myFace = aSelectedObject;
-	GroupOnSurface->LineEdit1->setText( aName );
+        myFace = aSelectedObject;
+        GroupOnSurface->LineEdit1->setText( aName );
       }
     }
   }
@@ -648,7 +648,7 @@ void BasicGUI_PointDlg::ActivateThisDialog( )
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -869,9 +869,9 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
   
   const int id = getConstructorId();
   if(!anObj->_is_nil() && !IsPreview() && (id ==  GEOM_POINT_XYZ || 
-					   id == GEOM_POINT_REF ||
-					   id == GEOM_POINT_EDGE ||
-					   id == GEOM_POINT_SURF) ) {
+                                           id == GEOM_POINT_REF ||
+                                           id == GEOM_POINT_EDGE ||
+                                           id == GEOM_POINT_SURF) ) {
       anObj->SetParameters(aParameters.join(":").toLatin1().constData());
   }
   

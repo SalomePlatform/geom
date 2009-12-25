@@ -119,7 +119,7 @@ void BuildGUI_WireDlg::Init()
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
   connect( GroupArgs->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_WIRE" ) );
 }
@@ -209,7 +209,7 @@ void BuildGUI_WireDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_WIRE );
   aMap.Add( GEOM_EDGE );

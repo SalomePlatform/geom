@@ -401,19 +401,19 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
       
       if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-	GEOM::GEOM_IShapesOperations_var aShapesOp =
-	  getGeomEngine()->GetIShapesOperations(getStudyId());
-	aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        GEOM::GEOM_IShapesOperations_var aShapesOp =
+          getGeomEngine()->GetIShapesOperations(getStudyId());
+        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
       }
       else { // get Object from study
-	aSelectedObject = aFindedObject;
+        aSelectedObject = aFindedObject;
       }
     }
     else {
       if (S.ShapeType() != TopAbs_EDGE && S.ShapeType() != TopAbs_WIRE) {
-	aSelectedObject = GEOM::GEOM_Object::_nil();
-	aName = "";
-	return;
+        aSelectedObject = GEOM::GEOM_Object::_nil();
+        aName = "";
+        return;
       }
     }
     
@@ -554,10 +554,10 @@ void TransformationGUI_PositionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -614,9 +614,9 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   case 0:
     {
       for (int i = 0; i < myObjects.length(); i++) {
-	anObj = toCreateCopy ? 
-	  anOper->PositionShapeCopy(myObjects[i], myObjects[i], myEndLCS) :
-	  anOper->PositionShape(myObjects[i], myObjects[i], myEndLCS);
+        anObj = toCreateCopy ? 
+          anOper->PositionShapeCopy(myObjects[i], myObjects[i], myEndLCS) :
+          anOper->PositionShape(myObjects[i], myObjects[i], myEndLCS);
 
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
@@ -629,8 +629,8 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
       for (int i = 0; i < myObjects.length(); i++) {
         if (toCreateCopy)
           anObj = toCreateCopy ? 
-	    anOper->PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS) :
-	    anOper->PositionShape(myObjects[i], myStartLCS, myEndLCS);
+            anOper->PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS) :
+            anOper->PositionShape(myObjects[i], myStartLCS, myEndLCS);
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
       }
@@ -642,9 +642,9 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
       double aDistance = Group1->SpinBox_DX->value();
       bool toReverse = Group1->CheckButton3->isChecked();
       for (int i = 0; i < myObjects.length(); i++) {
-	anObj = anOper->PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
-	if (!anObj->_is_nil())
-	  objects.push_back(anObj._retn());
+        anObj = anOper->PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
+        if (!anObj->_is_nil())
+          objects.push_back(anObj._retn());
       }
       res = true;
       break;

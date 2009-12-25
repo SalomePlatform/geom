@@ -462,13 +462,13 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::TranslateVectorDistance
   //Make a Python command
   if (theCopy) {
     GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeTranslationVectorDistance("
-				 << theObject << ", " << theVector << ", " << theDistance << ")";
+                                 << theObject << ", " << theVector << ", " << theDistance << ")";
     SetErrorCode(OK);
     return aCopy;
   }
 
   GEOM::TPythonDump(aFunction) << "geompy.TranslateVectorDistance("
-			       << theObject << ", " << theVector << ", " << theDistance << ", " << theCopy << ")";
+                               << theObject << ", " << theVector << ", " << theDistance << ", " << theCopy << ")";
   SetErrorCode(OK);
   return theObject;
 }
@@ -535,12 +535,12 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate1D
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::Translate2D (Handle(GEOM_Object) theObject,
-								Handle(GEOM_Object) theVector,
-								double theStep1,
-								Standard_Integer theNbTimes1,
-								Handle(GEOM_Object) theVector2,
-								double theStep2,
-								Standard_Integer theNbTimes2)
+                                                                Handle(GEOM_Object) theVector,
+                                                                double theStep1,
+                                                                Standard_Integer theNbTimes1,
+                                                                Handle(GEOM_Object) theVector2,
+                                                                double theStep2,
+                                                                Standard_Integer theNbTimes2)
 {
   SetErrorCode(KO);
 
@@ -1343,7 +1343,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShapeCopy
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
        (Handle(GEOM_Object) theObject, Handle(GEOM_Object) thePath, 
-	double theDistance, bool theCopy, bool theReverse)
+        double theDistance, bool theCopy, bool theReverse)
 {
   SetErrorCode(KO);
 
@@ -1393,7 +1393,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionAlongPath
   //Make a Python command
   if (theCopy) {
     GEOM::TPythonDump(aFunction) << aCopy << " = geompy.PositionAlongPath("
-				 << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
+                                 << theObject << ", " << thePath << ", " << theDistance << ", " << theCopy << ", " << theReverse << ")";
     SetErrorCode(OK);
     return aCopy;
   }
@@ -1575,11 +1575,11 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate1D (Handle(GEOM_Object)
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object) theObject,
-							     Handle(GEOM_Object) theAxis,
-							     double theAngle,
-							     Standard_Integer theNbTimes1,
-							     double theStep,
-							     Standard_Integer theNbTimes2)
+                                                             Handle(GEOM_Object) theAxis,
+                                                             double theAngle,
+                                                             Standard_Integer theNbTimes1,
+                                                             double theStep,
+                                                             Standard_Integer theNbTimes2)
 {
   SetErrorCode(KO);
 
@@ -1637,9 +1637,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate2D (Handle(GEOM_Object)
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEOM_Object) theObject,
-								      Handle(GEOM_Object) theCentPoint, 
-								      Handle(GEOM_Object) thePoint1,
-								      Handle(GEOM_Object) thePoint2)
+                                                                      Handle(GEOM_Object) theCentPoint, 
+                                                                      Handle(GEOM_Object) thePoint1,
+                                                                      Handle(GEOM_Object) thePoint2)
 {
   SetErrorCode(KO);
 
@@ -1686,7 +1686,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEO
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << "geompy.TrsfOp.RotateThreePoints(" << theObject
-			       << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
+                               << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
   return theObject;
@@ -1698,9 +1698,9 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePoints (Handle(GEO
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePointsCopy (Handle(GEOM_Object) theObject, 
-							 Handle(GEOM_Object) theCentPoint, 
-							 Handle(GEOM_Object) thePoint1,
-							 Handle(GEOM_Object) thePoint2)
+                                                         Handle(GEOM_Object) theCentPoint, 
+                                                         Handle(GEOM_Object) thePoint1,
+                                                         Handle(GEOM_Object) thePoint2)
 {
   SetErrorCode(KO);
 
@@ -1743,7 +1743,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateThreePointsCopy (Handle
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeRotationThreePoints(" << theObject
-			       << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
+                               << ", " << theCentPoint << ", "<<thePoint1 << ", " << thePoint2 << ")";
 
   SetErrorCode(OK);
   return aCopy;

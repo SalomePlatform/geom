@@ -273,7 +273,7 @@ void RepairGUI_RemoveHolesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText( "" );

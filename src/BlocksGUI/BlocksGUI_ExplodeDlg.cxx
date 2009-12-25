@@ -121,7 +121,7 @@ void BlocksGUI_ExplodeDlg::Init()
   connect( myGrp1->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( SubShapeToggled() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   myConstructorId = -1;
   ConstructorsClicked( 0 );
@@ -179,10 +179,10 @@ bool BlocksGUI_ExplodeDlg::ClickOnApply()
     // More than 30 subshapes : ask confirmation
     if ( myNbBlocks > 30 ) {
       if ( SUIT_MessageBox::warning( this, 
-				     tr( "GEOM_CONFIRM" ),
-				     tr( "GEOM_CONFIRM_INFO" ).arg( myNbBlocks ),
-				     tr( "GEOM_BUT_EXPLODE" ),
-				     tr( "GEOM_BUT_CANCEL" ) ) != 0 )
+                                     tr( "GEOM_CONFIRM" ),
+                                     tr( "GEOM_CONFIRM_INFO" ).arg( myNbBlocks ),
+                                     tr( "GEOM_BUT_EXPLODE" ),
+                                     tr( "GEOM_BUT_CANCEL" ) ) != 0 )
         return false;  /* aborted */
     }
   }
@@ -249,7 +249,7 @@ void BlocksGUI_ExplodeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -297,13 +297,13 @@ void BlocksGUI_ExplodeDlg::activateSelection()
 
   if ( isAllSubShapes() ) { // Sub-shapes selection disabled
     disconnect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-		SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+                SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
     globalSelection( GEOM_ALLSHAPES );
     if ( myObject->_is_nil() ) {
       SelectionIntoArgument();
     }
     connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	     SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+             SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   } 
   else {
     displayPreview( true, true, false );
@@ -334,9 +334,9 @@ void BlocksGUI_ExplodeDlg::updateButtonState()
   else {
     GEOM::GEOM_IBlocksOperations_var anOper = GEOM::GEOM_IBlocksOperations::_narrow(getOperation());
     bool isOnlyBlocks = anOper->IsCompoundOfBlocks( myObject,
-						    myGrp1->SpinBox1->value(),
-						    myGrp1->SpinBox2->value(),
-						    myNbBlocks );
+                                                    myGrp1->SpinBox1->value(),
+                                                    myGrp1->SpinBox2->value(),
+                                                    myNbBlocks );
     if ( isOnlyBlocks )
       myGrp1->TextBrowser1->setText( tr( "GEOM_NB_BLOCKS_NO_OTHERS" ).arg( myNbBlocks ) );
     else
@@ -406,8 +406,8 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
   switch ( getConstructorId() ) {
   case 0:
     aList = anOper->ExplodeCompoundOfBlocks( myObject,
-					     myGrp1->SpinBox1->value(),
-					     myGrp1->SpinBox2->value() );
+                                             myGrp1->SpinBox1->value(),
+                                             myGrp1->SpinBox2->value() );
     break;
   }
   
@@ -452,7 +452,7 @@ bool BlocksGUI_ExplodeDlg::execute( ObjectList& objects )
       CORBA::String_var objStr = myGeomGUI->getApp()->orb()->object_to_string( *anIter );
       if ( selected.contains( QString( objStr.in() ) ) )
       {
-	if ( !IsPreview() )
+        if ( !IsPreview() )
           (*anIter)->SetParameters(aParameters.join(":").toLatin1().constData());
         objects.push_back( *anIter );
       }

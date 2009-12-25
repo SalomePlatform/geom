@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	BlockFix.cxx
-// Created:	Tue Dec  7 11:59:05 2004
-// Author:	Pavel DURANDIN
+// File:        BlockFix.cxx
+// Created:     Tue Dec  7 11:59:05 2004
+// Author:      Pavel DURANDIN
 //
 #include <BlockFix.hxx>
 #include <TopoDS_Shape.hxx>

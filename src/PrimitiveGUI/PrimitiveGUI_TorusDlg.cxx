@@ -394,7 +394,7 @@ void PrimitiveGUI_TorusDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
   
   ConstructorsClicked( getConstructorId() );
 }
@@ -465,9 +465,9 @@ bool PrimitiveGUI_TorusDlg::execute (ObjectList& objects)
       anObj = anOper->MakeTorusPntVecRR(myPoint, myDir, getRadius1(), getRadius2());
       if (!anObj->_is_nil() && !IsPreview())
       {
-	QStringList aParameters;
-	aParameters << GroupPoints->SpinBox_DX->text();
-	aParameters << GroupPoints->SpinBox_DY->text();
+        QStringList aParameters;
+        aParameters << GroupPoints->SpinBox_DX->text();
+        aParameters << GroupPoints->SpinBox_DY->text();
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;

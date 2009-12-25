@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_CommonBlockAPI.cxx
-// Created:	Mon Dec 15 11:38:04 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_CommonBlockAPI.cxx
+// Created:     Mon Dec 15 11:38:04 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_CommonBlockAPI.ixx>
 
@@ -75,8 +75,8 @@
       const BOPTools_PaveBlock& aPB=anItPB.Value();
       anECurrent=aPB.OriginalEdge();
       if (anECurrent==anE) {
-	pmyListOfPaveBlock->Append(aPB);
-	break;
+        pmyListOfPaveBlock->Append(aPB);
+        break;
       }
     }
   }
@@ -126,7 +126,7 @@
     for (; anItPB.More(); anItPB.Next()) {
       const BOPTools_PaveBlock& aPBx=anItPB.Value();
       if (aPBx.IsEqual(aPB)) {
-	return aCB;
+        return aCB;
       }
     }
   }

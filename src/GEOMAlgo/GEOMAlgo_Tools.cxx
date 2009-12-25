@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Tools.cxx
-// Created:	Mon Dec  6 11:35:29 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_Tools.cxx
+// Created:     Mon Dec  6 11:35:29 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_Tools.ixx>
 
@@ -59,7 +59,7 @@
 
 static 
   void GetCount(const TopoDS_Shape& aS,
-		Standard_Integer& iCnt);
+                Standard_Integer& iCnt);
 
 //=======================================================================
 //function : IsCompositeShape
@@ -83,7 +83,7 @@ Standard_Boolean GEOMAlgo_Tools::IsCompositeShape(const TopoDS_Shape& aS)
 //purpose  : 
 //=======================================================================
 void GetCount(const TopoDS_Shape& aS,
-	      Standard_Integer& iCnt)
+              Standard_Integer& iCnt)
 {
   TopoDS_Iterator aIt;
   TopAbs_ShapeEnum aTS;
@@ -110,8 +110,8 @@ void GetCount(const TopoDS_Shape& aS,
 //purpose  : 
 //=======================================================================
   Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMPKLE,
-						  const Standard_Real aTol,
-						  IntTools_Context& aCtx)
+                                                  const Standard_Real aTol,
+                                                  IntTools_Context& aCtx)
 {
   Standard_Integer i, aNbE, iErr, j, aNbEE, aNbToAdd;
   TopTools_IndexedDataMapOfShapeListOfShape aMEE, aMSDE, aMEToAdd;
@@ -137,12 +137,12 @@ void GetCount(const TopoDS_Shape& aS,
       TopTools_ListOfShape& aLEE=aMEE.ChangeFromIndex(j);
       //
       if (j==1) {
-	aLSDE.Clear();
-	aLSDE.Append(aLEE);
+        aLSDE.Clear();
+        aLSDE.Append(aLEE);
       }
       else {
-	const TopoDS_Shape& aE1=aLEE.First();
-	aMEToAdd.Add(aE1, aLEE);
+        const TopoDS_Shape& aE1=aLEE.First();
+        aMEToAdd.Add(aE1, aLEE);
       }
     }
   }
@@ -172,9 +172,9 @@ void GetCount(const TopoDS_Shape& aS,
 //purpose  : 
 //=======================================================================
 Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
-					      const Standard_Real aTol,
-					      TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
-					      IntTools_Context& aCtx)
+                                              const Standard_Real aTol,
+                                              TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
+                                              IntTools_Context& aCtx)
 {
   Standard_Integer aNbE, aNbEProcessed, aNbESD, iErr;
   TopTools_ListOfShape aLESD;
@@ -203,37 +203,37 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
       const TopoDS_Shape& aS=aIt.Value();
       //
       if (aMProcessed.Contains(aS)) {
-	continue;
+        continue;
       }
       //
       //modified by NIZNHY-PKV Thu Dec 30 10:57:01 2004 f
       aType=aS.ShapeType();
       if (aType==TopAbs_EDGE) {
-	const TopoDS_Edge& aE=TopoDS::Edge(aS);
-	if (BRep_Tool::Degenerated(aE)) {
-	  aMProcessed.Add(aE);
-	  continue;
-	}
+        const TopoDS_Edge& aE=TopoDS::Edge(aS);
+        if (BRep_Tool::Degenerated(aE)) {
+          aMProcessed.Add(aE);
+          continue;
+        }
       }
       //modified by NIZNHY-PKV Thu Dec 30 10:57:03 2004 t
       //
       aLESD.Clear();
       iErr=GEOMAlgo_Tools::FindSDShapes(aS, aLE, aTol, aLESD, aCtx);
       if (iErr) {
-	return 2; // Err
+        return 2; // Err
       }
       //
       aNbESD=aLESD.Extent();
       if (!aNbESD) {
-	return 1; // Err
+        return 1; // Err
       }
       //
       aMEE.Add(aS, aLESD);
       //
       aIt1.Initialize(aLESD);
       for (; aIt1.More(); aIt1.Next()) {
-	const TopoDS_Shape& aE1=aIt1.Value();
-	aMProcessed.Add(aE1);
+        const TopoDS_Shape& aE1=aIt1.Value();
+        aMProcessed.Add(aE1);
       }
     }
   }
@@ -244,10 +244,10 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
 //purpose  : 
 //=======================================================================
 Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
-					      const TopTools_ListOfShape& aLE,
-					      const Standard_Real aTol,
-					      TopTools_ListOfShape& aLESD,
-					      IntTools_Context& aCtx)
+                                              const TopTools_ListOfShape& aLE,
+                                              const Standard_Real aTol,
+                                              TopTools_ListOfShape& aLESD,
+                                              IntTools_Context& aCtx)
 {
   Standard_Boolean bIsDone;
   Standard_Real aTol2, aD2;
@@ -266,12 +266,12 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
     else {
       bIsDone=GEOMAlgo_Tools::ProjectPointOnShape(aP1, aE2, aP2, aCtx);
       if (!bIsDone) {
-	//return 1; 
-	continue; // jfa BUG 20361
+        //return 1; 
+        continue; // jfa BUG 20361
       }
       aD2=aP1.SquareDistance(aP2);
       if(aD2<aTol2) {
-	aLESD.Append(aE2);
+        aLESD.Append(aE2);
       }
     }
   }
@@ -283,9 +283,9 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
 //purpose  : 
 //=======================================================================
 Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
-						     const TopoDS_Shape& aS,
-						     gp_Pnt& aP2,
-						     IntTools_Context& aCtx)
+                                                     const TopoDS_Shape& aS,
+                                                     gp_Pnt& aP2,
+                                                     IntTools_Context& aCtx)
 {
   Standard_Boolean bIsDone = Standard_False;
   Standard_Real aT2;
@@ -342,7 +342,7 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Tools::PointOnShape(const TopoDS_Shape& aS,
-				  gp_Pnt& aP3D)
+                                  gp_Pnt& aP3D)
 {
   TopAbs_ShapeEnum aType;
   //
@@ -370,7 +370,7 @@ void GEOMAlgo_Tools::PointOnShape(const TopoDS_Shape& aS,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
-				 gp_Pnt& aP3D)
+                                 gp_Pnt& aP3D)
 {
   Standard_Real aU, aV, aUMin, aUMax, aVMin, aVMax;
   //
@@ -386,9 +386,9 @@ void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
-				 const Standard_Real aU,
-				 const Standard_Real aV,
-				 gp_Pnt& aP3D)
+                                 const Standard_Real aU,
+                                 const Standard_Real aV,
+                                 gp_Pnt& aP3D)
 {
   Handle(Geom_Surface) aS;
   //
@@ -400,7 +400,7 @@ void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
-				 gp_Pnt& aP3D)
+                                 gp_Pnt& aP3D)
 {
   Standard_Real aTx, aT1, aT2;
   //
@@ -413,8 +413,8 @@ void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
-				 const Standard_Real aT,
-				 gp_Pnt& aP3D)
+                                 const Standard_Real aT,
+                                 gp_Pnt& aP3D)
 {
   Standard_Real aT1, aT2;
   Handle(Geom_Curve) aC3D;
@@ -427,9 +427,9 @@ void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
-					       const TopoDS_Face& aF,
-					       const Standard_Real aUMin, 
-					       const Standard_Real aUMax) 
+                                               const TopoDS_Face& aF,
+                                               const Standard_Real aUMin, 
+                                               const Standard_Real aUMax) 
 {
   Standard_Real aT1, aT2, aTx, aUx, aTol, aTwoPI;
   gp_Pnt2d aP2D;
@@ -469,8 +469,8 @@ Standard_Boolean GEOMAlgo_Tools::IsUPeriodic(const  Handle(Geom_Surface) &aS)
   aGAS.Load(aS);
   aType=aGAS.GetType();
   bRet=(aType==GeomAbs_Cylinder||
-	aType==GeomAbs_Cone ||
-	aType==GeomAbs_Sphere);
+        aType==GeomAbs_Cone ||
+        aType==GeomAbs_Sphere);
   //
   return bRet;
 }

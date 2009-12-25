@@ -156,10 +156,10 @@ void RepairGUI_FreeBoundDlg::onHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( this, 
-			      tr( "WRN_WARNING" ), 
-			      tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
-								    platform ) ).arg( myHelpFileName ) );
+                              tr( "WRN_WARNING" ), 
+                              tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
+                                                                    platform ) ).arg( myHelpFileName ) );
   }
 }
 
@@ -185,7 +185,7 @@ void RepairGUI_FreeBoundDlg::onActivate()
   setEnabled( true );
   myGeomGUI->SetActiveDialogBox( this );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
+           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
   activateSelection();
   onSelectionDone();
 }
@@ -226,7 +226,7 @@ void RepairGUI_FreeBoundDlg::Init()
 
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
+           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
 
   activateSelection();
   onSelectionDone();

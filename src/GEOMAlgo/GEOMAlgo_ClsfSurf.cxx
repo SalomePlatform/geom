@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ClsfSurf.cxx
-// Created:	Wed Nov 22 10:41:47 2006
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_ClsfSurf.cxx
+// Created:     Wed Nov 22 10:41:47 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_ClsfSurf.ixx>
 #include <GeomAbs_SurfaceType.hxx>
@@ -79,8 +79,8 @@
   myGAS.Load(myS);
   aType=myGAS.GetType();
   if (!(aType==GeomAbs_Plane || 
-	aType==GeomAbs_Cylinder ||
-	aType==GeomAbs_Sphere)) {
+        aType==GeomAbs_Cylinder ||
+        aType==GeomAbs_Sphere)) {
     myErrorStatus=11; // unallowed surface type
   }
 }

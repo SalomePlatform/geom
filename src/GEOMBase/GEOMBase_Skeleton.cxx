@@ -51,7 +51,7 @@
 //            true to construct a modal dialog.
 //=================================================================================
 GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* parent,
-				      bool modal, Qt::WindowFlags fl )
+                                      bool modal, Qt::WindowFlags fl )
   : QDialog( parent, fl ), 
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( theGeometryGUI ),
@@ -137,7 +137,7 @@ void GEOMBase_Skeleton::Init()
 // purpose  : 
 //=================================================================================
 void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox, 
-				     int min,  int max, int step )
+                                     int min,  int max, int step )
 {
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
@@ -148,8 +148,8 @@ void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
 // purpose  : 
 //=================================================================================
 void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
-				     double min,  double max, 
-				     double step, int decimals )
+                                     double min,  double max, 
+                                     double step, int decimals )
 {
   spinBox->setPrecision( decimals );
   spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
@@ -164,7 +164,7 @@ void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
 //            In this case PublishInStudy isn't called, so we need to update object's attributes manually
 //=================================================================================
 void GEOMBase_Skeleton::updateAttributes( GEOM::GEOM_Object_ptr theObj,
-					  const QStringList& theParameters)
+                                          const QStringList& theParameters)
 {
   SALOMEDS::Study_var aStudy = GeometryGUI::ClientStudyToStudy(getStudy()->studyDS());
   SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
@@ -337,9 +337,9 @@ void GEOMBase_Skeleton::ClickOnHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( 0, QObject::tr( "WRN_WARNING" ),
-			      QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
-			      QObject::tr( "BUT_OK" ) );
+                              QObject::tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ),
+                              QObject::tr( "BUT_OK" ) );
   }
 }
 

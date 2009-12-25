@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Algo.cxx
-// Created:	Sat Dec 04 12:39:47 2004
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+// File:        GEOMAlgo_Algo.cxx
+// Created:     Sat Dec 04 12:39:47 2004
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
 #include <GEOMAlgo_Algo.ixx>
 

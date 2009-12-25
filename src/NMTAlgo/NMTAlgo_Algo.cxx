@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_Algo.cxx
-// Created:	Tue Jan 27 14:58:21 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTAlgo_Algo.cxx
+// Created:     Tue Jan 27 14:58:21 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTAlgo_Algo.ixx>
 #include <stdlib.h>

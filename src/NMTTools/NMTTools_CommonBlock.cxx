@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_CommonBlock.cxx
-// Created:	Tue Dec  9 12:23:29 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_CommonBlock.cxx
+// Created:     Tue Dec  9 12:23:29 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_CommonBlock.ixx>
 

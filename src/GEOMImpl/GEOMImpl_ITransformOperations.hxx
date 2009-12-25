@@ -122,8 +122,8 @@ class GEOMImpl_ITransformOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) PositionAlongPath (Handle(GEOM_Object) theObject,
                                                          Handle(GEOM_Object) thePath,
                                                          double theDistance,
-							 bool   theCopy,
-							 bool   theReverse);
+                                                         bool   theCopy,
+                                                         bool   theReverse);
 
   Standard_EXPORT Handle(GEOM_Object) Rotate (Handle(GEOM_Object) theObject,
                                               Handle(GEOM_Object) theAxis,

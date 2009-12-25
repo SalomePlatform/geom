@@ -87,8 +87,8 @@ protected:
                                  const int    displayMode = -1,
                                  const int    color  = -1 );
   void displayPreview  ( const SALOME_Prs* prs, 
-			 const bool append = false, 
-			 const bool = true );
+                         const bool append = false, 
+                         const bool = true );
   void erasePreview    ( const bool = true );
 
   void localSelection( const ObjectList&, const int );

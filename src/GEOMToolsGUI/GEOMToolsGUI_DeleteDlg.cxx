@@ -75,8 +75,8 @@ static QStringList objectsToNames( const QMap<QString, QString>& objects )
   \param parent parent widget
 */
 GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent, 
-						const QMap<QString, QString>& objects, 
-						bool deleteAll )
+                                                const QMap<QString, QString>& objects, 
+                                                bool deleteAll )
 : QDialog( parent )
 {
   setModal( true );

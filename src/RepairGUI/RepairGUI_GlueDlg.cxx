@@ -103,7 +103,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   myTolEdt2->setValue( DEFAULT_TOLERANCE_VALUE );
 
   myDetectBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GLUE_FACES" ) ), 
-				 GroupPoints2->Box );
+                                 GroupPoints2->Box );
   mySubShapesChk = new QCheckBox( tr( "SELECT_FACES" ), GroupPoints2->Box );
 
   boxLayout = new QGridLayout( GroupPoints2->Box );
@@ -171,7 +171,7 @@ void RepairGUI_GlueDlg::Init()
   connect( mySubShapesChk, SIGNAL( stateChanged( int ) ), this, SLOT( onSubShapesChk() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   connect( myDetectBtn, SIGNAL( clicked() ), this, SLOT( onDetect() ) );
 
@@ -229,7 +229,7 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
   myEditCurrentArgument->setFocus();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   qApp->processEvents();
   updateGeometry();
@@ -344,7 +344,7 @@ void RepairGUI_GlueDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ), 
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   //GroupPoints->LineEdit1->setText("");
   //GroupPoints2->LineEdit1->setText("");
@@ -415,8 +415,8 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
       aResult = !anObj->_is_nil();
       if ( aResult && !IsPreview() )
       {
-	QStringList aParameters;
-	aParameters << myTolEdt->text();
+        QStringList aParameters;
+        aParameters << myTolEdt->text();
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
 
         objects.push_back( anObj._retn() );
@@ -467,12 +467,12 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
 
       if ( aResult )
       {
-	if ( !IsPreview() )
-	{
-	  QStringList aParameters;
-	  aParameters << myTolEdt2->text();
+        if ( !IsPreview() )
+        {
+          QStringList aParameters;
+          aParameters << myTolEdt2->text();
           anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	}
+        }
         objects.push_back( anObj._retn() );
       }
 
@@ -502,7 +502,7 @@ void RepairGUI_GlueDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
 
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 aFindMethod, /*theInheritFirstArg=*/true );
+                                         aFindMethod, /*theInheritFirstArg=*/true );
   }
 }
 
@@ -595,7 +595,7 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
           addInStudy( *it, aName.toLatin1().data() );
           display( *it, false );
         }
-	
+        
         if ( nbObjs ) {
           commitCommand();
           updateObjBrowser();
@@ -606,11 +606,11 @@ bool RepairGUI_GlueDlg::onAcceptLocal()
         }
 
         // JFA 28.12.2004 BEGIN // To enable warnings
-	GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+        GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
         if ( !CORBA::is_nil(anOper) && !anOper->IsDone() ) {
-	  wc.suspend();
-	  QString msgw = QObject::tr( anOper->GetErrorCode() );
-	  SUIT_MessageBox::warning( this, tr( "WRN_WARNING" ), msgw, tr( "BUT_OK" ) );
+          wc.suspend();
+          QString msgw = QObject::tr( anOper->GetErrorCode() );
+          SUIT_MessageBox::warning( this, tr( "WRN_WARNING" ), msgw, tr( "BUT_OK" ) );
         }
         // JFA 28.12.2004 END
       }
@@ -661,7 +661,7 @@ void RepairGUI_GlueDlg::onDetect()
   }
   
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) ) ;
+           this, SLOT( SelectionIntoArgument() ) ) ;
   SUIT_MessageBox::information( this, tr( "GEOM_FREE_BOUNDS_TLT" ), msg, tr( "Close" ) );
   updateButtonState();
   activateSelection();
@@ -679,7 +679,7 @@ void RepairGUI_GlueDlg::activateSelection()
   if ( anId == 0 )  { 
     // Case of whole gluing
     disconnect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-		this, SLOT( SelectionIntoArgument() ) );
+                this, SLOT( SelectionIntoArgument() ) );
     
     globalSelection( GEOM_ALLSHAPES );
     if ( myObject->_is_nil()) 
@@ -695,10 +695,10 @@ void RepairGUI_GlueDlg::activateSelection()
     else {
       displayPreview( true, false, false, 2/*line width*/, 1/*display mode*/, Quantity_NOC_RED );
       disconnect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-		  this, SLOT( SelectionIntoArgument() ) ) ;
+                  this, SLOT( SelectionIntoArgument() ) ) ;
       globalSelection( GEOM_PREVIEW );
       connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	       this, SLOT( SelectionIntoArgument() ) ) ;
+               this, SLOT( SelectionIntoArgument() ) ) ;
     } 
   }
   updateViewer();

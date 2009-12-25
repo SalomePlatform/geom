@@ -103,7 +103,7 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_ShapeInfo::SetNbSubShapes(const TopAbs_ShapeEnum aType,
-					  const Standard_Integer aNb) 
+                                          const Standard_Integer aNb) 
 {
   Standard_Integer iN;
   
@@ -599,8 +599,8 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType)
     printf("  Width     : %.3lf\n", myWidth);
   }
   else if (aKN==GEOMAlgo_KN_TRIANGLE ||
-	   aKN==GEOMAlgo_KN_QUADRANGLE||
-	   aKN==GEOMAlgo_KN_POLYGON) {
+           aKN==GEOMAlgo_KN_QUADRANGLE||
+           aKN==GEOMAlgo_KN_POLYGON) {
     DumpLocation (myLocation);
     DumpPosition (myPosition);
   }

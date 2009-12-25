@@ -119,7 +119,7 @@ void BuildGUI_ShellDlg::Init()
   connect( GroupShell->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_SHELL" ) );
 }
@@ -213,7 +213,7 @@ void BuildGUI_ShellDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
   aMap.Add( GEOM_FACE );

@@ -76,7 +76,7 @@ OCC2VTK(const TopoDS_Face& theFace,
     if(!aLoc.IsIdentity()){
       identity = false;
       myTransf = aLoc.Transformation();
-    }		
+    }           
       
     Standard_Integer i; 
     int aNbOfNodes = thePts->GetNumberOfPoints();

@@ -61,7 +61,7 @@ NMTDS_ListNodeOfListOfPassKeyBoolean(const NMTDS_PassKeyBoolean& I,const TCollec
  // Type management
  //
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

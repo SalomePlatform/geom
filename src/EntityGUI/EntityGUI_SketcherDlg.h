@@ -64,15 +64,15 @@ class EntityGUI_SketcherDlg : public QDialog, GEOMBase_Helper
 
 public:
   EntityGUI_SketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0,
-			 const double = 2. );
+                         const double = 2. );
   ~EntityGUI_SketcherDlg();
 
   bool eventFilter (QObject* object, QEvent* event);
 
 protected:
   void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
-						  double, double, double = 0.1, 
-						  int = 3 );
+                                                  double, double, double = 0.1, 
+                                                  int = 3 );
 
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -92,16 +92,16 @@ private:
   QString                            GetNewCommand( QString& );
 
   virtual void                       displayPreview( GEOM::GEOM_Object_ptr,
-						     const bool = false,
-						     const bool = false,
-						     const bool = true,
-						     const double = -1,
-						     const int  = -1,
-						     const int  = -1);
+                                                     const bool = false,
+                                                     const bool = false,
+                                                     const bool = true,
+                                                     const double = -1,
+                                                     const int  = -1,
+                                                     const int  = -1);
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
-						   TopoDS_Shape&,
-						   TopoDS_Shape& );
+                                                   TopoDS_Shape&,
+                                                   TopoDS_Shape& );
 
 private:
   int                                myConstructorId;
@@ -157,10 +157,10 @@ private:
   enum SketchState { FIRST_POINT, NEXT_POINT };
   
   enum SketchType { PT_ABS, PT_RELATIVE, PT_SEL,
-		    DIR_ANGLE_LENGTH, DIR_ANGLE_X, DIR_ANGLE_Y,
-		    DIR_PER_LENGTH, DIR_PER_X, DIR_PER_Y,
-		    DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
-		    DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y };
+                    DIR_ANGLE_LENGTH, DIR_ANGLE_X, DIR_ANGLE_Y,
+                    DIR_PER_LENGTH, DIR_PER_X, DIR_PER_Y,
+                    DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
+                    DIR_DXDY_LENGTH, DIR_DXDY_X, DIR_DXDY_Y };
   
 private slots:
   void                               ClickOnEnd();

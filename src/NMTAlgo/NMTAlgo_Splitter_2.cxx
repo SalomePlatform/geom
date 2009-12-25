@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_Splitter_2.cxx
-// Created:	Mon Feb  9 15:07:51 2004
-// Author:	Igor FEOKTISTOV
-//		<ifv@philipox.nnov.matra-dtv.fr>
+// File:        NMTAlgo_Splitter_2.cxx
+// Created:     Mon Feb  9 15:07:51 2004
+// Author:      Igor FEOKTISTOV
+//              <ifv@philipox.nnov.matra-dtv.fr>
 //
 #include <NMTAlgo_Splitter.ixx>
 
@@ -179,7 +179,7 @@
     for (; expResF.More(); expResF.Next()) {
       const TopoDS_Shape& aFR=expResF.Current();
       if (!MIF.Contains(aFR)) {
-	break;
+        break;
       }
     }
     //
@@ -190,10 +190,10 @@
     else {
       // add faces of a removed shape to RFM
       for (expResF.ReInit(); expResF.More(); expResF.Next()) {
-	const TopoDS_Shape& aF = expResF.Current();
-	if (!RFM.Remove(aF)) {
-	  RFM.Add(aF);
-	}
+        const TopoDS_Shape& aF = expResF.Current();
+        if (!RFM.Remove(aF)) {
+          RFM.Add(aF);
+        }
       }
     }
   }// for (; it.More(); it.Next())
@@ -236,24 +236,24 @@
       //
       itF.Initialize (RFM);
       for ( ; itF.More(); itF.Next()) {
-	const TopoDS_Shape& aF=itF.Key();
+        const TopoDS_Shape& aF=itF.Key();
         TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, MEF);
       }
       // add only faces forming a closed shell
       for (itF.Reset() ; itF.More(); itF.Next())  {
-	const TopoDS_Shape& aF=itF.Key();
+        const TopoDS_Shape& aF=itF.Key();
         TopExp_Explorer expE (aF, TopAbs_EDGE);
         for (; expE.More(); expE.Next()) {
           if (MEF.FindFromKey(expE.Current()).Extent() == 1) {
             break;
-	  }
-	}
+          }
+        }
         if (!expE.More()) {
           myBuilder.Add( Shell, aF);
-	}
-	else {
-	  //int a=0;
-	}
+        }
+        else {
+          //int a=0;
+        }
       }
       
       if (S.ShapeType() == TopAbs_SOLID) {
@@ -269,7 +269,7 @@
     else {
       it.Initialize(aSIm);
       for (; it.More(); it.Next()) {
-	myBuilder.Add (C, it.Value());
+        myBuilder.Add (C, it.Value());
       }
     }
   }
@@ -358,13 +358,13 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
       anExp.Init(myShape, TopAbs_EDGE);
   
       for(; anExp.More(); anExp.Next()) {
-	aMap.Add(anExp.Current());
+        aMap.Add(anExp.Current());
       }
 
       for (; it.More(); it.Next()) {
-	if(aMap.Contains(it.Value())) {
-	  myGenerated.Append(it.Value());
-	}
+        if(aMap.Contains(it.Value())) {
+          myGenerated.Append(it.Value());
+        }
       }
     }
 
@@ -379,8 +379,8 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
 
       const TopoDS_Shape& aS = aDS.Shape(i);
       if(S.IsSame(aS)) {
-	anIndex = i;
-	break;
+        anIndex = i;
+        break;
       }
 
     }
@@ -401,32 +401,32 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
 
       if(ind1 == anIndex || ind2 == anIndex) {
 
-	Standard_Integer aNSI = aES.NewShape();
-	if(aDS.GetShapeType(aNSI) == TopAbs_VERTEX) {
-	  myGenerated.Append(aDS.Shape(aNSI));
-	  bCheckVert = Standard_True;
-	}
+        Standard_Integer aNSI = aES.NewShape();
+        if(aDS.GetShapeType(aNSI) == TopAbs_VERTEX) {
+          myGenerated.Append(aDS.Shape(aNSI));
+          bCheckVert = Standard_True;
+        }
      
       }
 
     }
-	  
+          
     if(bCheckVert) {
       aMap.Clear();
       anExp.Init(myShape, TopAbs_VERTEX);
   
       for(; anExp.More(); anExp.Next()) {
-	aMap.Add(anExp.Current());
+        aMap.Add(anExp.Current());
       }
 
       it.Initialize(myGenerated);
       for (; it.More(); it.Next()) {
 
-	if(it.Value().ShapeType() != TopAbs_VERTEX) continue;
-	
-	if(!aMap.Contains(it.Value())) {
-	  myGenerated.Remove(it);
-	}
+        if(it.Value().ShapeType() != TopAbs_VERTEX) continue;
+        
+        if(!aMap.Contains(it.Value())) {
+          myGenerated.Remove(it);
+        }
 
       }
     }
@@ -447,8 +447,8 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
 
       const TopoDS_Shape& aS = aDS.Shape(i);
       if(S.IsSame(aS)) {
-	anIndex = i;
-	break;
+        anIndex = i;
+        break;
       }
 
     }
@@ -467,14 +467,14 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
 
       if(ind1 == anIndex || ind2 == anIndex) {
 
-	Standard_Integer aNSI = aEE.NewShape();
-	if(aDS.GetShapeType(aNSI) == TopAbs_VERTEX) {
-	  myGenerated.Append(aDS.Shape(aNSI));
-	  bCheckVert = Standard_True;
-	}
+        Standard_Integer aNSI = aEE.NewShape();
+        if(aDS.GetShapeType(aNSI) == TopAbs_VERTEX) {
+          myGenerated.Append(aDS.Shape(aNSI));
+          bCheckVert = Standard_True;
+        }
      
       }
-	  
+          
     }    
 
     const BOPTools_CArray1OfESInterference& aESs = anIP->ESInterferences();
@@ -488,14 +488,14 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
 
       if(ind1 == anIndex || ind2 == anIndex) {
 
-	Standard_Integer aNSI = aES.NewShape();
-	if(aDS.GetShapeType(aNSI) == TopAbs_VERTEX) {
-	  myGenerated.Append(aDS.Shape(aNSI));
-	  bCheckVert = Standard_True;
-	}
+        Standard_Integer aNSI = aES.NewShape();
+        if(aDS.GetShapeType(aNSI) == TopAbs_VERTEX) {
+          myGenerated.Append(aDS.Shape(aNSI));
+          bCheckVert = Standard_True;
+        }
      
       }
-	  
+          
     }    
 
     if(bCheckVert) {
@@ -503,15 +503,15 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
       anExp.Init(myShape, TopAbs_VERTEX);
   
       for(; anExp.More(); anExp.Next()) {
-	aMap.Add(anExp.Current());
+        aMap.Add(anExp.Current());
       }
 
       it.Initialize(myGenerated);
       for (; it.More(); it.Next()) {
 
-	if(!aMap.Contains(it.Value())) {
-	  myGenerated.Remove(it);
-	}
+        if(!aMap.Contains(it.Value())) {
+          myGenerated.Remove(it);
+        }
       }
     }
     return myGenerated;
@@ -524,7 +524,7 @@ const TopTools_ListOfShape& NMTAlgo_Splitter::Generated(const TopoDS_Shape& S)
 //purpose  : 
 //=======================================================================
 void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
-				 TopTools_ListOfShape& aLIms)
+                                 TopTools_ListOfShape& aLIms)
 {
   TopAbs_ShapeEnum aType;
   //
@@ -546,27 +546,27 @@ void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
       //
       aIt.Initialize(aIFC);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aIF=aIt.Value();
-	if (aMFS.Contains(aIF)) {
-	  const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aIF);
-	  //
-	  aItLS.Initialize(aLS);
-	  for (; aItLS.More(); aItLS.Next()) {
-	    const TopoDS_Shape& aSx=aItLS.Value();
-	    aMSd.Add(aSx);
-	  }
-	}
+        const TopoDS_Shape& aIF=aIt.Value();
+        if (aMFS.Contains(aIF)) {
+          const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aIF);
+          //
+          aItLS.Initialize(aLS);
+          for (; aItLS.More(); aItLS.Next()) {
+            const TopoDS_Shape& aSx=aItLS.Value();
+            aMSd.Add(aSx);
+          }
+        }
       }
       //
       aNbSd=aMSd.Extent();
       if (aNbSd) {
-	for (i=1; i<=aNbSd; ++i) {
-	  const TopoDS_Shape& aSx=aMSd(i);
-	  if (!aSx.IsSame(aS)) {
-	    aLIms.Append(aSx);
-	  }
-	}
-	return;
+        for (i=1; i<=aNbSd; ++i) {
+          const TopoDS_Shape& aSx=aMSd(i);
+          if (!aSx.IsSame(aS)) {
+            aLIms.Append(aSx);
+          }
+        }
+        return;
       }
     }
     //
@@ -583,7 +583,7 @@ void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
     bHasImage=NMTAlgo_Tools::FindImageSolid(aFC, aMSo, aSd);
     if (bHasImage) {
       if (!aSd.IsSame(aS)) {
-	aLIms.Append(aSd);
+        aLIms.Append(aSd);
       }
     }
   } //if (aType==TopAbs_SOLID) {
@@ -596,18 +596,18 @@ void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
     if (myModifiedFaces.IsBound(aS)) {
       anExp.Init(myShape, aType);
       for(; anExp.More(); anExp.Next()) {
-	aMap.Add(anExp.Current());
+        aMap.Add(anExp.Current());
       }
       //
       const TopTools_ListOfShape& aLS=myModifiedFaces.Find(aS);
       aIt.Initialize(aLS);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aFx=aIt.Value();
-	if (!aFx.IsSame(aS)) {
-	  if (aMap.Contains(aFx)) {
-	    aLIms.Append(aFx);
-	  }
-	}
+        const TopoDS_Shape& aFx=aIt.Value();
+        if (!aFx.IsSame(aS)) {
+          if (aMap.Contains(aFx)) {
+            aLIms.Append(aFx);
+          }
+        }
       }
     }
   } // else if (aType==TopAbs_FACE)
@@ -620,18 +620,18 @@ void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
     if (myImagesEdges.HasImage(aS)) {
       anExp.Init(myShape, aType);
       for(; anExp.More(); anExp.Next()) {
-	aMap.Add(anExp.Current());
+        aMap.Add(anExp.Current());
       }
       //
       const TopTools_ListOfShape& aLE=myImagesEdges.Image(aS);
       aIt.Initialize(aLE);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aEx=aIt.Value();
-	if (!aEx.IsSame(aS)) {
-	  if(aMap.Contains(aEx)) {
-	    aLIms.Append(aEx);
-	  }
-	}
+        const TopoDS_Shape& aEx=aIt.Value();
+        if (!aEx.IsSame(aS)) {
+          if(aMap.Contains(aEx)) {
+            aLIms.Append(aEx);
+          }
+        }
       }
     }
   }// else if (aType==TopAbs_EDGE)
@@ -650,8 +650,8 @@ void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
     for(i=1; i<=aNbS; ++i) {
       const TopoDS_Shape& aSx = aDS.Shape(i);
       if(aS.IsSame(aSx)) {
-	anIndex = i;
-	break;
+        anIndex = i;
+        break;
       }
     }
     //
@@ -670,8 +670,8 @@ void NMTAlgo_Splitter::FindImage(const TopoDS_Shape& aS,
     for(; anExp.More(); anExp.Next()) {
       const TopoDS_Shape& aVx=anExp.Current();
       if(aSDV.IsSame(aVx)) {
-	aLIms.Append(aSDV);
-	break;
+        aLIms.Append(aSDV);
+        break;
       }
     }
   }// else if (aType==TopAbs_VERTEX) 

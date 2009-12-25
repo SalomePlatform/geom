@@ -109,7 +109,7 @@ Standard_Integer GEOMImpl_PositionDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Shape aShapeEndLCS = aRefEndLCS->GetValue();
 
     if (aShapeBase.IsNull() || aShapeStartLCS.IsNull() ||
-	aShapeEndLCS.IsNull() || aShapeEndLCS.ShapeType() != TopAbs_FACE)
+        aShapeEndLCS.IsNull() || aShapeEndLCS.ShapeType() != TopAbs_FACE)
       return 0;
 
     gp_Trsf aTrsf;
@@ -236,10 +236,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PositionDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PositionDriver",
-			                                 sizeof(GEOMImpl_PositionDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_PositionDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

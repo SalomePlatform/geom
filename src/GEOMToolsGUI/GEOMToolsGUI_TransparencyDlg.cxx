@@ -202,16 +202,16 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
     app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);
   }
   else {
-		QString platform;
+                QString platform;
 #ifdef WIN32
-		platform = "winapplication";
+                platform = "winapplication";
 #else
-		platform = "application";
+                platform = "application";
 #endif
     SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
-			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			     QObject::tr("BUT_OK"));
+                             QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+                             arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+                             QObject::tr("BUT_OK"));
   }
 }
 
@@ -247,7 +247,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
   Handle(SALOME_InteractiveObject) FirstIOS =  selected.First();
   if ( FirstIOS.IsNull() )
     return;
-	
+        
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
@@ -257,7 +257,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     if ( !vtkVW )
       return;
     SVTK_View* aView = vtkVW->getView();
-    if ( myFirstInit ) {	
+    if ( myFirstInit ) {        
       myFirstInit = false;
       int transp = int (100 - ((aView->GetTransparency(FirstIOS))*100.0) + 0.5);
       mySlider->setValue(transp);
@@ -271,7 +271,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     }
     aView->Repaint();
   } // if ( isVTK )
-	
+        
   else if ( isOCC ) {
     GEOMBase* gb = new GEOMBase();
     Standard_Boolean found;
@@ -280,7 +280,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       myFirstInit = false;
       aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, found );
       if( !found )
-	return;
+        return;
       int transp = int( 100 - ( aisShape->Transparency() * 100.0 ) + 0.5);
       mySlider->setValue(transp);
       ValueHasChanged();
@@ -295,8 +295,8 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), found );
       if ( found ) {
-	ic->SetTransparency( aisShape, newValue, false );
-	ic->Redisplay( aisShape, Standard_False, Standard_True );
+        ic->SetTransparency( aisShape, newValue, false );
+        ic->Redisplay( aisShape, Standard_False, Standard_True );
       }
     } // for...
     ic->UpdateCurrentViewer();

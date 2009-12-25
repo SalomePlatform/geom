@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_BoxBndTree.hxx
-// Created:	Tue Oct 17 12:50:31 2006
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_BoxBndTree.hxx
+// Created:     Tue Oct 17 12:50:31 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #ifndef NMTDS_BoxBndTree_HeaderFile
 #define NMTDS_BoxBndTree_HeaderFile

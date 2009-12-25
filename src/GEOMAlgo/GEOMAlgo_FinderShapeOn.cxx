@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_FinderShapeOn.cxx
-// Created:	Tue Jan 11 14:44:31 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_FinderShapeOn.cxx
+// Created:     Tue Jan 11 14:44:31 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_FinderShapeOn.ixx>
 
@@ -352,12 +352,12 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aSImage=aIt.Value(); 
       if (myImages.IsBound(aSImage)) { 
-	const TopoDS_Shape& aSx=myImages.Find(aSImage); 
-	myMSS.Add(aSx, aSts[i]);
+        const TopoDS_Shape& aSx=myImages.Find(aSImage); 
+        myMSS.Add(aSx, aSts[i]);
       }
       else {
-	myErrorStatus=33;// can not find original shape
-	return; 
+        myErrorStatus=33;// can not find original shape
+        return; 
       }
     }
   }
@@ -403,21 +403,21 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
       switch (aType) {
       case TopAbs_VERTEX: {
         const TopoDS_Vertex& aVx=TopoDS::Vertex(aS);
-	aBB.UpdateVertex(aVx, myTolerance);
+        aBB.UpdateVertex(aVx, myTolerance);
       }
-	break;
+        break;
       case TopAbs_EDGE: {
         const TopoDS_Edge& aEx=TopoDS::Edge(aS);
-	aBB.UpdateEdge(aEx, myTolerance);
+        aBB.UpdateEdge(aEx, myTolerance);
       }
-	break;
+        break;
       case TopAbs_FACE: {
         const TopoDS_Face& aFx=TopoDS::Face(aS);
-	aBB.UpdateFace(aFx, myTolerance);
+        aBB.UpdateFace(aFx, myTolerance);
       }
-	break;
+        break;
       default:
-	break;
+        break;
       }
     }
   } //  
@@ -468,9 +468,9 @@ void GEOMAlgo_FinderShapeOn::CheckData()
   }
   //
   if (!(myShapeType==TopAbs_VERTEX ||
-	myShapeType==TopAbs_EDGE ||
-	myShapeType==TopAbs_FACE ||
-	myShapeType==TopAbs_SOLID)) {
+        myShapeType==TopAbs_EDGE ||
+        myShapeType==TopAbs_FACE ||
+        myShapeType==TopAbs_SOLID)) {
     myErrorStatus=12; // unallowed subshape type
     return;
   }
@@ -487,9 +487,9 @@ void GEOMAlgo_FinderShapeOn::CheckData()
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::CopySource(const TopoDS_Shape& aE,
-					TopTools_DataMapOfShapeShape& aImages,
-					TopTools_DataMapOfShapeShape& aOriginals,
-					TopoDS_Shape& aEx)
+                                        TopTools_DataMapOfShapeShape& aImages,
+                                        TopTools_DataMapOfShapeShape& aOriginals,
+                                        TopoDS_Shape& aEx)
 {
   Standard_Boolean bFree;
   TopAbs_ShapeEnum aType;

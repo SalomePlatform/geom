@@ -46,8 +46,8 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_ChangeOrientationDlg::RepairGUI_ChangeOrientationDlg( GeometryGUI* theGeometryGUI,
-								QWidget* parent,
-								bool modal )
+                                                                QWidget* parent,
+                                                                bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   //QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM",tr("ICON_DLG_SUPRESS_FACE")));
@@ -113,7 +113,7 @@ void RepairGUI_ChangeOrientationDlg::Init()
   connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( CreateCopyModeChanged( bool ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "CHANGE_ORIENTATION_NEW_OBJ_NAME" ) );
   resize(100,100);
@@ -225,7 +225,7 @@ void RepairGUI_ChangeOrientationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 

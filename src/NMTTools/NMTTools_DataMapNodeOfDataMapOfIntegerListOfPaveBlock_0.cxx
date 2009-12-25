@@ -51,10 +51,10 @@ Standard_EXPORT Handle_Standard_Type& NMTTools_DataMapNodeOfDataMapOfIntegerList
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock",
-			                                 sizeof(NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

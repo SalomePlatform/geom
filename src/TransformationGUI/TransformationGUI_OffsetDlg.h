@@ -40,7 +40,7 @@ class TransformationGUI_OffsetDlg : public GEOMBase_Skeleton
 
 public:
   TransformationGUI_OffsetDlg( GeometryGUI*, QWidget* = 0,
-			       bool = false, Qt::WindowFlags = 0 );
+                               bool = false, Qt::WindowFlags = 0 );
   ~TransformationGUI_OffsetDlg();
 
 protected:

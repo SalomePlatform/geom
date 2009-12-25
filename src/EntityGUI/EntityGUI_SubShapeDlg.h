@@ -67,7 +67,7 @@ private:
 
   void                                ResetStateOfDialog();
   unsigned int                        NumberOfSubShapes( const TopoDS_Shape&,
-							 const int ) const;
+                                                         const int ) const;
 
   void                                updateButtonState();
   bool                                isAllSubShapes() const;

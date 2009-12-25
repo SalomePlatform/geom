@@ -60,22 +60,22 @@
 using namespace std;
 // SALOME
 
-#define MAX2(X, Y)	(  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
-#define MAX3(X, Y, Z)	( MAX2 ( MAX2(X,Y) , Z) )
+#define MAX2(X, Y)      (  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
+#define MAX3(X, Y, Z)   ( MAX2 ( MAX2(X,Y) , Z) )
 
 
 
 
 
 void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
-					  vtkProperty* FaceProp,
-					  vtkProperty* EdgeFProp,
-					  vtkProperty* EdgeSProp,
-					  vtkProperty* EdgeIProp,
-					  vtkProperty* VertexProp,
-					  vtkProperty* IsoPVProp,
-					  vtkProperty* EdgePVProp,
-			   		  vtkProperty* VertexPVProp)
+                                          vtkProperty* FaceProp,
+                                          vtkProperty* EdgeFProp,
+                                          vtkProperty* EdgeSProp,
+                                          vtkProperty* EdgeIProp,
+                                          vtkProperty* VertexProp,
+                                          vtkProperty* IsoPVProp,
+                                          vtkProperty* EdgePVProp,
+                                          vtkProperty* VertexPVProp)
 {
   // Shading like default OCC material
   FaceProp->SetRepresentationToSurface();
@@ -160,8 +160,8 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
 
 
 void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
-					 Standard_Real deflection,
-					 Standard_Boolean forced)
+                                         Standard_Real deflection,
+                                         Standard_Boolean forced)
 {
   // Mesh the shape if necessary
   Standard_Boolean alreadymesh = Standard_True;
@@ -271,54 +271,54 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
       
       TopExp_Explorer ex2;
       for (ex2.Init(ex.Current(), TopAbs_EDGE); ex2.More(); ex2.Next()) {
-	const TopoDS_Edge& aEdge = TopoDS::Edge(ex2.Current());
-	
-	if (BRep_Tool::Degenerated(aEdge)) {    
-	  continue;
-	}
-	
-	// compute the number of faces
-	Standard_Integer nbf = edgemap.FindFromKey(ex2.Current()).Extent();
-	GEOM_Actor* EdgeActor = GEOM_Actor::New();
-	EdgeActor->SubShapeOn();
-	EdgeActor->setInputShape(ex2.Current(),deflection,mode);
-	
-	switch (nbf) {
-	  
-	case 0 : // isolated edge
-	  {
-	    EdgeActor->SetShadingProperty(EdgeIProp);
-	    EdgeActor->SetWireframeProperty(EdgeIProp);
-	  }
-	  break;
-	  
-	case 1 :// edge in only one face
-	  {
-	    EdgeActor->SetShadingProperty(EdgeFProp);
-	    EdgeActor->SetWireframeProperty(EdgeFProp);
-	  }
-	  break;
-	  
-	default :   // edge shared by at least two faces      
-	  {
-	    EdgeActor->SetShadingProperty(EdgeSProp);
-	    EdgeActor->SetWireframeProperty(EdgeSProp);
-	  }
-	}
-	
-	EdgeActor->SetPreviewProperty(EdgePVProp);
-	AISActors->AddItem(EdgeActor);
+        const TopoDS_Edge& aEdge = TopoDS::Edge(ex2.Current());
+        
+        if (BRep_Tool::Degenerated(aEdge)) {    
+          continue;
+        }
+        
+        // compute the number of faces
+        Standard_Integer nbf = edgemap.FindFromKey(ex2.Current()).Extent();
+        GEOM_Actor* EdgeActor = GEOM_Actor::New();
+        EdgeActor->SubShapeOn();
+        EdgeActor->setInputShape(ex2.Current(),deflection,mode);
+        
+        switch (nbf) {
+          
+        case 0 : // isolated edge
+          {
+            EdgeActor->SetShadingProperty(EdgeIProp);
+            EdgeActor->SetWireframeProperty(EdgeIProp);
+          }
+          break;
+          
+        case 1 :// edge in only one face
+          {
+            EdgeActor->SetShadingProperty(EdgeFProp);
+            EdgeActor->SetWireframeProperty(EdgeFProp);
+          }
+          break;
+          
+        default :   // edge shared by at least two faces      
+          {
+            EdgeActor->SetShadingProperty(EdgeSProp);
+            EdgeActor->SetWireframeProperty(EdgeSProp);
+          }
+        }
+        
+        EdgeActor->SetPreviewProperty(EdgePVProp);
+        AISActors->AddItem(EdgeActor);
       }
     }
   } else if ( myShape.ShapeType() == TopAbs_WIRE ) { // WIRE Actor
     TopExp_Explorer ex;
     for (ex.Init(myShape, TopAbs_EDGE); ex.More(); ex.Next()) {
       const TopoDS_Edge& aEdge = TopoDS::Edge(ex.Current());
-	
+        
       if (BRep_Tool::Degenerated(aEdge)) {    
-	continue;
+        continue;
       }
-	
+        
       GEOM_Actor* EdgeActor = GEOM_Actor::New();
       EdgeActor->setInputShape(ex.Current(),deflection,mode);
       EdgeActor->SetShadingProperty(EdgeIProp);
@@ -358,9 +358,9 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
 // BUILD ASSEMBLY
 //-------------------------------------------------------------
 vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
-						      Standard_Real deflection,
-						      Standard_Integer mode,
-						      Standard_Boolean forced)
+                                                      Standard_Real deflection,
+                                                      Standard_Integer mode,
+                                                      Standard_Boolean forced)
 {
   // Create a new vtkAssembly
 
@@ -409,7 +409,7 @@ vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
       const TopoDS_Edge& aEdge = TopoDS::Edge(ex2.Current());
  
       if (BRep_Tool::Degenerated(aEdge)) {    
-	continue;
+        continue;
       }
       
     
@@ -417,26 +417,26 @@ vtkAssembly*  GEOM_AssemblyBuilder::BuildAssembly(const TopoDS_Shape& myShape,
       Standard_Integer nbf = edgemap.FindFromKey(ex2.Current()).Extent();
       GEOM_Actor* EdgeActor = GEOM_Actor::New();
       switch (nbf) {
-	
+        
       case 0 : // isolated edge
-	{
-	  EdgeActor->SetShadingProperty(EdgeIProp);
-	  EdgeActor->SetWireframeProperty(EdgeIProp);
-	}
-	break;
-	
+        {
+          EdgeActor->SetShadingProperty(EdgeIProp);
+          EdgeActor->SetWireframeProperty(EdgeIProp);
+        }
+        break;
+        
       case 1 :// edge in only one face
-	{
-	  EdgeActor->SetShadingProperty(EdgeFProp);
-	  EdgeActor->SetWireframeProperty(EdgeFProp);
-	}
-	break;
-	
+        {
+          EdgeActor->SetShadingProperty(EdgeFProp);
+          EdgeActor->SetWireframeProperty(EdgeFProp);
+        }
+        break;
+        
       default :   // edge shared by at least two faces      
-	{
-	  EdgeActor->SetShadingProperty(EdgeSProp);
-	  EdgeActor->SetWireframeProperty(EdgeSProp);
-	}
+        {
+          EdgeActor->SetShadingProperty(EdgeSProp);
+          EdgeActor->SetWireframeProperty(EdgeSProp);
+        }
       }
   
       EdgeActor->setInputShape(ex2.Current(),deflection,mode);

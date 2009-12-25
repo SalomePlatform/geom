@@ -109,7 +109,7 @@ Partition_Inter3d::Partition_Inter3d(const Handle(BRepAlgo_AsDes)& AsDes)
 //=======================================================================
 
 void Partition_Inter3d::CompletPart3d(const TopTools_ListOfShape& SetOfFaces1,
-				      const TopTools_DataMapOfShapeShape& FaceShapeMap)
+                                      const TopTools_DataMapOfShapeShape& FaceShapeMap)
 {
   if (myAsDes.IsNull())
     myAsDes = new BRepAlgo_AsDes;
@@ -144,17 +144,17 @@ void Partition_Inter3d::CompletPart3d(const TopTools_ListOfShape& SetOfFaces1,
     for (; itLI.More(); itLI.Next()) {
       TopoDS_Face F2 = TopoDS::Face(BOS.TouchedShape(itLI));
       if (F1.IsSame(F2) || IsDone(F1,F2))
-	continue;
+        continue;
 
       TopoDS_Shape S2;
       if (FaceShapeMap.IsBound(F2)) S2 = FaceShapeMap.Find(F2);
       if (!S1.IsNull() && S1.IsSame(S2))
-	continue; // descendants of one shape
+        continue; // descendants of one shape
 
       TopExp_Explorer expE (F2, TopAbs_EDGE);
       for ( ; expE.More(); expE.Next())
-	if (EM.Contains( expE.Current() ))
-	  break;
+        if (EM.Contains( expE.Current() ))
+          break;
       if (expE.More())
       {
         // faces have a common edge, check if they are a tool and a face
@@ -169,7 +169,7 @@ void Partition_Inter3d::CompletPart3d(const TopTools_ListOfShape& SetOfFaces1,
 
       F1.Orientation(TopAbs_FORWARD);
       F2.Orientation(TopAbs_FORWARD);
-      FacesPartition(F1,F2);	  
+      FacesPartition(F1,F2);      
     }
 
     // mark as modified a face which has at least one new edge
@@ -178,8 +178,8 @@ void Partition_Inter3d::CompletPart3d(const TopTools_ListOfShape& SetOfFaces1,
     TopTools_ListIteratorOfListOfShape itE (myAsDes->Descendant( F1 ));
     for ( ; itE.More(); itE.Next()) {
       if (myNewEdges.Contains( itE.Value())) {
-	myTouched.Add( F1 );
-	break;
+        myTouched.Add( F1 );
+        break;
       }
     }
   }
@@ -191,8 +191,8 @@ void Partition_Inter3d::CompletPart3d(const TopTools_ListOfShape& SetOfFaces1,
 //=======================================================================
 
 static void PutInBounds (const TopoDS_Face&          F,
-			 const TopoDS_Edge&          E,
-			 Handle(Geom2d_Curve)&       C2d)
+                         const TopoDS_Edge&          E,
+                         Handle(Geom2d_Curve)&       C2d)
 {
   Standard_Real   umin,umax,vmin,vmax;
   Standard_Real   f,l;
@@ -279,8 +279,8 @@ static void PutInBounds (const TopoDS_Face&          F,
       Standard_Real d2 = umin - minC + period;
       if (d2 < d1) du =-period;
       if ( du != 0.) {
-	gp_Vec2d T2(du,0.);
-	C2d->Translate(T2);
+        gp_Vec2d T2(du,0.);
+        C2d->Translate(T2);
       }
     }
   }
@@ -310,8 +310,8 @@ static void PutInBounds (const TopoDS_Face&          F,
       Standard_Real d2 = vmin - minC + period;
       if (d2 < d1) dv =-period;
       if ( dv != 0.) {
-	gp_Vec2d T2(0.,dv);
-	C2d->Translate(T2);
+        gp_Vec2d T2(0.,dv);
+        C2d->Translate(T2);
       }
     }
   }
@@ -323,8 +323,8 @@ static void PutInBounds (const TopoDS_Face&          F,
 //=======================================================================
 
 void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
-				const TopoDS_Face& F2,
-				TopTools_ListOfShape& L)
+                                const TopoDS_Face& F2,
+                                TopTools_ListOfShape& L)
 {
   BRep_Builder B;
   
@@ -371,8 +371,8 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
       
       itLE.Next();
       if (itLE.More()) {
-	pc1 = Handle(Geom2d_Curve)::DownCast(pc1->Copy());
-	pc2 = Handle(Geom2d_Curve)::DownCast(pc2->Copy());
+        pc1 = Handle(Geom2d_Curve)::DownCast(pc1->Copy());
+        pc2 = Handle(Geom2d_Curve)::DownCast(pc2->Copy());
       }
     }
   }
@@ -430,35 +430,35 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
       oe = TopoDS::Edge( DS.Shape( itP.Support()));
       if (itP.IsVertex()) {
         // there is a vertex at intersection
-	if ( !MIV.Add( itP.Current() ))
-	  continue;
-	V = TopoDS::Vertex( DS.Shape( itP.Current()));
-	if ( !sde.IsNull() && (V.IsSame(sdeV1) || V.IsSame(sdeV2)) )
-	  oe = sde;
-	V = ReplaceSameDomainV( V , oe );
-	V.Orientation( TopAbs_INTERNAL);
-	B.UpdateVertex( V, itP.Parameter(), se, 0.); // AddVonE() sets real U
+        if ( !MIV.Add( itP.Current() ))
+          continue;
+        V = TopoDS::Vertex( DS.Shape( itP.Current()));
+        if ( !sde.IsNull() && (V.IsSame(sdeV1) || V.IsSame(sdeV2)) )
+          oe = sde;
+        V = ReplaceSameDomainV( V , oe );
+        V.Orientation( TopAbs_INTERNAL);
+        B.UpdateVertex( V, itP.Parameter(), se, 0.); // AddVonE() sets real U
       }
       else {
         // create a new vertex at the intersection point
-	const TopOpeBRepDS_Point& DSP = DS.Point( itP.Current());
-	V = BRepLib_MakeVertex( DSP.Point() );
-	V.Orientation( TopAbs_INTERNAL);
-	B.UpdateVertex( V, itP.Parameter(), se, DSP.Tolerance());
-	// make V be on the other edge
-	TopOpeBRepDS_PointIterator itOP (DS.ShapeInterferences( oe ));
-	for (; itOP.More(); itOP.Next()) {
-	  const TopOpeBRepDS_Point& ODSP = DS.Point( itOP.Current());
-	  if ( DSP.IsEqual (ODSP)) {
-	    B.UpdateVertex( V, itOP.Parameter(), TopoDS::Edge(oe), ODSP.Tolerance());
-	    break;
-	  }
-	}
+        const TopOpeBRepDS_Point& DSP = DS.Point( itP.Current());
+        V = BRepLib_MakeVertex( DSP.Point() );
+        V.Orientation( TopAbs_INTERNAL);
+        B.UpdateVertex( V, itP.Parameter(), se, DSP.Tolerance());
+        // make V be on the other edge
+        TopOpeBRepDS_PointIterator itOP (DS.ShapeInterferences( oe ));
+        for (; itOP.More(); itOP.Next()) {
+          const TopOpeBRepDS_Point& ODSP = DS.Point( itOP.Current());
+          if ( DSP.IsEqual (ODSP)) {
+            B.UpdateVertex( V, itOP.Parameter(), TopoDS::Edge(oe), ODSP.Tolerance());
+            break;
+          }
+        }
       }
       // add V on the both intersecting edges
       TopoDS_Vertex addedV = Partition_Inter2d::AddVonE( V,se,oe,myAsDes,dummyF);
       if (!addedV.IsSame( V ))
-	mySameDomainVM.Bind (V, addedV); // equal vertex is already there
+        mySameDomainVM.Bind (V, addedV); // equal vertex is already there
 
       MV.Add( addedV ); // to ease storage of vertices of ON splits
     }
@@ -497,8 +497,8 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
     TopTools_ListIteratorOfListOfShape itE( myAsDes->Descendant( F ));
     if (myAsDes->HasDescendant( F )) {
       for ( ; itE.More(); itE.Next())
-	if (se.IsSame( itE.Value() ))
-	  break;
+        if (se.IsSame( itE.Value() ))
+          break;
     }
     if (!itE.More())
     {
@@ -508,21 +508,21 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
       Standard_Real tol, f,l, umin=1e100, umax=-1e100;
       Handle(Geom2d_Curve) pc = BRep_Tool::CurveOnSurface( se, F, f,l);
       if (pc.IsNull()) {
-	itSP.Initialize( TopB.Splits(se,TopAbs_ON) );
-	for ( ; itSP.More(); itSP.Next()) {
-	  const TopoDS_Edge& E = TopoDS::Edge ( itSP.Value());
-	  BRep_Tool::Range(E, f, l);
-	  umin = Min( umin, f);
-	  umax = Max( umax, l);
-	}
-	Handle(Geom_Curve) C3d = BRep_Tool::Curve( se, f, l);
-	if (umin < umax) // sometimes umin == umax for closed edge
-	  C3d = new Geom_TrimmedCurve( C3d, umin, umax);
-	pc = TopOpeBRepTool_CurveTool::MakePCurveOnFace (F,C3d,tol);
-	if (pc.IsNull()) {
-	  MESSAGE (" CANT BUILD PCURVE ");
-	}
-	B.UpdateEdge( se, pc, F, tol);
+        itSP.Initialize( TopB.Splits(se,TopAbs_ON) );
+        for ( ; itSP.More(); itSP.Next()) {
+          const TopoDS_Edge& E = TopoDS::Edge ( itSP.Value());
+          BRep_Tool::Range(E, f, l);
+          umin = Min( umin, f);
+          umax = Max( umax, l);
+        }
+        Handle(Geom_Curve) C3d = BRep_Tool::Curve( se, f, l);
+        if (umin < umax) // sometimes umin == umax for closed edge
+          C3d = new Geom_TrimmedCurve( C3d, umin, umax);
+        pc = TopOpeBRepTool_CurveTool::MakePCurveOnFace (F,C3d,tol);
+        if (pc.IsNull()) {
+          MESSAGE (" CANT BUILD PCURVE ");
+        }
+        B.UpdateEdge( se, pc, F, tol);
       }
     }
 
@@ -532,7 +532,7 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
     for ( ; itSP.More(); itSP.Next()) {
       const TopoDS_Shape& SP = itSP.Value();
       if (!SPM.Add( SP ))
-	SPM.Remove( SP );
+        SPM.Remove( SP );
     }
   }
 
@@ -551,7 +551,7 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
     for ( ; itSP.More(); itSP.Next())
     {
       if (!SPM.Contains( itSP.Value() ))
-	continue;
+        continue;
       
       const TopoDS_Edge& S = TopoDS::Edge ( itSP.Value());
 
@@ -562,30 +562,30 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
       TopExp::Vertices (S, VS[0], VS[1]);
       for (j=0; j<2; ++j)
       {
-	if (mySameDomainVM.IsBound( VS[j] ))
-	  VS[j] = TopoDS::Vertex( mySameDomainVM( VS[j] ));
-	if ( !MV.Contains( VS[j] )) {
-	  // find equal vertex on se - point interference
-	  gp_Pnt P1 = BRep_Tool::Pnt( VS[j] );
-	  TopTools_ListIteratorOfListOfShape itV( myAsDes->Descendant(se) );
-	  for (; itV.More(); itV.Next()) {
-	    V = TopoDS::Vertex( itV.Value() );
+        if (mySameDomainVM.IsBound( VS[j] ))
+          VS[j] = TopoDS::Vertex( mySameDomainVM( VS[j] ));
+        if ( !MV.Contains( VS[j] )) {
+          // find equal vertex on se - point interference
+          gp_Pnt P1 = BRep_Tool::Pnt( VS[j] );
+          TopTools_ListIteratorOfListOfShape itV( myAsDes->Descendant(se) );
+          for (; itV.More(); itV.Next()) {
+            V = TopoDS::Vertex( itV.Value() );
             if ( V.IsSame( VS[j] ))
               break;
-	    gp_Pnt P2 = BRep_Tool::Pnt( V );
-	    if (P1.IsEqual( P2, Precision::Confusion())) {
-	      mySameDomainVM.Bind (VS[j], V);
-	      VS[j] = V;
-	      break;
-	    }
-	  }
-	  if (!itV.More())  // no interferences with edges
-	    myAsDes->Add( se, VS[j]);
-	}
+            gp_Pnt P2 = BRep_Tool::Pnt( V );
+            if (P1.IsEqual( P2, Precision::Confusion())) {
+              mySameDomainVM.Bind (VS[j], V);
+              VS[j] = V;
+              break;
+            }
+          }
+          if (!itV.More())  // no interferences with edges
+            myAsDes->Add( se, VS[j]);
+        }
 
         // add ends of ON splits to F in order to detect later
         // if a split is on face in IsSplitOn()
-	mySectionEdgesAD->Add( F, VS[j]);
+        mySectionEdgesAD->Add( F, VS[j]);
       }
       // in the descendants of F, first go ends of an ON split and
       // then a split itself
@@ -604,7 +604,7 @@ void Partition_Inter3d::Inter3D(const TopoDS_Face& F1,
 //=======================================================================
 
 void Partition_Inter3d::FacesPartition(const TopoDS_Face& F1,
-				       const TopoDS_Face& F2)
+                                       const TopoDS_Face& F2)
      //(const TopTools_DataMapOfShapeListOfShape& /*SetOfFaces2*/)
 {
   TopTools_ListOfShape LInt;
@@ -620,7 +620,7 @@ void Partition_Inter3d::FacesPartition(const TopoDS_Face& F1,
 //=======================================================================
 
 void Partition_Inter3d::SetDone(const TopoDS_Face& F1, 
-				const TopoDS_Face& F2)
+                                const TopoDS_Face& F2)
 {
   if (!myDone.IsBound(F1)) {
     TopTools_ListOfShape emptyList;
@@ -640,7 +640,7 @@ void Partition_Inter3d::SetDone(const TopoDS_Face& F1,
 //=======================================================================
 
 Standard_Boolean Partition_Inter3d::IsDone(const TopoDS_Face& F1, 
-					   const TopoDS_Face& F2) 
+                                           const TopoDS_Face& F2) 
 
   const 
 {
@@ -659,8 +659,8 @@ Standard_Boolean Partition_Inter3d::IsDone(const TopoDS_Face& F1,
 //=======================================================================
 
 void Partition_Inter3d::StorePart3d(const TopoDS_Face& F1, 
-				    const TopoDS_Face& F2, 
-				    const TopTools_ListOfShape& LInt)
+                                    const TopoDS_Face& F2, 
+                                    const TopTools_ListOfShape& LInt)
 {
   if (!LInt.IsEmpty()) {
     myAsDes->Add( F1,LInt);
@@ -771,13 +771,13 @@ Standard_Boolean Partition_Inter3d::HasSameDomainF(const TopoDS_Shape& F) const
 //=======================================================================
 
 Standard_Boolean Partition_Inter3d::IsSameDomainF(const TopoDS_Shape& F1,
-						 const TopoDS_Shape& F2) const
+                                                 const TopoDS_Shape& F2) const
 {
   if (mySameDomainFM.IsBound( F1 )) {
     TopTools_ListIteratorOfListOfShape it (mySameDomainFM( F1 ));
     for (; it.More(); it.Next()) 
       if (F2.IsSame( it.Value()))
-	return Standard_True;
+        return Standard_True;
   }
   return F1.IsSame( F2 );
 }
@@ -789,7 +789,7 @@ Standard_Boolean Partition_Inter3d::IsSameDomainF(const TopoDS_Shape& F1,
 //=======================================================================
 
 TopoDS_Vertex Partition_Inter3d::ReplaceSameDomainV(const TopoDS_Vertex& V,
-						    const TopoDS_Edge&   E) const
+                                                    const TopoDS_Edge&   E) const
 {
   TopoDS_Vertex SDV = V;
   if (mySameDomainVM.IsBound( V )) {
@@ -859,8 +859,8 @@ Standard_Boolean
 
 Standard_Boolean
   Partition_Inter3d::IsSplitOn(const TopoDS_Edge& NewE,
-			       const TopoDS_Edge& OldE,
-			       const TopoDS_Face& F) const
+                               const TopoDS_Edge& OldE,
+                               const TopoDS_Face& F) const
 {
   if (! mySectionEdgesAD->HasDescendant(F))
     return Standard_False;
@@ -868,7 +868,7 @@ Standard_Boolean
   TopTools_ListIteratorOfListOfShape itE ( mySectionEdgesAD->Descendant(F) );
   for ( ; itE.More(); itE.Next()) {
     if ( itE.Value().ShapeType() != TopAbs_EDGE ||
-	! OldE.IsSame ( itE.Value() ))
+        ! OldE.IsSame ( itE.Value() ))
       continue;
     // an edge encountered, its vertices and a split come next
     itE.Next();
@@ -884,7 +884,7 @@ Standard_Boolean
     TopExp::Vertices( OldE, V1, V2);
     
     if ( V1.IsSame(V2) &&
-	(V1.IsSame(V3) || V1.IsSame(V4)) ) {
+        (V1.IsSame(V3) || V1.IsSame(V4)) ) {
       // closed old edge; use the split for the test 
       itE.Next();
       if (!itE.More()) break;
@@ -893,21 +893,21 @@ Standard_Boolean
       Standard_Real f1,l1, f2,l2;
       Handle(Geom2d_Curve) PC1 = BRep_Tool::CurveOnSurface( split, F ,f1,l1);
       if (!PC1.IsNull()) {
-	Handle(Geom2d_Curve) PC2 = BRep_Tool::CurveOnSurface(NewE, F ,f2,l2);
-	gp_Pnt2d P = PC2->Value( 0.5*(f2+l2) );
-	Geom2dAPI_ProjectPointOnCurve proj (P, PC1, f1, l1);
-	if (proj.NbPoints() &&
-	    proj.LowerDistance() <= Precision::Confusion())
-	  return Standard_True;
+        Handle(Geom2d_Curve) PC2 = BRep_Tool::CurveOnSurface(NewE, F ,f2,l2);
+        gp_Pnt2d P = PC2->Value( 0.5*(f2+l2) );
+        Geom2dAPI_ProjectPointOnCurve proj (P, PC1, f1, l1);
+        if (proj.NbPoints() &&
+            proj.LowerDistance() <= Precision::Confusion())
+          return Standard_True;
       }
       else {
         Handle(Geom_Curve) C1 = BRep_Tool::Curve( split ,f1,l1);
-	Handle(Geom_Curve) C2 = BRep_Tool::Curve( NewE  ,f2,l2);
-	gp_Pnt P = C2->Value( 0.5*(f2+l2) );
-	GeomAPI_ProjectPointOnCurve proj (P, C1, f1, l1);
-	if (proj.NbPoints() &&
-	    proj.LowerDistance() <= Precision::Confusion())
-	  return Standard_True;
+        Handle(Geom_Curve) C2 = BRep_Tool::Curve( NewE  ,f2,l2);
+        gp_Pnt P = C2->Value( 0.5*(f2+l2) );
+        GeomAPI_ProjectPointOnCurve proj (P, C1, f1, l1);
+        if (proj.NbPoints() &&
+            proj.LowerDistance() <= Precision::Confusion())
+          return Standard_True;
       }
     }
     else {

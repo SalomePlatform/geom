@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_WireEdgeSet.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_WireEdgeSet.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_WireEdgeSet.ixx>
 

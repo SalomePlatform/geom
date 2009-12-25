@@ -36,16 +36,16 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeBoxDXDYDZ (double theDX, double theDY, double theDZ);
   Standard_EXPORT Handle(GEOM_Object) MakeBoxTwoPnt (Handle(GEOM_Object) thePnt1,
-						     Handle(GEOM_Object) thePnt2);
+                                                     Handle(GEOM_Object) thePnt2);
   Standard_EXPORT Handle(GEOM_Object) MakeFaceHW (double theH, double theW, int theOrientation);
   Standard_EXPORT Handle(GEOM_Object) MakeFaceObjHW (Handle(GEOM_Object) theObj,
-						     double theH, double theW);
+                                                     double theH, double theW);
   Standard_EXPORT Handle(GEOM_Object) MakeDiskThreePnt (Handle(GEOM_Object) thePnt1,
-							Handle(GEOM_Object) thePnt2,
-							Handle(GEOM_Object) thePnt3);
+                                                        Handle(GEOM_Object) thePnt2,
+                                                        Handle(GEOM_Object) thePnt3);
   Standard_EXPORT Handle(GEOM_Object) MakeDiskPntVecR (Handle(GEOM_Object) thePnt1,
-						       Handle(GEOM_Object) theVec,
-						       double theR);
+                                                       Handle(GEOM_Object) theVec,
+                                                       double theR);
   Standard_EXPORT Handle(GEOM_Object) MakeDiskR (double theR, int theOrientation);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderRH       (double theR, double theH);
   Standard_EXPORT Handle(GEOM_Object) MakeCylinderPntVecRH (Handle(GEOM_Object) thePnt,
@@ -94,8 +94,8 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                                double theAngle);
 
   Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle2Ways (Handle(GEOM_Object) theBase,
-								    Handle(GEOM_Object) theAxis,
-								    double theAngle);
+                                                                    Handle(GEOM_Object) theAxis,
+                                                                    double theAngle);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape,
                                                    int theMinDeg, int theMaxDeg,
@@ -109,27 +109,27 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                        bool theRuled);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeWithDifferentSections(
-		const Handle(TColStd_HSequenceOfTransient)& theBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations,
-		const Handle(GEOM_Object)& thePath,
-		bool theWithContact,
-		bool theWithCorrections);
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations,
+                const Handle(GEOM_Object)& thePath,
+                bool theWithContact,
+                bool theWithCorrections);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeWithShellSections(
-		const Handle(TColStd_HSequenceOfTransient)& theBases,
-	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations,
-		const Handle(GEOM_Object)& thePath,
-		bool theWithContact,
-		bool theWithCorrections);
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations,
+                const Handle(GEOM_Object)& thePath,
+                bool theWithContact,
+                bool theWithCorrections);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeShellsWithoutPath(
-		const Handle(TColStd_HSequenceOfTransient)& theBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations);
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
-								   Handle(GEOM_Object) thePath,
-								   Handle(GEOM_Object) theVec);
+                                                                   Handle(GEOM_Object) thePath,
+                                                                   Handle(GEOM_Object) theVec);
 
 };
 

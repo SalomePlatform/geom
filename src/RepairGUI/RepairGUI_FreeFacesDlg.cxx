@@ -66,7 +66,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg( GeometryGUI* GUI, QWidget* parent,
-						bool modal )
+                                                bool modal )
   : QDialog( parent, false ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( GUI ), 
@@ -170,11 +170,11 @@ void RepairGUI_FreeFacesDlg::onHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( this, 
-			      tr( "WRN_WARNING" ),
-			      tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
-								    platform ) ).
-			      arg( myHelpFileName ) );
+                              tr( "WRN_WARNING" ),
+                              tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", 
+                                                                    platform ) ).
+                              arg( myHelpFileName ) );
   }
 }
 
@@ -200,7 +200,7 @@ void RepairGUI_FreeFacesDlg::onActivate()
   setEnabled( true );
   myGeomGUI->SetActiveDialogBox( this );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
+           SIGNAL( currentSelectionChanged() ), SLOT( onSelectionDone() ) );
   activateSelection();
 }
 
@@ -215,7 +215,7 @@ void RepairGUI_FreeFacesDlg::Init()
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), SLOT  ( onDeactivate() ) );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
+           SIGNAL( currentSelectionChanged() ), SLOT  ( onSelectionDone() ) );
 
   activateSelection();
   onSelectionDone();
@@ -330,9 +330,9 @@ bool RepairGUI_FreeFacesDlg::execute( ObjectList& objects )
       try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
         getDisplayer()->SetToActivate( false );
-	aPrs = !aFace.IsNull() ? getDisplayer()->BuildPrs( aFace ) : 0;
+        aPrs = !aFace.IsNull() ? getDisplayer()->BuildPrs( aFace ) : 0;
         if ( aPrs )
-	  displayPreview( aPrs, true );
+          displayPreview( aPrs, true );
       }
       catch( const SALOME::SALOME_Exception& e )
       {

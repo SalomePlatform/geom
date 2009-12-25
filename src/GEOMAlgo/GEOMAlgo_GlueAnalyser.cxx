@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_GlueDetector.cxx
-// Created:	Wed Dec 15 11:08:09 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_GlueDetector.cxx
+// Created:     Wed Dec 15 11:08:09 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_GlueAnalyser.ixx>
 
@@ -212,7 +212,7 @@
       aIndex=aIt.Value();
       const TopoDS_Shape& aVx=aMIS.FindFromKey(aIndex);
       if(!j) {
-	aVF=aVx;
+        aVF=aVx;
       }
       aLVSD.Append(aVx);
       aMVProcessed.Add(aVx);
@@ -229,7 +229,7 @@
     for (; aItS.More(); aItS.Next()) {
       const TopoDS_Shape& aVSD=aItS.Value();
       if (!myOrigins.IsBound(aVSD)) {
-	myOrigins.Bind(aVSD, aV);
+        myOrigins.Bind(aVSD, aV);
       }
     }
   }
@@ -323,7 +323,7 @@
     for (; aItS.More(); aItS.Next()) {
       const TopoDS_Shape& aFSD=aItS.Value();
       if (!myOrigins.IsBound(aFSD)) {
-	myOrigins.Bind(aFSD, aNewShape);
+        myOrigins.Bind(aFSD, aNewShape);
       }
     }
   }
@@ -370,13 +370,13 @@
     aFx[1]=aLF.Last();
     for (i=0; i<2; ++i) {
       if (!aMFS.Contains(aFx[i])) {
-	continue;// it must not be so
+        continue;// it must not be so
       }
       //
       const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aFx[i]);
       aNbS=aLS.Extent();
       if (aNbS!=1) {
-	continue;
+        continue;
       }
       aSx[i]=aLS.First();
     }

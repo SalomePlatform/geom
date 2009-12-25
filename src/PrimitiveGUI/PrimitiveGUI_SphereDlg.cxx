@@ -50,7 +50,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 PrimitiveGUI_SphereDlg::PrimitiveGUI_SphereDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-						bool modal, Qt::WindowFlags fl )
+                                                bool modal, Qt::WindowFlags fl )
   :GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SPHERE_P" ) ) );
@@ -135,7 +135,7 @@ void PrimitiveGUI_SphereDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_SPHERE" ) );
 
@@ -175,7 +175,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
       myPoint = GEOM::GEOM_Object::_nil();
       
       connect( myGeomGUI->getApp()->selectionMgr(), 
-	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+               SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
   case 1:
@@ -263,12 +263,12 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
       GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName );
 
       if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	GEOM::GEOM_IShapesOperations_var aShapesOp =
-	  getGeomEngine()->GetIShapesOperations( getStudyId() );
-	aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+        GEOM::GEOM_IShapesOperations_var aShapesOp =
+          getGeomEngine()->GetIShapesOperations( getStudyId() );
+        aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
       }
       else {
-	aSelectedObject = aFindedObject; // get Object from study
+        aSelectedObject = aFindedObject; // get Object from study
       }
     }
     else { // Global Selection
@@ -325,7 +325,7 @@ void PrimitiveGUI_SphereDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
   
   ConstructorsClicked( getConstructorId() );
 }
@@ -402,14 +402,14 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
   case 0 :
     {
       if ( !CORBA::is_nil( myPoint ) ) {
-	anObj = anOper->MakeSpherePntR( myPoint, getRadius() );
-	if (!anObj->_is_nil() && !IsPreview())
+        anObj = anOper->MakeSpherePntR( myPoint, getRadius() );
+        if (!anObj->_is_nil() && !IsPreview())
         {
-	  QStringList aParameters;
-	  aParameters << GroupPoints->SpinBox_DX->text();
+          QStringList aParameters;
+          aParameters << GroupPoints->SpinBox_DX->text();
           anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	}
-	res = true;
+        }
+        res = true;
       }
       break;
     }
@@ -418,8 +418,8 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
       anObj = anOper->MakeSphereR( getRadius() );
       if (!anObj->_is_nil() && !IsPreview())
       {
-	QStringList aParameters;
-	aParameters << GroupDimensions->SpinBox_DX->text();
+        QStringList aParameters;
+        aParameters << GroupDimensions->SpinBox_DX->text();
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_ShapesDataStructure.cxx
-// Created:	Mon Dec  1 10:21:04 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_ShapesDataStructure.cxx
+// Created:     Mon Dec  1 10:21:04 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_ShapesDataStructure.ixx>
 #include <TopoDS_Iterator.hxx>
@@ -41,12 +41,12 @@
 
 static
   void ComputeBoxExS(const Standard_Integer aIx,
-		     const NMTDS_ShapesDataStructure* pDS,
-		     Bnd_Box& aBoxEx);
+                     const NMTDS_ShapesDataStructure* pDS,
+                     Bnd_Box& aBoxEx);
 static
   void GetAllSuccessorsS(const Standard_Integer nS,
-			 const NMTDS_ShapesDataStructure* myDS,
-			 TColStd_IndexedMapOfInteger& aMA);
+                         const NMTDS_ShapesDataStructure* myDS,
+                         TColStd_IndexedMapOfInteger& aMA);
 
 //===========================================================================
 //function : NMTDS_ShapesDataStructure::NMTDS_ShapesDataStructure
@@ -110,8 +110,8 @@ static
     for(j=1; j<=aNbSc; ++j) {
       aIndex=aAS1.GetSuccessor(j);
       if(aMFence.Add(aIndex)) {
-	BooleanOperations_AncestorsSeqAndSuccessorsSeq& aAS2=aMSA.ChangeFromIndex(aIndex);
-	aAS2.SetNewAncestor(iX);
+        BooleanOperations_AncestorsSeqAndSuccessorsSeq& aAS2=aMSA.ChangeFromIndex(aIndex);
+        aAS2.SetNewAncestor(iX);
       }
     }
   }
@@ -335,7 +335,7 @@ static
 //purpose  : 
 //===========================================================================
   Standard_Integer NMTDS_ShapesDataStructure::ShapeIndex(const TopoDS_Shape& aS,
-							 const Standard_Integer aRank)const
+                                                         const Standard_Integer aRank)const
 {
   Standard_Boolean bFound;
   Standard_Integer aIndex=0;
@@ -377,7 +377,7 @@ static
 //purpose  : 
 //=======================================================================
   void NMTDS_ShapesDataStructure::ComputeBoxEx (const Standard_Integer aIx,
-						Bnd_Box& aBoxEx)const
+                                                Bnd_Box& aBoxEx)const
 {
   ComputeBoxExS(aIx, this, aBoxEx);
 }
@@ -386,7 +386,7 @@ static
 //purpose  : 
 //=======================================================================
   void NMTDS_ShapesDataStructure::GetAllSuccessors(const Standard_Integer nS,
-						   TColStd_IndexedMapOfInteger& aMA)const
+                                                   TColStd_IndexedMapOfInteger& aMA)const
 {
   GetAllSuccessorsS(nS, this, aMA);
 }
@@ -395,8 +395,8 @@ static
 //purpose  : 
 //=======================================================================
 void GetAllSuccessorsS(const Standard_Integer nS,
-		       const NMTDS_ShapesDataStructure* myDS,
-		       TColStd_IndexedMapOfInteger& aMA)
+                       const NMTDS_ShapesDataStructure* myDS,
+                       TColStd_IndexedMapOfInteger& aMA)
 {
   TopAbs_ShapeEnum aT;
   Standard_Integer i, nSx, aNbSuccessors, *pSuccessors;
@@ -424,8 +424,8 @@ void GetAllSuccessorsS(const Standard_Integer nS,
 // purpose: 
 //=======================================================================
   void ComputeBoxExS(const Standard_Integer aIx,
-		     const NMTDS_ShapesDataStructure* pDS,
-		     Bnd_Box& aBoxEx)
+                     const NMTDS_ShapesDataStructure* pDS,
+                     Bnd_Box& aBoxEx)
 {
   Standard_Integer i, aNbS, iS;
   //

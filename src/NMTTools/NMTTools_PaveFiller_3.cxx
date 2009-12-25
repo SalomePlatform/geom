@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_3.cxx
-// Created:	Mon Dec  8 16:06:56 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_3.cxx
+// Created:     Mon Dec  8 16:06:56 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -45,7 +45,7 @@
 // Contribution of Samtech www.samcef.com BEGIN
 static
   Standard_Boolean Contains(const TopoDS_Face& aF,
-			    const TopoDS_Vertex& aV);
+                            const TopoDS_Vertex& aV);
 // Contribution of Samtech www.samcef.com END
 //=======================================================================
 // function: PerformVF
@@ -80,49 +80,49 @@ static
       aWhat=n1; // Vertex
       aWith=n2; // Face
       if (myDS->GetShapeType(n1)==TopAbs_FACE) {
-	aWhat=n2;
-	aWith=n1;
+        aWhat=n2;
+        aWith=n1;
       }
       //
       iSDV=FindSDVertex(aWhat);
-	//
+        //
       if(aJustAdd) {
-	//myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexSurface, anIndexIn);
-	continue;
+        //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexSurface, anIndexIn);
+        continue;
       }
       //
       aV1=TopoDS::Vertex(myDS->Shape(aWhat));
       if (iSDV) {
-	aV1=TopoDS::Vertex(myDS->Shape(iSDV));
+        aV1=TopoDS::Vertex(myDS->Shape(iSDV));
       }
-	//
+        //
       aF2=TopoDS::Face(myDS->Shape(aWith));
       //
       // Modified  Thu Sep 14 14:35:18 2006 
       // Contribution of Samtech www.samcef.com BEGIN
       if (Contains(aF2, aV1)) {
-	continue;
+        continue;
       }
       // Contribution of Samtech www.samcef.com END
       //
       aFlag=myContext.ComputeVS (aV1, aF2, aU, aV);
       //
       if (!aFlag) {
-	//
-	// Add Interference to the Pool
-	BOPTools_VSInterference anInterf (aWhat, aWith, aU, aV);
-	anIndexIn=aVSs.Append(anInterf);
-	//
-	// SetState for Vertex in DS;
-	myDS->SetState (aWhat, BooleanOperations_ON);
-	// Insert Vertex in Interference Object
-	BOPTools_VSInterference& aVS=aVSs(anIndexIn);
-	aVS.SetNewShape(aWhat);
-	// qqf
-	{
-	  myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VF);
-	}
-	// qqt
+        //
+        // Add Interference to the Pool
+        BOPTools_VSInterference anInterf (aWhat, aWith, aU, aV);
+        anIndexIn=aVSs.Append(anInterf);
+        //
+        // SetState for Vertex in DS;
+        myDS->SetState (aWhat, BooleanOperations_ON);
+        // Insert Vertex in Interference Object
+        BOPTools_VSInterference& aVS=aVSs(anIndexIn);
+        aVS.SetNewShape(aWhat);
+        // qqf
+        {
+          myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VF);
+        }
+        // qqt
       }
       //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexSurface, anIndexIn);
     }
@@ -136,7 +136,7 @@ static
 //purpose  : 
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Face& aF,
-			  const TopoDS_Vertex& aV)
+                          const TopoDS_Vertex& aV)
 {
   Standard_Boolean bRet;
   TopExp_Explorer aExp;

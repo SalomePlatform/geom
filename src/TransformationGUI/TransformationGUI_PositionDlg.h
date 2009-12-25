@@ -40,7 +40,7 @@ class TransformationGUI_PositionDlg : public GEOMBase_Skeleton
 
 public:
   TransformationGUI_PositionDlg( GeometryGUI*, QWidget* = 0,
-				 bool = false, Qt::WindowFlags = 0 );
+                                 bool = false, Qt::WindowFlags = 0 );
   ~TransformationGUI_PositionDlg();
   
 protected:

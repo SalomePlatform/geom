@@ -150,47 +150,47 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
     SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
     if ( prs ) {
       if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
-	SOCC_Prs* occPrs = (SOCC_Prs*) prs;
-	AIS_ListOfInteractive lst;
-	occPrs->GetObjects( lst );
-	if ( lst.Extent() ) {
-	  Handle(AIS_InteractiveObject) io = lst.First();
-	  if ( !io.IsNull() ) {
-	    int dm = io->DisplayMode();
+        SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+        AIS_ListOfInteractive lst;
+        occPrs->GetObjects( lst );
+        if ( lst.Extent() ) {
+          Handle(AIS_InteractiveObject) io = lst.First();
+          if ( !io.IsNull() ) {
+            int dm = io->DisplayMode();
             if ( dm == AIS_WireFrame )
-	      return "Wireframe";
-	    else if ( dm == AIS_Shaded )
-	      return "Shading";
-	    else { // return default display mode of AIS_InteractiveContext
-	      OCCViewer_Viewer* occViewer = (OCCViewer_Viewer*) SUIT_Session::session()->activeApplication()->desktop(
+              return "Wireframe";
+            else if ( dm == AIS_Shaded )
+              return "Shading";
+            else { // return default display mode of AIS_InteractiveContext
+              OCCViewer_Viewer* occViewer = (OCCViewer_Viewer*) SUIT_Session::session()->activeApplication()->desktop(
                                             )->activeWindow()->getViewManager()->getViewModel();
-	      Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-	      dm = ic->DisplayMode();
-	      if ( dm == AIS_WireFrame )
-		return "Wireframe";
-	      else if ( dm == AIS_Shaded )
-		return "Shading";
-	    }
-	  }
-	}
+              Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
+              dm = ic->DisplayMode();
+              if ( dm == AIS_WireFrame )
+                return "Wireframe";
+              else if ( dm == AIS_Shaded )
+                return "Shading";
+            }
+          }
+        }
       }
       else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
-	SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
-	vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
-	if ( lst ) {
-	  lst->InitTraversal();
-	  vtkActor* actor = lst->GetNextActor();
-	  if ( actor ) {
-	    SALOME_Actor* salActor = dynamic_cast<SALOME_Actor*>( actor );
-	    if ( salActor ) {
-	      int dm = salActor->getDisplayMode();
-	      if ( dm == 0 )
-		return "Wireframe";
-	      else if ( dm == 1 )
-		return "Shading";
-	    } // if ( salome actor )
-	  } // if ( actor )
-	} // if ( lst == vtkPrs->GetObjects() )
+        SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+        vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+        if ( lst ) {
+          lst->InitTraversal();
+          vtkActor* actor = lst->GetNextActor();
+          if ( actor ) {
+            SALOME_Actor* salActor = dynamic_cast<SALOME_Actor*>( actor );
+            if ( salActor ) {
+              int dm = salActor->getDisplayMode();
+              if ( dm == 0 )
+                return "Wireframe";
+              else if ( dm == 1 )
+                return "Shading";
+            } // if ( salome actor )
+          } // if ( actor )
+        } // if ( lst == vtkPrs->GetObjects() )
       } // if VTK
     }
   }
@@ -243,9 +243,9 @@ bool GEOMGUI_Selection::hasChildren( const _PTR(SObject)& obj )
     for ( ; it->More() && !ok; it->Next() ) {
       _PTR(SObject) child = it->Value();
       if ( child ) {
-	_PTR(SObject) refObj;
-	if ( child->ReferencedObject( refObj ) ) continue; // omit references
-	if ( child->GetName() != "" ) ok = true;
+        _PTR(SObject) refObj;
+        if ( child->ReferencedObject( refObj ) ) continue; // omit references
+        if ( child->GetName() != "" ) ok = true;
       }
     }
   }
@@ -311,7 +311,7 @@ bool GEOMGUI_Selection::isComponent( const int index ) const
     if ( study && !anEntry.isNull() ) {
       _PTR(SObject) aSO( study->FindObjectID( anEntry.toStdString() ) );
       if ( aSO && aSO->GetFatherComponent() )
-	return aSO->GetFatherComponent()->GetIOR() == aSO->GetIOR();
+        return aSO->GetFatherComponent()->GetIOR() == aSO->GetIOR();
     }
   }
   return false;
@@ -330,7 +330,7 @@ GEOM::GEOM_Object_ptr GEOMGUI_Selection::getObject( const int index ) const
       _PTR(SObject) aSO (study->FindObjectID(anEntry.toStdString()));
       if (aSO) {
         CORBA::Object_var anObj = GeometryGUI::ClientSObjectToObject(aSO);
-	return GEOM::GEOM_Object::_narrow(anObj);
+        return GEOM::GEOM_Object::_narrow(anObj);
       }
     }
   }
@@ -345,15 +345,15 @@ QString GEOMGUI_Selection::selectionMode() const
     if (aGeomGUI) {
       switch (aGeomGUI->getLocalSelectionMode())
       {
-	case GEOM_POINT      : return "VERTEX";
-	case GEOM_EDGE       : return "EDGE";
-	case GEOM_WIRE       : return "WIRE";
-	case GEOM_FACE       : return "FACE";
-	case GEOM_SHELL      : return "SHELL";
-	case GEOM_SOLID      : return "SOLID";
-	case GEOM_COMPOUND   : return "COMPOUND";
-	case GEOM_ALLOBJECTS : return "ALL";
-	default: return "";
+        case GEOM_POINT      : return "VERTEX";
+        case GEOM_EDGE       : return "EDGE";
+        case GEOM_WIRE       : return "WIRE";
+        case GEOM_FACE       : return "FACE";
+        case GEOM_SHELL      : return "SHELL";
+        case GEOM_SOLID      : return "SOLID";
+        case GEOM_COMPOUND   : return "COMPOUND";
+        case GEOM_ALLOBJECTS : return "ALL";
+        default: return "";
       }
     }
   }

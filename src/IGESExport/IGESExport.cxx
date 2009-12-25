@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	IGESExport.cxx
-// Created:	Wed May 19 14:49:45 2004
-// Author:	Pavel TELKOV
-//		<ptv@mutex.nnov.opencascade.com>
+// File:        IGESExport.cxx
+// Created:     Wed May 19 14:49:45 2004
+// Author:      Pavel TELKOV
+//              <ptv@mutex.nnov.opencascade.com>
 //
 #include "utilities.h"
 
@@ -81,7 +81,7 @@ IGESEXPORT_EXPORT
       // initialize writer
       IGESControl_Controller::Init();
       //IGESControl_Writer ICW (Interface_Static::CVal("write.iges.unit"),
-      //			Interface_Static::IVal("write.iges.brep.mode"));
+      //                        Interface_Static::IVal("write.iges.brep.mode"));
       IGESControl_Writer ICW ("M", aBrepMode); // "write.iges.unit" ->> VSR 15.09.09: export explicitly in meters
       Interface_Static::SetCVal("xstep.cascade.unit","M");
 

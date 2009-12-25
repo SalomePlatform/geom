@@ -62,10 +62,10 @@ class GEOMImpl_IInsertOperations : public GEOM_IOperations {
   Standard_EXPORT int LoadTexture(const TCollection_AsciiString& theTextureFile);
   
   Standard_EXPORT int AddTexture(int theWidth, int theHeight, 
-				 const Handle(TDataStd_HArray1OfByte)& theTexture);
+                                 const Handle(TDataStd_HArray1OfByte)& theTexture);
 
   Standard_EXPORT Handle(TDataStd_HArray1OfByte) GetTexture(int theTextureId, 
-							    int& theWidth, int& theHeight);
+                                                            int& theWidth, int& theHeight);
 
   Standard_EXPORT std::list<int> GetAllTextures();
   

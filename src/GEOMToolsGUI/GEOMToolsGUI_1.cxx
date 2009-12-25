@@ -110,25 +110,25 @@ void GEOMToolsGUI::OnRename()
     if ( aSelMgr && appStudy ) {
       aSelMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
-	_PTR(Study) aStudy = appStudy->studyDS();
+        _PTR(Study) aStudy = appStudy->studyDS();
 
-	bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
-	if ( aLocked ) {
-	  SUIT_MessageBox::warning ( app->desktop(),
-				     QObject::tr("WRN_WARNING"),
-				     QObject::tr("WRN_STUDY_LOCKED") );
-	  return;
-	}
+        bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
+        if ( aLocked ) {
+          SUIT_MessageBox::warning ( app->desktop(),
+                                     QObject::tr("WRN_WARNING"),
+                                     QObject::tr("WRN_STUDY_LOCKED") );
+          return;
+        }
 
         bool isAny = false; // is there any appropriate object selected
-	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	  Handle(SALOME_InteractiveObject) IObject = It.Value();
+        for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+          Handle(SALOME_InteractiveObject) IObject = It.Value();
 
-	  _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
-	  _PTR(GenericAttribute) anAttr;
-	  if ( obj ) {
-	    if ( obj->FindAttribute(anAttr, "AttributeName") ) {
-	      _PTR(AttributeName) aName (anAttr);
+          _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
+          _PTR(GenericAttribute) anAttr;
+          if ( obj ) {
+            if ( obj->FindAttribute(anAttr, "AttributeName") ) {
+              _PTR(AttributeName) aName (anAttr);
 
               GEOM::GEOM_Object_var anObj =
                 GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
@@ -142,15 +142,15 @@ void GEOMToolsGUI::OnRename()
                   (dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
                 }
               } // if ( anObj )
-	    } // if ( name attribute )
-	  } // if ( obj )
-	} // iterator
+            } // if ( name attribute )
+          } // if ( obj )
+        } // iterator
 
         if (!isAny) {
-	  SUIT_MessageBox::warning( app->desktop(),
-				    QObject::tr("WRN_WARNING"),
-				    QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
-	  return;
+          SUIT_MessageBox::warning( app->desktop(),
+                                    QObject::tr("WRN_WARNING"),
+                                    QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
+          return;
         }
       }
     }
@@ -226,11 +226,11 @@ void GEOMToolsGUI::OnAutoColor()
     {
       SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
       if ( !vtkVW )
-	return;
+        return;
       SVTK_View* aView = vtkVW->getView();
       SUIT_OverrideCursor();
       for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() )
-	aView->SetColor( It.Value(), c );
+        aView->SetColor( It.Value(), c );
     }
     else if ( isOCC )
     {
@@ -239,16 +239,16 @@ void GEOMToolsGUI::OnAutoColor()
 
       SOCC_Prs* anOCCPrs = dynamic_cast<SOCC_Prs*>( aPrs );
       if( !anOCCPrs )
-	continue;
+        continue;
 
       AIS_ListOfInteractive aList;
       anOCCPrs->GetObjects( aList );
       if( !aList.Extent() )
-	continue;
+        continue;
 
       Handle(AIS_InteractiveObject) io = aList.First();
       if( io.IsNull() )
-	continue;
+        continue;
 
       Quantity_Color aQuanColor( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
 
@@ -260,19 +260,19 @@ void GEOMToolsGUI::OnAutoColor()
       Aspect_TypeOfMarker aCurTypeOfMarker;
       aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
       if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
-	aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
+        aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aQuanColor, aCurScale) );
       }
       else {
-	Standard_Integer aWidth, aHeight;
-	aCurPointAspect->GetTextureSize( aWidth, aHeight );
-	Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
-	aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aQuanColor, 1, aWidth, aHeight, aTexture ) );
+        Standard_Integer aWidth, aHeight;
+        aCurPointAspect->GetTextureSize( aWidth, aHeight );
+        Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+        aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aQuanColor, 1, aWidth, aHeight, aTexture ) );
       }
       ic->SetLocalAttributes( io, aCurDrawer );
 
       io->SetColor( aQuanColor );
       if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-	Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aQuanColor );
+        Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aQuanColor );
 
       io->Redisplay( Standard_True );
     }
@@ -319,79 +319,79 @@ void GEOMToolsGUI::OnColor()
     if ( aSelMgr ) {
       aSelMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
-	SUIT_ViewWindow* window = app->desktop()->activeWindow();
-	bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-	bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
-	if ( isVTK ) {
-	  SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
-	  if ( !vtkVW )
-	    return;
-	  SVTK_View* aView = vtkVW->getView();
-	  QColor initcolor = aView->GetColor( selected.First()  );
-	  QColor c = QColorDialog::getColor( initcolor, app->desktop() );
-	  if ( c.isValid() ) {
-	    SUIT_OverrideCursor();
-	    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	      aView->SetColor( It.Value(), c );
-	    }
-	  }
-	} // if ( isVTK )
-	else if ( isOCC ) {
-	  Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
-	  if ( !io.IsNull() ) {
-	    Quantity_Color aColor;
-	    io->Color( aColor );
-	    QColor initcolor( (int)( aColor.Red() * 255.0 ), (int)( aColor.Green() * 255.0 ), (int)( aColor.Blue() * 255.0 ) );
-	    QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
-	    if ( c.isValid() ) {
-	      SUIT_OverrideCursor();
-	      aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
-	      for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-		io = GEOMBase::GetAIS( It.Value(), true );
-		if ( !io.IsNull() ) {
-		  // Set color for a point
-		  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
-		  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-		  Handle(AIS_Drawer) aCurDrawer = io->Attributes();
-		  Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
-		  Quantity_Color aCurColor;
-		  Standard_Real aCurScale;
-		  Aspect_TypeOfMarker aCurTypeOfMarker;
-		  aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-		  if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
-		    aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale) );
-		  }
-		  else {
-		    Standard_Integer aWidth, aHeight;
-		    aCurPointAspect->GetTextureSize( aWidth, aHeight );
-		    Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
-		    aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aColor, 1, aWidth, aHeight, aTexture ) );
-		  }
-		  ic->SetLocalAttributes(io, aCurDrawer);
-		  
-		  io->SetColor( aColor );
-		  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-		    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
+        SUIT_ViewWindow* window = app->desktop()->activeWindow();
+        bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+        bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+        if ( isVTK ) {
+          SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+          if ( !vtkVW )
+            return;
+          SVTK_View* aView = vtkVW->getView();
+          QColor initcolor = aView->GetColor( selected.First()  );
+          QColor c = QColorDialog::getColor( initcolor, app->desktop() );
+          if ( c.isValid() ) {
+            SUIT_OverrideCursor();
+            for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+              aView->SetColor( It.Value(), c );
+            }
+          }
+        } // if ( isVTK )
+        else if ( isOCC ) {
+          Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
+          if ( !io.IsNull() ) {
+            Quantity_Color aColor;
+            io->Color( aColor );
+            QColor initcolor( (int)( aColor.Red() * 255.0 ), (int)( aColor.Green() * 255.0 ), (int)( aColor.Blue() * 255.0 ) );
+            QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
+            if ( c.isValid() ) {
+              SUIT_OverrideCursor();
+              aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
+              for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+                io = GEOMBase::GetAIS( It.Value(), true );
+                if ( !io.IsNull() ) {
+                  // Set color for a point
+                  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+                  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+                  Handle(AIS_Drawer) aCurDrawer = io->Attributes();
+                  Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
+                  Quantity_Color aCurColor;
+                  Standard_Real aCurScale;
+                  Aspect_TypeOfMarker aCurTypeOfMarker;
+                  aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
+                  if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+                    aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aCurTypeOfMarker, aColor, aCurScale) );
+                  }
+                  else {
+                    Standard_Integer aWidth, aHeight;
+                    aCurPointAspect->GetTextureSize( aWidth, aHeight );
+                    Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+                    aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aColor, 1, aWidth, aHeight, aTexture ) );
+                  }
+                  ic->SetLocalAttributes(io, aCurDrawer);
+                  
+                  io->SetColor( aColor );
+                  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
+                    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
 
-		  io->Redisplay( Standard_True );
+                  io->Redisplay( Standard_True );
 
-		  // store color to GEOM_Object
-		  _PTR(Study) aStudy = appStudy->studyDS();
-		  _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
-		  GEOM::GEOM_Object_var anObject =
-		    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+                  // store color to GEOM_Object
+                  _PTR(Study) aStudy = appStudy->studyDS();
+                  _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
+                  GEOM::GEOM_Object_var anObject =
+                    GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
 
-		  SALOMEDS::Color aSColor;
-		  aSColor.R = (double)c.red() / 255.0;
-		  aSColor.G = (double)c.green() / 255.0;
-		  aSColor.B = (double)c.blue() / 255.0;
-		  anObject->SetColor( aSColor );
-		  anObject->SetAutoColor( false );
-		}
-	      }
-	    } // if c.isValid()
-	  } // first IO is not null
-	} // if ( isOCC )
+                  SALOMEDS::Color aSColor;
+                  aSColor.R = (double)c.red() / 255.0;
+                  aSColor.G = (double)c.green() / 255.0;
+                  aSColor.B = (double)c.blue() / 255.0;
+                  anObject->SetColor( aSColor );
+                  anObject->SetAutoColor( false );
+                }
+              }
+            } // if c.isValid()
+          } // first IO is not null
+        } // if ( isOCC )
       } // if ( selection not empty )
     }
   }
@@ -426,26 +426,26 @@ void GEOMToolsGUI::OnNbIsos()
       int VIso = CurDrawer->VIsoAspect()->Number();
       
       GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
-	new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+        new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
       
       NbIsosDlg->setU( UIso );
       NbIsosDlg->setV( VIso );
       
       if ( NbIsosDlg->exec() ) {
-	SUIT_OverrideCursor();
-	for(; ic->MoreCurrent(); ic->NextCurrent()) {
-	  CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	  Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
-	  
-	  int nbUIso = NbIsosDlg->getU();
-	  int nbVIso = NbIsosDlg->getV();
-	  
-	  CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
-	  CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
-	  
-	  ic->SetLocalAttributes(CurObject, CurDrawer);
-	  ic->Redisplay(CurObject);
-	}
+        SUIT_OverrideCursor();
+        for(; ic->MoreCurrent(); ic->NextCurrent()) {
+          CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+          Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
+          
+          int nbUIso = NbIsosDlg->getU();
+          int nbVIso = NbIsosDlg->getV();
+          
+          CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbUIso) );
+          CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , nbVIso) );
+          
+          ic->SetLocalAttributes(CurObject, CurDrawer);
+          ic->Redisplay(CurObject);
+        }
       }
     }
   }
@@ -477,10 +477,10 @@ void GEOMToolsGUI::OnNbIsos()
       SALOME_Prs* aPrs = view->CreatePrs( anIObject->getEntry() ); 
       SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aPrs );
       if ( vtkPrs ) {
-	vtkActorCollection* anActors = vtkPrs->GetObjects();
-	anActors->InitTraversal();
-	vtkActor* anAct = anActors->GetNextActor();
-	aCollection->AddItem(anAct);
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
       }
     }
   
@@ -508,14 +508,14 @@ void GEOMToolsGUI::OnNbIsos()
       SUIT_OverrideCursor();
       
       while( anAct!=NULL ) {
-	if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)){
-	  // There are no casting to needed actor.
-	  UIso = NbIsosDlg->getU();
-	  VIso = NbIsosDlg->getV();
-	  int aIsos[2]={UIso,VIso};
-	  anActor->SetNbIsos(aIsos);
-	}
-	anAct = aCollection->GetNextActor();
+        if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)){
+          // There are no casting to needed actor.
+          UIso = NbIsosDlg->getU();
+          VIso = NbIsosDlg->getV();
+          int aIsos[2]={UIso,VIso};
+          anActor->SetNbIsos(aIsos);
+        }
+        anAct = aCollection->GetNextActor();
       }
     }
   } // end vtkviewer
@@ -540,74 +540,74 @@ void GEOMToolsGUI::OnOpen()
       _PTR(GenericAttribute) anAttr;
       bool useSubItems = false;
       while (anIter->More() && !useSubItems) {
-	_PTR(SObject) subobj ( anIter->Value() );
-	if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
-	  useSubItems = true;
-	  obj =  subobj;
-	}
-	else
-	  anIter->Next();
+        _PTR(SObject) subobj ( anIter->Value() );
+        if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
+          useSubItems = true;
+          obj =  subobj;
+        }
+        else
+          anIter->Next();
       }
       obj->FindAttribute(anAttr, "AttributePersistentRef");
 
       while(useSubItems?anIter->More():!anAttr->_is_nil()) {
-	if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
-	   obj->FindAttribute(anAttr, "AttributePersistentRef")) {
-	  _PTR(SComponent) FComp ( obj->GetFatherComponent() );
-	  if (FComp) {
-	    if (FComp->FindAttribute(anAttr, "AttributeName")) {
-	      _PTR(AttributeName) aName ( anAttr );
-	      QString compName = QAD_Application::getDesktop()->getComponentName(aName->Value().c_str());
-	      //		    parent->loadComponentData(parent->getComponentName(aName->Value()));
-	      Engines::Component_var comp ;
-	      if ( compName.compare("SUPERV") == 0 ) {
-		comp = QAD_Application::getDesktop()->getEngine( "SuperVisionContainer", compName) ;
-	      }
-	      else {
-		comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", compName);
-		if ( comp->_is_nil() )
-		  comp = QAD_Application::getDesktop()->getEngine( "FactoryServerPy", compName);
-	      }
+        if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
+           obj->FindAttribute(anAttr, "AttributePersistentRef")) {
+          _PTR(SComponent) FComp ( obj->GetFatherComponent() );
+          if (FComp) {
+            if (FComp->FindAttribute(anAttr, "AttributeName")) {
+              _PTR(AttributeName) aName ( anAttr );
+              QString compName = QAD_Application::getDesktop()->getComponentName(aName->Value().c_str());
+              //                    parent->loadComponentData(parent->getComponentName(aName->Value()));
+              Engines::Component_var comp ;
+              if ( compName.compare("SUPERV") == 0 ) {
+                comp = QAD_Application::getDesktop()->getEngine( "SuperVisionContainer", compName) ;
+              }
+              else {
+                comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", compName);
+                if ( comp->_is_nil() )
+                  comp = QAD_Application::getDesktop()->getEngine( "FactoryServerPy", compName);
+              }
 
-	      if (!CORBA::is_nil(comp)) {
-		SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
-		if (!CORBA::is_nil(driver)) {
-		  SALOMEDS::StudyBuilder_var  B = dynamic_cast<SALOMEDS_Study*>(aStudy.get())->GetStudy()->NewBuilder();
-		  if (!CORBA::is_nil(B)) {
-		    B->LoadWith(FComp,driver);
-		  } else {
-		    return;
-		  }
-		}
-		else {
-		  MESSAGE("loadComponentData(): Driver is null");
-		  return;
-		}
-	      }
-	      else {
-		MESSAGE("loadComponentData(): Engine is null");
-		return;
-	      }
-		// 		// load
-		// 		Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
-		// 		if (!CORBA::is_nil(comp)) {
-		// 		  SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
-		// 		  SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-		// 		  SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
-		// 		  if (!CORBA::is_nil(SC))
-		// 		    aStudyBuilder->LoadWith(SC,driver);
-	    }
-	  }
-	  else {
-	    MESSAGE("Component is null");
-	  }
-	}
-	if(useSubItems) {
-	  anIter->Next();
-	  obj.reset( anIter->Value() );
-	}
-	else
-	  anAttr = NULL;
+              if (!CORBA::is_nil(comp)) {
+                SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
+                if (!CORBA::is_nil(driver)) {
+                  SALOMEDS::StudyBuilder_var  B = dynamic_cast<SALOMEDS_Study*>(aStudy.get())->GetStudy()->NewBuilder();
+                  if (!CORBA::is_nil(B)) {
+                    B->LoadWith(FComp,driver);
+                  } else {
+                    return;
+                  }
+                }
+                else {
+                  MESSAGE("loadComponentData(): Driver is null");
+                  return;
+                }
+              }
+              else {
+                MESSAGE("loadComponentData(): Engine is null");
+                return;
+              }
+                //              // load
+                //              Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
+                //              if (!CORBA::is_nil(comp)) {
+                //                SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
+                //                SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
+                //                SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
+                //                if (!CORBA::is_nil(SC))
+                //                  aStudyBuilder->LoadWith(SC,driver);
+            }
+          }
+          else {
+            MESSAGE("Component is null");
+          }
+        }
+        if(useSubItems) {
+          anIter->Next();
+          obj.reset( anIter->Value() );
+        }
+        else
+          anAttr = NULL;
       }
     }
   }
@@ -636,27 +636,27 @@ void GEOMToolsGUI::OnShowHideChildren( bool show )
     if ( aSelMgr && appStudy ) {
       aSelMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
-	_PTR(Study) aStudy = appStudy->studyDS();
-	_PTR(StudyBuilder) B = aStudy->NewBuilder();
+        _PTR(Study) aStudy = appStudy->studyDS();
+        _PTR(StudyBuilder) B = aStudy->NewBuilder();
 
-	bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
-	if ( aLocked ) {
-	  SUIT_MessageBox::warning( app->desktop(),
-				    QObject::tr( "WRN_WARNING" ),
-				    QObject::tr( "WRN_STUDY_LOCKED" ) );
-	  return;
-	}
+        bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+        if ( aLocked ) {
+          SUIT_MessageBox::warning( app->desktop(),
+                                    QObject::tr( "WRN_WARNING" ),
+                                    QObject::tr( "WRN_STUDY_LOCKED" ) );
+          return;
+        }
 
-	for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-	  Handle(SALOME_InteractiveObject) IObject = It.Value();
+        for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+          Handle(SALOME_InteractiveObject) IObject = It.Value();
 
-	  _PTR(SObject) obj ( aStudy->FindObjectID( IObject->getEntry() ) );
-	  _PTR(GenericAttribute) anAttr;
-	  if ( obj ) {
-	    _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
-	    aExp->SetExpandable( show );
-	  } // if ( obj )
-	} // iterator
+          _PTR(SObject) obj ( aStudy->FindObjectID( IObject->getEntry() ) );
+          _PTR(GenericAttribute) anAttr;
+          if ( obj ) {
+            _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
+            aExp->SetExpandable( show );
+          } // if ( obj )
+        } // iterator
       }
     }
     app->updateObjectBrowser( false );

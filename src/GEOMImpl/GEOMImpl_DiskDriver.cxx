@@ -95,11 +95,11 @@ Standard_Integer GEOMImpl_DiskDriver::Execute(TFunction_Logbook& log) const
         gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         gp_Ax2 anAxes (aP, -aV);
         gp_Circ aCirc (anAxes, aCI.GetRadius());
-	TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
-	BRepBuilderAPI_MakeWire MW;
-	MW.Add(TopoDS::Edge(aCircle));
-	BRepBuilderAPI_MakeFace MF (MW, Standard_False);
-	aShape = MF.Shape();
+        TopoDS_Shape aCircle = BRepBuilderAPI_MakeEdge(aCirc).Edge();
+        BRepBuilderAPI_MakeWire MW;
+        MW.Add(TopoDS::Edge(aCircle));
+        BRepBuilderAPI_MakeFace MF (MW, Standard_False);
+        aShape = MF.Shape();
       }
     }
   }
@@ -179,10 +179,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_DiskDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_DiskDriver",
-			                                 sizeof(GEOMImpl_DiskDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_DiskDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

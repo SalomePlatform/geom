@@ -88,29 +88,29 @@ void VolumeSection::CenterOfGravity()
       TopoDS_Face F = TopoDS::Face(ex.Current());
       Handle(Poly_Triangulation) Tr = BRep_Tool::Triangulation(F, L);
       if(Tr.IsNull())
-	MESSAGE("Error, null layer" )
+        MESSAGE("Error, null layer" )
       nbNodes = Tr->NbNodes();
       const TColgp_Array1OfPnt& Nodes = Tr->Nodes();
       
       // Calcul des dimensions de la boite englobante du solide
       
       for(i=1;i<=nbNodes;i++)
-	{
-	  InitPoint = Nodes(i).Transformed(L.Transformation());
-	  if(InitPoint.X() < Xmin)
-	    Xmin = InitPoint.X();
-	  if(InitPoint.X() > Xmax)
-	    Xmax = InitPoint.X();
-	  if(InitPoint.Y() < Ymin)
-	    Ymin = InitPoint.Y();
-	  if(InitPoint.Y() > Ymax)
-	    Ymax = InitPoint.Y();
-	  if(InitPoint.Z() < Zmin)
-	    Zmin = InitPoint.Z();
-	  if(InitPoint.Z() > Zmax)
-	    Zmax = InitPoint.Z();
-	  
-	}
+        {
+          InitPoint = Nodes(i).Transformed(L.Transformation());
+          if(InitPoint.X() < Xmin)
+            Xmin = InitPoint.X();
+          if(InitPoint.X() > Xmax)
+            Xmax = InitPoint.X();
+          if(InitPoint.Y() < Ymin)
+            Ymin = InitPoint.Y();
+          if(InitPoint.Y() > Ymax)
+            Ymax = InitPoint.Y();
+          if(InitPoint.Z() < Zmin)
+            Zmin = InitPoint.Z();
+          if(InitPoint.Z() > Zmax)
+            Zmax = InitPoint.Z();
+          
+        }
     }
   
   // Creation du point d'initialisation, c'est € dire le centre de gravit‰ 
@@ -141,7 +141,7 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
       TopoDS_Face F = TopoDS::Face(ex.Current());
       Handle(Poly_Triangulation) Tr = BRep_Tool::Triangulation(F, L);
       if(Tr.IsNull())
-	MESSAGE("Error, null layer" )
+        MESSAGE("Error, null layer" )
       const Poly_Array1OfTriangle& triangles = Tr->Triangles();
       Standard_Integer nbTriangles = Tr->NbTriangles();
       nbNodes = Tr->NbNodes();
@@ -151,70 +151,70 @@ Standard_Real VolumeSection::CalculateVolume(Standard_Real Elevation)
       //en tenant compte des triangles coup‰s par le plan de section
       
       for (i=1;i<=nbTriangles;i++) 
-	{
-	  Determinant=0;
-	  //Gardons la meme orientation des noeuds
-	  if (F.Orientation()  == TopAbs_REVERSED)
-	    triangles(i).Get(noeud[0], noeud[2], noeud[1]);
-	  else 
-	    triangles(i).Get(noeud[0], noeud[1], noeud[2]);
-	  
+        {
+          Determinant=0;
+          //Gardons la meme orientation des noeuds
+          if (F.Orientation()  == TopAbs_REVERSED)
+            triangles(i).Get(noeud[0], noeud[2], noeud[1]);
+          else 
+            triangles(i).Get(noeud[0], noeud[1], noeud[2]);
+          
           P[0] = Nodes(noeud[0]).Transformed(L.Transformation());
-	  z[0] = P[0].Z();
-	  P[1] = Nodes(noeud[1]).Transformed(L.Transformation());
-	  z[1] = P[1].Z();
+          z[0] = P[0].Z();
+          P[1] = Nodes(noeud[1]).Transformed(L.Transformation());
+          z[1] = P[1].Z();
           P[2] = Nodes(noeud[2]).Transformed(L.Transformation());
           z[2] = P[2].Z();
 
-	  // Determination des cas aux limites pour les triangles
-	  Standard_Integer i,compteur=0;
+          // Determination des cas aux limites pour les triangles
+          Standard_Integer i,compteur=0;
 
-	  for (i=0;i<=2;i++)
-	    {
+          for (i=0;i<=2;i++)
+            {
               flag[i]=Standard_False;
-	      if(z[i]>=Elevation)
-		{
-		  flag[i]=Standard_True;
-		  compteur++;
-		}
-	    }
-	  
-	  switch(compteur)
-	    {
-	    case 0:
-	      Determinant = ElementaryVolume(P[0],P[1],P[2]);
-	      break;
-	      
-	    case 1:
-	      for (i=0;i<=2;i++)
-		{
-		  if (flag[i]==Standard_True)
-		    {
-		      gp_Pnt Result1 = Intersection(P[i],P[(i+1)%3],Elevation);
-		      gp_Pnt Result2 = Intersection(P[i],P[(i+2)%3],Elevation);
-		      Determinant = ElementaryVolume(Result1,P[(i+1)%3],P[(i+2)%3])
-			+ ElementaryVolume(Result1,P[(i+2)%3],Result2);
-		    }
-		}
-	      break;
-	      
-	    case 2:
-	      for (i=0;i<=2;i++)
-		{
-		  if (flag[i]==Standard_False)
-		    {
-		      gp_Pnt Result1 = Intersection(P[i],P[(i+1)%3],Elevation);
-		      gp_Pnt Result2 = Intersection(P[i],P[(i+2)%3],Elevation);
-		      Determinant = ElementaryVolume(P[i],Result1,Result2);
-		    }
-		}
-	      break;
-	      
-	    case 3:
-	      break;
-	    }
-	  Volume += Determinant;
-	}
+              if(z[i]>=Elevation)
+                {
+                  flag[i]=Standard_True;
+                  compteur++;
+                }
+            }
+          
+          switch(compteur)
+            {
+            case 0:
+              Determinant = ElementaryVolume(P[0],P[1],P[2]);
+              break;
+              
+            case 1:
+              for (i=0;i<=2;i++)
+                {
+                  if (flag[i]==Standard_True)
+                    {
+                      gp_Pnt Result1 = Intersection(P[i],P[(i+1)%3],Elevation);
+                      gp_Pnt Result2 = Intersection(P[i],P[(i+2)%3],Elevation);
+                      Determinant = ElementaryVolume(Result1,P[(i+1)%3],P[(i+2)%3])
+                        + ElementaryVolume(Result1,P[(i+2)%3],Result2);
+                    }
+                }
+              break;
+              
+            case 2:
+              for (i=0;i<=2;i++)
+                {
+                  if (flag[i]==Standard_False)
+                    {
+                      gp_Pnt Result1 = Intersection(P[i],P[(i+1)%3],Elevation);
+                      gp_Pnt Result2 = Intersection(P[i],P[(i+2)%3],Elevation);
+                      Determinant = ElementaryVolume(P[i],Result1,Result2);
+                    }
+                }
+              break;
+              
+            case 3:
+              break;
+            }
+          Volume += Determinant;
+        }
     }
   
   return Volume;
@@ -258,30 +258,30 @@ Standard_Real VolumeSection::Archimede(Standard_Real Constante , Standard_Real E
   else
     {
       while((Bsup-Binf)>Epsilon)
-	{ 
-	  if((tempBinfVolume-Constante)*(tempCVolume-Constante)>0 && Abs(tempCVolume-Constante)>Epsilon)
-	    {
-	      Binf = c;
-	      tempBinfVolume=tempCVolume;
-	      
-	      c = ((Binf*(tempBsupVolume-Constante))-(Bsup*(tempBinfVolume-Constante)))
-		/((tempBsupVolume-Constante)-(tempBinfVolume-Constante));
+        { 
+          if((tempBinfVolume-Constante)*(tempCVolume-Constante)>0 && Abs(tempCVolume-Constante)>Epsilon)
+            {
+              Binf = c;
+              tempBinfVolume=tempCVolume;
+              
+              c = ((Binf*(tempBsupVolume-Constante))-(Bsup*(tempBinfVolume-Constante)))
+                /((tempBsupVolume-Constante)-(tempBinfVolume-Constante));
  tempCVolume=CalculateVolume(c);
-	    }
-	  else if((tempBinfVolume-Constante)*(tempCVolume-Constante)<0 && Abs(tempCVolume-Constante)>Epsilon)
-	    {
-	      Bsup = c;
-	      tempBsupVolume =tempCVolume;
+            }
+          else if((tempBinfVolume-Constante)*(tempCVolume-Constante)<0 && Abs(tempCVolume-Constante)>Epsilon)
+            {
+              Bsup = c;
+              tempBsupVolume =tempCVolume;
 
-	      c = ((Binf*(tempBsupVolume-Constante))-(Bsup*(tempBinfVolume-Constante)))
-		/((tempBsupVolume-Constante)-(tempBinfVolume-Constante));
+              c = ((Binf*(tempBsupVolume-Constante))-(Bsup*(tempBinfVolume-Constante)))
+                /((tempBsupVolume-Constante)-(tempBinfVolume-Constante));
  tempCVolume=CalculateVolume(c);
-	    }
-	  else
-	    {
-	      goto endMethod;
-	    }
-	}
+            }
+          else
+            {
+              goto endMethod;
+            }
+        }
       goto endMethod;
       
     }

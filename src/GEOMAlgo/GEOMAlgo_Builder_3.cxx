@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Builder_3.cxx
-// Created:	
-// Author:	Peter KURNEV
+// File:        GEOMAlgo_Builder_3.cxx
+// Created:     
+// Author:      Peter KURNEV
 //
 #include <GEOMAlgo_Builder.hxx>
 
@@ -70,7 +70,7 @@
 
 static
   void OwnInternalShapes(const TopoDS_Shape& ,
-			 TopTools_IndexedMapOfShape& );
+                         TopTools_IndexedMapOfShape& );
 
 //=======================================================================
 //function : FillImagesSolids
@@ -89,8 +89,8 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_Builder::BuildDraftSolid(const TopoDS_Shape& theSolid,
-					TopoDS_Shape& theDraftSolid,
-					TopTools_ListOfShape& theLIF)
+                                        TopoDS_Shape& theDraftSolid,
+                                        TopTools_ListOfShape& theLIF)
 {
   myErrorStatus=0;
   //
@@ -102,7 +102,7 @@ static
   Standard_Integer  iFlag;
   TopAbs_Orientation aOrF, aOrSh, aOrSd;
   TopoDS_Iterator aIt1, aIt2;
-  TopTools_ListIteratorOfListOfShape aItS;	
+  TopTools_ListIteratorOfListOfShape aItS;      
   BRep_Builder aBB;
   TopoDS_Shell aShD;
   TopoDS_Shape aFSDx, aFx;
@@ -128,49 +128,49 @@ static
       aOrF=aF.Orientation();
       //
       if (myImages.HasImage(aF)) {
-	const TopTools_ListOfShape& aLSp=myImages.Image(aF);
-	aItS.Initialize(aLSp);
-	for (; aItS.More(); aItS.Next()) {
-	  aFx=aItS.Value();
-	  //
-	  if (mySameDomainShapes.Contains(aFx)) {
-	    aFSDx=mySameDomainShapes.FindFromKey(aFx);
-	    //
-	    if (aOrF==TopAbs_INTERNAL) {
-	      aFSDx.Orientation(aOrF);
-	      theLIF.Append(aFSDx);
-	    }
-	    else {
-	      bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFSDx, aF, aCtx); 
-	      if (bToReverse) {
-		aFSDx.Reverse();
-	      }
-	      //
-	      iFlag=1;
-	      aBB.Add(aShD, aFSDx);
-	    }
-	  }// if (mySameDomainShapes.Contains(aFx)) {
-	  else {
-	    aFx.Orientation(aOrF);
-	    if (aOrF==TopAbs_INTERNAL) {
-	      theLIF.Append(aFx);
-	    }
-	    else{
-	      iFlag=1;
-	      aBB.Add(aShD, aFx);
-	    }
-	  }
-	}
+        const TopTools_ListOfShape& aLSp=myImages.Image(aF);
+        aItS.Initialize(aLSp);
+        for (; aItS.More(); aItS.Next()) {
+          aFx=aItS.Value();
+          //
+          if (mySameDomainShapes.Contains(aFx)) {
+            aFSDx=mySameDomainShapes.FindFromKey(aFx);
+            //
+            if (aOrF==TopAbs_INTERNAL) {
+              aFSDx.Orientation(aOrF);
+              theLIF.Append(aFSDx);
+            }
+            else {
+              bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFSDx, aF, aCtx); 
+              if (bToReverse) {
+                aFSDx.Reverse();
+              }
+              //
+              iFlag=1;
+              aBB.Add(aShD, aFSDx);
+            }
+          }// if (mySameDomainShapes.Contains(aFx)) {
+          else {
+            aFx.Orientation(aOrF);
+            if (aOrF==TopAbs_INTERNAL) {
+              theLIF.Append(aFx);
+            }
+            else{
+              iFlag=1;
+              aBB.Add(aShD, aFx);
+            }
+          }
+        }
       } //if (myImages.HasImage(aF)) {
       //
       else {
-	if (aOrF==TopAbs_INTERNAL) {
-	  theLIF.Append(aF);
-	}
-	else{
-	  iFlag=1;
-	  aBB.Add(aShD, aF);
-	}
+        if (aOrF==TopAbs_INTERNAL) {
+          theLIF.Append(aF);
+        }
+        else{
+          iFlag=1;
+          aBB.Add(aShD, aF);
+        }
       }
     } //for (; aIt2.More(); aIt2.Next()) {
     //
@@ -198,7 +198,7 @@ static
   TopTools_IndexedMapOfShape aMSolids, aMS, aMFaces, aMFIN;
   TopTools_MapOfShape aMFDone;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
-  TopTools_ListIteratorOfListOfShape aItS;	
+  TopTools_ListIteratorOfListOfShape aItS;      
   TopoDS_Iterator aIt, aItF;
   BRep_Builder aBB;
   TopoDS_Solid aSolidSp; 
@@ -218,28 +218,28 @@ static
     else if (aType==TopAbs_FACE) {
       // all faces (originals from DS or theirs images)
       if (myImages.HasImage(aS)) {
-	const TopTools_ListOfShape& aLS=myImages.Image(aS);
-	aItS.Initialize(aLS);
-	for (; aItS.More(); aItS.Next()) {
-	  const TopoDS_Shape& aFx=aItS.Value();
-	  //
-	  if (mySameDomainShapes.Contains(aFx)) {
-	    const TopoDS_Shape& aFSDx=mySameDomainShapes.FindFromKey(aFx);
-	    aMFaces.Add(aFSDx);
-	  }
-	  else {
-	    aMFaces.Add(aFx);
-	  }
-	}
+        const TopTools_ListOfShape& aLS=myImages.Image(aS);
+        aItS.Initialize(aLS);
+        for (; aItS.More(); aItS.Next()) {
+          const TopoDS_Shape& aFx=aItS.Value();
+          //
+          if (mySameDomainShapes.Contains(aFx)) {
+            const TopoDS_Shape& aFSDx=mySameDomainShapes.FindFromKey(aFx);
+            aMFaces.Add(aFSDx);
+          }
+          else {
+            aMFaces.Add(aFx);
+          }
+        }
       }
       else {
-	if (mySameDomainShapes.Contains(aS)) {
-	  const TopoDS_Shape& aFSDx=mySameDomainShapes.FindFromKey(aS);
-	  aMFaces.Add(aFSDx);
-	}
-	else {
-	  aMFaces.Add(aS);
-	}
+        if (mySameDomainShapes.Contains(aS)) {
+          const TopoDS_Shape& aFSDx=mySameDomainShapes.FindFromKey(aS);
+          aMFaces.Add(aFSDx);
+        }
+        else {
+          aMFaces.Add(aS);
+        }
       }
     }
   }
@@ -268,22 +268,22 @@ static
       const TopoDS_Shape& aShell=aIt.Value();
       //
       if (myImages.HasImage(aShell)) {
-	bHasImage=Standard_True;
-	//
-	const TopTools_ListOfShape& aLS=myImages.Image(aShell);
-	aItS.Initialize(aLS);
-	for (; aItS.More(); aItS.Next()) {
-	  const TopoDS_Shape& aSx=aItS.Value();
-	  aMS.Add(aSx);
-	  TopExp::MapShapes(aSx, TopAbs_FACE, aMS);
-	  TopExp::MapShapes(aSx, TopAbs_EDGE, aMS);
-	  TopExp::MapShapesAndAncestors(aSx, TopAbs_EDGE, TopAbs_FACE, aMEF);
-	}
+        bHasImage=Standard_True;
+        //
+        const TopTools_ListOfShape& aLS=myImages.Image(aShell);
+        aItS.Initialize(aLS);
+        for (; aItS.More(); aItS.Next()) {
+          const TopoDS_Shape& aSx=aItS.Value();
+          aMS.Add(aSx);
+          TopExp::MapShapes(aSx, TopAbs_FACE, aMS);
+          TopExp::MapShapes(aSx, TopAbs_EDGE, aMS);
+          TopExp::MapShapesAndAncestors(aSx, TopAbs_EDGE, TopAbs_FACE, aMEF);
+        }
       }
       else {
-	//aMS.Add(aShell);
-	TopExp::MapShapes(aShell, TopAbs_FACE, aMS);
-	TopExp::MapShapesAndAncestors(aShell, TopAbs_EDGE, TopAbs_FACE, aMEF);
+        //aMS.Add(aShell);
+        TopExp::MapShapes(aShell, TopAbs_FACE, aMS);
+        TopExp::MapShapesAndAncestors(aShell, TopAbs_EDGE, TopAbs_FACE, aMEF);
       }
     }
     //
@@ -298,7 +298,7 @@ static
     for (j=1; j<=aNbFaces; ++j) {
       const TopoDS_Shape& aFace=aMFaces(j);
       if (!aMS.Contains(aFace)) {
-	TopExp::MapShapesAndAncestors(aFace, TopAbs_EDGE, TopAbs_FACE, aMEFP);
+        TopExp::MapShapesAndAncestors(aFace, TopAbs_EDGE, TopAbs_FACE, aMEFP);
       }
     }
     //
@@ -311,17 +311,17 @@ static
       const TopoDS_Shape& aE=aMEFP.FindKey(j);
       //
       if (aMEF.Contains(aE)) { // !!
-	const TopTools_ListOfShape& aLF=aMEFP(j);
-	aItFP.Initialize(aLF);
-	for (; aItFP.More(); aItFP.Next()) {
-	  const TopoDS_Shape& aF=aItFP.Value();
-	  if (aMFence.Add(aF)) {
-	    aLFP1.Append(aF);
-	  }
-	}
+        const TopTools_ListOfShape& aLF=aMEFP(j);
+        aItFP.Initialize(aLF);
+        for (; aItFP.More(); aItFP.Next()) {
+          const TopoDS_Shape& aF=aItFP.Value();
+          if (aMFence.Add(aF)) {
+            aLFP1.Append(aF);
+          }
+        }
       }
       else {
-	aLEx.Append(aE);
+        aLEx.Append(aE);
       }
     }
     //
@@ -331,10 +331,10 @@ static
       const TopTools_ListOfShape& aLF=aMEFP.FindFromKey(aE);
       aItFP.Initialize(aLF);
       for (; aItFP.More(); aItFP.Next()) {
-	const TopoDS_Shape& aF=aItFP.Value();
-	if (aMFence.Add(aF)) {
-	  aLFP2.Append(aF);
-	}
+        const TopoDS_Shape& aF=aItFP.Value();
+        if (aMFence.Add(aF)) {
+          aLFP2.Append(aF);
+        }
       }
     }
     aLFP1.Append(aLFP2);
@@ -346,7 +346,7 @@ static
     for (; aItFP.More(); aItFP.Next()) {
       const TopoDS_Shape& aSP=aItFP.Value();
       if (!aMFDone.Add(aSP)) {
-	continue;
+        continue;
       }
       
       //
@@ -360,10 +360,10 @@ static
       aLFP.Append(aFP);
       aItS.Initialize(aLFP1);
       for (; aItS.More(); aItS.Next()) {
-	const TopoDS_Shape& aSk=aItS.Value();
-	if (!aMFDone.Contains(aSk)) {
-	  aLFP.Append(aSk);
-	}
+        const TopoDS_Shape& aSk=aItS.Value();
+        if (!aMFDone.Contains(aSk)) {
+          aLFP.Append(aSk);
+        }
       }
       //
       // Connexity Block that spreads from aFP the Bound 
@@ -374,16 +374,16 @@ static
       // fill states for the Connexity Block 
       aItS.Initialize(aLCBF);
       for (; aItS.More(); aItS.Next()) {
-	const TopoDS_Shape& aSx=aItS.Value();
-	aMFDone.Add(aSx);
-	if (aState==TopAbs_IN) {
-	  aMFIN.Add(aSx);
-	}
+        const TopoDS_Shape& aSx=aItS.Value();
+        aMFDone.Add(aSx);
+        if (aState==TopAbs_IN) {
+          aMFIN.Add(aSx);
+        }
       }
       //
       aNbFPx=aMFDone.Extent();
       if (aNbFPx==aNbFP) {
-	break;
+        break;
       }
     }//for (; aItFP.More(); aItFP.Next())
     //
@@ -392,14 +392,14 @@ static
     aNbFIN=aMFIN.Extent();
     if (aNbFIN || aNbLIF) {
       for (j=1; j<=aNbFIN; ++j) {
-	const TopoDS_Shape& aFIN=aMFIN(j);
-	aLFIN.Append(aFIN);
+        const TopoDS_Shape& aFIN=aMFIN(j);
+        aLFIN.Append(aFIN);
       }
       //
       aItS.Initialize(aLIF);
       for (; aItS.More(); aItS.Next()) {
-	const TopoDS_Shape& aFIN=aItS.Value();
-	aLFIN.Append(aFIN);
+        const TopoDS_Shape& aFIN=aItS.Value();
+        aLFIN.Append(aFIN);
       }
       //
       myInParts.Add(aSolid, aLFIN);
@@ -499,18 +499,18 @@ static
       const TopoDS_Shape& aSR=aItSS.Key(); 
       const GEOMAlgo_ShapeSet& aSSR=aItSS.Value();
       if (aSSi.Contains(aSSR)) {
-	// the aSR is SD solid for aS
-	aSSi.Subtract(aSSR);
-	// update images
-	if(myImages.HasImage(aS)) {
-	  myImages.Add(aS, aSR);
-	}
-	else {
-	  myImages.Bind(aS, aSR);
-	}
-	//
-	// update SD Shapes
-	mySameDomainShapes.Add(aSR, aSR);
+        // the aSR is SD solid for aS
+        aSSi.Subtract(aSSR);
+        // update images
+        if(myImages.HasImage(aS)) {
+          myImages.Add(aS, aSR);
+        }
+        else {
+          myImages.Bind(aS, aSR);
+        }
+        //
+        // update SD Shapes
+        mySameDomainShapes.Add(aSR, aSR);
       }
     }
     const TopTools_ListOfShape& aSFS1=aSSi.GetSet();
@@ -535,8 +535,8 @@ static
       aSSi.Clear();
       aExp.Init(aSR, TopAbs_FACE);
       for (; aExp.More(); aExp.Next()) {
-	const TopoDS_Shape& aF=aExp.Current();
-	aSSi.Add(aF);
+        const TopoDS_Shape& aF=aExp.Current();
+        aSSi.Add(aF);
       }
       aMSS.Bind(aSR, aSSi);
     }
@@ -574,8 +574,8 @@ static
       const TopoDS_Shape& aSR=aItSS.Key(); 
       const GEOMAlgo_ShapeSet& aSSR=aItSS.Value();
       if (aSSi.Contains(aSSR)) {
-	myImages.Bind(aS, aSR);
-	break;
+        myImages.Bind(aS, aSR);
+        break;
       }
     }
   } //for (i=1; i<=aNbS; ++i) 
@@ -618,7 +618,7 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aS=aIt.Value();
       if (aMFence.Add(aS)) {
-	aLSI.Append(aS);
+        aLSI.Append(aS);
       }
     }
   }
@@ -631,10 +631,10 @@ static
       const TopoDS_Shape& aW=aIt.Value();
       aItS.Initialize(aW);
       for (; aItS.More(); aItS.Next()) {
-	const TopoDS_Shape& aE=aItS.Value();
-	if (aMFence.Add(aE)) {
-	  aLSI.Append(aE);
-	}
+        const TopoDS_Shape& aE=aItS.Value();
+        if (aMFence.Add(aE)) {
+          aLSI.Append(aE);
+        }
       }
     }
   }
@@ -646,8 +646,8 @@ static
       const TopTools_ListOfShape &aLSp=myImages.Image(aS);
       aIt.Initialize(aLSp);
       for (; aIt.More(); aIt.Next()) {
-	const TopoDS_Shape& aSI=aIt.Value();
-	aMSI.Add(aSI);
+        const TopoDS_Shape& aSI=aIt.Value();
+        aMSI.Add(aSI);
       }
     }
     else {
@@ -672,42 +672,42 @@ static
       //
       aNbSx=aMx.Extent();
       for (j=1; j<=aNbSx; ++j) {
-	const TopoDS_Shape& aSI=aMx(j);
-	if (myImages.HasImage(aSI)) {
-	  const TopTools_ListOfShape &aLSp=myImages.Image(aSI);
-	  aIt.Initialize(aLSp);
-	  for (; aIt.More(); aIt.Next()) {
-	    const TopoDS_Shape& aSp=aIt.Value();
-	    aMSI.Add(aSp);
-	  }
-	}
-	else {
-	  aMSI.Add(aSI);
-	}
+        const TopoDS_Shape& aSI=aMx(j);
+        if (myImages.HasImage(aSI)) {
+          const TopTools_ListOfShape &aLSp=myImages.Image(aSI);
+          aIt.Initialize(aLSp);
+          for (; aIt.More(); aIt.Next()) {
+            const TopoDS_Shape& aSp=aIt.Value();
+            aMSI.Add(aSp);
+          }
+        }
+        else {
+          aMSI.Add(aSI);
+        }
       }
       //
       // build aux map from splits of solids
       if (myImages.HasImage(aS)) {
-	const TopTools_ListOfShape &aLSp=myImages.Image(aS);
-	aIt.Initialize(aLSp);
-	for (; aIt.More(); aIt.Next()) {
-	  const TopoDS_Shape& aSp=aIt.Value();
-	  if (aMFence.Add(aSp)) { 
-	    TopExp::MapShapesAndAncestors(aSp, TopAbs_VERTEX, TopAbs_EDGE, aMSx);
-	    TopExp::MapShapesAndAncestors(aSp, TopAbs_VERTEX, TopAbs_FACE, aMSx);
-	    TopExp::MapShapesAndAncestors(aSp, TopAbs_EDGE  , TopAbs_FACE, aMSx);
-	    aLSd.Append(aSp);
-	  }
-	}
+        const TopTools_ListOfShape &aLSp=myImages.Image(aS);
+        aIt.Initialize(aLSp);
+        for (; aIt.More(); aIt.Next()) {
+          const TopoDS_Shape& aSp=aIt.Value();
+          if (aMFence.Add(aSp)) { 
+            TopExp::MapShapesAndAncestors(aSp, TopAbs_VERTEX, TopAbs_EDGE, aMSx);
+            TopExp::MapShapesAndAncestors(aSp, TopAbs_VERTEX, TopAbs_FACE, aMSx);
+            TopExp::MapShapesAndAncestors(aSp, TopAbs_EDGE  , TopAbs_FACE, aMSx);
+            aLSd.Append(aSp);
+          }
+        }
       }
       else {
-	if (aMFence.Add(aS)) {
-	  TopExp::MapShapesAndAncestors(aS, TopAbs_VERTEX, TopAbs_EDGE, aMSx);
-	  TopExp::MapShapesAndAncestors(aS, TopAbs_VERTEX, TopAbs_FACE, aMSx);
-	  TopExp::MapShapesAndAncestors(aS, TopAbs_EDGE  , TopAbs_FACE, aMSx);
-	  aLSd.Append(aS);
-	  aMSOr.Add(aS); 
-	}
+        if (aMFence.Add(aS)) {
+          TopExp::MapShapesAndAncestors(aS, TopAbs_VERTEX, TopAbs_EDGE, aMSx);
+          TopExp::MapShapesAndAncestors(aS, TopAbs_VERTEX, TopAbs_FACE, aMSx);
+          TopExp::MapShapesAndAncestors(aS, TopAbs_EDGE  , TopAbs_FACE, aMSx);
+          aLSd.Append(aS);
+          aMSOr.Add(aS); 
+        }
       }
     }//if (aType==TopAbs_SOLID)
   }
@@ -723,7 +723,7 @@ static
       const TopTools_ListOfShape &aLSx=aMSx.FindFromKey(aSI);
       aNbSx=aLSx.Extent();
       if (aNbSx) {
-	aMSI.Remove(aSI);
+        aMSI.Remove(aSI);
       }
     }
   }
@@ -747,29 +747,29 @@ static
       //
       aState=GEOMAlgo_Tools3D::ComputeStateByOnePoint(aSI, aSd, 1.e-11, aCtx);
       if (aState==TopAbs_IN) {
-	//
-	if(aMSOr.Contains(aSd)) {
-	  //
-	  TopoDS_Solid aSdx;
-	  //
-	  aBB.MakeSolid(aSdx);
-	  aItS.Initialize(aSd);
-	  for (; aItS.More(); aItS.Next()) {
-	    const TopoDS_Shape& aSh=aItS.Value();
-	    aBB.Add(aSdx, aSh);
-	  }
-	  //
-	  aBB.Add(aSdx, aSI);
-	  //
-	  myImages.Bind(aSd, aSdx);
-	  aMSOr.Remove(aSd);
-	  aSd=aSdx;
-	}
-	else {
-	  aBB.Add(aSd, aSI);
-	}
-	//
-	aMSI.Remove(aSI);
+        //
+        if(aMSOr.Contains(aSd)) {
+          //
+          TopoDS_Solid aSdx;
+          //
+          aBB.MakeSolid(aSdx);
+          aItS.Initialize(aSd);
+          for (; aItS.More(); aItS.Next()) {
+            const TopoDS_Shape& aSh=aItS.Value();
+            aBB.Add(aSdx, aSh);
+          }
+          //
+          aBB.Add(aSdx, aSI);
+          //
+          myImages.Bind(aSd, aSdx);
+          aMSOr.Remove(aSd);
+          aSd=aSdx;
+        }
+        else {
+          aBB.Add(aSd, aSI);
+        }
+        //
+        aMSI.Remove(aSI);
       } //if (aState==TopAbs_IN) {
     }// for (; aItM.More(); aItM.Next()) {
   }//for (; aIt1.More(); aIt1.Next()) {
@@ -779,7 +779,7 @@ static
 //purpose  : 
 //=======================================================================
   void OwnInternalShapes(const TopoDS_Shape& theS,
-			 TopTools_IndexedMapOfShape& theMx)
+                         TopTools_IndexedMapOfShape& theMx)
 {
   TopoDS_Iterator aIt;
   //

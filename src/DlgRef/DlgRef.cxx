@@ -581,7 +581,7 @@ void DlgRef_3Sel3Spin1Check::ShowRows( int fromRow, int toRow, bool toShow )
       int row, col, rowspan, colspan;
       gridLayout1->getItemPosition( i, &row, &col, &rowspan, &colspan );
       if ( w && row >= fromRow && row <= toRow )
-	w->setVisible( toShow );
+        w->setVisible( toShow );
     }
   }
 }
@@ -611,7 +611,7 @@ void DlgRef_3Sel3Spin2Check::ShowRows( int fromRow, int toRow, bool toShow )
       int row, col, rowspan, colspan;
       gridLayout1->getItemPosition( i, &row, &col, &rowspan, &colspan );
       if ( w && row >= fromRow && row <= toRow )
-	w->setVisible( toShow );
+        w->setVisible( toShow );
     }
   }
 }
@@ -725,7 +725,7 @@ void DlgRef_4Sel1Spin2Check::ShowRows( int fromRow, int toRow, bool toShow )
       int row, col, rowspan, colspan;
       gridLayout1->getItemPosition( i, &row, &col, &rowspan, &colspan );
       if ( w && row >= fromRow && row <= toRow )
-	w->setVisible( toShow );
+        w->setVisible( toShow );
     }
   }
 }
@@ -793,7 +793,7 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
       double v = aRes.toDouble();
       double err = qAbs( theValue - v );
       if ( err > 0 && err <= prec )
-	break;
+        break;
     }
   }
 

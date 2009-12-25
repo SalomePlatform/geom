@@ -218,7 +218,7 @@ bool GenerationGUI_PipeDlg::ClickOnApply()
 
   initName();
   if ( getConstructorId() != 1 )
-  	ConstructorsClicked( getConstructorId() );
+        ConstructorsClicked( getConstructorId() );
   // activate selection and connect selection manager
   GroupPoints->PushButton1->click();
   return true;
@@ -261,8 +261,8 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
         S.ShapeType() == TopAbs_SHAPE)
       return;
     if ( getConstructorId() == 1 && 
-	 (S.ShapeType() == TopAbs_SHELL || 
-	  S.ShapeType() == TopAbs_VERTEX))
+         (S.ShapeType() == TopAbs_SHELL || 
+          S.ShapeType() == TopAbs_VERTEX))
       return;
 
     myBase = aSelectedObject;
@@ -274,7 +274,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       GroupPoints->PushButton3->click();
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit2 || 
-	   myEditCurrentArgument == GroupPoints->LineEdit3) {
+           myEditCurrentArgument == GroupPoints->LineEdit3) {
     myEditCurrentArgument == GroupPoints->LineEdit2 ? myOkPath = false : myOkVec = false;
     bool myOk = false;
     QString aName = GEOMBase::GetName(aSelectedObject);
@@ -286,58 +286,58 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
     else 
       { 
-	if (aSelectedObject != myBase) {
-	  TColStd_IndexedMapOfInteger aMap;
-	  aSelMgr->GetIndexes(aSelList.First(), aMap);
-	  if (aMap.Extent() == 1) {
-	    int anIndex = aMap(1);
-	    aName.append(":edge_" + QString::number(anIndex));
-	    
-	    //Find SubShape Object in Father
-	    GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-	    
-	    if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-	      GEOM::GEOM_IShapesOperations_var aShapesOp =
-		getGeomEngine()->GetIShapesOperations(getStudyId());
-	      aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	      myOk = true;
-	    }
-	    else { // get Object from study
-	      aSelectedObject = aFindedObject;
-	      myOk = true;
-	    }
-	  }
-	  else {
-	    myOk = true;
-	    if (S.ShapeType() != TopAbs_EDGE) {
-	      aSelectedObject = GEOM::GEOM_Object::_nil();
-	      aName = "";
-	      myOk = false;
-	    }
-	  }
-	  if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-	    myPath = aSelectedObject;
-	    myOkPath = myOk;
-	  }
-	  else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
-	    myVec = aSelectedObject;
-	    myOkVec = myOk;
-	  }
-	}
-	myEditCurrentArgument->setText(aName);
+        if (aSelectedObject != myBase) {
+          TColStd_IndexedMapOfInteger aMap;
+          aSelMgr->GetIndexes(aSelList.First(), aMap);
+          if (aMap.Extent() == 1) {
+            int anIndex = aMap(1);
+            aName.append(":edge_" + QString::number(anIndex));
+            
+            //Find SubShape Object in Father
+            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+            
+            if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+              GEOM::GEOM_IShapesOperations_var aShapesOp =
+                getGeomEngine()->GetIShapesOperations(getStudyId());
+              aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+              myOk = true;
+            }
+            else { // get Object from study
+              aSelectedObject = aFindedObject;
+              myOk = true;
+            }
+          }
+          else {
+            myOk = true;
+            if (S.ShapeType() != TopAbs_EDGE) {
+              aSelectedObject = GEOM::GEOM_Object::_nil();
+              aName = "";
+              myOk = false;
+            }
+          }
+          if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+            myPath = aSelectedObject;
+            myOkPath = myOk;
+          }
+          else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
+            myVec = aSelectedObject;
+            myOkVec = myOk;
+          }
+        }
+        myEditCurrentArgument->setText(aName);
 
-	if (myOkPath) {
-	  if (!myOkBase)
-	    GroupPoints->PushButton1->click();
-	  else if (!myOkVec)
-	    GroupPoints->PushButton3->click();
-	}
-	else if (myOkVec) {
-	  if (!myOkBase)
-	    GroupPoints->PushButton1->click();
-	  else if (!myOkPath)
-	    GroupPoints->PushButton2->click();
-	}
+        if (myOkPath) {
+          if (!myOkBase)
+            GroupPoints->PushButton1->click();
+          else if (!myOkVec)
+            GroupPoints->PushButton3->click();
+        }
+        else if (myOkVec) {
+          if (!myOkBase)
+            GroupPoints->PushButton1->click();
+          else if (!myOkPath)
+            GroupPoints->PushButton2->click();
+        }
       }
   }
 
@@ -429,7 +429,7 @@ void GenerationGUI_PipeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked(getConstructorId());
 }

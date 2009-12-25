@@ -50,7 +50,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_VectorDlg::BasicGUI_VectorDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					bool modal, Qt::WindowFlags fl )
+                                        bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_VECTOR_2P" ) ) );
@@ -161,7 +161,7 @@ void BasicGUI_VectorDlg::Init()
   connect( GroupDimensions->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( ReverseVector( int ) ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr("GEOM_VECTOR") );
 
@@ -208,7 +208,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
       globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
       connect( myGeomGUI->getApp()->selectionMgr(),
-	       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+               SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       break;
     }
   case 1:
@@ -297,16 +297,16 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
         int anIndex = aMap(1);
         aName += QString(":vertex_%1").arg(anIndex);
 
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-	
-	if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	}
-	else {
-	  aSelectedObject = aFindedObject; // get Object from study
-	}
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+        
+        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        }
+        else {
+          aSelectedObject = aFindedObject; // get Object from study
+        }
       }
       else { // Global Selection
         if (aShape.ShapeType() != TopAbs_VERTEX) {
@@ -326,12 +326,12 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
     if      (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myPoint1 = aSelectedObject;
       if (!myPoint1->_is_nil() && myPoint2->_is_nil())
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
     }
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
       myPoint2 = aSelectedObject;
       if (!myPoint2->_is_nil() && myPoint1->_is_nil())
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
   }
 
@@ -389,7 +389,7 @@ void BasicGUI_VectorDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
-	
+        
   ConstructorsClicked( getConstructorId() );
 }
 

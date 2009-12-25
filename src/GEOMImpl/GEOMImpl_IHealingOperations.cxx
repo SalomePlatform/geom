@@ -202,7 +202,7 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::stri
     {
       std::string anOperation = anOperators.Value( i ).ToCString();
       if ( GetOperatorParameters( anOperation, theParams, theValues ) )
-	theOperations.push_back( anOperation );
+        theOperations.push_back( anOperation );
       else
         nbOperatorErrors++;
     }
@@ -225,8 +225,8 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::stri
  */
 //=============================================================================
 bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation, 
-							 std::list<std::string>& theParams,
-							 std::list<std::string>& theValues )
+                                                         std::list<std::string>& theParams,
+                                                         std::list<std::string>& theValues )
 {
   ShHealOper_ShapeProcess aHealer;
   int nbParamValueErrors( 0 );
@@ -236,11 +236,11 @@ bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOp
       TCollection_AsciiString aParam( (Standard_CString)(*it).c_str() );
       TCollection_AsciiString aValue;
       if ( aHealer.GetParameter( aParam, aValue ) ) {
-	theParams.push_back( aParam.ToCString() );
-	theValues.push_back( aValue.ToCString() );
+        theParams.push_back( aParam.ToCString() );
+        theValues.push_back( aValue.ToCString() );
       }
       else
-	nbParamValueErrors++;
+        nbParamValueErrors++;
     }
   }
   else
@@ -358,7 +358,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -429,7 +429,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::CloseContour
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -566,7 +566,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::FillHoles (Handle(GEOM_Object) 
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -634,7 +634,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::Sew (Handle(GEOM_Object) theObj
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -697,7 +697,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
   }
   catch (Standard_Failure)
   {
-  	Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -716,8 +716,8 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
  */
 //=============================================================================
 bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject,
-						   Handle(TColStd_HSequenceOfTransient)& theClosed,
-						   Handle(TColStd_HSequenceOfTransient)& theOpen )
+                                                   Handle(TColStd_HSequenceOfTransient)& theClosed,
+                                                   Handle(TColStd_HSequenceOfTransient)& theOpen )
 {
   // set error code, check parameters
   SetErrorCode(KO);

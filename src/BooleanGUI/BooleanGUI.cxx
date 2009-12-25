@@ -55,7 +55,7 @@ bool BooleanGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
-  int anOperation = 0;	
+  int anOperation = 0;  
   if      ( theCommandID == 5011 )
     anOperation = FUSE;
   else if ( theCommandID == 5012 )

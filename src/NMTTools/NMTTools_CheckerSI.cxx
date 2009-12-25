@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  File:	NMTTools_CheckerSI.cxx
-//  Created:	Mon Feb 19 11:32:08 2007
-//  Author:	Peter KURNEV
+//  File:       NMTTools_CheckerSI.cxx
+//  Created:    Mon Feb 19 11:32:08 2007
+//  Author:     Peter KURNEV
 //
 #include <NMTTools_CheckerSI.ixx>
 

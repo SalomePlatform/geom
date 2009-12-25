@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Builder_1.cxx
-// Created:	
-// Author:	Peter KURNEV 
+// File:        GEOMAlgo_Builder_1.cxx
+// Created:     
+// Author:      Peter KURNEV 
 //
 #include <GEOMAlgo_Builder.hxx>
 //
@@ -64,12 +64,12 @@
 
 static
   void FillImagesCompounds(const TopTools_MapOfShape& ,
-			   BRepAlgo_Image& );
+                           BRepAlgo_Image& );
 
 static
   void FillImagesCompound(const TopoDS_Shape& ,
-			BRepAlgo_Image& ,
-			TopTools_MapOfShape& );
+                        BRepAlgo_Image& ,
+                        TopTools_MapOfShape& );
 
 //=======================================================================
 //function : FillImagesVertices
@@ -90,12 +90,12 @@ static
     if (aV.ShapeType()==TopAbs_VERTEX) {
       iV=pPF->FindSDVertex(i);
       if (iV) {
-	const TopoDS_Shape& aVSD=aDS.Shape(iV);
-	if (!myImages.HasImage(aV)) {
-	  myImages.Bind(aV, aVSD);
-	  //
-	  mySameDomainShapes.Add(aV, aVSD);
-	}
+        const TopoDS_Shape& aVSD=aDS.Shape(iV);
+        if (!myImages.HasImage(aV)) {
+          myImages.Bind(aV, aVSD);
+          //
+          mySameDomainShapes.Add(aV, aVSD);
+        }
       }
     }
   }
@@ -158,22 +158,22 @@ static
       //modified by NIZNHY-PKV Fri Nov 30 10:41:39 2007f
       //if (aSpR.IsSame(aSp) && aSpR.IsSame(aE)) {
       if (aSpR.IsSame(aSp) && aSpR.IsSame(aE) && !aIsCB) {
-	//modified by NIZNHY-PKV Fri Nov 30 10:41:46 2007t
-	continue;
+        //modified by NIZNHY-PKV Fri Nov 30 10:41:46 2007t
+        continue;
       }
       //
       aESpR=TopoDS::Edge(aSpR);
       bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aESpR, aEE, aCtx);
       if (bToReverse) {
-	aESpR.Reverse();
+        aESpR.Reverse();
       }
       aLSp.Append(aESpR);
       //
       aItLB.Initialize(aLB);
       for (; aItLB.More(); aItLB.Next()) {
-	nSpx=aItLB.Value();
-	const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
-	mySameDomainShapes.Add(aSpx ,aSpR);
+        nSpx=aItLB.Value();
+        const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
+        mySameDomainShapes.Add(aSpx ,aSpR);
       }
       //
       //
@@ -181,28 +181,28 @@ static
     else {
       aIt.Initialize(aLPB);
       for (; aIt.More(); aIt.Next()) {
-	const BOPTools_PaveBlock& aPB=aIt.Value();
-	//modified by NIZNHY-PKV Fri Nov 30 10:42:15 2007f
-	//const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
-	const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
-	//modified by NIZNHY-PKV Fri Nov 30 10:42:20 2007t
-	nSpR=aPBR.Edge();
-	const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
-	//
-	aESpR=TopoDS::Edge(aSpR);
-	bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aESpR, aEE, aCtx);
-	if (bToReverse) {
-	  aESpR.Reverse();
-	}
-	aLSp.Append(aESpR);
-	//
-	aItLB.Initialize(aLB);
-	for (; aItLB.More(); aItLB.Next()) {
-	  nSpx=aItLB.Value();
-	  const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
-	  mySameDomainShapes.Add(aSpx ,aSpR);
-	}
-	//
+        const BOPTools_PaveBlock& aPB=aIt.Value();
+        //modified by NIZNHY-PKV Fri Nov 30 10:42:15 2007f
+        //const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
+        const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
+        //modified by NIZNHY-PKV Fri Nov 30 10:42:20 2007t
+        nSpR=aPBR.Edge();
+        const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
+        //
+        aESpR=TopoDS::Edge(aSpR);
+        bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aESpR, aEE, aCtx);
+        if (bToReverse) {
+          aESpR.Reverse();
+        }
+        aLSp.Append(aESpR);
+        //
+        aItLB.Initialize(aLB);
+        for (; aItLB.More(); aItLB.Next()) {
+          nSpx=aItLB.Value();
+          const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
+          mySameDomainShapes.Add(aSpx ,aSpR);
+        }
+        //
       }
     }
     //
@@ -254,8 +254,8 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (myImages.HasImage(aF)) {
-	bInterferred=!bInterferred;
-	break;
+        bInterferred=!bInterferred;
+        break;
       }
     }
     if (!bInterferred){
@@ -269,20 +269,20 @@ static
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (myImages.HasImage(aF)) {
-	const TopTools_ListOfShape& aLFIm=myImages.Image(aF);
-	aItIm.Initialize(aLFIm);
-	for (; aItIm.More(); aItIm.Next()) {
-	  TopoDS_Shape aFIm=aItIm.Value();
-	  //
-	  bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFIm, aF, aCtx);
-	  if (bToReverse) {
-	    aFIm.Reverse();
-	  }
-	  aBB.Add(aCIm, aFIm);
-	}
+        const TopTools_ListOfShape& aLFIm=myImages.Image(aF);
+        aItIm.Initialize(aLFIm);
+        for (; aItIm.More(); aItIm.Next()) {
+          TopoDS_Shape aFIm=aItIm.Value();
+          //
+          bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFIm, aF, aCtx);
+          if (bToReverse) {
+            aFIm.Reverse();
+          }
+          aBB.Add(aCIm, aFIm);
+        }
       }
       else {
-	aBB.Add(aCIm, aF);
+        aBB.Add(aCIm, aF);
       }
     }
     myImages.Bind(aC, aCIm); 
@@ -293,7 +293,7 @@ static
 // purpose: 
 //=======================================================================
 void FillImagesCompounds(const TopTools_MapOfShape& theMS,
-			 BRepAlgo_Image& theImages)
+                         BRepAlgo_Image& theImages)
 {
   TopTools_MapOfShape aMFP;
   TopTools_MapIteratorOfMapOfShape aItS;
@@ -309,8 +309,8 @@ void FillImagesCompounds(const TopTools_MapOfShape& theMS,
 //purpose  : 
 //=======================================================================
 void FillImagesCompound(const TopoDS_Shape& theS,
-			BRepAlgo_Image& theImages,
-			TopTools_MapOfShape& theMFP)
+                        BRepAlgo_Image& theImages,
+                        TopTools_MapOfShape& theMFP)
 { 
   Standard_Boolean bInterferred;
   TopAbs_ShapeEnum aTypeX;
@@ -350,9 +350,9 @@ void FillImagesCompound(const TopoDS_Shape& theS,
       const TopTools_ListOfShape& aLFIm=theImages.Image(aSX);
       aItIm.Initialize(aLFIm);
       for (; aItIm.More(); aItIm.Next()) {
-	TopoDS_Shape aSXIm=aItIm.Value();
-	aSXIm.Orientation(aOrX);
-	aBB.Add(aCIm, aSXIm);
+        TopoDS_Shape aSXIm=aItIm.Value();
+        aSXIm.Orientation(aOrX);
+        aBB.Add(aCIm, aSXIm);
       }
     }
     else {

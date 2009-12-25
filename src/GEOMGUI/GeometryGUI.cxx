@@ -211,25 +211,25 @@ GEOMGUI* GeometryGUI::getLibrary( const QString& libraryName )
       QStringList dirList = libs.split( ";", QString::SkipEmptyParts ); // skip empty entries
 #endif
       for( int i = dirList.count()-1; i >= 0; i-- ) {
-	QString dir = dirList[ i ];
-	QFileInfo fi( Qtx::addSlash( dirList[ i ] ) + libraryName );
-	if( fi.exists() ) {
-	  OSD_SharedLibrary aSharedLibrary( fi.fileName().toLatin1().data() );
-	  bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
-	  if( !res ) {
-	    MESSAGE( "Can't open library : " << aSharedLibrary.DlError() );
-	    continue; // continue search further
-	  }
-	  OSD_Function osdF = aSharedLibrary.DlSymb( "GetLibGUI" );
-	  if ( osdF != NULL ) {
-	    LibraryGUI func = (GEOMGUI* (*) (GeometryGUI*))osdF;
-	    GEOMGUI* libGUI = (*func)(this);
-	    if ( libGUI ) {
-	      myGUIMap[ libraryName ] = libGUI;
-	      break; // found and loaded!
-	    }
-	  }
-	}
+        QString dir = dirList[ i ];
+        QFileInfo fi( Qtx::addSlash( dirList[ i ] ) + libraryName );
+        if( fi.exists() ) {
+          OSD_SharedLibrary aSharedLibrary( fi.fileName().toLatin1().data() );
+          bool res = aSharedLibrary.DlOpen( OSD_RTLD_LAZY );
+          if( !res ) {
+            MESSAGE( "Can't open library : " << aSharedLibrary.DlError() );
+            continue; // continue search further
+          }
+          OSD_Function osdF = aSharedLibrary.DlSymb( "GetLibGUI" );
+          if ( osdF != NULL ) {
+            LibraryGUI func = (GEOMGUI* (*) (GeometryGUI*))osdF;
+            GEOMGUI* libGUI = (*func)(this);
+            if ( libGUI ) {
+              myGUIMap[ libraryName ] = libGUI;
+              break; // found and loaded!
+            }
+          }
+        }
       }
     }
   }
@@ -388,129 +388,129 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 9024 ) { // OBJECT BROWSER - OPEN
     //cout << "id " << id << " received" << endl;
 #ifndef WNT
-	library = getLibrary( "libGEOMToolsGUI.so" );
+        library = getLibrary( "libGEOMToolsGUI.so" );
 #else
-	library = getLibrary( "GEOMToolsGUI.dll" );
+        library = getLibrary( "GEOMToolsGUI.dll" );
 #endif
   }
   else if( id == 211  ||  // MENU VIEW - WIREFRAME/SHADING
-	   id == 212  ||  // MENU VIEW - DISPLAY ALL
-	   id == 213  ||  // MENU VIEW - DISPLAY ONLY
-	   id == 214  ||  // MENU VIEW - ERASE ALL
-	   id == 215  ||  // MENU VIEW - ERASE
-	   id == 216  ||  // MENU VIEW - DISPLAY
-	   id == 218  ||  // MENU VIEW - VECTOR MODE
-	   id == 80311 ||  // POPUP VIEWER - WIREFRAME
-	   id == 80312 ||  // POPUP VIEWER - SHADING
-	   id == 80313 ) { // POPUP VIEWER - VECTORS
+           id == 212  ||  // MENU VIEW - DISPLAY ALL
+           id == 213  ||  // MENU VIEW - DISPLAY ONLY
+           id == 214  ||  // MENU VIEW - ERASE ALL
+           id == 215  ||  // MENU VIEW - ERASE
+           id == 216  ||  // MENU VIEW - DISPLAY
+           id == 218  ||  // MENU VIEW - VECTOR MODE
+           id == 80311 ||  // POPUP VIEWER - WIREFRAME
+           id == 80312 ||  // POPUP VIEWER - SHADING
+           id == 80313 ) { // POPUP VIEWER - VECTORS
 #ifndef WNT
-	library = getLibrary( "libDisplayGUI.so" );
+        library = getLibrary( "libDisplayGUI.so" );
 #else
-	library = getLibrary( "DisplayGUI.dll" );
+        library = getLibrary( "DisplayGUI.dll" );
 #endif
   }
   else if( id == 4011 ||  // MENU BASIC - POINT
-	   id == 4012 ||  // MENU BASIC - LINE
-	   id == 4013 ||  // MENU BASIC - CIRCLE
-	   id == 4014 ||  // MENU BASIC - ELLIPSE
-	   id == 4015 ||  // MENU BASIC - ARC
-	   id == 4016 ||  // MENU BASIC - VECTOR
-	   id == 4017 ||  // MENU BASIC - PLANE
-//	   id == 4018 ||  // MENU BASIC - WPLANE // DEPRECATED
-	   id == 4019 ||  // MENU BASIC - CURVE
-	   id == 4020 ) { // MENU BASIC - REPAIR
+           id == 4012 ||  // MENU BASIC - LINE
+           id == 4013 ||  // MENU BASIC - CIRCLE
+           id == 4014 ||  // MENU BASIC - ELLIPSE
+           id == 4015 ||  // MENU BASIC - ARC
+           id == 4016 ||  // MENU BASIC - VECTOR
+           id == 4017 ||  // MENU BASIC - PLANE
+//         id == 4018 ||  // MENU BASIC - WPLANE // DEPRECATED
+           id == 4019 ||  // MENU BASIC - CURVE
+           id == 4020 ) { // MENU BASIC - REPAIR
 #ifndef WNT
-	library = getLibrary( "libBasicGUI.so" );
+        library = getLibrary( "libBasicGUI.so" );
 #else
-	library = getLibrary( "BasicGUI.dll" );
+        library = getLibrary( "BasicGUI.dll" );
 #endif
   }
   else if( id == 4021 ||  // MENU PRIMITIVE - BOX
-	   id == 4022 ||  // MENU PRIMITIVE - CYLINDER
-	   id == 4023 ||  // MENU PRIMITIVE - SPHERE
-	   id == 4024 ||  // MENU PRIMITIVE - TORUS
-	   id == 4025 ||  // MENU PRIMITIVE - CONE
-	   id == 4026 ||  // MENU PRIMITIVE - FACE
-	   id == 4027 ) { // MENU PRIMITIVE - DISK
+           id == 4022 ||  // MENU PRIMITIVE - CYLINDER
+           id == 4023 ||  // MENU PRIMITIVE - SPHERE
+           id == 4024 ||  // MENU PRIMITIVE - TORUS
+           id == 4025 ||  // MENU PRIMITIVE - CONE
+           id == 4026 ||  // MENU PRIMITIVE - FACE
+           id == 4027 ) { // MENU PRIMITIVE - DISK
 #ifndef WNT
-	library = getLibrary( "libPrimitiveGUI.so" );
+        library = getLibrary( "libPrimitiveGUI.so" );
 #else
-	library = getLibrary( "PrimitiveGUI.dll" );
+        library = getLibrary( "PrimitiveGUI.dll" );
 #endif
   }
   else if( id == 4031 ||  // MENU GENERATION - PRISM
-	   id == 4032 ||  // MENU GENERATION - REVOLUTION
-	   id == 4033 ||  // MENU GENERATION - FILLING
-	   id == 4034 ) { // MENU GENERATION - PIPE
+           id == 4032 ||  // MENU GENERATION - REVOLUTION
+           id == 4033 ||  // MENU GENERATION - FILLING
+           id == 4034 ) { // MENU GENERATION - PIPE
 #ifndef WNT
-	library = getLibrary( "libGenerationGUI.so" );
+        library = getLibrary( "libGenerationGUI.so" );
 #else
-	library = getLibrary( "GenerationGUI.dll" );
+        library = getLibrary( "GenerationGUI.dll" );
 #endif
   }
   else if( id == 404 ||   // MENU ENTITY - SKETCHER
            id == 405 ||   // MENU ENTITY - 3D SKETCHER
-	   id == 407 ) {  // MENU ENTITY - EXPLODE
+           id == 407 ) {  // MENU ENTITY - EXPLODE
 #ifndef WNT
-	library = getLibrary( "libEntityGUI.so" );
+        library = getLibrary( "libEntityGUI.so" );
 #else
-	library = getLibrary( "EntityGUI.dll" );
+        library = getLibrary( "EntityGUI.dll" );
 #endif
   }
   else if( id == 4081 ||  // MENU BUILD - EDGE
-	   id == 4082 ||  // MENU BUILD - WIRE
-	   id == 4083 ||  // MENU BUILD - FACE
-	   id == 4084 ||  // MENU BUILD - SHELL
-	   id == 4085 ||  // MENU BUILD - SOLID
-	   id == 4086 ) { // MENU BUILD - COMPUND
+           id == 4082 ||  // MENU BUILD - WIRE
+           id == 4083 ||  // MENU BUILD - FACE
+           id == 4084 ||  // MENU BUILD - SHELL
+           id == 4085 ||  // MENU BUILD - SOLID
+           id == 4086 ) { // MENU BUILD - COMPUND
 #ifndef WNT
-	library = getLibrary( "libBuildGUI.so" );
+        library = getLibrary( "libBuildGUI.so" );
 #else
-	library = getLibrary( "BuildGUI.dll" );
+        library = getLibrary( "BuildGUI.dll" );
 #endif
   }
   else if( id == 5011 ||  // MENU BOOLEAN - FUSE
-	   id == 5012 ||  // MENU BOOLEAN - COMMON
-	   id == 5013 ||  // MENU BOOLEAN - CUT
-	   id == 5014 ) { // MENU BOOLEAN - SECTION
+           id == 5012 ||  // MENU BOOLEAN - COMMON
+           id == 5013 ||  // MENU BOOLEAN - CUT
+           id == 5014 ) { // MENU BOOLEAN - SECTION
 #ifndef WNT
-	library = getLibrary( "libBooleanGUI.so" );
+        library = getLibrary( "libBooleanGUI.so" );
 #else
-	library = getLibrary( "BooleanGUI.dll" );
+        library = getLibrary( "BooleanGUI.dll" );
 #endif
   }
   else if( id == 5021 ||  // MENU TRANSFORMATION - TRANSLATION
-	   id == 5022 ||  // MENU TRANSFORMATION - ROTATION
-	   id == 5023 ||  // MENU TRANSFORMATION - LOCATION
-	   id == 5024 ||  // MENU TRANSFORMATION - MIRROR
-	   id == 5025 ||  // MENU TRANSFORMATION - SCALE
-	   id == 5026 ||  // MENU TRANSFORMATION - OFFSET
-	   id == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
-	   id == 5028 ||  // MENU TRANSFORMATION - MULTI-ROTATION
+           id == 5022 ||  // MENU TRANSFORMATION - ROTATION
+           id == 5023 ||  // MENU TRANSFORMATION - LOCATION
+           id == 5024 ||  // MENU TRANSFORMATION - MIRROR
+           id == 5025 ||  // MENU TRANSFORMATION - SCALE
+           id == 5026 ||  // MENU TRANSFORMATION - OFFSET
+           id == 5027 ||  // MENU TRANSFORMATION - MULTI-TRANSLATION
+           id == 5028 ||  // MENU TRANSFORMATION - MULTI-ROTATION
            id == 5029 ) { // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
 #ifndef WNT
-	library = getLibrary( "libTransformationGUI.so" );
+        library = getLibrary( "libTransformationGUI.so" );
 #else
-	library = getLibrary( "TransformationGUI.dll" );
+        library = getLibrary( "TransformationGUI.dll" );
 #endif
   }
   else if( id == 503 ||   // MENU OPERATION - PARTITION
-	   id == 504 ||   // MENU OPERATION - ARCHIMEDE
-	   id == 505 ||   // MENU OPERATION - FILLET
-	   id == 506 ||   // MENU OPERATION - CHAMFER
-	   id == 507 ||   // MENU OPERATION - CLIPPING RANGE
-	   id == 508 ||   // MENU OPERATION - GET SHAPES ON SHAPE
-	   id == 509 ||   // MENU OPERATION - FILLET 2D
-	   id == 510 ) {  // MENU OPERATION - FILLET 1D
+           id == 504 ||   // MENU OPERATION - ARCHIMEDE
+           id == 505 ||   // MENU OPERATION - FILLET
+           id == 506 ||   // MENU OPERATION - CHAMFER
+           id == 507 ||   // MENU OPERATION - CLIPPING RANGE
+           id == 508 ||   // MENU OPERATION - GET SHAPES ON SHAPE
+           id == 509 ||   // MENU OPERATION - FILLET 2D
+           id == 510 ) {  // MENU OPERATION - FILLET 1D
 #ifndef WNT
-	library = getLibrary( "libOperationGUI.so" );
+        library = getLibrary( "libOperationGUI.so" );
 #else
-	library = getLibrary( "OperationGUI.dll" );
+        library = getLibrary( "OperationGUI.dll" );
 #endif
   }
   else if( id == 601 ||   // MENU REPAIR - SEWING
-	   id == 603 ||   // MENU REPAIR - SUPPRESS FACES
-	   id == 604 ||   // MENU REPAIR - SUPPRESS HOLE
+           id == 603 ||   // MENU REPAIR - SUPPRESS FACES
+           id == 604 ||   // MENU REPAIR - SUPPRESS HOLE
            id == 605 ||   // MENU REPAIR - SHAPE PROCESSING
            id == 606 ||   // MENU REPAIR - CLOSE CONTOUR
            id == 607 ||   // MENU REPAIR - REMOVE INTERNAL WIRES
@@ -518,39 +518,39 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 609 ||   // MENU MEASURE - FREE BOUNDARIES
            id == 610 ||   // MENU MEASURE - FREE FACES
            id == 611 ||   // MENU REPAIR - CHANGE ORIENTATION
-	   id == 602 ||   // MENU REPAIR - GLUE FACES
-	   id == 612 ) {  // MENU REPAIR - REMOVE EXTRA EDGES
+           id == 602 ||   // MENU REPAIR - GLUE FACES
+           id == 612 ) {  // MENU REPAIR - REMOVE EXTRA EDGES
 #ifndef WNT
-	library = getLibrary( "libRepairGUI.so" );
+        library = getLibrary( "libRepairGUI.so" );
 #else
-	library = getLibrary( "RepairGUI.dll" );
+        library = getLibrary( "RepairGUI.dll" );
 #endif
   }
   else if( id == 701   ||  // MENU MEASURE - PROPERTIES
-	   id == 702   ||  // MENU MEASURE - CDG
-	   id == 703   ||  // MENU MEASURE - INERTIA
-	   id == 704   ||  // MENU MEASURE - NORMALE
-	   id == 7041  ||  // MENU MEASURE - BOUNDING BOX
-	   id == 7042  ||  // MENU MEASURE - MIN DISTANCE
-	   id == 7043  ||  // MENU MEASURE - ANGLE
-	   id == 705   ||  // MENU MEASURE - TOLERANCE
-	   id == 706   ||  // MENU MEASURE - WHATIS
-	   id == 707   ||  // MENU MEASURE - CHECK
-	   id == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
-	   id == 708 ) {   // MENU MEASURE - POINT COORDINATES
+           id == 702   ||  // MENU MEASURE - CDG
+           id == 703   ||  // MENU MEASURE - INERTIA
+           id == 704   ||  // MENU MEASURE - NORMALE
+           id == 7041  ||  // MENU MEASURE - BOUNDING BOX
+           id == 7042  ||  // MENU MEASURE - MIN DISTANCE
+           id == 7043  ||  // MENU MEASURE - ANGLE
+           id == 705   ||  // MENU MEASURE - TOLERANCE
+           id == 706   ||  // MENU MEASURE - WHATIS
+           id == 707   ||  // MENU MEASURE - CHECK
+           id == 7072  ||  // MENU MEASURE - CHECK COMPOUND OF BLOCKS
+           id == 708 ) {   // MENU MEASURE - POINT COORDINATES
 #ifndef WNT
-	library = getLibrary( "libMeasureGUI.so" );
+        library = getLibrary( "libMeasureGUI.so" );
 #else
-	library = getLibrary( "MeasureGUI.dll" );
+        library = getLibrary( "MeasureGUI.dll" );
 #endif
   }
   else if( id == 800  ||  // MENU GROUP - CREATE
-	   id == 8001 ||  // POPUP MENU - CREATE GROUP
-	   id == 801 ) {  // MENU GROUP - EDIT
+           id == 8001 ||  // POPUP MENU - CREATE GROUP
+           id == 801 ) {  // MENU GROUP - EDIT
 #ifndef WNT
-	library = getLibrary( "libGroupGUI.so" );
+        library = getLibrary( "libGroupGUI.so" );
 #else
-	library = getLibrary( "GroupGUI.dll" );
+        library = getLibrary( "GroupGUI.dll" );
 #endif
   }
   else if( id == 9999  ||  // MENU BLOCKS - HEXAHEDRAL SOLID
@@ -559,9 +559,9 @@ void GeometryGUI::OnGUIEvent( int id )
            id == 99991 ||  // MENU BLOCKS - PROPAGATE
            id == 9995 ) {  // MENU BLOCKS - EXPLODE ON BLOCKS
 #ifndef WNT
-	library = getLibrary( "libBlocksGUI.so" );
+        library = getLibrary( "libBlocksGUI.so" );
 #else
-	library = getLibrary( "BlocksGUI.dll" );
+        library = getLibrary( "BlocksGUI.dll" );
 #endif
   }
 
@@ -634,13 +634,13 @@ static void UpdateVtkSelection()
     if ( win->getViewManager()->getTypeView() == VIEW_VTK ) {
       SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( window );
       if ( vw ) {
-	SVTK_RenderWindowInteractor* anInteractor = vw->getRWInteractor();
-	anInteractor->SetSelectionProp();
-	anInteractor->SetSelectionTolerance();
-	SVTK_InteractorStyleSALOME* aStyle = anInteractor->GetInteractorStyleSALOME();
-	if (aStyle) {
-	  aStyle->setPreselectionProp();
-	}
+        SVTK_RenderWindowInteractor* anInteractor = vw->getRWInteractor();
+        anInteractor->SetSelectionProp();
+        anInteractor->SetSelectionTolerance();
+        SVTK_InteractorStyleSALOME* aStyle = anInteractor->GetInteractorStyleSALOME();
+        if (aStyle) {
+          aStyle->setPreselectionProp();
+        }
       }
     }
   }
@@ -707,9 +707,9 @@ bool GeometryGUI::SetSettings()
       QString IsoU = QAD_CONFIG->getSetting("Geometry:SettingsIsoU");
       QString IsoV = QAD_CONFIG->getSetting("Geometry:SettingsIsoV");
       if(!IsoU.isEmpty())
-	ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
+        ic->DefaultDrawer()->UIsoAspect()->SetNumber(IsoU.toInt());
       if(!IsoV.isEmpty())
-	ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
+        ic->DefaultDrawer()->VIsoAspect()->SetNumber(IsoV.toInt());
     }
   }
 
@@ -1250,7 +1250,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   setToolShown( true );
 
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
-	  this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+          this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
   // Reset actions accelerator keys
   //action(111)->setAccel(QKeySequence(CTRL + Key_I)); // Import
@@ -1322,7 +1322,7 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   setToolShown( false );
 
   disconnect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
-	     this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
+             this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
 
   EmitSignalCloseAllDialogs();
 
@@ -1402,11 +1402,11 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
   {
     qDebug( "connect" );
     connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),
-	     this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
+             this, SLOT( OnKeyPress( SUIT_ViewWindow*, QKeyEvent* ) ) );
     connect( vm, SIGNAL( mousePress( SUIT_ViewWindow*, QMouseEvent* ) ),
-	     this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
+             this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
     connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
-	     this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
+             this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
 
 
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
@@ -1417,7 +1417,7 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
     QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
     while ( itOCCSel.hasNext() )
       if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-	sr->setEnabled(true);
+        sr->setEnabled(true);
   }
   else if ( vm->getType() == SVTK_Viewer::Type() )
   {
@@ -1429,7 +1429,7 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
     QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
     while ( itVTKSel.hasNext() )
       if ( LightApp_VTKSelector* sr = itVTKSel.next() )
-	sr->setEnabled(true);
+        sr->setEnabled(true);
   }
 }
 
@@ -1441,22 +1441,22 @@ void GeometryGUI::onViewManagerRemoved( SUIT_ViewManager* vm )
     QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
     while ( itOCCSel.hasNext() )
       if ( GEOMGUI_OCCSelector* sr = itOCCSel.next() )
-	if ( sr->viewer() == viewer )
-	{
-	  delete myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
-	  break;
-	}
+        if ( sr->viewer() == viewer )
+        {
+          delete myOCCSelectors.takeAt( myOCCSelectors.indexOf( sr ) );
+          break;
+        }
   }
   if ( vm->getType() == SVTK_Viewer::Type() )
   {
     QListIterator<LightApp_VTKSelector*> itVTKSel( myVTKSelectors );
     while ( itVTKSel.hasNext() )
       if ( LightApp_VTKSelector* sr = itVTKSel.next() )
-	if ( sr->viewer() == viewer )
-	{
-	  delete myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
-	  break;
-	}
+        if ( sr->viewer() == viewer )
+        {
+          delete myVTKSelectors.takeAt( myVTKSelectors.indexOf( sr ) );
+          break;
+        }
   }
 }
 
@@ -1477,16 +1477,16 @@ Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture( SalomeApp_Study* theSt
     if ( aTexture.IsNull() ) {
       GEOM::GEOM_IInsertOperations_var aInsOp = GeometryGUI::GetGeomGen()->GetIInsertOperations( theStudy->studyDS()->StudyId() );
       if ( !aInsOp->_is_nil() ) {
-	CORBA::Long aWidth, aHeight;
-	SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
-	if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
-	  theWidth  = aWidth;
-	  theHeight = aHeight;
-	  aTexture  = new Graphic3d_HArray1OfBytes( 1, aStream->length() );
-	  for ( int i = 0; i < aStream->length(); i++ )
-	    aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
-	  aTextureMap[ theId ] = aTexture;
-	}
+        CORBA::Long aWidth, aHeight;
+        SALOMEDS::TMPFile_var aStream = aInsOp->GetTexture( theId, aWidth, aHeight );
+        if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
+          theWidth  = aWidth;
+          theHeight = aHeight;
+          aTexture  = new Graphic3d_HArray1OfBytes( 1, aStream->length() );
+          for ( int i = 0; i < aStream->length(); i++ )
+            aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
+          aTextureMap[ theId ] = aTexture;
+        }
       }
     }
   }
@@ -1542,29 +1542,29 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( genGroup, "columns", 2 );
 
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
-				LightApp_Preferences::Selector, 
-				"Geometry", "display_mode" );
+                                LightApp_Preferences::Selector, 
+                                "Geometry", "display_mode" );
 
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "shading_color" );
+                 LightApp_Preferences::Color, "Geometry", "shading_color" );
 
   addPreference( tr( "PREF_WIREFRAME_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "wireframe_color" );
+                 LightApp_Preferences::Color, "Geometry", "wireframe_color" );
 
   addPreference( tr( "PREF_FREE_BOUND_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "free_bound_color" );
+                 LightApp_Preferences::Color, "Geometry", "free_bound_color" );
 
   addPreference( tr( "PREF_LINE_COLOR"), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "line_color" );
+                 LightApp_Preferences::Color, "Geometry", "line_color" );
 
   addPreference( tr( "PREF_POINT_COLOR"), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "point_color" );
+                 LightApp_Preferences::Color, "Geometry", "point_color" );
 
   addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
-		 LightApp_Preferences::Color, "Geometry", "isos_color" );
+                 LightApp_Preferences::Color, "Geometry", "isos_color" );
 
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
-			    LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
+                            LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
   int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
   setPreferenceProperty( VertexGroup, "columns", 2 );
@@ -1695,18 +1695,18 @@ void GeometryGUI::storeVisualParameters (int savePoint)
       QVector<SUIT_ViewWindow*> views = vman->getViews();
       for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++)
       {
-	if (SVTK_ViewWindow* vtkView = dynamic_cast<SVTK_ViewWindow*>(views[i]))
+        if (SVTK_ViewWindow* vtkView = dynamic_cast<SVTK_ViewWindow*>(views[i]))
         {
-	  vtkActorCollection* allActors = vtkView->getRenderer()->GetActors();
-	  allActors->InitTraversal();
-	  while (vtkActor* actor = allActors->GetNextActor())
+          vtkActorCollection* allActors = vtkView->getRenderer()->GetActors();
+          allActors->InitTraversal();
+          while (vtkActor* actor = allActors->GetNextActor())
           {
-	    if (actor->GetVisibility()) // store only visible actors
+            if (actor->GetVisibility()) // store only visible actors
             {
               GEOM_Actor* aGeomActor = 0;
               if (actor->IsA("GEOM_Actor"))
                 aGeomActor = GEOM_Actor::SafeDownCast(actor);
-	      if (aGeomActor && aGeomActor->hasIO())
+              if (aGeomActor && aGeomActor->hasIO())
               {
                 Handle(SALOME_InteractiveObject) io = aGeomActor->getIO();
                 if (io->hasEntry())
@@ -1746,10 +1746,10 @@ void GeometryGUI::storeVisualParameters (int savePoint)
                   param = occParam + "Isos";
                   ip->setParameter(entry, param, isosStr.toLatin1().data());
                 } // if (io->hasEntry())
-	      } // GEOM_Actor && hasIO
-	    } // isVisible
-	  } // while.. actors traversal
-	} // if (vtkView)
+              } // GEOM_Actor && hasIO
+            } // isVisible
+          } // while.. actors traversal
+        } // if (vtkView)
       } // for (views)
       vtkViewers++;
     } // if (SVTK view model)
@@ -1758,8 +1758,8 @@ void GeometryGUI::storeVisualParameters (int savePoint)
       QVector<SUIT_ViewWindow*> views = vman->getViews();
       for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++)
       {
-	SOCC_ViewWindow* occView = dynamic_cast<SOCC_ViewWindow*>(views[i]);
-	if (occView)
+        SOCC_ViewWindow* occView = dynamic_cast<SOCC_ViewWindow*>(views[i]);
+        if (occView)
         {
           //Handle(AIS_InteractiveContext) ic =
           //  ((OCCViewer_Viewer*)(occView->getViewManager()->getViewModel()))->getAISContext();
@@ -1818,9 +1818,9 @@ void GeometryGUI::storeVisualParameters (int savePoint)
                   ip->setParameter(entry, param, isosStr.toLatin1().data());
                 } // if (io->hasEntry())
               } // if (io)
-	    } // if (GEOM_AISShape)
-	  } // for (AIS_ListOfInteractive)
-	} // if ( occView )
+            } // if (GEOM_AISShape)
+          } // for (AIS_ListOfInteractive)
+        } // if ( occView )
       } // for ( views )
       occViewers++;
     } // if (SOCC view model)
@@ -1893,7 +1893,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       bool ok;
       int viewIndex = viewIndexStr.toUInt(&ok);
       if (!ok) // bad conversion of view index to integer
-	continue;
+        continue;
 
       // viewers
       if (viewerTypStr == SVTK_Viewer::Type())
@@ -1940,10 +1940,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
             }
           }
         } // if (paramNameStr == "Visibility")
-	else
+        else
         {
           // the rest properties "work" with GEOM_Actor
-	  if (vActor)
+          if (vActor)
           {
             QString val ((*valuesIt).c_str());
 
@@ -1966,7 +1966,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
               }
             }
           }
-	} // other parameters than Visibility
+        } // other parameters than Visibility
       }
       else if (viewerTypStr == SOCC_Viewer::Type())
       {
@@ -1996,7 +1996,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
         if (paramNameStr == "Visibility")
         {
-	  if (occActor.IsNull() && displayer())
+          if (occActor.IsNull() && displayer())
           {
             displayer()->Display(entry, true, occVModel);
 
@@ -2021,10 +2021,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
             }
           }
         } // if (paramNameStr == "Visibility")
-	else
+        else
         {
           // the rest properties "work" with GEOM_AISShape
-	  if (!occActor.IsNull())
+          if (!occActor.IsNull())
           {
             QString val ((*valuesIt).c_str());
 
@@ -2054,7 +2054,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
               }
             }
           }
-	} // other parameters than Visibility
+        } // other parameters than Visibility
       }
       else
       {

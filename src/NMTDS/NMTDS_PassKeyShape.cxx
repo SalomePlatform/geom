@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_PassKeyShape.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_PassKeyShape.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_PassKeyShape.ixx>
 
@@ -32,7 +32,7 @@
 
 static 
   Standard_Integer NormalizedId(const Standard_Integer aId,
-				const Standard_Integer aDiv);
+                                const Standard_Integer aDiv);
 //=======================================================================
 //function :
 //purpose  : 
@@ -86,7 +86,7 @@ static
 //purpose  : 
 //=======================================================================
   void NMTDS_PassKeyShape::SetShapes(const TopoDS_Shape& aS1)
-			       
+                               
 {
   Standard_Integer aHC;
   //
@@ -101,7 +101,7 @@ static
 //purpose  : 
 //=======================================================================
   void NMTDS_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
-					const TopoDS_Shape& aS2)
+                                        const TopoDS_Shape& aS2)
 {
   TopTools_ListOfShape aLS;
   //
@@ -114,8 +114,8 @@ static
 //purpose  : 
 //=======================================================================
   void NMTDS_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
-					const TopoDS_Shape& aS2,
-					const TopoDS_Shape& aS3)
+                                        const TopoDS_Shape& aS2,
+                                        const TopoDS_Shape& aS3)
 {
   TopTools_ListOfShape aLS;
   //
@@ -129,9 +129,9 @@ static
 //purpose  : 
 //=======================================================================
   void NMTDS_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
-					const TopoDS_Shape& aS2,
-					const TopoDS_Shape& aS3,
-					const TopoDS_Shape& aS4)
+                                        const TopoDS_Shape& aS2,
+                                        const TopoDS_Shape& aS3,
+                                        const TopoDS_Shape& aS4)
 {
   TopTools_ListOfShape aLS;
   //
@@ -214,7 +214,7 @@ static
 // purpose : 
 //=======================================================================
 Standard_Integer NormalizedId(const Standard_Integer aId,
-			      const Standard_Integer aDiv)
+                              const Standard_Integer aDiv)
 {
   Standard_Integer aMax, aTresh, aIdRet;
   //

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_BuilderTools.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_BuilderTools.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_BuilderTools.ixx>
 
@@ -60,8 +60,8 @@
 
 static 
   Standard_Integer ComputeProps(const TopoDS_Face& aF,
-				Standard_Real& aA,
-				Standard_Real& aV);
+                                Standard_Real& aA,
+                                Standard_Real& aV);
 static
   void BuildTriangulation(const TopoDS_Face& aF);
 
@@ -70,7 +70,7 @@ static
 //purpose  : 
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderTools::IsHole(const TopoDS_Shape& aW,
-						 const TopoDS_Shape& aFace)
+                                                 const TopoDS_Shape& aFace)
 {
   Standard_Boolean bIsHole;
   Standard_Integer i, aNbS;
@@ -96,7 +96,7 @@ static
     const TopoDS_Edge& aE=TopoDS::Edge(aItW.Value());
     aOr=aE.Orientation();
     if (!(aOr==TopAbs_FORWARD || 
-	  aOr==TopAbs_REVERSED)) {
+          aOr==TopAbs_REVERSED)) {
       continue;
     }
     //
@@ -168,8 +168,8 @@ static
 //purpose  : 
 //=======================================================================
 Standard_Integer ComputeProps(const TopoDS_Face& aF,
-			      Standard_Real& aA,
-			      Standard_Real& aV)
+                              Standard_Real& aA,
+                              Standard_Real& aV)
 {
   Standard_Integer j, i, i1, i2, aNbNodes, aNbTrigs, n[3];
   Standard_Real aAi, aVi;
@@ -225,7 +225,7 @@ Standard_Integer ComputeProps(const TopoDS_Face& aF,
       Standard_Real aSx, aZx;
       gp_Dir aDN(aVN);
       if (aOr==TopAbs_REVERSED) {
-	aDN.Reverse();
+        aDN.Reverse();
       }
       //
       aSx=aAi*aDN.Z();
@@ -269,11 +269,11 @@ void BuildTriangulation(const TopoDS_Face& aF)
   aDiscret=aCoeff*dMax;
   //
   BRepMesh_FastDiscret aMesher(aDiscret,
-			       aAngle,
-			       aBox,
-			       bWithShare,
-			       Standard_True,
-			       Standard_False,
-			       Standard_True);
+                               aAngle,
+                               aBox,
+                               bWithShare,
+                               Standard_True,
+                               Standard_False,
+                               Standard_True);
   aMesher.Add(aF);
 }

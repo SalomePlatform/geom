@@ -55,7 +55,7 @@ bool GEOM_FaceFilter::isShapeOk( const TopoDS_Shape& theShape ) const
   {
     BRepAdaptor_Surface aSurf( TopoDS::Face( theShape ) );
     GeomAbs_SurfaceType aType = aSurf.GetType();
-	
+        
     switch ( myKind ) 
     {
     case StdSelect_AnyFace:   return Standard_True;
@@ -64,10 +64,10 @@ bool GEOM_FaceFilter::isShapeOk( const TopoDS_Shape& theShape ) const
     case StdSelect_Sphere:    return ( aType == GeomAbs_Sphere);      
     case StdSelect_Torus:     return ( aType == GeomAbs_Torus);      
     case StdSelect_Revol:     return ( aType == GeomAbs_Cylinder  || 
-				       aType == GeomAbs_Cone      ||
-		                       aType == GeomAbs_Torus     ||
-		                       aType == GeomAbs_Sphere    || 
-		                       aType == GeomAbs_SurfaceOfRevolution ); 
+                                       aType == GeomAbs_Cone      ||
+                                       aType == GeomAbs_Torus     ||
+                                       aType == GeomAbs_Sphere    || 
+                                       aType == GeomAbs_SurfaceOfRevolution ); 
     case StdSelect_Cone:      return ( aType == GeomAbs_Cone);      
     }
   }

@@ -498,7 +498,7 @@ void TransformationGUI_MultiTranslationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -687,8 +687,8 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVectorU) &&
         !CORBA::is_nil(myVectorV)) {
       anObj = anOper->MultiTranslate2D(myBase,
-				       myVectorU, myStepU, myNbTimesU,
-				       myVectorV, myStepV, myNbTimesV);
+                                       myVectorU, myStepU, myNbTimesU,
+                                       myVectorV, myStepV, myNbTimesV);
       if(!IsPreview()) {
         aParameters<<GroupDimensions->SpinBox_DX1->text();
         aParameters<<GroupDimensions->SpinBox_DY1->text();

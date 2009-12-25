@@ -108,7 +108,7 @@ public:
 
 //  virtual void                DefinePopup( QString & theContext, QString & theParent, QString & theObject);
 //  virtual bool                CustomPopup( QAD_Desktop* parent, QMenu* popup, const QString& theContext,
-//			                   const QString& theParent, const QString& theObject );
+//                                         const QString& theParent, const QString& theObject );
 
   // The Working Plane management
   void                        SetWorkingPlane( gp_Ax3 wp ) { myWorkingPlane = wp;   }
@@ -154,12 +154,12 @@ protected:
 private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
   void                        createGeomAction( const int id, const QString& po_id,
-						const QString& icon_id = QString(""),
-						const int key = 0, const bool toggle = false );
+                                                const QString& icon_id = QString(""),
+                                                const int key = 0, const bool toggle = false );
   void                        createPopupItem( const int, const QString& clients, const QString& types,
-					       const bool isSingle = false, const int isVisible = -1,
-					       const bool isExpandAll = false, const bool isOCC = false,
-					       const int parentId = -1 );
+                                               const bool isSingle = false, const int isVisible = -1,
+                                               const bool isExpandAll = false, const bool isOCC = false,
+                                               const int parentId = -1 );
 
 public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!

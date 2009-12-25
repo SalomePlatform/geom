@@ -401,7 +401,7 @@ void PrimitiveGUI_ConeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -478,10 +478,10 @@ bool PrimitiveGUI_ConeDlg::execute (ObjectList& objects)
       anObj = anOper->MakeConePntVecR1R2H(myPoint, myDir, getRadius1(), getRadius2(), getHeight());
       if (!anObj->_is_nil() && !IsPreview())
       {
-	QStringList aParameters;
-	aParameters << GroupPoints->SpinBox_DX->text();
-	aParameters << GroupPoints->SpinBox_DY->text();
-	aParameters << GroupPoints->SpinBox_DZ->text();
+        QStringList aParameters;
+        aParameters << GroupPoints->SpinBox_DX->text();
+        aParameters << GroupPoints->SpinBox_DY->text();
+        aParameters << GroupPoints->SpinBox_DZ->text();
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       res = true;

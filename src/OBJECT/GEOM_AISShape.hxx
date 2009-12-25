@@ -83,30 +83,30 @@ public:
 //      }
  // Methods PUBLIC
  // 
-	GEOM_AISShape(const TopoDS_Shape& shape, const Standard_CString aName);
-	Standard_Boolean hasIO() ;
-	void setIO(const Handle(SALOME_InteractiveObject)& name) ;
-	void setName(const Standard_CString aName) ;
-	Standard_CString getName() ;
-	Handle_SALOME_InteractiveObject getIO() ;
-	void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
-	~GEOM_AISShape();
+        GEOM_AISShape(const TopoDS_Shape& shape, const Standard_CString aName);
+        Standard_Boolean hasIO() ;
+        void setIO(const Handle(SALOME_InteractiveObject)& name) ;
+        void setName(const Standard_CString aName) ;
+        Standard_CString getName() ;
+        Handle_SALOME_InteractiveObject getIO() ;
+        void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
+        ~GEOM_AISShape();
 
-	void SetTransparency(const Standard_Real aValue);
-	void SetShadingColor(const Quantity_Color &aCol);
-	void SetDisplayVectors(bool isShow);
+        void SetTransparency(const Standard_Real aValue);
+        void SetShadingColor(const Quantity_Color &aCol);
+        void SetDisplayVectors(bool isShow);
 
-	virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-				      const Handle(Prs3d_Presentation)& aPresentation,
-				      const Standard_Integer aMode = 0) ;
+        virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+                                      const Handle(Prs3d_Presentation)& aPresentation,
+                                      const Standard_Integer aMode = 0) ;
 
-	virtual  bool isShowVectors () { return myDisplayVectors; }
-	
+        virtual  bool isShowVectors () { return myDisplayVectors; }
+        
  // Type management
  //
-	friend Handle_Standard_Type& GEOM_AISShape_Type_();
-	const Handle(Standard_Type)& DynamicType() const;
-	Standard_Boolean	     IsKind(const Handle(Standard_Type)&) const;
+        friend Handle_Standard_Type& GEOM_AISShape_Type_();
+        const Handle(Standard_Type)& DynamicType() const;
+        Standard_Boolean             IsKind(const Handle(Standard_Type)&) const;
 
 protected: 
   Quantity_Color myShadingColor;

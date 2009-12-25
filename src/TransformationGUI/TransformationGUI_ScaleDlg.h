@@ -45,7 +45,7 @@ class TransformationGUI_ScaleDlg : public GEOMBase_Skeleton
 
 public:
   TransformationGUI_ScaleDlg( GeometryGUI*, QWidget* = 0,
-			      bool = false, Qt::WindowFlags = 0 );
+                              bool = false, Qt::WindowFlags = 0 );
   ~TransformationGUI_ScaleDlg();
 
 protected:

@@ -51,7 +51,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_ArcDlg::BasicGUI_ArcDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				  bool modal, Qt::WindowFlags fl )
+                                  bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -198,7 +198,7 @@ void BasicGUI_ArcDlg::Init()
   connect( Group3Pnts3->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_ARC" ) ); 
   
@@ -284,15 +284,15 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
         int anIndex = aMap(1);
         aName += QString(":vertex_%1").arg(anIndex);
 
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
 
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-	  aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	}
-	else
-	  aSelectedObject = aFindedObject; // get Object from study
+        if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+        }
+        else
+          aSelectedObject = aFindedObject; // get Object from study
       }
       else // Global Selection
       {
@@ -313,53 +313,53 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
     switch ( getConstructorId() ) {
     case 0:
       if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
-	myPoint1 = aSelectedObject;
-	if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
-	  Group3Pnts->PushButton2->click();
+        myPoint1 = aSelectedObject;
+        if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+          Group3Pnts->PushButton2->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
-	myPoint2 = aSelectedObject;
-	if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
-	  Group3Pnts->PushButton3->click();
+        myPoint2 = aSelectedObject;
+        if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+          Group3Pnts->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
-	myPoint3 = aSelectedObject;
-	if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
-	  Group3Pnts->PushButton1->click();
+        myPoint3 = aSelectedObject;
+        if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+          Group3Pnts->PushButton1->click();
       }
       break;
     case 1:
       if ( myEditCurrentArgument == Group3Pnts2->LineEdit1 ) {
-	myPoint1 = aSelectedObject;
-	if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
-	  Group3Pnts2->PushButton2->click();
+        myPoint1 = aSelectedObject;
+        if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+          Group3Pnts2->PushButton2->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 ) {
-	myPoint2 = aSelectedObject;
-	if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
-	  Group3Pnts2->PushButton3->click();
+        myPoint2 = aSelectedObject;
+        if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+          Group3Pnts2->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 ) {
-	myPoint3 = aSelectedObject;
-	if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
-	  Group3Pnts2->PushButton1->click();
+        myPoint3 = aSelectedObject;
+        if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+          Group3Pnts2->PushButton1->click();
       }
       break;
     case 2:
       if ( myEditCurrentArgument == Group3Pnts3->LineEdit1 ) {
-	myPoint1 = aSelectedObject;
-	if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
-	  Group3Pnts3->PushButton2->click();
+        myPoint1 = aSelectedObject;
+        if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+          Group3Pnts3->PushButton2->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts3->LineEdit2 ) {
-	myPoint2 = aSelectedObject;
-	if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
-	  Group3Pnts3->PushButton3->click();
+        myPoint2 = aSelectedObject;
+        if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+          Group3Pnts3->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts3->LineEdit3 ) {
-	myPoint3 = aSelectedObject;
-	if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
-	  Group3Pnts3->PushButton1->click();
+        myPoint3 = aSelectedObject;
+        if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+          Group3Pnts3->PushButton1->click();
       }
       break;
     }
@@ -491,9 +491,9 @@ void BasicGUI_ArcDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ),
-	   this,
-	   SLOT(SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ),
+           this,
+           SLOT(SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -536,25 +536,25 @@ bool BasicGUI_ArcDlg::isValid( QString& msg )
   case 0:
     {
       if (Group3Pnts->LineEdit1->text().trimmed().isEmpty() ||
-	  Group3Pnts->LineEdit2->text().trimmed().isEmpty() ||
-	  Group3Pnts->LineEdit3->text().trimmed().isEmpty())
-	return false;
+          Group3Pnts->LineEdit2->text().trimmed().isEmpty() ||
+          Group3Pnts->LineEdit3->text().trimmed().isEmpty())
+        return false;
       break;
     }
   case 1:
     {
       if (Group3Pnts2->LineEdit1->text().trimmed().isEmpty() ||
-	  Group3Pnts2->LineEdit2->text().trimmed().isEmpty() ||
-	  Group3Pnts2->LineEdit3->text().trimmed().isEmpty())
-	return false;
+          Group3Pnts2->LineEdit2->text().trimmed().isEmpty() ||
+          Group3Pnts2->LineEdit3->text().trimmed().isEmpty())
+        return false;
       break;
     }
   case 2:
     {
       if (Group3Pnts3->LineEdit1->text().trimmed().isEmpty() ||
-	  Group3Pnts3->LineEdit2->text().trimmed().isEmpty() ||
-	  Group3Pnts3->LineEdit3->text().trimmed().isEmpty())
-	return false;
+          Group3Pnts3->LineEdit2->text().trimmed().isEmpty() ||
+          Group3Pnts3->LineEdit3->text().trimmed().isEmpty())
+        return false;
       break;
     }
   }
@@ -577,8 +577,8 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   case 0:
     {
       if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-	anObj = anOper->MakeArc( myPoint1, myPoint2, myPoint3 );
-	res = true;
+        anObj = anOper->MakeArc( myPoint1, myPoint2, myPoint3 );
+        res = true;
       }
       break;
     }
@@ -586,16 +586,16 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
     {
       bool Sense = Group3Pnts2->CheckButton1->isChecked();
       if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-	anObj = anOper->MakeArcCenter( myPoint1, myPoint2, myPoint3, Sense );
-	res = true;
+        anObj = anOper->MakeArcCenter( myPoint1, myPoint2, myPoint3, Sense );
+        res = true;
       }
       break;
     }
   case 2:
     {
       if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-	anObj = anOper->MakeArcOfEllipse( myPoint1, myPoint2, myPoint3 );
-	res = true;
+        anObj = anOper->MakeArcOfEllipse( myPoint1, myPoint2, myPoint3 );
+        res = true;
       }
       break;
     }
@@ -689,7 +689,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   if ( CORBA::is_nil( myPoint1 ) )
     SelectionIntoArgument();

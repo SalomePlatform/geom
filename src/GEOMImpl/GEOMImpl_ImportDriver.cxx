@@ -54,7 +54,7 @@
 typedef TopoDS_Shape (*funcPoint)(const TCollection_AsciiString&,
                                   const TCollection_AsciiString&,
                                   TCollection_AsciiString&,
-				  const TDF_Label&);
+                                  const TDF_Label&);
 
 //=======================================================================
 //function : GetID
@@ -146,10 +146,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_ImportDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ImportDriver",
-			                                 sizeof(GEOMImpl_ImportDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_ImportDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

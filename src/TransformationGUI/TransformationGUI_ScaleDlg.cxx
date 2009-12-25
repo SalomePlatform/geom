@@ -413,7 +413,7 @@ void TransformationGUI_ScaleDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -525,7 +525,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
         for (int i = 0; i < myObjects.length(); i++)
         {
           anObj = anOper->ScaleShapeAlongAxesCopy(myObjects[i], myPoint, SpinBox_FX->value(),
-						  SpinBox_FY->value(), SpinBox_FZ->value());
+                                                  SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             if(!IsPreview()) {
               QStringList aParameters;
@@ -542,7 +542,7 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
         for (int i = 0; i < myObjects.length(); i++)
         {
           anObj = anOper->ScaleShapeAlongAxes(myObjects[i], myPoint, SpinBox_FX->value(),
-					      SpinBox_FY->value(), SpinBox_FZ->value());
+                                              SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }

@@ -70,9 +70,9 @@ public:
  // 
 Standard_EXPORT GEOM_InteractiveObject();
 Standard_EXPORT GEOM_InteractiveObject(const char* anIOR,
-				       const char* aFatherIOR,
-				       const char* aComponentDataType,
-				       const char* anEntry = "");
+                                       const char* aFatherIOR,
+                                       const char* aComponentDataType,
+                                       const char* anEntry = "");
 Standard_EXPORT   void setIOR(const char* anEntry) ;
 Standard_EXPORT   const char* getIOR() ;
 Standard_EXPORT   void setFatherIOR(const char* anEntry) ;
@@ -87,7 +87,7 @@ Standard_EXPORT   ~GEOM_InteractiveObject();
  //
  Standard_EXPORT friend Handle_Standard_Type& GEOM_InteractiveObject_Type_();
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ Standard_EXPORT Standard_Boolean              IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

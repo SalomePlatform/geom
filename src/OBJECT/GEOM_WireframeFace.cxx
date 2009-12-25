@@ -101,7 +101,7 @@ void
 GEOM_WireframeFace:: 
 OCC2VTK(const TopoDS_Face& theFace,
         vtkPolyData* thePolyData,
-		    vtkPoints* thePts,  
+                    vtkPoints* thePts,  
         const int theNbIso[2], 
         const int theDiscret) 
 { 
@@ -113,7 +113,7 @@ OCC2VTK(const TopoDS_Face& theFace,
 void 
 GEOM_WireframeFace:: 
 CreateIso(const TopoDS_Face& theFace,
-	  const int theNbIso[2], 
+          const int theNbIso[2], 
           const int theDiscret, 
           vtkPolyData* thePolyData,
           vtkPoints* thePts)
@@ -128,10 +128,10 @@ CreateIso(const TopoDS_Face& theFace,
   Geom2dHatch_Hatcher 
     aHatcher(Geom2dHatch_Intersector(INTERSECTOR_CONFUSION,
                                      INTERSECTOR_TANGENCY),
-		         HATHCER_CONFUSION_2D,
-		         HATHCER_CONFUSION_3D,
-				     Standard_True,
-				     Standard_False);
+                         HATHCER_CONFUSION_2D,
+                         HATHCER_CONFUSION_3D,
+                                     Standard_True,
+                                     Standard_False);
   
   Standard_Real anUMin, anUMax, aVMin, aVMax;
   TColStd_Array1OfReal anUPrm(1, theNbIso[0]), aVPrm(1, theNbIso[1]);
@@ -184,29 +184,29 @@ CreateIso(const TopoDS_Face& theFace,
 
     //-- Test if a TrimmedCurve is necessary
     if(Abs(PCurve->FirstParameter()-U1) <= Precision::PConfusion() &&
-	     Abs(PCurve->LastParameter()-U2) <= Precision::PConfusion())
+             Abs(PCurve->LastParameter()-U2) <= Precision::PConfusion())
     { 
       aHatcher.AddElement(PCurve, anEdge.Orientation()) ;      
     }else{ 
       if(!PCurve->IsPeriodic()){
-	      Handle(Geom2d_TrimmedCurve) TrimPCurve =
+              Handle(Geom2d_TrimmedCurve) TrimPCurve =
           Handle(Geom2d_TrimmedCurve)::DownCast(PCurve);
-	      if(!TrimPCurve.IsNull()){
+              if(!TrimPCurve.IsNull()){
           Handle_Geom2d_Curve aBasisCurve = TrimPCurve->BasisCurve();
-	        if(aBasisCurve->FirstParameter()-U1 > Precision::PConfusion() ||
-	           U2-aBasisCurve->LastParameter() > Precision::PConfusion()) 
+                if(aBasisCurve->FirstParameter()-U1 > Precision::PConfusion() ||
+                   U2-aBasisCurve->LastParameter() > Precision::PConfusion()) 
           {
-	          aHatcher.AddElement(PCurve, anEdge.Orientation()) ;      
-	          return;
-	        }
-	      }else{
-	        if(PCurve->FirstParameter()-U1 > Precision::PConfusion()){
-	          U1=PCurve->FirstParameter();
-	        }
-	        if(U2-PCurve->LastParameter()  > Precision::PConfusion()){
-	          U2=PCurve->LastParameter();
-	        }
-	      }
+                  aHatcher.AddElement(PCurve, anEdge.Orientation()) ;      
+                  return;
+                }
+              }else{
+                if(PCurve->FirstParameter()-U1 > Precision::PConfusion()){
+                  U1=PCurve->FirstParameter();
+                }
+                if(U2-PCurve->LastParameter()  > Precision::PConfusion()){
+                  U2=PCurve->LastParameter();
+                }
+              }
       }
       Handle(Geom2d_TrimmedCurve) TrimPCurve = 
         new Geom2d_TrimmedCurve(PCurve, U1, U2);
@@ -262,8 +262,8 @@ CreateIso(const TopoDS_Face& theFace,
     Index = anUInd(IIso) ;
     if(Index != 0){
       if(aHatcher.TrimDone(Index) && !aHatcher.TrimFailed(Index)){
-	      aHatcher.ComputeDomains(Index);
-	      if(aHatcher.IsDone (Index)) 
+              aHatcher.ComputeDomains(Index);
+              if(aHatcher.IsDone (Index)) 
           aNbDom = aHatcher.NbDomains (Index);
       }
     }
@@ -273,8 +273,8 @@ CreateIso(const TopoDS_Face& theFace,
     Index = aVInd(IIso);
     if(Index != 0){
       if(aHatcher.TrimDone (Index) && !aHatcher.TrimFailed(Index)){
-	      aHatcher.ComputeDomains (Index);
-	      if(aHatcher.IsDone (Index)) 
+              aHatcher.ComputeDomains (Index);
+              if(aHatcher.IsDone (Index)) 
           aNbDom = aHatcher.NbDomains (Index);
       }
     }
@@ -288,14 +288,14 @@ CreateIso(const TopoDS_Face& theFace,
     if(UInd != 0){
       Standard_Real UPrm = anUPrm.Value(UIso);
       if(aHatcher.IsDone(UInd)){
-	      Standard_Integer NbDom = aHatcher.NbDomains(UInd);
-	      for(Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++){
-	        const HatchGen_Domain& Dom = aHatcher.Domain(UInd, IDom) ;
-	        Standard_Real V1 = Dom.HasFirstPoint()? Dom.FirstPoint().Parameter(): aVMin - VTKINFINITE;
-	        Standard_Real V2 = Dom.HasSecondPoint()? Dom.SecondPoint().Parameter(): aVMax + VTKINFINITE;
-	        CreateIso_(theFace, GeomAbs_IsoU, UPrm, V1, V2, theDiscret, thePolyData, thePts);
-      	}
-	    }
+              Standard_Integer NbDom = aHatcher.NbDomains(UInd);
+              for(Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++){
+                const HatchGen_Domain& Dom = aHatcher.Domain(UInd, IDom) ;
+                Standard_Real V1 = Dom.HasFirstPoint()? Dom.FirstPoint().Parameter(): aVMin - VTKINFINITE;
+                Standard_Real V2 = Dom.HasSecondPoint()? Dom.SecondPoint().Parameter(): aVMax + VTKINFINITE;
+                CreateIso_(theFace, GeomAbs_IsoU, UPrm, V1, V2, theDiscret, thePolyData, thePts);
+        }
+            }
     }
   }
 
@@ -304,13 +304,13 @@ CreateIso(const TopoDS_Face& theFace,
     if(VInd != 0){
       Standard_Real VPrm = aVPrm.Value(VIso);
       if(aHatcher.IsDone (VInd)){
-	      Standard_Integer NbDom = aHatcher.NbDomains(VInd);
-	      for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++){
-	        const HatchGen_Domain& Dom = aHatcher.Domain(VInd, IDom);
-	        Standard_Real U1 = Dom.HasFirstPoint()? Dom.FirstPoint().Parameter(): aVMin - VTKINFINITE;
-	        Standard_Real U2 = Dom.HasSecondPoint()? Dom.SecondPoint().Parameter(): aVMax + VTKINFINITE;
-    	    CreateIso_(theFace, GeomAbs_IsoV, VPrm, U1, U2, theDiscret, thePolyData, thePts);
-	      }
+              Standard_Integer NbDom = aHatcher.NbDomains(VInd);
+              for (Standard_Integer IDom = 1 ; IDom <= NbDom ; IDom++){
+                const HatchGen_Domain& Dom = aHatcher.Domain(VInd, IDom);
+                Standard_Real U1 = Dom.HasFirstPoint()? Dom.FirstPoint().Parameter(): aVMin - VTKINFINITE;
+                Standard_Real U2 = Dom.HasSecondPoint()? Dom.SecondPoint().Parameter(): aVMax + VTKINFINITE;
+            CreateIso_(theFace, GeomAbs_IsoV, VPrm, U1, U2, theDiscret, thePolyData, thePts);
+              }
       }
     }
   }
@@ -364,101 +364,101 @@ CreateIso_(const TopoDS_Face& theFace,
       V2 = Par;
       stepV = 0;
       nbIntv = nbUIntv;
-    }	
-	
+    }   
+        
     S.D0(U1,V1,P);
     MoveTo(P,thePts);
 
     for(Intrv = 1; Intrv <= nbIntv; Intrv++){
       if(TI(Intrv) <= T1 && TI(Intrv + 1) <= T1)
-      	continue;
+        continue;
       if(TI(Intrv) >= T2 && TI(Intrv + 1) >= T2)
-	      continue;
+              continue;
       if(theIsoType == GeomAbs_IsoU){
-	      V1 = Max(T1, TI(Intrv));
-	      V2 = Min(T2, TI(Intrv + 1));
-	      stepV = (V2 - V1) / theDiscret;
+              V1 = Max(T1, TI(Intrv));
+              V2 = Min(T2, TI(Intrv + 1));
+              stepV = (V2 - V1) / theDiscret;
       }else{
-	      U1 = Max(T1, TI(Intrv));
-	      U2 = Min(T2, TI(Intrv + 1));
-	      stepU = (U2 - U1) / theDiscret;
+              U1 = Max(T1, TI(Intrv));
+              U2 = Min(T2, TI(Intrv + 1));
+              stepU = (U2 - U1) / theDiscret;
       }
 
       switch (SurfType) {
       case GeomAbs_Plane :
-	      break;
+              break;
       case GeomAbs_Cylinder :
       case GeomAbs_Cone :
-      	if(theIsoType == GeomAbs_IsoV){
-	        for(j = 1; j < theDiscret; j++){
-	          U1 += stepU;
-	          V1 += stepV;
-	          S.D0(U1,V1,P);
-	          DrawTo(P,thePolyData,thePts);
-	        }
-	      }
-	      break;
+        if(theIsoType == GeomAbs_IsoV){
+                for(j = 1; j < theDiscret; j++){
+                  U1 += stepU;
+                  V1 += stepV;
+                  S.D0(U1,V1,P);
+                  DrawTo(P,thePolyData,thePts);
+                }
+              }
+              break;
       case GeomAbs_Sphere :
       case GeomAbs_Torus :
       case GeomAbs_OffsetSurface :
       case GeomAbs_OtherSurface :
-      	for(j = 1; j < theDiscret; j++){
-	        U1 += stepU;
-	        V1 += stepV;
-	        S.D0(U1,V1,P);
-	        DrawTo(P,thePolyData,thePts);
-	      }
-	      break;
+        for(j = 1; j < theDiscret; j++){
+                U1 += stepU;
+                V1 += stepV;
+                S.D0(U1,V1,P);
+                DrawTo(P,thePolyData,thePts);
+              }
+              break;
       case GeomAbs_BezierSurface :
       case GeomAbs_BSplineSurface :
-      	for(j = 1; j <= theDiscret/2; j++){
+        for(j = 1; j <= theDiscret/2; j++){
           Standard_Real aStep = (theIsoType == GeomAbs_IsoV) ? stepU*2. : stepV*2.;
-	        CreateIso__(S, theIsoType, U1, V1, aStep, thePolyData, thePts);
-	        U1 += stepU*2.;
-	        V1 += stepV*2.;
-	      }
-	      break;
+                CreateIso__(S, theIsoType, U1, V1, aStep, thePolyData, thePts);
+                U1 += stepU*2.;
+                V1 += stepV*2.;
+              }
+              break;
       case GeomAbs_SurfaceOfExtrusion :
       case GeomAbs_SurfaceOfRevolution :
-      	if((theIsoType == GeomAbs_IsoV && SurfType == GeomAbs_SurfaceOfRevolution) ||
-	         (theIsoType == GeomAbs_IsoU && SurfType == GeomAbs_SurfaceOfExtrusion)) 
+        if((theIsoType == GeomAbs_IsoV && SurfType == GeomAbs_SurfaceOfRevolution) ||
+                 (theIsoType == GeomAbs_IsoU && SurfType == GeomAbs_SurfaceOfExtrusion)) 
         {
-	        if(SurfType == GeomAbs_SurfaceOfExtrusion) 
+                if(SurfType == GeomAbs_SurfaceOfExtrusion) 
             break;
-	        for(j = 1; j < theDiscret; j++){
-	          U1 += stepU;
-	          V1 += stepV;
-	          S.D0(U1,V1,P);
-	          DrawTo(P,thePolyData,thePts);
-	        }
-	      }else{
-	        CurvType = (S.BasisCurve())->GetType();
-	        switch(CurvType){
-	        case GeomAbs_Line :
-	          break;
-	        case GeomAbs_Circle :
-	        case GeomAbs_Ellipse :
-	          for (j = 1; j < theDiscret; j++) {
-	            U1 += stepU;
-	            V1 += stepV;
-	            S.D0(U1,V1,P);
-	            DrawTo(P,thePolyData,thePts);
-	          }
-	          break;
-	        case GeomAbs_Parabola :
-	        case GeomAbs_Hyperbola :
-	        case GeomAbs_BezierCurve :
-	        case GeomAbs_BSplineCurve :
-	        case GeomAbs_OtherCurve :
-	          for(j = 1; j <= theDiscret/2; j++){
+                for(j = 1; j < theDiscret; j++){
+                  U1 += stepU;
+                  V1 += stepV;
+                  S.D0(U1,V1,P);
+                  DrawTo(P,thePolyData,thePts);
+                }
+              }else{
+                CurvType = (S.BasisCurve())->GetType();
+                switch(CurvType){
+                case GeomAbs_Line :
+                  break;
+                case GeomAbs_Circle :
+                case GeomAbs_Ellipse :
+                  for (j = 1; j < theDiscret; j++) {
+                    U1 += stepU;
+                    V1 += stepV;
+                    S.D0(U1,V1,P);
+                    DrawTo(P,thePolyData,thePts);
+                  }
+                  break;
+                case GeomAbs_Parabola :
+                case GeomAbs_Hyperbola :
+                case GeomAbs_BezierCurve :
+                case GeomAbs_BSplineCurve :
+                case GeomAbs_OtherCurve :
+                  for(j = 1; j <= theDiscret/2; j++){
               Standard_Real aStep = (theIsoType == GeomAbs_IsoV) ? stepU*2. : stepV*2.;
-  	          CreateIso__(S, theIsoType, U1, V1, aStep, thePolyData, thePts);
-	            U1 += stepU*2.;
-	            V1 += stepV*2.;
-	          }
-	          break;
-	        }
-	      }
+                  CreateIso__(S, theIsoType, U1, V1, aStep, thePolyData, thePts);
+                    U1 += stepU*2.;
+                    V1 += stepV*2.;
+                  }
+                  break;
+                }
+              }
       }
     }
     S.D0(U2,V2,P);
@@ -473,9 +473,9 @@ void
 GEOM_WireframeFace:: 
 CreateIso__(const BRepAdaptor_Surface& theSurface, 
             GeomAbs_IsoType theIsoType,
-				    Standard_Real& theU, 
-				    Standard_Real& theV, 
-				    Standard_Real theStep, 
+                                    Standard_Real& theU, 
+                                    Standard_Real& theV, 
+                                    Standard_Real theStep, 
             vtkPolyData* thePolyData,
             vtkPoints* thePts)
 {

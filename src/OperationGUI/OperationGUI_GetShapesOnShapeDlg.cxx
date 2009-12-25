@@ -267,7 +267,7 @@ void OperationGUI_GetShapesOnShapeDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection(GEOM_ALLSHAPES);
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 }
 
 //=================================================================================
@@ -333,8 +333,8 @@ bool OperationGUI_GetShapesOnShapeDlg::execute (ObjectList& objects)
 
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
   GEOM::GEOM_Object_var anObj = anOper->GetShapesOnShapeAsCompound(myObject2, myObject1,
-								   (CORBA::Short) aLimit,
-								   aState);
+                                                                   (CORBA::Short) aLimit,
+                                                                   aState);
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());

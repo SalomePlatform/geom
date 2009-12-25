@@ -101,7 +101,7 @@ Standard_EXPORT ~BlockFix_PeriodicSurfaceModifier();
  //
  Standard_EXPORT friend Handle_Standard_Type& BlockFix_PeriodicSurfaceModifier_Type_();
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ Standard_EXPORT Standard_Boolean              IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

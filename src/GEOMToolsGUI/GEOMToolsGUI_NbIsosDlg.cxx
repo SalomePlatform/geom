@@ -174,16 +174,16 @@ void GEOMToolsGUI_NbIsosDlg::ClickOnHelp()
     app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);
   }
   else {
-		QString platform;
+                QString platform;
 #ifdef WIN32
-		platform = "winapplication";
+                platform = "winapplication";
 #else
-		platform = "application";
+                platform = "application";
 #endif
     SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
-			     QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-			     arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-			     QObject::tr("BUT_OK"));
+                             QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
+                             arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
+                             QObject::tr("BUT_OK"));
   }
 }
 

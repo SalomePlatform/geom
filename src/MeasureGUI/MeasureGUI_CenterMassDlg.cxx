@@ -116,7 +116,7 @@ void MeasureGUI_CenterMassDlg::Init()
   connect( myGrp->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_POINT") );
   globalSelection();
@@ -218,7 +218,7 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection();
   displayPreview();

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_Inter3d.cxx
-// Created:	Tue Jan 27 15:14:13 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTAlgo_Inter3d.cxx
+// Created:     Tue Jan 27 15:14:13 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTAlgo_Builder.ixx>
 
@@ -185,15 +185,15 @@
       //
       aItF2.Initialize(aLF2);
       for (; aItF2.More(); aItF2.Next()) {
-	const TopoDS_Face& aF2y=TopoDS::Face(aItF2.Value());
-	bIsSDF=NMTTools_Tools::AreFacesSameDomain(aF1x, aF2y, aCtx);
-	if (bIsSDF) {
-	  NMTTools_CoupleOfShape aCS;
-	  //
-	  aCS.SetShape1(aF1x);
-	  aCS.SetShape2(aF2y);
-	  aLCS.Append(aCS);
-	}
+        const TopoDS_Face& aF2y=TopoDS::Face(aItF2.Value());
+        bIsSDF=NMTTools_Tools::AreFacesSameDomain(aF1x, aF2y, aCtx);
+        if (bIsSDF) {
+          NMTTools_CoupleOfShape aCS;
+          //
+          aCS.SetShape1(aF1x);
+          aCS.SetShape2(aF2y);
+          aLCS.Append(aCS);
+        }
       }
     }
   }//for (i=1; i<=aNbFF; ++i)
@@ -266,8 +266,8 @@
       const TopoDS_Shape& aE=aME(j);
       //
       if (myImagesEdges.HasImage(aE)) {
-	aMFP.Add(i);
-	break;
+        aMFP.Add(i);
+        break;
       }
     }
   }// for (i=1; i<=aNb; ++i)
@@ -302,8 +302,8 @@
       const TopoDS_Edge& aE=TopoDS::Edge(anExp.Current());
       //
       if (!myImagesEdges.HasImage(aE)) {
-	aWES.AddStartElement(aE);
-	continue;
+        aWES.AddStartElement(aE);
+        continue;
       }
       //
       bIsDegenerated=BRep_Tool::Degenerated(aE);
@@ -312,36 +312,36 @@
       const TopTools_ListOfShape& aLIE=myImagesEdges.Image(aE);
       aIt.Initialize(aLIE);
       for (; aIt.More(); aIt.Next()) {
-	aSp=TopoDS::Edge(aIt.Value());
-	//
-	if (bIsDegenerated) {
-	  aSp.Orientation(aE.Orientation());
-	  aWES.AddStartElement(aSp);
-	  continue;
-	}
-	//
-	if (bIsClosed){
-	  if (!aMFence.Contains(aSp)){
-	    aMFence.Add(aSp);
-	    //
-	    if (!BRep_Tool::IsClosed(aSp, aF)){
-	      BOPTools_Tools3D::DoSplitSEAMOnFace(aSp, aF);
-	    }
-	    //
-	    aSp.Orientation(TopAbs_FORWARD);
-	    aWES.AddStartElement(aSp);
-	    //
-	    aSp.Orientation(TopAbs_REVERSED);
-	    aWES.AddStartElement(aSp);
-	    continue;
-	  }
-	}
-	//
-	bToReverse=BOPTools_Tools3D::IsSplitToReverse1(aSp, aE, aCtx);
-	if (bToReverse) {
-	  aSp.Reverse();
-	}
-	aWES.AddStartElement(aSp);
+        aSp=TopoDS::Edge(aIt.Value());
+        //
+        if (bIsDegenerated) {
+          aSp.Orientation(aE.Orientation());
+          aWES.AddStartElement(aSp);
+          continue;
+        }
+        //
+        if (bIsClosed){
+          if (!aMFence.Contains(aSp)){
+            aMFence.Add(aSp);
+            //
+            if (!BRep_Tool::IsClosed(aSp, aF)){
+              BOPTools_Tools3D::DoSplitSEAMOnFace(aSp, aF);
+            }
+            //
+            aSp.Orientation(TopAbs_FORWARD);
+            aWES.AddStartElement(aSp);
+            //
+            aSp.Orientation(TopAbs_REVERSED);
+            aWES.AddStartElement(aSp);
+            continue;
+          }
+        }
+        //
+        bToReverse=BOPTools_Tools3D::IsSplitToReverse1(aSp, aE, aCtx);
+        if (bToReverse) {
+          aSp.Reverse();
+        }
+        aWES.AddStartElement(aSp);
       }
     }
     //
@@ -350,14 +350,14 @@
       const TopTools_ListOfShape& aLE=myIn2DParts.FindFromKey(aF);
       aIt.Initialize(aLE);
       for (; aIt.More(); aIt.Next()) {
-	aSp=TopoDS::Edge(aIt.Value());
-	//
-	aSp.Orientation(TopAbs_FORWARD);
-	aWES.AddStartElement(aSp);
-	//
-	aSp.Orientation(TopAbs_REVERSED);
-	aWES.AddStartElement(aSp);
-	}
+        aSp=TopoDS::Edge(aIt.Value());
+        //
+        aSp.Orientation(TopAbs_FORWARD);
+        aWES.AddStartElement(aSp);
+        //
+        aSp.Orientation(TopAbs_REVERSED);
+        aWES.AddStartElement(aSp);
+        }
     }
     //
     // 2.1.3. Add Section Parts
@@ -365,13 +365,13 @@
       const TopTools_ListOfShape& aLE=mySectionParts.FindFromKey(aF);
       aIt.Initialize(aLE);
       for (; aIt.More(); aIt.Next()) {
-	aSp=TopoDS::Edge(aIt.Value());
-	//
-	aSp.Orientation(TopAbs_FORWARD);
-	aWES.AddStartElement(aSp);
-	//
-	aSp.Orientation(TopAbs_REVERSED);
-	aWES.AddStartElement(aSp);
+        aSp=TopoDS::Edge(aIt.Value());
+        //
+        aSp.Orientation(TopAbs_FORWARD);
+        aWES.AddStartElement(aSp);
+        //
+        aSp.Orientation(TopAbs_REVERSED);
+        aWES.AddStartElement(aSp);
       }
     }
     //
@@ -391,7 +391,7 @@
     for (; aIt.More(); aIt.Next()) {
       TopoDS_Shape& aFR=aIt.Value();
       if (anOriF==TopAbs_REVERSED) {
-	aFR.Orientation(TopAbs_REVERSED);
+        aFR.Orientation(TopAbs_REVERSED);
       }
       aLFR.Append(aFR);
     }
@@ -452,7 +452,7 @@
       BOPTools_SequenceOfCurves& aSC=aFF.Curves();
       aNbCurves=aSC.Length();
       if (!aNbCurves) {
-	continue;
+        continue;
       }
       //
       const BOPTools_Curve& aBC=aSC(1);
@@ -460,8 +460,8 @@
       //
       aItPBSc.Initialize(aLPB);
       for (; aItPBSc.More(); aItPBSc.Next()) {
-	const BOPTools_PaveBlock& aPBSc=aItPBSc.Value();
-	aLPBSc.Append(aPBSc);
+        const BOPTools_PaveBlock& aPBSc=aItPBSc.Value();
+        aLPBSc.Append(aPBSc);
       }
     }// for (j=1; j<=aNbFF; ++j) 
     //
@@ -475,8 +475,8 @@
       nSpIn=aPBR.Edge();
       const TopoDS_Shape& aSpIn=aDS.Shape(nSpIn);
       if (!aMFence.Contains(aSpIn)){
-	aMFence.Add(aSpIn);
-	aLSpIn.Append(aSpIn);
+        aMFence.Add(aSpIn);
+        aLSpIn.Append(aSpIn);
       }
     }
     myIn2DParts.Add(aF, aLSpIn);
@@ -489,8 +489,8 @@
       nSpSc=aPBSc.Edge();
       const TopoDS_Shape& aSpSc=aDS.Shape(nSpSc);
       if (!aMFence.Contains(aSpSc)){
-	aMFence.Add(aSpSc);
-	aLSpSc.Append(aSpSc);
+        aMFence.Add(aSpSc);
+        aLSpSc.Append(aSpSc);
       }
     }
     mySectionParts.Add(aF, aLSpSc);
@@ -538,7 +538,7 @@
       nSp=aPBR1.Edge();
       const TopoDS_Shape& aSp1=aDS.Shape(nSp);
       if (aSp1.IsSame(aE)) {
-	continue;
+        continue;
       }
     }
     //modified by NIZNHY-PKV Fri Jan 21 17:01:14 2005 t
@@ -591,14 +591,14 @@
       //
       nV1=aPBR.Pave1().Index();
       if (aDS.IsNewShape(nV1)) {
-	const TopoDS_Shape& aV1=aDS.Shape(nV1);
-	myQueryShapes.Add(aV1);
+        const TopoDS_Shape& aV1=aDS.Shape(nV1);
+        myQueryShapes.Add(aV1);
       }
       //
       nV2=aPBR.Pave2().Index();
       if (aDS.IsNewShape(nV2)) {
-	const TopoDS_Shape& aV2=aDS.Shape(nV2);
-	myQueryShapes.Add(aV2);
+        const TopoDS_Shape& aV2=aDS.Shape(nV2);
+        myQueryShapes.Add(aV2);
       }
     }
   }
@@ -636,7 +636,7 @@
 // purpose: 
 //=======================================================================
   Standard_Boolean NMTAlgo_Builder::IsSameDomainF(const TopoDS_Face& aF1,
-						  const TopoDS_Face& aF2)const
+                                                  const TopoDS_Face& aF2)const
 {
   Standard_Boolean bFlag=Standard_False;
   TopTools_ListIteratorOfListOfShape aItF1, aItF2;
@@ -657,11 +657,11 @@
     for (; aItF2.More(); aItF2.Next()) {
       const TopoDS_Shape& aF2y=aItF2.Value();
       if (!mySDFaces.Contains(aF2y)){
-	continue;
+        continue;
       }
       const TopoDS_Shape& aFSD2y=mySDFaces.FindFromKey(aF2y);
       if (aFSD1x.IsSame(aFSD2y)) {
-	return !bFlag;
+        return !bFlag;
       }
     }
   }

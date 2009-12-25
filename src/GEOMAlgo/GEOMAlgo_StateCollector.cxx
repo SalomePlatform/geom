@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_StateCollector.cxx
-// Created:	Thu Mar 10 09:42:11 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_StateCollector.cxx
+// Created:     Thu Mar 10 09:42:11 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_StateCollector.ixx>
 

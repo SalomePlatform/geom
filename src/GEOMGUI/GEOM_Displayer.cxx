@@ -202,7 +202,7 @@ static string getEntry( GEOM::GEOM_Object_ptr object )
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( string(IOR) ) );
       if ( SO )
-	return SO->GetID();
+        return SO->GetID();
     }
   }
   return "";
@@ -293,8 +293,8 @@ GEOM_Displayer::~GEOM_Displayer()
  */
 //=================================================================
 void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
-			     const bool updateViewer,
-			     SALOME_View* theViewFrame )
+                             const bool updateViewer,
+                             SALOME_View* theViewFrame )
 {
   SALOME_View* vf = theViewFrame ? theViewFrame : GetActiveView();
   if ( vf )
@@ -343,7 +343,7 @@ void GEOM_Displayer::Display( GEOM::GEOM_Object_ptr theObj, const bool updateVie
 void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool forced,
                             const bool updateViewer,
-			    SALOME_View* theViewFrame )
+                            SALOME_View* theViewFrame )
 {
   if ( theIO.IsNull() )
     return;
@@ -355,7 +355,7 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
     if ( prs ) {
       vf->Erase( prs, forced );
       if ( updateViewer )
-	vf->Repaint();
+        vf->Repaint();
       delete prs;  // delete presentation because displayer is its owner
     }
   }
@@ -403,19 +403,19 @@ void GEOM_Displayer::Redisplay( const Handle(SALOME_InteractiveObject)& theIO,
       SUIT_ViewManager* vman = wnd->getViewManager();
       if ( vman )
       {
-	SUIT_ViewModel* vmodel = vman->getViewModel();
-	if ( vmodel )
-	{
-	  SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
-	  if ( view )
-	  {
-	    if ( view->isVisible( theIO ) || view == GetActiveView() )
-	    {
-	      Erase( theIO, true, false, view );
-	      Display( theIO, updateViewer, view );
-	    }
-	  }
-	}
+        SUIT_ViewModel* vmodel = vman->getViewModel();
+        if ( vmodel )
+        {
+          SALOME_View* view = dynamic_cast<SALOME_View*>(vmodel);
+          if ( view )
+          {
+            if ( view->isVisible( theIO ) || view == GetActiveView() )
+            {
+              Erase( theIO, true, false, view );
+              Display( theIO, updateViewer, view );
+            }
+          }
+        }
       }
     }
   }
@@ -553,30 +553,30 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         AISShape->SetInfiniteState( myShape.Infinite() || myShape.ShapeType() == TopAbs_VERTEX );
 
         // Setup shape properties here ..., e.g. display mode, color, transparency, etc
-	AISShape->SetDisplayMode( myDisplayMode );
+        AISShape->SetDisplayMode( myDisplayMode );
         AISShape->SetShadingColor( myShadingColor );
 
-	// Set color and number for iso lines
-	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-	QColor col = aResMgr->colorValue( "Geometry", "isos_color",
+        // Set color and number for iso lines
+        SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+        QColor col = aResMgr->colorValue( "Geometry", "isos_color",
                                           QColor(int(0.5*255), int(0.5*255), int(0.5*255)) );
-	Quantity_Color aColor = SalomeApp_Tools::color( col );
-	int anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
-	int aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
+        Quantity_Color aColor = SalomeApp_Tools::color( col );
+        int anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
+        int aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
 
-	Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
-	anAspect->SetNumber( anUIsoNumber );
-	anAspect->SetColor( aColor );
-	AISShape->Attributes()->SetUIsoAspect( anAspect );
+        Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
+        anAspect->SetNumber( anUIsoNumber );
+        anAspect->SetColor( aColor );
+        AISShape->Attributes()->SetUIsoAspect( anAspect );
 
-	anAspect = AISShape->Attributes()->VIsoAspect();
-	anAspect->SetNumber( aVIsoNumber );
-	anAspect->SetColor( aColor );
-	AISShape->Attributes()->SetVIsoAspect( anAspect );
+        anAspect = AISShape->Attributes()->VIsoAspect();
+        anAspect->SetNumber( aVIsoNumber );
+        anAspect->SetColor( aColor );
+        AISShape->Attributes()->SetVIsoAspect( anAspect );
 
         if ( HasColor() )
         {
-	  AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
+          AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
           if ( myShape.ShapeType() == TopAbs_VERTEX )
           {
             Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
@@ -586,55 +586,55 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             AISShape->Attributes()->SetPointAspect( anAspect );
           }
         }
-	else
-	{
-	  if ( myShape.ShapeType() == TopAbs_VERTEX )
-	  {
-	    col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
-	    aColor = SalomeApp_Tools::color( col );
-	    
-	    Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
-	    anAspect->SetColor( aColor );
-	    anAspect->SetScale( myScaleOfMarker );
-	    anAspect->SetTypeOfMarker( myTypeOfMarker );
-	    AISShape->Attributes()->SetPointAspect( anAspect );
-	  }
-	  else
-	  {
-	    // Set line aspect
-	    col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
-	    aColor = SalomeApp_Tools::color( col );
-	    
-	    Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
-	    anAspect->SetColor( aColor );
-	    AISShape->Attributes()->SetLineAspect( anAspect );
-	    
-	    // Set unfree boundaries aspect
-	    anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
-	    anAspect->SetColor( aColor );
-	    AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
-	    
-	    // Set free boundaries aspect
-	    col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
-	    aColor = SalomeApp_Tools::color( col );
-	    
-	    anAspect = AISShape->Attributes()->FreeBoundaryAspect();
-	    anAspect->SetColor( aColor );
-	    AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
-	    
-	    // Set wire aspect
-	    col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
-	    aColor = SalomeApp_Tools::color( col );
-	    
-	    anAspect = AISShape->Attributes()->WireAspect();
-	    anAspect->SetColor( aColor );
-	    AISShape->Attributes()->SetWireAspect( anAspect );
-	    
-	    // bug [SALOME platform 0019868]
-	    // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
-	    AISShape->SetOwnDeviationAngle( 10*PI/180 );
-	  }
-	}
+        else
+        {
+          if ( myShape.ShapeType() == TopAbs_VERTEX )
+          {
+            col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
+            aColor = SalomeApp_Tools::color( col );
+            
+            Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+            anAspect->SetColor( aColor );
+            anAspect->SetScale( myScaleOfMarker );
+            anAspect->SetTypeOfMarker( myTypeOfMarker );
+            AISShape->Attributes()->SetPointAspect( anAspect );
+          }
+          else
+          {
+            // Set line aspect
+            col = aResMgr->colorValue( "Geometry", "wireframe_color", QColor( 255, 255, 0 ) );
+            aColor = SalomeApp_Tools::color( col );
+            
+            Handle(Prs3d_LineAspect) anAspect = AISShape->Attributes()->LineAspect();
+            anAspect->SetColor( aColor );
+            AISShape->Attributes()->SetLineAspect( anAspect );
+            
+            // Set unfree boundaries aspect
+            anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
+            anAspect->SetColor( aColor );
+            AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
+            
+            // Set free boundaries aspect
+            col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
+            aColor = SalomeApp_Tools::color( col );
+            
+            anAspect = AISShape->Attributes()->FreeBoundaryAspect();
+            anAspect->SetColor( aColor );
+            AISShape->Attributes()->SetFreeBoundaryAspect( anAspect );
+            
+            // Set wire aspect
+            col = aResMgr->colorValue( "Geometry", "line_color", QColor( 255, 0, 0 ) );
+            aColor = SalomeApp_Tools::color( col );
+            
+            anAspect = AISShape->Attributes()->WireAspect();
+            anAspect->SetColor( aColor );
+            AISShape->Attributes()->SetWireAspect( anAspect );
+            
+            // bug [SALOME platform 0019868]
+            // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
+            AISShape->SetOwnDeviationAngle( 10*PI/180 );
+          }
+        }
 
         if ( HasWidth() )
           AISShape->SetWidth( GetWidth() );
@@ -656,72 +656,72 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->SetOwner( anObj );
         }
 
-	// Get color and other properties from GEOM_Object
-	SUIT_Session* session = SUIT_Session::session();
-	SUIT_Application* app = session->activeApplication();
-	if ( app )
-	{
-	  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-	  if ( study )
-	  {
-	    Handle( SALOME_InteractiveObject ) anIO = AISShape->getIO();
-	    if ( !anIO.IsNull() )
-	    {
-	      _PTR(SObject) SO ( study->studyDS()->FindObjectID( anIO->getEntry() ) );
-	      if ( SO )
-	      {
-		// get CORBA reference to data object
-		CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
-		if ( !CORBA::is_nil( object ) )
-		{
-		  // downcast to GEOM object
-		  GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
-		  if ( !aGeomObject->_is_nil() )
-		  {
-		    SALOMEDS::Color aSColor = aGeomObject->GetColor();
-		    bool hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
-		    if( !hasColor && aGeomObject->GetType() == GEOM_GROUP ) // auto color for group
-		    {
-		      GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
-		      GEOM::GEOM_IGroupOperations_var anOperations = aGeomGen->GetIGroupOperations( study->id() );
-		      GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( aGeomObject );
-		      if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() )
-		      {
-			QList<SALOMEDS::Color> aReservedColors;
+        // Get color and other properties from GEOM_Object
+        SUIT_Session* session = SUIT_Session::session();
+        SUIT_Application* app = session->activeApplication();
+        if ( app )
+        {
+          SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+          if ( study )
+          {
+            Handle( SALOME_InteractiveObject ) anIO = AISShape->getIO();
+            if ( !anIO.IsNull() )
+            {
+              _PTR(SObject) SO ( study->studyDS()->FindObjectID( anIO->getEntry() ) );
+              if ( SO )
+              {
+                // get CORBA reference to data object
+                CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
+                if ( !CORBA::is_nil( object ) )
+                {
+                  // downcast to GEOM object
+                  GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
+                  if ( !aGeomObject->_is_nil() )
+                  {
+                    SALOMEDS::Color aSColor = aGeomObject->GetColor();
+                    bool hasColor = aSColor.R >= 0 && aSColor.G >= 0 && aSColor.B >= 0;
+                    if( !hasColor && aGeomObject->GetType() == GEOM_GROUP ) // auto color for group
+                    {
+                      GEOM::GEOM_Gen_var aGeomGen = GeometryGUI::GetGeomGen();
+                      GEOM::GEOM_IGroupOperations_var anOperations = aGeomGen->GetIGroupOperations( study->id() );
+                      GEOM::GEOM_Object_var aMainObject = anOperations->GetMainShape( aGeomObject );
+                      if ( !aMainObject->_is_nil() && aMainObject->GetAutoColor() )
+                      {
+                        QList<SALOMEDS::Color> aReservedColors;
 
-			SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( app );
-			CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
-			if ( strcmp(IOR.in(), "") != 0 )
-			{
-			  _PTR(Study) aStudy = study->studyDS();
-			  _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( string(IOR) ) );
-			  _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
-			  for( ; it->More(); it->Next() )
-			  {
-			    _PTR(SObject) aChildSObject( it->Value() );
-			    GEOM::GEOM_Object_var aChildObject =
-			      GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
-			    if( CORBA::is_nil( aChildObject ) )
-			      continue;
+                        SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( app );
+                        CORBA::String_var IOR = app->orb()->object_to_string( aMainObject );
+                        if ( strcmp(IOR.in(), "") != 0 )
+                        {
+                          _PTR(Study) aStudy = study->studyDS();
+                          _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( string(IOR) ) );
+                          _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
+                          for( ; it->More(); it->Next() )
+                          {
+                            _PTR(SObject) aChildSObject( it->Value() );
+                            GEOM::GEOM_Object_var aChildObject =
+                              GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aChildSObject));
+                            if( CORBA::is_nil( aChildObject ) )
+                              continue;
 
-			    if( aChildObject->GetType() != GEOM_GROUP )
-			      continue;
+                            if( aChildObject->GetType() != GEOM_GROUP )
+                              continue;
 
-			    SALOMEDS::Color aReservedColor = aChildObject->GetColor();
-			    aReservedColors.append( aReservedColor );
-			  }
-			}
+                            SALOMEDS::Color aReservedColor = aChildObject->GetColor();
+                            aReservedColors.append( aReservedColor );
+                          }
+                        }
 
-			aSColor = getUniqueColor( aReservedColors );
-			hasColor = true;
-		      }
-		    }
+                        aSColor = getUniqueColor( aReservedColors );
+                        hasColor = true;
+                      }
+                    }
 
-		    if( hasColor )
-		    {
-		      Quantity_Color aQuanColor( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
-		      AISShape->SetColor( aQuanColor );
-		      AISShape->SetShadingColor( aQuanColor );
+                    if( hasColor )
+                    {
+                      Quantity_Color aQuanColor( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
+                      AISShape->SetColor( aQuanColor );
+                      AISShape->SetShadingColor( aQuanColor );
                       if ( myShape.ShapeType() == TopAbs_VERTEX ) {
                         Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
                         anAspect->SetColor( aQuanColor );
@@ -729,43 +729,43 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                         anAspect->SetTypeOfMarker( myTypeOfMarker );
                         AISShape->Attributes()->SetPointAspect( anAspect );
                       }
-		    }
-		    // ... marker type
-		    GEOM::marker_type aType = aGeomObject->GetMarkerType();
-		    GEOM::marker_size aSize = aGeomObject->GetMarkerSize();
-		    if ( aType > GEOM::MT_NONE && aType < GEOM::MT_USER && aSize > GEOM::MS_NONE && aSize <= GEOM::MS_70 ) {
-		      Aspect_TypeOfMarker aMType = (Aspect_TypeOfMarker)( (int)aType-1 );
-		      double aMSize = ((int)aSize+1)*0.5;
-		      Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
-		      anAspect->SetScale( aMSize );
-		      anAspect->SetTypeOfMarker( aMType );
-		      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
-		      if ( hasColor )
-			aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
-		      anAspect->SetColor( aQuanColor );
-		      AISShape->Attributes()->SetPointAspect( anAspect );
-		    }
-		    else if ( aType == GEOM::MT_USER ) {
-		      int aTextureId = aGeomObject->GetMarkerTexture();
-		      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
-		      if ( hasColor ) aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
-		      Standard_Integer aWidth, aHeight;
-		      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
-		      if ( !aTexture.IsNull() ) {
-			static int TextureId = 0;
-			Handle(Prs3d_PointAspect) aTextureAspect = new Prs3d_PointAspect(aQuanColor,
-											 ++TextureId,
-											 aWidth, aHeight,
-											 aTexture );
-			AISShape->Attributes()->SetPointAspect( aTextureAspect );
-		      }
-		    }
-		  }
-		}
-	      }
-	    }
-	  }
-	}
+                    }
+                    // ... marker type
+                    GEOM::marker_type aType = aGeomObject->GetMarkerType();
+                    GEOM::marker_size aSize = aGeomObject->GetMarkerSize();
+                    if ( aType > GEOM::MT_NONE && aType < GEOM::MT_USER && aSize > GEOM::MS_NONE && aSize <= GEOM::MS_70 ) {
+                      Aspect_TypeOfMarker aMType = (Aspect_TypeOfMarker)( (int)aType-1 );
+                      double aMSize = ((int)aSize+1)*0.5;
+                      Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+                      anAspect->SetScale( aMSize );
+                      anAspect->SetTypeOfMarker( aMType );
+                      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
+                      if ( hasColor )
+                        aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
+                      anAspect->SetColor( aQuanColor );
+                      AISShape->Attributes()->SetPointAspect( anAspect );
+                    }
+                    else if ( aType == GEOM::MT_USER ) {
+                      int aTextureId = aGeomObject->GetMarkerTexture();
+                      Quantity_Color aQuanColor = SalomeApp_Tools::color( aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) ) );
+                      if ( hasColor ) aQuanColor = Quantity_Color( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
+                      Standard_Integer aWidth, aHeight;
+                      Handle(Graphic3d_HArray1OfBytes) aTexture = GeometryGUI::getTexture( getStudy(), aTextureId, aWidth, aHeight );
+                      if ( !aTexture.IsNull() ) {
+                        static int TextureId = 0;
+                        Handle(Prs3d_PointAspect) aTextureAspect = new Prs3d_PointAspect(aQuanColor,
+                                                                                         ++TextureId,
+                                                                                         aWidth, aHeight,
+                                                                                         aTexture );
+                        AISShape->Attributes()->SetPointAspect( aTextureAspect );
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
 
         // AISShape->SetName(???); ??? necessary to set name ???
         occPrs->AddObject( AISShape );
@@ -973,7 +973,7 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( const TopoDS_Shape& theShape )
  */
 //=================================================================
 SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
-					       SALOME_View* theViewFrame )
+                                               SALOME_View* theViewFrame )
 {
   SALOME_Prs* prs = 0;
   internalReset();
@@ -989,35 +989,35 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
       theIO->setEntry( entry.toLatin1().constData() );
       if ( !theIO.IsNull() )
       {
-	// set interactive object
-	setIO( theIO );
-	//  Find SOBject (because shape should be published previously)
-	SUIT_Session* session = SUIT_Session::session();
-	SUIT_Application* app = session->activeApplication();
-	if ( app )
-	{
-	  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-	  if ( study )
-	  {
-	    _PTR(SObject) SO ( study->studyDS()->FindObjectID( theIO->getEntry() ) );
-	    if ( SO )
-	    {
-	      // get CORBA reference to data object
-	      CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
-	      if ( !CORBA::is_nil( object ) )
-	      {
-		// downcast to GEOM object
-		GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( object );
-		if ( !GeomObject->_is_nil() )
-		{
-		  // finally set shape
-		  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
-		  myType = GeomObject->GetType();
-		}
-	      }
-	    }
-	  }
-	}
+        // set interactive object
+        setIO( theIO );
+        //  Find SOBject (because shape should be published previously)
+        SUIT_Session* session = SUIT_Session::session();
+        SUIT_Application* app = session->activeApplication();
+        if ( app )
+        {
+          SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+          if ( study )
+          {
+            _PTR(SObject) SO ( study->studyDS()->FindObjectID( theIO->getEntry() ) );
+            if ( SO )
+            {
+              // get CORBA reference to data object
+              CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
+              if ( !CORBA::is_nil( object ) )
+              {
+                // downcast to GEOM object
+                GEOM::GEOM_Object_var GeomObject = GEOM::GEOM_Object::_narrow( object );
+                if ( !GeomObject->_is_nil() )
+                {
+                  // finally set shape
+                  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
+                  myType = GeomObject->GetType();
+                }
+              }
+            }
+          }
+        }
       }
       UpdatePrs( prs );  // Update presentation by using of the double dispatch
     }
@@ -1051,8 +1051,8 @@ SALOME_Prs* GEOM_Displayer::buildSubshapePresentation(const TopoDS_Shape& aShape
       theIO->setEntry(entry.toLatin1().constData());
       if (!theIO.IsNull())
       {
-	// set interactive object
-	setIO(theIO);
+        // set interactive object
+        setIO(theIO);
         // finally set shape
         setShape(aShape);
         myType = GEOM_SUBSHAPE;
@@ -1127,7 +1127,7 @@ void GEOM_Displayer::GlobalSelection( const int theMode, const bool update )
  */
 //=================================================================
 void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
-				      const bool update, const QList<int>* theSubShapes )
+                                      const bool update, const QList<int>* theSubShapes )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -1161,7 +1161,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
     {
       ic = viewer->getAISContext();
       if ( !ic.IsNull() )
-	ic->RemoveFilters();
+        ic->RemoveFilters();
     }
 
   if ( theModes.Contains( GEOM_ALLOBJECTS ) )
@@ -1183,7 +1183,7 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
       TColStd_MapIteratorOfMapOfInteger anIter( theModes );
       QList<SUIT_SelectionFilter*> aListOfFilters;
       for ( ; anIter.More(); anIter.Next() )
-	{
+        {
           SUIT_SelectionFilter* aFilter;
           int aMode = anIter.Key();
           if ( aMode == GEOM_COMPOUNDFILTER )
@@ -1191,9 +1191,9 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
           else    
             aFilter = getFilter( aMode );
 
-	  if ( aFilter )
-	    aListOfFilters.append( aFilter );
-	}
+          if ( aFilter )
+            aListOfFilters.append( aFilter );
+        }
 
       aFilter = new GEOM_LogicalFilter( aListOfFilters, GEOM_LogicalFilter::LO_OR );
     }
@@ -1204,10 +1204,10 @@ void GEOM_Displayer::GlobalSelection( const TColStd_MapOfInteger& theModes,
     {
       sm->installFilter( aFilter );
       if ( !ic.IsNull() )
-	{
-	  Handle(GEOM_OCCFilter) anOCCFilter = new GEOM_OCCFilter( sm );
-	  ic->AddFilter( anOCCFilter );
-	}
+        {
+          Handle(GEOM_OCCFilter) anOCCFilter = new GEOM_OCCFilter( sm );
+          ic->AddFilter( anOCCFilter );
+        }
     }
 }
 
@@ -1419,7 +1419,7 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
     {
       aTolerance /= 2;
       if( aTolerance < 1 )
-	break;
+        break;
     }
     //cout << "Iteration N" << anIterations << " (tolerance=" << aTolerance << ")"<< endl;
 
@@ -1440,9 +1440,9 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
       //cout << h << " ";
       if( abs( h - aHue ) < aTolerance )
       {
-	ok = false;
-	//cout << "break (diff = " << abs( h - aHue ) << ")";
-	break;
+        ok = false;
+        //cout << "break (diff = " << abs( h - aHue ) << ")";
+        break;
       }
     }
     //cout << endl;

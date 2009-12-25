@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_BuilderShape.cxx
-// Created:	
-// Author:	Peter KURNEV 
+// File:        GEOMAlgo_BuilderShape.cxx
+// Created:     
+// Author:      Peter KURNEV 
 //
 #include <GEOMAlgo_BuilderShape.ixx>
 //=======================================================================

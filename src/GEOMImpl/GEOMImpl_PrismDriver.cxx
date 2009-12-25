@@ -93,13 +93,13 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
         }
         if (aV.Magnitude() > Precision::Confusion()) {
           aV.Normalize();
-	  if (aType == PRISM_BASE_VEC_H_2WAYS) {
-	    gp_Trsf aTrsf;
-	    aTrsf.SetTranslation( (-aV) * aCI.GetH() );
-	    BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-	    aShapeBase = aTransformation.Shape();
-	    aCI.SetH( aCI.GetH()*2 );
-	  }
+          if (aType == PRISM_BASE_VEC_H_2WAYS) {
+            gp_Trsf aTrsf;
+            aTrsf.SetTranslation( (-aV) * aCI.GetH() );
+            BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+            aShapeBase = aTransformation.Shape();
+            aCI.SetH( aCI.GetH()*2 );
+          }
           aShape = BRepPrimAPI_MakePrism(aShapeBase, aV * aCI.GetH(), Standard_False).Shape();
         }
       }
@@ -118,14 +118,14 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       if (!V1.IsNull() && !V2.IsNull()) {
         gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aV.Magnitude() > gp::Resolution()) {
-	  if (aType == PRISM_BASE_TWO_PNT_2WAYS)
-	    {
-	      gp_Trsf aTrsf;
-	      aTrsf.SetTranslation(-aV);
-	      BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-	      aShapeBase = aTransformation.Shape();
-	      aV = aV * 2;
-	    }
+          if (aType == PRISM_BASE_TWO_PNT_2WAYS)
+            {
+              gp_Trsf aTrsf;
+              aTrsf.SetTranslation(-aV);
+              BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+              aShapeBase = aTransformation.Shape();
+              aV = aV * 2;
+            }
           aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
         }
       }
@@ -136,13 +136,13 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
     gp_Vec aV (aCI.GetDX(), aCI.GetDY(), aCI.GetDZ());
     if (aV.Magnitude() > gp::Resolution()) {
       if (aType == PRISM_BASE_DXDYDZ_2WAYS)
-	{
-	  gp_Trsf aTrsf;
-	  aTrsf.SetTranslation(-aV);
-	  BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-	  aShapeBase = aTransformation.Shape();
-	  aV = aV * 2;
-	}
+        {
+          gp_Trsf aTrsf;
+          aTrsf.SetTranslation(-aV);
+          BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+          aShapeBase = aTransformation.Shape();
+          aV = aV * 2;
+        }
       aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
     }
   }
@@ -175,10 +175,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PrismDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PrismDriver",
-			                                 sizeof(GEOMImpl_PrismDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_PrismDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

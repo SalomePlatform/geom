@@ -45,7 +45,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-						    bool modal, Qt::WindowFlags fl )
+                                                    bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_FILLING" ) ) );
@@ -146,7 +146,7 @@ void GenerationGUI_FillingDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_FILLING" ) );
   resize(100,100);
@@ -275,7 +275,7 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_COMPOUND );
   displayPreview();
 }
@@ -357,7 +357,7 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
   GEOM::GEOM_Object_var anObj = anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, 
-						     myTol2D, myTol3D, myNbIter, myIsApprox );
+                                                     myTol2D, myTol3D, myNbIter, myIsApprox );
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )

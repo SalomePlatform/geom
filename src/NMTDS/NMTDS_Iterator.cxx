@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_Iterator.cxx
-// Created:	Sun May 07 15:04:41 2006
-// Author:	Peter KURNEV
+// File:        NMTDS_Iterator.cxx
+// Created:     Sun May 07 15:04:41 2006
+// Author:      Peter KURNEV
 //
 #include <NMTDS_Iterator.ixx>
 //
@@ -117,7 +117,7 @@
 // purpose: 
 //=======================================================================
   void NMTDS_Iterator::Initialize(const TopAbs_ShapeEnum aType1,
-				  const TopAbs_ShapeEnum aType2)
+                                  const TopAbs_ShapeEnum aType2)
 {
   Standard_Integer iX;
   //
@@ -152,8 +152,8 @@
 // purpose: 
 //=======================================================================
   void NMTDS_Iterator::Current(Standard_Integer& aIndex1,
-			       Standard_Integer& aIndex2,
-			       Standard_Boolean& aWithSubShape) const
+                               Standard_Integer& aIndex2,
+                               Standard_Boolean& aWithSubShape) const
 {
   const NMTDS_PassKeyBoolean& aPKB=myIterator.Value();
   aPKB.Ids(aIndex1, aIndex2);
@@ -250,7 +250,7 @@
       const TopoDS_Shape& aSi=myDS->Shape(i);
       aTi=aSi.ShapeType();
       if (!NMTDS_Tools::HasBRep(aTi)){
-	continue;
+        continue;
       }
       const Bnd_Box& aBoxEx=aMSB.FindFromKey(aSi);
       aSelector.Clear();
@@ -259,7 +259,7 @@
       aNbSD=aBBTree.Select(aSelector);
       //
       if (!aNbSD){
-	continue;
+        continue;
       }
       //
       const TColStd_ListOfInteger& aLI=aSelector.Indices();
@@ -269,56 +269,56 @@
       //
       aIt.Initialize(aLI);
       for (; aIt.More(); aIt.Next()) {
-	jB=aIt.Value();  // box index in MII
-	j=aMII.Find(jB); // DS index
-	if (j>=i1 && j<=i2) {
-	  continue;// same range
-	}
-	//
-	aPKXB.SetIds(i, j);
-	//
-	if (aMPKXB.Add(aPKXB)) {
-	  bFlag=Standard_False;// Bounding boxes are intersected
-	  const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
-	  const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
-	  if (aBoxi.IsOut(aBoxj)) {
-	    bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
-	  }
-	  const TopoDS_Shape& aSj=myDS->Shape(j);
-	  aTj=aSj.ShapeType();
-	  iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
-	  //bFlag=(iStatus==2);
-	  aPKXB.SetFlag(bFlag);
-	  myLists[iX].Append(aPKXB);
-	  //
-	  // VSD prepare
-	  if (iX==5) { //VV
-	    aLV.Append(j);
-	  }
-	}// if (aMPKXB.Add(aPKXB)) {
+        jB=aIt.Value();  // box index in MII
+        j=aMII.Find(jB); // DS index
+        if (j>=i1 && j<=i2) {
+          continue;// same range
+        }
+        //
+        aPKXB.SetIds(i, j);
+        //
+        if (aMPKXB.Add(aPKXB)) {
+          bFlag=Standard_False;// Bounding boxes are intersected
+          const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
+          const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
+          if (aBoxi.IsOut(aBoxj)) {
+            bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
+          }
+          const TopoDS_Shape& aSj=myDS->Shape(j);
+          aTj=aSj.ShapeType();
+          iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
+          //bFlag=(iStatus==2);
+          aPKXB.SetFlag(bFlag);
+          myLists[iX].Append(aPKXB);
+          //
+          // VSD prepare
+          if (iX==5) { //VV
+            aLV.Append(j);
+          }
+        }// if (aMPKXB.Add(aPKXB)) {
       }// for (; aIt.More(); aIt.Next()) {
       //
       // VSD treatment
       aNbLV=aLV.Extent();
       if (aNbLV) {
-	TColStd_ListOfInteger aLV1;
-	//
-	const TopoDS_Vertex& aVi=TopoDS::Vertex(aSi);
-	aIt.Initialize(aLV);
-	for (; aIt.More(); aIt.Next()) {
-	  j=aIt.Value();  
-	  const TopoDS_Shape&  aSj=myDS->Shape(j);
-	  const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
-	  iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
-	  if (!iFlag) {
-	    aLV1.Append(j);
-	  }
-	  else {
-	    aPKXB.SetIds(i, j);
-	    aMPKXB.Remove(aPKXB);
-	  }
-	}
-	aMVSD.Bind(i, aLV1);
+        TColStd_ListOfInteger aLV1;
+        //
+        const TopoDS_Vertex& aVi=TopoDS::Vertex(aSi);
+        aIt.Initialize(aLV);
+        for (; aIt.More(); aIt.Next()) {
+          j=aIt.Value();  
+          const TopoDS_Shape&  aSj=myDS->Shape(j);
+          const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
+          iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
+          if (!iFlag) {
+            aLV1.Append(j);
+          }
+          else {
+            aPKXB.SetIds(i, j);
+            aMPKXB.Remove(aPKXB);
+          }
+        }
+        aMVSD.Bind(i, aLV1);
       }
     }//for (i=i1; i<=i2; ++i) {
   }//for (iR=1; iR<aNbR; ++iR) {
@@ -334,7 +334,7 @@
 //purpose  : 
 //=======================================================================
   void NMTDS_Iterator::FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD,
-				TColStd_DataMapOfIntegerListOfInteger& bMVSD)
+                                TColStd_DataMapOfIntegerListOfInteger& bMVSD)
 {
   Standard_Boolean bFound;
   Standard_Integer aNbVSD, iCnt, i, j, k;
@@ -382,39 +382,39 @@
       iCnt=0;
       aItj.Initialize(aDMIMI);
       for (; aItj.More(); aItj.Next()) {
-	j=aItj.Key();
-	if (aMF.Contains(j)) {
-	  continue;
-	}
-	//
-	//TColStd_MapOfInteger& aMIj=aDMIMI.ChangeFind(j);
-	TColStd_MapOfInteger *pMj=(TColStd_MapOfInteger *)&aItj.Value();
-	TColStd_MapOfInteger& aMIj=*pMj;
-	//
-	aItMI.Initialize(aMIj);
-	for (; aItMI.More(); aItMI.Next()) {
-	  k=aItMI.Key();
-	  bFound=aMIi.Contains(k);
-	  if (bFound) {
-	    break;
-	  }
-	}
-	if (!bFound) {
-	  continue;
-	}
-	//
-	aItMI.Initialize(aMIj);
-	for (; aItMI.More(); aItMI.Next()) {
-	  k=aItMI.Key();
-	  aMIi.Add(k);
-	}
-	//
-	if (aMF.Add(j)) {
-	  ++iCnt;
-	}
+        j=aItj.Key();
+        if (aMF.Contains(j)) {
+          continue;
+        }
+        //
+        //TColStd_MapOfInteger& aMIj=aDMIMI.ChangeFind(j);
+        TColStd_MapOfInteger *pMj=(TColStd_MapOfInteger *)&aItj.Value();
+        TColStd_MapOfInteger& aMIj=*pMj;
+        //
+        aItMI.Initialize(aMIj);
+        for (; aItMI.More(); aItMI.Next()) {
+          k=aItMI.Key();
+          bFound=aMIi.Contains(k);
+          if (bFound) {
+            break;
+          }
+        }
+        if (!bFound) {
+          continue;
+        }
+        //
+        aItMI.Initialize(aMIj);
+        for (; aItMI.More(); aItMI.Next()) {
+          k=aItMI.Key();
+          aMIi.Add(k);
+        }
+        //
+        if (aMF.Add(j)) {
+          ++iCnt;
+        }
       } //for (; aItj.More(); aItj.Next()) {
       if (!iCnt) {
-	break;
+        break;
       }
     } // while (1) {
     //
@@ -422,9 +422,9 @@
     aItMI.Initialize(aMIi);
     for (; aItMI.More(); aItMI.Next()) {
       k=aItMI.Key();
-	if (k!=i) {
-	  aLV.Append(k);
-	}
+        if (k!=i) {
+          aLV.Append(k);
+        }
     }
     bMVSD.Bind(i, aLV);
   }// for (; aIti.More(); aIti.Next()) {
@@ -444,8 +444,8 @@
       const TColStd_ListOfInteger& aLV=aItX.Value();
       aIt.Initialize(aLV);
       for (; aIt.More(); aIt.Next()) {
-	j=aIt.Value();
-	printf(" %d", j);
+        j=aIt.Value();
+        printf(" %d", j);
       }
       printf(")\n");
     }

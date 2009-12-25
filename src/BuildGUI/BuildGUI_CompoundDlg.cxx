@@ -107,7 +107,7 @@ void BuildGUI_CompoundDlg::Init()
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
   connect( GroupShapes->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( ( (SalomeApp_Application*)(SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection( GEOM_ALLSHAPES );
 
@@ -192,7 +192,7 @@ void BuildGUI_CompoundDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   globalSelection( GEOM_ALLSHAPES );
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -249,7 +249,7 @@ void BuildGUI_CompoundDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
-					 /*theInheritFirstArg=*/false );
+                                         /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
+                                         /*theInheritFirstArg=*/false );
   }
 }

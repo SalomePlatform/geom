@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	IGESImport.cxx
-// Created:	Wed May 19 14:36:35 2004
-// Author:	Pavel TELKOV
-//		<ptv@mutex.nnov.opencascade.com>
+// File:        IGESImport.cxx
+// Created:     Wed May 19 14:36:35 2004
+// Author:      Pavel TELKOV
+//              <ptv@mutex.nnov.opencascade.com>
 //
 #include "utilities.h"
 
@@ -71,7 +71,7 @@ IGESIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& theFormatName,
                        TCollection_AsciiString&       theError,
-		       const TDF_Label&)
+                       const TDF_Label&)
   {
     // Set "C" numeric locale to save numbers correctly
     Kernel_Utils::Localizer loc;
@@ -84,39 +84,39 @@ IGESIMPORT_EXPORT
 
       if (status == IFSelect_RetDone) {
 
-	if( theFormatName == "IGES_UNIT" ) {
-	  Handle(IGESData_IGESModel) aModel = 
-	    Handle(IGESData_IGESModel)::DownCast(aReader.Model());
-	  gp_Pnt P(1.0,0.0,0.0);
-	  if(!aModel.IsNull()) {
-	    Handle(TCollection_HAsciiString) aUnitName = 
-	      aModel->GlobalSection().UnitName();
-	    //cout<<"aUnitName = "<<aUnitName->ToCString()<<endl;
-	    //cout<<"aUnitFlag = "<<aModel->GlobalSection().UnitFlag()<<endl;
-	    if( aUnitName->String()=="MM" ) {
-	      P = gp_Pnt(0.001,0.0,0.0);
-	    }
-	    else if( aUnitName->String()=="CM" ) {
-	      P = gp_Pnt(0.01,0.0,0.0);
-	    }
-	  }
-	  BRep_Builder B;
-	  TopoDS_Vertex V;
-	  B.MakeVertex(V,P,1.e-7);
-	  aResShape = V;
-	  return aResShape;
-	}
-	if( theFormatName == "IGES_SCALE" ) {
-	  //cout<<"need re-scale a model"<<endl;
-	  // set UnitFlag to 'meter'
-	  Handle(IGESData_IGESModel) aModel = 
-	    Handle(IGESData_IGESModel)::DownCast(aReader.Model());
-	  if(!aModel.IsNull()) {
-	    IGESData_GlobalSection aGS = aModel->GlobalSection();
-	    aGS.SetUnitFlag(6);
-	    aModel->SetGlobalSection(aGS);
-	  }
-	}
+        if( theFormatName == "IGES_UNIT" ) {
+          Handle(IGESData_IGESModel) aModel = 
+            Handle(IGESData_IGESModel)::DownCast(aReader.Model());
+          gp_Pnt P(1.0,0.0,0.0);
+          if(!aModel.IsNull()) {
+            Handle(TCollection_HAsciiString) aUnitName = 
+              aModel->GlobalSection().UnitName();
+            //cout<<"aUnitName = "<<aUnitName->ToCString()<<endl;
+            //cout<<"aUnitFlag = "<<aModel->GlobalSection().UnitFlag()<<endl;
+            if( aUnitName->String()=="MM" ) {
+              P = gp_Pnt(0.001,0.0,0.0);
+            }
+            else if( aUnitName->String()=="CM" ) {
+              P = gp_Pnt(0.01,0.0,0.0);
+            }
+          }
+          BRep_Builder B;
+          TopoDS_Vertex V;
+          B.MakeVertex(V,P,1.e-7);
+          aResShape = V;
+          return aResShape;
+        }
+        if( theFormatName == "IGES_SCALE" ) {
+          //cout<<"need re-scale a model"<<endl;
+          // set UnitFlag to 'meter'
+          Handle(IGESData_IGESModel) aModel = 
+            Handle(IGESData_IGESModel)::DownCast(aReader.Model());
+          if(!aModel.IsNull()) {
+            IGESData_GlobalSection aGS = aModel->GlobalSection();
+            aGS.SetUnitFlag(6);
+            aModel->SetGlobalSection(aGS);
+          }
+        }
 
         MESSAGE("ImportIGES : all Geometry Transfer");
         //OCC 5.1.2 porting
@@ -146,7 +146,7 @@ IGESIMPORT_EXPORT
 //          break;
 //        }
         theError = "Wrong format of the imported file. Can't import file.";
-	aResShape.Nullify();
+        aResShape.Nullify();
       }
     }
     catch(Standard_Failure) {

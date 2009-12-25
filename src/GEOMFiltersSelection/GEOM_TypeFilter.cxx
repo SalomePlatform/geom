@@ -50,9 +50,9 @@ bool GEOM_TypeFilter::isOk( const SUIT_DataOwner* sOwner ) const
   if ( !CORBA::is_nil( obj ) )
     {
       if (!myIsShapeType)
-	return obj->GetType() == type();
+        return obj->GetType() == type();
       else
-	return obj->GetShapeType() == type();
+        return obj->GetShapeType() == type();
     }
   
   return false;

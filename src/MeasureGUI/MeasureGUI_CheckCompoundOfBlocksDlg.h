@@ -65,7 +65,7 @@ private:
   void                                Init();
   void                                enterEvent( QEvent* );
   bool                                getBCErrors( bool&,
-						   GEOM::GEOM_IBlocksOperations::BCErrors& );
+                                                   GEOM::GEOM_IBlocksOperations::BCErrors& );
   void                                activateSelection();
 
 private:

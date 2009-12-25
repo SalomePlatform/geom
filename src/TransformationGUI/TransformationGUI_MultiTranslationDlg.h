@@ -41,7 +41,7 @@ class TransformationGUI_MultiTranslationDlg : public GEOMBase_Skeleton
 
 public:
   TransformationGUI_MultiTranslationDlg( GeometryGUI*, QWidget* = 0,
-					 bool = false, Qt::WindowFlags = 0 );
+                                         bool = false, Qt::WindowFlags = 0 );
   ~TransformationGUI_MultiTranslationDlg();
 
 protected:

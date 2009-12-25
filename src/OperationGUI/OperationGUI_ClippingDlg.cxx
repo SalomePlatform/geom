@@ -160,12 +160,12 @@ void OperationGUI_ClippingDlg::Init()
     center[2] = ( bounds[4] + bounds[5] ) / 2.0;
 
     double width = sqrt( ( bounds[1]-bounds[0] ) * ( bounds[1]-bounds[0] ) +
-			 ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
-			 ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
+                         ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
+                         ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
 
     double distance = sqrt( ( position[0]-center[0] ) * ( position[0]-center[0] ) +
-			    ( position[1]-center[1] ) * ( position[1]-center[1] ) +
-			    ( position[2]-center[2] ) * ( position[2]-center[2] ) );
+                            ( position[1]-center[1] ) * ( position[1]-center[1] ) +
+                            ( position[2]-center[2] ) * ( position[2]-center[2] ) );
 
     vtkFloatingPointType range[2] = { distance - width/2.0, distance + width/2.0 };
 
@@ -307,12 +307,12 @@ void OperationGUI_ClippingDlg::onReset()
     center[2] = ( bounds[4] + bounds[5] ) / 2.0;
 
     double width = sqrt( ( bounds[1]-bounds[0] ) * ( bounds[1]-bounds[0] ) +
-			 ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
-			 ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
+                         ( bounds[3]-bounds[2] ) * ( bounds[3]-bounds[2] ) +
+                         ( bounds[5]-bounds[4] ) * ( bounds[5]-bounds[4] ) );
 
     double distance = sqrt( ( position[0]-center[0] ) * ( position[0]-center[0] ) +
-			    ( position[1]-center[1] ) * ( position[1]-center[1] ) +
-			    ( position[2]-center[2] ) * ( position[2]-center[2] ) );
+                            ( position[1]-center[1] ) * ( position[1]-center[1] ) +
+                            ( position[2]-center[2] ) * ( position[2]-center[2] ) );
 
     vtkFloatingPointType range[2] = { distance - width/2.0, distance + width/2.0 };
 

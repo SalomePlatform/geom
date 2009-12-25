@@ -62,7 +62,7 @@ NMTTools_StdMapNodeOfMapOfPaveBlock(const BOPTools_PaveBlock& K,const TCollectio
  // Type management
  //
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

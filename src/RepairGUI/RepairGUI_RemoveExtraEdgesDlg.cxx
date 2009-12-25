@@ -46,7 +46,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_RemoveExtraEdgesDlg::RepairGUI_RemoveExtraEdgesDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-							      bool modal )
+                                                              bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
@@ -118,7 +118,7 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME" ) );
   resize(100,100);
@@ -230,7 +230,7 @@ void RepairGUI_RemoveExtraEdgesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
 }
@@ -307,7 +307,7 @@ void RepairGUI_RemoveExtraEdgesDlg::restoreSubShapes( SALOMEDS::Study_ptr   theS
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GetInPlaceByHistory
-					 /*theInheritFirstArg=*/true );
+                                         /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GetInPlaceByHistory
+                                         /*theInheritFirstArg=*/true );
   }
 }

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_SurfaceTools.cxx
-// Created:	Thu Jan 27 11:05:16 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_SurfaceTools.cxx
+// Created:     Thu Jan 27 11:05:16 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_SurfaceTools.ixx>
 
@@ -47,9 +47,9 @@
 //purpose  : 
 //=======================================================================
  Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
-						  const GeomAdaptor_Surface& aGAS,
-						  const Standard_Real aTol,
-						  TopAbs_State& aState)
+                                                  const GeomAdaptor_Surface& aGAS,
+                                                  const Standard_Real aTol,
+                                                  TopAbs_State& aState)
 {
   Standard_Integer iErr;
   Standard_Real aDp, aR;
@@ -103,9 +103,9 @@
 //purpose  : 
 //=======================================================================
  Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
-						  const Handle(Geom_Surface)& aSurf,
-						  const Standard_Real aTol,
-						  TopAbs_State& aState)
+                                                  const Handle(Geom_Surface)& aSurf,
+                                                  const Standard_Real aTol,
+                                                  TopAbs_State& aState)
 {
   Standard_Integer iErr;
   GeomAdaptor_Surface aGAS;
@@ -143,7 +143,7 @@
 //purpose  : 
 //=======================================================================
 Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
-					      const gp_Sphere& aSph)
+                                              const gp_Sphere& aSph)
 {
   Standard_Real aD;
   //
@@ -157,7 +157,7 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 //purpose  : 
 //=======================================================================
 Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
-					      const gp_Cylinder& aCyl)
+                                              const gp_Cylinder& aCyl)
 {
   Standard_Real aD;
   //
@@ -172,7 +172,7 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 //purpose  : 
 //=======================================================================
 Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
-					      const gp_Pln& aPL)
+                                              const gp_Pln& aPL)
 {
   Standard_Real aD;
   //
@@ -190,9 +190,9 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 //purpose  : 
 //=======================================================================
 Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
-						  const gp_Pnt& aP2,
-						  const gp_Cylinder& aCyl,
-						  const Standard_Real aTol)
+                                                  const gp_Pnt& aP2,
+                                                  const gp_Cylinder& aCyl,
+                                                  const Standard_Real aTol)
 {
   Standard_Boolean bRet=Standard_False;
   Standard_Real aSM;
@@ -223,8 +223,8 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic(const Handle(Geom_Surface)& a
   aGAS.Load(aSurf);
   aType=aGAS.GetType();
   bRet=(aType==GeomAbs_Plane || 
-	aType==GeomAbs_Cylinder ||
-	aType==GeomAbs_Sphere);
+        aType==GeomAbs_Cylinder ||
+        aType==GeomAbs_Sphere);
   return bRet;
 }
 //=======================================================================
@@ -232,34 +232,34 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic(const Handle(Geom_Surface)& a
 //purpose  : 
 //=======================================================================
 Standard_Boolean GEOMAlgo_SurfaceTools::IsConformState(const TopAbs_State aST1,
-						       const GEOMAlgo_State aST2)
+                                                       const GEOMAlgo_State aST2)
 {
   Standard_Boolean bRet=Standard_False;
   //
   switch (aST2) {
     case GEOMAlgo_ST_IN:
       if (aST1==TopAbs_IN) {
-	bRet=!bRet;
+        bRet=!bRet;
       }
       break;
     case GEOMAlgo_ST_OUT:
       if (aST1==TopAbs_OUT) {
-	bRet=!bRet;
+        bRet=!bRet;
       }
       break;
     case GEOMAlgo_ST_ON:
       if (aST1==TopAbs_ON) {
-	bRet=!bRet;
+        bRet=!bRet;
       }
       break;
     case GEOMAlgo_ST_ONIN:
       if (aST1==TopAbs_ON || aST1==TopAbs_IN) {
-	bRet=!bRet;
+        bRet=!bRet;
       }
       break;
     case GEOMAlgo_ST_ONOUT:
       if (aST1==TopAbs_ON || aST1==TopAbs_OUT) {
-	bRet=!bRet;
+        bRet=!bRet;
       }
       break;
     default:

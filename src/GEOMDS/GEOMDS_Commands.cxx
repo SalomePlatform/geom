@@ -53,7 +53,7 @@ GEOMDS_Commands::GEOMDS_Commands(const TDF_Label& Main)
 // purpose  :
 //=======================================================================
 TDF_Label GEOMDS_Commands::Generated(const TopoDS_Shape& S,
-				     const TCollection_ExtendedString& Name)
+                                     const TCollection_ExtendedString& Name)
 {
   TDF_Label NewLab = myLab.NewChild();
   TNaming_Builder B(NewLab);
@@ -69,8 +69,8 @@ TDF_Label GEOMDS_Commands::Generated(const TopoDS_Shape& S,
 // purpose  : 
 //=======================================================================
 TDF_Label GEOMDS_Commands::Generated(const TopoDS_Shape& S1,
-				     const TopoDS_Shape& S2,
-				     const TCollection_ExtendedString& Name)
+                                     const TopoDS_Shape& S2,
+                                     const TCollection_ExtendedString& Name)
 {
   TDF_Label NewLab = myLab.NewChild();
   TNaming_Builder B(NewLab);
@@ -86,7 +86,7 @@ TDF_Label GEOMDS_Commands::Generated(const TopoDS_Shape& S1,
 // purpose  :
 //=======================================================================
 TDF_Label GEOMDS_Commands::AddShape(const TopoDS_Shape& S,
-				    const TCollection_ExtendedString& Name)
+                                    const TCollection_ExtendedString& Name)
 {
   TDF_Label NewLab = myLab.NewChild();
   TNaming_Builder B(NewLab);
@@ -101,7 +101,7 @@ TDF_Label GEOMDS_Commands::AddShape(const TopoDS_Shape& S,
 // purpose  : SAME than AddShape() : will be renamed later
 //=======================================================================
 TDF_Label GEOMDS_Commands::AddIndependentShape(const TopoDS_Shape& S, 
-					       const TCollection_AsciiString& nameIOR)
+                                               const TCollection_AsciiString& nameIOR)
 {
   TDF_Label NewLab = myLab.NewChild();
   TNaming_Builder B(NewLab);
@@ -116,8 +116,8 @@ TDF_Label GEOMDS_Commands::AddIndependentShape(const TopoDS_Shape& S,
 // purpose  :
 //=======================================================================
 TDF_Label GEOMDS_Commands::AddDependentShape(const TopoDS_Shape& S,
-					     const TCollection_AsciiString& nameIOR,
-					     const TDF_Label& mainLab)
+                                             const TCollection_AsciiString& nameIOR,
+                                             const TDF_Label& mainLab)
 {
   TDF_Label NewLab = myLab.NewChild();
   TNaming_Builder B(NewLab);
@@ -135,8 +135,8 @@ TDF_Label GEOMDS_Commands::AddDependentShape(const TopoDS_Shape& S,
 // purpose  : 
 //=======================================================================
 TDF_Label GEOMDS_Commands::AddConstructiveElement(const TopoDS_Shape& S,
-						  const TCollection_ExtendedString& nameIOR,
-						  const GEOMDS_ConstructiveType& aType) 
+                                                  const TCollection_ExtendedString& nameIOR,
+                                                  const GEOMDS_ConstructiveType& aType) 
 {
   TDF_Label NewLab = myLab.NewChild();
   TNaming_Builder B(NewLab);
@@ -155,7 +155,7 @@ TDF_Label GEOMDS_Commands::AddConstructiveElement(const TopoDS_Shape& S,
 //          : Return false if attribute exist before
 //=======================================================================
 Standard_Boolean GEOMDS_Commands::AddIORNameAttribute(const TDF_Label& aLabel,
-						      const TCollection_ExtendedString& nameIOR)
+                                                      const TCollection_ExtendedString& nameIOR)
 {
   if( this->HasIOR(aLabel) )
     return false ;
@@ -184,8 +184,8 @@ Standard_Boolean GEOMDS_Commands::IsConstructiveElement(const TDF_Label& aLabel)
 //          : topology ' returnTopo' and type 'returnType'
 //=======================================================================
 Standard_Boolean GEOMDS_Commands::IsConstructiveElement(const TDF_Label& aLabel,
-							TopoDS_Shape& returnTopo,
-							GEOMDS_ConstructiveType& returnType)
+                                                        TopoDS_Shape& returnTopo,
+                                                        GEOMDS_ConstructiveType& returnType)
 {
   Handle(TDataStd_Integer) anAttType ;
   Handle(TNaming_NamedShape) anAttTopo ;
@@ -205,7 +205,7 @@ Standard_Boolean GEOMDS_Commands::IsConstructiveElement(const TDF_Label& aLabel,
 // purpose  : return true and 'returnTopo' if a topology is found on 'aLabel'
 //=======================================================================
 Standard_Boolean GEOMDS_Commands::GetShape(const TDF_Label& aLabel,
-					   TopoDS_Shape& returnTopo)
+                                           TopoDS_Shape& returnTopo)
 {
   Handle(TNaming_NamedShape) anAttTopo ;
   if( aLabel.FindAttribute(TNaming_NamedShape::GetID(), anAttTopo)) {
@@ -237,7 +237,7 @@ Standard_Boolean GEOMDS_Commands::IsDependentShape(const TDF_Label& aLabel)
 //          : a dependent object, otherwise return false.
 //=======================================================================
 Standard_Boolean GEOMDS_Commands::GetMainShapeLabel(const TDF_Label& aLabel,
-						    TDF_Label& returnMainLabel)
+                                                    TDF_Label& returnMainLabel)
 {
   Handle(TDF_Reference) anAttRef ;
   if( aLabel.FindAttribute(TDF_Reference::GetID(), anAttRef)) {
@@ -264,7 +264,7 @@ Standard_Boolean GEOMDS_Commands::ClearAllIOR(const TDF_Label& aLabel)
     if( L.FindAttribute(TDataStd_Name::GetID(), anAttName) ) {
       notTested = L.ForgetAttribute(TDataStd_Name::GetID()) ;
       if(notTested)
-	MESSAGE("in GEOMDS_Commands::ClearAllIOR : IOR CLEARED" )
+        MESSAGE("in GEOMDS_Commands::ClearAllIOR : IOR CLEARED" )
     ClearAllIOR(L);
     }
   }
@@ -290,7 +290,7 @@ Standard_Boolean GEOMDS_Commands::HasIOR(const TDF_Label& aLabel)
 //          : and define 'returnNameIOR'
 //=======================================================================
 Standard_Boolean GEOMDS_Commands::ReturnNameIOR(const TDF_Label& aLabel,
-						TCollection_ExtendedString& returnNameIOR)
+                                                TCollection_ExtendedString& returnNameIOR)
 {
   Handle(TDataStd_Name) anAttName ;
   if( !aLabel.FindAttribute(TDataStd_Name::GetID(), anAttName) )

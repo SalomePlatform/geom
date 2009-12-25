@@ -88,7 +88,7 @@ Standard_EXPORT virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aS
  // Type management
  //
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

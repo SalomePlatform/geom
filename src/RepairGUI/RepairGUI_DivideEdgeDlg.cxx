@@ -141,7 +141,7 @@ void RepairGUI_DivideEdgeDlg::Init()
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "DEVIDE_EDGE_NEW_OBJECT_NAME" ) );
   resize(100,100);
@@ -261,7 +261,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
           {
             myIndex = aMap( 1 );
             myObject = aSelectedObj;
-	    myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( myIndex ) );
+            myEditCurrentArgument->setText( aName += QString( ":edge_%1" ).arg( myIndex ) );
           }
           else if ( aType == TopAbs_EDGE ) // single shape selection
           {
@@ -317,7 +317,7 @@ void RepairGUI_DivideEdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
 //  myObject = GEOM::GEOM_Object::_nil();
   myIndex = -1;

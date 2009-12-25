@@ -302,7 +302,7 @@ SetVisibility(int theVisibility)
 { 
 #ifdef MYDEBUG
   MESSAGE ( "GEOM_Actor::SetVisibility = "<<theVisibility <<"  myIsSelected="<< myIsSelected
-	    << " theVisibility="<<theVisibility<<" myIsPreselected="<<myIsPreselected );
+            << " theVisibility="<<theVisibility<<" myIsPreselected="<<myIsPreselected );
 #endif
 
   SALOME_Actor::SetVisibility(theVisibility);
@@ -471,21 +471,21 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
         myWireframeFaceSource->AddFace(aFace);
         myShadingFaceSource->AddFace(aFace);
         TopExp_Explorer anEdgeExp(aFaceExp.Current(), TopAbs_EDGE);
-	for(; anEdgeExp.More(); anEdgeExp.Next()) {
-	  const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
+        for(; anEdgeExp.More(); anEdgeExp.Next()) {
+          const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
           if(!BRep_Tool::Degenerated(anEdge)){
-	    // compute the number of faces
-	    int aNbOfFaces = theEdgeMap.FindFromKey(anEdge).Extent();
-	    switch(aNbOfFaces){
-	    case 0:  // isolated edge
-	      myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
-	      break;
-	    case 1:  // edge in only one face
-	      myOneFaceEdgeSource->AddEdge(anEdge,theIsVector);
-	      break;
-	    default: // edge shared by at least two faces
-	      mySharedEdgeSource->AddEdge(anEdge,theIsVector);
-	    }
+            // compute the number of faces
+            int aNbOfFaces = theEdgeMap.FindFromKey(anEdge).Extent();
+            switch(aNbOfFaces){
+            case 0:  // isolated edge
+              myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+              break;
+            case 1:  // edge in only one face
+              myOneFaceEdgeSource->AddEdge(anEdge,theIsVector);
+              break;
+            default: // edge shared by at least two faces
+              mySharedEdgeSource->AddEdge(anEdge,theIsVector);
+            }
           }
         }
       }
@@ -746,8 +746,8 @@ GEOM_Actor
 bool
 GEOM_Actor
 ::PreHighlight(vtkInteractorStyle *theInteractorStyle, 
-	       SVTK_SelectionEvent* theSelectionEvent,
-	       bool theIsHighlight)
+               SVTK_SelectionEvent* theSelectionEvent,
+               bool theIsHighlight)
 {
 #ifdef MYDEBUG
   MESSAGE ( this<<" GEOM_Actor::PreHighlight (3) theIsHighlight="<<theIsHighlight );
@@ -773,8 +773,8 @@ GEOM_Actor
       //      cout << " nbio = " << nbio << endl;
 
       if( !mySelector->IsSelected( myIO ) ) {
-	//	printf ("!!!!!!!!!!!!!!!!\n");
-	SetPreSelected( true );
+        //      printf ("!!!!!!!!!!!!!!!!\n");
+        SetPreSelected( true );
       }
     }
     default:
@@ -795,8 +795,8 @@ GEOM_Actor
 bool
 GEOM_Actor
 ::Highlight(vtkInteractorStyle *theInteractorStyle, 
-	    SVTK_SelectionEvent* theSelectionEvent,
-	    bool theIsHighlight)
+            SVTK_SelectionEvent* theSelectionEvent,
+            bool theIsHighlight)
 {
   // define the selection of object
 #ifdef MYDEBUG
@@ -858,13 +858,13 @@ void GEOM_Actor::GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result)
     else
       {
       distance = sqrt(
-	(pos[0] - this->Position[0])*(pos[0] - this->Position[0]) +
+        (pos[0] - this->Position[0])*(pos[0] - this->Position[0]) +
         (pos[1] - this->Position[1])*(pos[1] - this->Position[1]) +
         (pos[2] - this->Position[2])*(pos[2] - this->Position[2]));
       for (i = 0; i < 3; i++)
-	{
+        {
         Rz[i] = (pos[i] - this->Position[i])/distance;
-	}
+        }
       }
   
     vtkMath::Cross(vup,Rz,Rx);

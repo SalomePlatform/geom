@@ -52,7 +52,7 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeEllipse (Handle(GEOM_Object) thePnt,
                                                    Handle(GEOM_Object) theVec,
                                                    double theRMajor, double theRMinor,
-						   Handle(GEOM_Object) theVecMaj);
+                                                   Handle(GEOM_Object) theVecMaj);
 
   Standard_EXPORT Handle(GEOM_Object) MakeArc (Handle(GEOM_Object) thePnt1,
                                                Handle(GEOM_Object) thePnt2,
@@ -64,8 +64,8 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                                                      bool                theSense);
 
   Standard_EXPORT Handle(GEOM_Object) MakeArcOfEllipse (Handle(GEOM_Object) thePnt1,
-							Handle(GEOM_Object) thePnt2,
-							Handle(GEOM_Object) thePnt3);
+                                                        Handle(GEOM_Object) thePnt2,
+                                                        Handle(GEOM_Object) thePnt3);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (list<Handle(GEOM_Object)> thePoints);
   Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (list<Handle(GEOM_Object)> thePoints,

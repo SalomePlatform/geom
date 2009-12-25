@@ -53,7 +53,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					      bool modal, Qt::WindowFlags fl )
+                                              bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SUBSHAPE" ) ) );
@@ -140,7 +140,7 @@ void EntityGUI_SubShapeDlg::Init()
   connect( GroupPoints->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( SubShapeToggled() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged( )), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged( )), this, SLOT( SelectionIntoArgument() ) );
 
   updateButtonState();
   resize(100,100);
@@ -344,7 +344,7 @@ void EntityGUI_SubShapeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   SubShapeToggled();
   updateButtonState();
 }
@@ -427,7 +427,7 @@ void EntityGUI_SubShapeDlg::ComboTextChanged()
 // purpose  :
 //=================================================================================
 unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes( const TopoDS_Shape& S,
-						       const int shapeType ) const
+                                                       const int shapeType ) const
 {
   if ( S.IsNull() )
     return 0;
@@ -437,13 +437,13 @@ unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes( const TopoDS_Shape& S,
 
   if ( S.ShapeType() == TopAbs_COMPOUND &&
        ( TopAbs_ShapeEnum(shapeType) == TopAbs_SHAPE ||
-	 TopAbs_ShapeEnum(shapeType) == TopAbs_COMPSOLID ||
-	 TopAbs_ShapeEnum(shapeType) == TopAbs_COMPOUND ) ) {
+         TopAbs_ShapeEnum(shapeType) == TopAbs_COMPSOLID ||
+         TopAbs_ShapeEnum(shapeType) == TopAbs_COMPOUND ) ) {
     TopoDS_Iterator It( S, Standard_True, Standard_True );
     for ( ; It.More(); It.Next() ) {
       if ( M.Add( It.Value() ) ) {
         if ( TopAbs_ShapeEnum( shapeType ) == TopAbs_SHAPE ||
-	     TopAbs_ShapeEnum( shapeType ) == It.Value().ShapeType() ) {
+             TopAbs_ShapeEnum( shapeType ) == It.Value().ShapeType() ) {
           index++;
         }
       }
@@ -574,18 +574,18 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
     if (aSelList.Extent() == 1) {
       Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-	GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
 
       if (aResult && !anObj->_is_nil()) {
-	TColStd_IndexedMapOfInteger aMapIndex;
-	aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
+        TColStd_IndexedMapOfInteger aMapIndex;
+        aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
 
-	GEOM::GEOM_ILocalOperations_var aLocOp = 
-	  getGeomEngine()->GetILocalOperations(getStudyId());
+        GEOM::GEOM_ILocalOperations_var aLocOp = 
+          getGeomEngine()->GetILocalOperations(getStudyId());
 
-	for (int i = 0, n = aList->length(); i < n; i++)
-	  if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
-	    objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+        for (int i = 0, n = aList->length(); i < n; i++)
+          if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
+            objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
       }
     }
   }

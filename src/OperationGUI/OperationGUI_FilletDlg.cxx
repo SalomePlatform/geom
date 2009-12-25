@@ -495,7 +495,7 @@ void OperationGUI_FilletDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -596,20 +596,20 @@ bool OperationGUI_FilletDlg::isValid (QString& msg)
       return !myShape->_is_nil() && ok;
     case 1:
       if (Group2->RadioButton1->isChecked())
-	ok = Group2->SpinBox_DX->isValid( msg, !IsPreview() );
+        ok = Group2->SpinBox_DX->isValid( msg, !IsPreview() );
       else
       {
-	ok = Group2->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-	ok = Group2->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+        ok = Group2->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+        ok = Group2->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
     case 2:
       if (Group3->RadioButton1->isChecked())
-	ok = Group3->SpinBox_DX->isValid( msg, !IsPreview() );
+        ok = Group3->SpinBox_DX->isValid( msg, !IsPreview() );
       else
       {
-	ok = Group3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-	ok = Group3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+        ok = Group3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+        ok = Group3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
     default: return false;
@@ -645,18 +645,18 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
     {
       anObj = anOper->MakeFilletEdges(myShape, getRadius(), aList);
       if (!anObj->_is_nil())
-	aParameters << Group2->SpinBox_DX->text();
+        aParameters << Group2->SpinBox_DX->text();
     }
     else
     {
       anObj = anOper->MakeFilletEdgesR1R2(myShape,
-					  Group2->SpinBox_DY->value(),
-					  Group2->SpinBox_DZ->value(),
-					  aList);
+                                          Group2->SpinBox_DY->value(),
+                                          Group2->SpinBox_DZ->value(),
+                                          aList);
       if (!anObj->_is_nil())
       {
-	aParameters << Group2->SpinBox_DY->text();
-	aParameters << Group2->SpinBox_DZ->text();
+        aParameters << Group2->SpinBox_DY->text();
+        aParameters << Group2->SpinBox_DZ->text();
       }
     }
   }
@@ -670,16 +670,16 @@ bool OperationGUI_FilletDlg::execute (ObjectList& objects)
     if (Group3->RadioButton1->isChecked()) {
       anObj = anOper->MakeFilletFaces(myShape, getRadius(), aList);
       if (!anObj->_is_nil())
-	aParameters << Group3->SpinBox_DX->text();
+        aParameters << Group3->SpinBox_DX->text();
     }
     else {
       anObj = anOper->MakeFilletFacesR1R2(myShape,
-					  Group3->SpinBox_DY->value(),
-					  Group3->SpinBox_DZ->value(), aList);
+                                          Group3->SpinBox_DY->value(),
+                                          Group3->SpinBox_DZ->value(), aList);
       if (!anObj->_is_nil())
       {
-	aParameters << Group3->SpinBox_DY->text();
-	aParameters << Group3->SpinBox_DZ->text();
+        aParameters << Group3->SpinBox_DY->text();
+        aParameters << Group3->SpinBox_DZ->text();
       }
     }
   }

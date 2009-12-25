@@ -159,7 +159,7 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
       Standard_Real radius1 = Abs(aProperties.MinCurvature());
       Standard_Real radius2 = Abs(aProperties.MaxCurvature());
       if (Abs(radius1) > Precision::Confusion()) {
-	radius = 1.0 / radius1;
+        radius = 1.0 / radius1;
         if (Abs(radius2) > Precision::Confusion()) {
           radius = (radius + 1.0 / radius2) / 2.0;
         }
@@ -229,10 +229,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_MeasureDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_MeasureDriver",
-			                                 sizeof(GEOMImpl_MeasureDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_MeasureDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

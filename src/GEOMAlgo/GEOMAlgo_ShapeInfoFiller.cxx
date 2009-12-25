@@ -700,7 +700,7 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillNbSubShapes(const TopoDS_Shape& aS,
-						 GEOMAlgo_ShapeInfo& aInfo)
+                                                 GEOMAlgo_ShapeInfo& aInfo)
 {
   myErrorStatus=0;
   //

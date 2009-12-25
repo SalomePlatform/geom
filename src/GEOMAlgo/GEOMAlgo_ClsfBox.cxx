@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ClsfSurf.cxx
-// Created:	Wed Nov 22 10:41:47 2006
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_ClsfSurf.cxx
+// Created:     Wed Nov 22 10:41:47 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_ClsfBox.ixx>
 #include <GeomAbs_SurfaceType.hxx>
@@ -165,18 +165,18 @@
     switch (aSt) {
       case TopAbs_OUT:
         myState=aSt;
-	iNext=0;
-	break;
+        iNext=0;
+        break;
       case TopAbs_ON:
-	++aNbON;
-	break;
+        ++aNbON;
+        break;
       case TopAbs_IN:
-	++aNbIN;
-	break;
+        ++aNbIN;
+        break;
       default:
-	myState=TopAbs_UNKNOWN;
-	iNext=0;
-	break; 
+        myState=TopAbs_UNKNOWN;
+        iNext=0;
+        break; 
     }
   }
   //

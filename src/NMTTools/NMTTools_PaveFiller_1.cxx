@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_1.cxx
-// Created:	Mon Dec  8 11:47:55 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_1.cxx
+// Created:     Mon Dec  8 11:47:55 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -123,15 +123,15 @@
     for (i=0; aItX.More(); aItX.Next(), ++i) {
       aItY.Initialize(aLIX);
       for (j=0; aItY.More(); aItY.Next(), ++j) {
-	if (j>i) {
-	  n1=aItX.Value();
-	  n2=aItY.Value();
-	  myIP->Add(n1, n2, Standard_True, NMTDS_TI_VV);
-	  //
-	  BOPTools_VVInterference aVV(n1, n2);
-	  aVV.SetNewShape(nVnew);
-	  aVVs.Append(aVV);    
-	}
+        if (j>i) {
+          n1=aItX.Value();
+          n2=aItY.Value();
+          myIP->Add(n1, n2, Standard_True, NMTDS_TI_VV);
+          //
+          BOPTools_VVInterference aVV(n1, n2);
+          aVV.SetNewShape(nVnew);
+          aVVs.Append(aVV);    
+        }
       }
     }
   }//for (; aIt1.More(); aIt1.Next()) {

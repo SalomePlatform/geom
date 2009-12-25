@@ -583,7 +583,7 @@ void OperationGUI_ChamferDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -751,37 +751,37 @@ bool OperationGUI_ChamferDlg::isValid (QString& msg)
     case 1:
       if (myRadioButton[ RadioButton21 ]->isChecked())
       {
-	ok = mySpinBox[ SpinBox21 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox22 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox21 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox22 ]->isValid( msg, !IsPreview() ) && ok;
       }
       else
       {
-	ok = mySpinBox[ SpinBox23 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox24 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox23 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox24 ]->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFace[ Face1 ] > 0 && myFace[ Face2 ] > 0 && ok;
     case 2:
       if (myRadioButton[ RadioButton31 ]->isChecked())
       {
-	ok = mySpinBox[ SpinBox31 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox32 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox31 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox32 ]->isValid( msg, !IsPreview() ) && ok;
       }
       else
       {
-	ok = mySpinBox[ SpinBox33 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox34 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox33 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox34 ]->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myFaces.Extent() > 0 && ok;
     case 3:
       if (myRadioButton[ RadioButton41 ]->isChecked())
       {
-	ok = mySpinBox[ SpinBox41 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox42 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox41 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox42 ]->isValid( msg, !IsPreview() ) && ok;
       }
       else
       {
-	ok = mySpinBox[ SpinBox43 ]->isValid( msg, !IsPreview() ) && ok;
-	ok = mySpinBox[ SpinBox44 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox43 ]->isValid( msg, !IsPreview() ) && ok;
+        ok = mySpinBox[ SpinBox44 ]->isValid( msg, !IsPreview() ) && ok;
       }
       return !myShape->_is_nil() && myEdges.Extent() > 0 && ok;
     default: return false;
@@ -812,26 +812,26 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
   else if (anId == 1) {
     if (flag) {
       anObj = anOper->MakeChamferEdge(myShape,
-				      mySpinBox[ SpinBox21 ]->value(),
-				      mySpinBox[ SpinBox22 ]->value(),
-				      myFace[ Face1 ],
-				      myFace[ Face2 ]);
+                                      mySpinBox[ SpinBox21 ]->value(),
+                                      mySpinBox[ SpinBox22 ]->value(),
+                                      myFace[ Face1 ],
+                                      myFace[ Face2 ]);
       if (!anObj->_is_nil())
       {
-	aParameters << mySpinBox[ SpinBox21 ]->text();
-	aParameters << mySpinBox[ SpinBox22 ]->text();
+        aParameters << mySpinBox[ SpinBox21 ]->text();
+        aParameters << mySpinBox[ SpinBox22 ]->text();
       }
     }
     else {
       anObj = anOper->MakeChamferEdgeAD(myShape,
-					mySpinBox[ SpinBox23 ]->value(),
-					mySpinBox[ SpinBox24 ]->value() * PI180,
-					myFace[ Face1 ],
-					myFace[ Face2 ]);
+                                        mySpinBox[ SpinBox23 ]->value(),
+                                        mySpinBox[ SpinBox24 ]->value() * PI180,
+                                        myFace[ Face1 ],
+                                        myFace[ Face2 ]);
       if (!anObj->_is_nil())
       {
-	aParameters << mySpinBox[ SpinBox23 ]->text();
-	aParameters << mySpinBox[ SpinBox24 ]->text();
+        aParameters << mySpinBox[ SpinBox23 ]->text();
+        aParameters << mySpinBox[ SpinBox24 ]->text();
       }
     }
   }
@@ -845,24 +845,24 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
 
     if (flag) {
       anObj = anOper->MakeChamferFaces(myShape,
-				       mySpinBox[ SpinBox31 ]->value(),
-				       mySpinBox[ SpinBox32 ]->value(),
-				       anArray);
+                                       mySpinBox[ SpinBox31 ]->value(),
+                                       mySpinBox[ SpinBox32 ]->value(),
+                                       anArray);
       if (!anObj->_is_nil())
       {
-	aParameters << mySpinBox[ SpinBox31 ]->text();
-	aParameters << mySpinBox[ SpinBox32 ]->text();
+        aParameters << mySpinBox[ SpinBox31 ]->text();
+        aParameters << mySpinBox[ SpinBox32 ]->text();
       }
     }
     else {
       anObj = anOper->MakeChamferFacesAD(myShape,
-					 mySpinBox[ SpinBox33 ]->value(),
-					 mySpinBox[ SpinBox34 ]->value() * PI180,
-					 anArray);
+                                         mySpinBox[ SpinBox33 ]->value(),
+                                         mySpinBox[ SpinBox34 ]->value() * PI180,
+                                         anArray);
       if (!anObj->_is_nil())
       {
-	aParameters << mySpinBox[ SpinBox33 ]->text();
-	aParameters << mySpinBox[ SpinBox34 ]->text();
+        aParameters << mySpinBox[ SpinBox33 ]->text();
+        aParameters << mySpinBox[ SpinBox34 ]->text();
       }
     }
   }
@@ -873,24 +873,24 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
       anArray[ i - 1 ] = myEdges(i);
     if (flag) {
       anObj = anOper->MakeChamferEdges(myShape,
-				       mySpinBox[ SpinBox41 ]->value(),
-				       mySpinBox[ SpinBox42 ]->value(),
-				       anArray);
+                                       mySpinBox[ SpinBox41 ]->value(),
+                                       mySpinBox[ SpinBox42 ]->value(),
+                                       anArray);
       if (!anObj->_is_nil())
       {
-	aParameters << mySpinBox[ SpinBox41 ]->text();
-	aParameters << mySpinBox[ SpinBox42 ]->text();
+        aParameters << mySpinBox[ SpinBox41 ]->text();
+        aParameters << mySpinBox[ SpinBox42 ]->text();
       }
     }
     else {
       anObj = anOper->MakeChamferEdgesAD(myShape,
-					 mySpinBox[ SpinBox43 ]->value(),
-					 mySpinBox[ SpinBox44 ]->value() * PI180,
-					 anArray);
+                                         mySpinBox[ SpinBox43 ]->value(),
+                                         mySpinBox[ SpinBox44 ]->value() * PI180,
+                                         anArray);
       if (!anObj->_is_nil())
       {
-	aParameters << mySpinBox[ SpinBox43 ]->text();
-	aParameters << mySpinBox[ SpinBox44 ]->text();
+        aParameters << mySpinBox[ SpinBox43 ]->text();
+        aParameters << mySpinBox[ SpinBox44 ]->text();
       }
     }
   }

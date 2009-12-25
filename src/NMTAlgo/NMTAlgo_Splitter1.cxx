@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_Splitter1.cxx
-// Created:	Wed Feb 11 14:26:27 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTAlgo_Splitter1.cxx
+// Created:     Wed Feb 11 14:26:27 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTAlgo_Splitter1.ixx>
 #include <NMTAlgo_Splitter.hxx>
@@ -109,7 +109,7 @@
 //purpose  :
 //=======================================================================
   void NMTAlgo_Splitter1::SetMaterial(const TopoDS_Shape& aS,
-				      const Standard_Integer iMt)
+                                      const Standard_Integer iMt)
 {
   TopExp_Explorer aExp;
   //
@@ -133,7 +133,7 @@
 //purpose  :
 //=======================================================================
   void NMTAlgo_Splitter1::AddTool(const TopoDS_Shape& aS)
-					    
+                                            
 {
   SetMaterial(aS, 0);
   NMTAlgo_Splitter::AddTool(aS);
@@ -238,7 +238,7 @@
     const TopoDS_Shape& aS=aIt.Value();
     if (aS.ShapeType()==TopAbs_SOLID){
       if (myMapSWMOut.IsBound(aS)) {
-	continue;
+        continue;
       }
     }
     myBuilder.Add(aR, aS);
@@ -292,14 +292,14 @@
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aIF=aIt.Value();
       if (aMFS.Contains(aIF)) {
-	const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aIF);
-	aItLS.Initialize(aLS);
-	for ( ;aItLS.More(); aItLS.Next()) {
-	  const TopoDS_Shape& aSd=aItLS.Value();
-	  if (!aMSd.Contains(aSd)) {
-	    aMSd.Add(aSd);
-	  }
-	}
+        const TopTools_ListOfShape& aLS=aMFS.FindFromKey(aIF);
+        aItLS.Initialize(aLS);
+        for ( ;aItLS.More(); aItLS.Next()) {
+          const TopoDS_Shape& aSd=aItLS.Value();
+          if (!aMSd.Contains(aSd)) {
+            aMSd.Add(aSd);
+          }
+        }
       }
     }
     //
@@ -316,7 +316,7 @@
       //aMSd.Add(aSd);
       bFound=NMTAlgo_Tools::FindImageSolid(aFC, aMSo, aSd);
       if (!aSd.IsNull()) {
-	aMSd.Add(aSd);
+        aMSd.Add(aSd);
       }
       //modified by NIZNHY-PKV Thu Dec 23 15:09:02 2004 t
     }
@@ -334,13 +334,13 @@
       const TopoDS_Shape& aSdx=aMSdx(j);
       //
       if (aMFS.Contains(aSdx)) {
-	TopTools_ListOfShape& aLS=aMFS.ChangeFromKey(aSdx);
-	aLS.Append(aSd);
+        TopTools_ListOfShape& aLS=aMFS.ChangeFromKey(aSdx);
+        aLS.Append(aSd);
       }
       else {
-	TopTools_ListOfShape aLS;
-	aLS.Append(aSd);
-	aMFS.Add(aSdx, aLS);
+        TopTools_ListOfShape aLS;
+        aLS.Append(aSd);
+        aMFS.Add(aSdx, aLS);
       }
     }
   }
@@ -358,16 +358,16 @@
       const TopoDS_Shape& aSd=aItLS.Value();
       //
       if (!myMapSWM.IsBound(aSd)){
-	continue;
+        continue;
       }
       //
       nMt=myMapSWM.Find(aSd);
       if (!j) {
-	nMtMax=nMt;
-	continue;
+        nMtMax=nMt;
+        continue;
       }
       if (nMt>nMtMax) {
-	nMtMax=nMt;
+        nMtMax=nMt;
       }
     }
     myMapSWMOut.Bind(aSdx, nMtMax);

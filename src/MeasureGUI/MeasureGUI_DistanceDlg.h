@@ -56,8 +56,8 @@ protected:
 private:
   void                                Init();
   bool                                getParameters( double&,
-						     gp_Pnt&,
-						     gp_Pnt& );
+                                                     gp_Pnt&,
+                                                     gp_Pnt& );
 private:
   QLineEdit*                          myEditCurrentArgument;
   QLineEdit*                          mySelEdit2;

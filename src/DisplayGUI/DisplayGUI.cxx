@@ -212,8 +212,8 @@ void DisplayGUI::EraseAll()
       SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
       SUIT_ViewManager* vman = vw->getViewManager();
       if ( vman->getType() == OCCViewer_Viewer::Type() || 
-	   vman->getType() == SVTK_Viewer::Type() ) {
-	GEOM_Displayer( appStudy ).EraseAll();
+           vman->getType() == SVTK_Viewer::Type() ) {
+        GEOM_Displayer( appStudy ).EraseAll();
       }
     }
   }
@@ -258,25 +258,25 @@ void DisplayGUI::Display()
     if ( anIObject->hasEntry() ) {
       _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
       if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
-	_PTR(SComponent) SC ( SO->GetFatherComponent() );
-	// if component is selected
-	listIO.Clear();
-	_PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
-	anIter->InitEx( true );
-	while( anIter->More() ) {
-	  _PTR(SObject) valSO ( anIter->Value() );
-	  _PTR(SObject) refSO;
-	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+        _PTR(SComponent) SC ( SO->GetFatherComponent() );
+        // if component is selected
+        listIO.Clear();
+        _PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
+        anIter->InitEx( true );
+        while( anIter->More() ) {
+          _PTR(SObject) valSO ( anIter->Value() );
+          _PTR(SObject) refSO;
+          if ( !valSO->ReferencedObject( refSO ) ) {
+            listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
                                                         SC->ComponentDataType().c_str(),
                                                         valSO->GetName().c_str()) );
-	  }
-	  anIter->Next();
-	}
-	break;
+          }
+          anIter->Next();
+        }
+        break;
       }
       else {
-	listIO.Append( anIObject );
+        listIO.Append( anIObject );
       }
     }
     else {
@@ -316,25 +316,25 @@ void DisplayGUI::Erase()
     if ( anIObject->hasEntry() ) {
       _PTR(SObject) SO ( anActiveStudy->studyDS()->FindObjectID( anIObject->getEntry() ) );
       if ( SO && QString(SO->GetID().c_str()) == QString(SO->GetFatherComponent()->GetID().c_str()) ) {
-	_PTR(SComponent) SC ( SO->GetFatherComponent() );
-	// if component is selected
-	listIO.Clear();
-	_PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
-	anIter->InitEx( true );
-	while( anIter->More() ) {
-	  _PTR(SObject) valSO ( anIter->Value() );
-	  _PTR(SObject) refSO;
-	  if ( !valSO->ReferencedObject( refSO ) ) {
-	    listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
+        _PTR(SComponent) SC ( SO->GetFatherComponent() );
+        // if component is selected
+        listIO.Clear();
+        _PTR(ChildIterator) anIter ( anActiveStudy->studyDS()->NewChildIterator( SO ) );
+        anIter->InitEx( true );
+        while( anIter->More() ) {
+          _PTR(SObject) valSO ( anIter->Value() );
+          _PTR(SObject) refSO;
+          if ( !valSO->ReferencedObject( refSO ) ) {
+            listIO.Append( new SALOME_InteractiveObject(valSO->GetID().c_str(),
                                                         SC->ComponentDataType().c_str(),
                                                         valSO->GetName().c_str()) );
-	  }
-	  anIter->Next();
-	}
-	break;
+          }
+          anIter->Next();
+        }
+        break;
       }
       else {
-	listIO.Append( anIObject );
+        listIO.Append( anIObject );
       }
     }
     else {
@@ -378,8 +378,8 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
     AIS_ListIteratorOfListOfInteractive ite( List );
     while( ite.More() ) {
       if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-	ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
+        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
+        ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
       }
       ite.Next();
     }
@@ -427,12 +427,12 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
     allActors->InitTraversal();
     while (vtkActor* actor = allActors->GetNextActor()) {
       if (actor->GetVisibility()) { // only for visible actors
-	GEOM_Actor* aGeomActor = 0;
-	if ( actor->IsA( "GEOM_Actor" ) ) {
-	  aGeomActor = GEOM_Actor::SafeDownCast( actor );
-	  if ( aGeomActor )
-	    aGeomActor->SetVectorMode( mode );
-	}
+        GEOM_Actor* aGeomActor = 0;
+        if ( actor->IsA( "GEOM_Actor" ) ) {
+          aGeomActor = GEOM_Actor::SafeDownCast( actor );
+          if ( aGeomActor )
+            aGeomActor->SetVectorMode( mode );
+        }
       }
     }
   }
@@ -449,9 +449,9 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
     AIS_ListIteratorOfListOfInteractive ite( List );
     while( ite.More() ) {
       if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-	aSh->SetDisplayVectors(mode);
-	ic->RecomputePrsOnly(ite.Value());
+        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
+        aSh->SetDisplayVectors(mode);
+        ic->RecomputePrsOnly(ite.Value());
       }
       ite.Next();
     }

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_DSFiller.cxx
-// Created:	Fri Dec  5 14:06:34 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_DSFiller.cxx
+// Created:     Fri Dec  5 14:06:34 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_DSFiller.ixx>
 #include <NMTTools_PaveFiller.hxx>

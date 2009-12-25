@@ -51,7 +51,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					  bool modal )
+                                          bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_SEWING" ) ) );
@@ -79,7 +79,7 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GEOM_FREE_BOUNDARIES" ) ), 
-				    GroupPoints->Box );
+                                    GroupPoints->Box );
   aLay->addWidget( aLbl1,          0, 0 );
   aLay->addWidget( myTolEdt,       0, 1 );
   aLay->addWidget( myFreeBoundBtn, 1, 0, 1, 2 );
@@ -120,7 +120,7 @@ void RepairGUI_SewingDlg::Init()
 
   myClosed = -1;
   myOpen = -1;
-	
+        
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -129,7 +129,7 @@ void RepairGUI_SewingDlg::Init()
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   connect( myFreeBoundBtn, SIGNAL( clicked() ), this, SLOT( onDetect() ) );
 
@@ -155,7 +155,7 @@ void RepairGUI_SewingDlg::ClickOnOk()
 bool RepairGUI_SewingDlg::ClickOnApply()
 {
   if ( !onAccept() )
-  	return false;
+        return false;
 
   initName();
 
@@ -227,7 +227,7 @@ void RepairGUI_SewingDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   GroupPoints->LineEdit1->setText( "" );
   myObject = GEOM::GEOM_Object::_nil();
@@ -290,9 +290,9 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
       myOpen = anOpen->length();
       int i;
       for ( i = 0; i < myClosed; i++ )
-	objects.push_back( aClosed[i]._retn() );
+        objects.push_back( aClosed[i]._retn() );
       for ( i = 0; i < myOpen; i++ )
-	objects.push_back( anOpen[i]._retn() );
+        objects.push_back( anOpen[i]._retn() );
     }
     else
       myClosed = -1;
@@ -304,8 +304,8 @@ bool RepairGUI_SewingDlg::execute( ObjectList& objects )
     {
       if ( !IsPreview() )
       {
-	QStringList aParameters;
-	aParameters << myTolEdt->text();
+        QStringList aParameters;
+        aParameters << myTolEdt->text();
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       objects.push_back( anObj._retn() );

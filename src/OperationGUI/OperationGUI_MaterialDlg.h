@@ -40,7 +40,7 @@ class OperationGUI_MaterialDlg : public GEOMBase_Skeleton
 
 public:
   OperationGUI_MaterialDlg( GeometryGUI*, QWidget*, GEOM::ListOfGO,
-			    bool = false );
+                            bool = false );
   ~OperationGUI_MaterialDlg();
   
 private:

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_IteratorOfCoupleOfShape.cxx
-// Created:	Thu Dec  4 17:00:03 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_IteratorOfCoupleOfShape.cxx
+// Created:     Thu Dec  4 17:00:03 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_IteratorOfCoupleOfShape.ixx>
 #include <Standard_NoSuchObject.hxx>
@@ -57,7 +57,7 @@
 // purpose: 
 //=======================================================================
   void NMTTools_IteratorOfCoupleOfShape::Initialize(const TopAbs_ShapeEnum Type1,
-						    const TopAbs_ShapeEnum Type2)
+                                                    const TopAbs_ShapeEnum Type2)
 {
   if(myPDS==NULL) {
     Standard_NoSuchObject::Raise("NMTTools_IteratorOfCoupleOfShape::Initialize: myPDS==NULL");
@@ -112,8 +112,8 @@
 // purpose: 
 //=======================================================================
   void NMTTools_IteratorOfCoupleOfShape::Current(Standard_Integer& aIndex1,
-						 Standard_Integer& aIndex2,
-						 Standard_Boolean& aWithSubShape) const
+                                                 Standard_Integer& aIndex2,
+                                                 Standard_Boolean& aWithSubShape) const
 {
   aIndex1=myIndex1;
   aIndex2=myIndex2;

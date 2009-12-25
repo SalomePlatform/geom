@@ -56,7 +56,7 @@ private:
   void                               enterEvent( QEvent* );
 
   void                               Convert( const TColStd_IndexedMapOfInteger&, 
-					      GEOM::short_array& );
+                                              GEOM::short_array& );
   
   void                               initSelection();
   

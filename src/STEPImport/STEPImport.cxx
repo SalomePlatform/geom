@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	STEPImport.cxx
-// Created:	Wed May 19 14:41:10 2004
-// Author:	Pavel TELKOV
-//		<ptv@mutex.nnov.opencascade.com>
+// File:        STEPImport.cxx
+// Created:     Wed May 19 14:41:10 2004
+// Author:      Pavel TELKOV
+//              <ptv@mutex.nnov.opencascade.com>
 //
 #include "utilities.h"
 
@@ -73,7 +73,7 @@ STEPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError,
-		       const TDF_Label&)
+                       const TDF_Label&)
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());
     // Set "C" numeric locale to save numbers correctly
@@ -94,41 +94,41 @@ STEPIMPORT_EXPORT
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {
-	Standard_Boolean failsonly = Standard_False ;
-	aReader.PrintCheckLoad (failsonly, IFSelect_ItemsByEntity);
-	/* Root transfers */
-	Standard_Integer nbr = aReader.NbRootsForTransfer();
-	aReader.PrintCheckTransfer (failsonly, IFSelect_ItemsByEntity);
+        Standard_Boolean failsonly = Standard_False ;
+        aReader.PrintCheckLoad (failsonly, IFSelect_ItemsByEntity);
+        /* Root transfers */
+        Standard_Integer nbr = aReader.NbRootsForTransfer();
+        aReader.PrintCheckTransfer (failsonly, IFSelect_ItemsByEntity);
 
-	for ( Standard_Integer n=1; n <= nbr; n++) {
-	  Standard_Boolean ok = aReader.TransferRoot(n);
-	  /* Collecting resulting entities */
-	  Standard_Integer nbs = aReader.NbShapes();
-	  if (!ok || nbs == 0)
-	  {
-	    // THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::ImportStep", SALOME::BAD_PARAM);
-	    continue; // skip empty root
-	  }
-	  /* For a single entity */
-	  else if (nbr == 1 && nbs == 1) {
-	    aResShape = aReader.Shape(1);
-	    break;
-	  }
+        for ( Standard_Integer n=1; n <= nbr; n++) {
+          Standard_Boolean ok = aReader.TransferRoot(n);
+          /* Collecting resulting entities */
+          Standard_Integer nbs = aReader.NbShapes();
+          if (!ok || nbs == 0)
+          {
+            // THROW_SALOME_CORBA_EXCEPTION("Exception catched in GEOM_Gen_i::ImportStep", SALOME::BAD_PARAM);
+            continue; // skip empty root
+          }
+          /* For a single entity */
+          else if (nbr == 1 && nbs == 1) {
+            aResShape = aReader.Shape(1);
+            break;
+          }
 
-	  for ( Standard_Integer i=1; i<=nbs; i++ ) {
-	    TopoDS_Shape aShape = aReader.Shape(i);
-	    if ( aShape.IsNull() ) {
-	      // THROW_SALOME_CORBA_EXCEPTION("Null shape in GEOM_Gen_i::ImportStep", SALOME::BAD_PARAM) ;
-	      //return aResShape;
-	      continue;
-	    }
-	    else {
-	      B.Add( compound, aShape ) ;
-	    }
-	  }
-	}
-	if ( aResShape.IsNull() )
-	  aResShape = compound;
+          for ( Standard_Integer i=1; i<=nbs; i++ ) {
+            TopoDS_Shape aShape = aReader.Shape(i);
+            if ( aShape.IsNull() ) {
+              // THROW_SALOME_CORBA_EXCEPTION("Null shape in GEOM_Gen_i::ImportStep", SALOME::BAD_PARAM) ;
+              //return aResShape;
+              continue;
+            }
+            else {
+              B.Add( compound, aShape ) ;
+            }
+          }
+        }
+        if ( aResShape.IsNull() )
+          aResShape = compound;
 
       } else {
 //        switch (status) {
@@ -148,7 +148,7 @@ STEPIMPORT_EXPORT
 //          break;
 //        }
         theError = "Wrong format of the imported file. Can't import file.";
-	aResShape.Nullify();
+        aResShape.Nullify();
       }
     }
     catch (Standard_Failure) {

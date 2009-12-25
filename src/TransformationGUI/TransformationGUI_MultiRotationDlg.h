@@ -41,7 +41,7 @@ class TransformationGUI_MultiRotationDlg : public GEOMBase_Skeleton
 
 public:
   TransformationGUI_MultiRotationDlg( GeometryGUI*, QWidget* = 0,
-				      bool = false, Qt::WindowFlags = 0 );
+                                      bool = false, Qt::WindowFlags = 0 );
   ~TransformationGUI_MultiRotationDlg();
   
 protected:

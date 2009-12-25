@@ -50,7 +50,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-				    bool modal, Qt::WindowFlags fl )
+                                    bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_OBJ_HW")));
@@ -149,7 +149,7 @@ void PrimitiveGUI_FaceDlg::Init()
   initSpinBox( GroupDimensions->SpinBox_DY, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   GroupDimensions->SpinBox_DY->setValue( aDefaultSize );
 
-	
+        
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
@@ -176,7 +176,7 @@ void PrimitiveGUI_FaceDlg::Init()
   connect( GroupType->RadioButton2, SIGNAL( clicked() ), this, SLOT( TypeButtonClicked() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_FACE" ) );
 
@@ -338,26 +338,26 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
     TopoDS_Shape aShape;
     if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
       if (GroupType->RadioButton2->isChecked())
-	aNeedType = TopAbs_FACE;
+        aNeedType = TopAbs_FACE;
 
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes( aSelList.First(), aMap );
       if ( aMap.Extent() == 1 ) { // Local Selection
-	int anIndex = aMap( 1 );
-	if ( aNeedType == TopAbs_EDGE )
+        int anIndex = aMap( 1 );
+        if ( aNeedType == TopAbs_EDGE )
           aName += QString( ":edge_%1" ).arg( anIndex );
         else
-	  aName += QString( ":face_%1" ).arg( anIndex );
+          aName += QString( ":face_%1" ).arg( anIndex );
 
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
 
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	}
-	else
-	  aSelectedObject = aFindedObject; // get Object from study
+        if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+          aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+        }
+        else
+          aSelectedObject = aFindedObject; // get Object from study
       }
       else { // Global Selection
         if ( aShape.ShapeType() != aNeedType ) {
@@ -420,7 +420,7 @@ void PrimitiveGUI_FaceDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -498,7 +498,7 @@ bool PrimitiveGUI_FaceDlg::execute (ObjectList& objects)
   switch (getConstructorId()) {
   case 0:
     anObj = anOper->MakeFaceHW(GroupDimensions->SpinBox_DX->value(),
-			       GroupDimensions->SpinBox_DY->value(), myOrientationType);
+                               GroupDimensions->SpinBox_DY->value(), myOrientationType);
     if (!anObj->_is_nil() && !IsPreview())
     {
       aParameters << GroupDimensions->SpinBox_DX->text();

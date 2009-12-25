@@ -49,9 +49,9 @@ class OperationGUI_ChamferDlg : public GEOMBase_Skeleton
 
   enum { MainObj1, MainObj2, Face1, Face2, MainObj3, Faces, MainObj4, Edges};
   enum { SpinBox1,
-	 SpinBox21, SpinBox22, SpinBox23, SpinBox24, 
-	 SpinBox31, SpinBox32, SpinBox33, SpinBox34,
-	 SpinBox41, SpinBox42, SpinBox43, SpinBox44  };
+         SpinBox21, SpinBox22, SpinBox23, SpinBox24, 
+         SpinBox31, SpinBox32, SpinBox33, SpinBox34,
+         SpinBox41, SpinBox42, SpinBox43, SpinBox44  };
   enum { RadioButton21, RadioButton22,
          RadioButton31, RadioButton32,
          RadioButton41, RadioButton42 };
@@ -81,9 +81,9 @@ private:
   void                                Init();
   void                                enterEvent( QEvent* );
   void                                createSelWg( const QString&, QPixmap&, QWidget*, 
-						   QGridLayout*, const int );
+                                                   QGridLayout*, const int );
   void                                createRadioWg( const QString&, const QString&, QWidget*, 
-						     QGridLayout*, const int, const int, const int );
+                                                     QGridLayout*, const int, const int, const int );
   void                                activateSelection();
   void                                enableWidgets();
   

@@ -56,7 +56,7 @@ private:
 private:
   GEOM::ListOfGO                     myShells;
   bool                               myOkShells; /* to check when arguments is defined and
-						    all shells are closed */
+                                                    all shells are closed */
 
   DlgRef_1Sel1Check*                GroupSolid;
 

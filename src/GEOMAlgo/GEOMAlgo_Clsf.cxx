@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Classifier.cxx
-// Created:	Wed Nov 22 10:23:04 2006
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_Classifier.cxx
+// Created:     Wed Nov 22 10:23:04 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_Clsf.ixx>
 

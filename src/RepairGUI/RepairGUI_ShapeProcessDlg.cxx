@@ -55,7 +55,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 RepairGUI_ShapeProcessDlg::RepairGUI_ShapeProcessDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-						      bool modal )
+                                                      bool modal )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal )
 {
   setHelpFileName( "shape_processing_operation_page.html" );
@@ -80,7 +80,7 @@ void RepairGUI_ShapeProcessDlg::init()
 
   initParamsValues();
   initSelection();
-	
+        
   setWindowTitle( tr( "GEOM_SHAPEPROCESS_TITLE" ) );
 
   mainFrame()->GroupConstructors->hide();
@@ -296,7 +296,7 @@ void RepairGUI_ShapeProcessDlg::init()
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( onApply() ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
 
   connect( mySelectWdgt->PushButton1, SIGNAL( clicked() ),       this, SLOT( selectClicked() ) );
   connect( mySelectWdgt->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( lineEditReturnPressed() ) );
@@ -349,7 +349,7 @@ bool RepairGUI_ShapeProcessDlg::onApply()
 void RepairGUI_ShapeProcessDlg::selectionChanged()
 {
   reset();
-	
+        
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
@@ -360,7 +360,7 @@ void RepairGUI_ShapeProcessDlg::selectionChanged()
   for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-	myObjects[i++] = aSelectedObject;
+        myObjects[i++] = aSelectedObject;
   }
   myObjects->length( i );
   if ( i == 1 )
@@ -400,8 +400,8 @@ void RepairGUI_ShapeProcessDlg::activate()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication( ) ))->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
-	
+           SIGNAL( currentSelectionChanged() ), this, SLOT( selectionChanged() ) );
+        
   reset();
   //myGeomGUI->SetState( 0 );
   initSelection();
@@ -426,7 +426,7 @@ void RepairGUI_ShapeProcessDlg::enterEvent( QEvent* )
 void RepairGUI_ShapeProcessDlg::reset()
 {
   myObjects = new GEOM::ListOfGO();
-  myObjects->length( 0 );	
+  myObjects->length( 0 );       
   mySelectWdgt->LineEdit1->setText( "" );
 }
 
@@ -570,9 +570,9 @@ bool RepairGUI_ShapeProcessDlg::isValid( QString& msg )
       const QString& aParam = aListIter.next();
       QWidget* aControl = getControl( aParam );
       if ( qobject_cast<SalomeApp_DoubleSpinBox*>( aControl ) )
-	ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
+        ok = qobject_cast<SalomeApp_DoubleSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
       else if ( qobject_cast<SalomeApp_IntSpinBox*>( aControl ) )
-	ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
+        ok = qobject_cast<SalomeApp_IntSpinBox*>( aControl )->isValid( msg, !IsPreview() ) && ok;
     }
   }
 
@@ -603,19 +603,19 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
 
   /*//-- check --
   int z;
-	MESSAGE("Objects : ");
-	for ( z = 0; z < myObjects->length(); z++ )
- 		MESSAGE(myObjects[z]->GetName() << " ");
-	MESSAGE("\nOperators : ");
-	for ( z = 0; z < anOperators->length(); z++ )
-		MESSAGE(anOperators[z] << " ");
-	MESSAGE("\nParameters : ");
-	for ( z = 0; z < aParams->length(); z++ )
-		MESSAGE(aParams[z] << " ");
-	MESSAGE("\nValues : ");
-	for ( z = 0; z < aValues->length(); z ++ )
-		MESSAGE(aValues[z] << " ");
-	MESSAGE("\n");
+        MESSAGE("Objects : ");
+        for ( z = 0; z < myObjects->length(); z++ )
+                MESSAGE(myObjects[z]->GetName() << " ");
+        MESSAGE("\nOperators : ");
+        for ( z = 0; z < anOperators->length(); z++ )
+                MESSAGE(anOperators[z] << " ");
+        MESSAGE("\nParameters : ");
+        for ( z = 0; z < aParams->length(); z++ )
+                MESSAGE(aParams[z] << " ");
+        MESSAGE("\nValues : ");
+        for ( z = 0; z < aValues->length(); z ++ )
+                MESSAGE(aValues[z] << " ");
+        MESSAGE("\n");
   */// -----------
 
   QStringList anErrorObjNames;
@@ -629,15 +629,15 @@ bool RepairGUI_ShapeProcessDlg::execute( ObjectList& objects )
     {
       if ( !IsPreview() )
       {
-	QStringList aParameters;
+        QStringList aParameters;
 
-	for ( int i = 0; i < anOperators->length(); i++ )
-	  aParameters << QString( anOperators[i] );
+        for ( int i = 0; i < anOperators->length(); i++ )
+          aParameters << QString( anOperators[i] );
 
-	for ( int i = 0; i < aParams->length(); i++ )
-	  aParameters << QString( aParams[i] );
+        for ( int i = 0; i < aParams->length(); i++ )
+          aParameters << QString( aParams[i] );
 
-	aParameters << getTexts( aParams );
+        aParameters << getTexts( aParams );
         anObj->SetParameters(aParameters.join(":").toLatin1().constData());
       }
       objects.push_back( anObj._retn() );
@@ -668,7 +668,7 @@ GEOM::string_array* RepairGUI_ShapeProcessDlg::getActiveOperators()
 
   for ( int i = 0; i < aCheckedList.count(); i++ )
     anOperators[i] = CORBA::string_dup( aCheckedList[i].toLatin1().constData() );
-	 	 
+                 
   return anOperators._retn();
 }
 
@@ -816,7 +816,7 @@ QStringList RepairGUI_ShapeProcessDlg::getTexts( const GEOM::string_array& thePa
     {
       QString aText = getText( aCtrl );
       if( !aText.isNull() )
-	aTexts.append( aText );
+        aTexts.append( aText );
     }
   }
     
@@ -849,7 +849,7 @@ void RepairGUI_ShapeProcessDlg::advOptionToggled( bool on )
   QAbstractButton* btn = (QAbstractButton*)sender();
   if ( on && btn->isCheckable() &&
        SUIT_MessageBox::warning( this,
-				 tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
-				 SUIT_MessageBox::Yes | SUIT_MessageBox::No ) == SUIT_MessageBox::No )
+                                 tr( "GEOM_WRN_WARNING" ), tr( "TIME_CONSUMING" ),
+                                 SUIT_MessageBox::Yes | SUIT_MessageBox::No ) == SUIT_MessageBox::No )
     btn->toggle();
 }

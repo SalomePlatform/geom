@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_CoupleOfShapes.cxx
-// Created:	Wed Dec 15 13:03:52 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_CoupleOfShapes.cxx
+// Created:     Wed Dec 15 13:03:52 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_CoupleOfShapes.ixx>
 //=======================================================================
@@ -36,7 +36,7 @@ GEOMAlgo_CoupleOfShapes::GEOMAlgo_CoupleOfShapes()
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_CoupleOfShapes::SetShapes(const TopoDS_Shape& aS1,
-					const TopoDS_Shape& aS2)
+                                        const TopoDS_Shape& aS2)
 {
   myShape1=aS1;
   myShape2=aS2;
@@ -46,7 +46,7 @@ void GEOMAlgo_CoupleOfShapes::SetShapes(const TopoDS_Shape& aS1,
 //purpose  : 
 //=======================================================================
 void GEOMAlgo_CoupleOfShapes::Shapes(TopoDS_Shape& aS1,
-				     TopoDS_Shape& aS2)const
+                                     TopoDS_Shape& aS2)const
 {
   aS1=myShape1;
   aS2=myShape2;

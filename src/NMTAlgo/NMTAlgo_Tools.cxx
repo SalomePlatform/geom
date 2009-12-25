@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_Tools.cxx
-// Created:	Fri Jan 30 16:30:45 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTAlgo_Tools.cxx
+// Created:     Fri Jan 30 16:30:45 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTAlgo_Tools.ixx>
 
@@ -65,7 +65,7 @@
 // purpose: 
 //=======================================================================
   Standard_Integer NMTAlgo_Tools::Sense (const TopoDS_Face& aF1,
-					 const TopoDS_Face& aF2)
+                                         const TopoDS_Face& aF2)
 {
   Standard_Integer iSense=0;
   gp_Dir aDNF1, aDNF2;
@@ -77,7 +77,7 @@
     aE1=TopoDS::Edge(anExp.Current());
     if (!BRep_Tool::Degenerated(aE1)) {
       if (!BRep_Tool::IsClosed(aE1, aF1)) {
-	break;
+        break;
       }
     }
   }
@@ -87,10 +87,10 @@
     aE2=TopoDS::Edge(anExp.Current());
     if (!BRep_Tool::Degenerated(aE2)) {
       if (!BRep_Tool::IsClosed(aE2, aF2)) {
-	if (aE2.IsSame(aE1)) {
-	  iSense=1;
-	  break;
-	}
+        if (aE2.IsSame(aE1)) {
+          iSense=1;
+          break;
+        }
       }
     }
   }
@@ -112,7 +112,7 @@
 // purpose: 
 //=======================================================================
   void NMTAlgo_Tools::OrientFacesOnShell (const TopoDS_Face& aF1, 
-					  TopoDS_Shell& aSh)
+                                          TopoDS_Shell& aSh)
 {
   Standard_Integer aNbFSh, iSenseFlag;
   gp_Dir aDNF1, aDNF2;
@@ -142,14 +142,14 @@
       //
       iSenseFlag=BOPTools_Tools3D::SenseFlag(aDNF1, aDNF2);
       if (iSenseFlag==1) {
-	return;
+        return;
       }
       //
       anExp.Init(aSh, TopAbs_FACE);
       for (; anExp.More(); anExp.Next()) {
-	const TopoDS_Shape& aFx=anExp.Current();
-	TopoDS_Shape *pFx=(TopoDS_Shape *)&aFx;
-	pFx->Reverse();
+        const TopoDS_Shape& aFx=anExp.Current();
+        TopoDS_Shape *pFx=(TopoDS_Shape *)&aFx;
+        pFx->Reverse();
       }
     }
   }
@@ -159,7 +159,7 @@
 // purpose: 
 //=======================================================================
   void NMTAlgo_Tools::OrientFacesOnShell (const TopoDS_Shell& aShell, 
-					  TopoDS_Shell& aShellNew)
+                                          TopoDS_Shell& aShellNew)
 {
   Standard_Boolean bIsProcessed1, bIsProcessed2;
   Standard_Integer i, aNbE, aNbF, j;
@@ -185,11 +185,11 @@
 
       TopTools_ListIteratorOfListOfShape anIt(aLF);
       for (; anIt.More(); anIt.Next()) {
-	const TopoDS_Shape& aF=anIt.Value();
-	if (!aFM.Contains(aF)) {
-	  aFM.Add(aF);
-	  aLFTmp.Append(aF);
-	}
+        const TopoDS_Shape& aF=anIt.Value();
+        if (!aFM.Contains(aF)) {
+          aFM.Add(aF);
+          aLFTmp.Append(aF);
+        }
       }
       aLF.Clear();
       aLF=aLFTmp;
@@ -216,14 +216,14 @@
       bIsProcessed2=aProcessedFaces.Contains(aF2);
      
       if (bIsProcessed1 && bIsProcessed2) {
-	continue;
+        continue;
       }
 
       if (!bIsProcessed1 && !bIsProcessed2) {
-	aProcessedFaces.Add(aF1);
-	aBB.Add(aShellNew, aF1);
+        aProcessedFaces.Add(aF1);
+        aBB.Add(aShellNew, aF1);
 
-	bIsProcessed1=!bIsProcessed1;
+        bIsProcessed1=!bIsProcessed1;
       }
 
       //
@@ -231,14 +231,14 @@
       
       aF1x=aF1;
       if (bIsProcessed1) {
-	j=aProcessedFaces.FindIndex(aF1);
-	aF1x=TopoDS::Face(aProcessedFaces.FindKey(j));
+        j=aProcessedFaces.FindIndex(aF1);
+        aF1x=TopoDS::Face(aProcessedFaces.FindKey(j));
       }
       
       aF2x=aF2;
       if (bIsProcessed2) {
-	j=aProcessedFaces.FindIndex(aF2);
-	aF2x=TopoDS::Face(aProcessedFaces.FindKey(j));
+        j=aProcessedFaces.FindIndex(aF2);
+        aF2x=TopoDS::Face(aProcessedFaces.FindKey(j));
       }
       //
 
@@ -246,26 +246,26 @@
       anOrE2=NMTAlgo_Tools::Orientation(aE, aF2x);
 
       if (bIsProcessed1 && !bIsProcessed2) {
-	
-	if (anOrE1==anOrE2) {
-	  if (!BRep_Tool::IsClosed(aE, aF1) &&
-	      !BRep_Tool::IsClosed(aE, aF2)) {
-	    aF2.Reverse();
-	  }
-	}
-	aProcessedFaces.Add(aF2);
-	aBB.Add(aShellNew, aF2);
+        
+        if (anOrE1==anOrE2) {
+          if (!BRep_Tool::IsClosed(aE, aF1) &&
+              !BRep_Tool::IsClosed(aE, aF2)) {
+            aF2.Reverse();
+          }
+        }
+        aProcessedFaces.Add(aF2);
+        aBB.Add(aShellNew, aF2);
       }
       
       else if (!bIsProcessed1 && bIsProcessed2) {
-	if (anOrE1==anOrE2) {
-	  if (!BRep_Tool::IsClosed(aE, aF1) &&
-	      !BRep_Tool::IsClosed(aE, aF2)) {
-	    aF1.Reverse();
-	  }
-	}
-	aProcessedFaces.Add(aF1);
-	aBB.Add(aShellNew, aF1);
+        if (anOrE1==anOrE2) {
+          if (!BRep_Tool::IsClosed(aE, aF1) &&
+              !BRep_Tool::IsClosed(aE, aF2)) {
+            aF1.Reverse();
+          }
+        }
+        aProcessedFaces.Add(aF1);
+        aBB.Add(aShellNew, aF1);
       }
     }
   }
@@ -283,11 +283,11 @@
     if (aNbF!=2) {
       TopTools_ListIteratorOfListOfShape anIt(aLF);
       for(; anIt.More(); anIt.Next()) {
-	const TopoDS_Face& aF=TopoDS::Face(anIt.Value());
-	if (!aProcessedFaces.Contains(aF)) {
-	  aProcessedFaces.Add(aF);
-	  aBB.Add(aShellNew, aF);
-	}
+        const TopoDS_Face& aF=TopoDS::Face(anIt.Value());
+        if (!aProcessedFaces.Contains(aF)) {
+          aProcessedFaces.Add(aF);
+          aBB.Add(aShellNew, aF);
+        }
       }
     }
   }
@@ -297,7 +297,7 @@
 //purpose  :
 //=======================================================================
   TopAbs_Orientation NMTAlgo_Tools::Orientation(const TopoDS_Edge& anE,
-						const TopoDS_Face& aF)
+                                                const TopoDS_Face& aF)
 {
   TopAbs_Orientation anOr=TopAbs_INTERNAL;
 
@@ -318,7 +318,7 @@
 //           If S1.IsNull(), check infinite point against S2.
 //=======================================================================
   Standard_Boolean NMTAlgo_Tools::IsInside (const TopoDS_Shape& theS1,
-					    const TopoDS_Shape& theS2)
+                                            const TopoDS_Shape& theS2)
 {
   BRepClass3d_SolidClassifier aClassifier( theS2 );
   //
@@ -340,7 +340,7 @@
 //purpose  : 
 //=======================================================================
   void NMTAlgo_Tools::MakeShells (const TopoDS_Shape& aFC,
-				  TopTools_ListOfShape& aLNS)
+                                  TopTools_ListOfShape& aLNS)
 {
   NMTAlgo_Loop3d aShellMaker;
   TopTools_MapOfOrientedShape aMTmp;
@@ -353,7 +353,7 @@
 //purpose  : 
 //=======================================================================
   void NMTAlgo_Tools::MakeSolids(const TopoDS_Shape& aFC,
-				 TopTools_ListOfShape& theShellList)
+                                 TopTools_ListOfShape& theShellList)
 {
   NMTAlgo_Tools::MakeShells(aFC, theShellList);
   NMTAlgo_Tools::MakeSolids(theShellList);
@@ -425,7 +425,7 @@
 //purpose  :
 //=======================================================================
   void NMTAlgo_Tools::BreakWebs(const TopoDS_Shape& aCS,
-				TopoDS_Shape& aCSR)
+                                TopoDS_Shape& aCSR)
 {
   Standard_Integer i, aNbF, aNbS;
   TopTools_IndexedDataMapOfShapeListOfShape aMFS;
@@ -474,8 +474,8 @@
 //purpose  :
 //=======================================================================
   Standard_Boolean NMTAlgo_Tools::FindImageSolid(const TopoDS_Shape& aFC,
-						 const TopTools_IndexedMapOfShape& aMSo,
-						 TopoDS_Shape& aSox)
+                                                 const TopTools_IndexedMapOfShape& aMSo,
+                                                 TopoDS_Shape& aSox)
 {
   Standard_Boolean bFound=Standard_False;
   Standard_Integer i, j, aNbSo, aNbF, aNbFSo;
@@ -506,8 +506,8 @@
     for (j=1; j<=aNbFSo; ++j) {
       const TopoDS_Shape& aFSo=aMFSo(j);
       if (!aMFC.Contains(aFSo)) {
-	bFound=Standard_False;
-	break;
+        bFound=Standard_False;
+        break;
       }
     }
     if (bFound) {

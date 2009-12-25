@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ShapeSolid.cxx
-// Created:	Thu Jan 13 12:54:48 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_ShapeSolid.cxx
+// Created:     Thu Jan 13 12:54:48 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_ShapeSolid.ixx>
 

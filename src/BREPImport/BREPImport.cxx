@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	BREPImport.cxx
-// Created:	Wed May 19 14:29:52 2004
-// Author:	Pavel TELKOV
-//		<ptv@mutex.nnov.opencascade.com>
+// File:        BREPImport.cxx
+// Created:     Wed May 19 14:29:52 2004
+// Author:      Pavel TELKOV
+//              <ptv@mutex.nnov.opencascade.com>
 //
 #include "utilities.h"
 
@@ -63,7 +63,7 @@ BREPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError,
-		       const TDF_Label&)
+                       const TDF_Label&)
   {
     MESSAGE("Import BREP from file " << theFileName);
     TopoDS_Shape aShape;

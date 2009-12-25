@@ -89,8 +89,8 @@ Standard_Integer GEOMImpl_BoxDriver::Execute(TFunction_Logbook& log) const
       gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(aShape2));
 
       if (P1.X() == P2.X() || P1.Y() == P2.Y() || P1.Z() == P2.Z()) {
-	StdFail_NotDone::Raise("Box can not be created, the points belong to the same plane");
-	return 0;
+        StdFail_NotDone::Raise("Box can not be created, the points belong to the same plane");
+        return 0;
       }
 
       BRepPrimAPI_MakeBox MB (P1,P2);
@@ -132,10 +132,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_BoxDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BoxDriver",
-			                                 sizeof(GEOMImpl_BoxDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_BoxDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

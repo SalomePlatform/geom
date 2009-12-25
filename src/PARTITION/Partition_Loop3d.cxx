@@ -101,7 +101,7 @@ const TopTools_ListOfShape&
   {
     const TopoDS_Shape& FF = itF.Value();
     if (AvoidFacesMap.Contains( FF ) ||
-	! AddedFacesMap.Add( FF ) )
+        ! AddedFacesMap.Add( FF ) )
       continue;
 
     // make a new shell
@@ -135,14 +135,14 @@ const TopTools_ListOfShape&
       for (; EdgeExp.More(); EdgeExp.Next())
       {
         const TopoDS_Edge& E = TopoDS::Edge( EdgeExp.Current());
-	if (! CheckedEdgesMap.Add( E ))
-	  continue;
+        if (! CheckedEdgesMap.Add( E ))
+          continue;
 
-	// candidate faces list
+        // candidate faces list
         const TopTools_ListOfShape& FL = myEFMap.ChangeFromKey(E);
         if (FL.IsEmpty())
           continue;
-	// select one of neighbors
+        // select one of neighbors
         TopoDS_Face SelF;
         if (FL.Extent() == 2) {
           if (! F.IsSame( FL.First() ))
@@ -152,7 +152,7 @@ const TopTools_ListOfShape&
         }
         else {
           // check if a face already added to Shell shares E
-	  TopTools_ListIteratorOfListOfShape it (FL);
+          TopTools_ListIteratorOfListOfShape it (FL);
           Standard_Boolean found = Standard_False;
           for (; !found && it.More(); it.Next())
             if (F != it.Value())
@@ -190,8 +190,8 @@ const TopTools_ListOfShape&
           }
         }
         if (!SelF.IsNull() &&
-	    AddedFacesMap.Add( SelF ) &&
-	    !AvoidFacesMap.Contains( SelF )) 
+            AddedFacesMap.Add( SelF ) &&
+            !AvoidFacesMap.Contains( SelF )) 
           Builder.Add( Shell, SelF);
 
       } // loop on edges of F
@@ -219,7 +219,7 @@ const TopTools_ListOfShape&
 //=======================================================================
 
 gp_Vec Partition_Loop3d::Normal(const TopoDS_Edge& E,
-				const TopoDS_Face& F)
+                                const TopoDS_Face& F)
 {
   gp_Vec Norm, V1, V2;
   Standard_Real First, Last;
@@ -245,7 +245,7 @@ gp_Vec Partition_Loop3d::Normal(const TopoDS_Edge& E,
 //=======================================================================
 
 static gp_Vec NextNormal(const TopoDS_Edge& E,
-			 const TopoDS_Face& F)
+                         const TopoDS_Face& F)
 {
   Standard_Real First, Last;
 
@@ -284,7 +284,7 @@ static gp_Vec NextNormal(const TopoDS_Edge& E,
 //=======================================================================
 
 static TopoDS_Edge FindEinF(const TopoDS_Edge& E,
-			    const TopoDS_Face& F)
+                            const TopoDS_Face& F)
 {
   TopExp_Explorer expl (F, TopAbs_EDGE);
   for (; expl.More(); expl.Next()) 
@@ -303,11 +303,11 @@ static TopoDS_Edge FindEinF(const TopoDS_Edge& E,
 //=======================================================================
 
 Standard_Boolean Partition_Loop3d::IsInside(const TopoDS_Edge& E,
-					    const TopoDS_Face& F1,
-					    const TopoDS_Face& F2,
-					    const Standard_Boolean CountDot,
-					    Standard_Real& Dot,
-					    Standard_Boolean& GoodOri) 
+                                            const TopoDS_Face& F1,
+                                            const TopoDS_Face& F2,
+                                            const Standard_Boolean CountDot,
+                                            Standard_Real& Dot,
+                                            Standard_Boolean& GoodOri) 
 {
   Standard_Real f, l;
   gp_Pnt P;

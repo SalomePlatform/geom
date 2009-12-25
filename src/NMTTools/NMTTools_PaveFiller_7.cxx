@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_7.cxx
-// Created:	Thu Dec 18 15:14:55 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_7.cxx
+// Created:     Thu Dec 18 15:14:55 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -85,7 +85,7 @@
 // Contribution of Samtech www.samcef.com BEGIN
 static 
   void FuseVertices(const TopoDS_Shape& aCompound,
-		    TopTools_DataMapOfShapeShape& aDMVV);
+                    TopTools_DataMapOfShapeShape& aDMVV);
 // Contribution of Samtech www.samcef.com END
 
 //=======================================================================
@@ -141,12 +141,12 @@ static
       aV2.Orientation(TopAbs_REVERSED);
       //xx
       if (aNbPaveBlocks==1) {
-	bIsNewVertex1=myDS->IsNewShape (nV1);
-	bIsNewVertex2=myDS->IsNewShape (nV2);
-	if (!bIsNewVertex1 && !bIsNewVertex2) {
-	  aPB.SetEdge(i);
-	  continue;
-	}
+        bIsNewVertex1=myDS->IsNewShape (nV1);
+        bIsNewVertex2=myDS->IsNewShape (nV2);
+        if (!bIsNewVertex1 && !bIsNewVertex2) {
+          aPB.SetEdge(i);
+          continue;
+        }
       }
       //xx
       BOPTools_Tools::MakeSplitEdge(aE, aV1, t1, aV2, t2, aESplit);  
@@ -161,8 +161,8 @@ static
       anASSeq.SetNewOrientation(aV2.Orientation());
       //
       if (anOri==TopAbs_INTERNAL) {
-	anASSeq.SetNewAncestor(i);
-	aESplit.Orientation(anOri);
+        anASSeq.SetNewAncestor(i);
+        aESplit.Orientation(anOri);
       }
       //
       myDS->InsertShapeAndAncestorsSuccessors(aESplit, anASSeq);
@@ -209,28 +209,28 @@ static
       // Among all PBs of aCB the first PB will be one
       // that have max tolerance value 
       {
-	Standard_Real aTolEx, aTolExMax;
-	BOPTools_ListOfPaveBlock *pLPB, aLPBx;
-	//
-	aTolExMax=-1.;
-	pLPB=(BOPTools_ListOfPaveBlock *)&aCB.PaveBlocks();
-	aPBIt.Initialize(*pLPB);
-	for (; aPBIt.More(); aPBIt.Next()) {
-	  const BOPTools_PaveBlock& aPBx=aPBIt.Value();
-	  nEx=aPBx.OriginalEdge();
-	  const TopoDS_Edge& aEx=TopoDS::Edge(myDS->Shape(nEx));
-	  aTolEx=BRep_Tool::Tolerance(aEx);
-	  if (aTolEx>aTolExMax) {
-	    aTolExMax=aTolEx;
-	    aLPBx.Prepend(aPBx);
-	  }
-	  else{
-	    aLPBx.Append(aPBx);
-	  }
-	}
-	//
-	pLPB->Clear();
-	*pLPB=aLPBx;
+        Standard_Real aTolEx, aTolExMax;
+        BOPTools_ListOfPaveBlock *pLPB, aLPBx;
+        //
+        aTolExMax=-1.;
+        pLPB=(BOPTools_ListOfPaveBlock *)&aCB.PaveBlocks();
+        aPBIt.Initialize(*pLPB);
+        for (; aPBIt.More(); aPBIt.Next()) {
+          const BOPTools_PaveBlock& aPBx=aPBIt.Value();
+          nEx=aPBx.OriginalEdge();
+          const TopoDS_Edge& aEx=TopoDS::Edge(myDS->Shape(nEx));
+          aTolEx=BRep_Tool::Tolerance(aEx);
+          if (aTolEx>aTolExMax) {
+            aTolExMax=aTolEx;
+            aLPBx.Prepend(aPBx);
+          }
+          else{
+            aLPBx.Append(aPBx);
+          }
+        }
+        //
+        pLPB->Clear();
+        *pLPB=aLPBx;
       }
       //modified by NIZNHY-PKV Wed Nov  8 15:59:50 2006t
       //
@@ -241,14 +241,14 @@ static
       const BOPTools_ListOfPaveBlock& aCBLPB=aCB.PaveBlocks();
       aPBIt.Initialize(aCBLPB);
       for (; aPBIt.More(); aPBIt.Next()) {
-	BOPTools_PaveBlock& aPBx=aPBIt.Value();
-	nEx=aPBx.OriginalEdge();
-	if (nEx==nE) {
-	  continue;
-	}
-	//
-	nSpx=SplitIndex(aPBx);
-	aPBx.SetEdge(nSpx);
+        BOPTools_PaveBlock& aPBx=aPBIt.Value();
+        nEx=aPBx.OriginalEdge();
+        if (nEx==nE) {
+          continue;
+        }
+        //
+        nSpx=SplitIndex(aPBx);
+        aPBx.SetEdge(nSpx);
       }
       //
     }
@@ -314,20 +314,20 @@ static
       aE=TopoDS::Edge(aExp.Current());
       //
       if (BRep_Tool::Degenerated(aE)) {
-	continue;
+        continue;
       }
       //
       nE=myDS->ShapeIndex(aE, iRankF);
       //
       if (aME.Contains(nE)) {
-	continue;
+        continue;
       }
       aME.Add(nE);
       //
       BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
       aNbPB=aLPB.Extent();
       if (aNbPB) {
-	continue;
+        continue;
       }
       TopExp::Vertices(aE, aV1, aV2);
       //
@@ -429,15 +429,15 @@ static
       const TopoDS_Shape& aVy=aDMVV.Find(aVx);
       
       if (aDMVFF1.IsBound(aVy)) {
-	TColStd_ListOfInteger& aLIy=aDMVFF1.ChangeFind(aVy);
-	aIt.Initialize(aLIx);
-	for(; aIt.More(); aIt.Next()) {
-	  nFx=aIt.Value();
-	  aLIy.Append(nFx);
-	}
+        TColStd_ListOfInteger& aLIy=aDMVFF1.ChangeFind(aVy);
+        aIt.Initialize(aLIx);
+        for(; aIt.More(); aIt.Next()) {
+          nFx=aIt.Value();
+          aLIy.Append(nFx);
+        }
       }
       else { 
-	aDMVFF1.Bind(aVy, aLIx);
+        aDMVFF1.Bind(aVy, aLIx);
       }
     }
   }
@@ -455,7 +455,7 @@ static
     for(; aIt.More(); aIt.Next()) {
       nFx=aIt.Value();
       if (aMIy.Add(nFx)) {
-	aLIy.Append(nFx);
+        aLIy.Append(nFx);
       }
     }
     aLIx.Clear();
@@ -540,16 +540,16 @@ static
       //
       aIt.Initialize(aLIFF);
       for (; aIt.More(); aIt.Next()) {
-	nFx=aIt.Value();
-	if (myAloneVertices.Contains(nFx)) {
-	  TColStd_IndexedMapOfInteger& aMVx=myAloneVertices.ChangeFromKey(nFx);
-	  aMVx.Add(nV);
-	}
-	else {
-	  TColStd_IndexedMapOfInteger aMVx;
-	  aMVx.Add(nV);
-	  myAloneVertices.Add(nFx, aMVx);
-	}
+        nFx=aIt.Value();
+        if (myAloneVertices.Contains(nFx)) {
+          TColStd_IndexedMapOfInteger& aMVx=myAloneVertices.ChangeFromKey(nFx);
+          aMVx.Add(nV);
+        }
+        else {
+          TColStd_IndexedMapOfInteger aMVx;
+          aMVx.Add(nV);
+          myAloneVertices.Add(nFx, aMVx);
+        }
       }
     }
   }
@@ -569,16 +569,16 @@ static
       const TColStd_IndexedMapOfInteger& aMAV=myAloneVertices(i);
       aNbAV=aMAV.Extent();
       for(j=1; j<=aNbAV; ++j) {
-	nV=aMAV(j);
-	if (aMAVF.Contains(nV)) {
-	  TColStd_IndexedMapOfInteger& aMF=aMAVF.ChangeFromKey(nV);
-	  aMF.Add(nF);
-	}
-	else{
-	  TColStd_IndexedMapOfInteger aMF;
-	  aMF.Add(nF);
-	  aMAVF.Add(nV, aMF);
-	}
+        nV=aMAV(j);
+        if (aMAVF.Contains(nV)) {
+          TColStd_IndexedMapOfInteger& aMF=aMAVF.ChangeFromKey(nV);
+          aMF.Add(nF);
+        }
+        else{
+          TColStd_IndexedMapOfInteger aMF;
+          aMF.Add(nF);
+          aMAVF.Add(nV, aMF);
+        }
       }
     }
     //
@@ -588,11 +588,11 @@ static
       const TColStd_IndexedMapOfInteger& aMF=aMAVF(i);
       aNbF=aMF.Extent();
       for(j=1; j<aNbF; ++j) {
-	nF1=aMF(j);
-	for(k=j+1; k<=aNbF; ++k) {
-	  nF2=aMF(k);
-	  myIP->Add(nF1, nF2, Standard_True, NMTDS_TI_FF);
-	}
+        nF1=aMF(j);
+        for(k=j+1; k<=aNbF; ++k) {
+          nF2=aMF(k);
+          myIP->Add(nF1, nF2, Standard_True, NMTDS_TI_FF);
+        }
       }
     }
   }
@@ -611,7 +611,7 @@ static
 // purpose: 
 //=======================================================================
   void NMTTools_PaveFiller::FuseVertices(const TopoDS_Shape& aCompound,
-					 TopTools_DataMapOfShapeShape& aDMVV)const
+                                         TopTools_DataMapOfShapeShape& aDMVV)const
 {
   Standard_Integer i, aNbVV, n1, n2, nX;
   NMTTools_PaveFiller tPF;

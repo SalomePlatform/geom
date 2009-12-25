@@ -142,7 +142,7 @@ void OperationGUI_PartitionDlg::Init()
   connect( GroupPoints->ComboBox1, SIGNAL( activated( int ) ), this, SLOT( ComboTextChanged() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_PARTITION" ) );
 
@@ -200,7 +200,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
 
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -335,7 +335,7 @@ void OperationGUI_PartitionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() ); 
 }
@@ -369,7 +369,7 @@ GEOM::GEOM_IOperations_ptr OperationGUI_PartitionDlg::createOperation()
 bool OperationGUI_PartitionDlg::isValid( QString& )
 {
   return ( myListShapes.length()     || myListTools.length() ||
-	   myListKeepInside.length() || myListRemoveInside.length() );
+           myListKeepInside.length() || myListRemoveInside.length() );
 }
 
 
@@ -403,8 +403,8 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   if ( isValid( msg ) ) {
     GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
     anObj = anOper->MakePartition( myListShapes, myListTools,
-				   myListKeepInside, myListRemoveInside,
-				   aLimit, false, myListMaterials, aKeepNonlimitShapes );
+                                   myListKeepInside, myListRemoveInside,
+                                   aLimit, false, myListMaterials, aKeepNonlimitShapes );
     res = true;
   }
 
@@ -437,8 +437,8 @@ void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
-					 /*theInheritFirstArg=*/myListShapes.length() == 1 ); // ? false
+                                         /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
+                                         /*theInheritFirstArg=*/myListShapes.length() == 1 ); // ? false
   }
 }
 

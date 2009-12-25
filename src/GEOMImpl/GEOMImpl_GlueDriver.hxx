@@ -161,9 +161,9 @@ Standard_EXPORT TopoDS_Shape GlueFacesWithWarnings (const TopoDS_Shape& theShape
                                                     TCollection_AsciiString& theWarning) const;
 
 Standard_EXPORT static TopoDS_Shape GlueFacesByList (const TopoDS_Shape& theShape,
-						     const Standard_Real theTolerance,
+                                                     const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids,
-						     const TopTools_MapOfShape& aFaces);
+                                                     const TopTools_MapOfShape& aFaces);
 
 
  // Type management

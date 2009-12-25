@@ -77,12 +77,12 @@ public:
   /* Display/Erase object methods */
   void          Display   ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool updateViewer = true,
-			    SALOME_View* theViewFrame = 0 );
+                            SALOME_View* theViewFrame = 0 );
 
   // This overloaded Display() method can be useful for operations
   // not using dialog boxes.
   void          Display   ( GEOM::GEOM_Object_ptr theObj,
-			    const bool updateViewer = true );
+                            const bool updateViewer = true );
 
   void          Redisplay ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool updateViewer = true );
@@ -90,7 +90,7 @@ public:
   void          Erase     ( const Handle(SALOME_InteractiveObject)& theIO,
                             const bool forced = false,
                             const bool updateViewer = true,
-			    SALOME_View* theViewFrame = 0 );
+                            SALOME_View* theViewFrame = 0 );
 
   void          Erase     ( GEOM::GEOM_Object_ptr theObj,
                             const bool forced = false,

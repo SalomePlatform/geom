@@ -101,7 +101,7 @@ void Partition_Loop::AddConstEdge (const TopoDS_Edge& E)
 //purpose  : 
 //=======================================================================
 static Standard_Real FindDelta(TopTools_ListOfShape& LE,
-			       const TopoDS_Face& F)
+                               const TopoDS_Face& F)
 {
   Standard_Real dist, f, l;
   Standard_Real d = Precision::Infinite();
@@ -123,13 +123,13 @@ static Standard_Real FindDelta(TopTools_ListOfShape& LE,
 //function : SelectEdge
 //purpose  : Find the edge <NE> connected <CE> by the vertex <CV> in the list <LE>.
 //           <NE> Is erased  of the list. If <CE> is too in the list <LE> 
-//			 with the same orientation, it's erased of the list 
+//                       with the same orientation, it's erased of the list 
 //=======================================================================
 static Standard_Boolean  SelectEdge(const TopoDS_Face&    F,
-				    const TopoDS_Edge&    CE,
-				    const TopoDS_Vertex&  CV,
-				    TopoDS_Edge&          NE,
-				    TopTools_ListOfShape& LE)
+                                    const TopoDS_Edge&    CE,
+                                    const TopoDS_Vertex&  CV,
+                                    TopoDS_Edge&          NE,
+                                    TopTools_ListOfShape& LE)
 {
   TopTools_ListIteratorOfListOfShape itl;
   NE.Nullify();
@@ -149,7 +149,7 @@ static Standard_Boolean  SelectEdge(const TopoDS_Face&    F,
     TopoDS_Face FForward = F;
     Handle(Geom2d_Curve) Cc, C;
     FForward.Orientation(TopAbs_FORWARD);
-			
+                        
     Cc = BRep_Tool::CurveOnSurface(CE,FForward,cf,cl);
     Standard_Real dist,distmin  = 100*BRep_Tool::Tolerance(CV);
     Standard_Real uc,u;
@@ -163,63 +163,63 @@ static Standard_Boolean  SelectEdge(const TopoDS_Face&    F,
     for ( itl.Initialize(LE); itl.More(); itl.Next()) {
       const TopoDS_Edge& E = TopoDS::Edge(itl.Value());
       if (!E.IsSame(CE)) {
-	C = BRep_Tool::CurveOnSurface(E,FForward,f,l);
-	if (E.Orientation () == TopAbs_FORWARD) u = f;
-	else                                    u = l;
-	P2 = C->Value(u);
-	dist = PV.Distance(P2);
-	if (dist <= distmin){
-	  distmin = dist;
-	}
-				
+        C = BRep_Tool::CurveOnSurface(E,FForward,f,l);
+        if (E.Orientation () == TopAbs_FORWARD) u = f;
+        else                                    u = l;
+        P2 = C->Value(u);
+        dist = PV.Distance(P2);
+        if (dist <= distmin){
+          distmin = dist;
+        }
+                                
       }
     }
 
     Standard_Real anglemax = - PI;
-    TopoDS_Edge   SelectedEdge;	
+    TopoDS_Edge   SelectedEdge; 
     for ( itl.Initialize(LE); itl.More(); itl.Next()) {
       const TopoDS_Edge& E = TopoDS::Edge(itl.Value());
       if (!E.IsSame(CE)) {
-	C = BRep_Tool::CurveOnSurface(E,FForward,f,l);
-	if (E.Orientation () == TopAbs_FORWARD) u = f;
-	else                                    u = l;
-	P2 = C->Value(u);
-	dist = PV.Distance(P2);
-	if (dist <= distmin + (1./3)*delta){ 
-	  gp_Pnt2d PC, P;
-	  gp_Vec2d CTg1, CTg2, Tg1, Tg2;
-	  Cc->D2(uc, PC, CTg1, CTg2);
-	  C->D2(u, P, Tg1, Tg2);
+        C = BRep_Tool::CurveOnSurface(E,FForward,f,l);
+        if (E.Orientation () == TopAbs_FORWARD) u = f;
+        else                                    u = l;
+        P2 = C->Value(u);
+        dist = PV.Distance(P2);
+        if (dist <= distmin + (1./3)*delta){ 
+          gp_Pnt2d PC, P;
+          gp_Vec2d CTg1, CTg2, Tg1, Tg2;
+          Cc->D2(uc, PC, CTg1, CTg2);
+          C->D2(u, P, Tg1, Tg2);
 
-	  Standard_Real angle;
+          Standard_Real angle;
 
-	  if (CE.Orientation () == TopAbs_REVERSED && E.Orientation () == TopAbs_FORWARD) {
-	    angle = CTg1.Angle(Tg1.Reversed());
-	  }
-	  else if (CE.Orientation () == TopAbs_FORWARD && E.Orientation () == TopAbs_REVERSED) {
-	    angle = (CTg1.Reversed()).Angle(Tg1);
-	  }
-	  else if (CE.Orientation () == TopAbs_REVERSED && E.Orientation () == TopAbs_REVERSED) {
-	    angle = CTg1.Angle(Tg1);
-	  }
-	  else if (CE.Orientation () == TopAbs_FORWARD && E.Orientation () == TopAbs_FORWARD) {
-	    angle = (CTg1.Reversed()).Angle(Tg1.Reversed());
-	  }
-	  if (angle >= anglemax) {
-	    anglemax = angle ;
-	    SelectedEdge = E;	
-	  }
-	}
+          if (CE.Orientation () == TopAbs_REVERSED && E.Orientation () == TopAbs_FORWARD) {
+            angle = CTg1.Angle(Tg1.Reversed());
+          }
+          else if (CE.Orientation () == TopAbs_FORWARD && E.Orientation () == TopAbs_REVERSED) {
+            angle = (CTg1.Reversed()).Angle(Tg1);
+          }
+          else if (CE.Orientation () == TopAbs_REVERSED && E.Orientation () == TopAbs_REVERSED) {
+            angle = CTg1.Angle(Tg1);
+          }
+          else if (CE.Orientation () == TopAbs_FORWARD && E.Orientation () == TopAbs_FORWARD) {
+            angle = (CTg1.Reversed()).Angle(Tg1.Reversed());
+          }
+          if (angle >= anglemax) {
+            anglemax = angle ;
+            SelectedEdge = E;   
+          }
+        }
       }
     }
     for ( itl.Initialize(LE); itl.More(); itl.Next()) {
       const TopoDS_Edge& E = TopoDS::Edge(itl.Value());
       if (E.IsEqual(SelectedEdge)) {
-	NE = TopoDS::Edge(E);
-	LE.Remove(itl);
-	break;
+        NE = TopoDS::Edge(E);
+        LE.Remove(itl);
+        break;
       }
-    }					
+    }                                   
   }
   else if (LE.Extent() == 1) {
     NE = TopoDS::Edge(LE.First());
@@ -236,9 +236,9 @@ static Standard_Boolean  SelectEdge(const TopoDS_Face&    F,
 //purpose  : 
 //=======================================================================
 static Standard_Boolean  SamePnt2d(TopoDS_Vertex  V,
-				   TopoDS_Edge&   E1,
-				   TopoDS_Edge&   E2,
-				   TopoDS_Face&   F)
+                                   TopoDS_Edge&   E1,
+                                   TopoDS_Edge&   E2,
+                                   TopoDS_Face&   F)
 {
   Standard_Real   f1,f2,l1,l2;
   gp_Pnt2d        P1,P2;
@@ -261,7 +261,7 @@ static Standard_Boolean  SamePnt2d(TopoDS_Vertex  V,
 //purpose  : 
 //=======================================================================
 static void  PurgeNewEdges(TopTools_ListOfShape& ConstEdges,
-			   const TopTools_MapOfOrientedShape&          UsedEdges)
+                           const TopTools_MapOfOrientedShape&          UsedEdges)
 {
   TopTools_ListIteratorOfListOfShape it(ConstEdges);
   while ( it.More()) {
@@ -280,8 +280,8 @@ static void  PurgeNewEdges(TopTools_ListOfShape& ConstEdges,
 //purpose  : 
 //=======================================================================
 static void StoreInMVE (const TopoDS_Face& F,
-			TopoDS_Edge& E,
-			TopTools_DataMapOfShapeListOfShape& MVE )
+                        TopoDS_Edge& E,
+                        TopTools_DataMapOfShapeListOfShape& MVE )
 
 { 
   TopoDS_Vertex V1, V2;
@@ -292,7 +292,7 @@ static void StoreInMVE (const TopoDS_Face& F,
     MVE.Bind(V1,Empty);
   }
   MVE(V1).Append(E);
-	
+        
   if (!MVE.IsBound(V2)) {
     MVE.Bind(V2,Empty);
   }
@@ -351,8 +351,8 @@ void Partition_Loop::Perform()
     if (!MVE.IsBound(CV)) continue;
     for ( itl.Initialize(MVE(CV)); itl.More(); itl.Next()) {
       if (itl.Value().IsEqual(CE)) {
-	MVE(CV).Remove(itl);
-	break;
+        MVE(CV).Remove(itl);
+        break;
       }
     }
 
@@ -368,39 +368,39 @@ void Partition_Loop::Perform()
 
       //--------------
       // stop test
-      //--------------			
+      //--------------                  
       if (!MVE.IsBound(CV) || MVE(CV).IsEmpty() || CV.IsSame(VF) ) {
-	if (CV.IsSame(VF)) {
-	  if (MVE(CV).Extent() == 1 ) MVE.UnBind(CV);
-	  else {
-	    for ( itl.Initialize(MVE(CV)); itl.More(); itl.Next()) {
-	      if (itl.Value().IsEqual(CE)) {
-		MVE(CV).Remove(itl);
-		break;
-	      }
-	    }
-	  }
-	}
-	End=Standard_True;
+        if (CV.IsSame(VF)) {
+          if (MVE(CV).Extent() == 1 ) MVE.UnBind(CV);
+          else {
+            for ( itl.Initialize(MVE(CV)); itl.More(); itl.Next()) {
+              if (itl.Value().IsEqual(CE)) {
+                MVE(CV).Remove(itl);
+                break;
+              }
+            }
+          }
+        }
+        End=Standard_True;
       } 
 
       //--------------
       // select edge
       //--------------
       else {
-	Standard_Boolean find = SelectEdge(myFace,CE,CV,NE,MVE(CV));
-	if (find) {
-	  CE=NE;
-	  if (MVE(CV).IsEmpty()) MVE.UnBind(CV);
-	  if (CE.IsNull() ) {
-	    MESSAGE ( " CE is  NULL !!! " )
-	    End=Standard_True;
-	  }
-	}
-	else {
-	  MESSAGE ( " edge doesn't exist " )
-	  End=Standard_True;
-	}
+        Standard_Boolean find = SelectEdge(myFace,CE,CV,NE,MVE(CV));
+        if (find) {
+          CE=NE;
+          if (MVE(CV).IsEmpty()) MVE.UnBind(CV);
+          if (CE.IsNull() ) {
+            MESSAGE ( " CE is  NULL !!! " )
+            End=Standard_True;
+          }
+        }
+        else {
+          MESSAGE ( " edge doesn't exist " )
+          End=Standard_True;
+        }
       }
     }
 
@@ -412,7 +412,7 @@ void Partition_Loop::Perform()
     else{
       MESSAGE ( "wire not closed" )
     }
-    myNewWires.Append (NW);			
+    myNewWires.Append (NW);                     
   }
 
   PurgeNewEdges(myConstEdges,UsedEdges);
@@ -460,7 +460,7 @@ void  Partition_Loop::WiresToFaces()
     
     if (FR.IsDone()) {
       for (; FR.More(); FR.Next()) {
-	myNewFaces.Append(FR.Current().Oriented(OriF));
+        myNewFaces.Append(FR.Current().Oriented(OriF));
       }
     }
   }

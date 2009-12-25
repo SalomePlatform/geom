@@ -42,7 +42,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 TransformationGUI_OffsetDlg::TransformationGUI_OffsetDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-							  bool modal, Qt::WindowFlags fl )
+                                                          bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_OFFSET" ) ) );
@@ -120,7 +120,7 @@ void TransformationGUI_OffsetDlg::Init()
   
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
   connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged( bool ) ) );
@@ -237,7 +237,7 @@ void TransformationGUI_OffsetDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_ALLSHAPES );
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
@@ -302,7 +302,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
         if(!IsPreview()) {
           anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
         }
-	objects.push_back( anObj._retn() );
+        objects.push_back( anObj._retn() );
       }
     }
   }
@@ -310,7 +310,7 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
     for ( int i = 0; i < myObjects.length(); i++ ) {
       anObj = anOper->OffsetShape( myObjects[i], GetOffset() );
       if ( !anObj->_is_nil() )
-	objects.push_back( anObj._retn() );
+        objects.push_back( anObj._retn() );
     }
   }
   res = true;
@@ -328,8 +328,8 @@ void TransformationGUI_OffsetDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStu
   if ( mainFrame()->CheckBoxRestoreSS->isChecked() ) {
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-					 /*theFindMethod=*/GEOM::FSM_Transformed,
-					 /*theInheritFirstArg=*/true );
+                                         /*theFindMethod=*/GEOM::FSM_Transformed,
+                                         /*theInheritFirstArg=*/true );
   }
 }
 

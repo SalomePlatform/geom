@@ -997,9 +997,9 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
     theVolume = 0.0;
     if (aShape.ShapeType() < TopAbs_SHELL) {
       for (TopExp_Explorer Exp (aShape, TopAbs_SOLID); Exp.More(); Exp.Next()) {
-	GProp_GProps VProps;
-	BRepGProp::VolumeProperties(Exp.Current(), VProps);
-	theVolume += VProps.Mass();
+        GProp_GProps VProps;
+        BRepGProp::VolumeProperties(Exp.Current(), VProps);
+        theVolume += VProps.Mass();
       }
     }
   }
@@ -1160,25 +1160,25 @@ void GEOMImpl_IMeasureOperations::GetTolerance
       TopoDS_Face Face = TopoDS::Face(ExF.Current());
       T = BRep_Tool::Tolerance(Face);
       if (T > FaceMax)
- 	FaceMax = T;
+        FaceMax = T;
       if (T < FaceMin)
-	FaceMin = T;
+        FaceMin = T;
     }
     for (TopExp_Explorer ExE (aShape, TopAbs_EDGE); ExE.More(); ExE.Next()) {
       TopoDS_Edge Edge = TopoDS::Edge(ExE.Current());
       T = BRep_Tool::Tolerance(Edge);
       if (T > EdgeMax)
-	EdgeMax = T;
+        EdgeMax = T;
       if (T < EdgeMin)
-	EdgeMin = T;
+        EdgeMin = T;
     }
     for (TopExp_Explorer ExV (aShape, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
       TopoDS_Vertex Vertex = TopoDS::Vertex(ExV.Current());
       T = BRep_Tool::Tolerance(Vertex);
       if (T > VertMax)
-	VertMax = T;
+        VertMax = T;
       if (T < VertMin)
-	VertMin = T;
+        VertMin = T;
     }
   }
   catch (Standard_Failure) {
@@ -1689,12 +1689,12 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
       gp_Pnt PMin1, PMin2, P1, P2;
 
       for (int i = 1; i <= dst.NbSolution(); i++) {
-	P1 = dst.PointOnShape1(i);
-	P2 = dst.PointOnShape2(i);
+        P1 = dst.PointOnShape1(i);
+        P2 = dst.PointOnShape2(i);
 
-	Standard_Real Dist = P1.Distance(P2);
-	if (MinDist > Dist) {
-	  MinDist = Dist;
+        Standard_Real Dist = P1.Distance(P2);
+        if (MinDist > Dist) {
+          MinDist = Dist;
           PMin1 = P1;
           PMin2 = P2;
         }
@@ -1798,7 +1798,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
     Handle(Geom_Curve) C2 = BRep_Tool::Curve(E2,fp,lp);
 
     if ( C1.IsNull() || C2.IsNull() ||
-	!C1->IsKind(STANDARD_TYPE(Geom_Line)) ||
+        !C1->IsKind(STANDARD_TYPE(Geom_Line)) ||
         !C2->IsKind(STANDARD_TYPE(Geom_Line)))
     {
       SetErrorCode("The edges must be linear");
@@ -2462,14 +2462,14 @@ void GEOMImpl_IMeasureOperations::GetProblemSub (const BRepCheck_Analyzer&      
 
     const Handle(BRepCheck_Result)& res = theAna.Result(sub);
     for (res->InitContextIterator();
-	 res->MoreShapeInContext();
-	 res->NextShapeInContext()) {
+         res->MoreShapeInContext();
+         res->NextShapeInContext()) {
       if (res->ContextualShape().IsSame(theShape) && !Contains(theMap(sub), theShape)) {
-	theMap(sub).Append(theShape);
-	itl.Initialize(res->StatusOnShape());
+        theMap(sub).Append(theShape);
+        itl.Initialize(res->StatusOnShape());
 
-	if (itl.Value() != BRepCheck_NoError) {
-	  Standard_Integer ii = 0;
+        if (itl.Value() != BRepCheck_NoError) {
+          Standard_Integer ii = 0;
 
           for (ii = 1; ii <= sl->Length(); ii++)
             if (sl->Value(ii).IsSame(sub)) break;
@@ -2488,8 +2488,8 @@ void GEOMImpl_IMeasureOperations::GetProblemSub (const BRepCheck_Analyzer&      
             NbProblems->SetValue((Standard_Integer)stat,
                                  NbProblems->Value((Standard_Integer)stat) + 1);
           }
-	}
-	break;
+        }
+        break;
       }
     }
   }

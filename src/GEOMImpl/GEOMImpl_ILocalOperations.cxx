@@ -882,7 +882,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdges
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ MESSAGE ( "Chamfer Driver is NULL!!!" ); return NULL; }
+        { MESSAGE ( "Chamfer Driver is NULL!!!" ); return NULL; }
 
   GEOMImpl_IChamfer aCI (aFunction);
 
@@ -954,7 +954,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeChamferEdgesAD
 
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ChamferDriver::GetID())
-	{ MESSAGE("Chamfer Driver is NULL!!!"); return NULL;}
+        { MESSAGE("Chamfer Driver is NULL!!!"); return NULL;}
 
   GEOMImpl_IChamfer aCI (aFunction);
 

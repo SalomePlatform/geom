@@ -42,7 +42,7 @@
 #include "ui_DlgRef_1List1Spin1Btn_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1List1Spin1Btn : public QWidget, 
-					    public Ui::DlgRef_1List1Spin1Btn_QTD
+                                            public Ui::DlgRef_1List1Spin1Btn_QTD
 {
   Q_OBJECT
 
@@ -58,7 +58,7 @@ public:
 #include "ui_DlgRef_1Sel1Check1List_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1Sel1Check1List : public QWidget, 
-					     public Ui::DlgRef_1Sel1Check1List_QTD
+                                             public Ui::DlgRef_1Sel1Check1List_QTD
 {
   Q_OBJECT
 
@@ -74,7 +74,7 @@ public:
 #include "ui_DlgRef_1Sel1Check1Sel_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1Sel1Check1Sel : public QWidget, 
-					    public Ui::DlgRef_1Sel1Check1Sel_QTD
+                                            public Ui::DlgRef_1Sel1Check1Sel_QTD
 {
   Q_OBJECT
 
@@ -90,7 +90,7 @@ public:
 #include "ui_DlgRef_1Sel1Check_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1Sel1Check : public QWidget, 
-					public Ui::DlgRef_1Sel1Check_QTD
+                                        public Ui::DlgRef_1Sel1Check_QTD
 {
   Q_OBJECT
 
@@ -106,7 +106,7 @@ public:
 #include "ui_DlgRef_1Sel1List1Check3Btn_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1Sel1List1Check3Btn : public QWidget, 
-					         public Ui::DlgRef_1Sel1List1Check3Btn_QTD
+                                                 public Ui::DlgRef_1Sel1List1Check3Btn_QTD
 {
   Q_OBJECT
 
@@ -122,7 +122,7 @@ public:
 #include "ui_DlgRef_1Sel1Spin1Check_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1Sel1Spin1Check : public QWidget, 
-					     public Ui::DlgRef_1Sel1Spin1Check_QTD
+                                             public Ui::DlgRef_1Sel1Spin1Check_QTD
 {
   Q_OBJECT
 
@@ -138,7 +138,7 @@ public:
 #include "ui_DlgRef_1Sel1Spin_QTD.h"
 
 class DLGREF_EXPORT DlgRef_1Sel1Spin : public QWidget, 
-				       public Ui::DlgRef_1Sel1Spin_QTD
+                                       public Ui::DlgRef_1Sel1Spin_QTD
 {
   Q_OBJECT
 

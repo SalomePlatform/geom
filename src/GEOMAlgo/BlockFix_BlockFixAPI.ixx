@@ -40,10 +40,10 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_BlockFixAPI_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("BlockFix_BlockFixAPI",
-			                                 sizeof(BlockFix_BlockFixAPI),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(BlockFix_BlockFixAPI),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

@@ -56,36 +56,36 @@ public :
   static int GetIndex(const TopoDS_Shape& subshape, const TopoDS_Shape& shape, int ShapeType);
   static TopoDS_Shape GetShapeFromIOR(QString IOR);
   static bool GetShape(const GEOM::GEOM_Object_ptr&, TopoDS_Shape&,
-		       const TopAbs_ShapeEnum = TopAbs_SHAPE);
+                       const TopAbs_ShapeEnum = TopAbs_SHAPE);
   static bool GetTopoFromSelection(const SALOME_ListIO& aList, TopoDS_Shape& tds);
   static int GetNameOfSelectedIObjects(const SALOME_ListIO& aList, QString& aName,
-				       const bool theShapesOnly = false);
+                                       const bool theShapesOnly = false);
   static bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
 
   /* Convertions */
   static GEOM::GEOM_Object_ptr ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, 
-						    Standard_Boolean& testResult);
+                                                    Standard_Boolean& testResult);
   static Handle(GEOM_AISShape) ConvertIOinGEOMAISShape(const Handle(SALOME_InteractiveObject)& IO,
-						       Standard_Boolean& testResult,
-						       bool onlyInActiveView = false);
+                                                       Standard_Boolean& testResult,
+                                                       bool onlyInActiveView = false);
 
   static Handle(AIS_InteractiveObject) GetAIS(const Handle(SALOME_InteractiveObject)& theIO,
-					      const bool isOnlyInActiveView = false); 
+                                              const bool isOnlyInActiveView = false); 
   static void ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList,
-					 GEOM::string_array& listIOR); 
+                                         GEOM::string_array& listIOR); 
 
   static Handle(GEOM_AISShape) ConvertIORinGEOMAISShape(const char * IOR,
-							Standard_Boolean& testResult,
-							bool onlyInActiveView = false);
+                                                        Standard_Boolean& testResult,
+                                                        bool onlyInActiveView = false);
   static GEOM_Actor* ConvertIORinGEOMActor(const char * IOR, Standard_Boolean& testResult,
-					   bool onlyInActiveView = false);
+                                           bool onlyInActiveView = false);
 
   static GEOM::GEOM_Object_ptr ConvertIOinGEOMObject(const Handle(SALOME_InteractiveObject)& IO, 
-						     Standard_Boolean& testResult);
+                                                     Standard_Boolean& testResult);
 
   static void ConvertListOfIOInListOfGO(const SALOME_ListIO& aList,
-					GEOM::ListOfGO& listGO,
-					const bool theShapesOnly = false); 
+                                        GEOM::ListOfGO& listGO,
+                                        const bool theShapesOnly = false); 
 
   static GEOM::GEOM_Object_ptr GetObjectFromIOR(const char* theIOR);
 
@@ -103,7 +103,7 @@ public :
 
   /*  Generates default names */
   static bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName,
-				       const SALOME_ListIO& aList);
+                                       const SALOME_ListIO& aList);
   /* Shows message box with error code */
   static bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
 

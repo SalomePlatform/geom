@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_8.cxx
-// Created:	Fri Dec 19 11:15:53 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_8.cxx
+// Created:     Fri Dec 19 11:15:53 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -52,9 +52,9 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::SharedEdges(const Standard_Integer nF1,
-					const Standard_Integer nF2,
-					TColStd_ListOfInteger& aLNE,
-					TopTools_ListOfShape& aLSE)
+                                        const Standard_Integer nF2,
+                                        TColStd_ListOfInteger& aLNE,
+                                        TopTools_ListOfShape& aLSE)
 {
   Standard_Integer nE1, nE2;
   TColStd_MapOfInteger aM1;
@@ -139,7 +139,7 @@
 // purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::CommonBlocksFace(const Standard_Integer nF,
-							 NMTTools_ListOfCommonBlock& aLCB)
+                                                         NMTTools_ListOfCommonBlock& aLCB)
 {
   Standard_Integer nE;
   TopAbs_ShapeEnum aT;
@@ -175,7 +175,7 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsFace(const Standard_Integer nF,
-					   BOPTools_ListOfPaveBlock& aLPB)
+                                           BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
@@ -200,7 +200,7 @@
 // purpose:
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::HasRealSplitsInOnFace(const Standard_Integer nF1,
-							      const Standard_Integer nF2)
+                                                              const Standard_Integer nF2)
 {
   Standard_Boolean bFlag;
   BOPTools_ListOfPaveBlock aLPB;
@@ -222,9 +222,9 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsInFace(const Standard_Integer ,//for overriding
-					     const Standard_Integer nF1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF1,
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1;
   //
@@ -241,8 +241,8 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsInFace(const Standard_Integer nE1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nF1;
   //
@@ -262,7 +262,7 @@
     for (; anItLFCB.More(); anItLFCB.Next()) {
       nF1=anItLFCB.Value();
       if (nF1==nF2) {
-	aLPB.Append(aPB1R);
+        aLPB.Append(aPB1R);
       }
     }
   }
@@ -272,8 +272,8 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsOnEdge(const Standard_Integer nE1,
-					     const Standard_Integer nE2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nE2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   //
@@ -294,7 +294,7 @@
       const BOPTools_PaveBlock& aPB2=anIt.Value();
       nE=aPB2.OriginalEdge();
       if (nE==nE2) {
-	aLPB.Append(aPB1R);
+        aLPB.Append(aPB1R);
       }
     }
   }
@@ -304,8 +304,8 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsOnFace(const Standard_Integer nE1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE2;
   //
@@ -322,9 +322,9 @@
 // purpose:
 //=======================================================================
   void NMTTools_PaveFiller::RealSplitsOnFace(const Standard_Integer ,//for overriding
-					     const Standard_Integer nF1,
-					     const Standard_Integer nF2,
-					     BOPTools_ListOfPaveBlock& aLPB)
+                                             const Standard_Integer nF1,
+                                             const Standard_Integer nF2,
+                                             BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1;
   //
@@ -343,7 +343,7 @@
 // purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsFace(const Standard_Integer nF,
-						   BOPTools_ListOfPaveBlock& aLPB)
+                                                   BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   TopAbs_ShapeEnum aT;
@@ -376,9 +376,9 @@
 // purpose: splits of edges from nF1 in nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1;
   TopAbs_ShapeEnum aT1, aT2;
@@ -403,8 +403,8 @@
 // purpose: splits of edge nE1 in aFace2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nF1;
   TopAbs_ShapeEnum aT1, aT2;
@@ -431,7 +431,7 @@
     for (; anItLFCB.More(); anItLFCB.Next()) {
       nF1=anItLFCB.Value();
       if (nF1==nF2) {
-	aLPB.Append(aPB1);
+        aLPB.Append(aPB1);
       }
     }
   }
@@ -442,8 +442,8 @@
 // purpose:  splits of edge nE1 on nE2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnEdge(const Standard_Integer nE1,
-						     const Standard_Integer nE2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nE2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE;
   TopAbs_ShapeEnum aT1, aT2;
@@ -471,7 +471,7 @@
       const BOPTools_PaveBlock& aPB2=anIt.Value();
       nE=aPB2.OriginalEdge();
       if (nE==nE2) {
-	aLPB.Append(aPB1);
+        aLPB.Append(aPB1);
       }
     }
   }
@@ -482,8 +482,8 @@
 // purpose:  splits of edge nE1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE2, ip;
   TopAbs_ShapeEnum aT1, aT2;
@@ -511,9 +511,9 @@
 // purpose:  splits of edges from face nF1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     BOPTools_ListOfPaveBlock& aLPB)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Integer nE1, ip;
   TopAbs_ShapeEnum aT1, aT2;
@@ -543,7 +543,7 @@
 // purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsFace(const Standard_Integer nF,
-						   TColStd_ListOfInteger& aSplits)
+                                                   TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -568,9 +568,9 @@
 // purpose: splits of edges from nF1 in nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -593,8 +593,8 @@
 // purpose: splits of edge nE1 in aFace2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsInFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -617,8 +617,8 @@
 // purpose:  splits of edge nE1 on nE2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnEdge(const Standard_Integer nE1,
-						     const Standard_Integer nE2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nE2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -641,8 +641,8 @@
 // purpose:  splits of edge nE1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer nE1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;
@@ -665,9 +665,9 @@
 // purpose:  splits of edges from face nF1 on face nF2
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::SplitsOnFace(const Standard_Integer ,//for overriding
-						     const Standard_Integer nF1,
-						     const Standard_Integer nF2,
-						     TColStd_ListOfInteger& aSplits)
+                                                     const Standard_Integer nF1,
+                                                     const Standard_Integer nF2,
+                                                     TColStd_ListOfInteger& aSplits)
 {
   Standard_Integer nE, iErr;
   BOPTools_ListIteratorOfListOfPaveBlock aIt;

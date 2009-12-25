@@ -149,7 +149,7 @@ Handle(GEOM_Object) GEOMImpl_IBooleanOperations::MakePartition
                               const Standard_Integer                      theLimit,
                               const Standard_Boolean                      theRemoveWebs,
                               const Handle(TColStd_HArray1OfInteger)&     theMaterials,
-			      const Standard_Integer theKeepNonlimitShapes,
+                              const Standard_Integer theKeepNonlimitShapes,
                               const Standard_Boolean thePerformSelfIntersections)
 {
   SetErrorCode(KO);

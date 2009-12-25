@@ -211,20 +211,20 @@ void GEOMToolsGUI_MarkerDlg::accept()
       SALOME_ListIO selected;
       selMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
-	_PTR(Study) study = getStudy()->studyDS();
-	for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
-	  _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
-	  GEOM::GEOM_Object_var anObject =
-	    GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-	  if ( !anObject->_is_nil() ) {
-	    if ( myWGStack->currentIndex() == 0 )
-	      anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
-	    else if ( getCustomMarkerID() > 0 )
-	      anObject->SetMarkerTexture( getCustomMarkerID() );
-	  }
-	}
-	GEOM_Displayer displayer( getStudy() );
-	displayer.Redisplay( selected, true );
+        _PTR(Study) study = getStudy()->studyDS();
+        for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
+          _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
+          GEOM::GEOM_Object_var anObject =
+            GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
+          if ( !anObject->_is_nil() ) {
+            if ( myWGStack->currentIndex() == 0 )
+              anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
+            else if ( getCustomMarkerID() > 0 )
+              anObject->SetMarkerTexture( getCustomMarkerID() );
+          }
+        }
+        GEOM_Displayer displayer( getStudy() );
+        displayer.Redisplay( selected, true );
       }
     }
   }
@@ -277,35 +277,35 @@ void GEOMToolsGUI_MarkerDlg::init()
       SALOME_ListIO selected;
       selMgr->selectedObjects( selected );
       if ( !selected.IsEmpty() ) {
-	_PTR(Study) study = getStudy()->studyDS();
-	for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
-	  _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
-	  GEOM::GEOM_Object_var anObject =
-	    GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-	  if ( !anObject->_is_nil() ) {
-	    GEOM::marker_type mtype = anObject->GetMarkerType();
-	    if ( aType == -1 )
-	      aType = mtype;
-	    else if ( aType != mtype ) {
-	      aType = (GEOM::marker_type)-1;
-	      break;
-	    }
-	    if ( mtype > GEOM::MT_NONE && mtype < GEOM::MT_USER ) {
-	      GEOM::marker_size msize = anObject->GetMarkerSize();
-	      if ( aSize == -1 )
-		aSize = msize;
-	      else if ( aSize != msize )
-		break;
-	    }
-	    else if ( mtype == GEOM::MT_USER ) {
-	      int mtexture = anObject->GetMarkerTexture();
-	      if ( aTexture == 0 )
-		aTexture = mtexture;
-	      else if ( aTexture != mtexture )
-		break;
-	    }
-	  }
-	}
+        _PTR(Study) study = getStudy()->studyDS();
+        for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
+          _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
+          GEOM::GEOM_Object_var anObject =
+            GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
+          if ( !anObject->_is_nil() ) {
+            GEOM::marker_type mtype = anObject->GetMarkerType();
+            if ( aType == -1 )
+              aType = mtype;
+            else if ( aType != mtype ) {
+              aType = (GEOM::marker_type)-1;
+              break;
+            }
+            if ( mtype > GEOM::MT_NONE && mtype < GEOM::MT_USER ) {
+              GEOM::marker_size msize = anObject->GetMarkerSize();
+              if ( aSize == -1 )
+                aSize = msize;
+              else if ( aSize != msize )
+                break;
+            }
+            else if ( mtype == GEOM::MT_USER ) {
+              int mtexture = anObject->GetMarkerTexture();
+              if ( aTexture == 0 )
+                aTexture = mtexture;
+              else if ( aTexture != mtexture )
+                break;
+            }
+          }
+        }
       }
     }
   }
@@ -315,7 +315,7 @@ void GEOMToolsGUI_MarkerDlg::init()
     setCustomMarker( aTexture );
   else
     setStandardMarker((GEOM::marker_type)(resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS) + 1),
-		      (GEOM::marker_size)(resMgr->integerValue("Geometry", "marker_scale", 1)));
+                      (GEOM::marker_size)(resMgr->integerValue("Geometry", "marker_scale", 1)));
 }
 
 void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
@@ -329,18 +329,18 @@ void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
       image.setColor( 1, qRgba( 0, 0, 0, 255 ) );
       int bytesperline = tWidth/8;
       for ( int j = texture->Lower(); j <= texture->Upper(); j++ ) {
-	uchar val = (uchar)texture->Value( j );
-	for ( int k = 0; k < 8; k++ ) {
-	  int row = ( j - texture->Lower() ) / bytesperline;
-	  int col = ( ( j - texture->Lower() ) % bytesperline ) * 8 + k;
-	  image.setPixel( row, col, ( val & (1<<(8-k-1)) ) ? 1 : 0 );
-	}
+        uchar val = (uchar)texture->Value( j );
+        for ( int k = 0; k < 8; k++ ) {
+          int row = ( j - texture->Lower() ) / bytesperline;
+          int col = ( ( j - texture->Lower() ) % bytesperline ) * 8 + k;
+          image.setPixel( row, col, ( val & (1<<(8-k-1)) ) ? 1 : 0 );
+        }
       }
       QPixmap pixmap = QPixmap::fromImage( image );
       if ( !pixmap.isNull() ) {
-	myCustomTypeCombo->addItem( pixmap, QString::number( id ) );
-	myCustomTypeCombo->setId( myCustomTypeCombo->count()-1, id );
-	if ( select ) myCustomTypeCombo->setCurrentId( id );
+        myCustomTypeCombo->addItem( pixmap, QString::number( id ) );
+        myCustomTypeCombo->setId( myCustomTypeCombo->count()-1, id );
+        if ( select ) myCustomTypeCombo->setCurrentId( id );
       }
     }
   }

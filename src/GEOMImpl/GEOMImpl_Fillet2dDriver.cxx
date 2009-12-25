@@ -89,7 +89,7 @@ Standard_Integer GEOMImpl_Fillet2dDriver::Execute(TFunction_Logbook& log) const
   for (; ind <= aLen; ind++) {
     TopoDS_Shape aShapeVertex;
     if (GEOMImpl_ILocalOperations::GetSubShape
-	(aFaceShape, aCI.GetVertex(ind), aShapeVertex)) {
+        (aFaceShape, aCI.GetVertex(ind), aShapeVertex)) {
       fillet2d.AddFillet(TopoDS::Vertex(aShapeVertex), rad);
     }
   }
@@ -126,10 +126,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_Fillet2dDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_Fillet2dDriver",
-			                                 sizeof(GEOMImpl_Fillet2dDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_Fillet2dDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

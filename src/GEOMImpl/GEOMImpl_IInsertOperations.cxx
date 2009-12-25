@@ -135,8 +135,8 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) the
 //=============================================================================
 void GEOMImpl_IInsertOperations::Export
                      (const Handle(GEOM_Object)      theOriginal,
-		      const TCollection_AsciiString& theFileName,
-		      const TCollection_AsciiString& theFormatName)
+                      const TCollection_AsciiString& theFileName,
+                      const TCollection_AsciiString& theFormatName)
 {
   SetErrorCode(KO);
 
@@ -195,7 +195,7 @@ void GEOMImpl_IInsertOperations::Export
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
                                  (const TCollection_AsciiString& theFileName,
-		                  const TCollection_AsciiString& theFormatName)
+                                  const TCollection_AsciiString& theFormatName)
 {
   SetErrorCode(KO);
 
@@ -272,7 +272,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 //=============================================================================
 Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
                      (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
-		      Handle(TColStd_HSequenceOfAsciiString)& thePatterns)
+                      Handle(TColStd_HSequenceOfAsciiString)& thePatterns)
 {
   if (theFormats.IsNull())
     theFormats = new TColStd_HSequenceOfAsciiString;
@@ -305,13 +305,13 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
       int aLenFormats = theFormats->Length();
       bool isFound = false;
       for(int aInd=1;aInd<=aLenFormats;aInd++){
-	if( theFormats->Value(aInd) == aToken){
-	  isFound = true;
-	  break;
-	}
+        if( theFormats->Value(aInd) == aToken){
+          isFound = true;
+          break;
+        }
       }
       if(!isFound)
-	theFormats->Append(aToken);
+        theFormats->Append(aToken);
     }
   }
 
@@ -329,7 +329,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
       if (myResMgr->Find(aKey.ToCString()))
         aPattern = myResMgr->Value(aKey.ToCString());
       else if(myResMgrUser->Find(aKey.ToCString()))
-	aPattern = myResMgrUser->Value(aKey.ToCString());
+        aPattern = myResMgrUser->Value(aKey.ToCString());
       else {
         aPattern = theFormats->Value(j);
         aPattern += " Files ( *.* )";
@@ -348,7 +348,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::ImportTranslators
 //=============================================================================
 Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
                      (Handle(TColStd_HSequenceOfAsciiString)& theFormats,
-		      Handle(TColStd_HSequenceOfAsciiString)& thePatterns)
+                      Handle(TColStd_HSequenceOfAsciiString)& thePatterns)
 {
   if (theFormats.IsNull())
     theFormats = new TColStd_HSequenceOfAsciiString;
@@ -381,13 +381,13 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
       int aLenFormats = theFormats->Length();
       bool isFound = false;
       for(int aInd=1;aInd<=aLenFormats;aInd++){
-	if( theFormats->Value(aInd) == aToken){
-	  isFound = true;
-	  break;
-	}
+        if( theFormats->Value(aInd) == aToken){
+          isFound = true;
+          break;
+        }
       }
       if(!isFound)
-	theFormats->Append(aToken);
+        theFormats->Append(aToken);
     }
   }
 
@@ -405,7 +405,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::ExportTranslators
       if (myResMgr->Find(aKey.ToCString()))
         aPattern = myResMgr->Value(aKey.ToCString());
       else if (myResMgrUser->Find(aKey.ToCString()))
-	aPattern = myResMgrUser->Value(aKey.ToCString());
+        aPattern = myResMgrUser->Value(aKey.ToCString());
       else {
         aPattern = theFormats->Value(j);
         aPattern += " Files ( *.* )";
@@ -542,7 +542,7 @@ Standard_Boolean GEOMImpl_IInsertOperations::InitResMgr()
   }
 
   return ( myResMgr->Find("Import") || myResMgr->Find("Export") ||
-	   myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
+           myResMgrUser->Find("Import") || myResMgrUser->Find("Export"));
 }
 
 int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTextureFile)
@@ -583,7 +583,7 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
     for (int i = 0; i < lenline/8; i++) {
       unsigned char byte = 0;
       for (int j = 0; j < 8; j++)
-	byte = (byte << 1) + ( i*8+j < line.size() && line[i*8+j] != '0' ? 1 : 0 );
+        byte = (byte << 1) + ( i*8+j < line.size() && line[i*8+j] != '0' ? 1 : 0 );
       bytedata.push_back(byte);
     }
     for (int i = lenline/8; i < lenbytes; i++)
@@ -605,7 +605,7 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
 }
   
 int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight, 
-					   const Handle(TDataStd_HArray1OfByte)& theTexture)
+                                           const Handle(TDataStd_HArray1OfByte)& theTexture)
 {
   SetErrorCode(KO);
   int aTextureId = GetEngine()->addTexture(GetDocID(), theWidth, theHeight, theTexture);
@@ -614,7 +614,7 @@ int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight,
 }
 
 Handle(TDataStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theTextureId,
-								      int& theWidth, int& theHeight)
+                                                                      int& theWidth, int& theHeight)
 {
   SetErrorCode(KO);
   

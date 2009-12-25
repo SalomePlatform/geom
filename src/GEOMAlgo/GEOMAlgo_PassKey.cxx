@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Algo.cxx
-// Created:	Sat Dec 04 12:39:47 2004
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
+// File:        GEOMAlgo_Algo.cxx
+// Created:     Sat Dec 04 12:39:47 2004
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
 //
 #include <GEOMAlgo_PassKey.ixx>
 
@@ -37,7 +37,7 @@
 
 static
   Standard_Integer NormalizedId(const Standard_Integer aId,
-				const Standard_Integer aDiv);
+                                const Standard_Integer aDiv);
 
 //=======================================================================
 //function :
@@ -90,7 +90,7 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1)
-			       
+                               
 {
   Clear();
   myNbIds=1;
@@ -102,7 +102,7 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
-				const Standard_Integer aId2)
+                                const Standard_Integer aId2)
 {
   TColStd_ListOfInteger aLI;
   //
@@ -115,8 +115,8 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
-				const Standard_Integer aId2,
-				const Standard_Integer aId3)
+                                const Standard_Integer aId2,
+                                const Standard_Integer aId3)
 {
   TColStd_ListOfInteger aLI;
   //
@@ -130,9 +130,9 @@ static
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
-				const Standard_Integer aId2,
-				const Standard_Integer aId3,
-				const Standard_Integer aId4)
+                                const Standard_Integer aId2,
+                                const Standard_Integer aId3,
+                                const Standard_Integer aId4)
 { 
   TColStd_ListOfInteger aLI;
   //
@@ -225,7 +225,7 @@ static
 // purpose : 
 //=======================================================================
 Standard_Integer NormalizedId(const Standard_Integer aId,
-			      const Standard_Integer aDiv)
+                              const Standard_Integer aDiv)
 {
   Standard_Integer aMax, aTresh, aIdRet;
   //

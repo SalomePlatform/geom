@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_WESCorrector.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTAlgo_WESCorrector.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_WESCorrector.ixx>
 
@@ -56,7 +56,7 @@
 
 static
   void MakeWire(const TopTools_ListOfShape& aLE, 
-		TopoDS_Wire& newWire);
+                TopoDS_Wire& newWire);
 
 //=======================================================================
 // function: 
@@ -164,36 +164,36 @@ static
     while(1) {
       aNbVP=aMVP.Extent();
       for (j=1; j<=aNbVP; ++j) {
-	const TopoDS_Shape& aVP=aMVP(j);
-	const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aVP);
-	aIt.Initialize(aLE);
-	for (; aIt.More(); aIt.Next()) {
-	  const TopoDS_Shape& aE=aIt.Value();
-	  if (aMEC.Contains(aE)) {
-	    continue;
-	  }
-	  aMEC.Add(aE);
-	  //
-	  aItE.Initialize(aE);
-	  for (; aItE.More(); aItE.Next()) {
-	    const TopoDS_Shape& aVE=aItE.Value();
-	    if (!aMVS.Contains(aVE)) {
-	      aMVS.Add(aVE);
-	      aMVAdd.Add(aVE);
-	    }
-	  }
-	}
+        const TopoDS_Shape& aVP=aMVP(j);
+        const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aVP);
+        aIt.Initialize(aLE);
+        for (; aIt.More(); aIt.Next()) {
+          const TopoDS_Shape& aE=aIt.Value();
+          if (aMEC.Contains(aE)) {
+            continue;
+          }
+          aMEC.Add(aE);
+          //
+          aItE.Initialize(aE);
+          for (; aItE.More(); aItE.Next()) {
+            const TopoDS_Shape& aVE=aItE.Value();
+            if (!aMVS.Contains(aVE)) {
+              aMVS.Add(aVE);
+              aMVAdd.Add(aVE);
+            }
+          }
+        }
       }//for (j=1; j<=aNbVP; ++j) 
       //
       aNbVP=aMVAdd.Extent();
       if (!aNbVP) {
-	break; // from while(1)
+        break; // from while(1)
       }
       //
       aMVP.Clear();
       for (j=1; j<=aNbVP; ++j) {
-	const TopoDS_Shape& aVE=aMVAdd(j);
-	aMVP.Add(aVE);
+        const TopoDS_Shape& aVE=aMVAdd(j);
+        aMVP.Add(aVE);
       }
       aMVAdd.Clear();
     }// while(1) {
@@ -209,24 +209,24 @@ static
       aER=aMEC(j);
       //
       if (aMER.Contains(aER)) {
-	aER.Orientation(TopAbs_FORWARD);
-	aLEC.Append(aER);
-	aER.Orientation(TopAbs_REVERSED);
-	aLEC.Append(aER);
-	//
-	//modified by NIZNHY-PKV Tue Nov 28 12:02:29 2006f
-	//bClosed=BRep_Tool::IsClosed(TopoDS::Edge(aER), myWES->Face());
-	//if (!bClosed) {
-	  bRegular=Standard_False;
-	//}
-	//modified by NIZNHY-PKV Tue Nov 28 12:02:33 2006t
+        aER.Orientation(TopAbs_FORWARD);
+        aLEC.Append(aER);
+        aER.Orientation(TopAbs_REVERSED);
+        aLEC.Append(aER);
+        //
+        //modified by NIZNHY-PKV Tue Nov 28 12:02:29 2006f
+        //bClosed=BRep_Tool::IsClosed(TopoDS::Edge(aER), myWES->Face());
+        //if (!bClosed) {
+          bRegular=Standard_False;
+        //}
+        //modified by NIZNHY-PKV Tue Nov 28 12:02:33 2006t
       }
       else {
-	aLEC.Append(aER);
+        aLEC.Append(aER);
       }
       //
       if (bRegular) {
-	TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+        TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
       }
     }//for (j=1; j<=aNbC; ++j) {
     //
@@ -235,20 +235,20 @@ static
       //
       aNbVR=aMVER.Extent();
       for (k=1; k<=aNbVR; ++k) {
-	const TopTools_ListOfShape& aLER=aMVER(k);
-	aNbER=aLER.Extent();
-	if (aNbER==1) {
-	  const TopoDS_Edge& aEx=TopoDS::Edge(aER);
-	  bClosed=BRep_Tool::IsClosed(aEx, myWES->Face());
-	  if (!bClosed) {
-	    bRegular=!bRegular;
-	    break;
-	  }
-	}
-	if (aNbER>2) {
-	  bRegular=!bRegular;
-	  break;
-	}
+        const TopTools_ListOfShape& aLER=aMVER(k);
+        aNbER=aLER.Extent();
+        if (aNbER==1) {
+          const TopoDS_Edge& aEx=TopoDS::Edge(aER);
+          bClosed=BRep_Tool::IsClosed(aEx, myWES->Face());
+          if (!bClosed) {
+            bRegular=!bRegular;
+            break;
+          }
+        }
+        if (aNbER>2) {
+          bRegular=!bRegular;
+          break;
+        }
       }
     }
     //
@@ -319,7 +319,7 @@ static
 // purpose: 
 //=======================================================================
   void MakeWire(const TopTools_ListOfShape& aLE, 
-		TopoDS_Wire& newWire)
+                TopoDS_Wire& newWire)
 {
   BRep_Builder aBB;
   aBB.MakeWire(newWire);

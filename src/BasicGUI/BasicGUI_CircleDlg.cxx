@@ -50,7 +50,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					bool modal, Qt::WindowFlags fl )
+                                        bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_CIRCLE_PV" ) ) );
@@ -250,7 +250,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   case 2:
     {
       GroupPntVecR->hide();
-      Group3Pnts->hide();		
+      Group3Pnts->hide();               
       GroupCenter2Pnts->show();
       
       myEditCurrentArgument = GroupCenter2Pnts->LineEdit1;
@@ -276,7 +276,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   displayPreview();
 }
@@ -353,16 +353,16 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
         else
           aName += QString( ":vertex_%1" ).arg( anIndex );
 
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
 
-	if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	  aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-	}
-	else {
-	  aSelectedObject = aFindedObject; // get Object from study
-	}
+        if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+          aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
+        }
+        else {
+          aSelectedObject = aFindedObject; // get Object from study
+        }
       }
       else { // Global Selection
         if ( aShape.ShapeType() != aNeedType ) {
@@ -382,42 +382,42 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
     if      ( myEditCurrentArgument == GroupPntVecR->LineEdit1 ) {
       myPoint  = aSelectedObject;
       if ( !myPoint->_is_nil() && myDir->_is_nil() )
-	GroupPntVecR->PushButton2->click();
+        GroupPntVecR->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPntVecR->LineEdit2 ) {
       myDir    = aSelectedObject;
       if ( !myDir->_is_nil() && myPoint->_is_nil() )
-	GroupPntVecR->PushButton1->click();
+        GroupPntVecR->PushButton1->click();
     }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
       myPoint1 = aSelectedObject;
       if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
-	Group3Pnts->PushButton2->click();
+        Group3Pnts->PushButton2->click();
     }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
       myPoint2 = aSelectedObject;
       if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
-	Group3Pnts->PushButton3->click();
+        Group3Pnts->PushButton3->click();
     }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
       myPoint3 = aSelectedObject;
       if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
-	Group3Pnts->PushButton1->click();
+        Group3Pnts->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit1 ) {
       myPoint4 = aSelectedObject;
       if ( !myPoint4->_is_nil() && myPoint5->_is_nil() )
-	GroupCenter2Pnts->PushButton2->click();
+        GroupCenter2Pnts->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit2 ) {
       myPoint5 = aSelectedObject;
       if ( !myPoint5->_is_nil() && myPoint6->_is_nil() )
-	GroupCenter2Pnts->PushButton3->click();
+        GroupCenter2Pnts->PushButton3->click();
     }
     else if ( myEditCurrentArgument == GroupCenter2Pnts->LineEdit3 ) {
       myPoint6 = aSelectedObject;
       if ( !myPoint6->_is_nil() && myPoint4->_is_nil() )
-	GroupCenter2Pnts->PushButton1->click();
+        GroupCenter2Pnts->PushButton1->click();
     }
   }
 
@@ -543,7 +543,7 @@ void BasicGUI_CircleDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }

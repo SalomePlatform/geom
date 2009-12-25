@@ -119,17 +119,17 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Vertex V1, V2;
       TopExp::Vertices(anE, V1, V2, Standard_True);
       if (!V1.IsNull() && !V2.IsNull()) {
-	gp_Vec aVM (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+        gp_Vec aVM (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aVM.Magnitude() < gp::Resolution()) {
           Standard_ConstructionError::Raise
             ("Ellipse creation aborted: major axis vector of zero length is given");
         }
-	if (aV.IsParallel(aVM, Precision::Angular())) {
-	  Standard_ConstructionError::Raise
-	    ("Ellipse creation aborted: normal and major axis vectors are parallel");
-	}
-	// Axes defined with main axis vector
-	anAxes  = gp_Ax2 (aP, aV, aVM);
+        if (aV.IsParallel(aVM, Precision::Angular())) {
+          Standard_ConstructionError::Raise
+            ("Ellipse creation aborted: normal and major axis vectors are parallel");
+        }
+        // Axes defined with main axis vector
+        anAxes  = gp_Ax2 (aP, aV, aVM);
       }
     }
 
@@ -167,10 +167,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_EllipseDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_EllipseDriver",
-			                                 sizeof(GEOMImpl_EllipseDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_EllipseDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

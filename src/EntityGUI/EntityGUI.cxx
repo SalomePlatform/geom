@@ -195,13 +195,13 @@ bool EntityGUI::SObjectExist( const _PTR(SObject)& theFatherObject, const char* 
     if ( SO->FindAttribute( anAttr, "AttributeIOR" ) ) {
       _PTR(AttributeIOR) anIOR ( anAttr  );
       if ( strcmp( anIOR->Value().c_str(), IOR ) == 0 )
-	return true;
+        return true;
     }
     if ( SO->ReferencedObject( RefSO ) ) {
       if ( RefSO->FindAttribute( anAttr, "AttributeIOR" ) ) {
         _PTR(AttributeIOR) anIOR ( anAttr );
-	if ( strcmp( anIOR->Value().c_str(), IOR ) == 0 )
-	  return true;
+        if ( strcmp( anIOR->Value().c_str(), IOR ) == 0 )
+          return true;
       }
     }
   }

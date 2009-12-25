@@ -42,7 +42,7 @@ MeasureGUI_1Sel12LineEdit::~MeasureGUI_1Sel12LineEdit()
 //////////////////////////////////////////
 
 MeasureGUI_1Sel1TextView1Check::MeasureGUI_1Sel1TextView1Check( QWidget* parent, 
-								Qt::WindowFlags f )
+                                                                Qt::WindowFlags f )
 : QWidget( parent, f )
 {
   setupUi( this );
@@ -57,7 +57,7 @@ MeasureGUI_1Sel1TextView1Check::~MeasureGUI_1Sel1TextView1Check()
 //////////////////////////////////////////
 
 MeasureGUI_1Sel1TextView2ListBox::MeasureGUI_1Sel1TextView2ListBox( QWidget* parent, 
-								    Qt::WindowFlags f )
+                                                                    Qt::WindowFlags f )
 : QWidget( parent, f )
 {
   setupUi( this );

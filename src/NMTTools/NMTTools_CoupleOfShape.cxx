@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_CoupleOfShape.cxx
-// Created:	Wed Jan 28 15:06:11 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_CoupleOfShape.cxx
+// Created:     Wed Jan 28 15:06:11 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_CoupleOfShape.ixx>
 

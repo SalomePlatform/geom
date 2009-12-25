@@ -98,7 +98,7 @@ void MeasureGUI_CheckShapeDlg::Init()
   MeasureGUI_Skeleton::Init();
 
   connect( myGrp->CheckBox1, SIGNAL( toggled( bool) ), 
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 }
 
 //=================================================================================

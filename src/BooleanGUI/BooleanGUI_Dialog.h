@@ -40,7 +40,7 @@ class BooleanGUI_Dialog : public GEOMBase_Skeleton
 
 public:
   BooleanGUI_Dialog( const int, GeometryGUI*, QWidget* = 0,
-		     bool = false, Qt::WindowFlags = 0 );
+                     bool = false, Qt::WindowFlags = 0 );
   ~BooleanGUI_Dialog();
   
 protected:

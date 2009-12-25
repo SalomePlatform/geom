@@ -159,8 +159,8 @@ bool MeasureGUI_MaxToleranceDlg::getParameters( double& theMinFaceToler,
     GEOM::GEOM_IMeasureOperations_var anOper = GEOM::GEOM_IMeasureOperations::_narrow( getOperation() );
     try {
       anOper->GetTolerance( myObj, 
-			    theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
-			    theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
+                            theMinFaceToler, theMaxFaceToler,   theMinEdgeToler,
+                            theMaxEdgeToler, theMinVertexToler, theMaxVertexToler );
     }
     catch( const SALOME::SALOME_Exception& e ) {
       SalomeApp_Tools::QtCatchCorbaException( e );

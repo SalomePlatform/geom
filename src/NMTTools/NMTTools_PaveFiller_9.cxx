@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_9.cxx
-// Created:	Fri Dec 19 11:15:53 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_9.cxx
+// Created:     Fri Dec 19 11:15:53 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -58,7 +58,7 @@
 // purpose: 
 //=======================================================================
   void NMTTools_PaveFiller::PrepareFace(const Standard_Integer nF, 
-					TopoDS_Face& newFace)
+                                        TopoDS_Face& newFace)
 {
   Standard_Boolean bToReverse, bIsDegenerated;
   Standard_Integer iRankF, nE, nSp, aNbPB;
@@ -97,27 +97,27 @@
       const BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
       aNbPB=aLPB.Extent();
       if (!aNbPB) {
-	aBB.Add(newWire, aE);
-	continue;
+        aBB.Add(newWire, aE);
+        continue;
       }
       //
       aItPB.Initialize(aLPB);
       for (; aItPB.More(); aItPB.Next()) {
-	const BOPTools_PaveBlock& aPB=aItPB.Value();
-	const BOPTools_PaveBlock& aPBR=RealPaveBlock(aPB);
-	nSp=aPBR.Edge();
-	//
-	aSp=TopoDS::Edge(myDS->Shape(nSp));
-	if (!bIsDegenerated) {
-	  bToReverse=BOPTools_Tools3D::IsSplitToReverse1(aSp, aE, myContext);
-	  if (bToReverse) {
-	    aSp.Reverse();
-	  }
-	}
-	else {
-	 aSp.Orientation(anOrE);
-	}
-	aBB.Add(newWire, aSp);
+        const BOPTools_PaveBlock& aPB=aItPB.Value();
+        const BOPTools_PaveBlock& aPBR=RealPaveBlock(aPB);
+        nSp=aPBR.Edge();
+        //
+        aSp=TopoDS::Edge(myDS->Shape(nSp));
+        if (!bIsDegenerated) {
+          bToReverse=BOPTools_Tools3D::IsSplitToReverse1(aSp, aE, myContext);
+          if (bToReverse) {
+            aSp.Reverse();
+          }
+        }
+        else {
+         aSp.Orientation(anOrE);
+        }
+        aBB.Add(newWire, aSp);
       }
     }
     aBB.Add(newFace, newWire);

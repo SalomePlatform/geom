@@ -143,7 +143,7 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
       gp_Pnt pt2 = anId2Pnts(id2);
           
       if(!isidtrsf) {
-      	// apply edge transformation
+        // apply edge transformation
         pt1.Transform(edgeTransf);
         pt2.Transform(edgeTransf);
       }

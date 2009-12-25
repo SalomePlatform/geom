@@ -48,9 +48,9 @@ class vtkCellArray;
 
 class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
-  // methods	
+  // methods    
 
- public:	
+ public:        
 
   static GEOM_OCCReader* New();
 
@@ -67,59 +67,59 @@ class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   GEOM_OCCReader();
   ~GEOM_OCCReader();
-  void Execute();	
+  void Execute();       
 
   void ComputeShading(vtkPoints* Pts,vtkCellArray* Cells);
   void ComputeWireframe(vtkPoints* Pts,vtkCellArray* Cells);
 
   void TransferFaceSData(const TopoDS_Face& aFace,
-			 vtkPoints* Pts,
-			 vtkCellArray* Cells);
+                         vtkPoints* Pts,
+                         vtkCellArray* Cells);
 
   void TransferFaceWData(const TopoDS_Face& aFace,
-			 vtkPoints* Pts,
-			 vtkCellArray* Cells);
+                         vtkPoints* Pts,
+                         vtkCellArray* Cells);
 
   void TransferEdgeSData(const TopoDS_Edge& aEdge,
-			 vtkPoints* Pts,
-			 vtkCellArray* Cells);
+                         vtkPoints* Pts,
+                         vtkCellArray* Cells);
 
   void TransferEdgeWData(const TopoDS_Edge& aEdge,
-			 vtkPoints* Pts,
-			 vtkCellArray* Cells);
+                         vtkPoints* Pts,
+                         vtkCellArray* Cells);
 
   void TransferVertexWData(const TopoDS_Vertex& aVertex,
-			   vtkPoints* Pts,
-			   vtkCellArray* Cells);
+                           vtkPoints* Pts,
+                           vtkCellArray* Cells);
 
   void createISO(const TopoDS_Face &, 
-		 double, int,
-		 vtkPoints* Pts,
-		 vtkCellArray* Cells);
+                 double, int,
+                 vtkPoints* Pts,
+                 vtkCellArray* Cells);
   
   void DrawIso(GeomAbs_IsoType aType,
-	       Standard_Real PParm,
-	       Standard_Real p1,
-	       Standard_Real p2,
-	       vtkPoints* Pts,
-	       vtkCellArray* Cells,
-	       Standard_Integer& startidx);
+               Standard_Real PParm,
+               Standard_Real p1,
+               Standard_Real p2,
+               vtkPoints* Pts,
+               vtkCellArray* Cells,
+               Standard_Integer& startidx);
   
   void MoveTo(gp_Pnt P,
-	      vtkPoints* Pts);
+              vtkPoints* Pts);
 
   void DrawTo(gp_Pnt P,
-	      vtkPoints* Pts,
-	      vtkCellArray* Cells);
+              vtkPoints* Pts,
+              vtkCellArray* Cells);
 
   void PlotIso(BRepAdaptor_Surface& S, 
-	       GeomAbs_IsoType T,
-	       Standard_Real& U, 
-	       Standard_Real& V, 
-	       Standard_Real Step, 
-	       Standard_Boolean& halt,
-	       vtkPoints* Pts,
-	       vtkCellArray* Cells);
+               GeomAbs_IsoType T,
+               Standard_Real& U, 
+               Standard_Real& V, 
+               Standard_Real Step, 
+               Standard_Boolean& halt,
+               vtkPoints* Pts,
+               vtkCellArray* Cells);
 
   // fields
 
@@ -127,7 +127,7 @@ class GEOM_OBJECT_EXPORT GEOM_OCCReader : public vtkPolyDataSource {
 
   Standard_Boolean       forced;
   int                    discretiso;
-  int			 amode;
+  int                    amode;
   int                    nbisos;
   TopoDS_Shape           myShape;
   bool                   myIsVector;

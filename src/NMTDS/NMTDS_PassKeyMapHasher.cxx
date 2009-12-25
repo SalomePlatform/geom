@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_PassKeyMapHasher.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_PassKeyMapHasher.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_PassKeyMapHasher.ixx>
 
@@ -31,7 +31,7 @@
 //purpose  : 
 //=======================================================================
   Standard_Integer NMTDS_PassKeyMapHasher::HashCode(const NMTDS_PassKey& aPK,
-						    const Standard_Integer Upper)
+                                                    const Standard_Integer Upper)
 {
   return aPK.HashCode(Upper);
 }
@@ -40,7 +40,7 @@
 //purpose  : 
 //=======================================================================
   Standard_Boolean NMTDS_PassKeyMapHasher::IsEqual(const NMTDS_PassKey& aPK1,
-						   const NMTDS_PassKey& aPK2)
+                                                   const NMTDS_PassKey& aPK2)
 {
   return aPK1.IsEqual(aPK2);
 }

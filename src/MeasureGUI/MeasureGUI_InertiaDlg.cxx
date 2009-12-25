@@ -173,10 +173,10 @@ bool MeasureGUI_InertiaDlg::getParameters( gp_Mat& I,
     try {
       double x, y, z;
       anOper->GetInertia( myObj,
-			  I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
-			  I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
-			  I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
-			  x, y, z );
+                          I( 1, 1 ), I( 1, 2 ), I( 1, 3 ),
+                          I( 2, 1 ), I( 2, 2 ), I( 2, 3 ),
+                          I( 3, 1 ), I( 3, 2 ), I( 3, 3 ),
+                          x, y, z );
 
         theIXYZ.SetCoord( x, y, z );
     }

@@ -189,16 +189,16 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     BRepExtrema_DistShapeShape dst (aRefShape1, aRefShape2);
     if (dst.IsDone())
       {
-	gp_Pnt P1, P2;
-	for (int i = 1; i <= dst.NbSolution(); i++) {
-	  P1 = dst.PointOnShape1(i);
-	  P2 = dst.PointOnShape2(i);
-	  Standard_Real Dist = P1.Distance(P2);
-	  if ( Dist <= Precision::Confusion() )
-	    aPnt = P1;
-	  else 
-	    Standard_TypeMismatch::Raise ("Lines not have an Intersection Point");
-	}
+        gp_Pnt P1, P2;
+        for (int i = 1; i <= dst.NbSolution(); i++) {
+          P1 = dst.PointOnShape1(i);
+          P2 = dst.PointOnShape2(i);
+          Standard_Real Dist = P1.Distance(P2);
+          if ( Dist <= Precision::Confusion() )
+            aPnt = P1;
+          else 
+            Standard_TypeMismatch::Raise ("Lines not have an Intersection Point");
+        }
       }
   }
   else {
@@ -233,10 +233,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PointDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PointDriver",
-			                                 sizeof(GEOMImpl_PointDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_PointDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

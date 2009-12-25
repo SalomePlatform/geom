@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_IndexRange.cxx
-// Created:	Fri Nov 28 10:34:59 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_IndexRange.cxx
+// Created:     Fri Nov 28 10:34:59 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_IndexRange.ixx>
 //=======================================================================

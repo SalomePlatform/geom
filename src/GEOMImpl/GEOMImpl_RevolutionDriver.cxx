@@ -105,18 +105,18 @@ Standard_Integer GEOMImpl_RevolutionDriver::Execute(TFunction_Logbook& log) cons
       gp_Lin aL(BRep_Tool::Pnt(V1), gp_Dir(aV));
       Standard_Real d = aL.Distance(BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase)));
       if (d < Precision::Confusion()) {
-	Standard_ConstructionError::Raise("Vertex to be rotated is too close to Revolution Axis");
+        Standard_ConstructionError::Raise("Vertex to be rotated is too close to Revolution Axis");
       }
     }
     double anAngle = aCI.GetAngle();
     gp_Ax1 anAxis (BRep_Tool::Pnt(V1), aV);
     if (aType == REVOLUTION_BASE_AXIS_ANGLE_2WAYS)
       {
-	gp_Trsf aTrsf;
-	aTrsf.SetRotation(anAxis, ( -anAngle ));
-	BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-	aShapeBase = aTransformation.Shape();
-	anAngle = anAngle * 2;
+        gp_Trsf aTrsf;
+        aTrsf.SetRotation(anAxis, ( -anAngle ));
+        BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+        aShapeBase = aTransformation.Shape();
+        anAngle = anAngle * 2;
       }
     BRepPrimAPI_MakeRevol MR (aShapeBase, anAxis, anAngle, Standard_False);
     if (!MR.IsDone()) MR.Build();
@@ -153,10 +153,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_RevolutionDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_RevolutionDriver",
-			                                 sizeof(GEOMImpl_RevolutionDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_RevolutionDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

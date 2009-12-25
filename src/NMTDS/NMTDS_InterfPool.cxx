@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_.InterfPoolcxx
-// Created:	Wed Feb 21 10:35:35 2007
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_.InterfPoolcxx
+// Created:     Wed Feb 21 10:35:35 2007
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_InterfPool.ixx>
 #include <NMTDS_PassKeyBoolean.hxx>
@@ -53,7 +53,7 @@ static
 //purpose  : 
 //=======================================================================
   Standard_Boolean NMTDS_InterfPool::Add (const NMTDS_PassKeyBoolean& aPKB,
-					  const NMTDS_InterfType aType)
+                                          const NMTDS_InterfType aType)
 {
   Standard_Boolean bRet;
   Standard_Integer iType;
@@ -71,8 +71,8 @@ static
 //purpose  : 
 //=======================================================================
   Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
-					  const Standard_Integer aInd2,
-					  const NMTDS_InterfType aType)
+                                          const Standard_Integer aInd2,
+                                          const NMTDS_InterfType aType)
 {
   NMTDS_PassKeyBoolean aPKB;
   //
@@ -84,9 +84,9 @@ static
 //purpose  : 
 //=======================================================================
   Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
-					  const Standard_Integer aInd2,
-					  const Standard_Boolean bFlag,
-					  const NMTDS_InterfType aType)
+                                          const Standard_Integer aInd2,
+                                          const Standard_Boolean bFlag,
+                                          const NMTDS_InterfType aType)
 {
   NMTDS_PassKeyBoolean aPKB;
   //
@@ -116,7 +116,7 @@ static
 //purpose  : 
 //=======================================================================
   Standard_Boolean NMTDS_InterfPool::Contains(const Standard_Integer aInd1,
-					      const Standard_Integer aInd2)const
+                                              const Standard_Integer aInd2)const
 {
   NMTDS_PassKeyBoolean aPKB;
   //
@@ -166,7 +166,7 @@ static
       const NMTDS_PassKeyBoolean& aPKB=aIt.Key();
       aPKB.Ids(n1, n2);
       if(n1==aInd || n2==aInd) {
-	pL->Append(aPKB);
+        pL->Append(aPKB);
       }
     }
   }
@@ -201,7 +201,7 @@ static
 //purpose  : 
 //=======================================================================
   const NMTDS_ListOfPassKeyBoolean& NMTDS_InterfPool::Get(const Standard_Integer aInd,
-							  const NMTDS_InterfType aType)const
+                                                          const NMTDS_InterfType aType)const
 {
   Standard_Integer n1, n2;
   NMTDS_ListOfPassKeyBoolean *pL, aLPKB;

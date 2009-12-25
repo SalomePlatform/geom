@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	STEPExport.cxx
-// Created:	Wed May 19 14:53:52 2004
-// Author:	Pavel TELKOV
-//		<ptv@mutex.nnov.opencascade.com>
+// File:        STEPExport.cxx
+// Created:     Wed May 19 14:53:52 2004
+// Author:      Pavel TELKOV
+//              <ptv@mutex.nnov.opencascade.com>
 //
 #include "utilities.h"
 
@@ -81,11 +81,11 @@ STEPEXPORT_EXPORT
       status = aWriter.Transfer( theShape, STEPControl_AsIs );
       //VRV: OCC 4.0 migration
       if ( status == IFSelect_RetDone ) 
-	  status = aWriter.Write( theFileName.ToCString() );
+          status = aWriter.Write( theFileName.ToCString() );
 
       // Return previous locale
       if ( status == IFSelect_RetDone ) 
-	return 1;
+        return 1;
     }
   catch(Standard_Failure) 
     {

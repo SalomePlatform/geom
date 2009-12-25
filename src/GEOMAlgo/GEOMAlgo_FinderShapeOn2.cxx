@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_FinderShapeOn1.cxx
-// Created:	Fri Mar  4 10:31:06 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_FinderShapeOn1.cxx
+// Created:     Fri Mar  4 10:31:06 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_FinderShapeOn2.ixx>
 #include <math.h>
@@ -285,9 +285,9 @@
   }
   //
   if (!(myShapeType==TopAbs_VERTEX ||
-	myShapeType==TopAbs_EDGE ||
-	myShapeType==TopAbs_FACE ||
-	myShapeType==TopAbs_SOLID)) {
+        myShapeType==TopAbs_EDGE ||
+        myShapeType==TopAbs_FACE ||
+        myShapeType==TopAbs_SOLID)) {
     myErrorStatus=12; // unallowed subshape type
     return;
   }
@@ -331,7 +331,7 @@
     //
     if (myShapeType==TopAbs_VERTEX){
       if (bIsConformState) {
-	myMSS.Add(aV, aSt);
+        myMSS.Add(aV, aSt);
       }
     }
     else if (bIsConformState || aSt==TopAbs_ON) {
@@ -368,11 +368,11 @@
       //
       bIsConformState=myMSS.Contains(aV);
       if (!bIsConformState) {
-	break;// vertex has non-conformed state
+        break;// vertex has non-conformed state
       }
       else {
-	aSt=myMSS.FindFromKey(aV);
-	aSC.AppendState(aSt);
+        aSt=myMSS.FindFromKey(aV);
+        aSC.AppendState(aSt);
       }
     }
     //
@@ -393,7 +393,7 @@
       aC=BRep_Tool::Curve(aE, aT1, aT2);
       bCanBeON=myClsf->CanBeON(aC);
       if(!bCanBeON) {
-	continue;
+        continue;
       }
     }
     //
@@ -406,9 +406,9 @@
     aIt.Initialize(aLP);
     for (iCnt=0; aIt.More(); aIt.Next(), ++iCnt) {
       if (myNbPntsMax) {
-	if (iCnt > myNbPntsMax) {
-	  break;
-	}
+        if (iCnt > myNbPntsMax) {
+          break;
+        }
       }
       //
       const gp_Pnt& aP=aIt.Value();
@@ -417,15 +417,15 @@
       myClsf->Perform();
       iErr=myClsf->ErrorStatus();
       if (iErr) {
-	myErrorStatus=40; // point can not be classified
-	return;
+        myErrorStatus=40; // point can not be classified
+        return;
       }
       //
       aSt=myClsf->State();
       //
       bIsToBreak=aSC.AppendState(aSt);
       if (bIsToBreak) {
-	break;
+        break;
       }
     }
     //
@@ -434,7 +434,7 @@
     bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
     if (myShapeType==TopAbs_EDGE) {
       if (bIsConformState) {
-	myMSS.Add(aE, aSt);
+        myMSS.Add(aE, aSt);
       }
     }
     else if (bIsConformState || aSt==TopAbs_ON) {
@@ -471,7 +471,7 @@
       aS=BRep_Tool::Surface(aF);
       bCanBeON=myClsf->CanBeON(aS);
       if(!bCanBeON) {
-	continue;
+        continue;
       }
     }
     //
@@ -480,11 +480,11 @@
       const TopoDS_Shape& aE=aExp.Current();
       bIsConformState=myMSS.Contains(aE);
       if (!bIsConformState) {
-	break;// edge has non-conformed state
+        break;// edge has non-conformed state
       }
       else {
-	aSt=myMSS.FindFromKey(aE);
-	aSC.AppendState(aSt);
+        aSt=myMSS.FindFromKey(aE);
+        aSC.AppendState(aSt);
       }
     }
     //
@@ -501,9 +501,9 @@
     aIt.Initialize(aLP);
     for (iCnt=0; aIt.More(); aIt.Next(), ++iCnt) {
       if (myNbPntsMax) {
-	if (iCnt > myNbPntsMax) {
-	  break;
-	}
+        if (iCnt > myNbPntsMax) {
+          break;
+        }
       }
       //
       const gp_Pnt& aP=aIt.Value();
@@ -512,15 +512,15 @@
       myClsf->Perform();
       iErr=myClsf->ErrorStatus();
       if (iErr) {
-	myErrorStatus=40; // point can not be classified
-	return;
+        myErrorStatus=40; // point can not be classified
+        return;
       }
       //
       aSt=myClsf->State();
       //
       bIsToBreak=aSC.AppendState(aSt);
       if (bIsToBreak) {
-	break;
+        break;
       }
     }
     //
@@ -529,7 +529,7 @@
     bIsConformState=GEOMAlgo_SurfaceTools::IsConformState(aSt, myState);
     if (myShapeType==TopAbs_FACE) {
       if (bIsConformState) {
-	myMSS.Add(aF, aSt);
+        myMSS.Add(aF, aSt);
       }
     }
     else if (bIsConformState || aSt==TopAbs_ON) {
@@ -563,11 +563,11 @@
       const TopoDS_Shape& aF=aMF(j);
       bIsConformState=myMSS.Contains(aF);
       if (!bIsConformState) {
-	break;// face has non-conformed state
+        break;// face has non-conformed state
       }
       else {
-	aSt=myMSS.FindFromKey(aF);
-	aSC.AppendState(aSt);
+        aSt=myMSS.FindFromKey(aF);
+        aSC.AppendState(aSt);
       }
     }
     //
@@ -589,7 +589,7 @@
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Face& aF,
-					  GEOMAlgo_ListOfPnt& aLP)
+                                          GEOMAlgo_ListOfPnt& aLP)
 {
   myErrorStatus=0;
   //
@@ -628,11 +628,11 @@
       //
       aPK.SetIds(n[k], n[k+1]);
       if (aMPKI.IsBound(aPK)) {
-	Standard_Integer& iCntX=aMPKI.ChangeFind(aPK);
-	++iCntX;
+        Standard_Integer& iCntX=aMPKI.ChangeFind(aPK);
+        ++iCntX;
       }
       else {
-	aMPKI.Bind(aPK, 1);
+        aMPKI.Bind(aPK, 1);
       }
     }
   }
@@ -649,8 +649,8 @@
       aNbMax=aPK.NbMax();
       pIds=(Standard_Integer*)aPK.Key();
       for (k=1; k<3; ++k) {
-	aNx=*(pIds+aNbMax-k);
-	aMBN.Add(aNx);
+        aNx=*(pIds+aNbMax-k);
+        aMBN.Add(aNx);
       }
       */
       aNx=(Standard_Integer)aPK.Id(1);
@@ -689,49 +689,49 @@
       aNbLinks=aMPKI.Extent();
       aIt.Initialize(aMPKI);
       for (; aIt.More(); aIt.Next()) {
-	iCnt=aIt.Value();
-	if (iCnt>1) {
-	  // take the first having occured inner link
-	  // and discretize it
-	  const GEOMAlgo_PassKey& aPK=aIt.Key();
-	  //qf
-	  /*
-	  aNbMax=aPK.NbMax();
-	  pIds=(Standard_Integer*)aPK.Key();
-	  aN1=*(pIds+aNbMax-1);
-	  aN2=*(pIds+aNbMax-2);
-	  */
-	  //
-	  aN1=(Standard_Integer)aPK.Id(1);
-	  aN2=(Standard_Integer)aPK.Id(2);
-	  //qt
-	  aP1=aNodes(aN1).Transformed(aTrsf);
-	  aP2=aNodes(aN2).Transformed(aTrsf);
-	  //
-	  if (aType==GeomAbs_Cylinder) {
-	    Standard_Real aTolSM;
-	    gp_Cylinder aCyl;
-	    //
-	    aTolSM=1.523e-6;//~1.-cos(0.1 deg)
-	    aCyl=aGAS.Cylinder();
-	    if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, aTolSM)) {
-	      continue;
-	    }
-	  }
-	  //
-	  BRepLib_MakeEdge aBME(aP1, aP2);
-	  bIsDone=aBME.IsDone();
-	  if (!bIsDone) {
-	    myErrorStatus=30; //can not obtain the line fron the link
-	    return;
-	  }
-	  //
-	  const TopoDS_Shape& aSx=aBME.Shape();
-	  const TopoDS_Edge& aE=TopoDS::Edge(aSx);
-	  //
-	  InnerPoints(aE, myNbPntsMin, aLP);
-	  break;
-	}// if (iCnt>1)
+        iCnt=aIt.Value();
+        if (iCnt>1) {
+          // take the first having occured inner link
+          // and discretize it
+          const GEOMAlgo_PassKey& aPK=aIt.Key();
+          //qf
+          /*
+          aNbMax=aPK.NbMax();
+          pIds=(Standard_Integer*)aPK.Key();
+          aN1=*(pIds+aNbMax-1);
+          aN2=*(pIds+aNbMax-2);
+          */
+          //
+          aN1=(Standard_Integer)aPK.Id(1);
+          aN2=(Standard_Integer)aPK.Id(2);
+          //qt
+          aP1=aNodes(aN1).Transformed(aTrsf);
+          aP2=aNodes(aN2).Transformed(aTrsf);
+          //
+          if (aType==GeomAbs_Cylinder) {
+            Standard_Real aTolSM;
+            gp_Cylinder aCyl;
+            //
+            aTolSM=1.523e-6;//~1.-cos(0.1 deg)
+            aCyl=aGAS.Cylinder();
+            if (!GEOMAlgo_SurfaceTools::IsCoaxial(aP1, aP2, aCyl, aTolSM)) {
+              continue;
+            }
+          }
+          //
+          BRepLib_MakeEdge aBME(aP1, aP2);
+          bIsDone=aBME.IsDone();
+          if (!bIsDone) {
+            myErrorStatus=30; //can not obtain the line fron the link
+            return;
+          }
+          //
+          const TopoDS_Shape& aSx=aBME.Shape();
+          const TopoDS_Edge& aE=TopoDS::Edge(aSx);
+          //
+          InnerPoints(aE, myNbPntsMin, aLP);
+          break;
+        }// if (iCnt>1)
       }// for (; aIt.More(); aIt.Next())
     }// if (aType==GeomAbs_Plane || aType==GeomAbs_Cylinder) 
   }// if (!aNb && myNbPntsMin) { 
@@ -741,7 +741,7 @@
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
-					  GEOMAlgo_ListOfPnt& aLP)
+                                          GEOMAlgo_ListOfPnt& aLP)
 {
   myErrorStatus=0;
   //
@@ -797,8 +797,8 @@
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_FinderShapeOn2::InnerPoints(const TopoDS_Edge& aE,
-					  const Standard_Integer aNbPntsMin,
-					  GEOMAlgo_ListOfPnt& aLP)
+                                          const Standard_Integer aNbPntsMin,
+                                          GEOMAlgo_ListOfPnt& aLP)
 {
   // try to fill it yourself
   Standard_Boolean bInf1, bInf2;

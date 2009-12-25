@@ -110,7 +110,7 @@ void OperationGUI_MaterialDlg::Init()
       QStringList labels;
       labels << GEOMBase::GetName( anObject );
       labels << ( ind < myListMaterials.length() ? 
-		  QString::number( myListMaterials[ind] ) : QString( "0" ) );
+                  QString::number( myListMaterials[ind] ) : QString( "0" ) );
       GroupPoints->ListView1->addTopLevelItem( new QTreeWidgetItem( labels ) );
     }
   }
@@ -124,7 +124,7 @@ void OperationGUI_MaterialDlg::Init()
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetMaterial() ) );
   
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(), 
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 
@@ -197,7 +197,7 @@ void OperationGUI_MaterialDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   return;
 }
 

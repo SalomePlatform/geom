@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	STLExport.cxx
-// Created:	Wed May 19 14:53:52 2004
-// Author:	Pavel TELKOV
-// 		<ptv@mutex.nnov.opencascade.com>
+// File:        STLExport.cxx
+// Created:     Wed May 19 14:53:52 2004
+// Author:      Pavel TELKOV
+//              <ptv@mutex.nnov.opencascade.com>
 //
 #include "utilities.h"
 

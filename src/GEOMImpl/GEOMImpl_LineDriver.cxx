@@ -115,18 +115,18 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     }
     else
     {
-	TopExp_Explorer Exp (E, TopAbs_EDGE);
-	if ( Exp.More() ){
-	    aShape = Exp.Current();
-	    Exp.Next();
-	}
-	else
-	  {
-	    Standard_ConstructionError::Raise("Faces not have intersection line");
-	    aShape = E.Shape();
-	  }
-	if ( Exp.More() )
-	  aShape = E.Shape();
+        TopExp_Explorer Exp (E, TopAbs_EDGE);
+        if ( Exp.More() ){
+            aShape = Exp.Current();
+            Exp.Next();
+        }
+        else
+          {
+            Standard_ConstructionError::Raise("Faces not have intersection line");
+            aShape = E.Shape();
+          }
+        if ( Exp.More() )
+          aShape = E.Shape();
     }
 
   } else if (aType == LINE_PNT_DIR) {
@@ -190,10 +190,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_LineDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_LineDriver",
-			                                 sizeof(GEOMImpl_LineDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_LineDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

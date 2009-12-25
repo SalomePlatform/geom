@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_PassKeyBoolean.cxx
-// Created:	Mon May 15 14:31:05 2006
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTDS_PassKeyBoolean.cxx
+// Created:     Mon May 15 14:31:05 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTDS_PassKeyBoolean.ixx>
 

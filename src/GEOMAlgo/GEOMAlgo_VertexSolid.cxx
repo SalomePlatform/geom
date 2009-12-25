@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_VertexSolid.cxx
-// Created:	Wed Jan 12 16:36:40 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_VertexSolid.cxx
+// Created:     Wed Jan 12 16:36:40 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_VertexSolid.ixx>
 
@@ -162,8 +162,8 @@ void GEOMAlgo_VertexSolid::Prepare()
     //
     aState=aDS.GetState(i);
     if (aState==BooleanOperations_ON ||
-	aState==BooleanOperations_IN ||
-	aState==BooleanOperations_OUT) {
+        aState==BooleanOperations_IN ||
+        aState==BooleanOperations_OUT) {
       continue;
     }
     //
@@ -173,10 +173,10 @@ void GEOMAlgo_VertexSolid::Prepare()
       BOPTools_VVInterference& aVV=aVVs(j);
       aVV.Indices(n1, n2);
       if (n1==i || n2==i) {
-	pDS->SetState (n1, BooleanOperations_ON);
-	pDS->SetState (n2, BooleanOperations_ON);
-	iFound=1;
-	break;
+        pDS->SetState (n1, BooleanOperations_ON);
+        pDS->SetState (n2, BooleanOperations_ON);
+        iFound=1;
+        break;
       } 
     }
     if (iFound) {

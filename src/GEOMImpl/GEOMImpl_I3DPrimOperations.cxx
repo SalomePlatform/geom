@@ -255,7 +255,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceHW (double theH, double 
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFaceObjHW (Handle(GEOM_Object) theObj,
-							       double theH, double theW)
+                                                               double theH, double theW)
 {
   SetErrorCode(KO);
 
@@ -370,8 +370,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskPntVecR
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDiskThreePnt (Handle(GEOM_Object) thePnt1,
-								  Handle(GEOM_Object) thePnt2,
-								  Handle(GEOM_Object) thePnt3)
+                                                                  Handle(GEOM_Object) thePnt2,
+                                                                  Handle(GEOM_Object) thePnt3)
 {
   SetErrorCode(KO);
 
@@ -979,8 +979,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH (Handle(GEOM_Objec
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
-								    Handle(GEOM_Object) theVec,
-								    double theH)
+                                                                    Handle(GEOM_Object) theVec,
+                                                                    double theH)
 {
   SetErrorCode(KO);
 
@@ -1521,10 +1521,10 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
-						const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
-						bool theModeSolid,
-						double thePreci,
-						bool theRuled)
+                                                const Handle(TColStd_HSequenceOfTransient)& theSeqSections,
+                                                bool theModeSolid,
+                                                double thePreci,
+                                                bool theRuled)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1606,7 +1606,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
     if(!aSectObj.IsNull()) {
       pyDump<< aSectObj;
       if(i < nbObj)
-	pyDump<<", ";
+        pyDump<<", ";
     }
   }
   
@@ -1625,11 +1625,11 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeThruSections(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
-	        const Handle(TColStd_HSequenceOfTransient)& theBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations,
-		const Handle(GEOM_Object)& thePath,
-		bool theWithContact,
-		bool theWithCorrections)
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations,
+                const Handle(GEOM_Object)& thePath,
+                bool theWithContact,
+                bool theWithCorrections)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1680,14 +1680,14 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     {
       Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
       if(anItemLoc.IsNull())
-	continue;
+        continue;
     
       Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
       if(aRefLoc.IsNull())
-	continue;
+        continue;
       aSeqLocs->Append(aRefLoc);
     }
     aSeqBases->Append(aRefBase);
@@ -1732,7 +1732,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
     
   }
@@ -1749,7 +1749,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbLocs)
-	pyDump<<", ";
+        pyDump<<", ";
     }
   }  
 
@@ -1768,12 +1768,12 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithDifferentSections(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
-	        const Handle(TColStd_HSequenceOfTransient)& theBases,
-	        const Handle(TColStd_HSequenceOfTransient)& theSubBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations,
-		const Handle(GEOM_Object)& thePath,
-		bool theWithContact,
-		bool theWithCorrections)
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theSubBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations,
+                const Handle(GEOM_Object)& thePath,
+                bool theWithContact,
+                bool theWithCorrections)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1828,26 +1828,26 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     if( nbSubBases >= nbBases ) {
       Handle(Standard_Transient) aSubItem = theSubBases->Value(i);
       if(aSubItem.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Object) aSubBase = Handle(GEOM_Object)::DownCast(aSubItem);
       if(aSubBase.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefSubBase = aSubBase->GetLastFunction();
       if(aRefSubBase.IsNull())
-	continue;
+        continue;
       aSeqSubBases->Append(aRefSubBase);
     }
 
     if(nbLocs) {
       Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
       if(anItemLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
       if(aRefLoc.IsNull())
-	continue;
+        continue;
       aSeqLocs->Append(aRefLoc);
     }
 
@@ -1894,7 +1894,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
     
   }
@@ -1911,7 +1911,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
     
   }
@@ -1928,7 +1928,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbLocs)
-	pyDump<<", ";
+        pyDump<<", ";
     }
   }  
 
@@ -1946,8 +1946,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeWithShellSections(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
-	        const Handle(TColStd_HSequenceOfTransient)& theBases,
-		const Handle(TColStd_HSequenceOfTransient)& theLocations)
+                const Handle(TColStd_HSequenceOfTransient)& theBases,
+                const Handle(TColStd_HSequenceOfTransient)& theLocations)
 {
   Handle(GEOM_Object) anObj;
   SetErrorCode(KO);
@@ -1994,13 +1994,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
     if(nbLocs) {
       Handle(Standard_Transient) anItemLoc = theLocations->Value(i);
       if(anItemLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Object) aLoc = Handle(GEOM_Object)::DownCast(anItemLoc);
       if(aLoc.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefLoc = aLoc->GetLastFunction();
       if(aRefLoc.IsNull())
-	continue;
+        continue;
       aSeqLocs->Append(aRefLoc);
     }
 
@@ -2043,7 +2043,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbBases)
-	pyDump<<", ";
+        pyDump<<", ";
     }
     
   }
@@ -2060,7 +2060,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
     if(!anObj.IsNull()) {
       pyDump<< anObj;
       if(i < nbLocs)
-	pyDump<<", ";
+        pyDump<<", ";
     }
   }  
 
@@ -2078,8 +2078,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeShellsWithoutPath(
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePipeBiNormalAlongVector (Handle(GEOM_Object) theBase,
-									     Handle(GEOM_Object) thePath,
-									     Handle(GEOM_Object) theVec)
+                                                                             Handle(GEOM_Object) thePath,
+                                                                             Handle(GEOM_Object) theVec)
 {
   SetErrorCode(KO);
 

@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Builder.cxx
-// Created:	
-// Author:	Peter KURNEV 
+// File:        GEOMAlgo_Builder.cxx
+// Created:     
+// Author:      Peter KURNEV 
 //
 #include <GEOMAlgo_Builder.ixx>
 
@@ -223,19 +223,19 @@
     aType=aS.ShapeType();
     if (aType==theType) {
       if (myImages.HasImage(aS)){
-	const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
-	aItIm.Initialize(aLSIm);
-	for (; aItIm.More(); aItIm.Next()) {
-	  const TopoDS_Shape& aSIm=aItIm.Value();
-	  if (aM.Add(aSIm)) {
-	    aBB.Add(myShape, aSIm);
-	  }
-	}
+        const TopTools_ListOfShape& aLSIm=myImages.Image(aS);
+        aItIm.Initialize(aLSIm);
+        for (; aItIm.More(); aItIm.Next()) {
+          const TopoDS_Shape& aSIm=aItIm.Value();
+          if (aM.Add(aSIm)) {
+            aBB.Add(myShape, aSIm);
+          }
+        }
       }
       else {
-	if (aM.Add(aS)) {
-	  aBB.Add(myShape, aS);
-	}
+        if (aM.Add(aS)) {
+          aBB.Add(myShape, aS);
+        }
       }
     }
   }

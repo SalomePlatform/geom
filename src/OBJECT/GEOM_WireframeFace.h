@@ -61,7 +61,7 @@ protected:
   static  
   void 
   CreateIso(const TopoDS_Face& theFace,
-	    const int theNbIso[2], 
+            const int theNbIso[2], 
             const int theDiscret, 
             vtkPolyData* thePolyData,
             vtkPoints* thePts);
@@ -81,9 +81,9 @@ protected:
   void 
   CreateIso__(const BRepAdaptor_Surface& theSurface, 
               GeomAbs_IsoType theIsoType,
-		  		    Standard_Real& theU, 
-			  	    Standard_Real& theV, 
-				      Standard_Real theStep, 
+                                    Standard_Real& theU, 
+                                    Standard_Real& theV, 
+                                      Standard_Real theStep, 
               vtkPolyData* thePolyData,
               vtkPoints* thePts);
 

@@ -39,10 +39,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMAlgo_Clsf_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMAlgo_Clsf",
-			                                 sizeof(GEOMAlgo_Clsf),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMAlgo_Clsf),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

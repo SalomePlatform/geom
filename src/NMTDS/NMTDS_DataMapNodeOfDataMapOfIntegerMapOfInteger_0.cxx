@@ -51,10 +51,10 @@ Standard_EXPORT Handle_Standard_Type& NMTDS_DataMapNodeOfDataMapOfIntegerMapOfIn
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger",
-			                                 sizeof(NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

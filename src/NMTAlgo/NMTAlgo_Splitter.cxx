@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTAlgo_Splitter.cxx
-// Created:	Thu Jan 29 17:13:03 2004
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTAlgo_Splitter.cxx
+// Created:     Thu Jan 29 17:13:03 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTAlgo_Splitter.ixx>
 
@@ -419,8 +419,8 @@ static
       //
       aIt.Initialize(aLSp);
       for (; aIt.More(); aIt.Next()) { 
-	const TopoDS_Shape& aSp=aIt.Value();
-	myQueryShapes.Add(aSp);
+        const TopoDS_Shape& aSp=aIt.Value();
+        myQueryShapes.Add(aSp);
       }
     }
   }
@@ -433,8 +433,8 @@ static
       const TopTools_ListOfShape& aLSc=mySectionParts.FindFromKey(aF);
       aIt.Initialize(aLSc);
       for (; aIt.More(); aIt.Next()) { 
-	const TopoDS_Shape& aSc=aIt.Value();
-	myQueryShapes.Add(aSc);
+        const TopoDS_Shape& aSc=aIt.Value();
+        myQueryShapes.Add(aSc);
       }
     }
   }
@@ -521,57 +521,57 @@ static
       aOriFS= aFS.Orientation();
       //
       if (!myImagesFaces.HasImage(aFS)) {
-	myQueryShapes.Add(aFS);
-	//modified by NIZNHY-PKV Mon Jan 24 09:50:42 2005 f
-	if (!myModifiedFaces.IsBound(aFS)) {
-	  TopTools_ListOfShape aLS;
-	  //
-	  aLS.Append(aFS);
-	  myModifiedFaces.Bind(aFS, aLS);
-	}
-	//modified by NIZNHY-PKV Mon Jan 24 09:50:44 2005 t
-	continue;
+        myQueryShapes.Add(aFS);
+        //modified by NIZNHY-PKV Mon Jan 24 09:50:42 2005 f
+        if (!myModifiedFaces.IsBound(aFS)) {
+          TopTools_ListOfShape aLS;
+          //
+          aLS.Append(aFS);
+          myModifiedFaces.Bind(aFS, aLS);
+        }
+        //modified by NIZNHY-PKV Mon Jan 24 09:50:44 2005 t
+        continue;
       }
       //
       const TopTools_ListOfShape& aLFI=myImagesFaces.Image(aFS);
       aItFI.Initialize(aLFI);
       for (; aItFI.More(); aItFI.Next()) {
-	const TopoDS_Face& aFI=TopoDS::Face(aItFI.Value());
-	aFIx=aFI;
-	aFIx.Orientation(aOriFS);
-	//
-	if (mySDFaces.Contains(aFIx)) {
-	  const TopoDS_Face& aFSDI=TopoDS::Face(mySDFaces.FindFromKey(aFIx));
-	  TopoDS_Face aFSDIx=aFSDI;
-	  //
-	  iSense=NMTAlgo_Tools::Sense(aFIx, aFSDIx);
-	  //
-	  if (iSense < 0) {
-	    aFSDIx.Reverse();
-	  }
-	  myQueryShapes.Add(aFSDIx);
-	  //modified by NIZNHY-PKV Mon Jan 24 09:56:06 2005f
-	  aFIy=aFSDIx;
-	  //modified by NIZNHY-PKV Mon Jan 24 09:56:09 2005t
-	}
-	else {
-	  myQueryShapes.Add(aFIx);
-	  //modified by NIZNHY-PKV Mon Jan 24 09:56:06 2005f
-	  aFIy=aFIx;
-	  //modified by NIZNHY-PKV Mon Jan 24 09:56:09 2005t
-	}
-	//modified by NIZNHY-PKV Mon Jan 24 09:53:38 2005f
-	if (!myModifiedFaces.IsBound(aFS)) {
-	  TopTools_ListOfShape aLS;
-	  //
-	  aLS.Append(aFIy);
-	  myModifiedFaces.Bind(aFS, aLS);
-	}
-	else {
-	  TopTools_ListOfShape& aLS=myModifiedFaces.ChangeFind(aFS);
-	  aLS.Append(aFIy);
-	}
-	//modified by NIZNHY-PKV Mon Jan 24 09:53:43 2005t
+        const TopoDS_Face& aFI=TopoDS::Face(aItFI.Value());
+        aFIx=aFI;
+        aFIx.Orientation(aOriFS);
+        //
+        if (mySDFaces.Contains(aFIx)) {
+          const TopoDS_Face& aFSDI=TopoDS::Face(mySDFaces.FindFromKey(aFIx));
+          TopoDS_Face aFSDIx=aFSDI;
+          //
+          iSense=NMTAlgo_Tools::Sense(aFIx, aFSDIx);
+          //
+          if (iSense < 0) {
+            aFSDIx.Reverse();
+          }
+          myQueryShapes.Add(aFSDIx);
+          //modified by NIZNHY-PKV Mon Jan 24 09:56:06 2005f
+          aFIy=aFSDIx;
+          //modified by NIZNHY-PKV Mon Jan 24 09:56:09 2005t
+        }
+        else {
+          myQueryShapes.Add(aFIx);
+          //modified by NIZNHY-PKV Mon Jan 24 09:56:06 2005f
+          aFIy=aFIx;
+          //modified by NIZNHY-PKV Mon Jan 24 09:56:09 2005t
+        }
+        //modified by NIZNHY-PKV Mon Jan 24 09:53:38 2005f
+        if (!myModifiedFaces.IsBound(aFS)) {
+          TopTools_ListOfShape aLS;
+          //
+          aLS.Append(aFIy);
+          myModifiedFaces.Bind(aFS, aLS);
+        }
+        else {
+          TopTools_ListOfShape& aLS=myModifiedFaces.ChangeFind(aFS);
+          aLS.Append(aFIy);
+        }
+        //modified by NIZNHY-PKV Mon Jan 24 09:53:43 2005t
       }
     }//for (; aExp.More(); aExp.Next()) {
     //

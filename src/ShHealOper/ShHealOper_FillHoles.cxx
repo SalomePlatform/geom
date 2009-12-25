@@ -227,7 +227,7 @@ Standard_Boolean ShHealOper_FillHoles::prepareWires(const TopTools_SequenceOfSha
       if (!BRep_Tool::Degenerated (TopoDS::Edge (aExp.Current())))
         if(myEdgeFaces.Contains(aExp.Current()) && myEdgeFaces.FindFromKey(aExp.Current()).Extent() >1)
           continue;
-	aSeqEdges->Append(aExp.Current());
+        aSeqEdges->Append(aExp.Current());
     }
   }
   
@@ -278,7 +278,7 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
   try {
     
       GeomPlate_BuildPlateSurface aBuilder(myDegree, myNbPtsOnCur, myNbIter,
-						 myTol2d, myTol3d, myTolAng, myTolCrv);
+                                                 myTol2d, myTol3d, myTolAng, myTolCrv);
       TopoDS_Iterator aIter;
       for(aIter.Initialize (theWire); aIter.More(); aIter.Next()) {
 
@@ -286,7 +286,7 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
         BRepAdaptor_Curve adC(ae);
         Handle(BRepAdaptor_HCurve) aHAD= new BRepAdaptor_HCurve(adC);
         Handle(BRepFill_CurveConstraint) aConst =
-	    new BRepFill_CurveConstraint (aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
+            new BRepFill_CurveConstraint (aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
         //Handle(GeomPlate_CurveConstraint) aConst = 
          // new GeomPlate_CurveConstraint(aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
         aBuilder.Add (aConst);

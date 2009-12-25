@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTDS_IteratorChecker.cxx
-// Created:	Tue Feb  6 10:37:59 2007
-// Author:	Peter KURNEV
+// File:        NMTDS_IteratorChecker.cxx
+// Created:     Tue Feb  6 10:37:59 2007
+// Author:      Peter KURNEV
 //
 #include <NMTDS_IteratorCheckerSI.ixx>
 
@@ -103,22 +103,22 @@
     aTi=aSi.ShapeType();
     if (NMTDS_Tools::HasBRep(aTi)) {
       if (aTi!=TopAbs_VERTEX) {
-	TColStd_IndexedMapOfInteger aMA;
-	//
-	myDS->GetAllSuccessors(i, aMA);
-	//
-	aNbA=aMA.Extent();
-	for (j=1; j<=aNbA; ++j) {
-	  iX=aMA(j);
-	  aPKXB.Clear();
-	  aPKXB.SetIds(i, iX);
-	  aMPA.Add(aPKXB);
-	}
+        TColStd_IndexedMapOfInteger aMA;
+        //
+        myDS->GetAllSuccessors(i, aMA);
+        //
+        aNbA=aMA.Extent();
+        for (j=1; j<=aNbA; ++j) {
+          iX=aMA(j);
+          aPKXB.Clear();
+          aPKXB.SetIds(i, iX);
+          aMPA.Add(aPKXB);
+        }
       }
       else {
-	aPKXB.Clear();
-	aPKXB.SetIds(i, i);
-	aMPA.Add(aPKXB);
+        aPKXB.Clear();
+        aPKXB.SetIds(i, i);
+        aMPA.Add(aPKXB);
       }
       //
       Bnd_Box aBoxEx;
@@ -170,27 +170,27 @@
       //
       aPKXB.SetIds(i, j);
       if (aMPA.Contains(aPKXB)) {
-	continue;
+        continue;
       }
       //
       if (aMPKXB.Add(aPKXB)) {
-	bFlag=Standard_False;// Bounding boxes are intersected
-	const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
-	const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
-	if (aBoxi.IsOut(aBoxj)) {
-	  bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
-	}
-	const TopoDS_Shape& aSj=myDS->Shape(j);
-	aTj=aSj.ShapeType();
-	iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
-	//bFlag=(iStatus==2);
-	aPKXB.SetFlag(bFlag);
-	myLists[iX].Append(aPKXB);
-	//
-	// VSD prepare
-	if (iX==5) { //VV
-	  aLV.Append(j);
-	}
+        bFlag=Standard_False;// Bounding boxes are intersected
+        const Bnd_Box& aBoxi=myDS->GetBoundingBox(i);
+        const Bnd_Box& aBoxj=myDS->GetBoundingBox(j);
+        if (aBoxi.IsOut(aBoxj)) {
+          bFlag=!bFlag; //Bounding boxes of Sub-shapes are intersected
+        }
+        const TopoDS_Shape& aSj=myDS->Shape(j);
+        aTj=aSj.ShapeType();
+        iX=NMTDS_Tools::TypeToInteger(aTi, aTj);
+        //bFlag=(iStatus==2);
+        aPKXB.SetFlag(bFlag);
+        myLists[iX].Append(aPKXB);
+        //
+        // VSD prepare
+        if (iX==5) { //VV
+          aLV.Append(j);
+        }
       }// if (aMPKXB.Add(aPKXB)) {
     }// for (; aIt.More(); aIt.Next()) {
     //
@@ -202,18 +202,18 @@
       const TopoDS_Vertex& aVi=TopoDS::Vertex(aSi);
       aIt.Initialize(aLV);
       for (; aIt.More(); aIt.Next()) {
-	j=aIt.Value();  
-	const TopoDS_Shape&  aSj=myDS->Shape(j);
-	const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
-	iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
-	if (!iFlag) {
-	  aLV1.Append(j);
-	}
-	else {
-	  aPKXB.SetIds(i, j);
-	  aMPKXB.Remove(aPKXB);
-	}
-      }	
+        j=aIt.Value();  
+        const TopoDS_Shape&  aSj=myDS->Shape(j);
+        const TopoDS_Vertex& aVj=TopoDS::Vertex(aSj);
+        iFlag=NMTDS_Tools::ComputeVV(aVi, aVj);
+        if (!iFlag) {
+          aLV1.Append(j);
+        }
+        else {
+          aPKXB.SetIds(i, j);
+          aMPKXB.Remove(aPKXB);
+        }
+      } 
       aMVSD.Bind(i, aLV1);
     }
   }//for (i=1; i<=aNbS; ++i) {

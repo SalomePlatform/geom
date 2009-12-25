@@ -40,7 +40,7 @@ class TransformationGUI_MirrorDlg : public GEOMBase_Skeleton
 
 public:
   TransformationGUI_MirrorDlg( GeometryGUI*, QWidget* = 0,
-			       bool = false, Qt::WindowFlags = 0 );
+                               bool = false, Qt::WindowFlags = 0 );
   ~TransformationGUI_MirrorDlg();
 
 protected:

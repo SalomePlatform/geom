@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_0.cxx
-// Created:	Mon Dec  8 11:45:51 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_0.cxx
+// Created:     Mon Dec  8 11:45:51 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -38,7 +38,7 @@
 // purpose: 
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::IsSuccessorsComputed(const Standard_Integer aN1,
-							     const Standard_Integer aN2)const
+                                                             const Standard_Integer aN2)const
 {
   Standard_Boolean bComputed;
   Standard_Integer i, nSuc, n1, n2, ntmp, aNbS;
@@ -96,7 +96,7 @@
 //purpose  : 
 //=======================================================================
   void NMTTools_PaveFiller::SortTypes(Standard_Integer& theWhat,
-				      Standard_Integer& theWith)const 
+                                      Standard_Integer& theWith)const 
 { 
   Standard_Integer aWhat, aWith;
   Standard_Boolean aReverseFlag;

@@ -55,7 +55,7 @@ bool GEOM_EdgeFilter::isShapeOk( const TopoDS_Shape& theShape ) const
   {
     BRepAdaptor_Curve aCurve( TopoDS::Edge( theShape ) );
     GeomAbs_CurveType aType = aCurve.GetType();
-	
+        
     switch ( myKind ) 
     {
     case StdSelect_AnyEdge: return Standard_True;

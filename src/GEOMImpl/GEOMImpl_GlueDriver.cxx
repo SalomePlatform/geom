@@ -265,9 +265,9 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
 //purpose  :
 //=======================================================================
 TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesByList (const TopoDS_Shape& theShape,
-						   const Standard_Real theTolerance,
+                                                   const Standard_Real theTolerance,
                                                    const Standard_Boolean doKeepNonSolids,
-						   const TopTools_MapOfShape& aFaces)
+                                                   const TopTools_MapOfShape& aFaces)
 {
   TopoDS_Shape aRes;
 
@@ -346,15 +346,15 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
     for( ; i <= SF->Length(); i++) {
       Handle(Standard_Transient) anItem = SF->Value(i);
       if(anItem.IsNull())
-	continue;
+        continue;
       Handle(GEOM_Function) aRefSh = Handle(GEOM_Function)::DownCast(anItem);
       if(aRefSh.IsNull())
-	continue;
+        continue;
       TopoDS_Shape aFace = aRefSh->GetValue();
       if(aFace.IsNull())
-	continue;
+        continue;
       if(!aFaces.Contains(aFace))
-	aFaces.Add(aFace);
+        aFaces.Add(aFace);
     }
     aShape = GlueFacesByList(aShapeBase, tol3d, aKeepNonSolids, aFaces);
   }
@@ -389,10 +389,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_GlueDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_GlueDriver",
-			                                 sizeof(GEOMImpl_GlueDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_GlueDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

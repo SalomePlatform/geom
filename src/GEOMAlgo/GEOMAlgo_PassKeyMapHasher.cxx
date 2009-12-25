@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_PassKeyMapHasher.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_PassKeyMapHasher.cxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_PassKeyMapHasher.ixx>
 
@@ -31,7 +31,7 @@
 //purpose  : 
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKeyMapHasher::HashCode(const GEOMAlgo_PassKey& aPK,
-						       const Standard_Integer Upper)
+                                                       const Standard_Integer Upper)
 {
   return aPK.HashCode(Upper);
 }
@@ -40,7 +40,7 @@
 //purpose  : 
 //=======================================================================
   Standard_Boolean GEOMAlgo_PassKeyMapHasher::IsEqual(const GEOMAlgo_PassKey& aPK1,
-						      const GEOMAlgo_PassKey& aPK2)
+                                                      const GEOMAlgo_PassKey& aPK2)
 {
   return aPK1.IsEqual(aPK2);
 }

@@ -102,7 +102,7 @@ public:
   void ReleaseGraphicsResources(vtkWindow *);
   const TopoDS_Shape& getTopo();
   void setInputShape(const TopoDS_Shape& ashape, double adef1,
-		     int imode, bool isVector = false);
+                     int imode, bool isVector = false);
   double getDeflection();
   double isVector();
 
@@ -137,15 +137,15 @@ public:
   virtual
   bool
   PreHighlight(vtkInteractorStyle* theInteractorStyle,
-	       SVTK_SelectionEvent* theSelectionEvent,
-	       bool theIsHighlight);
+               SVTK_SelectionEvent* theSelectionEvent,
+               bool theIsHighlight);
 
   //! To process highlight (called from #SVTK_InteractorStyle)
   virtual
   bool
   Highlight(vtkInteractorStyle* theInteractorStyle,
-	    SVTK_SelectionEvent* theSelectionEvent,
-	    bool theIsHighlight);
+            SVTK_SelectionEvent* theSelectionEvent,
+            bool theIsHighlight);
 
   //! Visibility management
   virtual

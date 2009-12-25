@@ -42,9 +42,9 @@ GEOM_InteractiveObject::GEOM_InteractiveObject()
 }
 
 GEOM_InteractiveObject::GEOM_InteractiveObject(const char* anIOR,
-					       const char* aFatherIOR,
-					       const char* aComponentDataType,
-					       const char* anEntry)
+                                               const char* aFatherIOR,
+                                               const char* aComponentDataType,
+                                               const char* anEntry)
   : SALOME_InteractiveObject(anEntry,aComponentDataType)
 {
   myIOR       = anIOR;

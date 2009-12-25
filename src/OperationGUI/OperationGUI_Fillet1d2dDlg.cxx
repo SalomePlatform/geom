@@ -195,36 +195,36 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
         GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
       
       if (aResult && !anObj->_is_nil()) {
-	QString aName = GEOMBase::GetName( anObj );
-	TopoDS_Shape aShape;
-	if ( GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-	  TColStd_IndexedMapOfInteger aMap;
-	  aSelMgr->GetIndexes(aSelList.First(), aMap);
-	  if ( aMap.Extent() == 1 ) { // Local Selection
-	    int anIndex = aMap( 1 );
-	    aName += QString( myIs1D ? ":wire_%1" : ":face_%1" ).arg( anIndex );
+        QString aName = GEOMBase::GetName( anObj );
+        TopoDS_Shape aShape;
+        if ( GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+          TColStd_IndexedMapOfInteger aMap;
+          aSelMgr->GetIndexes(aSelList.First(), aMap);
+          if ( aMap.Extent() == 1 ) { // Local Selection
+            int anIndex = aMap( 1 );
+            aName += QString( myIs1D ? ":wire_%1" : ":face_%1" ).arg( anIndex );
    
-	    //Find SubShape Object in Father
-	    GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( anObj, aName );
-	    
-	    if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-	      GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-	      anObj = aShapesOp->GetSubShape( anObj, anIndex );
-	    }
-	    else
-	      anObj = aFindedObject; // get Object from study
-	  }
-	  else { // Global Selection
-	    if ( aShape.ShapeType() != (myIs1D ? TopAbs_WIRE : TopAbs_FACE) ) {
-	      anObj = GEOM::GEOM_Object::_nil();
-	      aName = "";
-	    }
-	  }
-	}
-	myShape = anObj;
-	myEditCurrentArgument->setText(aName
+            //Find SubShape Object in Father
+            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( anObj, aName );
+            
+            if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+              anObj = aShapesOp->GetSubShape( anObj, anIndex );
+            }
+            else
+              anObj = aFindedObject; // get Object from study
+          }
+          else { // Global Selection
+            if ( aShape.ShapeType() != (myIs1D ? TopAbs_WIRE : TopAbs_FACE) ) {
+              anObj = GEOM::GEOM_Object::_nil();
+              aName = "";
+            }
+          }
+        }
+        myShape = anObj;
+        myEditCurrentArgument->setText(aName
 );
-	displayPreview();
+        displayPreview();
       }
     }
   } else if (myEditCurrentArgument == GroupVertexes->LineEdit2) {
@@ -250,7 +250,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
 
           isPreview = true;
           myEditCurrentArgument->setText(aName);
-	  myVertexes = anIndexes;
+          myVertexes = anIndexes;
         }
       }
     }

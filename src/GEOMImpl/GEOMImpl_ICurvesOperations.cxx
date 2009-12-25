@@ -335,7 +335,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
                        (Handle(GEOM_Object) thePnt, Handle(GEOM_Object) theVec,
                         double theRMajor, double theRMinor,
-			Handle(GEOM_Object) theVecMaj)
+                        Handle(GEOM_Object) theVecMaj)
 {
   SetErrorCode(KO);
 
@@ -397,12 +397,12 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
   //Make a Python command
   if (!theVecMaj.IsNull()) {
     GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
-				 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor
-				 << ", " << theVecMaj << ")";
+                                 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor
+                                 << ", " << theVecMaj << ")";
   }
   else {
     GEOM::TPythonDump(aFunction) << anEll << " = geompy.MakeEllipse("
-				 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
+                                 << thePnt << ", " << theVec << ", " << theRMajor << ", " << theRMinor << ")";
   }
 
   SetErrorCode(OK);
@@ -536,8 +536,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Object) thePnt1,
-								  Handle(GEOM_Object) thePnt2,
-								  Handle(GEOM_Object) thePnt3)
+                                                                  Handle(GEOM_Object) thePnt2,
+                                                                  Handle(GEOM_Object) thePnt3)
 {
   SetErrorCode(KO);
 
@@ -734,7 +734,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCommand,
-							      list<double> theWorkingPlane)
+                                                              list<double> theWorkingPlane)
 {
   SetErrorCode(KO);
 

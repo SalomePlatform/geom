@@ -74,8 +74,8 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   if ( aStudy->GetProperties()->IsLocked() ) {
     SUIT_MessageBox::warning( parent,
-			      tr( "WRN_WARNING" ), 
-			      tr( "WRN_STUDY_LOCKED" ) );
+                              tr( "WRN_WARNING" ), 
+                              tr( "WRN_STUDY_LOCKED" ) );
     return false;
   }
 
@@ -94,14 +94,14 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
         aSelMgr->selectedObjects( aList );
 
       if ( aList.Extent() == 1 ) {
-	Standard_Boolean aResult = Standard_False;
-	GEOM::GEOM_Object_var anObj =
-	  GEOMBase::ConvertIOinGEOMObject( aList.First(), aResult );
+        Standard_Boolean aResult = Standard_False;
+        GEOM::GEOM_Object_var anObj =
+          GEOMBase::ConvertIOinGEOMObject( aList.First(), aResult );
 
-	if ( aResult && !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
-	  aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::EditGroup, getGeometryGUI(), parent ); 
-	  break;
-	}
+        if ( aResult && !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
+          aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::EditGroup, getGeometryGUI(), parent ); 
+          break;
+        }
       }
       SUIT_MessageBox::warning( parent, tr( "WRN_WARNING" ), tr( "NO_GROUP" ) );
       break;

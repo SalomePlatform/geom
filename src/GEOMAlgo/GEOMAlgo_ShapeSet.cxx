@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ShapeSet.cxx
-// Created:	
-// Author:	Peter KURNEV 
+// File:        GEOMAlgo_ShapeSet.cxx
+// Created:     
+// Author:      Peter KURNEV 
 //
 #include <GEOMAlgo_ShapeSet.ixx>
 
@@ -61,7 +61,7 @@
 //purpose  : 
 //=======================================================================
   void GEOMAlgo_ShapeSet::Add(const TopoDS_Shape& theShape,
-			      const TopAbs_ShapeEnum theType)
+                              const TopAbs_ShapeEnum theType)
 {
   TopExp_Explorer aExp;
   //
@@ -127,7 +127,7 @@
     if (aOr==TopAbs_FORWARD || aOr==TopAbs_REVERSED) {
       bRet=myMap.Contains(aF);
       if (!bRet) {
-	break;
+        break;
       }
     }
   }
@@ -158,7 +158,7 @@
     const TopoDS_Shape& aS=aIt.Value();
     if (!theOther.myMap.Contains(aS)) {
       if(myMap.Add(aS)){
-	aLS.Append(aS);
+        aLS.Append(aS);
       }
     }
   }

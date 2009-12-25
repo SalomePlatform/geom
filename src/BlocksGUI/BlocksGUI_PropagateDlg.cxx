@@ -267,7 +267,7 @@ void BlocksGUI_PropagateDlg::activateSelection()
     SelectionIntoArgument();
   }
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 }
 
 //================================================================

@@ -74,7 +74,7 @@ NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox(const TopoDS_Shape& K1,const 
  // Type management
  //
  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
+ //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
 
 protected:
 

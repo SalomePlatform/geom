@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_WireSolid.cxx
-// Created:	Wed Jan 12 10:19:31 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_WireSolid.cxx
+// Created:     Wed Jan 12 10:19:31 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_WireSolid.ixx>
 
@@ -138,34 +138,34 @@ void GEOMAlgo_WireSolid::BuildResult()
       aNbPB=aLPB.Extent();
       //
       if (!aNbPB) {
-	aState=aDS.GetState(i);
-	//
-	if (aState==BooleanOperations_IN) {
-	  myLSIN.Append(aE);
-	}
-	else if (aState==BooleanOperations_OUT) {
-	  myLSOUT.Append(aE);
-	}
-	else if (aState==BooleanOperations_ON) {
-	  myLSON.Append(aE);
-	}
+        aState=aDS.GetState(i);
+        //
+        if (aState==BooleanOperations_IN) {
+          myLSIN.Append(aE);
+        }
+        else if (aState==BooleanOperations_OUT) {
+          myLSOUT.Append(aE);
+        }
+        else if (aState==BooleanOperations_ON) {
+          myLSON.Append(aE);
+        }
       }
       //
       else if (aNbPB==1) {
-	const BOPTools_PaveBlock& aPB=aLPB.First();
-	nSp=aPB.Edge();
-	const TopoDS_Shape& aSp=aDS.Shape(nSp);
-	aState=aDS.GetState(nSp);
-	 //
-	if (aState==BooleanOperations_IN) {
-	  myLSIN.Append(aE);
-	}
-	else if (aState==BooleanOperations_OUT) {
-	  myLSOUT.Append(aE);
-	}
-	else if (aState==BooleanOperations_ON) {
-	  myLSON.Append(aE);
-	} 
+        const BOPTools_PaveBlock& aPB=aLPB.First();
+        nSp=aPB.Edge();
+        const TopoDS_Shape& aSp=aDS.Shape(nSp);
+        aState=aDS.GetState(nSp);
+         //
+        if (aState==BooleanOperations_IN) {
+          myLSIN.Append(aE);
+        }
+        else if (aState==BooleanOperations_OUT) {
+          myLSOUT.Append(aE);
+        }
+        else if (aState==BooleanOperations_ON) {
+          myLSON.Append(aE);
+        } 
       }
     }
   }

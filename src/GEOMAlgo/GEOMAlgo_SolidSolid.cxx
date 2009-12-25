@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_SolidSolid.cxx
-// Created:	Wed Jan 26 12:06:26 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_SolidSolid.cxx
+// Created:     Wed Jan 26 12:06:26 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_SolidSolid.ixx>
 
@@ -163,39 +163,39 @@ void GEOMAlgo_SolidSolid::BuildResult()
       const TopoDS_Shape& aF=aMF(j);
       //
       if (!aMFS.Contains(aF)) {// the face is intesected 
-	++aNbFINTR;
-	break; 
+        ++aNbFINTR;
+        break; 
       }
       //
       aState=aMFS.FindFromKey(aF);
       switch (aState) {
         case TopAbs_IN:
-	  ++aNbFIN;
-	  break;
-	case TopAbs_OUT:
-	  ++aNbFOUT;
-	  break;
-	case TopAbs_ON:
-	  ++aNbFON;
-	  break;
-	default:
-	  break;
+          ++aNbFIN;
+          break;
+        case TopAbs_OUT:
+          ++aNbFOUT;
+          break;
+        case TopAbs_ON:
+          ++aNbFON;
+          break;
+        default:
+          break;
       }
       if (aNbFIN && aNbFOUT) {
-	++aNbFINTR;
-	break;
+        ++aNbFINTR;
+        break;
       }
     }
     //
     if (!aNbFINTR) {
       if (aNbFON==aNbF) {
-	myLSON.Append(aSolid);
+        myLSON.Append(aSolid);
       }
       else if (aNbFIN) {
-	myLSIN.Append(aSolid);
+        myLSIN.Append(aSolid);
       }
       else if (aNbFOUT) {
-	myLSOUT.Append(aSolid);
+        myLSOUT.Append(aSolid);
       }
     }
   }

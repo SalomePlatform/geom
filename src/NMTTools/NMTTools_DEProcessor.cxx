@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_DEProcessor.cxx
-// Created:	Wed Sep 12 12:10:52 2001
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_DEProcessor.cxx
+// Created:     Wed Sep 12 12:10:52 2001
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_DEProcessor.ixx>
 
@@ -152,29 +152,29 @@
       const TopoDS_Edge& aE=TopoDS::Edge(aS);
       
       if (BRep_Tool::Degenerated(aE)) {
-	iRankE=myDS->Rank(i);
-	aV=TopExp::FirstVertex(aE);
-	nVx=myDS->ShapeIndex(aV, iRankE);
-	//
-	nV=nVx;
-	ip=myFiller->FindSDVertex(nV);
-	if (ip) {
-	  nV=ip;
-	}
-	//
-	TColStd_ListOfInteger aLFn;
-	const TopTools_ListOfShape& aLF=aMEF.FindFromKey(aE);
-	TopTools_ListIteratorOfListOfShape anIt(aLF);
-	for (; anIt.More(); anIt.Next()) {
-	  const TopoDS_Shape& aF=anIt.Value();
-	  nF=myDS->ShapeIndex(aF, iRankE);
-	  aLFn.Append(nF);
-	}
-	BOPTools_DEInfo aDEInfo;
-	aDEInfo.SetVertex(nV);
-	aDEInfo.SetFaces(aLFn);
+        iRankE=myDS->Rank(i);
+        aV=TopExp::FirstVertex(aE);
+        nVx=myDS->ShapeIndex(aV, iRankE);
+        //
+        nV=nVx;
+        ip=myFiller->FindSDVertex(nV);
+        if (ip) {
+          nV=ip;
+        }
+        //
+        TColStd_ListOfInteger aLFn;
+        const TopTools_ListOfShape& aLF=aMEF.FindFromKey(aE);
+        TopTools_ListIteratorOfListOfShape anIt(aLF);
+        for (; anIt.More(); anIt.Next()) {
+          const TopoDS_Shape& aF=anIt.Value();
+          nF=myDS->ShapeIndex(aF, iRankE);
+          aLFn.Append(nF);
+        }
+        BOPTools_DEInfo aDEInfo;
+        aDEInfo.SetVertex(nV);
+        aDEInfo.SetFaces(aLFn);
 
-	myDEMap.Add (i, aDEInfo);
+        myDEMap.Add (i, aDEInfo);
       }
     }
   }
@@ -207,7 +207,7 @@
       //
       aNbLPB=aLPB.Extent();
       if (!aNbLPB) {
-	continue;
+        continue;
       }
       //
       FillPaveSet (nED, nVD, nFD, aLPB);
@@ -226,9 +226,9 @@
 // purpose: 
 //=======================================================================
   void NMTTools_DEProcessor::FindPaveBlocks(const Standard_Integer ,
-					    const Standard_Integer nVD,
-					    const Standard_Integer nFD,
-					    BOPTools_ListOfPaveBlock& aLPBOut)
+                                            const Standard_Integer nVD,
+                                            const Standard_Integer nFD,
+                                            BOPTools_ListOfPaveBlock& aLPBOut)
 {
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
   Standard_Integer i, aNb, nF2, nV;
@@ -253,15 +253,15 @@
       const BOPTools_Pave& aPave1=aPBSp.Pave1();
       nV=aPave1.Index();
       if (nV==nVD) {
-	aLPBOut.Append(aPBSp);
-	continue;
+        aLPBOut.Append(aPBSp);
+        continue;
       }
       //
       const BOPTools_Pave& aPave2=aPBSp.Pave2();
       nV=aPave2.Index();
       if (nV==nVD) {
-	aLPBOut.Append(aPBSp);
-	continue;
+        aLPBOut.Append(aPBSp);
+        continue;
       }
     }
     //
@@ -276,21 +276,21 @@
       //
       anIt.Initialize(aLPBSe);
       for (; anIt.More(); anIt.Next()) {
-	const BOPTools_PaveBlock& aPBSe=anIt.Value();
-	//
-	const BOPTools_Pave& aPv1=aPBSe.Pave1();
-	nV=aPv1.Index();
-	if (nV==nVD) {
-	  aLPBOut.Append(aPBSe);
-	  continue;
-	}
-	//
-	const BOPTools_Pave& aPv2=aPBSe.Pave2();
-	nV=aPv2.Index();
-	if (nV==nVD) {
-	  aLPBOut.Append(aPBSe);
-	  continue;
-	}
+        const BOPTools_PaveBlock& aPBSe=anIt.Value();
+        //
+        const BOPTools_Pave& aPv1=aPBSe.Pave1();
+        nV=aPv1.Index();
+        if (nV==nVD) {
+          aLPBOut.Append(aPBSe);
+          continue;
+        }
+        //
+        const BOPTools_Pave& aPv2=aPBSe.Pave2();
+        nV=aPv2.Index();
+        if (nV==nVD) {
+          aLPBOut.Append(aPBSe);
+          continue;
+        }
       }
     }
   }
@@ -300,9 +300,9 @@
 // purpose: 
 //=======================================================================
   void NMTTools_DEProcessor::FillPaveSet (const Standard_Integer nED,
-					  const Standard_Integer nVD,
-					  const Standard_Integer nFD,
-					  const BOPTools_ListOfPaveBlock& aLPB)
+                                          const Standard_Integer nVD,
+                                          const Standard_Integer nFD,
+                                          const BOPTools_ListOfPaveBlock& aLPB)
 {
   Standard_Boolean bIsDone, bXDir, bRejectFlag;
   Standard_Integer nE, aNbPoints, j;
@@ -367,55 +367,55 @@
     if(bIsDone) {
       aNbPoints=aGInter.NbPoints();
       if (aNbPoints) { 
-	for (j=1; j<=aNbPoints; ++j) {
-	  aP2D=aGInter.Point(j).Value();
-	  Handle(Geom2d_Line) aCLDE;
-	  //
-	  //modified by NIZNHY-PKV Thu Mar 20 17:37:32 2008f
-	  Handle(Geom2d_TrimmedCurve) aCLDET1=
-	    Handle(Geom2d_TrimmedCurve)::DownCast(aC2DDE1);
-	  if (aCLDET1.IsNull()) {
-	    aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
-	  }
-	  else {
-	    Handle(Geom2d_Curve) aBasisCurve=aCLDET1->BasisCurve();
-	    aCLDE=Handle(Geom2d_Line)::DownCast(aBasisCurve);
-	  }
-	  //aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
-	  //modified by NIZNHY-PKV Thu Mar 20 17:37:37 2008t
-	  
-	  if (aCLDE.IsNull()) {
-	    continue;
-	  }
+        for (j=1; j<=aNbPoints; ++j) {
+          aP2D=aGInter.Point(j).Value();
+          Handle(Geom2d_Line) aCLDE;
+          //
+          //modified by NIZNHY-PKV Thu Mar 20 17:37:32 2008f
+          Handle(Geom2d_TrimmedCurve) aCLDET1=
+            Handle(Geom2d_TrimmedCurve)::DownCast(aC2DDE1);
+          if (aCLDET1.IsNull()) {
+            aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+          }
+          else {
+            Handle(Geom2d_Curve) aBasisCurve=aCLDET1->BasisCurve();
+            aCLDE=Handle(Geom2d_Line)::DownCast(aBasisCurve);
+          }
+          //aCLDE=Handle(Geom2d_Line)::DownCast(aC2DDE1);
+          //modified by NIZNHY-PKV Thu Mar 20 17:37:37 2008t
+          
+          if (aCLDE.IsNull()) {
+            continue;
+          }
 
-	  aLDE=aCLDE->Lin2d();
-	  aX=ElCLib::Parameter(aLDE, aP2D);
-	  //
-	  if (fabs (aX-aTD1) < aDT || fabs (aX-aTD2) < aDT) {
-	    continue; 
-	  }
-	  if (aX < aTD1 || aX > aTD2) {
-	    continue; 
-	  }
-	  //
-	  bRejectFlag=Standard_False;
-	  const BOPTools_ListOfPave& aListOfPave=aPaveSet.Set();
-	  BOPTools_ListIteratorOfListOfPave aPaveIt(aListOfPave);
-	  for (; aPaveIt.More(); aPaveIt.Next()) {
-	    const BOPTools_Pave& aPavex=aPaveIt.Value();
-	    aXx=aPavex.Param();
-	    if (fabs (aX-aXx) < aDT) {
-	      bRejectFlag=Standard_True;
-	      break;
-	    }
-	  }
-	  if (bRejectFlag) {
-	    continue; 
-	  }
-	  //
-	  BOPTools_Pave aPave(nVD, aX, BooleanOperations_UnknownInterference);
-	  aPaveSet.Append(aPave);
-	}
+          aLDE=aCLDE->Lin2d();
+          aX=ElCLib::Parameter(aLDE, aP2D);
+          //
+          if (fabs (aX-aTD1) < aDT || fabs (aX-aTD2) < aDT) {
+            continue; 
+          }
+          if (aX < aTD1 || aX > aTD2) {
+            continue; 
+          }
+          //
+          bRejectFlag=Standard_False;
+          const BOPTools_ListOfPave& aListOfPave=aPaveSet.Set();
+          BOPTools_ListIteratorOfListOfPave aPaveIt(aListOfPave);
+          for (; aPaveIt.More(); aPaveIt.Next()) {
+            const BOPTools_Pave& aPavex=aPaveIt.Value();
+            aXx=aPavex.Param();
+            if (fabs (aX-aXx) < aDT) {
+              bRejectFlag=Standard_True;
+              break;
+            }
+          }
+          if (bRejectFlag) {
+            continue; 
+          }
+          //
+          BOPTools_Pave aPave(nVD, aX, BooleanOperations_UnknownInterference);
+          aPaveSet.Append(aPave);
+        }
       }
     }
   }
@@ -448,7 +448,7 @@
 // purpose: 
 //=======================================================================
   void NMTTools_DEProcessor::MakeSplitEdges (const Standard_Integer nED,
-					     const Standard_Integer nFD)
+                                             const Standard_Integer nFD)
 {
   const BOPTools_SplitShapesPool& aSplitShapesPool=myFiller->SplitShapesPool();
   const BOPTools_ListOfPaveBlock& aSplitEdges=aSplitShapesPool(myDS->RefEdge(nED));
@@ -503,12 +503,12 @@
 // purpose: 
 //=======================================================================
   void NMTTools_DEProcessor::MakeSplitEdge (const TopoDS_Edge&   aE,
-					    const TopoDS_Face&   aF,
-					    const TopoDS_Vertex& aV1,
-					    const Standard_Real  aP1,
-					    const TopoDS_Vertex& aV2,
-					    const Standard_Real  aP2,
-					    TopoDS_Edge& aNewEdge)
+                                            const TopoDS_Face&   aF,
+                                            const TopoDS_Vertex& aV1,
+                                            const Standard_Real  aP1,
+                                            const TopoDS_Vertex& aV2,
+                                            const Standard_Real  aP2,
+                                            TopoDS_Edge& aNewEdge)
 {
   Standard_Real aTol=1.e-7;
 

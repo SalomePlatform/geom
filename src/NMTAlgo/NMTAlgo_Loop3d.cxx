@@ -97,7 +97,7 @@ static
   for (; itF.More(); itF.Next()) {
     const TopoDS_Shape& FF = itF.Value();
     if (AvoidFacesMap.Contains( FF ) ||
-	! AddedFacesMap.Add( FF ) )
+        ! AddedFacesMap.Add( FF ) )
       continue;
 
     // make a new shell
@@ -129,14 +129,14 @@ static
       TopExp_Explorer EdgeExp(F, TopAbs_EDGE);
       for (; EdgeExp.More(); EdgeExp.Next()){
         const TopoDS_Edge& E = TopoDS::Edge( EdgeExp.Current());
-	if (! CheckedEdgesMap.Add( E ))
-	  continue;
-	
-	// candidate faces list
+        if (! CheckedEdgesMap.Add( E ))
+          continue;
+        
+        // candidate faces list
         const TopTools_ListOfShape& FL = myEFMap.ChangeFromKey(E);
         if (FL.IsEmpty())
           continue;
-	// select one of neighbors
+        // select one of neighbors
         TopoDS_Face SelF;
         if (FL.Extent() == 2) {
           if (! F.IsSame( FL.First() ))
@@ -146,7 +146,7 @@ static
         }
         else {
           // check if a face already added to Shell shares E
-	  TopTools_ListIteratorOfListOfShape it (FL);
+          TopTools_ListIteratorOfListOfShape it (FL);
           Standard_Boolean found = Standard_False;
           for (; !found && it.More(); it.Next())
             if (F != it.Value())
@@ -184,8 +184,8 @@ static
           }
         }
         if (!SelF.IsNull() &&
-	    AddedFacesMap.Add( SelF ) &&
-	    !AvoidFacesMap.Contains( SelF )) 
+            AddedFacesMap.Add( SelF ) &&
+            !AvoidFacesMap.Contains( SelF )) 
           Builder.Add( Shell, SelF);
 
       } // loop on edges of F
@@ -209,7 +209,7 @@ static
 //purpose  : 
 //=======================================================================
   gp_Vec NMTAlgo_Loop3d::Normal(const TopoDS_Edge& E,
-				  const TopoDS_Face& F)
+                                  const TopoDS_Face& F)
 {
   gp_Vec Norm, V1, V2;
   Standard_Real First, Last;
@@ -235,11 +235,11 @@ static
 //           check if faces are oriented well for sewing
 //=======================================================================
   Standard_Boolean NMTAlgo_Loop3d::IsInside(const TopoDS_Edge& E,
-					    const TopoDS_Face& F1,
-					    const TopoDS_Face& F2,
-					    const Standard_Boolean CountDot,
-					    Standard_Real& Dot,
-					    Standard_Boolean& GoodOri) 
+                                            const TopoDS_Face& F1,
+                                            const TopoDS_Face& F2,
+                                            const Standard_Boolean CountDot,
+                                            Standard_Real& Dot,
+                                            Standard_Boolean& GoodOri) 
 {
   Standard_Real f, l;
   gp_Pnt P;
@@ -303,7 +303,7 @@ static
 //warning  : E must be properly oriented in F.
 //=======================================================================
 gp_Vec NextNormal(const TopoDS_Edge& E,
-			 const TopoDS_Face& F)
+                         const TopoDS_Face& F)
 {
   Standard_Real First, Last;
 
@@ -339,7 +339,7 @@ gp_Vec NextNormal(const TopoDS_Edge& E,
 //purpose  : find E in F
 //=======================================================================
 TopoDS_Edge FindEinF(const TopoDS_Edge& E,
-		      const TopoDS_Face& F)
+                      const TopoDS_Face& F)
 {
   TopExp_Explorer expl (F, TopAbs_EDGE);
   for (; expl.More(); expl.Next()) 

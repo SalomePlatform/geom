@@ -49,7 +49,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 MeasureGUI_Skeleton::MeasureGUI_Skeleton( GeometryGUI* GUI, QWidget* parent,
-					  bool modal, Qt::WindowFlags f )
+                                          bool modal, Qt::WindowFlags f )
   : QDialog( parent, f ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( GUI )
@@ -96,33 +96,33 @@ void MeasureGUI_Skeleton::Init()
   /* signals and slots connections */
   
   connect( buttonClose(), SIGNAL( clicked() ),
-	   this,          SLOT( ClickOnCancel() ) );
+           this,          SLOT( ClickOnCancel() ) );
 
   connect( buttonHelp(),  SIGNAL( clicked() ), 
-	   this,          SLOT( ClickOnHelp() ) );
+           this,          SLOT( ClickOnHelp() ) );
   
   if ( myGeomGUI ) {
     connect( myGeomGUI,   SIGNAL( SignalDeactivateActiveDialog() ),
-	     this,        SLOT  ( DeactivateActiveDialog() ) );
+             this,        SLOT  ( DeactivateActiveDialog() ) );
     
     connect( myGeomGUI,   SIGNAL( SignalCloseAllDialogs() ),
-	     this,        SLOT  ( ClickOnCancel() ) );
+             this,        SLOT  ( ClickOnCancel() ) );
   }
   
   if ( mySelEdit ) {
     connect( mySelEdit,   SIGNAL( returnPressed() ),
-	     this,        SLOT( LineEditReturnPressed() ) );
+             this,        SLOT( LineEditReturnPressed() ) );
   }
    
   if ( mySelBtn ) {
     connect( mySelBtn,    SIGNAL( clicked() ),
-	     this,        SLOT  ( SetEditCurrentArgument() ) );
+             this,        SLOT  ( SetEditCurrentArgument() ) );
   }
 
   LightApp_SelectionMgr* aSel = ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr();
   if ( aSel ) {
     connect( aSel, SIGNAL( currentSelectionChanged() ), 
-	     this, SLOT  ( SelectionIntoArgument() ) ) ;
+             this, SLOT  ( SelectionIntoArgument() ) ) ;
   }
 
   /* displays Dialog */
@@ -160,8 +160,8 @@ void MeasureGUI_Skeleton::ClickOnHelp()
     platform = "application";
 #endif
     SUIT_MessageBox::warning( this, tr( "WRN_WARNING" ),
-			      tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
-			      arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ) );
+                              tr( "EXTERNAL_BROWSER_CANNOT_SHOW_PAGE" ).
+                              arg( app->resourceMgr()->stringValue( "ExternalBrowser", platform ) ).arg( myHelpFileName ) );
   }
 }
 
@@ -222,7 +222,7 @@ void MeasureGUI_Skeleton::ActivateThisDialog()
   LightApp_SelectionMgr* aSel = ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr();
   if ( aSel )
     connect( aSel, SIGNAL( currentSelectionChanged() ), 
-	     this, SLOT  ( SelectionIntoArgument() ) ) ;
+             this, SLOT  ( SelectionIntoArgument() ) ) ;
   
   redisplayPreview();
   activateSelection();

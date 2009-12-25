@@ -50,8 +50,8 @@ protected:
 private:
   void                                Init();
   bool                                getParameters( double&, double&,
-						     double&, double&,
-						     double&, double& );
+                                                     double&, double&,
+                                                     double&, double& );
 
 private:
   MeasureGUI_1Sel6LineEdit*           myGrp;

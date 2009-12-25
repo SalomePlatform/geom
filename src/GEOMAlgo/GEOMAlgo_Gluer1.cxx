@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Gluer1.cxx
-// Created:	Wed Jan 24 11:52:27 2007
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_Gluer1.cxx
+// Created:     Wed Jan 24 11:52:27 2007
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_Gluer1.ixx>
 
@@ -72,7 +72,7 @@ class GEOMAlgo_CoupleOfInteger {
   }
   //
   void SetValues(const Standard_Integer aI1,
-		 const Standard_Integer aI2) {
+                 const Standard_Integer aI2) {
     myInt1=aI1;    
     myInt2=aI2;
   }
@@ -86,7 +86,7 @@ class GEOMAlgo_CoupleOfInteger {
   }
   //
   void Values(Standard_Integer& aI1,
-	      Standard_Integer& aI2) const {
+              Standard_Integer& aI2) const {
     aI1=myInt1;    
     aI2=myInt2;
   }
@@ -108,14 +108,14 @@ class GEOMAlgo_CoupleOfInteger {
 //
 static
   void SortShell(const Standard_Integer , 
-		 GEOMAlgo_CoupleOfInteger* );
+                 GEOMAlgo_CoupleOfInteger* );
 static
   void RefineSolid(const TopoDS_Shape& ,
-		   const TopTools_DataMapOfShapeShape& ,
-		   TopTools_DataMapOfShapeShape& );
+                   const TopTools_DataMapOfShapeShape& ,
+                   TopTools_DataMapOfShapeShape& );
 static
   void MakeFaceToReplace(const TopoDS_Face& ,
-			 TopoDS_Face& );
+                         TopoDS_Face& );
 //
 //=======================================================================
 //function : GEOMAlgo_Gluer1
@@ -276,10 +276,10 @@ static
       aPKS.Clear();
       aPKS.SetShapes(aS1, aS2);
       if (!myMapGN.IsBound(aPKS)) {
-	//some faces, wanted to unglue, are not glued at all;
-	myWarningStatus=2; 
-	myRejectedFaces.Append(aCS);
-	continue;
+        //some faces, wanted to unglue, are not glued at all;
+        myWarningStatus=2; 
+        myRejectedFaces.Append(aCS);
+        continue;
       }
       //
       const TopoDS_Shape& aFN=myMapGN.Find(aPKS);
@@ -316,13 +316,13 @@ static
     for (; aItLS.More(); aItLS.Next()) {
       const TopoDS_Shape& aS=aItLS.Value();
       if (aMSF.Contains(aS)) {
-	TopTools_ListOfShape& aLF=aMSF.ChangeFromKey(aS);
-	aLF.Append(aFN);
+        TopTools_ListOfShape& aLF=aMSF.ChangeFromKey(aS);
+        aLF.Append(aFN);
       }
       else {
-	TopTools_ListOfShape aLF;
-	aLF.Append(aFN);
-	aMSF.Add(aS, aLF); 
+        TopTools_ListOfShape aLF;
+        aLF.Append(aFN);
+        aMSF.Add(aS, aLF); 
       }
     }
   }
@@ -373,7 +373,7 @@ static
     for (; aItLS.More(); aItLS.Next()) {
       const TopoDS_Shape& aFN=aItLS.Value();
       if (!aMFNP.Add(aFN)) {
-	continue;
+        continue;
       }
       // 
       // original face from original solid -> FD  
@@ -383,12 +383,12 @@ static
       const TopTools_ListOfShape& aLFD=myImages.Find(aFN);
       aItLS1.Initialize(aLFD);
       for (; aItLS1.More(); aItLS1.Next()) {
-	const TopoDS_Shape& aFDx=aItLS1.Value();
-	if (aMFD.Contains(aFDx)) {
-	  aFD=aFDx;
-	  bFound=Standard_True;
-	  break;
-	}
+        const TopoDS_Shape& aFDx=aItLS1.Value();
+        if (aMFD.Contains(aFDx)) {
+          aFD=aFDx;
+          bFound=Standard_True;
+          break;
+        }
       }
       //if (!bFound) {...}
       aMFNFD.Bind(aFN, aFD);
@@ -418,10 +418,10 @@ static
       TopTools_ListOfShape& aLFD=myImages.ChangeFind(aFN);
       aItLS.Initialize(aLFD);
       for (; aItLS.More(); aItLS.Next()) {
-	const TopoDS_Shape& aFDx=aItLS.Value();
-	if (!aFDx.IsSame(aFD)) {
-	  aLFDx.Append(aFDx);
-	}
+        const TopoDS_Shape& aFDx=aItLS.Value();
+        if (!aFDx.IsSame(aFD)) {
+          aLFDx.Append(aFDx);
+        }
       }
       aLFD=aLFDx;
       //
@@ -438,8 +438,8 @@ static
 // purpose : replace faces (aMFN) of solid aSd by new ones 
 //=======================================================================
 void RefineSolid(const TopoDS_Shape& aSd,
-		 const TopTools_DataMapOfShapeShape& aMFNFD,
-		 TopTools_DataMapOfShapeShape& aMFNFN2)
+                 const TopTools_DataMapOfShapeShape& aMFNFD,
+                 TopTools_DataMapOfShapeShape& aMFNFN2)
 {
   TopoDS_Shape *pSh;
   TopoDS_Face aF2;
@@ -458,7 +458,7 @@ void RefineSolid(const TopoDS_Shape& aSd,
     for (; aItSh.More(); aItSh.Next()) {
       const TopoDS_Shape& aF=aItSh.Value();
       if (aMFNFD.IsBound(aF)) {
-	aLF.Append(aF);
+        aLF.Append(aF);
       }
     }
     //
@@ -480,7 +480,7 @@ void RefineSolid(const TopoDS_Shape& aSd,
 //purpose  : 
 //=======================================================================
 void MakeFaceToReplace(const TopoDS_Face& aF,
-		       TopoDS_Face& aFR)
+                       TopoDS_Face& aFR)
 {
   Standard_Real aTol;
   Handle(Geom_Surface) aS;
@@ -508,7 +508,7 @@ void MakeFaceToReplace(const TopoDS_Face& aF,
 // purpose : 
 //=======================================================================
 void SortShell(const Standard_Integer n, 
-	       GEOMAlgo_CoupleOfInteger* a) 
+               GEOMAlgo_CoupleOfInteger* a) 
 {
   Standard_Integer nd, i, j, l, d=1;
   GEOMAlgo_CoupleOfInteger x;
@@ -526,13 +526,13 @@ void SortShell(const Standard_Integer n,
     m30:;
       l=j+d;
       if (a[l].Value1() < a[j].Value1()) {
-	x=a[j];
-	a[j]=a[l];
-	a[l]=x;
-	j-=d;
-	if (j > -1) { 
-	  goto m30;
-	}
+        x=a[j];
+        a[j]=a[l];
+        a[l]=x;
+        j-=d;
+        if (j > -1) { 
+          goto m30;
+        }
       }//if (a[l] < a[j]){
     }//for (i=0; i<nd; ++i) 
   }//while (1)

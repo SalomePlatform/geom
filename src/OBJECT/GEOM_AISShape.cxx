@@ -73,8 +73,8 @@
 using namespace std;
 
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
-			     const Handle(AIS_InteractiveContext)& theIC,
-			     SelectMgr_IndexedMapOfOwner& theMap )
+                             const Handle(AIS_InteractiveContext)& theIC,
+                             SelectMgr_IndexedMapOfOwner& theMap )
 {
   if ( theObj.IsNull() || theIC.IsNull() )
     return;
@@ -93,20 +93,20 @@ static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
     for ( sel->Init(); sel->More(); sel->Next() ) {
       Handle(SelectBasics_SensitiveEntity) entity = sel->Sensitive();
       if ( entity.IsNull() )
-	continue;
+        continue;
 
       Handle(SelectMgr_EntityOwner) owner =
-	Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
+        Handle(SelectMgr_EntityOwner)::DownCast(entity->OwnerId());
       if ( !owner.IsNull() )
-	theMap.Add( owner );
+        theMap.Add( owner );
     }
   }
 }
 
 static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
- 			     const TopoDS_Shape& aMainShape,
-			     const SelectMgr_IndexedMapOfOwner& anAllMap, 
-			     SelectMgr_IndexedMapOfOwner& aToHiliteMap )
+                             const TopoDS_Shape& aMainShape,
+                             const SelectMgr_IndexedMapOfOwner& anAllMap, 
+                             SelectMgr_IndexedMapOfOwner& aToHiliteMap )
 {
   TopTools_IndexedMapOfShape aMapOfShapes;
   TopExp::MapShapes(aMainShape, aMapOfShapes);
@@ -127,7 +127,7 @@ static void indicesToOwners( const TColStd_IndexedMapOfInteger& aIndexMap,
 }
 
 GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
-			     const Standard_CString aName)
+                             const Standard_CString aName)
   : SALOME_AISShape(shape), myName(aName), myDisplayVectors(false)
 {
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
@@ -162,8 +162,8 @@ Standard_CString GEOM_AISShape::getName(){
 }
 
 void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
-			    const Handle(Prs3d_Presentation)& aPrs,
-			    const Standard_Integer aMode)
+                            const Handle(Prs3d_Presentation)& aPrs,
+                            const Standard_Integer aMode)
 {  
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
   
@@ -228,10 +228,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       if ( C.IsNull() ) continue;
 
       if ( anEdgeE.Orientation() == TopAbs_FORWARD )
-	C->D1(lp, aP2, aDirVec);
+        C->D1(lp, aP2, aDirVec);
       else {
-	C->D1(fp, aP1, aDirVec);
-	aP2 = aP1;
+        C->D1(fp, aP1, aDirVec);
+        aP2 = aP1;
       }
 
       GeomAdaptor_Curve aAdC;
@@ -239,13 +239,13 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       Standard_Real aDist = GCPnts_AbscissaPoint::Length(aAdC, fp, lp); 
      
       if (aDist > gp::Resolution()) {
-	gp_Dir aDir;
-	if ( anEdgeE.Orientation() == TopAbs_FORWARD )
-	  aDir = aDirVec;
-	else
-	  aDir = -aDirVec;
+        gp_Dir aDir;
+        if ( anEdgeE.Orientation() == TopAbs_FORWARD )
+          aDir = aDirVec;
+        else
+          aDir = -aDirVec;
 
-	Prs3d_Arrow::Draw(aPrs, aP2, aDir, PI/180.*5., aDist/10.);
+        Prs3d_Arrow::Draw(aPrs, aP2, aDir, PI/180.*5., aDist/10.);
       }
     }
   }
@@ -276,7 +276,7 @@ void GEOM_AISShape::SetShadingColor(const Quantity_Color &aCol)
 }
 
 void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
-				       const Standard_Boolean aHighlight )
+                                       const Standard_Boolean aHighlight )
 {
   Handle(AIS_InteractiveObject) anObj = this;
   Handle(AIS_InteractiveContext) anIC = GetContext();

@@ -52,7 +52,7 @@
 //            TRUE to construct a modal dialog.
 //=================================================================================
 BasicGUI_EllipseDlg::BasicGUI_EllipseDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					  bool modal, Qt::WindowFlags fl )
+                                          bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_ELLIPSE_PV" ) ) );
@@ -153,7 +153,7 @@ void BasicGUI_EllipseDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
   
   connect( myGeomGUI->getApp()->selectionMgr(), 
-	  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+          SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_ELLIPSE" ) );
 
@@ -256,16 +256,16 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
         else
           aName += QString(":vertex_%1").arg(anIndex);
 
-	//Find SubShape Object in Father
-	GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
 
-	if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
           GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
           aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	} 
-	else {
-	  aSelectedObject = aFindedObject; // get Object from study
-	}
+        } 
+        else {
+          aSelectedObject = aFindedObject; // get Object from study
+        }
       }
       else { // Global Selection
         if (aShape.ShapeType() != aNeedType) {
@@ -285,17 +285,17 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
       myPoint = aSelectedObject;
       if ( !myPoint->_is_nil() && myDir->_is_nil() )
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myDir   = aSelectedObject;
       if ( !myDir->_is_nil() && myMajor->_is_nil() )
-	GroupPoints->PushButton3->click();
+        GroupPoints->PushButton3->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) {
       myMajor = aSelectedObject;
       if ( !myMajor->_is_nil() && myPoint->_is_nil() )
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
     }
   }
 
@@ -372,7 +372,7 @@ void BasicGUI_EllipseDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
   
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;

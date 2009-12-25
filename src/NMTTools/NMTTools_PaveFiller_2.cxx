@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_PaveFiller_2.cxx
-// Created:	Mon Dec  8 12:02:56 2003
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        NMTTools_PaveFiller_2.cxx
+// Created:     Mon Dec  8 12:02:56 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <NMTTools_PaveFiller.ixx>
 
@@ -61,7 +61,7 @@
 
 static
   Standard_Boolean Contains(const TopoDS_Edge& aE,
-			    const TopoDS_Vertex& aV);
+                            const TopoDS_Vertex& aV);
 // Contribution of Samtech www.samcef.com END
 
 //=======================================================================
@@ -98,18 +98,18 @@ static
       aWhat=n1; // Vertex
       aWith=n2; // Edge
       if (myDS->GetShapeType(n1)==TopAbs_EDGE) {
-	aWhat=n2;
-	aWith=n1;
+        aWhat=n2;
+        aWith=n1;
       }
       //
       if(bJustAdd) {
-	//myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexEdge, anIndexIn);
-	continue;
+        //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexEdge, anIndexIn);
+        continue;
       }
       // Edge
       aE2=TopoDS::Edge(myDS->Shape(aWith));
       if (BRep_Tool::Degenerated(aE2)){
-	continue;
+        continue;
       }
       // Vertex
       nV1=aWhat;
@@ -117,62 +117,62 @@ static
       //
       iSDV=FindSDVertex(aWhat);
       if (iSDV) {
-	nV1=iSDV;
-	aV1=TopoDS::Vertex(myDS->Shape(nV1));
-	// Modified to find same domain vertex Thu Sep 14 14:35:18 2006 
-	// Contribution of Samtech www.samcef.com BEGIN
-	Standard_Integer nVE, iSDVE, iRet;
-	//
-	BooleanOperations_OnceExplorer aExp(*myDS);
-	iRet=0;
-	aExp.Init(aWith, TopAbs_VERTEX);
-	for (; aExp.More(); aExp.Next()) {
-	  nVE=aExp.Current();
-	  iSDVE=FindSDVertex(nVE);
-	  if (iSDVE==iSDV) {
-	    iRet=1;
-	    break;
-	  }
-	}
-	if (iRet) {
-	  continue;
-	}
+        nV1=iSDV;
+        aV1=TopoDS::Vertex(myDS->Shape(nV1));
+        // Modified to find same domain vertex Thu Sep 14 14:35:18 2006 
+        // Contribution of Samtech www.samcef.com BEGIN
+        Standard_Integer nVE, iSDVE, iRet;
+        //
+        BooleanOperations_OnceExplorer aExp(*myDS);
+        iRet=0;
+        aExp.Init(aWith, TopAbs_VERTEX);
+        for (; aExp.More(); aExp.Next()) {
+          nVE=aExp.Current();
+          iSDVE=FindSDVertex(nVE);
+          if (iSDVE==iSDV) {
+            iRet=1;
+            break;
+          }
+        }
+        if (iRet) {
+          continue;
+        }
       }
       else {
-	if (Contains(aE2, aV1)) {
-	  continue;
-	}
-	// Contribution of Samtech www.samcef.com END
+        if (Contains(aE2, aV1)) {
+          continue;
+        }
+        // Contribution of Samtech www.samcef.com END
       }
       //
       aFlag=myContext.ComputeVE (aV1, aE2, aT);
       //
       if (!aFlag) {
-	// Add Interference to the Pool
-	BOPTools_VEInterference anInterf (aWhat, aWith, aT);
-	anIndexIn=aVEs.Append(anInterf);
-	//
-	// Add Pave to the Edge's myPavePool
-	aCouple.SetCouple(nV1, aWith);
-	if (!aSnareMap.Contains(aCouple)){
-	  aSnareMap.Add(aCouple);
-	  //
-	  BOPTools_Pave aPave(nV1, aT, BooleanOperations_VertexEdge);
-	  aPave.SetInterference(anIndexIn);
-	  BOPTools_PaveSet& aPaveSet= myPavePool(myDS->RefEdge(aWith));
-	  aPaveSet.Append(aPave);
-	}
-	//
-	// State for the Vertex in DS;
-	myDS->SetState (aWhat, BooleanOperations_ON);
-	// Insert Vertex in Interference Object
-	BOPTools_VEInterference& aVE=aVEs(anIndexIn);
-	aVE.SetNewShape(aWhat);
-	// qqf
-	{
-	  myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VE);
-	}	  
-	// qqt
+        // Add Interference to the Pool
+        BOPTools_VEInterference anInterf (aWhat, aWith, aT);
+        anIndexIn=aVEs.Append(anInterf);
+        //
+        // Add Pave to the Edge's myPavePool
+        aCouple.SetCouple(nV1, aWith);
+        if (!aSnareMap.Contains(aCouple)){
+          aSnareMap.Add(aCouple);
+          //
+          BOPTools_Pave aPave(nV1, aT, BooleanOperations_VertexEdge);
+          aPave.SetInterference(anIndexIn);
+          BOPTools_PaveSet& aPaveSet= myPavePool(myDS->RefEdge(aWith));
+          aPaveSet.Append(aPave);
+        }
+        //
+        // State for the Vertex in DS;
+        myDS->SetState (aWhat, BooleanOperations_ON);
+        // Insert Vertex in Interference Object
+        BOPTools_VEInterference& aVE=aVEs(anIndexIn);
+        aVE.SetNewShape(aWhat);
+        // qqf
+        {
+          myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VE);
+        }         
+        // qqt
       }
       //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexEdge, anIndexIn);
     }
@@ -197,7 +197,7 @@ static
       aE=TopoDS::Edge(myDS->Shape(i));
       //
       if (BRep_Tool::Degenerated(aE)){
-	continue;
+        continue;
       }
       //
       BOPTools_PaveSet& aPaveSet=myPavePool(myDS->RefEdge(i));
@@ -205,21 +205,21 @@ static
       // A <-
       aNBSuc=myDS->NumberOfSuccessors(i);
       for (ii=1; ii <=aNBSuc; ii++) {
-	nV=myDS->GetSuccessor(i, ii);
-	anOr=myDS->GetOrientation(i, ii);
-	aV=TopoDS::Vertex(myDS->Shape(nV));
-	aV.Orientation(anOr);
-	aT=BRep_Tool::Parameter(aV, aE);
-	//
-	ip=FindSDVertex(nV);
-	if (ip) {
-	  aV=TopoDS::Vertex(myDS->Shape(ip));
-	  aV.Orientation(anOr);// XX ? if the edge is closed it'll be amazing result 
-	  nV=ip;
-	}
-	//
-	BOPTools_Pave aPave(nV, aT); 
-	aPaveSet.Append (aPave);
+        nV=myDS->GetSuccessor(i, ii);
+        anOr=myDS->GetOrientation(i, ii);
+        aV=TopoDS::Vertex(myDS->Shape(nV));
+        aV.Orientation(anOr);
+        aT=BRep_Tool::Parameter(aV, aE);
+        //
+        ip=FindSDVertex(nV);
+        if (ip) {
+          aV=TopoDS::Vertex(myDS->Shape(ip));
+          aV.Orientation(anOr);// XX ? if the edge is closed it'll be amazing result 
+          nV=ip;
+        }
+        //
+        BOPTools_Pave aPave(nV, aT); 
+        aPaveSet.Append (aPave);
       }
     }
   }
@@ -232,7 +232,7 @@ static
 //purpose  : 
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Edge& aE,
-			  const TopoDS_Vertex& aV)
+                          const TopoDS_Vertex& aV)
 {
   Standard_Boolean bRet;
   TopoDS_Iterator aIt;

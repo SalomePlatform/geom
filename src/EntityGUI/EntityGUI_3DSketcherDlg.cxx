@@ -67,8 +67,8 @@ private:
 //            TRUE to construct a modal dialog.
 //=================================================================================
 EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
-					          bool modal, Qt::WindowFlags fl,
-						  const double lineWidth )
+                                                  bool modal, Qt::WindowFlags fl,
+                                                  const double lineWidth )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl ),
     myGeometryGUI( theGeometryGUI ),
     myLineWidth( lineWidth )
@@ -306,45 +306,45 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
     if (!CORBA::is_nil(aSelectedObject) && aRes) {
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE)) { // Explore the shape if its a local selection
-	TColStd_IndexedMapOfInteger aMap;
-	aSelMgr->GetIndexes(aSelList.First(), aMap);
-	if (aMap.Extent() == 1)
-	  {
-	    int anIndex = aMap(1);
-	    GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-	    aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-	  }
+        TColStd_IndexedMapOfInteger aMap;
+        aSelMgr->GetIndexes(aSelList.First(), aMap);
+        if (aMap.Extent() == 1)
+          {
+            int anIndex = aMap(1);
+            GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+            aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+          }
       }
       bool isOk = true;
       if ( aShape.ShapeType() != TopAbs_VERTEX )
-	isOk = GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX);
+        isOk = GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX);
       if (isOk) {
-	gp_Pnt aPnt;
-	if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-	  // set coordinates to the Spin Boxes
-	  double aX, aY, aZ;
-	  aX = aPnt.X();
-	  aY = aPnt.Y();
-	  aZ = aPnt.Z();
-	  bool blocked = Group3Spin->SpinBox_DX->signalsBlocked();
-	  Group3Spin->SpinBox_DX->blockSignals(true);
-	  Group3Spin->SpinBox_DY->blockSignals(true);
-	  Group3Spin->SpinBox_DZ->blockSignals(true);
-	  if ( GroupType->RadioButton1->isChecked() ) {
-	    Group3Spin->SpinBox_DX->setValue( aX );
-	    Group3Spin->SpinBox_DY->setValue( aY );
-	    Group3Spin->SpinBox_DZ->setValue( aZ );
-	  } else if ( GroupType->RadioButton2->isChecked() ) {
-	    double x, y, z;
-	    GetLastPoints(x, y, z);
-	    Group3Spin->SpinBox_DX->setValue( aX - x );
-	    Group3Spin->SpinBox_DY->setValue( aY - y );
-	    Group3Spin->SpinBox_DZ->setValue( aZ - z );
-	  }
-	  Group3Spin->SpinBox_DX->blockSignals(blocked);
-	  Group3Spin->SpinBox_DY->blockSignals(blocked);
-	  Group3Spin->SpinBox_DZ->blockSignals(blocked);
-	}
+        gp_Pnt aPnt;
+        if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
+          // set coordinates to the Spin Boxes
+          double aX, aY, aZ;
+          aX = aPnt.X();
+          aY = aPnt.Y();
+          aZ = aPnt.Z();
+          bool blocked = Group3Spin->SpinBox_DX->signalsBlocked();
+          Group3Spin->SpinBox_DX->blockSignals(true);
+          Group3Spin->SpinBox_DY->blockSignals(true);
+          Group3Spin->SpinBox_DZ->blockSignals(true);
+          if ( GroupType->RadioButton1->isChecked() ) {
+            Group3Spin->SpinBox_DX->setValue( aX );
+            Group3Spin->SpinBox_DY->setValue( aY );
+            Group3Spin->SpinBox_DZ->setValue( aZ );
+          } else if ( GroupType->RadioButton2->isChecked() ) {
+            double x, y, z;
+            GetLastPoints(x, y, z);
+            Group3Spin->SpinBox_DX->setValue( aX - x );
+            Group3Spin->SpinBox_DY->setValue( aY - y );
+            Group3Spin->SpinBox_DZ->setValue( aZ - z );
+          }
+          Group3Spin->SpinBox_DX->blockSignals(blocked);
+          Group3Spin->SpinBox_DY->blockSignals(blocked);
+          Group3Spin->SpinBox_DZ->blockSignals(blocked);
+        }
       }
     }
   }
@@ -375,7 +375,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
   myGeomGUI->SetActiveDialogBox( this );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
-	  SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+          SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
@@ -461,8 +461,8 @@ bool EntityGUI_3DSketcherDlg::execute( ObjectList& objects )
 //=================================================================================
 
 void EntityGUI_3DSketcherDlg::initSpinBox( QDoubleSpinBox* spinBox,
-					 double min,  double max,
-					 double step, int decimals )
+                                         double min,  double max,
+                                         double step, int decimals )
 {
   spinBox->setDecimals( decimals );
   spinBox->setRange( min, max );
@@ -551,12 +551,12 @@ void EntityGUI_3DSketcherDlg::GetCurrentPoints(double& x, double& y, double& z)
 //            Redefined from GEOMBase_Helper.
 //================================================================
 void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
-					      const bool            append,
-					      const bool            activate,
-					      const bool            update,
-					      const double          lineWidth,
-					      const int             displayMode,
-					      const int             color )
+                                              const bool            append,
+                                              const bool            activate,
+                                              const bool            update,
+                                              const double          lineWidth,
+                                              const int             displayMode,
+                                              const int             color )
 {
   // Set color for preview shape
   getDisplayer()->SetColor( Quantity_NOC_RED );
@@ -597,8 +597,8 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
 // Purpose  : Create applyed wire, and last segment from entry object
 //================================================================
 bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
-					    TopoDS_Shape&         theApplyedWire,
-					    TopoDS_Shape&         theLastSegment )
+                                            TopoDS_Shape&         theApplyedWire,
+                                            TopoDS_Shape&         theLastSegment )
 {
   TopoDS_Shape aShape;
   if ( !GEOMBase::GetShape( theObject, aShape ) ||

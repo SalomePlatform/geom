@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_ShellSolid.cxx
-// Created:	Wed Jan 12 12:49:45 2005
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:        GEOMAlgo_ShellSolid.cxx
+// Created:     Wed Jan 12 12:49:45 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
 //
 #include <GEOMAlgo_ShellSolid.ixx>
 
@@ -217,7 +217,7 @@ void GEOMAlgo_ShellSolid::BuildResult()
       const BOPTools_ListOfPaveBlock& aSectEdges=aBC.NewPaveBlocks();
       aNbS=aSectEdges.Extent();
       if (aNbS) {
-	break;
+        break;
       }
     }
     //
@@ -229,7 +229,7 @@ void GEOMAlgo_ShellSolid::BuildResult()
     for (; anExp.More(); anExp.Next()) {
       const TopoDS_Edge& aE=TopoDS::Edge(anExp.Current());
       if (BRep_Tool::Degenerated(aE)) {
-	continue;
+        continue;
       }
       //
       nE=aDS.ShapeIndex(aE, myRank);
@@ -237,46 +237,46 @@ void GEOMAlgo_ShellSolid::BuildResult()
       aNbPB=aLPB.Extent();
       //
       if (aNbPB<2) {
-	nSp=nE;
-	if (aNbPB) {
-	  const BOPTools_PaveBlock& aPB=aLPB.First();
-	  nSp=aPB.Edge();
-	}
-	const TopoDS_Shape& aSp=aDS.Shape(nSp);
-	//
-	aState=aDS.GetState(nSp);
-	if (aState==BooleanOperations_IN) {
-	  myLSIN.Append(aF1);
-	}
-	else if (aState==BooleanOperations_OUT) {
-	  myLSOUT.Append(aF1);
-	}
-	else if (aState==BooleanOperations_ON) {
-	  Standard_Real aTol;
-	  TopAbs_State aSt;
-	  //
-	  //const TopoDS_Face& aF2=TopoDS::Face(aDS.Shape((iRank1==myRank)? nF2 : nF1));
-	  //aTol=BRep_Tool::Tolerance(aF2);
-	  aTol=1.e-7;
-	  //
-	  BOPTools_Tools3D::PointNearEdge(aE, aF1, aP2D, aP3D);
-	  const TopoDS_Solid& aRefSolid=(myRank==1) ? 
-	    TopoDS::Solid(aDS.Tool()) : TopoDS::Solid(aDS.Object());
-	  //
-	  BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)& aPaveFiller;
-	  IntTools_Context& aCtx=pPF->ChangeContext();
-	  //
-	  BRepClass3d_SolidClassifier& aSC=aCtx.SolidClassifier(aRefSolid);
-	  aSC.Perform(aP3D, aTol);
-	  aSt=aSC.State();
-	  if (aSt==TopAbs_IN) {
-	    myLSIN.Append(aF1);
-	  }
-	  else if (aSt==TopAbs_OUT) {
-	    myLSOUT.Append(aF1);
-	  }
-	} 
-	break; 
+        nSp=nE;
+        if (aNbPB) {
+          const BOPTools_PaveBlock& aPB=aLPB.First();
+          nSp=aPB.Edge();
+        }
+        const TopoDS_Shape& aSp=aDS.Shape(nSp);
+        //
+        aState=aDS.GetState(nSp);
+        if (aState==BooleanOperations_IN) {
+          myLSIN.Append(aF1);
+        }
+        else if (aState==BooleanOperations_OUT) {
+          myLSOUT.Append(aF1);
+        }
+        else if (aState==BooleanOperations_ON) {
+          Standard_Real aTol;
+          TopAbs_State aSt;
+          //
+          //const TopoDS_Face& aF2=TopoDS::Face(aDS.Shape((iRank1==myRank)? nF2 : nF1));
+          //aTol=BRep_Tool::Tolerance(aF2);
+          aTol=1.e-7;
+          //
+          BOPTools_Tools3D::PointNearEdge(aE, aF1, aP2D, aP3D);
+          const TopoDS_Solid& aRefSolid=(myRank==1) ? 
+            TopoDS::Solid(aDS.Tool()) : TopoDS::Solid(aDS.Object());
+          //
+          BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)& aPaveFiller;
+          IntTools_Context& aCtx=pPF->ChangeContext();
+          //
+          BRepClass3d_SolidClassifier& aSC=aCtx.SolidClassifier(aRefSolid);
+          aSC.Perform(aP3D, aTol);
+          aSt=aSC.State();
+          if (aSt==TopAbs_IN) {
+            myLSIN.Append(aF1);
+          }
+          else if (aSt==TopAbs_OUT) {
+            myLSOUT.Append(aF1);
+          }
+        } 
+        break; 
       } // if (aNbPB<2) { 
     } //for (; anExp.More(); anExp.Next())
   } 
@@ -340,26 +340,26 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
       iZone=0;
       TopTools_ListIteratorOfListOfShape anIt(aLF);
       for (; anIt.More(); anIt.Next()) {
-	const TopoDS_Shape& aFR=anIt.Value();
+        const TopoDS_Shape& aFR=anIt.Value();
 
-	if (aFR.ShapeType()==TopAbs_FACE) {
-	  const TopoDS_Face& aFaceResult=TopoDS::Face(aFR);
-	  //
-	  Standard_Boolean bIsValidIn2D, bNegativeFlag;
-	  bIsValidIn2D=BOPTools_Tools3D::IsValidArea (aFaceResult, bNegativeFlag);
-	  if (bIsValidIn2D) { 
-	    //if(CheckSameDomainFaceInside(aFaceResult, aF2)) {
-	    iZone=1;
-	    break;
-	    //}
-	  }
-	  //
-	}
+        if (aFR.ShapeType()==TopAbs_FACE) {
+          const TopoDS_Face& aFaceResult=TopoDS::Face(aFR);
+          //
+          Standard_Boolean bIsValidIn2D, bNegativeFlag;
+          bIsValidIn2D=BOPTools_Tools3D::IsValidArea (aFaceResult, bNegativeFlag);
+          if (bIsValidIn2D) { 
+            //if(CheckSameDomainFaceInside(aFaceResult, aF2)) {
+            iZone=1;
+            break;
+            //}
+          }
+          //
+        }
       }
       
       if (iZone) { 
-	bFlag=Standard_True;
-	aFF.SetStatesMap(aWESFiller.StatesMap());
+        bFlag=Standard_True;
+        aFF.SetStatesMap(aWESFiller.StatesMap());
       }
       
     }// if (iSenseFlag)

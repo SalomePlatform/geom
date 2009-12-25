@@ -179,8 +179,8 @@ void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView
 // Purpose  :
 //================================================================
 void GEOMBase_Helper::redisplay( const ObjectList& objList,
-				 const bool withChildren,
-				 const bool updateView )
+                                 const bool withChildren,
+                                 const bool updateView )
 {
   ObjectList::const_iterator it = objList.begin();
   for ( ; it != objList.end(); it++ ) {
@@ -195,8 +195,8 @@ void GEOMBase_Helper::redisplay( const ObjectList& objList,
 // Purpose  :
 //================================================================
 void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
-				 const bool withChildren,
-				 const bool updateView )
+                                 const bool withChildren,
+                                 const bool updateView )
 {
   if ( !object->_is_nil() ) {
     // Unset color of shape ( this color may be set during preview displaying )
@@ -219,18 +219,18 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
       CORBA::String_var objStr = SalomeApp_Application::orb()->object_to_string(object);
       _PTR(SObject) aSObj (aStudy->FindObjectIOR(std::string(objStr.in())));
       if ( aSObj  ) {
-	_PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
-	for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
-	  GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow
+        _PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
+        for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
+          GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow
             (GeometryGUI::ClientSObjectToObject(anIt->Value()));
-	  if ( !CORBA::is_nil( aChild ) ) {
-	    if ( !aChild->_is_nil() ) {
-	      std::string entry = getEntry( aChild );
-	      getDisplayer()->Redisplay( new SALOME_InteractiveObject(
+          if ( !CORBA::is_nil( aChild ) ) {
+            if ( !aChild->_is_nil() ) {
+              std::string entry = getEntry( aChild );
+              getDisplayer()->Redisplay( new SALOME_InteractiveObject(
                 entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
-	    }
-	  }
-	}
+            }
+          }
+        }
       }
     }
   }
@@ -270,10 +270,10 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
     else {
       for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it )
       {
-	    GEOM::GEOM_Object_var obj=*it;
+            GEOM::GEOM_Object_var obj=*it;
         displayPreview( obj, true, activate, false, lineWidth, displayMode, color );
         if ( toRemoveFromEngine )
-	      obj->Destroy();
+              obj->Destroy();
       }
     }
   }
@@ -356,7 +356,7 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
       SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
       SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
       if (aView)
-	aView->Display( prs );
+        aView->Display( prs );
     }
 
   // Add prs to the preview list
@@ -379,15 +379,15 @@ void GEOMBase_Helper::erasePreview( const bool update )
   for ( PrsList::iterator anIter = myPreview.begin(); anIter != myPreview.end(); ++anIter ) {
     if ( vfOK )
       {
-	 SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
-	 if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
-	      aViewManager->getType() == SVTK_Viewer::Type() )
-	   {
-	     SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
-	     SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
-	     if (aView)
-	       aView->Erase( *anIter, true );
-	   }
+         SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
+         if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
+              aViewManager->getType() == SVTK_Viewer::Type() )
+           {
+             SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+             SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+             if (aView)
+               aView->Erase( *anIter, true );
+           }
       }
     delete *anIter;
   }
@@ -491,7 +491,7 @@ void GEOMBase_Helper::globalSelection( const int theMode, const bool update )
 //            in accordance with mode. theMode is from GEOMImpl_Types
 //================================================================
 void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
-				       const bool update )
+                                       const bool update )
 {
   getDisplayer()->GlobalSelection( theModes, update );
 }
@@ -503,7 +503,7 @@ void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 //================================================================
 void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
                                        const QList<int>& subShapes,
-				       const bool update )
+                                       const bool update )
 {
   getDisplayer()->GlobalSelection( theModes, update, &subShapes );
 }
@@ -607,7 +607,7 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
     {
       anApp = it.next();
       if ( anApp && anApp->desktop() == aDesktop )
-	break;
+        break;
     }
 
   return dynamic_cast<SalomeApp_Study*>(anApp->activeStudy());
@@ -627,7 +627,7 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
       if ( SO ) {
-	      return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
+              return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
       }
     }
   }
@@ -763,8 +763,8 @@ bool GEOMBase_Helper::checkViewWindow()
     QListIterator<SUIT_ViewWindow*> it( aViewWindowsList );
     while ( it.hasNext() )
       {
-	if ( myViewWindow == it.next() )
-	  return true;
+        if ( myViewWindow == it.next() )
+          return true;
       }
   }
   myViewWindow = 0;
@@ -787,9 +787,9 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   if ( aLocked ) {
     MESSAGE("GEOMBase_Helper::onAccept - ActiveStudy is locked");
     SUIT_MessageBox::warning ( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
-			       QObject::tr("WRN_WARNING"),
-			       QObject::tr("WRN_STUDY_LOCKED"),
-			       QObject::tr("BUT_OK") );
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr("WRN_STUDY_LOCKED"),
+                               QObject::tr("BUT_OK") );
     return false;
   }
 
@@ -807,19 +807,19 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
       SUIT_Session::session()->activeApplication()->putInfo( "" );
       ObjectList objects;
       if ( !execute( objects ) || !getOperation()->IsDone() ) {
-	wc.suspend();
-	abortCommand();
-	showError();
+        wc.suspend();
+        abortCommand();
+        showError();
       }
       else {
-	addSubshapesToStudy(); // add Subshapes if local selection
-	const int nbObjs = objects.size();
+        addSubshapesToStudy(); // add Subshapes if local selection
+        const int nbObjs = objects.size();
         int aNumber = 1;
-	for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
-	  GEOM::GEOM_Object_var obj=*it;
-	  if ( publish ) {
-	    QString aName = getNewObjectName();
-	    if ( nbObjs > 1 ) {
+        for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
+          GEOM::GEOM_Object_var obj=*it;
+          if ( publish ) {
+            QString aName = getNewObjectName();
+            if ( nbObjs > 1 ) {
               if (aName.isEmpty())
                 aName = getPrefix(obj);
               if (nbObjs <= 30) {
@@ -829,37 +829,37 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
                 // Don't check name uniqueness in case of numerous objects
                 aName = aName + "_" + QString::number(aNumber++);
               }
-	    } else {
-	      // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
-	      if ( aName.isEmpty() )
-		aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
-	    }
-	    addInStudy( obj, aName.toLatin1().constData() );
+            } else {
+              // PAL6521: use a prefix, if some dialog box doesn't reimplement getNewObjectName()
+              if ( aName.isEmpty() )
+                aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
+            }
+            addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
-	    display( obj, false );
+            display( obj, false );
 #ifdef WITHGENERICOBJ
-	    // obj has been published in study. Its refcount has been incremented.
-	    // It is safe to decrement its refcount
-	    // so that it will be destroyed when the entry in study will be removed
-	    obj->Destroy();
+            // obj has been published in study. Its refcount has been incremented.
+            // It is safe to decrement its refcount
+            // so that it will be destroyed when the entry in study will be removed
+            obj->Destroy();
 #endif
-	  }
-	  else {
+          }
+          else {
             // asv : fix of PAL6454. If publish==false, then the original shape
             // was modified, and need to be re-cached in GEOM_Client before redisplay
-	    clearShapeBuffer( obj );
+            clearShapeBuffer( obj );
             // withChildren=true, updateView=false
-	    redisplay( obj, true, false );
+            redisplay( obj, true, false );
           }
-	}
+        }
 
-	if ( nbObjs ) {
-	  commitCommand();
-	  updateObjBrowser();
-	  SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
-	}
-	else
-	  abortCommand();
+        if ( nbObjs ) {
+          commitCommand();
+          updateObjBrowser();
+          SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
+        }
+        else
+          abortCommand();
       }
     }
   }
@@ -888,9 +888,9 @@ void GEOMBase_Helper::showError()
     msg = QObject::tr( "GEOM_PRP_ABORT" );
 
   SUIT_MessageBox::critical( SUIT_Session::session()->activeApplication()->desktop(),
-			     QObject::tr( "GEOM_ERROR_STATUS" ),
-			     msg,
-			     QObject::tr( "BUT_OK" ) );
+                             QObject::tr( "GEOM_ERROR_STATUS" ),
+                             msg,
+                             QObject::tr( "BUT_OK" ) );
 }
 
 //================================================================

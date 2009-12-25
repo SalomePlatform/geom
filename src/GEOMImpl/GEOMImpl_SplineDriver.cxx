@@ -96,7 +96,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
             isSeveral = Standard_True;
           }
         }
- 	CurvePoints.SetValue(ind, aP);
+        CurvePoints.SetValue(ind, aP);
         aPrevP = aP;
       }
     }
@@ -111,7 +111,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
       //aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
       Handle(TColgp_HArray1OfPnt) aHCurvePoints = new TColgp_HArray1OfPnt(1, aLen);
       for (ind = 1; ind <= aLen; ind++) {
- 	aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
+        aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
       }
       int isClosed = aCI.GetIsClosed();
       GeomAPI_Interpolate GBC (aHCurvePoints, isClosed, gp::Resolution());
@@ -152,10 +152,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_SplineDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_SplineDriver",
-			                                 sizeof(GEOMImpl_SplineDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_SplineDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

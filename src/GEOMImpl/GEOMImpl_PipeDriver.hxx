@@ -157,7 +157,7 @@ public:
   { return STANDARD_TYPE(GEOMImpl_PipeDriver) ; }
   Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
   { return (STANDARD_TYPE(GEOMImpl_PipeDriver) == AType ||
-	    TFunction_Driver::IsKind(AType)); } 
+            TFunction_Driver::IsKind(AType)); } 
 
 };
 

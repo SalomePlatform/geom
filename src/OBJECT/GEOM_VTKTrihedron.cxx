@@ -97,8 +97,8 @@ GEOM_VTKTrihedronAxis::~GEOM_VTKTrihedronAxis()
 void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
 {
   vtkFloatingPointType aPosition[ 3 ] = { myOri[ 0 ] + myDir[ 0 ] * theSize,
-					  myOri[ 1 ] + myDir[ 1 ] * theSize,
-					  myOri[ 2 ] + myDir[ 2 ] * theSize };
+                                          myOri[ 1 ] + myDir[ 1 ] * theSize,
+                                          myOri[ 2 ] + myDir[ 2 ] * theSize };
                            
   myLineSource->SetPoint1( myOri[ 0 ], myOri[ 1 ], myOri[ 2 ] );
   myLineSource->SetPoint2( aPosition );

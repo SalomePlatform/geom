@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	NMTTools_CheckerSI.cxx
-// Created:	Mon Feb 19 11:32:08 2007
-// Author:	Peter KURNEV
+// File:        NMTTools_CheckerSI.cxx
+// Created:     Mon Feb 19 11:32:08 2007
+// Author:      Peter KURNEV
 //
 #include <NMTTools_CheckerSI.ixx>
 #include <NMTDS_ShapesDataStructure.hxx>
@@ -48,16 +48,16 @@
 
 static
   Standard_Boolean IsValid(const TopoDS_Edge& aE,
-			   const TopoDS_Vertex& aV,
-			   const Standard_Real aTV1,
-			   const Standard_Real aTV2);
+                           const TopoDS_Vertex& aV,
+                           const Standard_Real aTV1,
+                           const Standard_Real aTV2);
 
 //=======================================================================
 // function: PreparePaveBlocks
 // purpose: 
 //=======================================================================
   void NMTTools_CheckerSI::PreparePaveBlocks(const TopAbs_ShapeEnum aType1, 
-					     const TopAbs_ShapeEnum aType2)
+                                             const TopAbs_ShapeEnum aType2)
 {
   NMTTools_PaveFiller::PreparePaveBlocks(aType1, aType2);
 }
@@ -105,8 +105,8 @@ static
     if (nV1==nV2) {
       bIsValid=IsValid(aE, aV1, aT1, aT2);
       if (!bIsValid) {
-	//printf(" pb SR: nV    nE: %d  nV1:( %d %15.10lf ) nV2:( %d %15.10lf )\n", nE, nV1, aT1, nV2, aT2);
-	myStopStatus=1;
+        //printf(" pb SR: nV    nE: %d  nV1:( %d %15.10lf ) nV2:( %d %15.10lf )\n", nE, nV1, aT1, nV2, aT2);
+        myStopStatus=1;
       }
     }
     //
@@ -132,9 +132,9 @@ static
 //purpose  : 
 //=======================================================================
 Standard_Boolean IsValid(const TopoDS_Edge& aE,
-			 const TopoDS_Vertex& aV,
-			 const Standard_Real aTV1,
-			 const Standard_Real aTV2)
+                         const TopoDS_Vertex& aV,
+                         const Standard_Real aTV1,
+                         const Standard_Real aTV2)
 {
   Standard_Boolean bRet;
   Standard_Integer i, aNbP, aNbP1;

@@ -68,13 +68,13 @@ static QString lastUsedFilter;
 //            the selected file type code through <filter> argument.
 //=======================================================================
 static QString getFileName( QWidget*           parent,
-			    const QString&     initial,
-			    const FilterMap&   filterMap,
+                            const QString&     initial,
+                            const FilterMap&   filterMap,
                             const QStringList& filters,
-			    const QString&     caption,
-			    bool               open,
-			    QString&           format,
-			    bool               showCurrentDirInitially = false )
+                            const QString&     caption,
+                            bool               open,
+                            QString&           format,
+                            bool               showCurrentDirInitially = false )
 {
   //QStringList filters;
   QString aBrepFilter;
@@ -121,11 +121,11 @@ static QString getFileName( QWidget*           parent,
 //            the selected file type code through <format> argument.
 //=======================================================================
 static QStringList getFileNames( QWidget*           parent,
-				 const QString&     initial,
-				 const FilterMap&   filterMap,
-				 const QString&     caption,
-				 QString&           format,
-				 bool               showCurrentDirInitially = false)
+                                 const QString&     initial,
+                                 const FilterMap&   filterMap,
+                                 const QString&     caption,
+                                 QString&           format,
+                                 bool               showCurrentDirInitially = false)
 {
   QString aBrepFilter;
   QStringList allFilters;
@@ -220,11 +220,11 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
     int aRefLength = aReferences.size();
     if (aRefLength) {
       for (int i = 0; i < aRefLength; i++) {
-	_PTR(SObject) firstSO( aReferences[i] );
-	_PTR(SComponent) aComponent = firstSO->GetFatherComponent();
-	QString type = aComponent->ComponentDataType().c_str();
-	if ( type == "SMESH" )
-	  return true;
+        _PTR(SObject) firstSO( aReferences[i] );
+        _PTR(SComponent) aComponent = firstSO->GetFatherComponent();
+        QString type = aComponent->ComponentDataType().c_str();
+        if ( type == "SMESH" )
+          return true;
       }
     }
   }
@@ -247,11 +247,11 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
       bool deleted = false;
       QMap<QString, GEOM::GEOM_Object_var>::Iterator git;
       for ( git = gobjects.begin(); git != gobjects.end() && ( !depends || !deleted ); ++git ) {
-	depends = depends || list[i]->_is_equivalent( *git );
-	deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
+        depends = depends || list[i]->_is_equivalent( *git );
+        deleted = deleted || git.key() == child->GetID().c_str() ;//geomObj->_is_equivalent( *git );
       }
       if ( depends && !deleted )
-	return true;
+        return true;
     }
   }
   return false;
@@ -289,138 +289,138 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
     {
     case 31: // COPY
       {
-	OnEditCopy();
-	break;
+        OnEditCopy();
+        break;
       }
     case 33: // DELETE
       {
-	OnEditDelete();
-	break;
+        OnEditDelete();
+        break;
       }
     case 111: // IMPORT BREP
     case 112: // IMPORT IGES
     case 113: // IMPORT STEP
       {
-	Import();
-	break;
+        Import();
+        break;
       }
     case 121: // EXPORT BREP
     case 122: // EXPORT IGES
     case 123: // EXPORT STEP
       {
-	Export();
-	break;
+        Export();
+        break;
       }
     case 2171: // POPUP VIEWER - SELECT ONLY - VERTEX
       {
-	OnSelectOnly( GEOM_POINT );
-	break;
+        OnSelectOnly( GEOM_POINT );
+        break;
       }
     case 2172: // POPUP VIEWER - SELECT ONLY - EDGE
       {
-	OnSelectOnly( GEOM_EDGE );
-	break;
+        OnSelectOnly( GEOM_EDGE );
+        break;
       }
     case 2173: // POPUP VIEWER - SELECT ONLY - WIRE
       {
-	OnSelectOnly( GEOM_WIRE );
-	break;
+        OnSelectOnly( GEOM_WIRE );
+        break;
       }
     case 2174: // POPUP VIEWER - SELECT ONLY - FACE
       {
-	OnSelectOnly( GEOM_FACE );
-	break;
+        OnSelectOnly( GEOM_FACE );
+        break;
       }
     case 2175: // POPUP VIEWER - SELECT ONLY - SHELL
       {
-	OnSelectOnly( GEOM_SHELL );
-	break;
+        OnSelectOnly( GEOM_SHELL );
+        break;
       }
     case 2176: // POPUP VIEWER - SELECT ONLY - SOLID
       {
-	OnSelectOnly( GEOM_SOLID );
-	break;
+        OnSelectOnly( GEOM_SOLID );
+        break;
       }
     case 2177: // POPUP VIEWER - SELECT ONLY - COMPOUND
       {
-	OnSelectOnly( GEOM_COMPOUND );
-	break;
+        OnSelectOnly( GEOM_COMPOUND );
+        break;
       }
     case 2178: // POPUP VIEWER - SELECT ONLY - SELECT ALL
       {
-	OnSelectOnly( GEOM_ALLOBJECTS );
-	break;
+        OnSelectOnly( GEOM_ALLOBJECTS );
+        break;
       }    
     case 411: // SETTINGS - ADD IN STUDY
       {
-	// SAN -- TO BE REMOVED !!!
-	break;
+        // SAN -- TO BE REMOVED !!!
+        break;
       }
     case 412: // SETTINGS - SHADING COLOR
       {
-	OnSettingsColor();
-	break;
+        OnSettingsColor();
+        break;
       }
     case 804: // ADD IN STUDY - POPUP VIEWER
       {
-	// SAN -- TO BE REMOVED !!!!
-	break;
+        // SAN -- TO BE REMOVED !!!!
+        break;
       }
     case 901: // RENAME
       {
-	OnRename();
-	break;
+        OnRename();
+        break;
       }
     case 5103: // CHECK GEOMETRY
       {
-	OnCheckGeometry();
-	break;
+        OnCheckGeometry();
+        break;
       }
     case 8032: // COLOR - POPUP VIEWER
       {
-	OnColor();
-	break;
+        OnColor();
+        break;
       }
     case 8033: // TRANSPARENCY - POPUP VIEWER
       {
-	OnTransparency();
-	break;
+        OnTransparency();
+        break;
       }
     case 8034: // ISOS - POPUP VIEWER
       {
-	OnNbIsos();
-	break;
+        OnNbIsos();
+        break;
       }
     case 8035: // AUTO COLOR - POPUP VIEWER
       {
-	OnAutoColor();
-	break;
+        OnAutoColor();
+        break;
       }
     case 8036: // DISABLE AUTO COLOR - POPUP VIEWER
       {
-	OnDisableAutoColor();
-	break;
+        OnDisableAutoColor();
+        break;
       }
     case 8037: // SHOW CHILDREN - POPUP VIEWER
     case 8038: // HIDE CHILDREN - POPUP VIEWER
       {
-	OnShowHideChildren( theCommandID == 8037 );
-	break;
+        OnShowHideChildren( theCommandID == 8037 );
+        break;
       }
     case 8039: // POINT MARKER
       {
-	OnPointMarker();
-	break;
+        OnPointMarker();
+        break;
       }
     case 9024 : // OPEN - OBJBROSER POPUP
       {
-	OnOpen();
-	break;
+        OnOpen();
+        break;
       }
     default:
       {
-	SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-	break;
+        SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+        break;
       }
     }
   return true;
@@ -454,8 +454,8 @@ void GEOMToolsGUI::OnEditDelete()
   // check if study is locked
   if ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() )->IsLocked() ) {
     SUIT_MessageBox::warning( app->desktop(),
-			      tr("WRN_WARNING"),
-			      tr("WRN_STUDY_LOCKED") );
+                              tr("WRN_WARNING"),
+                              tr("WRN_STUDY_LOCKED") );
     return; // study is locked
   }
   
@@ -478,8 +478,8 @@ void GEOMToolsGUI::OnEditDelete()
     QString parentComp = getParentComponent( obj );
     if ( parentComp != geomComp )  {
       SUIT_MessageBox::warning( app->desktop(),
-				QObject::tr("ERR_ERROR"),
-				QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ) );
+                                QObject::tr("ERR_ERROR"),
+                                QObject::tr("NON_GEOM_OBJECTS_SELECTED").arg( getGeometryGUI()->moduleName() ) );
       return; // not GEOM object selected
     }
 
@@ -487,7 +487,7 @@ void GEOMToolsGUI::OnEditDelete()
     // if GEOM component is selected, so skip other checks
     if ( isComponentSelected ) continue; 
     ///////////////////////////////////////////////////////
-	
+        
     // check if object is reference
     _PTR(SObject) refobj;
     if ( obj && obj->ReferencedObject( refobj ) ) {
@@ -509,10 +509,10 @@ void GEOMToolsGUI::OnEditDelete()
     for ( it->InitEx( true ); it->More(); it->Next() ) {
       _PTR(SObject) child( it->Value() );
       if ( child && child->ReferencedObject( refobj ) )
-	continue; // skip references
+        continue; // skip references
       aName = child->GetName().c_str();
       if ( !aName.isEmpty() )
-	allDeleted.insert( child->GetID().c_str(), aName );
+        allDeleted.insert( child->GetID().c_str(), aName );
     }
   }
   
@@ -559,8 +559,8 @@ void GEOMToolsGUI::OnEditDelete()
     // GEOM component is not selected: check if selected objects are in use
     if ( inUse( aStudy, geomComp, allDeleted ) ) {
       SUIT_MessageBox::warning( app->desktop(),
-				QObject::tr("WRN_WARNING"),
-				QObject::tr("DEP_OBJECT") );
+                                QObject::tr("WRN_WARNING"),
+                                QObject::tr("DEP_OBJECT") );
       return; // object(s) in use
     }
     // ... and then delete all objects
@@ -636,8 +636,8 @@ bool GEOMToolsGUI::Import()
   bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
   if ( aLocked ) {
     SUIT_MessageBox::warning( app->desktop(),
-			      QObject::tr("WRN_WARNING"),
-			      QObject::tr("WRN_STUDY_LOCKED") );
+                              QObject::tr("WRN_WARNING"),
+                              QObject::tr("WRN_STUDY_LOCKED") );
     return false;
   }
 
@@ -645,8 +645,8 @@ bool GEOMToolsGUI::Import()
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::critical( app->desktop(),
-			       QObject::tr("WRN_WARNING"),
-			       QObject::tr( "GEOM Engine is not started" ) );
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr( "GEOM Engine is not started" ) );
     return false;
   }
 
@@ -665,7 +665,7 @@ bool GEOMToolsGUI::Import()
   // select files to be imported
   QString fileType;
   QStringList fileNames = getFileNames( app->desktop(), "", aMap,
-					tr( "GEOM_MEN_IMPORT" ), fileType, true );
+                                        tr( "GEOM_MEN_IMPORT" ), fileType, true );
 
   // set Wait cursor
   SUIT_OverrideCursor wc;
@@ -695,13 +695,13 @@ bool GEOMToolsGUI::Import()
       QString ext = QFileInfo( fileName ).suffix().toUpper();
       QRegExp re( "\\*\\.(\\w+)" );
       for ( FilterMap::const_iterator it = aMap.begin(); 
-	    it != aMap.end() && aCurrentType.isEmpty(); ++it ) {
-	int pos = 0;
-	while ( re.indexIn( it.key(), pos ) >= 0 ) {
-	  QString f = re.cap(1).trimmed().toUpper();
-	  if ( ext == f ) { aCurrentType = it.value(); break; }
-	  pos = re.pos() + re.cap(1).length() + 2;
-	}
+            it != aMap.end() && aCurrentType.isEmpty(); ++it ) {
+        int pos = 0;
+        while ( re.indexIn( it.key(), pos ) >= 0 ) {
+          QString f = re.cap(1).trimmed().toUpper();
+          if ( ext == f ) { aCurrentType = it.value(); break; }
+          pos = re.pos() + re.cap(1).length() + 2;
+        }
       }
     }
     else {
@@ -723,78 +723,78 @@ bool GEOMToolsGUI::Import()
 
       // skl 29.05.2009
       if ( aCurrentType == "IGES" ) {
-	GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, "IGES_UNIT" );
-	bool needConvert = false;
-	TCollection_AsciiString aUnitName = aInsOp->GetErrorCode();
-	if ( aUnitName.SubString( 1, 4 ) == "UNIT" )
-	  needConvert = aUnitName.SubString( 6, aUnitName.Length() ) != "M";
+        GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, "IGES_UNIT" );
+        bool needConvert = false;
+        TCollection_AsciiString aUnitName = aInsOp->GetErrorCode();
+        if ( aUnitName.SubString( 1, 4 ) == "UNIT" )
+          needConvert = aUnitName.SubString( 6, aUnitName.Length() ) != "M";
 
-	if ( needConvert ) {
-	  if ( igesAnswer == SUIT_MessageBox::NoToAll ) {
-	    // converting for all files is already approved
-	    fileT = "IGES_SCALE";
-	  }
-	  else if ( igesAnswer != SUIT_MessageBox::YesToAll ) {
-	    SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
-	    if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
-	    igesAnswer = SUIT_MessageBox::question( app->desktop(),
-						    "Question",//tr("WRN_WARNING"),
-						    tr("GEOM_SCALE_DIMENSIONS"),
-						    btns | SUIT_MessageBox::Cancel,
-						    SUIT_MessageBox::No );
-	    switch ( igesAnswer ) {
-	    case SUIT_MessageBox::Cancel:
-	      return false;                // cancel (break) import operation
-	    case SUIT_MessageBox::Yes:
-	    case SUIT_MessageBox::YesToAll:
-	      break;                       // scaling is confirmed
-	    case SUIT_MessageBox::No:
-	    case SUIT_MessageBox::NoAll:
-	      fileT = "IGES_SCALE";
-	    default:
-	      break;                       // scaling is rejected
-	    } // switch ( igesAnswer )
-	  } // if ( igeAnswer != NoToAll )
-	} // if ( needConvert )
+        if ( needConvert ) {
+          if ( igesAnswer == SUIT_MessageBox::NoToAll ) {
+            // converting for all files is already approved
+            fileT = "IGES_SCALE";
+          }
+          else if ( igesAnswer != SUIT_MessageBox::YesToAll ) {
+            SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+            if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+            igesAnswer = SUIT_MessageBox::question( app->desktop(),
+                                                    "Question",//tr("WRN_WARNING"),
+                                                    tr("GEOM_SCALE_DIMENSIONS"),
+                                                    btns | SUIT_MessageBox::Cancel,
+                                                    SUIT_MessageBox::No );
+            switch ( igesAnswer ) {
+            case SUIT_MessageBox::Cancel:
+              return false;                // cancel (break) import operation
+            case SUIT_MessageBox::Yes:
+            case SUIT_MessageBox::YesToAll:
+              break;                       // scaling is confirmed
+            case SUIT_MessageBox::No:
+            case SUIT_MessageBox::NoAll:
+              fileT = "IGES_SCALE";
+            default:
+              break;                       // scaling is rejected
+            } // switch ( igesAnswer )
+          } // if ( igeAnswer != NoToAll )
+        } // if ( needConvert )
       } // if ( aCurrentType == "IGES" )
       else if ( aCurrentType == "ACIS" ) {
-	if ( acisAnswer != SUIT_MessageBox::YesToAll && acisAnswer != SUIT_MessageBox::NoToAll ) {
-	  SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
-	  if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
-	  acisAnswer = SUIT_MessageBox::question( app->desktop(),
-						  "Question",//tr("WRN_WARNING"),
-						  tr("GEOM_PUBLISH_NAMED_SHAPES"),
-						  btns | SUIT_MessageBox::Cancel,
-						  SUIT_MessageBox::No );
-	  if ( acisAnswer == SUIT_MessageBox::Cancel )
-	    return false; // cancel (break) import operation
-	} // if ( acisAnswer != YesToAll && acisAnswer != NoToAll )
+        if ( acisAnswer != SUIT_MessageBox::YesToAll && acisAnswer != SUIT_MessageBox::NoToAll ) {
+          SUIT_MessageBox::StandardButtons btns = SUIT_MessageBox::Yes | SUIT_MessageBox::No;
+          if ( i < fileNames.count()-1 ) btns = btns | SUIT_MessageBox::YesToAll | SUIT_MessageBox::NoToAll;
+          acisAnswer = SUIT_MessageBox::question( app->desktop(),
+                                                  "Question",//tr("WRN_WARNING"),
+                                                  tr("GEOM_PUBLISH_NAMED_SHAPES"),
+                                                  btns | SUIT_MessageBox::Cancel,
+                                                  SUIT_MessageBox::No );
+          if ( acisAnswer == SUIT_MessageBox::Cancel )
+            return false; // cancel (break) import operation
+        } // if ( acisAnswer != YesToAll && acisAnswer != NoToAll )
       } // else if ( aCurrentType == "ACIS" )
       
       GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
 
       if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
-	QString aPublishObjName = 
-	  GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
-	
-	SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
-	GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
-						   SALOMEDS::SObject::_nil(),
-						   anObj,
-						   aPublishObjName.toLatin1().constData() );
-	
-	objsForDisplay.append( anObj );
-	
-	if ( aCurrentType == "ACIS" ) {
-	  if ( acisAnswer == SUIT_MessageBox::Yes || acisAnswer == SUIT_MessageBox::YesToAll )
-	    GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy( aDSStudy, anObj );
-	}
+        QString aPublishObjName = 
+          GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
+        
+        SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
+        GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
+                                                   SALOMEDS::SObject::_nil(),
+                                                   anObj,
+                                                   aPublishObjName.toLatin1().constData() );
+        
+        objsForDisplay.append( anObj );
+        
+        if ( aCurrentType == "ACIS" ) {
+          if ( acisAnswer == SUIT_MessageBox::Yes || acisAnswer == SUIT_MessageBox::YesToAll )
+            GeometryGUI::GetGeomGen()->PublishNamedShapesInStudy( aDSStudy, anObj );
+        }
 
-	anOp->commit();
+        anOp->commit();
       }
       else {
-	anOp->abort();
-	errors.append( QString( "%1 : %2" ).arg( fileName ).arg( aInsOp->GetErrorCode() ) );
+        anOp->abort();
+        errors.append( QString( "%1 : %2" ).arg( fileName ).arg( aInsOp->GetErrorCode() ) );
       }
     }
     catch( const SALOME::SALOME_Exception& S_ex ) {
@@ -812,8 +812,8 @@ bool GEOMToolsGUI::Import()
 
   if ( errors.count() > 0 ) {
     SUIT_MessageBox::critical( app->desktop(),
-			       QObject::tr( "GEOM_ERROR" ),
-			       QObject::tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
+                               QObject::tr( "GEOM_ERROR" ),
+                               QObject::tr( "GEOM_IMPORT_ERRORS" ) + "\n" + errors.join( "\n" ) );
   }
 
   app->updateActions(); //SRN: To update a Save button in the toolbar
@@ -841,8 +841,8 @@ bool GEOMToolsGUI::Export()
   GEOM::GEOM_Gen_var eng = GeometryGUI::GetGeomGen();
   if ( CORBA::is_nil( eng ) ) {
     SUIT_MessageBox::critical( app->desktop(),
-			       QObject::tr("WRN_WARNING"),
-			       QObject::tr( "GEOM Engine is not started" ) );
+                               QObject::tr("WRN_WARNING"),
+                               QObject::tr( "GEOM Engine is not started" ) );
     return false;
   }
 
@@ -880,7 +880,7 @@ bool GEOMToolsGUI::Export()
 
     QString fileType;
     QString file = getFileName(app->desktop(), QString( IObject->getName() ), aMap, filters,
-			       tr("GEOM_MEN_EXPORT"), false, fileType, true);
+                               tr("GEOM_MEN_EXPORT"), false, fileType, true);
 
     // User has pressed "Cancel" --> stop the operation
     if ( file.isEmpty() || fileType.isEmpty() )
@@ -898,16 +898,16 @@ bool GEOMToolsGUI::Export()
       aInsOp->Export( anObj, file.toStdString().c_str(), fileType.toLatin1().constData() );
 
       if ( aInsOp->IsDone() )
-	anOp->commit();
+        anOp->commit();
       else
-	{
-	  anOp->abort();
-	  wc.suspend();
-	  SUIT_MessageBox::critical( app->desktop(),
-				     QObject::tr( "GEOM_ERROR" ),
-				     QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ) );
-	  return false;
-	}
+        {
+          anOp->abort();
+          wc.suspend();
+          SUIT_MessageBox::critical( app->desktop(),
+                                     QObject::tr( "GEOM_ERROR" ),
+                                     QObject::tr("GEOM_PRP_ABORT") + "\n" + QString( aInsOp->GetErrorCode() ) );
+          return false;
+        }
     }
     catch (const SALOME::SALOME_Exception& S_ex) {
       //QtCatchCorbaException(S_ex);
@@ -919,8 +919,8 @@ bool GEOMToolsGUI::Export()
 
   if ( !appropriateObj )
     SUIT_MessageBox::warning( app->desktop(),
-			      QObject::tr("WRN_WARNING"),
-			      QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
+                              QObject::tr("WRN_WARNING"),
+                              QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
   return true;
 }
 
@@ -954,8 +954,8 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
       // Erase graphical object
       QListIterator<SALOME_View*> it( views );
       while ( it.hasNext() )
-	if ( SALOME_View* view = it.next() )
-	  disp->Erase(geomObj, true, view);
+        if ( SALOME_View* view = it.next() )
+          disp->Erase(geomObj, true, view);
       
       // Remove object from Engine
       // We can't directly remove object from engine. All we can do is to unpublish the object

@@ -334,7 +334,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
     /*    if (myObjects.length()) {
       if (getConstructorId() == 0 && myAxis->_is_nil() || getConstructorId() == 1 && myCentPoint->_is_nil() )
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
         }*/   // here commented, because multiple objects can be selected IPAL 21437
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 0) {
@@ -463,7 +463,7 @@ void TransformationGUI_RotationDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-	   this, SLOT( SelectionIntoArgument() ) );
+           this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() );
 }
@@ -564,10 +564,10 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
               anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-	      updateAttributes(anObj, aParameters);
-	    }
+              updateAttributes(anObj, aParameters);
+            }
             objects.push_back(anObj._retn());
-	  }
+          }
         }
       }
       res = true;

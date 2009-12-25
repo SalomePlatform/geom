@@ -94,7 +94,7 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aShapeEdge;
       if (GEOMImpl_ILocalOperations::GetSubShape
           (aShapeBase, aCI.GetEdge(ind), aShapeEdge)) {
-	  fill.Add(TopoDS::Edge(aShapeEdge));
+          fill.Add(TopoDS::Edge(aShapeEdge));
       }
     }
   } else if (aType == FILLET_SHAPE_FACES || aType == FILLET_SHAPE_FACES_2R) {
@@ -117,9 +117,9 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
       fill.SetRadius(aCI.GetR(), i, 1);
     else if (aType == FILLET_SHAPE_FACES_2R || aType == FILLET_SHAPE_EDGES_2R)
       for (int i = 1; i <= fill.NbContours(); i++)
-	{
-	fill.SetRadius(aCI.GetR1(), aCI.GetR2(), i, 1);
-	}
+        {
+        fill.SetRadius(aCI.GetR1(), aCI.GetR2(), i, 1);
+        }
 
   fill.Build();
   if (!fill.IsDone()) {
@@ -169,10 +169,10 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_FilletDriver_Type_()
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_FilletDriver",
-			                                 sizeof(GEOMImpl_FilletDriver),
-			                                 1,
-			                                 (Standard_Address)_Ancestors,
-			                                 (Standard_Address)NULL);
+                                                         sizeof(GEOMImpl_FilletDriver),
+                                                         1,
+                                                         (Standard_Address)_Ancestors,
+                                                         (Standard_Address)NULL);
 
   return _aType;
 }

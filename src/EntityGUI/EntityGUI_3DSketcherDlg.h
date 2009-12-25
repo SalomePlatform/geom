@@ -53,8 +53,8 @@ public:
 
 protected:
   void                               initSpinBox( QDoubleSpinBox*, 
-						  double, double, double = 0.1, 
-						  int = 3 );
+                                                  double, double, double = 0.1, 
+                                                  int = 3 );
 
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
@@ -66,16 +66,16 @@ private:
   void                               enterEvent( QEvent* );
 
   virtual void                       displayPreview( GEOM::GEOM_Object_ptr,
-						     const bool = false,
-						     const bool = false,
-						     const bool = true,
-						     const double = -1,
-						     const int  = -1,
-						     const int  = -1);
+                                                     const bool = false,
+                                                     const bool = false,
+                                                     const bool = true,
+                                                     const double = -1,
+                                                     const int  = -1,
+                                                     const int  = -1);
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
-						   TopoDS_Shape&,
-						   TopoDS_Shape& );
+                                                   TopoDS_Shape&,
+                                                   TopoDS_Shape& );
 
 private:
   QList<double>                      myPointsList;
