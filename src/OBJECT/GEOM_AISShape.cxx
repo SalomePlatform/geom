@@ -36,35 +36,39 @@
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
 #include <AIS_InteractiveContext.hxx>
+
+#include <BRep_Tool.hxx>
+
+#include <GCPnts_AbscissaPoint.hxx>
+#include <GeomAdaptor_Curve.hxx>
+#include <gp_Pnt.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Vec.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
+
 #include <Prs3d_ShadingAspect.hxx>
+#include <Prs3d_Arrow.hxx>
+
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
 #include <StdSelect_BRepOwner.hxx>
 #include <SelectMgr_IndexedMapOfOwner.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <StdSelect_DisplayMode.hxx>
-#include <StdPrs_WFShape.hxx>
+#include <StdPrs_WFDeflectionShape.hxx>
+
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TopExp.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-
-#include <BRep_Tool.hxx>
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Dir.hxx>
-#include <gp_Vec.hxx>
-#include <Prs3d_Arrow.hxx>
-#include <GeomAdaptor_Curve.hxx>
-#include <GCPnts_AbscissaPoint.hxx>
 
 using namespace std;
 
@@ -168,7 +172,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   switch (d) {
   case StdSelect_DM_Wireframe: 
     {
-      StdPrs_WFShape::Add(aPrs,myshape,myDrawer);
+      StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
       break;
     }
   case StdSelect_DM_Shading:
