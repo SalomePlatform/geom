@@ -1775,6 +1775,34 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return aList
 
         ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+        #  the specified cylinder by the certain way, defined through \a theState parameter.
+        #  @param theShape Shape to find sub-shapes of.
+        #  @param theShapeType Type of sub-shapes to be retrieved.
+        #  @param theAxis Vector (or line, or linear edge), specifying
+        #                 axis of the cylinder to find shapes on.
+        #  @param thePnt Point specifying location of the bottom of the cylinder.
+        #  @param theRadius Radius of the cylinder to find shapes on.
+        #  @param theState The state of the subshapes to find. It can be one of
+        #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
+        #  @return List of all found sub-shapes.
+        #
+        #  @ref swig_GetShapesOnCylinderWithLocation "Example"
+        def GetShapesOnCylinderWithLocation(self, theShape, theShapeType, theAxis, thePnt, theRadius, theState):
+            # Example: see GEOM_TestOthers.py
+            aList = self.ShapesOp.GetShapesOnCylinderWithLocation(theShape, theShapeType, theAxis, thePnt, theRadius, theState)
+            RaiseIfFailed("GetShapesOnCylinderWithLocation", self.ShapesOp)
+            return aList
+
+        ## Works like the above method, but returns list of sub-shapes indices
+        #
+        #  @ref swig_GetShapesOnCylinderWithLocationIDs "Example"
+        def GetShapesOnCylinderWithLocationIDs(self, theShape, theShapeType, theAxis, thePnt, theRadius, theState):
+            # Example: see GEOM_TestOthers.py
+            aList = self.ShapesOp.GetShapesOnCylinderWithLocationIDs(theShape, theShapeType, theAxis, thePnt, theRadius, theState)
+            RaiseIfFailed("GetShapesOnCylinderWithLocationIDs", self.ShapesOp)
+            return aList
+
+        ## Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
         #  the specified sphere by the certain way, defined through \a theState parameter.
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved.

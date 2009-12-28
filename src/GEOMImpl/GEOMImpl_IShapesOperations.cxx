@@ -109,12 +109,13 @@
 
 #include <Bnd_Box.hxx>
 #include <GProp_GProps.hxx>
-#include <gp_Pnt.hxx>
-#include <gp_Lin.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_Array1OfReal.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <gp_Cylinder.hxx>
+#include <gp_Lin.hxx>
+#include <gp_Pnt.hxx>
 
 #include <vector>
 
@@ -2153,7 +2154,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnPlan
   gp_Vec aVec(BRep_Tool::Pnt(V1),BRep_Tool::Pnt(V2));
 
   if (aVec.Magnitude() < Precision::Confusion()) {
-     SetErrorCode("Vector with null magnitude given");
+    SetErrorCode("Vector with null magnitude given");
     return NULL;
   }
   Handle(Geom_Surface) aPlane = new Geom_Plane(aLoc, aVec);
@@ -2226,6 +2227,77 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCyli
   GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
     << "] = geompy.GetShapesOnCylinder(" << theShape << ", " << aShapeType
       << ", " << theAxis << ", " << theRadius << ", " << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnCylinderWithLocation
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetShapesOnCylinderWithLocation
+                                          (const Handle(GEOM_Object)& theShape,
+                                           const Standard_Integer     theShapeType,
+                                           const Handle(GEOM_Object)& theAxis,
+                                           const Handle(GEOM_Object)& thePnt,
+                                           const Standard_Real        theRadius,
+                                           const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAxis.IsNull() || thePnt.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAxis = theAxis->GetValue();
+  TopoDS_Shape aPnt   = thePnt->GetValue();
+
+  if (aShape.IsNull() || anAxis.IsNull() || aPnt.IsNull()) return NULL;
+
+  if (aPnt.ShapeType() != TopAbs_VERTEX )
+  {
+    SetErrorCode("Bottom location point must be vertex");
+    return NULL;
+  }
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if ( !checkTypeShapesOn( aShapeType ))
+    return NULL;
+
+  // Create a cylinder surface
+  Handle(Geom_Surface) aCylinder = makeCylinder( anAxis, theRadius );
+  if ( aCylinder.IsNull() )
+    return NULL;
+
+  // translate the surface
+  Handle(Geom_CylindricalSurface) aCylSurface =
+    Handle(Geom_CylindricalSurface)::DownCast( aCylinder );
+  if ( aCylSurface.IsNull() )
+  {
+    SetErrorCode("Unexpected surface type instead of Geom_CylindricalSurface");
+    return NULL;
+  }
+  gp_Pnt fromLoc = aCylSurface->Cylinder().Location();
+  gp_Pnt toLoc   = BRep_Tool::Pnt( TopoDS::Vertex( aPnt ));
+  aCylinder->Translate( fromLoc, toLoc );
+
+  // Find objects
+  TCollection_AsciiString anAsciiList;
+  Handle(TColStd_HSequenceOfTransient) aSeq;
+  aSeq = getShapesOnSurface( aCylinder, theShape, aShapeType, theState, anAsciiList );
+  if ( aSeq.IsNull() || aSeq->Length() == 0 )
+    return NULL;
+
+  // Make a Python command
+
+  Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast( aSeq->Value( 1 ));
+  Handle(GEOM_Function) aFunction = anObj->GetLastFunction();
+
+  GEOM::TPythonDump(aFunction)
+    << "[" << anAsciiList.ToCString()
+    << "] = geompy.GetShapesOnCylinderWithLocation(" << theShape << ", " << aShapeType << ", "
+    << theAxis << ", " << thePnt << ", " << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -2438,6 +2510,74 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
     << "listShapesOnCylinder = geompy.GetShapesOnCylinderIDs"
     << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
     << theRadius << ", " << theState << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnCylinderWithLocationIDs
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylinderWithLocationIDs
+                                          (const Handle(GEOM_Object)& theShape,
+                                           const Standard_Integer     theShapeType,
+                                           const Handle(GEOM_Object)& theAxis,
+                                           const Handle(GEOM_Object)& thePnt,
+                                           const Standard_Real        theRadius,
+                                           const GEOMAlgo_State       theState)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull() || theAxis.IsNull() || thePnt.IsNull()) return NULL;
+
+  TopoDS_Shape aShape = theShape->GetValue();
+  TopoDS_Shape anAxis = theAxis->GetValue();
+  TopoDS_Shape aPnt   = thePnt->GetValue();
+
+  if (aShape.IsNull() || anAxis.IsNull() || aPnt.IsNull()) return NULL;
+
+  if (aPnt.ShapeType() != TopAbs_VERTEX )
+  {
+    SetErrorCode("Bottom location point must be vertex");
+    return NULL;
+  }
+
+  TopAbs_ShapeEnum aShapeType = TopAbs_ShapeEnum(theShapeType);
+  if ( !checkTypeShapesOn( aShapeType ))
+    return NULL;
+
+  // Create a cylinder surface
+  Handle(Geom_Surface) aCylinder = makeCylinder( anAxis, theRadius );
+  if ( aCylinder.IsNull() )
+    return NULL;
+
+  // translate the surface
+  Handle(Geom_CylindricalSurface) aCylSurface =
+    Handle(Geom_CylindricalSurface)::DownCast( aCylinder );
+  if ( aCylSurface.IsNull() )
+  {
+    SetErrorCode("Unexpected surface type instead of Geom_CylindricalSurface");
+    return NULL;
+  }
+  gp_Pnt fromLoc = aCylSurface->Cylinder().Location();
+  gp_Pnt toLoc   = BRep_Tool::Pnt( TopoDS::Vertex( aPnt ));
+  aCylinder->Translate( fromLoc, toLoc );
+
+  // Find object IDs
+  Handle(TColStd_HSequenceOfInteger) aSeq;
+  aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
+
+  // The GetShapesOnCylinder() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = 
+    GEOM::GetCreatedLast(theShape, GEOM::GetCreatedLast(thePnt,theAxis))->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << "listShapesOnCylinder = geompy.GetShapesOnCylinderWithLocationIDs"
+    << "(" << theShape << ", " << aShapeType << ", " << theAxis << ", "
+    << thePnt << ", " << theRadius << ", " << theState << ")";
 
   SetErrorCode(OK);
   return aSeq;

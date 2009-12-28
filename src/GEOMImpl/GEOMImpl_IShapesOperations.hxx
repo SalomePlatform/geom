@@ -135,6 +135,14 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                          const GEOMAlgo_State       theState);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetShapesOnCylinderWithLocation (const Handle(GEOM_Object)& theShape,
+                                     const Standard_Integer     theShapeType,
+                                     const Handle(GEOM_Object)& theAxis,
+                                     const Handle(GEOM_Object)& thePnt,
+                                     const Standard_Real        theRadius,
+                                     const GEOMAlgo_State       theState);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
     GetShapesOnSphere (const Handle(GEOM_Object)& theShape,
                        const Standard_Integer     theShapeType,
                        const Handle(GEOM_Object)& theCenter,
@@ -160,6 +168,14 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                             const Handle(GEOM_Object)& theAxis,
                             const Standard_Real        theRadius,
                             const GEOMAlgo_State       theState);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger)
+    GetShapesOnCylinderWithLocationIDs (const Handle(GEOM_Object)& theShape,
+                                        const Standard_Integer     theShapeType,
+                                        const Handle(GEOM_Object)& theAxis,
+                                        const Handle(GEOM_Object)& thePnt,
+                                        const Standard_Real        theRadius,
+                                        const GEOMAlgo_State       theState);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfInteger)
     GetShapesOnSphereIDs (const Handle(GEOM_Object)& theShape,

@@ -551,6 +551,19 @@ def TestOtherOperations (geompy, math):
   geompy.UnionIDs(edges_in, edges_in_cyl_ids)
   geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")
 
+  # GetShapesOnCylinderWithLocation
+  edges_out_cyl = geompy.GetShapesOnCylinderWithLocation(blocksComp, geompy.ShapeType["EDGE"],
+                                                         vy, 55, geompy.GEOM.ST_OUT)
+  for edge_i in edges_out_cyl:
+    geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0), r = 55)")
+
+  # GetShapesOnCylinderIDs
+  edges_in_cyl_ids = geompy.GetShapesOnCylinderIDs(blocksComp, geompy.ShapeType["EDGE"],
+                                                   vy, 80, geompy.GEOM.ST_IN)
+  edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
+  geompy.UnionIDs(edges_in, edges_in_cyl_ids)
+  geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")
+
   # GetShapesOnSphere
   vertices_on_sph = geompy.GetShapesOnSphere(blocksComp, geompy.ShapeType["VERTEX"],
                                              p0, 100, geompy.GEOM.ST_ON)

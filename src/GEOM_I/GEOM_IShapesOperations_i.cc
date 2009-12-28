@@ -811,6 +811,45 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinder
 
 //=============================================================================
 /*!
+ *  GetShapesOnCylinderWithLocation
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetShapesOnCylinderWithLocation
+                                                (GEOM::GEOM_Object_ptr   theShape,
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAxis,
+                                                 GEOM::GEOM_Object_ptr   thePnt,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  Handle(GEOM_Object) aPnt   = GetObjectImpl(thePnt);
+
+  if (aShape.IsNull() || anAxis.IsNull() || aPnt.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Cylinder
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->GetShapesOnCylinderWithLocation
+    (aShape, theShapeType, anAxis, aPnt, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
  *  GetShapesOnSphere
  */
 //=============================================================================
@@ -996,6 +1035,45 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnCylinderIDs
   //Get Shapes On Cylinder
   Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnCylinderIDs
     (aShape, theShapeType, anAxis, theRadius, ShapeState(theState));
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetShapesOnCylinderWithLocationIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetShapesOnCylinderWithLocationIDs
+                                                (GEOM::GEOM_Object_ptr   theShape,
+                                                 const CORBA::Long       theShapeType,
+                                                 GEOM::GEOM_Object_ptr   theAxis,
+                                                 GEOM::GEOM_Object_ptr   thePnt,
+                                                 const CORBA::Double     theRadius,
+                                                 const GEOM::shape_state theState)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) anAxis = GetObjectImpl(theAxis);
+  Handle(GEOM_Object) aPnt   = GetObjectImpl(thePnt);
+
+  if (aShape.IsNull() || anAxis.IsNull() || aPnt.IsNull()) return aSeq._retn();
+
+  //Get Shapes On Cylinder
+  Handle(TColStd_HSequenceOfInteger) aHSeq = GetOperations()->GetShapesOnCylinderWithLocationIDs
+    (aShape, theShapeType, anAxis, aPnt, theRadius, ShapeState(theState));
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 

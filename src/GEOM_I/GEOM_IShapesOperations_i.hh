@@ -124,6 +124,13 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 				       CORBA::Double         theRadius,
 				       GEOM::shape_state     theState);
 
+  GEOM::ListOfGO* GetShapesOnCylinderWithLocation (GEOM::GEOM_Object_ptr theShape,
+                                                   CORBA::Long           theShapeType,
+                                                   GEOM::GEOM_Object_ptr theAxis,
+                                                   GEOM::GEOM_Object_ptr thePnt,
+                                                   CORBA::Double         theRadius,
+                                                   GEOM::shape_state     theState);
+
   GEOM::ListOfGO* GetShapesOnSphere (GEOM::GEOM_Object_ptr theShape,
 				     CORBA::Long           theShapeType,
 				     GEOM::GEOM_Object_ptr theCenter,
@@ -154,6 +161,13 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 					    GEOM::GEOM_Object_ptr theAxis,
 					    CORBA::Double         theRadius,
 					    GEOM::shape_state     theState);
+
+  GEOM::ListOfLong* GetShapesOnCylinderWithLocationIDs (GEOM::GEOM_Object_ptr theShape,
+                                                        CORBA::Long           theShapeType,
+                                                        GEOM::GEOM_Object_ptr theAxis,
+                                                        GEOM::GEOM_Object_ptr thePnt,
+                                                        CORBA::Double         theRadius,
+                                                        GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnSphereIDs (GEOM::GEOM_Object_ptr theShape,
 					  CORBA::Long           theShapeType,
