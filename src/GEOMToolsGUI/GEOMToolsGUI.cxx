@@ -376,6 +376,11 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
         OnCheckGeometry();
         break;
       }
+    case 8031: // DEFLECTION ANGLE - POPUP VIEWER
+      {
+	OnDeflection();
+	break;
+      }
     case 8032: // COLOR - POPUP VIEWER
       {
         OnColor();

@@ -2380,6 +2380,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Isos</translation>
         </message>
         <message>
+            <source>MEN_POP_DEFLECTION</source>
+            <translation>Deflection Coefficient</translation>
+        </message>
+        <message>
             <source>MEN_POP_RENAME</source>
             <translation>Rename</translation>
         </message>
@@ -2574,6 +2578,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>NON_GEOM_OBJECTS_SELECTED</source>
             <translation>There are objects selected which do not belong to %1 component.</translation>
+        </message>
+        <message>
+            <source>PREF_DEFLECTION</source>
+            <translation>Deflection coefficient</translation>
         </message>
         <message>
             <source>PREF_DISPLAY_MODE</source>
@@ -2930,6 +2938,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>STB_POP_ISOS</source>
             <translation>Isolines</translation>
+        </message>
+        <message>
+            <source>STB_POP_DEFLECTION</source>
+            <translation>Deflection Coefficient</translation>
         </message>
         <message>
             <source>STB_POP_RENAME</source>
@@ -3414,6 +3426,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>TOP_POP_ISOS</source>
             <translation>Isolines</translation>
+        </message>
+        <message>
+            <source>TOP_POP_DEFLECTION</source>
+            <translation>Deflection Coefficient</translation>
         </message>
         <message>
             <source>TOP_POP_RENAME</source>
@@ -4291,6 +4307,17 @@ Would you like to continue?</translation>
         <message>
             <source>GEOM_DELETE_OBJECTS</source>
             <translation>Delete objects</translation>
+        </message>
+    </context>
+    <context>
+        <name>GEOMToolsGUI_DeflectionDlg</name>
+        <message>
+            <source>GEOM_DEFLECTION_TLT</source>
+            <translation>Select Deflection of Shape</translation>
+        </message>
+        <message>
+            <source>GEOM_DEFLECTION</source>
+            <translation>Deflection :</translation>
         </message>
     </context>
     <context>

@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GEOMToolsGUI.h
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GEOMToolsGUI.h
+//  Author : Damien COQUERET, Open CASCADE S.A.S.
+
 #ifndef GEOMTOOLSGUI_H
 #define GEOMTOOLSGUI_H
 
@@ -69,6 +69,7 @@ private:
   void         OnColor();
   void         OnTransparency();
   void         OnNbIsos();
+  void         OnDeflection();
   void         OnOpen();
   void         OnSelectOnly(int mode);
   void         OnShowHideChildren( bool );

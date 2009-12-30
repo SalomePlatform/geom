@@ -375,6 +375,7 @@ void GeometryGUI::OnGUIEvent( int id )
       id == 411  ||  // MENU SETTINGS - ADD IN STUDY
       id == 412  ||  // MENU SETTINGS - SHADING COLOR
       id == 5103 ||  // MENU TOOLS - CHECK GEOMETRY
+      id == 8031 ||  // POPUP VIEWER - DEFLECTION COEFFICIENT
       id == 8032 ||  // POPUP VIEWER - COLOR
       id == 8033 ||  // POPUP VIEWER - TRANSPARENCY
       id == 8034 ||  // POPUP VIEWER - ISOS
@@ -897,6 +898,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( 80311, "POP_WIREFRAME", "", 0, true );
   createGeomAction( 80312, "POP_SHADING", "", 0, true );
   createGeomAction( 80313, "POP_VECTORS", "", 0, true );
+  createGeomAction( 8031, "POP_DEFLECTION" );
   createGeomAction( 8032, "POP_COLOR" );
   createGeomAction( 8033, "POP_TRANSPARENCY" );
   createGeomAction( 8034, "POP_ISOS" );
@@ -1173,6 +1175,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( 8033 ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8034 ), -1, -1 ); // isos
   mgr->setRule( action( 8034 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  8031 ), -1, -1 ); // deflection
+  mgr->setRule( action( 8031 ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  8039 ), -1, -1 ); // point marker
   mgr->setRule( action( 8039 ), QString( "selcount>0 and $typeid in {%1}" ).arg( GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
@@ -1566,6 +1570,9 @@ void GeometryGUI::createPreferences()
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
                             LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
+  int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
+                            LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
+
   int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
   setPreferenceProperty( VertexGroup, "columns", 2 );
 
@@ -1591,6 +1598,11 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "min", 1 );
   setPreferenceProperty( step, "max", 10000 );
   setPreferenceProperty( step, "precision", 3 );
+
+  // Set property for deflection value for spinboxes
+  setPreferenceProperty( defl, "min", 1.0e-07 );
+  setPreferenceProperty( defl, "max", 10000.0 );
+  setPreferenceProperty( defl, "step", 0.0001 );
 
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
