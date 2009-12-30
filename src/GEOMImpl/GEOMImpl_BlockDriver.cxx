@@ -43,6 +43,7 @@
 
 #include <TNaming_CopyShape.hxx>
 
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepLib.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepTools.hxx>
@@ -81,6 +82,9 @@
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <GProp_GProps.hxx>
+
+#include <Geom_Line.hxx>
+#include <GC_MakeLine.hxx>
 
 #include <gp.hxx>
 #include <gp_Pnt.hxx>
@@ -234,7 +238,7 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
           ("Impossible to build a connected wire from the given edges");
       }
       TopoDS_Wire aWire = *MW;
-      delete MW; 
+      delete MW;
 
       // check the wire closure
       TopoDS_Vertex aV1, aV2;
@@ -276,10 +280,20 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
           V21.IsNull() || V22.IsNull()) {
         Standard_NullObject::Raise("Bad edge for face construction: vertex is not defined");
       }
-      gp_Pnt P11 = BRep_Tool::Pnt(V11);
-      gp_Pnt P12 = BRep_Tool::Pnt(V12);
-      gp_Pnt P21 = BRep_Tool::Pnt(V21);
-      gp_Pnt P22 = BRep_Tool::Pnt(V22);
+
+      BRepAdaptor_Curve C1 (anEdge1);
+      BRepAdaptor_Curve C2 (anEdge2);
+      gp_Pnt P11, P12, P21, P22;
+
+      // Mantis issue 0020599: Creation of a quadrangle face from 2 edges: SIGSEGV
+      P11 = C1.Value(C1.FirstParameter());
+      P12 = C1.Value(C1.LastParameter());
+      P21 = C2.Value(C2.FirstParameter());
+      P22 = C2.Value(C2.LastParameter());
+      //gp_Pnt P11 = BRep_Tool::Pnt(V11);
+      //gp_Pnt P12 = BRep_Tool::Pnt(V12);
+      //gp_Pnt P21 = BRep_Tool::Pnt(V21);
+      //gp_Pnt P22 = BRep_Tool::Pnt(V22);
 
       if (P11.Distance(P21) < prec || P12.Distance(P22) < prec ||
           P11.Distance(P22) < prec || P12.Distance(P21) < prec) {
@@ -289,15 +303,47 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       Standard_Real per11 = P11.Distance(P21) + P12.Distance(P22);
       Standard_Real per12 = P11.Distance(P22) + P12.Distance(P21);
 
+      BRep_Builder BB;
+
       TopoDS_Edge anEdge3;
       TopoDS_Edge anEdge4;
+
+      // Mantis issue 0020599: Creation of a quadrangle face from 2 edges: SIGSEGV
       if (per11 < per12) {
-        anEdge3 = BRepBuilderAPI_MakeEdge(V11, V21);
-        anEdge4 = BRepBuilderAPI_MakeEdge(V12, V22);
-      } else {
-        anEdge3 = BRepBuilderAPI_MakeEdge(V11, V22);
-        anEdge4 = BRepBuilderAPI_MakeEdge(V12, V21);
+        Handle(Geom_Line) Line1 = GC_MakeLine(P11, P21).Value();
+        Handle(Geom_Line) Line2 = GC_MakeLine(P12, P22).Value();
+
+        BB.MakeEdge(anEdge3, Line1, Precision::Confusion());
+        BB.Range(anEdge3, 0., P11.Distance(P21));
+        BB.Add(anEdge3, V11.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge3, V21.Oriented(TopAbs_REVERSED));
+
+        BB.MakeEdge(anEdge4, Line2, Precision::Confusion());
+        BB.Range(anEdge4, 0., P12.Distance(P22));
+        BB.Add(anEdge4, V12.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge4, V22.Oriented(TopAbs_REVERSED));
       }
+      else {
+        Handle(Geom_Line) Line1 = GC_MakeLine(P11, P22).Value();
+        Handle(Geom_Line) Line2 = GC_MakeLine(P12, P21).Value();
+
+        BB.MakeEdge(anEdge3, Line1, Precision::Confusion());
+        BB.Range(anEdge3, 0., P11.Distance(P22));
+        BB.Add(anEdge3, V11.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge3, V22.Oriented(TopAbs_REVERSED));
+
+        BB.MakeEdge(anEdge4, Line2, Precision::Confusion());
+        BB.Range(anEdge4, 0., P12.Distance(P21));
+        BB.Add(anEdge4, V12.Oriented(TopAbs_FORWARD));
+        BB.Add(anEdge4, V21.Oriented(TopAbs_REVERSED));
+      }
+      //if (per11 < per12) {
+      //  anEdge3 = BRepBuilderAPI_MakeEdge(V11, V21);
+      //  anEdge4 = BRepBuilderAPI_MakeEdge(V12, V22);
+      //} else {
+      //  anEdge3 = BRepBuilderAPI_MakeEdge(V11, V22);
+      //  anEdge4 = BRepBuilderAPI_MakeEdge(V12, V21);
+      //}
 
       // build a wire
       BRepBuilderAPI_MakeWire* MW;
@@ -1035,7 +1081,8 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_BlockDriver_Type_()
 //function : DownCast
 //purpose  :
 //=======================================================================
-const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
+const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast
+  (const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOMImpl_BlockDriver) _anOtherObject;
 
@@ -1045,5 +1092,5 @@ const Handle(GEOMImpl_BlockDriver) Handle(GEOMImpl_BlockDriver)::DownCast(const 
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
