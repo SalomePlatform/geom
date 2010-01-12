@@ -274,8 +274,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       // create two edges, linking ends of the given edges
       TopoDS_Vertex V11, V12, V21, V22;
-      TopExp::Vertices(anEdge1, V11, V12, Standard_True);
-      TopExp::Vertices(anEdge2, V21, V22, Standard_True);
+      TopExp::Vertices(anEdge1, V11, V12, Standard_False);
+      TopExp::Vertices(anEdge2, V21, V22, Standard_False);
       if (V11.IsNull() || V12.IsNull() ||
           V21.IsNull() || V22.IsNull()) {
         Standard_NullObject::Raise("Bad edge for face construction: vertex is not defined");
