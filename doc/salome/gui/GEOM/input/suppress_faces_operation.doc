@@ -13,8 +13,8 @@ available in <b>OCC Viewer</b> only.
 \n <b>TUI Command:</b> <em>geompy.SuppressFaces(Shape, ListOfID),</em>
 where \em Shape is a shape to be processed, \em ListOfID is a list of faces
 ID's to be removed.
-\n <b>Arguments:</b> Name + Faces which should be removed (you can
-select them in the 3D viewer).
+\n <b>Arguments:</b> Name + 1 shape + Faces which should be removed
+(you can select them in the 3D viewer).
 
 \image html repair2.png
 

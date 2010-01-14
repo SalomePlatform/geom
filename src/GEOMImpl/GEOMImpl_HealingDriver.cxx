@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_HealingDriver.hxx>
@@ -66,12 +66,10 @@ const Standard_GUID& GEOMImpl_HealingDriver::GetID()
   return aHealingDriver;
 }
 
-
 //=======================================================================
 //function : GEOMImpl_HealingDriver
 //purpose  :
 //=======================================================================
-
 GEOMImpl_HealingDriver::GEOMImpl_HealingDriver()
 {
 }
@@ -195,7 +193,9 @@ Standard_Boolean GEOMImpl_HealingDriver::SuppressFaces (GEOMImpl_IHealing* theHI
   if (aFaces.IsNull()) // remove all faces
   {
     aResult = aHealer.Perform();
-  } else {
+  }
+  else
+  {
     TopTools_SequenceOfShape aShapesFaces;
     TopTools_IndexedMapOfShape aShapes;
     TopExp::MapShapes(theOriginalShape, aShapes);
@@ -445,7 +445,5 @@ const Handle(GEOMImpl_HealingDriver) Handle(GEOMImpl_HealingDriver)::DownCast(co
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
-
-

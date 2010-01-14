@@ -19,26 +19,23 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : RepairGUI_SuppressFacesDlg.h
-// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : RepairGUI_SuppressFacesDlg.h
+//  Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
+
 #ifndef REPAIRGUI_SUPPRESSFACESDLG_H
 #define REPAIRGUI_SUPPRESSFACESDLG_H
 
 #include <GEOMBase_Skeleton.h>
 
-#include <QList>
-
-class DlgRef_1Sel;
-class TColStd_IndexedMapOfInteger;
+class DlgRef_2Sel;
 
 //=================================================================================
 // class    : RepairGUI_SuppressFacesDlg
 // purpose  :
 //=================================================================================
 class RepairGUI_SuppressFacesDlg : public GEOMBase_Skeleton
-{ 
+{
   Q_OBJECT
 
 public:
@@ -49,32 +46,25 @@ protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );    
+  virtual bool                       execute( ObjectList& );
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-
-  void                               Convert( const TColStd_IndexedMapOfInteger&, 
-                                              GEOM::short_array& );
-  
   void                               initSelection();
-  
+
 private:
-  GEOM::ListOfGO_var                 myObjects;
-  QList<GEOM::short_array>           myFaces;
-  // GEOM::short_array-s contain indexes of selected faces,
-  // index of a GEOM::short_array in myFaces list equals to index of
-  // GEOM::GEOM_Object in myObjects list to which the faces belong to.
-  
-  DlgRef_1Sel*                       GroupPoints;
-  
+  GEOM::GEOM_Object_var              myObject;
+  GEOM::short_array_var              myFacesInd;
+
+  DlgRef_2Sel*                       GroupArgs;
+
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
-  
+
   void                               ActivateThisDialog();
-  
+
   void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();

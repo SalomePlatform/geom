@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -224,7 +224,7 @@ void GEOMImpl_IHealingOperations::GetShapeProcessParameters (std::list<std::stri
  *  GetOperatorParameters
  */
 //=============================================================================
-bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation, 
+bool GEOMImpl_IHealingOperations::GetOperatorParameters( const std::string theOperation,
                                                          std::list<std::string>& theParams,
                                                          std::list<std::string>& theValues )
 {
@@ -323,27 +323,27 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   // set error code, check parameters
   SetErrorCode(KO);
 
-  if ( theObject.IsNull() ) // if theFaces.IsNull() - it's OK, it means that ALL faces must be removed..
+  if (theObject.IsNull()) // if theFaces.IsNull() - it's OK, it means that ALL faces must be removed..
     return NULL;
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if(aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), GEOM_COPY );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), GEOM_COPY);
 
   //Add the function
   aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), SUPPRESS_FACES);
 
-  if(aFunction.IsNull()) return NULL;
+  if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if(aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
 
   // prepare "data container" class IHealing
-  GEOMImpl_IHealing HI(aFunction);
-  HI.SetFaces( theFaces );
-  HI.SetOriginal( aLastFunction );
+  GEOMImpl_IHealing HI (aFunction);
+  HI.SetFaces(theFaces);
+  HI.SetOriginal(aLastFunction);
 
   //Compute the translation
   try {
@@ -358,7 +358,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   }
   catch (Standard_Failure)
   {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -375,7 +375,6 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::SuppressFaces
   SetErrorCode(OK);
   return aNewObject;
 }
-
 
 //=============================================================================
 /*!
@@ -811,7 +810,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
   }
 
   Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
-  if (aLastFunction.IsNull()) 
+  if (aLastFunction.IsNull())
     return NULL; //There is no function which creates an object to be processed
 
   //Add the function
@@ -908,4 +907,3 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
   SetErrorCode(OK);
   return aNewObject;
 }
-
