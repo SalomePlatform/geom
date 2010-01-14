@@ -34,6 +34,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 // OCCT Includes
 #include <TopAbs.hxx>
@@ -109,6 +110,8 @@ void RepairGUI_SuppressFacesDlg::Init()
   myObject = GEOM::GEOM_Object::_nil();
   myFacesInd = new GEOM::short_array();
   myFacesInd->length(0);
+  
+  mainFrame()->GroupBoxPublish->show();
 
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -170,10 +173,10 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if (aSelList.Extent() == 1) {
-    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
+  if (myEditCurrentArgument == GroupArgs->LineEdit1) {
+    if (aSelList.Extent() == 1) {
+      Handle(SALOME_InteractiveObject) anIO = aSelList.First();
 
-    if (myEditCurrentArgument == GroupArgs->LineEdit1) {
       Standard_Boolean aRes;
       myObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
       if (aRes && GEOMBase::IsShape(myObject)) {
@@ -193,26 +196,35 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
       else
         myObject = GEOM::GEOM_Object::_nil();
     }
-    else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(anIO, aMap);
+  }
+  else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
+    TColStd_IndexedMapOfInteger aMap;
 
-      if (aMap.IsEmpty()) { // try to detect selected published sub-shape
+    if (aSelList.Extent() == 1) {
+      Handle(SALOME_InteractiveObject) anIO = aSelList.First();
+      aSelMgr->GetIndexes(anIO, aMap);
+    }
+
+    if (aMap.IsEmpty() && aSelList.Extent() > 0) { // try to detect selected published sub-shape
+      SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(myGeomGUI->getApp()->activeStudy());
+      if (!appStudy) return;
+      _PTR(Study) aStudy = appStudy->studyDS();
+
+      TopTools_IndexedMapOfShape aMainMap;
+      TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myObject);
+      TopExp::MapShapes(aMainShape, aMainMap);
+
+      SALOME_ListIteratorOfListIO anIter (aSelList);
+      for (int i = 0; anIter.More(); anIter.Next(), i++) {
+        Handle(SALOME_InteractiveObject) anIO = anIter.Value();
         QString anEntry = anIO->getEntry();
 
-        SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(myGeomGUI->getApp()->activeStudy());
-        if (!appStudy) return;
-        _PTR(Study) aStudy = appStudy->studyDS();
         _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
         GEOM::GEOM_Object_var aGeomObj =
           GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
         TopoDS_Shape aShape;
         if (GEOMBase::GetShape(aGeomObj, aShape)) {
           if (aGeomObj->GetType() == GEOM_GROUP || aShape.ShapeType() == TopAbs_FACE) {
-            TopTools_IndexedMapOfShape aMainMap;
-            TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myObject);
-            TopExp::MapShapes(aMainShape, aMainMap);
-
             TopExp_Explorer anExp (aShape, TopAbs_FACE);
             for (; anExp.More(); anExp.Next()) {
               TopoDS_Shape aSubShape = anExp.Current();
@@ -224,14 +236,14 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
           }
         }
       }
-
-      const int n = aMap.Extent();
-      myFacesInd->length(n);
-      for (int i = 1; i <= n; i++)
-        myFacesInd[i-1] = aMap(i);
-      if (n)
-        myEditCurrentArgument->setText(QString::number(n) + "_" + tr("GEOM_FACE") + tr("_S_"));
     }
+
+    const int n = aMap.Extent();
+    myFacesInd->length(n);
+    for (int i = 1; i <= n; i++)
+      myFacesInd[i-1] = aMap(i);
+    if (n)
+      myEditCurrentArgument->setText(QString::number(n) + "_" + tr("GEOM_FACE") + tr("_S_"));
   }
 }
 
@@ -372,4 +384,19 @@ void RepairGUI_SuppressFacesDlg::initSelection()
 
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void RepairGUI_SuppressFacesDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                   SALOMEDS::SObject_ptr theSObject)
+{
+  if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
+    // empty list of arguments means that all arguments should be restored
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
+                                        /*theFindMethod=*/GEOM::FSM_GetInPlace,
+                                        /*theInheritFirstArg=*/true);
+  }
 }
