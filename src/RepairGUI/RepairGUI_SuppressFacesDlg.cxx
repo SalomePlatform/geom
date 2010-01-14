@@ -32,10 +32,14 @@
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
+#include <SalomeApp_Study.h>
 #include <LightApp_SelectionMgr.h>
 
 // OCCT Includes
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 
@@ -192,6 +196,35 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
     else if (myEditCurrentArgument == GroupArgs->LineEdit2) {
       TColStd_IndexedMapOfInteger aMap;
       aSelMgr->GetIndexes(anIO, aMap);
+
+      if (aMap.IsEmpty()) { // try to detect selected published sub-shape
+        QString anEntry = anIO->getEntry();
+
+        SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(myGeomGUI->getApp()->activeStudy());
+        if (!appStudy) return;
+        _PTR(Study) aStudy = appStudy->studyDS();
+        _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+        GEOM::GEOM_Object_var aGeomObj =
+          GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObj));
+        TopoDS_Shape aShape;
+        if (GEOMBase::GetShape(aGeomObj, aShape)) {
+          if (aGeomObj->GetType() == GEOM_GROUP || aShape.ShapeType() == TopAbs_FACE) {
+            TopTools_IndexedMapOfShape aMainMap;
+            TopoDS_Shape aMainShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), myObject);
+            TopExp::MapShapes(aMainShape, aMainMap);
+
+            TopExp_Explorer anExp (aShape, TopAbs_FACE);
+            for (; anExp.More(); anExp.Next()) {
+              TopoDS_Shape aSubShape = anExp.Current();
+              int anIndex = aMainMap.FindIndex(aSubShape);
+              if (anIndex >= 0) {
+                aMap.Add(anIndex);
+              }
+            }
+          }
+        }
+      }
+
       const int n = aMap.Extent();
       myFacesInd->length(n);
       for (int i = 1; i <= n; i++)
