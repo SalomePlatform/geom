@@ -260,6 +260,8 @@ bool BlocksGUI_PropagateDlg::execute( ObjectList& objects )
 void BlocksGUI_PropagateDlg::activateSelection()
 {
   TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_FACE );
+  aMap.Add( GEOM_SHELL );
   aMap.Add( GEOM_SOLID );
   aMap.Add( GEOM_COMPOUND );
   globalSelection( aMap );
