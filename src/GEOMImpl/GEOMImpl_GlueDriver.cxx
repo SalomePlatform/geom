@@ -44,6 +44,8 @@
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
+#include <ShapeFix_Shape.hxx>
+
 #include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
 
@@ -145,6 +147,13 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFacesWithWarnings (const TopoDS_Shape& the
   }
 
   aRes = aGluer.Result();
+
+  // SKL 18.01.2010 - patch for 20662
+  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aRes);
+  aSfs->SetPrecision(Precision::Confusion());
+  aSfs->Perform();
+  aRes = aSfs->Shape();
+
 
   // Fill history to be used by GetInPlace functionality
   TopTools_IndexedMapOfShape aResIndices;
