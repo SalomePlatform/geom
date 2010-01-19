@@ -553,7 +553,7 @@ def TestOtherOperations (geompy, math):
 
   # GetShapesOnCylinderWithLocation
   edges_out_cyl = geompy.GetShapesOnCylinderWithLocation(blocksComp, geompy.ShapeType["EDGE"],
-                                                         vy, 55, geompy.GEOM.ST_OUT)
+                                                         vy, p11, 55, geompy.GEOM.ST_OUT)
   for edge_i in edges_out_cyl:
     geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0), r = 55)")
 
