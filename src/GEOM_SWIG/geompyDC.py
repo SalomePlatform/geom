@@ -3898,6 +3898,107 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetType", self.GroupOp)
             return aType
 
+        ## Convert a type of geom object from id to string value
+        #  @param theId is a GEOM obect type id.
+        #
+        #  @ref swig_GetType "Example"
+        def ShapeIdToType(self, theId):
+            if theId == 0:
+                return "COPY"
+            if theId == 1:
+                return "IMPORT"
+            if theId == 2:
+                return "POINT"
+            if theId == 3:
+                return "VECTOR"
+            if theId == 4:
+                return "PLANE"
+            if theId == 5:
+                return "LINE"
+            if theId == 6:
+                return "TORUS"
+            if theId == 7:
+                return "BOX"
+            if theId == 8:
+                return "CYLINDER"
+            if theId == 9:
+                return "CONE"
+            if theId == 10:
+                return "SPHERE"
+            if theId == 11:
+                return "PRISM"
+            if theId == 12:
+                return "REVOLUTION"
+            if theId == 13:
+                return "BOOLEAN"
+            if theId == 14:
+                return "PARTITION"
+            if theId == 15:
+                return "POLYLINE"
+            if theId == 16:
+                return "CIRCLE"
+            if theId == 17:
+                return "SPLINE"
+            if theId == 18:
+                return "ELLIPSE"
+            if theId == 19:
+                return "CIRC_ARC"
+            if theId == 20:
+                return "FILLET"
+            if theId == 21:
+                return "CHAMFER"
+            if theId == 22:
+                return "EDGE"
+            if theId == 23:
+                return "WIRE"
+            if theId == 24:
+                return "FACE"
+            if theId == 25:
+                return "SHELL"
+            if theId == 26:
+                return "SOLID"
+            if theId == 27:
+                return "COMPOUND"
+            if theId == 28:
+                return "SUBSHAPE"
+            if theId == 29:
+                return "PIPE"
+            if theId == 30:
+                return "ARCHIMEDE"
+            if theId == 31:
+                return "FILLING"
+            if theId == 32:
+                return "EXPLODE"
+            if theId == 33:
+                return "GLUED"
+            if theId == 34:
+                return "SKETCHER"
+            if theId == 35:
+                return "CDG"
+            if theId == 36:
+                return "FREE_BOUNDS"
+            if theId == 37:
+                return "GROUP"
+            if theId == 38:
+                return "BLOCK"
+            if theId == 39:
+                return "MARKER"
+            if theId == 40:
+                return "THRUSECTIONS"
+            if theId == 41:
+                return "COMPOUNDFILTER"
+            if theId == 42:
+                return "SHAPES_ON_SHAPE"
+            if theId == 43:
+                return "ELLIPSE_ARC"
+            if theId == 44:
+                return "3DSKETCHER"
+            if theId == 45:
+                return "FILLET_2D"
+            if theId == 46:
+                return "FILLET_1D"
+            return "Shape Id not exist."
+
         ## Returns a main shape associated with the group
         #  @param theGroup is a GEOM group for which a main shape object is requested
         #  @return a GEOM object which is a main shape for theGroup

@@ -1,0 +1,85 @@
+/*!
+
+\page geometrical_obj_prop_page Geometrical Object Properties
+
+<h2>Geometrical Object Type</h2>
+
+The <b>Type</b> property of the geometrical object specifies the 
+way the object has been created. It is an integer identifier that 
+has predefined value depending on the function type used for the 
+object creation. The type of the object can be retrieved using the 
+<b>GetType()</b> function.
+
+<b>For example</b>: the geometrical object created using MakeBox() 
+functions has type equal to 7. The shape imported from the BREP, 
+IGES, STEP or other CAD file, has type equal to 1.
+
+The possible values of the geometrical objects are listed in the table below: 
+
+<table border="1" align="center" width="250" cellpadding="3"
+            cellspacing="0" bgcolor="#EEEEEE">
+            <tr align=center bgcolor=#999999><td>ID</td><td>STRING</td></tr>
+            <tr align=center><td>0</td><td>COPY</td></tr>
+            <tr align=center><td>1</td><td>IMPORT</td></tr>
+            <tr align=center><td>2</td><td>POINT</td></tr>
+            <tr align=center><td>3</td><td>VECTOR</td></tr>
+            <tr align=center><td>4</td><td>PLANE</td></tr>
+            <tr align=center><td>5</td><td>LINE</td></tr>
+            <tr align=center><td>6</td><td>TORUS</td></tr>
+            <tr align=center><td>7</td><td>BOX</td></tr>
+            <tr align=center><td>8</td><td>CYLINDER</td></tr>
+            <tr align=center><td>9</td><td>CONE</td></tr>
+            <tr align=center><td>10</td><td>SPHERE</td></tr>
+            <tr align=center><td>11</td><td>PRISM</td></tr>
+            <tr align=center><td>12</td><td>REVOLUTION</td></tr>
+            <tr align=center><td>13</td><td>BOOLEAN</td></tr>
+            <tr align=center><td>14</td><td>PARTITION</td></tr>
+            <tr align=center><td>15</td><td>POLYLINE</td></tr>
+            <tr align=center><td>16</td><td>CIRCLE</td></tr>
+            <tr align=center><td>17</td><td>SPLINE</td></tr>
+            <tr align=center><td>18</td><td>ELLIPSE</td></tr>
+            <tr align=center><td>19</td><td>CIRC_ARC</td></tr>
+            <tr align=center><td>20</td><td>FILLET</td></tr>
+            <tr align=center><td>21</td><td>CHAMFER</td></tr>
+            <tr align=center><td>22</td><td>EDGE</td></tr>
+            <tr align=center><td>23</td><td>WIRE</td></tr>
+            <tr align=center><td>24</td><td>FACE</td></tr>
+            <tr align=center><td>25</td><td>SHELL</td></tr>
+            <tr align=center><td>26</td><td>SOLID</td></tr>
+            <tr align=center><td>27</td><td>COMPOUND</td></tr>
+            <tr align=center><td>28</td><td>SUBSHAPE</td></tr>
+            <tr align=center><td>29</td><td>PIPE</td></tr>
+            <tr align=center><td>30</td><td>ARCHIMEDE</td></tr>
+            <tr align=center><td>31</td><td>FILLING</td></tr>
+            <tr align=center><td>32</td><td>EXPLODE</td></tr>
+            <tr align=center><td>33</td><td>GLUED</td></tr>
+            <tr align=center><td>34</td><td>SKETCHER</td></tr>
+            <tr align=center><td>35</td><td>CDG</td></tr>
+            <tr align=center><td>36</td><td>FREE_BOUNDS</td></tr>
+            <tr align=center><td>37</td><td>GROUP</td></tr>
+            <tr align=center><td>38</td><td>BLOCK</td></tr>
+            <tr align=center><td>39</td><td>MARKER</td></tr>
+            <tr align=center><td>40</td><td>THRUSECTIONS</td></tr>
+            <tr align=center><td>41</td><td>COMPOUNDFILTER</td></tr>
+            <tr align=center><td>42</td><td>SHAPES_ON_SHAPE</td></tr>
+            <tr align=center><td>43</td><td>ELLIPSE_ARC</td></tr>
+            <tr align=center><td>44</td><td>3DSKETCHER</td></tr>
+            <tr align=center><td>45</td><td>FILLET_2D</td></tr>
+            <tr align=center><td>46</td><td>FILLET_1D</td></tr>
+</table>
+
+Also geompy.py module provides a helper function ShapeIdToType() 
+that allows converting of the geometrical object type id value 
+to its string representation.
+
+<b>For example:</b>
+\code
+import geompy
+box = geompy.MakeBoxDXDYDZ(10,10,10)
+type = geompy.ShapeIdToType(box.GetType())
+print type
+\endcode
+
+The above code prints "BOX" value. 
+
+*/
