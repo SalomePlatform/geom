@@ -540,6 +540,22 @@ module GEOM
 			    in double theYDX, in double theYDY, in double theYDZ);
 
     /*!
+     *  Create a local coordinate system from shape.
+     *  \param theShape The initial shape to detect the coordinate system.
+     *  \return New GEOM_Object, containing the created coordinate system.
+     */
+    GEOM_Object MakeMarkerFromShape (in GEOM_Object theShape);
+   
+    /*!
+     *  Create a local coordinate system from point and two vectors (DX, DY).
+     *  \param theOrigin Point of coordinate system origin.
+     *  \param theXVec Vector of X direction.
+     *  \param theYVec Vector of Y direction.
+     *  \return New GEOM_Object, containing the created coordinate system.
+     */
+    GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin, in GEOM_Object theXVec, in GEOM_Object theYVec);
+       
+    /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
      *  Values of parameters should be between 0. and 1.0
      *  \param theFace - face for which tangent plane shuold be built.

@@ -803,6 +803,34 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker
 }
 
 //=============================================================================
+//  MakeMarkerFromShape:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarkerFromShape (GEOM::GEOM_Object_ptr theShape)
+{
+  beginService( " GEOM_Superv_i::MakeMarkerFromShape" );
+  MESSAGE("GEOM_Superv_i::MakeMarkerFromShape");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakeMarkerFromShape(theShape);
+  endService( " GEOM_Superv_i::MakeMarkerFromShape" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeMarkerPntTwoVec:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarkerPntTwoVec (GEOM::GEOM_Object_ptr theOrigin,
+                                                          GEOM::GEOM_Object_ptr theXVec,
+                                                          GEOM::GEOM_Object_ptr theYVec)
+{
+  beginService( " GEOM_Superv_i::MakeMarkerPntTwoVec" );
+  MESSAGE("GEOM_Superv_i::MakeMarkerPntTwoVec");
+  getBasicOp();
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakeMarkerPntTwoVec(theOrigin, theXVec, theYVec);
+  endService( " GEOM_Superv_i::MakeMarkerPntTwoVec" );
+  return anObj;
+}
+
+//=============================================================================
 //  MakeTangentPlaneOnFace:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 

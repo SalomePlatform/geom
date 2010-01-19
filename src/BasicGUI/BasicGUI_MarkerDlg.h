@@ -61,6 +61,11 @@ private:
   void                          enterEvent( QEvent* );
   void                          onSelectionDone0();
 
+  GEOM::GEOM_Object_var         myShape;
+  GEOM::GEOM_Object_var         myPoint;
+  GEOM::GEOM_Object_var         myVectorX;
+  GEOM::GEOM_Object_var         myVectorY;
+
 private slots:
   void                          onOk();
   bool                          onApply();

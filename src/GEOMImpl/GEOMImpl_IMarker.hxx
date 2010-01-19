@@ -35,6 +35,11 @@
 #define CS_ARG_Y_DY  8
 #define CS_ARG_Y_DZ  9
 
+#define CS_ARG_SHAPE  10
+#define CS_ARG_ORIGIN 11
+#define CS_ARG_XVEC   12
+#define CS_ARG_YVEC   13
+
 class GEOMImpl_IMarker
 {
  public:
@@ -61,6 +66,26 @@ class GEOMImpl_IMarker
     _func->SetReal(CS_ARG_Y_DY, theDY);
     _func->SetReal(CS_ARG_Y_DZ, theDZ);
   }
+  
+  void SetShape (Handle(GEOM_Function) theShape)
+  {
+    _func->SetReference(CS_ARG_SHAPE, theShape);
+  }
+
+  void SetOrigin (Handle(GEOM_Function) theOrigin)
+  {
+    _func->SetReference(CS_ARG_ORIGIN, theOrigin);
+  }
+
+  void SetXVec (Handle(GEOM_Function) theXVec)
+  {
+    _func->SetReference(CS_ARG_XVEC, theXVec);
+  }
+
+  void SetYVec (Handle(GEOM_Function) theYVec)
+  {
+    _func->SetReference(CS_ARG_YVEC, theYVec);
+  }
 
   void GetOrigin (double& theX, double& theY, double& theZ)
   {
@@ -81,6 +106,26 @@ class GEOMImpl_IMarker
     theDX = _func->GetReal(CS_ARG_Y_DX);
     theDY = _func->GetReal(CS_ARG_Y_DY);
     theDZ = _func->GetReal(CS_ARG_Y_DZ);
+  }
+  
+  Handle(GEOM_Function) GetShape()
+  {
+    return _func->GetReference(CS_ARG_SHAPE); 
+  }
+
+  Handle(GEOM_Function) GetOrigin()
+  {
+    return _func->GetReference(CS_ARG_ORIGIN); 
+  }
+
+  Handle(GEOM_Function) GetXVec()
+  {
+    return _func->GetReference(CS_ARG_XVEC); 
+  }
+
+  Handle(GEOM_Function) GetYVec()
+  {
+    return _func->GetReference(CS_ARG_YVEC); 
   }
 
  private:

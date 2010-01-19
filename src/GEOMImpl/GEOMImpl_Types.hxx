@@ -295,4 +295,6 @@
 #define BLOCK_COMPOUND_IMPROVE    10
 
 // Marker
-#define MARKER_CS 1
+#define MARKER_CS      1
+#define MARKER_SHAPE   2
+#define MARKER_PNT2VEC 3

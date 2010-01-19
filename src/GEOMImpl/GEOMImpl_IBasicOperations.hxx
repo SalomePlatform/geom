@@ -100,6 +100,12 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeMarker (double theOX,  double theOY,  double theOZ,
                                   double theXDX, double theXDY, double theXDZ,
                                   double theYDX, double theYDY, double theYDZ);
+				  
+  Standard_EXPORT Handle(GEOM_Object) MakeMarkerFromShape (const Handle(GEOM_Object)& theShape);
+  
+  Standard_EXPORT Handle(GEOM_Object) MakeMarkerPntTwoVec (const Handle(GEOM_Object)& theOrigin,
+                                                           const Handle(GEOM_Object)& theXVec,
+                                                           const Handle(GEOM_Object)& theYVec);
 
   Standard_EXPORT Handle(GEOM_Object) MakeTangentPlaneOnFace(const Handle(GEOM_Object)& theFace,
                                                              double theParamU,

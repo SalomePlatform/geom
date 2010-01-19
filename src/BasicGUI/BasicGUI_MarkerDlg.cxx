@@ -167,6 +167,7 @@ BasicGUI_MarkerDlg::~BasicGUI_MarkerDlg()
 //=================================================================================
 void BasicGUI_MarkerDlg::Init()
 {
+  myShape = myPoint = myVectorX = myVectorY = GEOM::GEOM_Object::_nil();
   myBlockPreview = false;
   myConstructorId = -1;
   myEditCurrentArgument = Group1->LineEdit1;
@@ -218,24 +219,6 @@ void BasicGUI_MarkerDlg::Init()
   myBlockPreview = false;
 
   ConstructorsClicked( 0 );
-
-
-  //@
-  /*
-  QAD_ViewFrame* aFrame = QAD_Application::getDesktop()->getActiveApp()->
-    getActiveStudy()->getActiveStudyFrame()->getRightFrame()->getViewFrame();
-
-  VTKViewer_ViewFrame* aVTKFrame = dynamic_cast<VTKViewer_ViewFrame*>( aFrame );
-  if ( aVTKFrame )
-  {
-    aVTKFrame->AdjustTrihedrons( true );
-    return;
-  }
-
-  OCCViewer_ViewFrame* aOCCFrame = dynamic_cast<OCCViewer_ViewFrame*>( aFrame );
-  if ( aOCCFrame )
-    aOCCFrame->AdjustTrihedrons( true );
-  */
 }
 
 //=================================================================================
@@ -248,7 +231,6 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
     globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
     activate( GEOM_MARKER );
-    displayPreview();
     return;
   }
 
@@ -276,6 +258,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       globalSelection( GEOM_ALLGEOM );
       myEditCurrentArgument = Group1->LineEdit1;
       Group1->LineEdit1->setText( "" );
+      myShape = GEOM::GEOM_Object::_nil();
       break;
     }
   case 2:
@@ -295,9 +278,14 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       Group2->LineEdit1->setEnabled( true );
       Group2->LineEdit2->setEnabled( false );
       Group2->LineEdit3->setEnabled( false );
+      myPoint = GEOM::GEOM_Object::_nil();
+      myVectorX = GEOM::GEOM_Object::_nil();
+      myVectorY = GEOM::GEOM_Object::_nil();
       break;
     }
   }
+
+  displayPreview();
 
   qApp->processEvents();
   updateGeometry();
@@ -428,39 +416,9 @@ void BasicGUI_MarkerDlg::onSelectionDone()
       QString aName = GEOMBase::GetName( aSelectedObj );
       
       if ( getConstructorId() == 1 ) { // by shape position
-        // Get shape's position
-        CORBA::Double Ox, Oy, Oz,   Zx, Zy, Zz,   Xx, Xy, Xz,   Yx, Yy, Yz;
-        Ox = Oy = Oz = Zx = Zy = Xy = Xz = Yx = Yz = 0;
-        Zz = Xx = Yy = 1.;
-        
-        GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
-          myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
-        aMeasureOp->GetPosition( aSelectedObj, Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz );
-        
-        // Calculate Y direction
-        if ( aMeasureOp->IsDone() ) {
-          gp_Pnt aPnt  ( Ox, Oy, Oz );
-          gp_Dir aDirN ( Zx, Zy, Zz );
-          gp_Dir aDirX ( Xx, Xy, Xz );
-          gp_Ax3 anAx3 ( aPnt, aDirN, aDirX );
-
-          gp_Dir aDirY = anAx3.YDirection();
-          aDirY.Coord(Yx,Yy,Yz);
-        }
-
-        // Set values
-        myData[ X ]->setValue( Ox );
-        myData[ Y ]->setValue( Oy );
-        myData[ Z ]->setValue( Oz );
-
-        myData[ DX1 ]->setValue( Xx );
-        myData[ DY1 ]->setValue( Xy );
-        myData[ DZ1 ]->setValue( Xz );
-
-        myData[ DX2 ]->setValue( Yx );
-        myData[ DY2 ]->setValue( Yy );
-        myData[ DZ2 ]->setValue( Yz );
-
+        TopoDS_Shape aShape;
+        if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
+          myShape = aSelectedObj;
         myEditCurrentArgument->setText( aName );
       }
       else if ( getConstructorId() == 2 ) { // by point and two vectors
@@ -487,56 +445,26 @@ void BasicGUI_MarkerDlg::onSelectionDone()
 
           if ( myEditCurrentArgument == Group2->LineEdit1 ) {
             if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
-              gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-              myData[ X ]->setValue( aPnt.X() );
-              myData[ Y ]->setValue( aPnt.Y() );
-              myData[ Z ]->setValue( aPnt.Z() );
+              myPoint = aSelectedObj;
               myEditCurrentArgument->setText( aName );
               if (Group2->LineEdit2->text() == "")
                 Group2->PushButton2->click();
             }
-            else {
-              myData[ X ]->setValue( 0 );
-              myData[ Y ]->setValue( 0 );
-              myData[ Z ]->setValue( 0 );
-            }
           }
           else if (myEditCurrentArgument == Group2->LineEdit2) {
             if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
-              gp_Pnt aP1 = BRep_Tool::Pnt( TopExp::FirstVertex( TopoDS::Edge( aShape ) ) );
-              gp_Pnt aP2 = BRep_Tool::Pnt( TopExp::LastVertex( TopoDS::Edge( aShape ) ) );
-              gp_Dir aDir( gp_Vec( aP1, aP2 ) );
-
-              myData[ DX1 ]->setValue( aDir.X() );
-              myData[ DY1 ]->setValue( aDir.Y() );
-              myData[ DZ1 ]->setValue( aDir.Z() );
+              myVectorX = aSelectedObj;
               myEditCurrentArgument->setText( aName );
               if (Group2->LineEdit3->text() == "")
                 Group2->PushButton3->click();
             }
-            else {
-              myData[ DX1 ]->setValue( 0 );
-              myData[ DY1 ]->setValue( 0 );
-              myData[ DZ1 ]->setValue( 0 );
-            }
           }
           else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
             if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
-              gp_Pnt aP1 = BRep_Tool::Pnt( TopExp::FirstVertex( TopoDS::Edge( aShape ) ) );
-              gp_Pnt aP2 = BRep_Tool::Pnt( TopExp::LastVertex( TopoDS::Edge( aShape ) ) );
-              gp_Dir aDir(gp_Vec( aP1, aP2 ));
-
-              myData[ DX2 ]->setValue( aDir.X() );
-              myData[ DY2 ]->setValue( aDir.Y() );
-              myData[ DZ2 ]->setValue( aDir.Z() );
+              myVectorY = aSelectedObj;
               myEditCurrentArgument->setText( aName );
               if (Group2->LineEdit1->text() == "")
                 Group2->PushButton1->click();
-            }
-            else {
-              myData[ DX2 ]->setValue( 0 );
-              myData[ DY2 ]->setValue( 0 );
-              myData[ DZ2 ]->setValue( 0 );
             }
           }
         }
@@ -545,34 +473,14 @@ void BasicGUI_MarkerDlg::onSelectionDone()
   }
   else {
     if ( getConstructorId() == 1 ) {
-      myData[ X ]->setValue( 0 );
-      myData[ Y ]->setValue( 0 );
-      myData[ Z ]->setValue( 0 );
-
-      myData[ DX1 ]->setValue( 0 );
-      myData[ DY1 ]->setValue( 0 );
-      myData[ DZ1 ]->setValue( 0 );
-
-      myData[ DX2 ]->setValue( 0 );
-      myData[ DY2 ]->setValue( 0 );
-      myData[ DZ2 ]->setValue( 0 );
-    }
-    else if ( getConstructorId() == 2 ) {
-      if ( myEditCurrentArgument == Group2->LineEdit1 ) {
-        myData[ X ]->setValue( 0 );
-        myData[ Y ]->setValue( 0 );
-        myData[ Z ]->setValue( 0 );
-      }
-      else if ( myEditCurrentArgument == Group2->LineEdit2 ) {
-        myData[ DX1 ]->setValue( 0 );
-        myData[ DY1 ]->setValue( 0 );
-        myData[ DZ1 ]->setValue( 0 );
-      }
-      else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
-        myData[ DX2 ]->setValue( 0 );
-        myData[ DY2 ]->setValue( 0 );
-        myData[ DZ2 ]->setValue( 0 );
-      }
+      myShape = GEOM::GEOM_Object::_nil();
+    } else if ( getConstructorId() == 2 ) {
+      if ( myEditCurrentArgument == Group2->LineEdit1 )
+        myPoint = GEOM::GEOM_Object::_nil();
+      else if ( myEditCurrentArgument == Group2->LineEdit2 )
+        myVectorX = GEOM::GEOM_Object::_nil();
+      else if ( myEditCurrentArgument == Group2->LineEdit3 )
+        myVectorY = GEOM::GEOM_Object::_nil();
     }
   }
 
@@ -685,31 +593,28 @@ GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 bool BasicGUI_MarkerDlg::isValid( QString& msg )
 {
   const int id = getConstructorId();
-  gp_Vec v1( myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value() ),
-         v2( myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
-
-  bool isOk = false;
-  // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
-  // Vectors shouldn't be checked for being orthogonal here!
-  if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() ) {
-    isOk = !v1.IsParallel( v2, Precision::Angular() );
-    if ( !isOk )
-      msg += tr( "VEC_PARALLEL" );
-  }
-
   switch ( id ) {
-  case 0: {
-    bool ok = true;
-    for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
-      ok = anIter.value()->isValid( msg, !IsPreview()) && ok;
-    return isOk && ok;
-  }
-  case 1:
-    return !Group1->LineEdit1->text().isEmpty() && isOk;
-  case 2:
-    return !Group2->LineEdit1->text().isEmpty() &&
-      !Group2->LineEdit2->text().isEmpty() &&
-      !Group2->LineEdit3->text().isEmpty() && isOk;
+    case 0: {
+      gp_Vec v1( myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value() ),
+        v2( myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
+      
+      bool isOk = false;
+      // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
+      // Vectors shouldn't be checked for being orthogonal here!
+      if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() ) {
+        isOk = !v1.IsParallel( v2, Precision::Angular() );
+        if ( !isOk )
+          msg += tr( "VEC_PARALLEL" );
+      }
+      bool ok = true;
+      for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
+        ok = anIter.value()->isValid( msg, !IsPreview()) && ok;
+      return isOk && ok;
+    }
+    case 1:
+      return !myShape->_is_nil();
+    case 2:
+      return !myPoint->_is_nil() && !myVectorX->_is_nil() && !myVectorY->_is_nil();
   }
   return false;
 }
@@ -721,28 +626,32 @@ bool BasicGUI_MarkerDlg::isValid( QString& msg )
 bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->MakeMarker( myData[ X   ]->value(), 
-                                                    myData[ Y   ]->value(), 
-                                                    myData[ Z   ]->value(),
-                                                    myData[ DX1 ]->value(),
-                                                    myData[ DY1 ]->value(), 
-                                                    myData[ DZ1 ]->value(),
-                                                    myData[ DX2 ]->value(),
-                                                    myData[ DY2 ]->value(),
-                                                    myData[ DZ2 ]->value() );
+  GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_nil();
   QStringList aParameters;
-  aParameters<<myData[X]->text();
-  aParameters<<myData[Y]->text();
-  aParameters<<myData[Z]->text();
-  aParameters<<myData[ DX1 ]->text(); 
-  aParameters<<myData[ DY1 ]->text(); 
-  aParameters<<myData[ DZ1 ]->text();
-  aParameters<<myData[ DX2 ]->text();
-  aParameters<<myData[ DY2 ]->text();
-  aParameters<<myData[ DZ2 ]->text();
+  const int id = getConstructorId();
+  if (id == 0) {
+    anObj = anOper->MakeMarker( myData[ X   ]->value(), myData[ Y   ]->value(), 
+                                myData[ Z   ]->value(), myData[ DX1 ]->value(),
+                                myData[ DY1 ]->value(), myData[ DZ1 ]->value(),
+                                myData[ DX2 ]->value(), myData[ DY2 ]->value(),
+                                myData[ DZ2 ]->value() );
+    aParameters<<myData[X]->text();
+    aParameters<<myData[Y]->text();
+    aParameters<<myData[Z]->text();
+    aParameters<<myData[ DX1 ]->text(); 
+    aParameters<<myData[ DY1 ]->text(); 
+    aParameters<<myData[ DZ1 ]->text();
+    aParameters<<myData[ DX2 ]->text();
+    aParameters<<myData[ DY2 ]->text();
+    aParameters<<myData[ DZ2 ]->text();
+  } else if (id == 1) {
+    anObj = anOper->MakeMarkerFromShape( myShape ); 
+  } else if (id == 2) {
+    anObj = anOper->MakeMarkerPntTwoVec( myPoint, myVectorX, myVectorY ); 
+  }
   
   if ( !anObj->_is_nil() ) {
-    if ( !IsPreview() )
+    if ( !IsPreview() && id == 0)
       anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back( anObj._retn() );
   }

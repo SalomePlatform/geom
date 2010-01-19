@@ -563,6 +563,62 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarker
 
 //=============================================================================
 /*!
+ *  MakeMarkerFromShape
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarkerFromShape
+                                              (GEOM::GEOM_Object_ptr theShape)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the referenced object
+  Handle(GEOM_Object) aRef = GetObjectImpl(theShape);
+  if (aRef.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject = GetOperations()->MakeMarkerFromShape(aRef);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeMarkerPntTwoVec
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakeMarkerPntTwoVec
+                                              (GEOM::GEOM_Object_ptr theOrigin,
+                                               GEOM::GEOM_Object_ptr theXVec,
+                                               GEOM::GEOM_Object_ptr theYVec)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the referenced objects
+  Handle(GEOM_Object) aRef1 = GetObjectImpl(theOrigin);
+  Handle(GEOM_Object) aRef2 = GetObjectImpl(theXVec);
+  Handle(GEOM_Object) aRef3 = GetObjectImpl(theYVec);
+  if (aRef1.IsNull() || aRef2.IsNull() || aRef3.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject = GetOperations()->MakeMarkerPntTwoVec(aRef1,
+                                                                      aRef2,
+								      aRef3);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeTangentPlaneOnFace
  */
 //=============================================================================

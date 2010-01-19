@@ -25,6 +25,7 @@
 #include <GEOMImpl_IMarker.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
+#include <GEOMImpl_IMeasureOperations.hxx>
 
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Tool.hxx>
@@ -102,6 +103,48 @@ Standard_Integer GEOMImpl_MarkerDriver::Execute(TFunction_Logbook& log) const
     gp_Ax3 anA (aPO, aN, aVX);
     gp_Pln aPln (anA);
 
+    double aTrimSize = 100.0;
+    aShape = BRepBuilderAPI_MakeFace(aPln, -aTrimSize, +aTrimSize, -aTrimSize, +aTrimSize).Shape();
+  } else if (aType == MARKER_SHAPE) {
+    Handle(GEOM_Function) aRefShape = aPI.GetShape();
+    TopoDS_Shape aSh = aRefShape->GetValue();
+    gp_Ax3 anAx3 = GEOMImpl_IMeasureOperations::GetPosition(aSh);
+    gp_Pln aPln (anAx3);
+
+    double aTrimSize = 100.0;
+    aShape = BRepBuilderAPI_MakeFace(aPln, -aTrimSize, +aTrimSize, -aTrimSize, +aTrimSize).Shape();
+  } else if (aType == MARKER_PNT2VEC) {
+    Handle(GEOM_Function) aRefOrigin  = aPI.GetOrigin();
+    Handle(GEOM_Function) aRefXVec = aPI.GetXVec();
+    Handle(GEOM_Function) aRefYVec = aPI.GetYVec();
+    TopoDS_Shape aShapeOrigin = aRefOrigin->GetValue();
+    TopoDS_Shape aShapeXVec = aRefXVec->GetValue();
+    TopoDS_Shape aShapeYVec = aRefYVec->GetValue();
+    if (aShapeOrigin.ShapeType() != TopAbs_VERTEX || aShapeOrigin.IsNull()) return 0;
+    if (aShapeXVec.ShapeType() != TopAbs_EDGE || aShapeXVec.IsNull()) return 0;
+    if (aShapeYVec.ShapeType() != TopAbs_EDGE || aShapeYVec.IsNull()) return 0;
+
+    gp_Pnt aPO = BRep_Tool::Pnt( TopoDS::Vertex( aShapeOrigin ) );
+
+    gp_Pnt aPX1 = BRep_Tool::Pnt( TopExp::FirstVertex( TopoDS::Edge( aShapeXVec ) ) );
+    gp_Pnt aPX2 = BRep_Tool::Pnt( TopExp::LastVertex( TopoDS::Edge( aShapeXVec ) ) );
+    gp_Vec aVX( aPX1, aPX2 );
+
+    gp_Pnt aPY1 = BRep_Tool::Pnt( TopExp::FirstVertex( TopoDS::Edge( aShapeYVec ) ) );
+    gp_Pnt aPY2 = BRep_Tool::Pnt( TopExp::LastVertex( TopoDS::Edge( aShapeYVec ) ) );
+    gp_Vec aVY( aPY1, aPY2 );
+
+    if (aVX.Magnitude() < gp::Resolution() || aVY.Magnitude() < gp::Resolution())
+        Standard_ConstructionError::Raise
+          ("Local CS creation aborted: vector of zero length is given");
+
+    if ( aVX.IsParallel(aVY, Precision::Angular()))
+      Standard_ConstructionError::Raise("Parallel Vectors given");
+    
+    gp_Vec aN = aVX ^ aVY;
+    gp_Ax3 anA (aPO, aN, aVX);
+    gp_Pln aPln (anA);
+    
     double aTrimSize = 100.0;
     aShape = BRepBuilderAPI_MakeFace(aPln, -aTrimSize, +aTrimSize, -aTrimSize, +aTrimSize).Shape();
   } else {

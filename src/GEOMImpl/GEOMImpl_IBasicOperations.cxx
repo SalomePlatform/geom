@@ -1059,6 +1059,115 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarker
 
 //=============================================================================
 /*!
+ *  MakeMarkerFromShape
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerFromShape
+                                  (const Handle(GEOM_Object)& theShape)
+{
+  SetErrorCode(KO);
+
+  //Add a new Marker object
+  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GetDocID(), GEOM_MARKER);
+
+  //Add a new Marker function
+  Handle(GEOM_Function) aFunction =
+    aMarker->AddFunction(GEOMImpl_MarkerDriver::GetID(), MARKER_SHAPE);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MarkerDriver::GetID()) return NULL;
+
+  GEOMImpl_IMarker aPI(aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aPI.SetShape(aRefShape);
+
+  //Compute the marker value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Marker driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aMarker << " = geompy.MakeMarkerFromShape(" << theShape << ")";
+
+  SetErrorCode(OK);
+  return aMarker;
+}
+
+//=============================================================================
+/*!
+ *  MakeMarkerPntTwoVec
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakeMarkerPntTwoVec
+                                              (const Handle(GEOM_Object)& theOrigin,
+                                               const Handle(GEOM_Object)& theXVec,
+                                               const Handle(GEOM_Object)& theYVec)
+{
+  SetErrorCode(KO);
+
+  //Add a new Marker object
+  Handle(GEOM_Object) aMarker = GetEngine()->AddObject(GetDocID(), GEOM_MARKER);
+
+  //Add a new Marker function
+  Handle(GEOM_Function) aFunction =
+    aMarker->AddFunction(GEOMImpl_MarkerDriver::GetID(), MARKER_PNT2VEC);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MarkerDriver::GetID()) return NULL;
+
+  GEOMImpl_IMarker aPI(aFunction);
+
+  Handle(GEOM_Function) aRefOrigin = theOrigin->GetLastFunction();
+  Handle(GEOM_Function) aRefXVec = theXVec->GetLastFunction();
+  Handle(GEOM_Function) aRefYVec = theYVec->GetLastFunction();
+  if (aRefOrigin.IsNull() || aRefXVec.IsNull() || aRefYVec.IsNull()) return NULL;
+
+  aPI.SetOrigin(aRefOrigin);
+  aPI.SetXVec(aRefXVec);
+  aPI.SetYVec(aRefYVec);
+
+  //Compute the marker value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Marker driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aMarker << " = geompy.MakeMarkerPntTwoVec("
+    << theOrigin << ", " << theXVec << ", " << theYVec << ")";
+
+  SetErrorCode(OK);
+  return aMarker;
+}
+
+//=============================================================================
+/*!
  *  MakeTangentPlaneOnFace
  */
 //=============================================================================

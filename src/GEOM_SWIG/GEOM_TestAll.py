@@ -107,6 +107,9 @@ def TestAll (geompy, math):
   Sketcher = geompy.MakeSketcher("Sketcher:F -100 -100:TT 250 -100:R 0:C 100 150:R 0:L 300:WW",
                                  [100,0,0, 1,1,1, -1,1,0]) #(String, List of Doubles)->GEOM_Object_ptr
   Sketcher3d = geompy.Make3DSketcher([0,0,0, 50,50,50, 0,50,50, 10,0,0])
+  
+  #Create local coordinate system from shape
+  cs4 = geompy.MakeMarkerFromShape(Plane)
 
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
@@ -303,6 +306,7 @@ def TestAll (geompy, math):
   id_cs1 = geompy.addToStudy(cs1, "CS 50,50,50, 1,0,0, 0,1,0")
   id_cs2 = geompy.addToStudy(cs2, "CS 70,80,10, 1,0,1, 1,1,0")
   id_cs3 = geompy.addToStudy(cs3, "CS: pz, vxy, vz")
+  id_cs4 = geompy.addToStudy(cs4, "CS: Plane")
 
   id_Line   = geompy.addToStudy(Line,   "Line")
   id_Line1  = geompy.addToStudy(Line1,  "Line by point and vector")

@@ -641,7 +641,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
-	## Create a plane, passing through the 2 vectors
+        ## Create a plane, passing through the 2 vectors
         #  with center in a start point of the first vector.
         #  @param theVec1 Vector, defining center point and plane direction.
         #  @param theVec2 Vector, defining the plane normal direction.
@@ -657,10 +657,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
-	## Create a plane, based on a Local coordinate system.
+        ## Create a plane, based on a Local coordinate system.
         #  @param theLCS  coordinate system, defining plane.
         #  @param theTrimSize Half size of a side of quadrangle face, representing the plane.
-	#  @param theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
+        #  @param theOrientation OXY, OYZ or OZX orientation - (1, 2 or 3)
         #  @return New GEOM_Object, containing the created plane.
         #
         #  @ref tui_creation_plane "Example"
@@ -686,28 +686,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeMarker", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
+	    
+        ## Create a local coordinate system from shape.
+        #  @param theShape The initial shape to detect the coordinate system.
+        #  @return New GEOM_Object, containing the created coordinate system.
+        #
+        #  @ref tui_creation_lcs "Example"
+        def MakeMarkerFromShape(self, theShape):
+            anObj = self.BasicOp.MakeMarkerFromShape(theShape)
+            RaiseIfFailed("MakeMarkerFromShape", self.BasicOp)
+            return anObj
 
-        ## Create a local coordinate system.
+        ## Create a local coordinate system from point and two vectors.
         #  @param theOrigin Point of coordinate system origin.
         #  @param theXVec Vector of X direction
         #  @param theYVec Vector of Y direction
         #  @return New GEOM_Object, containing the created coordinate system.
         #
-        #  @ref swig_MakeMarker "Example"
+	#  @ref tui_creation_lcs "Example"
         def MakeMarkerPntTwoVec(self, theOrigin, theXVec, theYVec):
-            O = self.PointCoordinates( theOrigin )
-            OXOY = []
-            for vec in [ theXVec, theYVec ]:
-                v1, v2 = self.SubShapeAll( vec, ShapeType["VERTEX"] )
-                p1 = self.PointCoordinates( v1 )
-                p2 = self.PointCoordinates( v2 )
-                for i in range( 0, 3 ):
-                    OXOY.append( p2[i] - p1[i] )
-                #
-            anObj = self.BasicOp.MakeMarker( O[0], O[1], O[2],
-                                             OXOY[0], OXOY[1], OXOY[2],
-                                             OXOY[3], OXOY[4], OXOY[5], )
-            RaiseIfFailed("MakeMarker", self.BasicOp)
+            anObj = self.BasicOp.MakeMarkerPntTwoVec(theOrigin, theXVec, theYVec)
+            RaiseIfFailed("MakeMarkerPntTwoVec", self.BasicOp)
             return anObj
 
         # end of l3_basic_go
@@ -1255,7 +1254,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
-	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
+        ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  @param theBase Base shape to be extruded.
         #  @param theDX, theDY, theDZ Directions of extrusion.
         #  @return New GEOM_Object, containing the created prism.
@@ -1269,7 +1268,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
-	## Create a shape by extrusion of the base shape along the dx, dy, dz direction
+        ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  i.e. all the space, transfixed by the base shape during its translation
         #  along the vector on the given distance in 2 Ways (forward/backward) .
         #  @param theBase Base shape to be extruded.

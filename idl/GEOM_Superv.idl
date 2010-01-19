@@ -103,6 +103,10 @@ module GEOM
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
 			    in double theXDX, in double theXDY, in double theXDZ,
 			    in double theYDX, in double theYDY, in double theYDZ) ;
+			    
+    GEOM_Object MakeMarkerFromShape (in GEOM_Object theShape) ;
+    
+    GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin, in GEOM_Object theXVec, in GEOM_Object theYVec) ;
 
     /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
