@@ -122,10 +122,17 @@ a shape to be checked.
 \anchor bounding_box_anchor
 <br><h2>Bounding box</h2>
 
-\n Returns the dimensions of the bounding box for the selected
+Returns the dimensions of the bounding box for the selected
 geometrical object.
 
-\n <b>Result:</b> Displays the dimensions of the bounding box of a
+\b NOTE: In order to take into account any possible distortion of a shape 
+that affects the resulting bounding box, the algorithm enlarges 
+the bounding box to the value of the maximum deflection value of 
+faces (by iterating through all faces of a shape).
+This functionallity is implemented in such a way in order to have 
+satisfactory performance.
+
+<b>Result:</b> Displays the dimensions of the bounding box of a
 geometrical object in the form of Python Tuple (Xmin, Xmax, Ymin,
 Ymax, Zmin, Zmax).
 \n <b>TUI Command:</b> <em>geompy.BoundingBox(Shape),</em> where \em Shape
