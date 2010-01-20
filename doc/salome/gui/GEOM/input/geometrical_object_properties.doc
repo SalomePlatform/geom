@@ -2,7 +2,9 @@
 
 \page geometrical_obj_prop_page Geometrical Object Properties
 
-<h2>Geometrical Object Type</h2>
+<h2>Geometrical Object Types</h2>
+
+<b>GetType function:</b>
 
 The <b>Type</b> property of the geometrical object specifies the 
 way the object has been created. It is an integer identifier that 
@@ -16,8 +18,7 @@ IGES, STEP or other CAD file, has type equal to 1.
 
 The possible values of the geometrical objects are listed in the table below: 
 
-<table border="1" align="center" width="250" cellpadding="3"
-            cellspacing="0" bgcolor="#EEEEEE">
+<table border="1" align="center" width="250" cellpadding="3" cellspacing="0" bgcolor="#EEEEEE">
             <tr align=center bgcolor=#999999><td>ID</td><td>STRING</td></tr>
             <tr align=center><td>0</td><td>COPY</td></tr>
             <tr align=center><td>1</td><td>IMPORT</td></tr>
@@ -66,13 +67,14 @@ The possible values of the geometrical objects are listed in the table below:
             <tr align=center><td>44</td><td>3DSKETCHER</td></tr>
             <tr align=center><td>45</td><td>FILLET_2D</td></tr>
             <tr align=center><td>46</td><td>FILLET_1D</td></tr>
+            <tr align=center><td>&nbps;</td><td>&nbps;</td></tr>
 </table>
 
 Also geompy.py module provides a helper function ShapeIdToType() 
 that allows converting of the geometrical object type id value 
 to its string representation.
 
-<b>For example:</b>
+For example:
 \code
 import geompy
 box = geompy.MakeBoxDXDYDZ(10,10,10)
@@ -80,6 +82,24 @@ type = geompy.ShapeIdToType(box.GetType())
 print type
 \endcode
 
-The above code prints "BOX" value. 
+The above code prints "BOX" value.
+
+<b>GetShapeType function:</b>
+
+There are the shape type in terms of its topology nature, possible
+values are: { COMPOUND, COMPSOLID, SOLID, SHELL, FACE, WIRE, EDGE,
+VERTEX, SHAPE }<br>
+This type can be retrieved using geompy function GetShapeType().
+
+Example code:
+\code
+import geompy
+import GEOM
+box = geompy.MakeBoxDXDYDZ(10,10,10)
+type = geompy.GetShapeType()
+print type == GEOM.SOLID
+\endcode
+
+The code above prints "True".
 
 */
