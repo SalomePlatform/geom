@@ -10,7 +10,7 @@ The <b>Type</b> property of the geometrical object specifies the
 way the object has been created. It is an integer identifier that 
 has predefined value depending on the function type used for the 
 object creation. The type of the object can be retrieved using the 
-<b>GetType()</b> function.
+\b %GetType() function of the \b GEOM_Object interface.
 
 <b>For example</b>: the geometrical object created using MakeBox() 
 functions has type equal to 7. The shape imported from the BREP, 
@@ -86,10 +86,14 @@ The above code prints "BOX" value.
 
 <b>GetShapeType function:</b>
 
-There are the shape type in terms of its topology nature, possible
-values are: { COMPOUND, COMPSOLID, SOLID, SHELL, FACE, WIRE, EDGE,
-VERTEX, SHAPE }<br>
-This type can be retrieved using geompy function GetShapeType().
+The ShapeType property specifies the geometrical object in terms of
+its topology nature.
+
+The possible values are defined in the GEOM namespace: { COMPOUND, COMPSOLID,
+SOLID, SHELL, FACE, WIRE, EDGE, VERTEX, SHAPE }<br>
+
+This type can be retrieved using the \b %GetShapeType() function
+of the \b GEOM_Object interface.
 
 Example code:
 \code
@@ -100,6 +104,6 @@ type = geompy.GetShapeType()
 print type == GEOM.SOLID
 \endcode
 
-The code above prints "True".
+This code prints "True".
 
 */
