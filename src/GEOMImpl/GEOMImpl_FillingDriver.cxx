@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_FillingDriver.hxx>
@@ -122,7 +122,11 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
       if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
       if (BRep_Tool::Degenerated(TopoDS::Edge(Scurrent))) continue;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
-      C = new Geom_TrimmedCurve(C, First, Last);
+      if (Scurrent.Orientation() == TopAbs_REVERSED)
+        // Mantis isuue 0020659: consider the orientation of the edges
+        C = new Geom_TrimmedCurve(C, Last, First);
+      else
+        C = new Geom_TrimmedCurve(C, First, Last);
       Section.AddCurve(C);
       i++;
     }
@@ -130,20 +134,20 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     /* a 'tolerance' is used to compare 2 knots : see GeomFill_Generator.cdl */
     Section.Perform(Precision::Confusion());
     Handle(GeomFill_Line) Line = new GeomFill_Line(i);
-    
+
     GeomFill_AppSurf App (mindeg, maxdeg, tol3d, tol2d, nbiter); /* user parameters */
     App.Perform(Line, Section);
-    
+
     if (!App.IsDone()) return 0;
     Standard_Integer UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots;
     App.SurfShape(UDegree, VDegree, NbUPoles, NbVPoles, NbUKnots, NbVKnots);
     Handle(Geom_BSplineSurface) GBS = new Geom_BSplineSurface
       (App.SurfPoles(), App.SurfWeights(), App.SurfUKnots(), App.SurfVKnots(),
        App.SurfUMults(), App.SurfVMults(), App.UDegree(), App.VDegree());
-    
+
     if (GBS.IsNull()) return 0;
     aShape = BRepBuilderAPI_MakeFace(GBS);
-  }    
+  }
   else {
     // implemented by skl 20.03.2008 for bug 16568
     // make approximation - try to create bspline surface
@@ -262,7 +266,5 @@ const Handle(GEOMImpl_FillingDriver) Handle(GEOMImpl_FillingDriver)::DownCast(co
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
-
-
