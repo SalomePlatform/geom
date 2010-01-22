@@ -19,14 +19,14 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _NMTDS_MapOfPassKeyBoolean_HeaderFile
-#define _NMTDS_MapOfPassKeyBoolean_HeaderFile
+#ifndef _NMTDS_IndexedDataMapOfShapeBndSphere_HeaderFile
+#define _NMTDS_IndexedDataMapOfShapeBndSphere_HeaderFile
 
 #ifndef _TCollection_BasicMap_HeaderFile
 #include <TCollection_BasicMap.hxx>
 #endif
-#ifndef _Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx>
+#ifndef _Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere_HeaderFile
+#include <Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere.hxx>
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
@@ -35,10 +35,12 @@
 #include <Standard_Boolean.hxx>
 #endif
 class Standard_DomainError;
-class NMTDS_PassKeyBoolean;
-class NMTDS_PassKeyMapHasher;
-class NMTDS_MapIteratorOfMapOfPassKeyBoolean;
-class NMTDS_StdMapNodeOfMapOfPassKeyBoolean;
+class Standard_OutOfRange;
+class Standard_NoSuchObject;
+class TopoDS_Shape;
+class NMTDS_BndSphere;
+class TopTools_ShapeMapHasher;
+class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere;
 
 
 #ifndef _Standard_HeaderFile
@@ -49,7 +51,7 @@ class NMTDS_StdMapNodeOfMapOfPassKeyBoolean;
 #endif
 
 
-class NMTDS_MapOfPassKeyBoolean  : public TCollection_BasicMap {
+class NMTDS_IndexedDataMapOfShapeBndSphere  : public TCollection_BasicMap {
 
 public:
 
@@ -69,11 +71,11 @@ public:
  // 
 
 
-Standard_EXPORT NMTDS_MapOfPassKeyBoolean(const Standard_Integer NbBuckets = 1);
+Standard_EXPORT NMTDS_IndexedDataMapOfShapeBndSphere(const Standard_Integer NbBuckets = 1);
 
 
-Standard_EXPORT   NMTDS_MapOfPassKeyBoolean& Assign(const NMTDS_MapOfPassKeyBoolean& Other) ;
-  NMTDS_MapOfPassKeyBoolean& operator =(const NMTDS_MapOfPassKeyBoolean& Other) 
+Standard_EXPORT   NMTDS_IndexedDataMapOfShapeBndSphere& Assign(const NMTDS_IndexedDataMapOfShapeBndSphere& Other) ;
+  NMTDS_IndexedDataMapOfShapeBndSphere& operator =(const NMTDS_IndexedDataMapOfShapeBndSphere& Other) 
 {
   return Assign(Other);
 }
@@ -84,20 +86,51 @@ Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
 
 
 Standard_EXPORT   void Clear() ;
-~NMTDS_MapOfPassKeyBoolean()
+~NMTDS_IndexedDataMapOfShapeBndSphere()
 {
   Clear();
 }
 
 
 
-Standard_EXPORT   Standard_Boolean Add(const NMTDS_PassKeyBoolean& aKey) ;
+Standard_EXPORT   Standard_Integer Add(const TopoDS_Shape& K,const NMTDS_BndSphere& I) ;
 
 
-Standard_EXPORT   Standard_Boolean Contains(const NMTDS_PassKeyBoolean& aKey) const;
+Standard_EXPORT   void Substitute(const Standard_Integer I,const TopoDS_Shape& K,const NMTDS_BndSphere& T) ;
 
 
-Standard_EXPORT   Standard_Boolean Remove(const NMTDS_PassKeyBoolean& aKey) ;
+Standard_EXPORT   void RemoveLast() ;
+
+
+Standard_EXPORT   Standard_Boolean Contains(const TopoDS_Shape& K) const;
+
+
+Standard_EXPORT  const TopoDS_Shape& FindKey(const Standard_Integer I) const;
+
+
+Standard_EXPORT  const NMTDS_BndSphere& FindFromIndex(const Standard_Integer I) const;
+ const NMTDS_BndSphere& operator ()(const Standard_Integer I) const
+{
+  return FindFromIndex(I);
+}
+
+
+
+Standard_EXPORT   NMTDS_BndSphere& ChangeFromIndex(const Standard_Integer I) ;
+  NMTDS_BndSphere& operator ()(const Standard_Integer I) 
+{
+  return ChangeFromIndex(I);
+}
+
+
+
+Standard_EXPORT   Standard_Integer FindIndex(const TopoDS_Shape& K) const;
+
+
+Standard_EXPORT  const NMTDS_BndSphere& FindFromKey(const TopoDS_Shape& K) const;
+
+
+Standard_EXPORT   NMTDS_BndSphere& ChangeFromKey(const TopoDS_Shape& K) ;
 
 
 
@@ -119,7 +152,7 @@ private:
  // 
 
 
-Standard_EXPORT NMTDS_MapOfPassKeyBoolean(const NMTDS_MapOfPassKeyBoolean& Other);
+Standard_EXPORT NMTDS_IndexedDataMapOfShapeBndSphere(const NMTDS_IndexedDataMapOfShapeBndSphere& Other);
 
 
  // Fields PRIVATE

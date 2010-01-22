@@ -39,6 +39,7 @@ salomeinclude_HEADERS = \
 	Handle_NMTDS_ListNodeOfListOfPassKey.hxx \
 	Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx \
 	Handle_NMTDS_StdMapNodeOfMapOfPassKey.hxx \
+	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere.hxx \
 	NMTDS_CArray1OfIndexRange.hxx \
 	NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger.hxx \
 	NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx \
@@ -49,6 +50,8 @@ salomeinclude_HEADERS = \
 	NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
 	NMTDS_IndexedDataMapOfIntegerShape.hxx \
 	NMTDS_IndexedDataMapOfShapeBox.hxx \
+	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere.hxx \
+	NMTDS_IndexedDataMapOfShapeBndSphere.hxx \
 	NMTDS_IndexRange.hxx \
 	NMTDS_IndexRange.ixx \
 	NMTDS_IndexRange.jxx \
@@ -101,6 +104,11 @@ salomeinclude_HEADERS = \
 	NMTDS_Tools.hxx \
 	NMTDS_Tools.ixx \
 	NMTDS_Tools.jxx \
+	NMTDS_BndSphere.hxx \
+	NMTDS_BndSphere.ixx \
+	NMTDS_BndSphere.jxx \
+	NMTDS_BndSphere.lxx \
+	NMTDS_BndSphereTree.hxx \
 	NMTDS_BoxBndTree.hxx
 
 # Libraries targets
@@ -117,6 +125,8 @@ dist_libNMTDS_la_SOURCES = \
 	NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_0.cxx \
 	NMTDS_IndexedDataMapOfIntegerShape_0.cxx  \
 	NMTDS_IndexedDataMapOfShapeBox_0.cxx \
+	NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBndSphere_0.cxx \
+	NMTDS_IndexedDataMapOfShapeBndSphere_0.cxx \
 	NMTDS_IndexRange.cxx \
 	NMTDS_InterfPool.cxx \
 	NMTDS_Iterator.cxx \
@@ -143,6 +153,8 @@ dist_libNMTDS_la_SOURCES = \
 	NMTDS_StdMapNodeOfMapOfPassKey_0.cxx \
 	NMTDS_StdMapNodeOfMapOfPassKeyBoolean_0.cxx \
 	NMTDS_Tools.cxx \
+	NMTDS_BndSphere.cxx \
+	NMTDS_BndSphereTree.cxx \
 	NMTDS_BoxBndTree.cxx
 
 # additional information to compile and link file
@@ -158,6 +170,7 @@ libNMTDS_la_LDFLAGS  =		\
 # extra dist files
 CDL_FILES =				\
 	NMTDS.cdl			\
+	NMTDS_BndSphere.cdl		\
 	NMTDS_IndexRange.cdl		\
 	NMTDS_InterfPool.cdl		\
 	NMTDS_Iterator.cdl		\

@@ -19,26 +19,19 @@
 // the specific terms and conditions governing rights and limitations under the
 // License.
 
-#ifndef _NMTDS_MapOfPassKeyBoolean_HeaderFile
-#define _NMTDS_MapOfPassKeyBoolean_HeaderFile
+#ifndef _NMTDS_BndSphere_HeaderFile
+#define _NMTDS_BndSphere_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
+#ifndef _gp_Pnt_HeaderFile
+#include <gp_Pnt.hxx>
 #endif
-#ifndef _Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
+#ifndef _Standard_Real_HeaderFile
+#include <Standard_Real.hxx>
 #endif
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
-class Standard_DomainError;
-class NMTDS_PassKeyBoolean;
-class NMTDS_PassKeyMapHasher;
-class NMTDS_MapIteratorOfMapOfPassKeyBoolean;
-class NMTDS_StdMapNodeOfMapOfPassKeyBoolean;
+class gp_Pnt;
 
 
 #ifndef _Standard_HeaderFile
@@ -49,7 +42,7 @@ class NMTDS_StdMapNodeOfMapOfPassKeyBoolean;
 #endif
 
 
-class NMTDS_MapOfPassKeyBoolean  : public TCollection_BasicMap {
+class NMTDS_BndSphere  {
 
 public:
 
@@ -69,35 +62,27 @@ public:
  // 
 
 
-Standard_EXPORT NMTDS_MapOfPassKeyBoolean(const Standard_Integer NbBuckets = 1);
+Standard_EXPORT NMTDS_BndSphere();
+Standard_EXPORT virtual ~NMTDS_BndSphere();
+
+  void SetCenter(const gp_Pnt& theP) ;
+
+ const gp_Pnt& Center() const;
+
+  void SetRadius(const Standard_Real theR) ;
+
+  Standard_Real Radius() const;
+
+  void SetGap(const Standard_Real theGap) ;
+
+  Standard_Real Gap() const;
+
+  void Add(const NMTDS_BndSphere& theOther) ;
 
 
-Standard_EXPORT   NMTDS_MapOfPassKeyBoolean& Assign(const NMTDS_MapOfPassKeyBoolean& Other) ;
-  NMTDS_MapOfPassKeyBoolean& operator =(const NMTDS_MapOfPassKeyBoolean& Other) 
-{
-  return Assign(Other);
-}
+Standard_EXPORT   Standard_Boolean IsOut(const NMTDS_BndSphere& theOther) const;
 
-
-
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-
-Standard_EXPORT   void Clear() ;
-~NMTDS_MapOfPassKeyBoolean()
-{
-  Clear();
-}
-
-
-
-Standard_EXPORT   Standard_Boolean Add(const NMTDS_PassKeyBoolean& aKey) ;
-
-
-Standard_EXPORT   Standard_Boolean Contains(const NMTDS_PassKeyBoolean& aKey) const;
-
-
-Standard_EXPORT   Standard_Boolean Remove(const NMTDS_PassKeyBoolean& aKey) ;
+  Standard_Real SquareExtent() const;
 
 
 
@@ -111,15 +96,15 @@ protected:
 
  // Fields PROTECTED
  //
+gp_Pnt myCenter;
+Standard_Real myRadius;
+Standard_Real myGap;
 
 
 private: 
 
  // Methods PRIVATE
  // 
-
-
-Standard_EXPORT NMTDS_MapOfPassKeyBoolean(const NMTDS_MapOfPassKeyBoolean& Other);
 
 
  // Fields PRIVATE
@@ -129,6 +114,7 @@ Standard_EXPORT NMTDS_MapOfPassKeyBoolean(const NMTDS_MapOfPassKeyBoolean& Other
 };
 
 
+#include <NMTDS_BndSphere.lxx>
 
 
 
