@@ -431,41 +431,47 @@ void BasicGUI_MarkerDlg::onSelectionDone()
           TColStd_IndexedMapOfInteger aMap;
           aSelMgr->GetIndexes( anIO, aMap );
 
-          if ( !aMap.IsEmpty() ) {
+          if ( aMap.Extent() == 1 ) { // Local Selection
             int anIndex = aMap( 1 );
             if ( aNeedType == TopAbs_EDGE )
-              aName += QString( "_edge_%1" ).arg( anIndex );
+              aName += QString( ":edge_%1" ).arg( anIndex );
             else
-              aName += QString( "_vertex_%1" ).arg( anIndex );
-
-            TopTools_IndexedMapOfShape aShapes;
-            TopExp::MapShapes( aShape, aShapes );
-            aShape = aShapes.FindKey( anIndex );
-          }
-
-          if ( myEditCurrentArgument == Group2->LineEdit1 ) {
-            if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
-              myPoint = aSelectedObj;
-              myEditCurrentArgument->setText( aName );
-              if (Group2->LineEdit2->text() == "")
-                Group2->PushButton2->click();
+              aName += QString( ":vertex_%1" ).arg( anIndex );
+            
+            //Find SubShape Object in Father
+            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObj, aName );
+            if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+              aSelectedObj = aShapesOp->GetSubShape( aSelectedObj, anIndex );
+            } 
+            else {
+              aSelectedObj = aFindedObject; // get Object from study
             }
+          }
+          else { // Global Selection
+            if ( aShape.ShapeType() != aNeedType ) {
+              aSelectedObj = GEOM::GEOM_Object::_nil();
+              aName = "";
+            }
+          }
+          
+          if ( myEditCurrentArgument == Group2->LineEdit1 ) {
+            myPoint = aSelectedObj;
+            myEditCurrentArgument->setText( aName );
+            if (!myPoint->_is_nil() && Group2->LineEdit2->text() == "")
+                Group2->PushButton2->click();
           }
           else if (myEditCurrentArgument == Group2->LineEdit2) {
-            if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
-              myVectorX = aSelectedObj;
-              myEditCurrentArgument->setText( aName );
-              if (Group2->LineEdit3->text() == "")
-                Group2->PushButton3->click();
-            }
+            myVectorX = aSelectedObj;
+            myEditCurrentArgument->setText( aName );
+            if (!myVectorX->_is_nil() && Group2->LineEdit3->text() == "")
+              Group2->PushButton3->click();
           }
           else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
-            if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_EDGE ) {
-              myVectorY = aSelectedObj;
-              myEditCurrentArgument->setText( aName );
-              if (Group2->LineEdit1->text() == "")
+            myVectorY = aSelectedObj;
+            myEditCurrentArgument->setText( aName );
+            if (!myVectorX->_is_nil() && Group2->LineEdit1->text() == "")
                 Group2->PushButton1->click();
-            }
           }
         }
       }
