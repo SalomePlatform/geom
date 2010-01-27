@@ -100,7 +100,7 @@ Example code:
 import geompy
 import GEOM
 box = geompy.MakeBoxDXDYDZ(10,10,10)
-type = geompy.GetShapeType()
+type = box.GetShapeType()
 print type == GEOM.SOLID
 \endcode
 
