@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : BasicGUI_PointDlg.cxx
-// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : BasicGUI_PointDlg.cxx
+//  Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
+
 #include "BasicGUI_PointDlg.h"
 
 #include <SUIT_ResourceMgr.h>
@@ -64,7 +64,7 @@
 
 //=================================================================================
 // class    : BasicGUI_PointDlg()
-// purpose  : Constructs a BasicGUI_PointDlg which is a child of 'parent', with the 
+// purpose  : Constructs a BasicGUI_PointDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -171,13 +171,13 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   myZ->setEnabled( false );
 
   QPalette aPal = myX->palette();
-  aPal.setColor( QPalette::Disabled, QPalette::Text, QColor( 0, 0, 0 ) ) ;
+  aPal.setColor( QPalette::Disabled, QPalette::Text, QColor( 0, 0, 0 ) );
   myX->setPalette( aPal );
   myY->setPalette( aPal );
   myZ->setPalette( aPal );
 
   setHelpFileName( "create_point_page.html" );
- 
+
   Init();
 }
 
@@ -213,7 +213,7 @@ void BasicGUI_PointDlg::Init()
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
-  
+
   /* min, max, step and decimals for spin boxes */
   initSpinBox( GroupXYZ->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
   initSpinBox( GroupXYZ->SpinBox_DY, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
@@ -248,7 +248,6 @@ void BasicGUI_PointDlg::Init()
 
   connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-
   connect( myParamCoord->button( PARAM_VALUE ), SIGNAL( clicked() ), this, SLOT( ClickParamCoord() ) );
   connect( myParamCoord->button( COORD_VALUE ), SIGNAL( clicked() ), this, SLOT( ClickParamCoord() ) );
   connect( GroupOnCurve->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
@@ -277,9 +276,8 @@ void BasicGUI_PointDlg::Init()
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
            this,  SLOT(SelectionIntoArgument() ) );
 
-  
   initName( tr( "GEOM_VERTEX" ) );
-  
+
   ConstructorsClicked( 0 );
 }
 
@@ -306,14 +304,14 @@ void BasicGUI_PointDlg::SetDoubleSpinBoxStep( double step )
 // purpose  : Radio button management
 //=================================================================================
 void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
-{  
+{
   globalSelection(); // close local contexts, if any
 
   switch ( constructorId ) {
   case GEOM_POINT_XYZ:
     {
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-      
+
       GroupRefPoint->hide();
       GroupOnCurve->hide();
       GroupLineIntersection->hide();
@@ -331,18 +329,18 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myRefPoint = GEOM::GEOM_Object::_nil();
-      GroupRefPoint->PushButton1->setDown(true);      
+      GroupRefPoint->PushButton1->setDown(true);
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-      
+
       myParamCoord->button( PARAM_VALUE )->hide();
       myParamCoord->button( COORD_VALUE )->hide();
       GroupXYZ->hide();
       GroupOnCurve->hide();
       GroupLineIntersection->hide();
       GroupOnSurface->hide();
-      
+
       GroupRefPoint->show();
-      
+
       myCoordGrp->show();
       break;
     }
@@ -445,7 +443,7 @@ bool BasicGUI_PointDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
-  
+
   initName();
   ConstructorsClicked( getConstructorId() );
   return true;
@@ -498,7 +496,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 
           //Find SubShape Object in Father
           GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-          
+
           if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
             GEOM::GEOM_IShapesOperations_var aShapesOp =
               getGeomEngine()->GetIShapesOperations(getStudyId());
@@ -557,7 +555,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       }
     }
   }
-  
+
   displayPreview();
 }
 
@@ -569,9 +567,9 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 void BasicGUI_PointDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupRefPoint->LineEdit1         || 
+  if ( send == GroupRefPoint->LineEdit1         ||
        send == GroupOnCurve->LineEdit1          ||
-       send == GroupLineIntersection->LineEdit1 || 
+       send == GroupLineIntersection->LineEdit1 ||
        send == GroupLineIntersection->LineEdit2  ) {
     myEditCurrentArgument = send;
     GEOMBase_Skeleton::LineEditReturnPressed();
@@ -592,13 +590,13 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
   if ( send == GroupRefPoint->PushButton1 ) {
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
-    
+
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if ( send == GroupOnCurve->PushButton1 ) {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
-    
+
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == GroupOnSurface->PushButton1 )
@@ -775,7 +773,6 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
       ok = GroupXYZ->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
     }
     return !myFace->_is_nil() && ok;
-    
   }
   return false;
 }
@@ -803,7 +800,7 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       aParameters << GroupXYZ->SpinBox_DX->text();
       aParameters << GroupXYZ->SpinBox_DY->text();
       aParameters << GroupXYZ->SpinBox_DZ->text();
-      
+
       anObj = anOper->MakePointXYZ( x, y, z );
       res = true;
       break;
@@ -817,7 +814,7 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       aParameters << GroupRefPoint->SpinBox_DX->text();
       aParameters << GroupRefPoint->SpinBox_DY->text();
       aParameters << GroupRefPoint->SpinBox_DZ->text();
-      
+
       anObj = anOper->MakePointWithReference( myRefPoint, dx, dy, dz );
       res = true;
       break;
@@ -831,18 +828,18 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
         double x = GroupXYZ->SpinBox_DX->value();
         double y = GroupXYZ->SpinBox_DY->value();
         double z = GroupXYZ->SpinBox_DZ->value();
-        
+
         aParameters << GroupXYZ->SpinBox_DX->text();
         aParameters << GroupXYZ->SpinBox_DY->text();
         aParameters << GroupXYZ->SpinBox_DZ->text();
-        
+
         anObj = anOper->MakePointOnCurveByCoord( myEdge, x, y, z );
       }
       res = true;
       break;
     }
   case GEOM_POINT_INTINT :
-    anOper->MakePointOnLinesIntersection( myLine1, myLine2 );
+    anObj = anOper->MakePointOnLinesIntersection( myLine1, myLine2 );
     res = true;
     break;
   case GEOM_POINT_SURF :
@@ -855,26 +852,25 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
         double x = GroupXYZ->SpinBox_DX->value();
         double y = GroupXYZ->SpinBox_DY->value();
         double z = GroupXYZ->SpinBox_DZ->value();
-        
+
         aParameters << GroupXYZ->SpinBox_DX->text();
         aParameters << GroupXYZ->SpinBox_DY->text();
         aParameters << GroupXYZ->SpinBox_DZ->text();
-        
+
         anObj = anOper->MakePointOnSurfaceByCoord( myFace, x, y, z );
       }
       res = true;
       break;
     }
   }
-  
+
   const int id = getConstructorId();
-  if(!anObj->_is_nil() && !IsPreview() && (id ==  GEOM_POINT_XYZ || 
+  if(!anObj->_is_nil() && !IsPreview() && (id == GEOM_POINT_XYZ ||
                                            id == GEOM_POINT_REF ||
                                            id == GEOM_POINT_EDGE ||
                                            id == GEOM_POINT_SURF) ) {
       anObj->SetParameters(aParameters.join(":").toLatin1().constData());
   }
-  
 
   if ( id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF ) {
     TopoDS_Shape aShape;
@@ -891,11 +887,11 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       myZ->setText( "" );
     }
   }
-  
+
   if ( !anObj->_is_nil() ) {
     objects.push_back( anObj._retn() );
   }
-  
+
   return res;
 }
 
@@ -945,7 +941,7 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
 {
   bool isParam = myParamCoord->checkedId() == PARAM_VALUE;
   GroupXYZ->setShown( !isParam );
-  
+
   const int id = getConstructorId();
   if ( id == GEOM_POINT_EDGE ) {
     GroupOnCurve->TextLabel2->setShown( isParam );
