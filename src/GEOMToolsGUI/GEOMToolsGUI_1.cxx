@@ -557,13 +557,23 @@ void GEOMToolsGUI::OnDeflection()
       GEOMToolsGUI_DeflectionDlg * DeflectionDlg = new GEOMToolsGUI_DeflectionDlg
         (SUIT_Session::session()->activeApplication()->desktop());
       DeflectionDlg->setDC(aDC);
-      if (DeflectionDlg->exec()) {
-        SUIT_OverrideCursor();
-        double aNewDC = DeflectionDlg->getDC();
-        for (; ic->MoreCurrent(); ic->NextCurrent()) {
-          CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-          ic->SetDeviationCoefficient(CurObject, aNewDC, Standard_True);
-          ic->Redisplay(CurObject);
+      double aNewDC = 0.0;
+      bool ok = false;
+      while (!ok) {
+        if (DeflectionDlg->exec()) {
+          SUIT_OverrideCursor();
+          aNewDC = DeflectionDlg->getDC();
+          ok = (1e-07 <= aNewDC && aNewDC <= 1.0); // spinbox can return zero
+          if (ok) {
+            for (; ic->MoreCurrent(); ic->NextCurrent()) {
+              CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+              ic->SetDeviationCoefficient(CurObject, aNewDC, Standard_True);
+              ic->Redisplay(CurObject);
+            }
+          }
+        }
+        else {
+          ok = true;
         }
       }
     }
