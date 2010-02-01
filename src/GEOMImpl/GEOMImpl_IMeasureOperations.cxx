@@ -1344,7 +1344,10 @@ static double CheckSingularCase(const TopoDS_Shape& aSh1,
       if( sh.ShapeType()==TopAbs_SHELL || sh.ShapeType()==TopAbs_FACE ) {
         // non solid case
         double U1,U2,V1,V2;
-        S->Bounds(U1,U2,V1,V2);
+        // changes for 0020677: EDF 1219 GEOM: MinDistance gives 0 instead of 20.88
+        //S->Bounds(U1,U2,V1,V2); changed by
+        ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh1),U1,U2,V1,V2);
+        // end of changes for 020677 (dmv)
         Handle(Geom_RectangularTrimmedSurface) TrS1 = 
           new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
         Handle(Geom_RectangularTrimmedSurface) TrS2 = 
