@@ -39,6 +39,12 @@ sometimes purely geometrical coincidence is not enough and it
 is necessary to work with shapes, which actually belong both 
 to the main and the second shape.</li>
 </ul>
+<li>You can selectively display the selected elements using the following buttons:</li>
+<ul>
+<li><b>Show only selected</b> - displays only the subshapes selected in the list box.</li>
+<li><b>Hide selected</b> - hides the subshapes selected in the list box.</li>
+<li><b>Show all sub-shapes</b> - displays only the subshapes of the Main Shape.</li>
+</ul>
 <li> You can select the elements of your group in two ways:
 <ul>
 <li>You can select them manually in the 3D Viewer, and add to the

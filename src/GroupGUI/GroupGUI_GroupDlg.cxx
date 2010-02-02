@@ -111,30 +111,33 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   myMainName->setReadOnly(true);
   myMainName->setEnabled(myMode == CreateGroup);
 
-  QLabel* aSecondLabel = new QLabel(tr("SECOND_SHAPE"), GroupMedium);
-
-  mySelBtn2 = new QPushButton(GroupMedium);
-  mySelBtn2->setIcon(iconSelect);
-  mySelBtn2->setEnabled(false);
-
-  myShape2Name = new QLineEdit(GroupMedium);
-  myShape2Name->setReadOnly(true);
-  myShape2Name->setEnabled(false);
-
   myRestrictGroupBox = new QGroupBox(tr("SHAPE_SEL_RESTR"), GroupMedium);
   myRestrictGroup = new QButtonGroup(myRestrictGroupBox);
   QRadioButton* allSubs     = new QRadioButton(tr("NO_RESTR")            , myRestrictGroupBox);
   QRadioButton* inPlaceSubs = new QRadioButton(tr("GEOM_PARTS_OF_SHAPE2"), myRestrictGroupBox);
   QRadioButton* shape2Subs  = new QRadioButton(tr("SUBSHAPES_OF_SHAPE2") , myRestrictGroupBox);
-  QVBoxLayout* aRestrictLayout = new QVBoxLayout(myRestrictGroupBox);
+  QGridLayout* aRestrictLayout = new QGridLayout(myRestrictGroupBox);
+
+  QLabel* aSecondLabel = new QLabel(tr("SECOND_SHAPE"), myRestrictGroupBox);
+  mySelBtn2 = new QPushButton(myRestrictGroupBox);
+  mySelBtn2->setIcon(iconSelect);
+  mySelBtn2->setEnabled(false);
+  myShape2Name = new QLineEdit(myRestrictGroupBox);
+  myShape2Name->setReadOnly(true);
+  myShape2Name->setEnabled(false);
+
   aRestrictLayout->setMargin(9);
   aRestrictLayout->setSpacing(6);
-  aRestrictLayout->addWidget(allSubs);
-  aRestrictLayout->addWidget(inPlaceSubs);
-  aRestrictLayout->addWidget(shape2Subs);
-  myRestrictGroup->addButton(allSubs,     ALL_SUBSHAPES);
-  myRestrictGroup->addButton(inPlaceSubs, GET_IN_PLACE);
-  myRestrictGroup->addButton(shape2Subs,  SUBSHAPES_OF_SHAPE2);
+  aRestrictLayout->addWidget(allSubs,      0, 0, 1, 3);
+  aRestrictLayout->addWidget(inPlaceSubs,  1, 0, 1, 3);
+  aRestrictLayout->addWidget(shape2Subs,   2, 0, 1, 3);
+  aRestrictLayout->addWidget(aSecondLabel, 3, 0);
+  aRestrictLayout->addWidget(mySelBtn2,    3, 1);
+  aRestrictLayout->addWidget(myShape2Name, 3, 2);
+  myRestrictGroup->addButton(allSubs,      ALL_SUBSHAPES);
+  myRestrictGroup->addButton(inPlaceSubs,  GET_IN_PLACE);
+  myRestrictGroup->addButton(shape2Subs,   SUBSHAPES_OF_SHAPE2);
+  myRestrictGroupBox->setEnabled(!CORBA::is_nil(myMainObj));
   allSubs->setChecked(true);
 
   myShowOnlyBtn = new QPushButton(tr("Show only selected"), GroupMedium);
@@ -154,21 +157,20 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   aMedLayout->addWidget(aMainLabel,         0, 0);
   aMedLayout->addWidget(mySelBtn,           0, 1);
   aMedLayout->addWidget(myMainName,         0, 2, 1, 2);
-  aMedLayout->addWidget(aSecondLabel,       1, 0);
-  aMedLayout->addWidget(mySelBtn2,          1, 1);
-  aMedLayout->addWidget(myShape2Name,       1, 2, 1, 2);
-  aMedLayout->addWidget(myRestrictGroupBox, 2, 0, 3, 3);
+  aMedLayout->addWidget(myRestrictGroupBox, 1, 0, 4, 3);
 
-  aMedLayout->addWidget(myShowOnlyBtn,      2, 3);
-  aMedLayout->addWidget(myHideSelBtn,       3, 3);
-  aMedLayout->addWidget(myShowAllBtn,       4, 3);
+  aMedLayout->addWidget(myShowOnlyBtn,      1, 3);
+  aMedLayout->addWidget(myHideSelBtn,       2, 3);
+  aMedLayout->addWidget(myShowAllBtn,       3, 3);
 
+  aMedLayout->addWidget(myIdList,           5, 0, 4, 3);
   aMedLayout->addWidget(mySelAllBtn,        5, 3);
   aMedLayout->addWidget(myAddBtn,           6, 3);
   aMedLayout->addWidget(myRemBtn,           7, 3);
 
-  aMedLayout->addWidget(myIdList,           5, 0, 3, 3);
-  aMedLayout->setRowStretch(5, 1);
+  aMedLayout->setColumnStretch( 2, 5 );
+  aMedLayout->setRowStretch(5, 5);
+  aMedLayout->setRowStretch(8, 5);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
