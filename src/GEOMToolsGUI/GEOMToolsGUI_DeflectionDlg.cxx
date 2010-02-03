@@ -26,7 +26,7 @@
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include <GeometryGUI.h>
 #include <LightApp_Application.h>
-#include <SalomeApp_DoubleSpinBox.h>
+#include <QtxDoubleSpinBox.h>
 
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -71,11 +71,10 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   TextLabel1->setText(tr("GEOM_DEFLECTION"));
   GroupC1Layout->addWidget(TextLabel1, 0, 0);
 
-  //SpinBox = new SalomeApp_DoubleSpinBox (/*min*/1.0e-07, /*max*/1.0, /*step*/1.0e-04, GroupC1);
-  SpinBox = new SalomeApp_DoubleSpinBox (GroupC1);
-  SpinBox->setPrecision( 10 );
-  SpinBox->setDecimals( 10 );
-  SpinBox->setRange( 1.0e-07, 1.0 );
+  SpinBox = new QtxDoubleSpinBox (GroupC1);
+  SpinBox->setPrecision( 6 );
+  SpinBox->setDecimals( 6 );
+  SpinBox->setRange( DEFLECTION_MIN, 1.0 );
   SpinBox->setSingleStep( 1.0e-04 );
   //SpinBox->setMinimum(1.0e-07);
   //SpinBox->setMaximum(1.0);

@@ -1600,10 +1600,10 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( step, "precision", 3 );
 
   // Set property for deflection value for spinboxes
-  setPreferenceProperty( defl, "min", 1.0e-07 );
+  setPreferenceProperty( defl, "min", DEFLECTION_MIN );
   setPreferenceProperty( defl, "max", 1.0 );
   setPreferenceProperty( defl, "step", 1.0e-04 );
-  setPreferenceProperty( defl, "precision", 10 );
+  setPreferenceProperty( defl, "precision", 6 );
 
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;

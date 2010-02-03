@@ -636,6 +636,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 
             // IMP 0020626
             double aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
+            aDC = std::max( aDC, DEFLECTION_MIN ); // to avoid to small values of the coefficient
             AISShape->SetOwnDeviationCoefficient(aDC);
           }
         }

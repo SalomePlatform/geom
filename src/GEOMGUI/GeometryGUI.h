@@ -47,6 +47,9 @@
 #include "SALOMEconfig.h"
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 
+// minimum allowed value for deflection coefficient
+#define DEFLECTION_MIN 1e-06
+
 typedef QMap<QString, GEOMGUI*> GUIMap;
 
 class QDialog;
