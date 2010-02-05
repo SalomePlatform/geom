@@ -34,6 +34,7 @@
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
 class LightApp_SelectionMgr;
+class LightApp_DataOwner;
 
 class GEOMGUI_EXPORT GEOMGUI_Selection : public LightApp_Selection
 {
@@ -43,6 +44,8 @@ public:
 
   virtual QVariant      parameter( const int, const QString& ) const;
   virtual QVariant      parameter( const QString& ) const;
+  
+  virtual bool          processOwner( const LightApp_DataOwner* );
 
 private:
   bool                  isVisible( const int ) const;

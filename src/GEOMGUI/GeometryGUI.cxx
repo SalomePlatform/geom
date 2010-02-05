@@ -1530,6 +1530,8 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
       GEOM::GEOM_Object_var aGeomObj = GEOM::GEOM_Object::_narrow(anObj);
       if (CORBA::is_nil(aGeomObj) || aGeomObj->GetType() != GEOM_IMPORT)
         isImported = false;
+    } else {
+      isImported = false;
     }
   }
 

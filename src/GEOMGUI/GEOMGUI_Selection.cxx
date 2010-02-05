@@ -30,6 +30,8 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 
+#include "LightApp_DataOwner.h"
+
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewWindow.h>
@@ -97,6 +99,13 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
     return QVariant( hasShownChildren( ind ) );
   else
     return LightApp_Selection::parameter( ind, p );
+}
+
+// the method to skip temporary objects from selection (called from LightApp)
+
+bool GEOMGUI_Selection::processOwner( const LightApp_DataOwner* theOwner)
+{
+  return !theOwner->entry().contains("_");
 }
 
 QString GEOMGUI_Selection::typeName( const int index ) const
