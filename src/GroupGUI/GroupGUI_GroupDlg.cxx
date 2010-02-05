@@ -488,10 +488,15 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       for (int i = 0, n = myIdList->count(); i < n; i++)
         aMap.insert(myIdList->item(i)->text().toInt(), i);
 
+      bool highlight = false;
       for (int ii = 1, nn = aMapIndex.Extent(); ii <= nn; ii++) {
-        if (aMap.contains(aMapIndex(ii)))
+        if (aMap.contains(aMapIndex(ii))) {
           myIdList->item(aMap[aMapIndex(ii)])->setSelected(true);
+          highlight = true;
+        }
       }
+      if ( highlight )
+        highlightSubShapes();
     }
     myIdList->blockSignals(isBlocked);
 
@@ -914,6 +919,27 @@ void GroupGUI_GroupDlg::highlightSubShapes()
 
   SALOME_ListIO aSelList;
 
+  // To highlight the selected subshape in Object Browser, if it's already pudlished under the main shape
+  GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
+  QMap<int, QString> childsMap;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  if (appStudy) {
+    _PTR(Study) aStudy = appStudy->studyDS();
+    CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+    QString anEntry = aMainEntry.in();
+    _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
+    _PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
+    for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
+      GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anIt->Value()));
+      if ( !CORBA::is_nil( aChild ) ) {
+        int index = aLocOp->GetSubShapeIndex(myMainObj, aChild);
+        CORBA::String_var aChildEntry = aChild->GetStudyEntry();
+        QString anEntry = aChildEntry.in();
+        childsMap.insert(index, anEntry);
+      }
+    }
+  }
+
   AIS_ListIteratorOfListOfInteractive ite (List);
   for (; ite.More(); ite.Next()) {
     if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
@@ -924,8 +950,13 @@ void GroupGUI_GroupDlg::highlightSubShapes()
         int index = anEntry.lastIndexOf("_");
         anEntry.remove(0, index+1);
         int anIndex = anEntry.toInt();
-        if (anIds.Contains(anIndex))
+        if ( anIds.Contains(anIndex) ) {
           aSelList.Append(anIO);
+          if ( childsMap.contains ( anIndex )) {
+            Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject( childsMap.value(anIndex).toLatin1().constData(), "GEOM", "TEMP_IO" );
+            aSelList.Append(tmpIO);
+          }
+        } 
       }
     }
   }
