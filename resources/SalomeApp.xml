@@ -26,6 +26,12 @@
     <!-- Major module parameters -->
     <parameter name="name" value="Geometry"/>
     <parameter name="icon" value="ModuleGeom.png"/>
+    <parameter name="documentation" value="HELP_GEOM"/>
+  </section>
+  <section name="HELP_GEOM" >
+    <parameter name="sub_menu" value="%1"/>
+    <parameter name="GEOM User's Documentation" value="${GEOM_ROOT_DIR}/share/doc/salome/gui/GEOM/index.html"/>
+    <parameter name="GEOM Developer's Documentation" value="${GEOM_ROOT_DIR}/share/doc/salome/tui/GEOM/index.html"/>
   </section>
   <section name="resources">
     <!-- Module resources -->
