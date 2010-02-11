@@ -27,6 +27,7 @@
 #define BASICGUI_POINTDLG_H
 
 #include <GEOMBase_Skeleton.h>
+#include <QMap>
 
 class DlgRef_1Sel1Spin;
 class DlgRef_3Spin;
@@ -37,6 +38,8 @@ class DlgRef_1Sel2Spin;
 class QLineEdit;
 class QGroupBox;
 class QButtonGroup;
+class QMenu;
+class QAction;
 
 class gp_Pnt;
 
@@ -88,7 +91,14 @@ private:
   QLineEdit*                         myX;
   QLineEdit*                         myY;
   QLineEdit*                         myZ;
+
+  QGroupBox*                         myParamGroup;
   QButtonGroup*                      myParamCoord;
+
+  QMenu*                             myBtnPopup;
+  QMap<QAction*, int>                myActions;
+
+  TopAbs_ShapeEnum                   myNeedType;
   
 private slots:
   void                               ClickOnOk();
@@ -102,6 +112,7 @@ private slots:
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               ClickParamCoord();
+  void                               onBtnPopup( QAction* );
 };
 
 #endif // BASICGUI_POINTDLG_H

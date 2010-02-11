@@ -40,9 +40,12 @@ projected on the given edge to produce the resulting point.
 projected point.
 \image html point3_2.png
 
-\n Fourthly, we can define a point by intersection of two \b  Lines.
-\n <b>TUI Command:</b> <em>geompy.MakePointOnLinesIntersection(myLine1,myLine2).</em>
-\n <b>Arguments:</b> Name + 2 lines
+\n Fourthly, we can define a point(s) by intersection of two \b Lines or \b Wires (or a Wire and a Line). 
+If they intersect only once, a point will be created. If there are several intersections, a compound of 
+points will be created. The type of the selected object (Line or Wire) can be changed in the popup menu, 
+after clicking the corresponding selection button. (see the picture below) 
+\n <b>TUI Command:</b> <em>geompy.MakePointOnLinesIntersection(myLine1,myWire1).</em>
+\n <b>Arguments:</b> Name + 2 1D objects
 
 \image html point4.png
 

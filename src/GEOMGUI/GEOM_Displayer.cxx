@@ -577,14 +577,14 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         if ( HasColor() )
         {
           AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
+          Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
+          anAspect->SetColor( (Quantity_NameOfColor)GetColor() );
           if ( myShape.ShapeType() == TopAbs_VERTEX )
           {
-            Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
-            anAspect->SetColor( (Quantity_NameOfColor)GetColor() );
             anAspect->SetScale( myScaleOfMarker );
             anAspect->SetTypeOfMarker( myTypeOfMarker );
-            AISShape->Attributes()->SetPointAspect( anAspect );
           }
+          AISShape->Attributes()->SetPointAspect( anAspect );
         }
         else
         {

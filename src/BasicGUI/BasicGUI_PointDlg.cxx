@@ -42,6 +42,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QRadioButton>
+#include <QMenu>
 
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
@@ -61,6 +62,8 @@
 #define GEOM_POINT_INTINT 3
 #define GEOM_POINT_SURF   4
 
+#define SPACING 6
+#define MARGIN  9
 
 //=================================================================================
 // class    : BasicGUI_PointDlg()
@@ -79,6 +82,8 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   QPixmap image3( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_REF" ) ) );
   QPixmap image4( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_LINES") ) );
   QPixmap image5( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_FACE" ) ) );
+  QPixmap image6( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICO_LINE" ) ) );
+  QPixmap image7( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICO_WIRE" ) ) );
 
   setWindowTitle( tr( "GEOM_POINT_TITLE" ) );
 
@@ -92,14 +97,14 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   mainFrame()->RadioButton5->show();
   mainFrame()->RadioButton5->setIcon( image5 );
 
-  QGroupBox* paramGrp = new QGroupBox( centralWidget() );
-  myParamCoord = new QButtonGroup( paramGrp );
-  QHBoxLayout* boxLayout = new QHBoxLayout( paramGrp );
-  boxLayout->setMargin( 0 ); boxLayout->setSpacing( 6 );
-  QRadioButton* btn = new QRadioButton( tr( "GEOM_PARAM_VALUE" ), paramGrp );
+  myParamGroup = new QGroupBox( centralWidget() );
+  myParamCoord = new QButtonGroup( myParamGroup );
+  QHBoxLayout* boxLayout = new QHBoxLayout( myParamGroup );
+  boxLayout->setMargin( MARGIN ); boxLayout->setSpacing( SPACING );
+  QRadioButton* btn = new QRadioButton( tr( "GEOM_PARAM_VALUE" ), myParamGroup );
   myParamCoord->addButton( btn, PARAM_VALUE );
   boxLayout->addWidget( btn );
-  btn = new QRadioButton( tr( "GEOM_COORD_VALUE" ), paramGrp );
+  btn = new QRadioButton( tr( "GEOM_COORD_VALUE" ), myParamGroup );
   myParamCoord->addButton( btn, COORD_VALUE );
   boxLayout->addWidget( btn );
   myParamCoord->setExclusive( true );
@@ -132,12 +137,21 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupRefPoint->TextLabel3->setText( tr( "GEOM_DY" ) );
   GroupRefPoint->TextLabel4->setText( tr( "GEOM_DZ" ) );
 
+  /* popup menu for line intersect buttons */
+  myBtnPopup = new QMenu(this);
+  QIcon ico_line = QIcon( image6 );
+  QIcon ico_wire = QIcon( image7 );
+  myActions[myBtnPopup->addAction( ico_line, tr( "GEOM_EDGE" ) )] = 0;
+  myActions[myBtnPopup->addAction( ico_wire, tr( "GEOM_WIRE" ) )] = 1;
+
   GroupLineIntersection = new DlgRef_2Sel( centralWidget() );
   GroupLineIntersection->GroupBox1->setTitle( tr( "GEOM_LINE_INTERSECTION" ) );
   GroupLineIntersection->TextLabel1->setText( tr( "GEOM_LINE1" ) );
   GroupLineIntersection->TextLabel2->setText( tr( "GEOM_LINE2" ) );
   GroupLineIntersection->PushButton1->setIcon( image2 );
+  GroupLineIntersection->PushButton1->setMenu( myBtnPopup );
   GroupLineIntersection->PushButton2->setIcon( image2 );
+  GroupLineIntersection->PushButton2->setMenu( myBtnPopup );
   GroupLineIntersection->LineEdit2->setEnabled(false);
 
   myCoordGrp = new QGroupBox( tr( "GEOM_COORDINATES_RES" ), centralWidget() );
@@ -154,7 +168,7 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
-  layout->addWidget( paramGrp );
+  layout->addWidget( myParamGroup );
   layout->addWidget( GroupXYZ );
   layout->addWidget( GroupOnCurve );
   layout->addWidget( GroupOnSurface );
@@ -207,6 +221,7 @@ void BasicGUI_PointDlg::Init()
 
   myEdge = GEOM::GEOM_Object::_nil();
   myRefPoint = GEOM::GEOM_Object::_nil();
+  myNeedType = TopAbs_VERTEX;
 
   myEditCurrentArgument = 0;
 
@@ -256,8 +271,9 @@ void BasicGUI_PointDlg::Init()
   connect( GroupOnSurface->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupOnSurface->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
-  connect( GroupLineIntersection->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupLineIntersection->PushButton2, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( myBtnPopup, SIGNAL( triggered( QAction* ) ), SLOT( onBtnPopup( QAction* ) ) );
+  connect( GroupLineIntersection->PushButton1, SIGNAL( pressed() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupLineIntersection->PushButton2, SIGNAL( pressed() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupLineIntersection->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupLineIntersection->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
@@ -305,67 +321,63 @@ void BasicGUI_PointDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 {
-  globalSelection(); // close local contexts, if any
-
   switch ( constructorId ) {
   case GEOM_POINT_XYZ:
     {
+      globalSelection(); // close local contexts, if any
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
       GroupRefPoint->hide();
       GroupOnCurve->hide();
       GroupLineIntersection->hide();
       GroupOnSurface->hide();
-
       myCoordGrp->hide();
-
-      myParamCoord->button( PARAM_VALUE )->hide();
-      myParamCoord->button( COORD_VALUE )->hide();
+      myParamGroup->hide();
       GroupXYZ->show();
       break;
     }
   case GEOM_POINT_REF:
     {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+
       myEditCurrentArgument = GroupRefPoint->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myRefPoint = GEOM::GEOM_Object::_nil();
       GroupRefPoint->PushButton1->setDown(true);
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-
-      myParamCoord->button( PARAM_VALUE )->hide();
-      myParamCoord->button( COORD_VALUE )->hide();
+      myParamGroup->hide();
       GroupXYZ->hide();
       GroupOnCurve->hide();
       GroupLineIntersection->hide();
       GroupOnSurface->hide();
-
       GroupRefPoint->show();
-
       myCoordGrp->show();
       break;
     }
   case GEOM_POINT_EDGE:
     {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+
       myEditCurrentArgument = GroupOnCurve->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myEdge = GEOM::GEOM_Object::_nil();
       GroupOnCurve->PushButton1->setDown(true);
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
-
       GroupRefPoint->hide();
       GroupLineIntersection->hide();
       GroupOnSurface->hide();
-
-      myParamCoord->button( PARAM_VALUE )->show();
-      myParamCoord->button( COORD_VALUE )->show();
+      myParamGroup->show();
       GroupOnCurve->show();
       myCoordGrp->show();
-
       updateParamCoord( false );
       break;
     }
   case GEOM_POINT_INTINT:
     {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+      myNeedType = TopAbs_EDGE;
+
       myEditCurrentArgument = GroupLineIntersection->LineEdit1;
       GroupLineIntersection->LineEdit1->setText( "" );
       GroupLineIntersection->LineEdit2->setText( "" );
@@ -375,38 +387,30 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       myLine2 = GEOM::GEOM_Object::_nil();
       GroupLineIntersection->PushButton1->setDown(true);
       GroupLineIntersection->PushButton2->setDown(false);
-
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
-
-      myParamCoord->button( PARAM_VALUE )->hide();
-      myParamCoord->button( COORD_VALUE )->hide();
+      myParamGroup->hide();
       GroupXYZ->hide();
       GroupRefPoint->hide();
       GroupOnCurve->hide();
       GroupOnSurface->hide();
-
       myCoordGrp->hide();
-
       GroupLineIntersection->show();
       break;
     }
   case GEOM_POINT_SURF:
     {
+      globalSelection(); // close local contexts, if any
+      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+
       myEditCurrentArgument = GroupOnSurface->LineEdit1;
       myEditCurrentArgument->setText( "" );
       myFace = GEOM::GEOM_Object::_nil();
       GroupOnSurface->PushButton1->setDown(true);
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
-
       GroupRefPoint->hide();
       GroupOnCurve->hide();
       GroupLineIntersection->hide();
-
-      myParamCoord->button( PARAM_VALUE )->show();
-      myParamCoord->button( COORD_VALUE )->show();
+      myParamGroup->show();
       GroupOnSurface->show();
       myCoordGrp->show();
-
       updateParamCoord( false );
       break;
     }
@@ -477,21 +481,26 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
     if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
       QString aName = GEOMBase::GetName(aSelectedObject);
-      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-        if ( id == GEOM_POINT_EDGE || id == GEOM_POINT_INTINT )
-          aNeedType = TopAbs_EDGE;
+        if ( id == GEOM_POINT_XYZ || id == GEOM_POINT_REF)
+          myNeedType = TopAbs_VERTEX;
+        else if ( id == GEOM_POINT_EDGE )
+          myNeedType = TopAbs_EDGE;
         else if ( id == GEOM_POINT_SURF )
-          aNeedType = TopAbs_FACE;
+          myNeedType = TopAbs_FACE;
 
         TColStd_IndexedMapOfInteger aMap;
         aSelMgr->GetIndexes(anIO, aMap);
         if ( aMap.Extent() == 1 ) { // Local Selection
           int anIndex = aMap( 1 );
-          if ( aNeedType == TopAbs_EDGE )
+          if ( myNeedType == TopAbs_FACE )
+            aName += QString( ":face_%1" ).arg( anIndex );
+          else if ( myNeedType == TopAbs_WIRE )
+            aName += QString( ":wire_%1" ).arg( anIndex );
+          else if ( myNeedType == TopAbs_EDGE )
             aName += QString( ":edge_%1" ).arg( anIndex );
-          else
+          else  if ( myNeedType == TopAbs_VERTEX )
             aName += QString( ":vertex_%1" ).arg( anIndex );
 
           //Find SubShape Object in Father
@@ -508,7 +517,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
           GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE );
         }
         else { // Global Selection
-          if ( aShape.ShapeType() != aNeedType ) {
+          if ( aShape.ShapeType() != myNeedType ) {
             aSelectedObject = GEOM::GEOM_Object::_nil();
             aName = "";
             if ( id == GEOM_POINT_XYZ ) return;
@@ -516,7 +525,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         }
       }
 
-      if ( aShape.IsNull() || aShape.ShapeType() != aNeedType)
+      if ( aShape.IsNull() || aShape.ShapeType() != myNeedType)
         return;
 
       if ( id == GEOM_POINT_XYZ ) {
@@ -535,17 +544,23 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       }
       else if ( id == GEOM_POINT_INTINT ) {
         myEditCurrentArgument->setText( aName );
-        globalSelection();
-        localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
         if ( myEditCurrentArgument == GroupLineIntersection->LineEdit1 ) {
           myLine1 = aSelectedObject;
-          if ( !myLine1->_is_nil() && myLine2->_is_nil() )
+          if ( !myLine1->_is_nil() && myLine2->_is_nil() ) {
+            GroupLineIntersection->PushButton2->setMenu( 0 );
             GroupLineIntersection->PushButton2->click();
+            GroupLineIntersection->PushButton2->setDown(true);
+            GroupLineIntersection->PushButton2->setMenu( myBtnPopup );
+          }
         }
         else if ( myEditCurrentArgument == GroupLineIntersection->LineEdit2 ) {
           myLine2 = aSelectedObject;
-          if ( !myLine2->_is_nil() && myLine1->_is_nil() )
+          if ( !myLine2->_is_nil() && myLine1->_is_nil() ) {
+            GroupLineIntersection->PushButton1->setMenu( 0 );
             GroupLineIntersection->PushButton1->click();
+            GroupLineIntersection->PushButton1->setDown(true);
+            GroupLineIntersection->PushButton1->setMenu( myBtnPopup );
+          }
         }
       }
       else if ( id == GEOM_POINT_SURF )
@@ -583,27 +598,25 @@ void BasicGUI_PointDlg::LineEditReturnPressed()
 //=================================================================================
 void BasicGUI_PointDlg::SetEditCurrentArgument()
 {
-  globalSelection(); // close local contexts, if any
-
   QPushButton* send = (QPushButton*)sender();
 
   if ( send == GroupRefPoint->PushButton1 ) {
     GroupRefPoint->LineEdit1->setFocus();
     myEditCurrentArgument = GroupRefPoint->LineEdit1;
-
+    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   }
   else if ( send == GroupOnCurve->PushButton1 ) {
     GroupOnCurve->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnCurve->LineEdit1;
-
+    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == GroupOnSurface->PushButton1 )
   {
     GroupOnSurface->LineEdit1->setFocus();
     myEditCurrentArgument = GroupOnSurface->LineEdit1;
-
+    globalSelection(); // close local contexts, if any
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
   }
   else if ( send == GroupLineIntersection->PushButton1 ) {
@@ -612,7 +625,6 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupLineIntersection->PushButton2->setDown( false );
     GroupLineIntersection->LineEdit1->setEnabled(true);
     GroupLineIntersection->LineEdit2->setEnabled(false);
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   else if ( send == GroupLineIntersection->PushButton2 ) {
     GroupLineIntersection->LineEdit2->setFocus();
@@ -620,7 +632,6 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupLineIntersection->PushButton1->setDown( false );
     GroupLineIntersection->LineEdit1->setEnabled(false);
     GroupLineIntersection->LineEdit2->setEnabled(true);
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   }
   send->setDown(true);
 }
@@ -958,4 +969,21 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
     updateGeometry();
     resize( minimumSizeHint() );
   }
+}
+
+//=================================================================================
+// function : onBtnPopup()
+// purpose  :
+//=================================================================================
+void BasicGUI_PointDlg::onBtnPopup( QAction* a )
+{
+  int index = myActions[a];
+  globalSelection(); // close local contexts, if any
+  QString type;
+  if ( index == 0 )
+    myNeedType = TopAbs_EDGE;
+  else 
+    myNeedType = TopAbs_WIRE;
+  
+  localSelection( GEOM::GEOM_Object::_nil(), myNeedType );
 }

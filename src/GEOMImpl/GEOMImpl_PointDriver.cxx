@@ -29,12 +29,14 @@
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
+#include <BRep_Builder.hxx>
 #include <Precision.hxx>
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
+#include <TopoDS_Compound.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -105,6 +107,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   gp_Pnt aPnt;
+  TopoDS_Compound aCompound;
+  bool retCompound = false;
 
   if (aType == POINT_XYZ) {
     aPnt = gp_Pnt(aPI.GetX(), aPI.GetY(), aPI.GetZ());
@@ -120,7 +124,6 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     }
     gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aRefShape));
     aPnt = gp_Pnt(P.X() + aPI.GetX(), P.Y() + aPI.GetY(), P.Z() + aPI.GetZ());
-
   }
   else if (aType == POINT_CURVE_PAR) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
@@ -181,32 +184,45 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Shape aRefShape1 = aRef1->GetValue();
     TopoDS_Shape aRefShape2 = aRef2->GetValue();
 
-    if (aRefShape1.ShapeType() != TopAbs_EDGE || aRefShape2.ShapeType() != TopAbs_EDGE ) {
+    if ( (aRefShape1.ShapeType() != TopAbs_EDGE && aRefShape1.ShapeType() != TopAbs_WIRE)
+      || (aRefShape2.ShapeType() != TopAbs_EDGE && aRefShape2.ShapeType() != TopAbs_WIRE) ) {
       Standard_TypeMismatch::Raise
-        ("Creation Point On Lines Intersection Aborted : Line shape is not an edge");
+        ("Creation Point On Lines Intersection Aborted : Line shape is not an edge or wire");
     }
     //Calculate Lines Intersection Point
     BRepExtrema_DistShapeShape dst (aRefShape1, aRefShape2);
-    if (dst.IsDone())
-      {
-        gp_Pnt P1, P2;
-        for (int i = 1; i <= dst.NbSolution(); i++) {
-          P1 = dst.PointOnShape1(i);
-          P2 = dst.PointOnShape2(i);
-          Standard_Real Dist = P1.Distance(P2);
-          if ( Dist <= Precision::Confusion() )
-            aPnt = P1;
-          else 
-            Standard_TypeMismatch::Raise ("Lines not have an Intersection Point");
+    if (dst.IsDone()) {
+      gp_Pnt P1, P2;
+      BRep_Builder B;
+      B.MakeCompound( aCompound );
+      for (int i = 1; i <= dst.NbSolution(); i++) {
+        P1 = dst.PointOnShape1(i);
+        P2 = dst.PointOnShape2(i);
+        Standard_Real Dist = P1.Distance(P2);
+        if ( Dist <= Precision::Confusion() && dst.NbSolution() > 1) {
+          BRepBuilderAPI_MakeVertex mkVertex (P1);
+          B.Add(aCompound, mkVertex.Shape());
+          retCompound = true;
+        } else if ( Dist <= Precision::Confusion() ) {
+          aPnt = P1;
+        } else {
+          Standard_TypeMismatch::Raise ("Shapes has not an Intersection Points");
         }
       }
+    }
   }
   else {
     return 0;
   }
 
-  BRepBuilderAPI_MakeVertex mkVertex (aPnt);
-  TopoDS_Shape aShape = mkVertex.Shape();
+  TopoDS_Shape aShape;
+  if ( retCompound ) {
+    aShape = aCompound;
+  } else {
+    BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+    aShape = mkVertex.Shape();
+  }
+
   aShape.Infinite(Standard_True);
   aFunction->SetValue(aShape);
 
@@ -258,5 +274,3 @@ const Handle(GEOMImpl_PointDriver) Handle(GEOMImpl_PointDriver)::DownCast(const 
 
   return _anOtherObject ;
 }
-
-
