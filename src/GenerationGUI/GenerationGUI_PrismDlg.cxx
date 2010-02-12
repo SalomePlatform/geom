@@ -169,7 +169,7 @@ void GenerationGUI_PrismDlg::Init()
 
   GroupPoints3->LineEdit1->setText("");
 
-  myPoint1 = myPoint2 = myBase = myVec = GEOM::GEOM_Object::_nil();
+  myPoint1 = myPoint2 = myVec = GEOM::GEOM_Object::_nil();
   myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
 
   // signals and slots connections
@@ -278,13 +278,8 @@ void GenerationGUI_PrismDlg::ConstructorsClicked (int constructorId)
   updateGeometry();
   resize(minimumSizeHint());
 
-  if (myInitial) {
-    myInitial = false;
-    SelectionIntoArgument();
-  }
-  else {
-    displayPreview();
-  }
+  SelectionIntoArgument();
+  displayPreview();
 }
 
 //=================================================================================
@@ -325,17 +320,34 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
+  QString aBaseName = ""; /* name of base object selection */
+  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aBaseName, true);
+
+  if (nbSel > 1)
+    aBaseName = QString( "%1_objects").arg( nbSel );
+
+  // Base Object(s) selected
+  if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
+      myEditCurrentArgument == GroupPoints2->LineEdit1 ||
+      getConstructorId() == 2 ) {
+    myOkBase = false;
+    if ( nbSel > 0 ) {
+      GEOMBase::ConvertListOfIOInListOfGO(aSelList, myBaseObjects, true);
+      myEditCurrentArgument->setText( aBaseName );
+      myOkBase = true;
+    }
+    displayPreview();
+    return;
+  }
+
   if (getConstructorId() == 0)
   {
-    if (aSelList.Extent() != 1) {
-      if (myEditCurrentArgument == GroupPoints->LineEdit1)
-        myOkBase = false;
-      else if (myEditCurrentArgument == GroupPoints->LineEdit2)
+    if (aSelList.Extent() < 1) {
+      if (myEditCurrentArgument == GroupPoints->LineEdit2)
         myOkVec = false;
       return;
     }
 
-    // nbSel == 1
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
       GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
@@ -376,26 +388,15 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       }
     }
 
-    myEditCurrentArgument->setText(aName);
-
-    if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-      myBase = aSelectedObject;
-      myOkBase = true;
-      if (!myOkVec)
-        GroupPoints->PushButton2->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2 && myOk) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit2 && myOk) {
+      myEditCurrentArgument->setText(aName);
       myOkVec = true;
       myVec = aSelectedObject;
-      if (!myOkBase)
-        GroupPoints->PushButton1->click();
     }
   }
   else if (getConstructorId() == 1) { // getConstructorId()==1 - extrusion using 2 points
     if (aSelList.Extent() != 1) {
-      if (myEditCurrentArgument == GroupPoints2->LineEdit1)
-        myOkBase = false;
-      else if (myEditCurrentArgument == GroupPoints2->LineEdit2) {
+      if (myEditCurrentArgument == GroupPoints2->LineEdit2) {
         myPoint1 = GEOM::GEOM_Object::_nil();
         myOkPnt1 = false;
       }
@@ -406,7 +407,6 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       return;
     }
 
-    // nbSel == 1
     Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
       GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
@@ -447,13 +447,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
 
     myEditCurrentArgument->setText(aName);
 
-    if (myEditCurrentArgument == GroupPoints2->LineEdit1) {
-      myOkBase = true;
-      myBase = aSelectedObject;
-      if (!myOkPnt1)
-        GroupPoints2->PushButton2->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints2->LineEdit2 && myOk) {
+    if (myEditCurrentArgument == GroupPoints2->LineEdit2 && myOk) {
       myOkPnt1 = true;
       myPoint1 = aSelectedObject;
       if (!myOkPnt2)
@@ -466,25 +460,6 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
         GroupPoints2->PushButton1->click();
     }
   }
-  else if (getConstructorId() == 2) { // extrusion using dx dy dz
-    Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-
-    if (!testResult || CORBA::is_nil(aSelectedObject))
-      return;
-
-    QString aName = GEOMBase::GetName(aSelectedObject);
-    myBase = aSelectedObject;
-    myOkBase = true;
-    myEditCurrentArgument->setText(aName);
-  }
-
-  // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
 
   displayPreview();
 }
@@ -651,60 +626,54 @@ bool GenerationGUI_PrismDlg::isValid (QString& msg)
 bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
 {
   QStringList aParameters;
-  GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_Object_var anObj, aBaseObj;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  switch (getConstructorId()) {
-  case 0:
-    if (!myBothway) {
-      anObj = anOper->MakePrismVecH(myBase, myVec, getHeight());
+  for (int i=0; i < myBaseObjects.length(); i++) {
+    aBaseObj = myBaseObjects[i];
+    
+    switch (getConstructorId()) {
+    case 0:
+      if (!myBothway)
+        anObj = anOper->MakePrismVecH(aBaseObj, myVec, getHeight());
+      else
+        anObj = anOper->MakePrismVecH2Ways(aBaseObj, myVec, getHeight());
+      
+      if (!anObj->_is_nil() && !IsPreview()) {
+        aParameters << GroupPoints->SpinBox_DX->text();
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      }
+      break;
+    case 1:
+      if (!myBothway2)
+        anObj = anOper->MakePrismTwoPnt(aBaseObj, myPoint1, myPoint2);
+      else
+        anObj = anOper->MakePrismTwoPnt2Ways(aBaseObj, myPoint1, myPoint2);
+      break;
+    case 2:
+      double dx = GroupPoints3->SpinBox_DX->value();
+      double dy = GroupPoints3->SpinBox_DY->value();
+      double dz = GroupPoints3->SpinBox_DZ->value();
+      
+      if (!myBothway3)
+        anObj = anOper->MakePrismDXDYDZ(aBaseObj, dx, dy, dz);
+      else
+        anObj = anOper->MakePrismDXDYDZ2Ways(aBaseObj, dx, dy, dz);
+      
+      if (!anObj->_is_nil() && !IsPreview()) {
+        aParameters << GroupPoints3->SpinBox_DX->text();
+        aParameters << GroupPoints3->SpinBox_DY->text();
+        aParameters << GroupPoints3->SpinBox_DZ->text();
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      }
+      break;
     }
-    else {
-      anObj = anOper->MakePrismVecH2Ways(myBase, myVec, getHeight());
-    }
-
-    if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupPoints->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
-
-    break;
-  case 1:
-    if (!myBothway2) {
-      anObj = anOper->MakePrismTwoPnt(myBase, myPoint1, myPoint2);
-    }
-    else {
-      anObj = anOper->MakePrismTwoPnt2Ways(myBase, myPoint1, myPoint2);
-    }
-    break;
-  case 2:
-    double dx = GroupPoints3->SpinBox_DX->value();
-    double dy = GroupPoints3->SpinBox_DY->value();
-    double dz = GroupPoints3->SpinBox_DZ->value();
-
-    if (!myBothway3) {
-      anObj = anOper->MakePrismDXDYDZ(myBase, dx, dy, dz);
-    }
-    else {
-      anObj = anOper->MakePrismDXDYDZ2Ways(myBase, dx, dy, dz);
-    }
-
-    if (!anObj->_is_nil() && !IsPreview())
-    {
-      aParameters << GroupPoints3->SpinBox_DX->text();
-      aParameters << GroupPoints3->SpinBox_DY->text();
-      aParameters << GroupPoints3->SpinBox_DZ->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
-    }
-
-    break;
+    
+    if (!anObj->_is_nil())
+      objects.push_back(anObj._retn());
   }
-
-  if (!anObj->_is_nil())
-    objects.push_back(anObj._retn());
-
+  
   return true;
 }
 

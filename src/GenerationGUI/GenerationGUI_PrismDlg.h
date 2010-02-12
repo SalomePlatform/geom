@@ -57,7 +57,7 @@ private:
   double                             getHeight() const;
  
 private:
-  GEOM::GEOM_Object_var              myBase; /* Base shape */
+  GEOM::ListOfGO                     myBaseObjects;  /* Base shapes */
   GEOM::GEOM_Object_var              myVec;  /* Vector, defining the direction */
   GEOM::GEOM_Object_var              myPoint1, myPoint2;   /* Points for extrusion */ 
   

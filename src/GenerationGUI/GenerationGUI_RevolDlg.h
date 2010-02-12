@@ -55,7 +55,7 @@ private:
   double                             getAngle() const;
   
 private:
-  GEOM::GEOM_Object_var              myBase; /* Base shape */
+  GEOM::ListOfGO                     myBaseObjects;  /* Base shapes */
   GEOM::GEOM_Object_var              myAxis; /* Axis of the revolution */
   bool                               myOkBase; 
   bool                               myOkAxis;

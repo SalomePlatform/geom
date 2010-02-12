@@ -5,13 +5,14 @@
 \n To generate an \b Extrusion on an object in the <b>Main Menu</b>
 select <b>New Entity - > Generation  - > Extrusion</b>
 
-\n There are 2 algorithms for creation of an \b Extrusion (Prism).
+\n There are 3 algorithms for creation of an \b Extrusion (Prism).
 \n The \b Result of the operation will be a GEOM_Object (edge, face, shell
 solid or compsolid).
 
 \n Firstly, you can define the <b>Base Shape</b> (a basis of the
 extrusion), the \b Vector (a direction of the extrusion) and the \b
-Height of extrusion.
+Height of extrusion.<br>
+It is possible to select in GUI several Base Shapes to make several extrusions (using Shift button). 
 \n The \b Result of the operation will be a GEOM_Object (edge, face,
 shell, solid or compsolid).
 \n <b> Both Directions </b> checkbox allows extruiding the source
@@ -23,7 +24,7 @@ extrusion) + 1 value (dimension).
 
 \image html extrusion1.png
 
-\n Secondly, you can define the \b Extrusion by the <b>Base Shape</b>
+\n Secondly, you can define the \b Extrusion by the <b>Base Shape(s)</b>
 and the \b Start and <b>End Point</b> of the \b Vector (in this way
 you don't need to create it in advance).
 \n <b> Both Directions </b> checkbox allows extruiding the source
@@ -34,7 +35,7 @@ shell) serving as base object + 2 vertices.
 
 \image html extrusion2.png
 
-\n Finally, you can define the \b Extrusion by the <b>Base Shape</b>
+\n Finally, you can define the \b Extrusion by the <b>Base Shape(s)</b>
 and the <b>DX, DY, DZ</b> Vector\n
 <b>Both Directions</b> checkbox allows extruding the
 source objects both forward and backward.

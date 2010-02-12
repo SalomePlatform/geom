@@ -113,7 +113,7 @@ void GenerationGUI_PipeDlg::Init()
   GroupPoints->LineEdit1->setText("");
   GroupPoints->LineEdit2->setText("");
   GroupPoints->LineEdit3->setText("");
-  myBase = myPath = myVec = GEOM::GEOM_Object::_nil();
+  myPath = myVec = GEOM::GEOM_Object::_nil();
   myOkBase = myOkPath = myOkVec = false;
 
   GroupPoints->CheckButton1->setEnabled(false);
@@ -171,6 +171,9 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
       break;
     }
   }
+  qApp->processEvents();
+  updateGeometry();
+  resize(100,100);
 
   displayPreview();
 }
@@ -240,12 +243,12 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if (aSelList.Extent() != 1)
+  if (aSelList.Extent() < 1)
     return;
 
-  // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  QString aName = GEOMBase::GetName(aSelectedObject);
 
   if (!testResult || aSelectedObject->_is_nil())
     return;
@@ -255,98 +258,87 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     return;
 
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    if (S.ShapeType() == TopAbs_COMPSOLID ||
-        S.ShapeType() == TopAbs_COMPOUND ||
-        S.ShapeType() == TopAbs_SOLID ||
-        S.ShapeType() == TopAbs_SHAPE)
-      return;
-    if ( getConstructorId() == 1 && 
-         (S.ShapeType() == TopAbs_SHELL || 
-          S.ShapeType() == TopAbs_VERTEX))
-      return;
+    myOkBase = false;
+    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myBaseObjects, true);
+    if (aSelList.Extent() > 1)
+      aName = QString( "%1_objects").arg( aSelList.Extent() );
 
-    myBase = aSelectedObject;
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+    if ( aSelList.Extent() > 0 ) {
+      // check base shapes
+      for (int i=0; i < myBaseObjects.length(); i++) {
+        GEOMBase::GetShape(myBaseObjects[i], S);
+        if (S.ShapeType() == TopAbs_COMPSOLID ||
+            S.ShapeType() == TopAbs_COMPOUND ||
+            S.ShapeType() == TopAbs_SOLID ||
+            S.ShapeType() == TopAbs_SHAPE)
+          return;
+        if ( getConstructorId() == 1 && 
+             (S.ShapeType() == TopAbs_SHELL || 
+              S.ShapeType() == TopAbs_VERTEX))
+          return;
+      }
+    }
+
+    myEditCurrentArgument->setText(aName);
     myOkBase = true;
-    if (!myOkPath)
-      GroupPoints->PushButton2->click();
-    else if (!myOkVec)
-      GroupPoints->PushButton3->click();
-  }
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2 || 
+  } else if (myEditCurrentArgument == GroupPoints->LineEdit2 || 
            myEditCurrentArgument == GroupPoints->LineEdit3) {
     myEditCurrentArgument == GroupPoints->LineEdit2 ? myOkPath = false : myOkVec = false;
     bool myOk = false;
-    QString aName = GEOMBase::GetName(aSelectedObject);
 
     if (myEditCurrentArgument == GroupPoints->LineEdit2 && !GroupPoints->CheckButton1->isChecked() ){
       myPath = aSelectedObject;
       myOkPath = true;
       myEditCurrentArgument->setText(aName);
-    }
-    else 
-      { 
-        if (aSelectedObject != myBase) {
-          TColStd_IndexedMapOfInteger aMap;
-          aSelMgr->GetIndexes(aSelList.First(), aMap);
-          if (aMap.Extent() == 1) {
-            int anIndex = aMap(1);
-            aName.append(":edge_" + QString::number(anIndex));
-            
-            //Find SubShape Object in Father
-            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-            
-            if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
-              GEOM::GEOM_IShapesOperations_var aShapesOp =
-                getGeomEngine()->GetIShapesOperations(getStudyId());
-              aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-              myOk = true;
-            }
-            else { // get Object from study
-              aSelectedObject = aFindedObject;
-              myOk = true;
-            }
-          }
-          else {
-            myOk = true;
-            if (S.ShapeType() != TopAbs_EDGE) {
-              aSelectedObject = GEOM::GEOM_Object::_nil();
-              aName = "";
-              myOk = false;
-            }
-          }
-          if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-            myPath = aSelectedObject;
-            myOkPath = myOk;
-          }
-          else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
-            myVec = aSelectedObject;
-            myOkVec = myOk;
-          }
-        }
-        myEditCurrentArgument->setText(aName);
+    } else { 
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) {
+        int anIndex = aMap(1);
+        aName.append(":edge_" + QString::number(anIndex));
+        
+        //Find SubShape Object in Father
+        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
 
-        if (myOkPath) {
-          if (!myOkBase)
-            GroupPoints->PushButton1->click();
-          else if (!myOkVec)
-            GroupPoints->PushButton3->click();
+        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+          GEOM::GEOM_IShapesOperations_var aShapesOp =
+            getGeomEngine()->GetIShapesOperations(getStudyId());
+          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+          myOk = true;
+        } else { // get Object from study
+          aSelectedObject = aFindedObject;
+          myOk = true;
         }
-        else if (myOkVec) {
-          if (!myOkBase)
-            GroupPoints->PushButton1->click();
-          else if (!myOkPath)
-            GroupPoints->PushButton2->click();
+      } else {
+        myOk = true;
+        if (S.ShapeType() != TopAbs_EDGE) {
+          aSelectedObject = GEOM::GEOM_Object::_nil();
+          aName = "";
+          myOk = false;
         }
       }
+      if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+        myPath = aSelectedObject;
+        myOkPath = myOk;
+      } else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
+        myVec = aSelectedObject;
+        myOkVec = myOk;
+      }
+      myEditCurrentArgument->setText(aName);
+      
+      if (myOkPath) {
+        if (!myOkBase)
+          GroupPoints->PushButton1->click();
+        else if (!myOkVec)
+          GroupPoints->PushButton3->click();
+      } else if (myOkVec) {
+        if (!myOkBase)
+          GroupPoints->PushButton1->click();
+        else if (!myOkPath)
+          GroupPoints->PushButton2->click();
+      }
+    }
   }
-
-  // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
-
   displayPreview();
 }
 
@@ -473,22 +465,24 @@ bool GenerationGUI_PipeDlg::isValid (QString&)
 //=================================================================================
 bool GenerationGUI_PipeDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
+  GEOM::GEOM_Object_var anObj, aBase;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  switch ( getConstructorId() ) {
-  case 0 :
-    anObj = anOper->MakePipe(myBase, myPath);
-    break;
-  case 1 :
-    anObj = anOper->MakePipeBiNormalAlongVector(myBase, myPath, myVec);
-    break;
+  for (int i=0; i < myBaseObjects.length(); i++) {
+    aBase = myBaseObjects[i];
+    switch ( getConstructorId() ) {
+    case 0 :
+      anObj = anOper->MakePipe(aBase, myPath);
+      break;
+    case 1 :
+      anObj = anOper->MakePipeBiNormalAlongVector(aBase, myPath, myVec);
+      break;
+    }
+    
+    if (!anObj->_is_nil())
+      objects.push_back(anObj._retn());
   }
-
-  if (!anObj->_is_nil())
-    objects.push_back(anObj._retn());
-
   return true;
 }
 

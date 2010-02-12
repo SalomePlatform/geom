@@ -7,7 +7,8 @@ To generate a \b Pipe in the <b>Main Menu</b> select <b>New Entity - > Generatio
 \n Firstly, to create an extruded \b Pipe shape, you can define the <b>Base
 Object</b> (vertex, edge, planar wire, face or shell), which will be extruded
 and the <b>Path Object</b> (edge or wire) along which the <b>Base 
-Object</b> will be extruded.
+Object</b> will be extruded.<br>
+It is possible to select in GUI several Base Objects to make several pipes (using Shift button).
 \n In this mode the default pipe generation algorithm is used. The pipe
 is created so that the <b>angle between the normal vector</b> to
 the base shape <b>and the tangent to the path</b> wire remains constant at any point of the

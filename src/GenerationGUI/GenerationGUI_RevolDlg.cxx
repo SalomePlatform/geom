@@ -71,7 +71,7 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg (GeometryGUI* theGeometryGUI, QWi
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(centralWidget());
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
-  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECT"));
+  GroupPoints->TextLabel1->setText(tr("GEOM_OBJECTS"));
   GroupPoints->TextLabel2->setText(tr("GEOM_AXIS"));
   GroupPoints->TextLabel3->setText(tr("GEOM_ANGLE"));
   GroupPoints->PushButton1->setIcon(image1);
@@ -118,7 +118,7 @@ void GenerationGUI_RevolDlg::Init()
 
   GroupPoints->LineEdit1->setText("");
   GroupPoints->LineEdit2->setText("");
-  myBase = myAxis = GEOM::GEOM_Object::_nil();
+  myAxis = GEOM::GEOM_Object::_nil();
   myOkBase = myOkAxis = false;
 
   // signals and slots connections
@@ -219,12 +219,12 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if (aSelList.Extent() != 1)
+  if (aSelList.Extent() < 1)
     return;
 
-  // nbSel == 1
   Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  QString aName = GEOMBase::GetName(aSelectedObject);
 
   if (!testResult || aSelectedObject->_is_nil())
     return;
@@ -233,17 +233,22 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   if (!GEOMBase::GetShape(aSelectedObject, S) || S.IsNull())
     return;
 
-  QString aName = GEOMBase::GetName(aSelectedObject);
-
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    if (!isAcceptableBase(S))
-      return;
+    myOkBase = false;
+    if (aSelList.Extent() > 1)
+      aName = QString( "%1_objects").arg( aSelList.Extent() );
 
-    myBase = aSelectedObject;
-    myOkBase = true;
-    myEditCurrentArgument->setText(aName);
-    if (!myOkAxis)
-      GroupPoints->PushButton2->click();
+    if ( aSelList.Extent() > 0 ) {
+      GEOMBase::ConvertListOfIOInListOfGO(aSelList, myBaseObjects, true);
+      // check base shapes
+      for (int i=0; i < myBaseObjects.length(); i++) {
+        GEOMBase::GetShape(myBaseObjects[i], S);
+        if (!isAcceptableBase(S))
+          return;
+      }
+      myEditCurrentArgument->setText( aName );
+      myOkBase = true;
+    }
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
     TColStd_IndexedMapOfInteger aMap;
@@ -260,13 +265,11 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
           getGeomEngine()->GetIShapesOperations(getStudyId());
         myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
         myOkAxis = true;
-      }
-      else {
+      } else {
         myAxis = aFindedObject;
         myOkAxis = true;
       }
-    }
-    else {
+    } else {
       myOkAxis = true;
       if (S.ShapeType() != TopAbs_EDGE) {
         aSelectedObject = GEOM::GEOM_Object::_nil();
@@ -279,12 +282,6 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
     if (myOkAxis && !myOkBase)
       GroupPoints->PushButton1->click();
   }
-
-  // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
 
   displayPreview();
 }
@@ -403,26 +400,25 @@ bool GenerationGUI_RevolDlg::isValid (QString& msg)
 //=================================================================================
 bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj;
-
+  GEOM::GEOM_Object_var anObj, aBase;
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  if (!myBothway) {
-    anObj = anOper->MakeRevolutionAxisAngle(myBase, myAxis, getAngle() * PI180);
-  }
-  else {
-    anObj = anOper->MakeRevolutionAxisAngle2Ways(myBase, myAxis, getAngle() * PI180);
-  }
+  for (int i=0; i < myBaseObjects.length(); i++) {
+    aBase = myBaseObjects[i];
 
-  if (!anObj->_is_nil())
-  {
-    if (!IsPreview())
-    {
-      QStringList aParameters;
-      aParameters << GroupPoints->SpinBox_DX->text();
-      anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    if (!myBothway)
+      anObj = anOper->MakeRevolutionAxisAngle(aBase, myAxis, getAngle() * PI180);
+    else
+      anObj = anOper->MakeRevolutionAxisAngle2Ways(aBase, myAxis, getAngle() * PI180);
+    
+    if (!anObj->_is_nil()) {
+      if (!IsPreview()) {
+        QStringList aParameters;
+        aParameters << GroupPoints->SpinBox_DX->text();
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+      }
+      objects.push_back(anObj._retn());
     }
-    objects.push_back(anObj._retn());
   }
 
   return true;
