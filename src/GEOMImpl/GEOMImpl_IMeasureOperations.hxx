@@ -92,6 +92,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) GetCentreOfMass (Handle(GEOM_Object) theShape);
 
+  Standard_EXPORT Handle(GEOM_Object) GetVertexByIndex (Handle(GEOM_Object) theShape,
+                                                        Standard_Integer theIndex);
+
   Standard_EXPORT Handle(GEOM_Object) GetNormal (Handle(GEOM_Object) theFace,
                                                  Handle(GEOM_Object) theOptionalPoint);
 

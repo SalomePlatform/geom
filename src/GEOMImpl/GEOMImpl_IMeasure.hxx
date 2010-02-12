@@ -30,7 +30,8 @@ class GEOMImpl_IMeasure
 {
   enum {
     MEASURE_ARG_BASE  = 1,
-    MEASURE_ARG_POINT = 2
+    MEASURE_ARG_POINT = 2,
+    MEASURE_INDEX = 3
   };
  public:
 
@@ -45,6 +46,10 @@ class GEOMImpl_IMeasure
   { _func->SetReference(MEASURE_ARG_POINT, thePnt); }
 
   Handle(GEOM_Function) GetPoint() { return _func->GetReference(MEASURE_ARG_POINT); }
+  
+  void SetIndex(int theIndex) { _func->SetInteger(MEASURE_INDEX, theIndex); }
+    
+  int GetIndex() { return _func->GetInteger(MEASURE_INDEX); }
 
  private:
 

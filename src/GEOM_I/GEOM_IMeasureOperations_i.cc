@@ -151,6 +151,31 @@ GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetCentreOfMass
 
 //=============================================================================
 /*!
+ *  GetVertexByIndex
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IMeasureOperations_i::GetVertexByIndex
+  (GEOM::GEOM_Object_ptr theShape, CORBA::Long theIndex)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if ( aShape.IsNull() ) return aGEOMObject._retn();
+
+  // Get vertex by index
+  Handle(GEOM_Object) anObject = GetOperations()->GetVertexByIndex(aShape, theIndex);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  GetNormal
  */
 //=============================================================================

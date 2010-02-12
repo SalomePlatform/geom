@@ -3231,6 +3231,41 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetCentreOfMass", self.MeasuOp)
             return anObj
 
+        ## Get a vertex subshape by index depended with orientation.
+        #  @param theShape Shape to find subshape.
+        #  @param theIndex Index to find vertex by this index.
+        #  @return New GEOM_Object, containing the created vertex.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def GetVertexByIndex(self,theShape, theIndex):
+            # Example: see GEOM_TestMeasures.py
+            anObj = self.MeasuOp.GetVertexByIndex(theShape, theIndex)
+            RaiseIfFailed("GetVertexByIndex", self.MeasuOp)
+            return anObj
+
+        ## Get the first vertex of wire/edge depended orientation.
+        #  @param theShape Shape to find first vertex.
+        #  @return New GEOM_Object, containing the created vertex.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def GetFirstVertex(self,theShape):
+            # Example: see GEOM_TestMeasures.py
+            anObj = self.GetVertexByIndex(theShape, 0)
+            RaiseIfFailed("GetFirstVertex", self.MeasuOp)
+            return anObj
+
+        ## Get the last vertex of wire/edge depended orientation.
+        #  @param theShape Shape to find last vertex.
+        #  @return New GEOM_Object, containing the created vertex.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def GetLastVertex(self,theShape):
+            # Example: see GEOM_TestMeasures.py
+            nb_vert =  self.ShapesOp.NumberOfSubShapes(theShape, ShapeType["VERTEX"])
+            anObj = self.GetVertexByIndex(theShape, (nb_vert-1))
+            RaiseIfFailed("GetLastVertex", self.MeasuOp)
+            return anObj
+
         ## Get a normale to the given face. If the point is not given,
         #  the normale is calculated at the center of mass.
         #  @param theFace Face to define normale of.

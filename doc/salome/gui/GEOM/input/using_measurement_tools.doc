@@ -9,6 +9,7 @@ concerning created or imported geometrical objects. They are:
 <li>\ref point_coord_anchor "Point coordinates"</li>
 <li>\ref basic_prop_anchor "Basic properties"</li>
 <li>\ref center_mass_anchor "Center of mass"</li>
+<li>\ref vertex_by_index "Get Vertex By Index"</li>
 <li>\ref inertia_anchor "Inertia"</li>
 <li>\ref normale_anchor "Normal to a Face"</li>
 <li>\ref boundaries_anchor "Check Free Boundaries"</li>
@@ -65,6 +66,18 @@ the selected geometrical object.
 the shape for which a center of gravity is computed.
 
 \image html measures3.png
+
+\anchor vertex_by_index
+<br><h2>Get Vertex by Index</h2>
+
+\n It is possible to get the first or the last vertex from an edge or a wire, depending on 
+its direction (orientation), or to find the vertex by the index inside the wire. 
+The numeration of vertexes starts from 0. This function has only a TUI implementation) 
+
+\n <b>Result:</b> GEOM_Object (vertex).
+\n <b>TUI Command:</b> <em> geompy.GetVertexByIndex(Shape, Index),</em>
+<em> geompy.GetFirstVertex(Shape),</em>
+<em> geompy.GetLastVertex(Shape),</em> where \em Shape must be Wire or Edge.
 
 \anchor inertia_anchor
 <br><h2>Inertia</h2>

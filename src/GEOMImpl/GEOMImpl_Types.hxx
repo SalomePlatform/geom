@@ -113,6 +113,7 @@
 #define VECTOR_DX_DY_DZ 2
 #define VECTOR_TANGENT_CURVE_PAR 3
 #define VECTOR_FACE_NORMALE 4
+#define VERTEX_BY_INDEX 5
 
 #define PLANE_PNT_VEC      1
 #define PLANE_FACE         2

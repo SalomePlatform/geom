@@ -897,6 +897,60 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
 
 //=============================================================================
 /*!
+ *  GetVertexByIndex
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
+                                                (Handle(GEOM_Object) theShape,
+                                                 Standard_Integer theIndex)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  //Add a new Vertex object
+  Handle(GEOM_Object) aVertex = GetEngine()->AddObject(GetDocID(), GEOM_POINT);
+
+  //Add a function
+  Handle(GEOM_Function) aFunction =
+    aVertex->AddFunction(GEOMImpl_MeasureDriver::GetID(), VERTEX_BY_INDEX);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MeasureDriver::GetID()) return NULL;
+
+  GEOMImpl_IMeasure aCI (aFunction);
+  aCI.SetBase(aRefShape);
+  aCI.SetIndex(theIndex);
+
+  //Compute
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Vertex by index driver failed.");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aVertex << " = geompy.GetVertexByIndex(" << theShape << ", " << theIndex << ")";
+
+  SetErrorCode(OK);
+  return aVertex;
+}
+
+//=============================================================================
+/*!
  *  GetNormal
  */
 //=============================================================================

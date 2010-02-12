@@ -2885,6 +2885,15 @@ module GEOM
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object GetCentreOfMass (in GEOM_Object theShape);
+    
+    
+    /*
+     *  Get the vertex by index for 1D objects depends the edge/wire orientation
+     *  \param theShape Shape (wire or edge) to find the vertex on it
+     *  \param theIndex Index of vertex subshape
+     *  \return New GEOM_Object, vertex.
+     */
+    GEOM_Object GetVertexByIndex( in GEOM_Object theShape, in long index );
 
     /*!
      *  Get a vector, representing the normal of theFace.

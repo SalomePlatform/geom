@@ -71,6 +71,35 @@ else:
         print "But must be (50, 15, 50)"
 \endcode
 
+<br><h2>Get vertex by index</h2>
+
+\code
+import geompy
+
+# Create auxiliary objects
+Vertex_1 = geompy.MakeVertex(0, 0, 0)
+Vertex_2 = geompy.MakeVertex(10, 20, 0)
+Vertex_3 = geompy.MakeVertex(0, 40, 0)
+Vertex_4 = geompy.MakeVertex(-10, 60, 0)
+Vertex_5 = geompy.MakeVertex(0, 80, 0)
+Curve_1 = geompy.MakeInterpol([Vertex_1, Vertex_2, Vertex_3])
+Curve_2 = geompy.MakeInterpol([Vertex_5, Vertex_4, Vertex_3])
+Wire_1 = geompy.MakeWire([Curve_1, Curve_2])
+Reversed_Wire = geompy.ChangeOrientationShellCopy(Wire_1)
+
+# Get The vertexes from Reversed Wire by different functions
+vertex_0 = geompy.GetFirstVertex(Reversed_Wire)
+vertex_1 = geompy.GetVertexByIndex(Reversed_Wire, 1)
+vertex_2 = geompy.GetLastVertex(Reversed_Wire)
+
+# Publish objects in study
+geompy.addToStudy( Wire_1, "Wire_1" )
+geompy.addToStudy( Reversed_Wire, "Reversed_Wire" )
+geompy.addToStudy( vertex_0, "vertex_0" )
+geompy.addToStudy( vertex_1, "vertex_1" )
+geompy.addToStudy( vertex_2, "vertex_2" )
+\endcode
+
 <br><h2>Inertia</h2>
 
 \code

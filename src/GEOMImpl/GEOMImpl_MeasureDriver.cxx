@@ -35,6 +35,11 @@
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Wire.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <GProp_GProps.hxx>
 #include <GeomLProp_SLProps.hxx>
@@ -107,6 +112,69 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
     }
 
     aShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
+  }
+  else if (aType == VERTEX_BY_INDEX)
+  {
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();
+    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    if (aShapeBase.IsNull()) {
+      Standard_NullObject::Raise("Shape for centre of mass calculation is null");
+    }
+
+    int index = aCI.GetIndex();
+    gp_Pnt aVertex;
+
+    if (aShapeBase.ShapeType() == TopAbs_VERTEX) {
+      if ( index != 1 )
+        Standard_NullObject::Raise("Vertex index is out of range");
+      else
+        aVertex = BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase));
+    } else if (aShapeBase.ShapeType() == TopAbs_EDGE) {
+      TopoDS_Vertex aV1, aV2;
+      TopoDS_Edge anEdgeE = TopoDS::Edge(aShapeBase);
+      
+      TopExp::Vertices(anEdgeE, aV1, aV2);
+      gp_Pnt aP1 = BRep_Tool::Pnt(aV1);
+      gp_Pnt aP2 = BRep_Tool::Pnt(aV2);
+
+      if (index < 0 || index > 1)
+        Standard_NullObject::Raise("Vertex index is out of range");
+
+      if ( anEdgeE.Orientation() == TopAbs_FORWARD && index == 0 ||
+           anEdgeE.Orientation() == TopAbs_REVERSED && index == 1 )
+        aVertex = aP1;
+      else
+      aVertex = aP2;
+    } else if (aShapeBase.ShapeType() == TopAbs_WIRE) {
+      TopTools_IndexedMapOfShape anEdgeShapes;
+      TopTools_IndexedMapOfShape aVertexShapes;
+      TopoDS_Vertex aV1, aV2;
+      TopoDS_Wire aWire = TopoDS::Wire(aShapeBase);
+      TopExp_Explorer exp (aWire, TopAbs_EDGE);
+      for (; exp.More(); exp.Next()) {
+        anEdgeShapes.Add(exp.Current());
+        TopoDS_Edge E = TopoDS::Edge(exp.Current());
+        TopExp::Vertices(E, aV1, aV2);
+        if ( aVertexShapes.Extent() == 0)
+          aVertexShapes.Add(aV1);
+        if ( !aV1.IsSame( aVertexShapes(aVertexShapes.Extent()) ) )
+          aVertexShapes.Add(aV1);
+        if ( !aV2.IsSame( aVertexShapes(aVertexShapes.Extent()) ) )
+          aVertexShapes.Add(aV2);
+      }
+
+      if (index < 0 || index > aVertexShapes.Extent())
+        Standard_NullObject::Raise("Vertex index is out of range");
+
+      if (aWire.Orientation() == TopAbs_FORWARD)
+        aVertex = BRep_Tool::Pnt(TopoDS::Vertex(aVertexShapes(index+1)));
+      else
+        aVertex = BRep_Tool::Pnt(TopoDS::Vertex(aVertexShapes(aVertexShapes.Extent() - index)));
+    } else {
+      Standard_NullObject::Raise("Shape for vertex calculation is not an edge or wire");
+    }
+
+    aShape = BRepBuilderAPI_MakeVertex(aVertex).Shape();
   }
   else if (aType == VECTOR_FACE_NORMALE)
   {
