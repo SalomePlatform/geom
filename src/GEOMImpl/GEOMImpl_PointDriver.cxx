@@ -206,7 +206,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
         } else if ( Dist <= Precision::Confusion() ) {
           aPnt = P1;
         } else {
-          Standard_TypeMismatch::Raise ("Shapes has not an Intersection Points");
+          Standard_TypeMismatch::Raise ("Shapes have not an Intersection Point");
         }
       }
     }
