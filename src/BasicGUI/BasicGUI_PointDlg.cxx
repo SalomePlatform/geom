@@ -460,6 +460,7 @@ bool BasicGUI_PointDlg::ClickOnApply()
 //=================================================================================
 void BasicGUI_PointDlg::SelectionIntoArgument()
 {
+  erasePreview();
   const int id = getConstructorId();
 
   if ( ( id == GEOM_POINT_REF || id == GEOM_POINT_EDGE || id == GEOM_POINT_SURF ) && myEditCurrentArgument != 0 )
@@ -469,6 +470,12 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     myY->setText( "" );
     myZ->setText( "" );
     myRefPoint = myEdge = myFace = GEOM::GEOM_Object::_nil();
+  } else if ( id == GEOM_POINT_INTINT ) {
+    myEditCurrentArgument->setText( "" );
+    if ( myEditCurrentArgument == GroupLineIntersection->LineEdit1 )
+      myLine1 = GEOM::GEOM_Object::_nil();
+    else if ( myEditCurrentArgument == GroupLineIntersection->LineEdit2 )
+      myLine2 = GEOM::GEOM_Object::_nil();
   }
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -851,6 +858,13 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
     }
   case GEOM_POINT_INTINT :
     anObj = anOper->MakePointOnLinesIntersection( myLine1, myLine2 );
+    if ( !anObj->_is_nil() ) {
+      QString aName = getNewObjectName();
+      if ( anObj->GetShapeType() == GEOM::COMPOUND && aName.startsWith("Vertex") )
+        initName( tr( "GEOM_COMPOUND" ) );
+      else if (  anObj->GetShapeType() == GEOM::VERTEX && aName.startsWith("Compound"))
+        initName( tr( "GEOM_VERTEX" ) );
+    }
     res = true;
     break;
   case GEOM_POINT_SURF :
