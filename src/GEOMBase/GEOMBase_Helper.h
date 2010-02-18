@@ -161,6 +161,7 @@ protected:
   // as a top-level object.
 
   virtual QString getNewObjectName() const; 
+  virtual bool extractPrefix() const;
   virtual void addSubshapesToStudy();
 
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );

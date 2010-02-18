@@ -824,7 +824,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
                 aName = getPrefix(obj);
               if (nbObjs <= 30) {
                 // Try to find a unique name
-                aName = GEOMBase::GetDefaultName(aName);
+                aName = GEOMBase::GetDefaultName(aName, extractPrefix());
               } else {
                 // Don't check name uniqueness in case of numerous objects
                 aName = aName + "_" + QString::number(aNumber++);
@@ -957,6 +957,17 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::getFather( GEOM::GEOM_Object_ptr theObj )
 QString GEOMBase_Helper::getNewObjectName() const
 {
   return QString::null;
+}
+
+//================================================================
+// Function : extractPrefix
+// Purpose  : Redefine this method to return \c true if necessary 
+//            to extract prefix when generating new name for the
+//            object(s) being created
+//================================================================
+bool GEOMBase_Helper::extractPrefix() const
+{
+  return false;
 }
 
 //================================================================

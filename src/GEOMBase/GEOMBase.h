@@ -108,7 +108,8 @@ public :
   static bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
 
   /* This method generates default names for results of geometrical operations */
-  static QString GetDefaultName(const QString& theOperation);   
+  static QString GetDefaultName(const QString& theOperation, const bool extractPrefix = false);
+
   /* Shows message box with error code and comment */
   static void ShowErrorMessage(const char* theErrorCode, const char* theComment = 0);
 

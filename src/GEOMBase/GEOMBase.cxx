@@ -806,7 +806,7 @@ bool GEOMBase::DefineDlgPosition(QWidget* aDlg, int& x, int& y)
 // function : GetDefaultName()
 // purpose  : Generates default names
 //=======================================================================
-QString GEOMBase::GetDefaultName(const QString& theOperation)
+QString GEOMBase::GetDefaultName(const QString& theOperation, const bool extractPrefix)
 {
   QString aName = "";
 
@@ -830,8 +830,23 @@ QString GEOMBase::GetDefaultName(const QString& theOperation)
   // build a unique name
   int aNumber = 0;
   bool isUnique = false;
+  QString prefix = theOperation;
+
+  if ( extractPrefix ) {
+    QStringList parts = prefix.split( "_", QString::KeepEmptyParts );
+    if ( parts.count() > 1 ) {
+      bool ok;
+      aNumber = parts.last().toLong(&ok);
+      if ( ok ) {
+	parts.removeLast();
+	prefix = parts.join( "_" );
+	aNumber--;
+      }
+    }
+  }
+
   while (!isUnique) {
-    aName = theOperation + "_" + QString::number(++aNumber);
+    aName = prefix + "_" + QString::number(++aNumber);
     isUnique = (aSet.count(aName.toStdString()) == 0);
   }
 
