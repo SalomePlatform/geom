@@ -458,3 +458,12 @@ void GenerationGUI_RevolDlg::addSubshapesToStudy()
 
   addSubshapesToFather(objMap);
 }
+
+//=================================================================================
+// function : extractPrefix
+// purpose  : redefined from GEOMBase_Helper class
+//=================================================================================
+bool GenerationGUI_RevolDlg::extractPrefix() const
+{
+  return myBaseObjects.length() > 1;
+}

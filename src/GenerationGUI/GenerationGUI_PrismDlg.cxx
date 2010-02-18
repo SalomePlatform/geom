@@ -733,3 +733,12 @@ void GenerationGUI_PrismDlg::addSubshapesToStudy()
   }
   addSubshapesToFather(objMap);
 }
+
+//=================================================================================
+// function : extractPrefix
+// purpose  : redefined from GEOMBase_Helper class
+//=================================================================================
+bool GenerationGUI_PrismDlg::extractPrefix() const
+{
+  return myBaseObjects.length() > 1;
+}

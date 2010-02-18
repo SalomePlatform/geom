@@ -498,3 +498,12 @@ void GenerationGUI_PipeDlg::addSubshapesToStudy()
 
   addSubshapesToFather(objMap);
 }
+
+//=================================================================================
+// function : extractPrefix
+// purpose  : redefined from GEOMBase_Helper class
+//=================================================================================
+bool GenerationGUI_PipeDlg::extractPrefix() const
+{
+  return myBaseObjects.length() > 1;
+}

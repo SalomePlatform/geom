@@ -48,6 +48,7 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
   virtual void                       addSubshapesToStudy();
+  virtual bool                       extractPrefix() const;
 
 private:
   void                               Init();
