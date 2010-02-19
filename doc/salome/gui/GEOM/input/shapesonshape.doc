@@ -2,7 +2,10 @@
 
 \page shapesonshape_page Get Shapes on Shape
 
-This operation is a special case of <b>Explode</b> operation. It produces a group of sub-shapes of the exploded shape, which are located in a definite way relatively another reference shape.
+This operation is a special case of <b>Explode</b> operation. It
+produces a group of sub-shapes of the exploded shape, which are
+located in a definite way relatively another reference shape. The
+reference shape should be a solid.
 
 To use this operation, select in the Main Menu <b>Operations -> Get Shapes on Shape.</b> The following dialog box will appear. 
 
@@ -11,7 +14,8 @@ To use this operation, select in the Main Menu <b>Operations -> Get Shapes on Sh
 <ul>
 <li> <b>Name</b> is the name of the resulting group of shapes; </li>
 <li> <b>Shape for exploding</b> is the shape that will be exploded; </li>
-<li> <b>Shape for checking</b> is the reference shape; </li>
+<li> <b>Solid for checking</b> is the reference shape, which should be
+a solid; </li>
 <li> <b>Reconstruction Limit</b> is the type of created sub-shapes:
 		       solid, shell, face, wire, edge, vertex; </li>
 <li> <b>State</b> is the position of the created sub-shapes relatively the reference shapes:

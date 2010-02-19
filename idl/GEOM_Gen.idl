@@ -1719,7 +1719,7 @@ module GEOM
 
     /*!
      * \brief Find subshapes complying with given status
-     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theCheckShape - the shape to check state of subshapes against. It must be a solid.
      * \param theShape - the shape to explore
      * \param theShapeType - type of subshape of theShape
      * \param theState - required state
@@ -1732,7 +1732,7 @@ module GEOM
 
     /*!
      * \brief Find subshapes complying with given status
-     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theCheckShape - the shape to check state of subshapes against. It must be a solid.
      * \param theShape - the shape to explore
      * \param theShapeType - type of subshape of theShape
      * \param theState - required state
@@ -1745,7 +1745,7 @@ module GEOM
 
     /*!
      * \brief Find subshapes complying with given status
-     * \param theCheckShape - the shape to check state of subshapes against
+     * \param theCheckShape - the shape to check state of subshapes against. It must be a solid.
      * \param theShape - the shape to explore
      * \param theShapeType - type of subshape of theShape
      * \param theState - required state

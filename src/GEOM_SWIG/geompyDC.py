@@ -1891,7 +1891,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Find in \a theShape all sub-shapes of type \a theShapeType,
         #  situated relatively the specified \a theCheckShape by the
         #  certain way, defined through \a theState parameter.
-        #  @param theCheckShape Shape for relative comparing.
+        #  @param theCheckShape Shape for relative comparing. It must be a solid.
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved.
         #  @param theState The state of the subshapes to find. It can be one of

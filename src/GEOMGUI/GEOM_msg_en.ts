@@ -3745,7 +3745,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_SHAPES_ON_SHAPE_CSHAPE</source>
-            <translation>Shape for checking</translation>
+            <translation>Solid for checking</translation>
         </message>
         <message>
             <source>GEOM_SHAPES_ON_SHAPE_STATE</source>

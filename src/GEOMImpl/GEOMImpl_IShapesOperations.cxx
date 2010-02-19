@@ -1738,10 +1738,15 @@ Handle(TColStd_HSequenceOfInteger)
   Standard_Integer iErr = aFinder.ErrorStatus();
   // the detailed description of error codes is in GEOMAlgo_FinderShapeOn1.cxx
   if (iErr) {
-    MESSAGE(" iErr : " << iErr);
-    TCollection_AsciiString aMsg (" iErr : ");
-    aMsg += TCollection_AsciiString(iErr);
-    SetErrorCode(aMsg);
+    if (iErr == 41) {
+      SetErrorCode("theCheckShape must be a solid");
+    }
+    else {
+      MESSAGE(" iErr : " << iErr);
+      TCollection_AsciiString aMsg (" iErr : ");
+      aMsg += TCollection_AsciiString(iErr);
+      SetErrorCode(aMsg);
+    }
     return aSeqOfIDs;
   }
   Standard_Integer iWrn = aFinder.WarningStatus();
@@ -3176,6 +3181,10 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
   if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
   if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
+
+  //if (Tol_1D > 1.0) Tol_1D = 1.0;
+  //if (Tol_2D > 1.0) Tol_2D = 1.0;
+  //if (Tol_3D > 1.0) Tol_3D = 1.0;
 
   Tol_Mass = Tol_3D;
   if      ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
