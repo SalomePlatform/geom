@@ -42,8 +42,3 @@ DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER GEOM BREPExport	\
                DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI		\
                BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI	\
                MeasureGUI GroupGUI BlocksGUI GEOM_SWIG_WITHIHM
-
-#######################################
-# Not used packages are listed below
-#######################################
-# GEOMDS NMTAlgo PARTITION
