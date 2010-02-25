@@ -67,7 +67,6 @@ private slots:
   void                                ClickOnOk();
   bool                                ClickOnApply();
   void                                ActivateThisDialog();
-  void                                LineEditReturnPressed();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
   void                                ConstructorsClicked( int );
