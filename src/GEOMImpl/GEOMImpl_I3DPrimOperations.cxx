@@ -1453,7 +1453,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
        (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
-        double theTol2D, double theTol3D, int theNbIter, bool isApprox)
+        double theTol2D, double theTol3D, int theNbIter,
+        bool isUseOri, bool isApprox)
 {
   SetErrorCode(KO);
 
@@ -1482,6 +1483,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   aFI.SetTol3D(theTol3D);
   aFI.SetNbIter(theNbIter);
   aFI.SetApprox(isApprox);
+  aFI.SetUseOri(isUseOri);
 
   //Compute the Solid value
   try {

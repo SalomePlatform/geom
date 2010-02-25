@@ -70,6 +70,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   GroupPoints->TextLabel5->setText( tr( "GEOM_FILLING_MAX_DEG" ) );
   GroupPoints->TextLabel6->setText( tr( "GEOM_FILLING_TOL_3D" ) );
   GroupPoints->CheckBox1->setText( tr( "GEOM_FILLING_APPROX" ) );
+  GroupPoints->CheckBox2->setText( tr( "GEOM_FILLING_USEORI" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
@@ -108,6 +109,7 @@ void GenerationGUI_FillingDlg::Init()
   myTol3D = 0.0001;
   myTol2D = 0.0001;
   myNbIter = 0;
+  myIsUseOri = false;
   myIsApprox = false;
   myOkCompound = false;
 
@@ -141,7 +143,11 @@ void GenerationGUI_FillingDlg::Init()
   connect( GroupPoints->SpinBox4, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox5, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( ApproxChanged() ) );
+  connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ),
+           this, SLOT( ApproxChanged() ) );
+
+  connect( GroupPoints->CheckBox2, SIGNAL( stateChanged( int ) ),
+           this, SLOT( UseOriChanged() ) );
 
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -224,7 +230,8 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
     if (GEOMBase::GetShape(aSelectedObject, S) && S.ShapeType() == TopAbs_COMPOUND) {
       // myCompound should be a compound of edges
       for (TopoDS_Iterator it (S); it.More(); it.Next())
-        if (it.Value().ShapeType() != TopAbs_EDGE)
+        if ( it.Value().ShapeType() != TopAbs_EDGE && 
+             it.Value().ShapeType() != TopAbs_WIRE )
           return;
       myCompound = aSelectedObject;
       myOkCompound = true;
@@ -315,6 +322,16 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 }
 
 //=================================================================================
+// function : UseOriChanged()
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::UseOriChanged()
+{
+  myIsUseOri = GroupPoints->CheckBox2->isChecked();
+  displayPreview();
+}
+
+//=================================================================================
 // function : ApproxChanged()
 // purpose  :
 //=================================================================================
@@ -323,6 +340,7 @@ void GenerationGUI_FillingDlg::ApproxChanged()
   myIsApprox = GroupPoints->CheckBox1->isChecked();
   displayPreview();
 }
+
 
 //=================================================================================
 // function : createOperation
@@ -355,9 +373,11 @@ bool GenerationGUI_FillingDlg::isValid( QString& msg )
 //=================================================================================
 bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, 
-                                                     myTol2D, myTol3D, myNbIter, myIsApprox );
+  GEOM::GEOM_I3DPrimOperations_var anOper =
+    GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+  GEOM::GEOM_Object_var anObj =
+    anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D,
+                         myNbIter, myIsUseOri, myIsApprox );
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )

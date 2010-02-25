@@ -1316,6 +1316,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTol2D a 2d tolerance to be reached
         #  @param theTol3D a 3d tolerance to be reached
         #  @param theNbIter a number of iteration of approximation algorithm
+        #  @param isUseOri flag for take into account orientation of edges
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using Besier curves. The usage of
@@ -1324,12 +1325,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
-        def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, isApprox=0):
+        def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D,
+                        theTol3D, theNbIter, isUseOri=0, isApprox=0):
             # Example: see GEOM_TestAll.py
             theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg,
                                                                                          theTol2D, theTol3D, theNbIter)
             anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
-                                            theTol2D, theTol3D, theNbIter, isApprox)
+                                            theTol2D, theTol3D, theNbIter,
+                                            isUseOri, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj

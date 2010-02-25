@@ -685,7 +685,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_FILLING_COMPOUND</source>
-            <translation>Edges compound</translation>
+            <translation>Input compound</translation>
         </message>
         <message>
             <source>GEOM_FILLING_MAX_DEG</source>
@@ -3730,6 +3730,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_FILLING_APPROX</source>
             <translation>Approximation</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_USEORI</source>
+            <translation>Use orientation</translation>
         </message>
         <message>
             <source>GEOM_WRN_NO_APPROPRIATE_SELECTION</source>

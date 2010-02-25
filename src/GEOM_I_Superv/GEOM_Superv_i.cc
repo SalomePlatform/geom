@@ -1242,14 +1242,20 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Ob
 //  MakeFilling:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape,
-						  CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
-						  CORBA::Double theTol2D, CORBA::Double theTol3D,
-						  CORBA::Long theNbIter, CORBA::Boolean theApprox)
+						  CORBA::Long theMinDeg,
+                                                  CORBA::Long theMaxDeg,
+						  CORBA::Double theTol2D,
+                                                  CORBA::Double theTol3D,
+						  CORBA::Long theNbIter,
+                                                  CORBA::Boolean theUseOri,
+                                                  CORBA::Boolean theApprox)
 {
   beginService( " GEOM_Superv_i::MakeFilling" );
   MESSAGE("GEOM_Superv_i::MakeFilling");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, theApprox);
+  GEOM::GEOM_Object_ptr anObj =
+    my3DPrimOp->MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D,
+                            theNbIter, theUseOri, theApprox);
   endService( " GEOM_Superv_i::MakeFilling" );
   return anObj;
 }

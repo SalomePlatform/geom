@@ -1185,7 +1185,8 @@ module GEOM
     GEOM_Object MakeFilling (in GEOM_Object theShape,
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
-			     in long theNbIter, in boolean theApprox);
+			     in long theNbIter,  in boolean theUseOri,
+                             in boolean theApprox);
 
     /*!
      *  Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.

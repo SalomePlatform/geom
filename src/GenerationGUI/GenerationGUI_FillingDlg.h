@@ -60,6 +60,7 @@ private:
   Standard_Real                      myTol2D;
   Standard_Integer                   myNbIter;
   bool                               myIsApprox;
+  bool                               myIsUseOri;
   bool                               myOkCompound; /* to check when curv. compound is defined */
 
   DlgRef_1Sel5Spin1Check*            GroupPoints;
@@ -72,6 +73,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );
+  void                               UseOriChanged();
   void                               ApproxChanged();
   void                               SetDoubleSpinBoxStep( double );
 };
