@@ -44,8 +44,8 @@ public:
   GEOMToolsGUI_DeflectionDlg( QWidget* );
   ~GEOMToolsGUI_DeflectionDlg();
 
-  double    getDC() const;
-  void      setDC( const double );
+  double    getTheDC() const;
+  void      setTheDC( const double );
 
 private slots:
   void      ClickOnHelp();

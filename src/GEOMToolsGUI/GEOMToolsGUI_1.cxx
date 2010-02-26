@@ -556,13 +556,13 @@ void GEOMToolsGUI::OnDeflection()
 
       GEOMToolsGUI_DeflectionDlg * DeflectionDlg = new GEOMToolsGUI_DeflectionDlg
         (SUIT_Session::session()->activeApplication()->desktop());
-      DeflectionDlg->setDC(aDC);
+      DeflectionDlg->setTheDC(aDC);
       double aNewDC = 0.0;
       bool ok = false;
       while (!ok) {
         if (DeflectionDlg->exec()) {
           SUIT_OverrideCursor();
-          aNewDC = DeflectionDlg->getDC();
+          aNewDC = DeflectionDlg->getTheDC();
           ok = (1e-07 <= aNewDC && aNewDC <= 1.0); // spinbox can return zero
           if (ok) {
             for (; ic->MoreCurrent(); ic->NextCurrent()) {
@@ -628,10 +628,10 @@ void GEOMToolsGUI::OnDeflection()
 
     GEOMToolsGUI_DeflectionDlg* DeflectionDlg = new GEOMToolsGUI_DeflectionDlg
       (SUIT_Session::session()->activeApplication()->desktop());
-    DeflectionDlg->setDC(aDC);
+    DeflectionDlg->setTheDC(aDC);
     if (DeflectionDlg->exec()) {
       SUIT_OverrideCursor();
-      aDC = DeflectionDlg->getDC();
+      aDC = DeflectionDlg->getTheDC();
       while (anAct != NULL) {
         if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
           // There are no casting to needed actor.

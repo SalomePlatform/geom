@@ -137,12 +137,12 @@ GEOMToolsGUI_DeflectionDlg::~GEOMToolsGUI_DeflectionDlg()
   // no need to delete child widgets, Qt does it all for us
 }
 
-double GEOMToolsGUI_DeflectionDlg::getDC() const
+double GEOMToolsGUI_DeflectionDlg::getTheDC() const
 {
   return SpinBox->text().toDouble();
 }
 
-void GEOMToolsGUI_DeflectionDlg::setDC (const double v)
+void GEOMToolsGUI_DeflectionDlg::setTheDC (const double v)
 {
   SpinBox->setValue(v);
 }
