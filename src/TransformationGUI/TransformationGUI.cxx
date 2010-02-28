@@ -27,6 +27,7 @@
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewModel.h>
@@ -77,31 +78,31 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 5021: // TRANSLATION
+  case GEOMOp::OpTranslate:      // TRANSLATION
     aDlg = new TransformationGUI_TranslationDlg( getGeometryGUI(), parent );
     break;
-  case 5022: // ROTATION
+  case GEOMOp::OpRotate:         // ROTATION
     aDlg = new TransformationGUI_RotationDlg( getGeometryGUI(), parent );
     break;
-  case 5023: // POSITION
+  case GEOMOp::OpChangeLoc:      // POSITION
     aDlg = new TransformationGUI_PositionDlg( getGeometryGUI(), parent );
     break;
-  case 5024: // MIRROR
+  case GEOMOp::OpMirror:         // MIRROR
     aDlg = new TransformationGUI_MirrorDlg( getGeometryGUI(), parent );
     break;
-  case 5025: // SCALE
+  case GEOMOp::OpScale:          // SCALE
     aDlg = new TransformationGUI_ScaleDlg( getGeometryGUI(), parent );
     break;
-  case 5026: // OFFSET
+  case GEOMOp::OpOffset:         // OFFSET
     aDlg = new TransformationGUI_OffsetDlg( getGeometryGUI(), parent );
     break;
-  case 5027: // MULTI TRANSLATION
+  case GEOMOp::OpMultiTranslate: // MULTI TRANSLATION
     aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent );
     break;
-  case 5028: // MULTI ROTATION
+  case GEOMOp::OpMultiRotate:    // MULTI ROTATION
     aDlg = new TransformationGUI_MultiRotationDlg( getGeometryGUI(), parent );
     break;
-  case 5029: // RELOAD IMPORTED SHAPE
+  case GEOMOp::OpReimport:       // RELOAD IMPORTED SHAPE
     {
       SalomeApp_Study* anAppStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
 

@@ -27,6 +27,7 @@
 #include "GEOMToolsGUI_DeleteDlg.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 #include <GEOMBase.h>
 #include <GEOM_Operation.h>
 #include <GEOM_Displayer.h>
@@ -285,149 +286,75 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
 {
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
-  switch (theCommandID)
-    {
-    case 31: // COPY
-      {
-        OnEditCopy();
-        break;
-      }
-    case 33: // DELETE
-      {
-        OnEditDelete();
-        break;
-      }
-    case 111: // IMPORT BREP
-    case 112: // IMPORT IGES
-    case 113: // IMPORT STEP
-      {
-        Import();
-        break;
-      }
-    case 121: // EXPORT BREP
-    case 122: // EXPORT IGES
-    case 123: // EXPORT STEP
-      {
-        Export();
-        break;
-      }
-    case 2171: // POPUP VIEWER - SELECT ONLY - VERTEX
-      {
-        OnSelectOnly( GEOM_POINT );
-        break;
-      }
-    case 2172: // POPUP VIEWER - SELECT ONLY - EDGE
-      {
-        OnSelectOnly( GEOM_EDGE );
-        break;
-      }
-    case 2173: // POPUP VIEWER - SELECT ONLY - WIRE
-      {
-        OnSelectOnly( GEOM_WIRE );
-        break;
-      }
-    case 2174: // POPUP VIEWER - SELECT ONLY - FACE
-      {
-        OnSelectOnly( GEOM_FACE );
-        break;
-      }
-    case 2175: // POPUP VIEWER - SELECT ONLY - SHELL
-      {
-        OnSelectOnly( GEOM_SHELL );
-        break;
-      }
-    case 2176: // POPUP VIEWER - SELECT ONLY - SOLID
-      {
-        OnSelectOnly( GEOM_SOLID );
-        break;
-      }
-    case 2177: // POPUP VIEWER - SELECT ONLY - COMPOUND
-      {
-        OnSelectOnly( GEOM_COMPOUND );
-        break;
-      }
-    case 2178: // POPUP VIEWER - SELECT ONLY - SELECT ALL
-      {
-        OnSelectOnly( GEOM_ALLOBJECTS );
-        break;
-      }    
-    case 411: // SETTINGS - ADD IN STUDY
-      {
-        // SAN -- TO BE REMOVED !!!
-        break;
-      }
-    case 412: // SETTINGS - SHADING COLOR
-      {
-        OnSettingsColor();
-        break;
-      }
-    case 804: // ADD IN STUDY - POPUP VIEWER
-      {
-        // SAN -- TO BE REMOVED !!!!
-        break;
-      }
-    case 901: // RENAME
-      {
-        OnRename();
-        break;
-      }
-    case 5103: // CHECK GEOMETRY
-      {
-        OnCheckGeometry();
-        break;
-      }
-    case 8031: // DEFLECTION ANGLE - POPUP VIEWER
-      {
-	OnDeflection();
-	break;
-      }
-    case 8032: // COLOR - POPUP VIEWER
-      {
-        OnColor();
-        break;
-      }
-    case 8033: // TRANSPARENCY - POPUP VIEWER
-      {
-        OnTransparency();
-        break;
-      }
-    case 8034: // ISOS - POPUP VIEWER
-      {
-        OnNbIsos();
-        break;
-      }
-    case 8035: // AUTO COLOR - POPUP VIEWER
-      {
-        OnAutoColor();
-        break;
-      }
-    case 8036: // DISABLE AUTO COLOR - POPUP VIEWER
-      {
-        OnDisableAutoColor();
-        break;
-      }
-    case 8037: // SHOW CHILDREN - POPUP VIEWER
-    case 8038: // HIDE CHILDREN - POPUP VIEWER
-      {
-        OnShowHideChildren( theCommandID == 8037 );
-        break;
-      }
-    case 8039: // POINT MARKER
-      {
-        OnPointMarker();
-        break;
-      }
-    case 9024 : // OPEN - OBJBROSER POPUP
-      {
-        OnOpen();
-        break;
-      }
-    default:
-      {
-        SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-        break;
-      }
-    }
+  switch ( theCommandID ) {
+  case GEOMOp::OpDelete:         // EDIT - DELETE
+    OnEditDelete();
+    break;
+  case GEOMOp::OpImport:         // FILE - IMPORT
+    Import();
+    break;
+  case GEOMOp::OpExport:         // FILE - EXPORT
+    Export();
+    break;
+  case GEOMOp::OpCheckGeom:      // TOOLS - CHECK GEOMETRY
+    OnCheckGeometry();
+    break;
+  case GEOMOp::OpSelectVertex:   // POPUP - SELECT ONLY - VERTEX
+    OnSelectOnly( GEOM_POINT );
+    break;
+  case GEOMOp::OpSelectEdge:     // POPUP - SELECT ONLY - EDGE
+    OnSelectOnly( GEOM_EDGE );
+    break;
+  case GEOMOp::OpSelectWire:     // POPUP - SELECT ONLY - WIRE
+    OnSelectOnly( GEOM_WIRE );
+    break;
+  case GEOMOp::OpSelectFace:     // POPUP - SELECT ONLY - FACE
+    OnSelectOnly( GEOM_FACE );
+    break;
+  case GEOMOp::OpSelectShell:    // POPUP - SELECT ONLY - SHELL
+    OnSelectOnly( GEOM_SHELL );
+    break;
+  case GEOMOp::OpSelectSolid:    // POPUP - SELECT ONLY - SOLID
+    OnSelectOnly( GEOM_SOLID );
+    break;
+  case GEOMOp::OpSelectCompound: // POPUP - SELECT ONLY - COMPOUND
+    OnSelectOnly( GEOM_COMPOUND );
+    break;
+  case GEOMOp::OpSelectAll:      // POPUP - SELECT ONLY - SELECT ALL
+    OnSelectOnly( GEOM_ALLOBJECTS );
+    break;
+  case GEOMOp::OpRename:         // POPUP - RENAME
+    OnRename();
+    break;
+  case GEOMOp::OpDeflection:     // POPUP - DEFLECTION ANGLE
+    OnDeflection();
+    break;
+  case GEOMOp::OpColor:          // POPUP - COLOR
+    OnColor();
+    break;
+  case GEOMOp::OpTransparency:   // POPUP - TRANSPARENCY
+    OnTransparency();
+    break;
+  case GEOMOp::OpIsos:           // POPUP - ISOS
+    OnNbIsos();
+    break;
+  case GEOMOp::OpAutoColor:      // POPUP - AUTO COLOR
+    OnAutoColor();
+    break;
+  case GEOMOp::OpNoAutoColor:    // POPUP - DISABLE AUTO COLOR
+    OnDisableAutoColor();
+    break;
+  case GEOMOp::OpShowChildren:   // POPUP - SHOW CHILDREN
+  case GEOMOp::OpHideChildren:   // POPUP - HIDE CHILDREN
+    OnShowHideChildren( theCommandID == GEOMOp::OpShowChildren );
+    break;
+  case GEOMOp::OpPointMarker:    // POPUP - POINT MARKER
+    OnPointMarker();
+    break;
+  default:
+    SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
+  }
   return true;
 }
 
@@ -585,45 +512,9 @@ void GEOMToolsGUI::OnEditDelete()
   app->updateActions(); //SRN: To update a Save button in the toolbar
 }
 
-
-//==============================================================================
-// function : OnEditCopy()
-// purpose  :
-//==============================================================================
-void GEOMToolsGUI::OnEditCopy()
-{
-/*
- SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection() );
-  GEOM::string_array_var listIOR = new GEOM::string_array;
-
-  const SALOME_ListIO& List = Sel->StoredIObjects();
-
-  myGeomBase->ConvertListOfIOInListOfIOR(List, listIOR);
-
-  Sel->ClearIObjects();
-
-  SALOMEDS::Study_var aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-  int aStudyID = aStudy->StudyId();
-
-  for (unsigned int ind = 0; ind < listIOR->length();ind++) {
-    GEOM::GEOM_Object_var aShapeInit = myGeom->GetIORFromString(listIOR[ind]);
-    try {
-      GEOM::GEOM_IInsertOperations_var IOp =  myGeom->GetIInsertOperations(aStudyID);
-      GEOM::GEOM_Object_var result = IOp->MakeCopy(aShapeInit);
-      myGeomBase->Display(result);
-    }
-    catch  (const SALOME::SALOME_Exception& S_ex) {
-      QtCatchCorbaException(S_ex);
-    }
-  }
-
-  QAD_Application::getDesktop()->putInfo(tr("GEOM_PRP_READY"));
-*/
-}
-
 //=====================================================================================
 // function : Import
-// purpose  : BRep, Iges, Step
+// purpose  : BRep, Iges, Step, ...
 //=====================================================================================
 bool GEOMToolsGUI::Import()
 {
@@ -931,7 +822,7 @@ bool GEOMToolsGUI::Export()
 
 //=====================================================================================
 // function : RemoveObjectWithChildren
-// purpose  : to be used by OnEditDelete() method
+// purpose  : used by OnEditDelete() method
 //=====================================================================================
 void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
                                             _PTR(Study) aStudy,

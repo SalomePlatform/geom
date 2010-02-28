@@ -57,7 +57,7 @@ PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
   QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_HW")));
 
-  setWindowTitle( tr( "GEOM_FACE_TITLE" ) );
+  setWindowTitle( tr( "GEOM_RECTANGLE_TITLE" ) );
  
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FACE" ) );

@@ -27,6 +27,8 @@
 #include "GroupGUI_GroupDlg.h" 
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
+
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
 
@@ -80,11 +82,11 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   }
 
   switch ( theCommandID ) {
-  case 800: 
-  case 8001: // CREATE GROUP
+  case GEOMOp::OpGroupCreate: 
+  case GEOMOp::OpGroupCreatePopup: // CREATE GROUP
     aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::CreateGroup, getGeometryGUI(), parent ); 
     break;
-  case 801:  // EDIT GROUP
+  case GEOMOp::OpGroupEdit:  // EDIT GROUP
     {
       SALOME_ListIO aList;
       aList.Clear();

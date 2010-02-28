@@ -56,10 +56,8 @@ private:
   bool         Import();
   bool         Export();
 
-  void         OnEditCopy();
   void         OnEditDelete();
 
-  void         OnSettingsColor();
   void         OnRename();
   void         OnCheckGeometry();
 
@@ -70,7 +68,6 @@ private:
   void         OnTransparency();
   void         OnNbIsos();
   void         OnDeflection();
-  void         OnOpen();
   void         OnSelectOnly(int mode);
   void         OnShowHideChildren( bool );
   void         OnPointMarker();

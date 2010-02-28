@@ -89,25 +89,6 @@
 // VTK includes
 #include <vtkRenderer.h>
 
-void GEOMToolsGUI::OnSettingsColor()
-{
-  SUIT_Session* sess = SUIT_Session::session();
-  SUIT_ResourceMgr* resMgr = sess->resourceMgr();
-  SUIT_Desktop* desk = sess->activeApplication()->desktop();
-
-  QColor anInitColor = resMgr->colorValue( "Geometry", "SettingsShadingColor", QColor( "yellow" ) );
-
-  QColor aDialogColor = QColorDialog::getColor(anInitColor, desk );
-  if( aDialogColor.isValid() )
-  {
-    QString type = desk->activeWindow()->getViewManager()->getType();
-    if( type != OCCViewer_Viewer::Type() && type != SVTK_Viewer::Type() )
-      MESSAGE("Settings Color is not supported for current Viewer");
-
-    resMgr->setValue( "Geometry", "SettingsShadingColor", aDialogColor );
-  }
-}
-
 void GEOMToolsGUI::OnRename()
 {
   SALOME_ListIO selected;
@@ -642,99 +623,6 @@ void GEOMToolsGUI::OnDeflection()
       }
     }
   } // end vtkviewer
-}
-
-void GEOMToolsGUI::OnOpen()
-{
-/*
-  SALOME_Selection* Sel = SALOME_Selection::Selection(QAD_Application::getDesktop()->getActiveStudy()->getSelection());
-  _PTR(Study) aStudy = QAD_Application::getDesktop()->getActiveStudy()->getStudyDocument();
-
-  SALOME_ListIteratorOfListIO It(Sel->StoredIObjects());
-  Handle(SALOME_InteractiveObject) anIObject;
-  for(;It.More();It.Next()) {
-    anIObject = It.Value();
-    _PTR(SObject) obj ( aStudy->FindObjectID(anIObject->getEntry()) );
-    _PTR(AttributePersistentRef) aPersist;
-    _PTR(AttributeIOR) anIOR;
-    if(obj) {
-      // this SObject may be GEOM module root SObject
-      _PTR(ChildIterator) anIter ( aStudy->NewChildIterator() );
-      _PTR(GenericAttribute) anAttr;
-      bool useSubItems = false;
-      while (anIter->More() && !useSubItems) {
-        _PTR(SObject) subobj ( anIter->Value() );
-        if (subobj->FindAttribute(anAttr, "AttributePersistentRef")) {
-          useSubItems = true;
-          obj =  subobj;
-        }
-        else
-          anIter->Next();
-      }
-      obj->FindAttribute(anAttr, "AttributePersistentRef");
-
-      while(useSubItems?anIter->More():!anAttr->_is_nil()) {
-        if(!obj->FindAttribute(anAttr, "AttributeIOR") &&
-           obj->FindAttribute(anAttr, "AttributePersistentRef")) {
-          _PTR(SComponent) FComp ( obj->GetFatherComponent() );
-          if (FComp) {
-            if (FComp->FindAttribute(anAttr, "AttributeName")) {
-              _PTR(AttributeName) aName ( anAttr );
-              QString compName = QAD_Application::getDesktop()->getComponentName(aName->Value().c_str());
-              //                    parent->loadComponentData(parent->getComponentName(aName->Value()));
-              Engines::Component_var comp ;
-              if ( compName.compare("SUPERV") == 0 ) {
-                comp = QAD_Application::getDesktop()->getEngine( "SuperVisionContainer", compName) ;
-              }
-              else {
-                comp = QAD_Application::getDesktop()->getEngine( "FactoryServer", compName);
-                if ( comp->_is_nil() )
-                  comp = QAD_Application::getDesktop()->getEngine( "FactoryServerPy", compName);
-              }
-
-              if (!CORBA::is_nil(comp)) {
-                SALOMEDS::Driver_var   driver = SALOMEDS::Driver::_narrow(comp);
-                if (!CORBA::is_nil(driver)) {
-                  SALOMEDS::StudyBuilder_var  B = dynamic_cast<SALOMEDS_Study*>(aStudy.get())->GetStudy()->NewBuilder();
-                  if (!CORBA::is_nil(B)) {
-                    B->LoadWith(FComp,driver);
-                  } else {
-                    return;
-                  }
-                }
-                else {
-                  MESSAGE("loadComponentData(): Driver is null");
-                  return;
-                }
-              }
-              else {
-                MESSAGE("loadComponentData(): Engine is null");
-                return;
-              }
-                //              // load
-                //              Engines::Component_var comp = QAD_Application::getDesktop()->getEngine("FactoryServer","GEOM");
-                //              if (!CORBA::is_nil(comp)) {
-                //                SALOMEDS::Driver_var driver = SALOMEDS::Driver::_narrow(comp);
-                //                SALOMEDS::StudyBuilder_var aStudyBuilder = aStudy->NewBuilder();
-                //                SALOMEDS::SComponent_var SC = aStudy->FindComponent("GEOM");
-                //                if (!CORBA::is_nil(SC))
-                //                  aStudyBuilder->LoadWith(SC,driver);
-            }
-          }
-          else {
-            MESSAGE("Component is null");
-          }
-        }
-        if(useSubItems) {
-          anIter->Next();
-          obj.reset( anIter->Value() );
-        }
-        else
-          anAttr = NULL;
-      }
-    }
-  }
-*/
 }
 
 void GEOMToolsGUI::OnSelectOnly(int mode)

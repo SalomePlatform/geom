@@ -26,6 +26,7 @@
 #include "RepairGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
@@ -75,18 +76,18 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 
   QDialog* aDlg = NULL;
   switch ( theCommandID ) {
-    case 601: aDlg = new RepairGUI_SewingDlg            ( getGeometryGUI(), parent ); break;
-    case 602: aDlg = new RepairGUI_GlueDlg              ( getGeometryGUI(), parent ); break;
-    case 603: aDlg = new RepairGUI_SuppressFacesDlg     ( getGeometryGUI(), parent ); break;
-    case 604: aDlg = new RepairGUI_RemoveHolesDlg       ( getGeometryGUI(), parent ); break;
-    case 605: aDlg = new RepairGUI_ShapeProcessDlg      ( getGeometryGUI(), parent ); break;
-    case 606: aDlg = new RepairGUI_CloseContourDlg      ( getGeometryGUI(), parent ); break;
-    case 607: aDlg = new RepairGUI_RemoveIntWiresDlg    ( getGeometryGUI(), parent ); break;
-    case 608: aDlg = new RepairGUI_DivideEdgeDlg        ( getGeometryGUI(), parent ); break;
-    case 609: aDlg = new RepairGUI_FreeBoundDlg         ( getGeometryGUI(), parent ); break;
-    case 610: aDlg = new RepairGUI_FreeFacesDlg         ( getGeometryGUI(), parent ); break;
-    case 611: aDlg = new RepairGUI_ChangeOrientationDlg ( getGeometryGUI(), parent ); break;
-    case 612: aDlg = new RepairGUI_RemoveExtraEdgesDlg  ( getGeometryGUI(), parent ); break;  
+  case GEOMOp::OpSewing:           aDlg = new RepairGUI_SewingDlg            ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpGlueFaces:        aDlg = new RepairGUI_GlueDlg              ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpSuppressFaces:    aDlg = new RepairGUI_SuppressFacesDlg     ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpSuppressHoles:    aDlg = new RepairGUI_RemoveHolesDlg       ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpShapeProcess:     aDlg = new RepairGUI_ShapeProcessDlg      ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpCloseContour:     aDlg = new RepairGUI_CloseContourDlg      ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpRemoveIntWires:   aDlg = new RepairGUI_RemoveIntWiresDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpAddPointOnEdge:   aDlg = new RepairGUI_DivideEdgeDlg        ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpFreeBoundaries:   aDlg = new RepairGUI_FreeBoundDlg         ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpFreeFaces:        aDlg = new RepairGUI_FreeFacesDlg         ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpOrientation:      aDlg = new RepairGUI_ChangeOrientationDlg ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  ( getGeometryGUI(), parent ); break;  
     default:
       app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
       break;
