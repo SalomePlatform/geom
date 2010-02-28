@@ -25,6 +25,7 @@
 //
 #include "DisplayGUI.h"
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 #include <GEOM_Displayer.h>
 #include <GEOM_AISShape.hxx>
 #include <GEOM_Actor.h>
@@ -89,73 +90,49 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
 
-  switch (theCommandID) {
-  case 211: // MENU VIEW - WIREFRAME/SHADING
-    {
-      InvertDisplayMode();
-      int newMode = GetDisplayMode();
-      getGeometryGUI()->action( 211 )->setText
-        ( newMode == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
-      getGeometryGUI()->menuMgr()->update();
-      break;
-    }
-  case 212: // MENU VIEW - DISPLAY ALL
-    {
-      getGeometryGUI()->EmitSignalDeactivateDialog();
-      DisplayAll();
-      break;
-    }
-  case 213: // MENU VIEW - DISPLAY ONLY
-    {
-      getGeometryGUI()->EmitSignalDeactivateDialog();
-      DisplayOnly();
-      break;
-    }
-  case 214: // MENU VIEW - ERASE ALL
-    {
-      EraseAll();
-      break;
-    }
-  case 215: // MENU VIEW - ERASE
-    {
-      Erase();
-      break;
-    }
-  case 216: // MENU VIEW - DISPLAY
-    {
-      getGeometryGUI()->EmitSignalDeactivateDialog();
-      Display();
-      break;
-    }
-  case 218: // MENU VIEW - VECTORS MODE
-    {
-      bool mode = GetVectorMode();
-      SetVectorMode(!mode);
-      getGeometryGUI()->action( 218 )->setText
-      ( mode == false ? tr( "MEN_VECTOR_MODE_OFF" ) : tr("MEN_VECTOR_MODE_ON") );
-      getGeometryGUI()->menuMgr()->update();
-      break;
-    }
-  case 80311: // POPUP VIEWER - WIREFRAME
-    {
-      ChangeDisplayMode( 0 );
-      break;
-    }
-  case 80312: // POPUP VIEWER - SHADING
-    {
-      ChangeDisplayMode( 1 );
-      break;
-    }
-  case 80313: // POPUP VIEWER - VECTORS
-    {
-      ChangeDisplayMode( 2 );
-      break;
-    }
+  switch ( theCommandID ) {
+  case GEOMOp::OpDisplayMode:    // MENU VIEW - DISPLAY MODE - WIREFRAME/SHADING
+    InvertDisplayMode();
+    getGeometryGUI()->action( GEOMOp::OpDisplayMode )->setText
+      ( GetDisplayMode() == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
+    getGeometryGUI()->menuMgr()->update();
+    break;
+  case GEOMOp::OpShowAll:        // MENU VIEW - SHOW ALL
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    DisplayAll();
+    break;
+  case GEOMOp::OpShowOnly:       // POPUP MENU - SHOW ONLY
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    DisplayOnly();
+    break;
+  case GEOMOp::OpHideAll:        // MENU VIEW - HIDE ALL
+    EraseAll();
+    break;
+  case GEOMOp::OpHide:           // POPUP MENU - HIDE
+    Erase();
+    break;
+  case GEOMOp::OpShow:           // POPUP MENU - SHOW
+    getGeometryGUI()->EmitSignalDeactivateDialog();
+    Display();
+    break;
+  case GEOMOp::OpSwitchVectors:  // MENU VIEW - DISPLAY MODE - SHOW EDGE DIRECTION
+    SetVectorMode(!GetVectorMode());
+    getGeometryGUI()->action( GEOMOp::OpSwitchVectors )->setText
+      ( GetVectorMode() ? tr("MEN_VECTOR_MODE_ON") : tr( "MEN_VECTOR_MODE_OFF" ) );
+    getGeometryGUI()->menuMgr()->update();
+    break;
+  case GEOMOp::OpWireframe:      // POPUP MENU - DISPLAY MODE - WIREFRAME
+    ChangeDisplayMode( 0 );
+    break;
+  case GEOMOp::OpShading:        // POPUP MENU - DISPLAY MODE - SHADING
+    ChangeDisplayMode( 1 );
+    break;
+  case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+    ChangeDisplayMode( 2 );
+    break;
   default:
-    {
-      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-      break;
-    }
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
   }
   Sel->setSelectedObjects( selected );
   return true;

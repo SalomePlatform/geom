@@ -32,6 +32,7 @@ lib_LTLIBRARIES = libGEOM.la
 # header files 
 salomeinclude_HEADERS = 	\
 	GeometryGUI.h		\
+	GeometryGUI_Operations.h\
 	GEOMGUI.h		\
 	GEOM_Displayer.h	\
 	GEOMGUI_OCCSelector.h	\

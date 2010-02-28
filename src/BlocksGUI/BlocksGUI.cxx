@@ -32,6 +32,7 @@
 #include "BlocksGUI_PropagateDlg.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
@@ -66,11 +67,11 @@ bool BlocksGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = 0;
 
   switch ( theCommandID ) {
-  case 9999:  aDlg = new BlocksGUI_BlockDlg    ( getGeometryGUI(), parent ); break;
-  case 9998:  aDlg = new BlocksGUI_TrsfDlg     ( getGeometryGUI(), parent ); break;
-  case 9997:  aDlg = new BlocksGUI_QuadFaceDlg ( getGeometryGUI(), parent ); break;
-  case 9995:  aDlg = new BlocksGUI_ExplodeDlg  ( getGeometryGUI(), parent ); break;
-  case 99991: aDlg = new BlocksGUI_PropagateDlg( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpHexaSolid:      aDlg = new BlocksGUI_BlockDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpMultiTransform: aDlg = new BlocksGUI_TrsfDlg     ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpQuadFace:       aDlg = new BlocksGUI_QuadFaceDlg ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpExplodeBlock:   aDlg = new BlocksGUI_ExplodeDlg  ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPropagate:      aDlg = new BlocksGUI_PropagateDlg( getGeometryGUI(), parent ); break;
   default:
     getGeometryGUI()->getApp()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;

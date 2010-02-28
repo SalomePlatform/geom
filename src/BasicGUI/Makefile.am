@@ -38,8 +38,10 @@ salomeinclude_HEADERS =			\
 	BasicGUI_MarkerDlg.h		\
 	BasicGUI_PlaneDlg.h		\
 	BasicGUI_PointDlg.h		\
-	BasicGUI_VectorDlg.h		\
-	BasicGUI_WorkingPlaneDlg.h
+	BasicGUI_VectorDlg.h
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg.h
+#
 
 # Libraries targets
 
@@ -55,9 +57,11 @@ dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI_ArcDlg.cxx		\
 	BasicGUI_VectorDlg.cxx		\
 	BasicGUI_PlaneDlg.cxx		\
-	BasicGUI_WorkingPlaneDlg.cxx	\
 	BasicGUI_CurveDlg.cxx		\
 	BasicGUI_MarkerDlg.cxx
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg.cxx
+#
 
 MOC_FILES =					\
 	BasicGUI_PointDlg_moc.cxx		\
@@ -67,9 +71,11 @@ MOC_FILES =					\
 	BasicGUI_ArcDlg_moc.cxx			\
 	BasicGUI_VectorDlg_moc.cxx		\
 	BasicGUI_PlaneDlg_moc.cxx		\
-	BasicGUI_WorkingPlaneDlg_moc.cxx	\
 	BasicGUI_CurveDlg_moc.cxx		\
 	BasicGUI_MarkerDlg_moc.cxx
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg_moc.cxx
+#
 
 nodist_libBasicGUI_la_SOURCES =			\
 	$(MOC_FILES)

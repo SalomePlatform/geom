@@ -818,6 +818,10 @@
             <translation>build_face.png</translation>
         </message>
         <message>
+            <source>ICO_RECTANGLE</source>
+            <translation>build_face.png</translation>
+        </message>
+        <message>
             <source>ICO_FACE_SEL_ONLY</source>
             <translation>build_face.png</translation>
         </message>

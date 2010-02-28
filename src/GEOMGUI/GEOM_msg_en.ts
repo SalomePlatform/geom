@@ -497,7 +497,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
 	<message>
             <source>GEOM_DISK_TITLE</source>
-            <translation>Create A Disk</translation>
+            <translation>Disk Construction</translation>
         </message>
         <message>
             <source>GEOM_DIMENSIONS</source>
@@ -628,7 +628,11 @@ Please, select face, shell or solid and try again</translation>
             <translation>Create A Face</translation>
         </message>
         <message>
-            <source>GEOM_FILLET</source>
+            <source>GEOM_RECTANGLE_TITLE</source>
+            <translation>Face Construction</translation>
+        </message>
+        <message>
+          <source>GEOM_FILLET</source>
             <translation>Fillet</translation>
         </message>
 	<message>
@@ -1585,7 +1589,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_SKETCHER_TITLE</source>
-            <translation>Sketch Construction</translation>
+            <translation>2D Sketch Construction</translation>
         </message>
 	<message>
             <source>GEOM_3DSKETCHER_TITLE</source>
@@ -2144,6 +2148,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Cylinder</translation>
         </message>
         <message>
+            <source>MEN_RECTANGLE</source>
+            <translation>Face</translation>
+        </message>
+        <message>
             <source>MEN_DELETE</source>
             <translation>Delete</translation>
         </message>
@@ -2225,7 +2233,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_FILLET</source>
-            <translation>Fillet</translation>
+            <translation>Fillet 3D</translation>
         </message>
 	<message>
             <source>MEN_FILLET_1D</source>
@@ -2309,7 +2317,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_MODIFY_LOCATION</source>
-            <translation>Modify the Location</translation>
+            <translation>Modify Location</translation>
         </message>
         <message>
             <source>MEN_MUL_ROTATION</source>
@@ -2341,7 +2349,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_PIPE</source>
-            <translation>Extrusion Along a Path</translation>
+            <translation>Extrusion Along Path</translation>
         </message>
         <message>
             <source>MEN_PLANE</source>
@@ -2473,7 +2481,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_SKETCH</source>
-            <translation>Sketch</translation>
+            <translation>2D Sketch</translation>
         </message>
 	<message>
             <source>MEN_3DSKETCH</source>
@@ -2665,7 +2673,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_ARCHIMEDE</source>
-            <translation>Archimede</translation>
+            <translation>Archimede operation</translation>
         </message>
         <message>
             <source>STB_BASIC_PROPS</source>
@@ -2681,7 +2689,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_CHAMFER</source>
-            <translation>Chamfer</translation>
+            <translation>Create a chamfer</translation>
         </message>
         <message>
             <source>STB_CHANGE_ORIENTATION</source>
@@ -2746,6 +2754,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>STB_CYLINDER</source>
             <translation>Create a cylinder</translation>
+        </message>
+        <message>
+            <source>STB_RECTANGLE</source>
+            <translation>Create rectangular face</translation>
         </message>
         <message>
             <source>STB_DELETE</source>
@@ -2813,7 +2825,15 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_FILLET</source>
-            <translation>Fillet</translation>
+            <translation>Create 3D fillet</translation>
+        </message>
+        <message>
+            <source>STB_FILLET_1D</source>
+            <translation>Create 1D fillet</translation>
+        </message>
+        <message>
+            <source>STB_FILLET_2D</source>
+            <translation>Create 2D fillet</translation>
         </message>
         <message>
             <source>STB_FILLING</source>
@@ -2873,23 +2893,23 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_MIRROR</source>
-            <translation>Mirror image</translation>
+            <translation>Mirror a shape</translation>
         </message>
         <message>
             <source>STB_MODIFY_LOCATION</source>
-            <translation>Modify the Location</translation>
+            <translation>Modify shape's location</translation>
         </message>
         <message>
             <source>STB_MUL_ROTATION</source>
-            <translation>Multi-Rotation</translation>
+            <translation>Perform multi-rotation</translation>
         </message>
         <message>
             <source>STB_MUL_TRANSFORM</source>
-            <translation>Multi-transformation</translation>
+            <translation>Perform multi-transformation</translation>
         </message>
         <message>
             <source>STB_MUL_TRANSLATION</source>
-            <translation>Multi-Translation</translation>
+            <translation>Perform multi-translation</translation>
         </message>
         <message>
             <source>STB_OFFSET</source>
@@ -2897,11 +2917,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_PARTITION</source>
-            <translation>Partition</translation>
+            <translation>Make a partition</translation>
         </message>
         <message>
             <source>STB_PIPE</source>
-            <translation>Create a shape by Extrusion along a path</translation>
+            <translation>Create a shape by extrusion along a path</translation>
         </message>
         <message>
             <source>STB_PLANE</source>
@@ -2973,11 +2993,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_ROTATION</source>
-            <translation>Rotation</translation>
+            <translation>Rotate a shape</translation>
         </message>
         <message>
             <source>STB_SCALE</source>
-            <translation>Scale transform</translation>
+            <translation>Scale a shape</translation>
         </message>
         <message>
             <source>STB_SECTION</source>
@@ -3013,7 +3033,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_SKETCH</source>
-            <translation>Sketch</translation>
+            <translation>Create 2D sketch</translation>
+        </message>
+        <message>
+            <source>STB_3DSKETCH</source>
+            <translation>Create 3D sketch</translation>
         </message>
         <message>
             <source>STB_SOLID</source>
@@ -3053,7 +3077,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_TRANSLATION</source>
-            <translation>Translation</translation>
+            <translation>Translate shape</translation>
         </message>
         <message>
             <source>STB_VECTOR</source>
@@ -3164,6 +3188,14 @@ Please, select face, shell or solid and try again</translation>
             <translation>Transformation</translation>
         </message>
         <message>
+            <source>TOOL_BUILD</source>
+            <translation>Build</translation>
+        </message>
+        <message>
+            <source>TOOL_OPERATIONS</source>
+            <translation>Operations</translation>
+        </message>
+        <message>
             <source>TOP_ARC</source>
             <translation>Create an arc</translation>
         </message>
@@ -3229,7 +3261,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_COMPOUND</source>
-            <translation>Build a compound</translation>
+            <translation>Build compound</translation>
         </message>
         <message>
             <source>TOP_CONE</source>
@@ -3251,9 +3283,13 @@ Please, select face, shell or solid and try again</translation>
             <source>TOP_DELETE</source>
             <translation>Delete object</translation>
         </message>
+        <message>
+            <source>TOP_RECTANGLE</source>
+            <translation>Create rectangular face</translation>
+        </message>
 	<message>
             <source>TOP_DISK</source>
-            <translation>Build a Disk</translation>
+            <translation>Create a disk</translation>
         </message>
         <message>
             <source>TOP_DISPLAY</source>
@@ -3269,7 +3305,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_EDGE</source>
-            <translation>Build an edge</translation>
+            <translation>Build edge</translation>
         </message>
         <message>
             <source>TOP_ELLIPSE</source>
@@ -3301,11 +3337,19 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_FACE</source>
-            <translation>Build a face</translation>
+            <translation>Build face</translation>
         </message>
         <message>
             <source>TOP_FILLET</source>
-            <translation>Fillet</translation>
+            <translation>Fillet 3D</translation>
+        </message>
+        <message>
+            <source>TOP_FILLET_1D</source>
+            <translation>Fillet 1D</translation>
+        </message>
+        <message>
+            <source>TOP_FILLET_2D</source>
+            <translation>Fillet 2D</translation>
         </message>
         <message>
             <source>TOP_FILLING</source>
@@ -3365,7 +3409,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_MODIFY_LOCATION</source>
-            <translation>Modify the Location</translation>
+            <translation>Modify location</translation>
         </message>
         <message>
             <source>TOP_MUL_ROTATION</source>
@@ -3389,7 +3433,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_PIPE</source>
-            <translation>Extrusion along a path</translation>
+            <translation>Extrusion along path</translation>
         </message>
         <message>
             <source>TOP_PLANE</source>
@@ -3489,15 +3533,19 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_SHELL</source>
-            <translation>Build a shell</translation>
+            <translation>Build shell</translation>
         </message>
         <message>
             <source>TOP_SKETCH</source>
-            <translation>Sketch</translation>
+            <translation>2D sketch</translation>
+        </message>
+        <message>
+            <source>TOP_3DSKETCH</source>
+            <translation>3D sketch</translation>
         </message>
         <message>
             <source>TOP_SOLID</source>
-            <translation>Build a solid</translation>
+            <translation>Build solid</translation>
         </message>
         <message>
             <source>TOP_SPHERE</source>
@@ -3541,7 +3589,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_WIRE</source>
-            <translation>Build a wire</translation>
+            <translation>Build wire</translation>
         </message>
         <message>
             <source>TOP_WORK_PLANE</source>

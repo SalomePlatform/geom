@@ -26,6 +26,7 @@
 #include "EntityGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
@@ -72,14 +73,14 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 404: // SKETCHER
+  case GEOMOp::Op2dSketcher: // 2D SKETCHER
     getGeometryGUI()->ActiveWorkingPlane();
     aDlg = new EntityGUI_SketcherDlg( getGeometryGUI(), parent );
     break;
-  case 405: // 3D SKETCHER
+  case GEOMOp::Op3dSketcher: // 3D SKETCHER
     aDlg = new EntityGUI_3DSketcherDlg( getGeometryGUI(), parent );
     break;
-  case 407: // EXPLODE : use ic
+  case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );
     break;
   default:

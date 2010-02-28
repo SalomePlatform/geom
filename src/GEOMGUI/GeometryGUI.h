@@ -50,8 +50,6 @@
 // minimum allowed value for deflection coefficient
 #define DEFLECTION_MIN 1e-06
 
-typedef QMap<QString, GEOMGUI*> GUIMap;
-
 class QDialog;
 class QMenu;
 class GEOMGUI_OCCSelector;
@@ -81,17 +79,14 @@ public:
 
   static Handle(Graphic3d_HArray1OfBytes) getTexture( SalomeApp_Study*, int, int&, int& );
 
-  static bool                 InitGeomGen();   //BugID IPAL9186: SRN: To be called by Python scripts
+  static bool                 InitGeomGen();
 
-  static  GEOM::GEOM_Gen_var  GetGeomGen();//        { return GeometryGUI::myComponentGeom; }
+  static  GEOM::GEOM_Gen_var  GetGeomGen();
 
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
 
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }
-  Standard_CString&           GetFatherior()      { return myFatherior; }
-  //void                        SetState( const int state ) { myState = state; }
-  //int                         GetState() const    { return myState; }
 
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
@@ -103,15 +98,8 @@ public:
   void                        EmitSignalCloseAllDialogs();
   void                        EmitSignalDefaultStepValueChanged( double newVal );
 
+  // Process action
   void                        OnGUIEvent( int id );
-
-//  virtual bool                SetSettings();
-//  virtual void                SupportedViewType ( int* buffer, int bufferSize );
-  virtual void                BuildPresentation( const Handle(SALOME_InteractiveObject)&, SUIT_ViewWindow* = 0 );
-
-//  virtual void                DefinePopup( QString & theContext, QString & theParent, QString & theObject);
-//  virtual bool                CustomPopup( QAD_Desktop* parent, QMenu* popup, const QString& theContext,
-//                                         const QString& theParent, const QString& theObject );
 
   // The Working Plane management
   void                        SetWorkingPlane( gp_Ax3 wp ) { myWorkingPlane = wp;   }
@@ -171,12 +159,11 @@ private:
 
   typedef QMap<long, Handle(Graphic3d_HArray1OfBytes)> TextureMap;
   typedef QMap<long, TextureMap> StudyTextureMap;
-  
+  typedef QMap<QString, GEOMGUI*> GUIMap;
+
   GUIMap                      myGUIMap;          // GUI libraries map
   QDialog*                    myActiveDialogBox; // active dialog box
   GEOM_Client                 myShapeReader;     // geom shape reader
-  Standard_CString            myFatherior;
-  int                         myState;           // identify a method
   gp_Ax3                      myWorkingPlane;
   QMap<int,QString>           myRules;           // popup rules
   static StudyTextureMap      myTextureMap;      // texture map
