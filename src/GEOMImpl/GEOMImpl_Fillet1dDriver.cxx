@@ -26,6 +26,7 @@
 #include <GEOMImpl_IFillet1d.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_ILocalOperations.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOM_Function.hxx>
 
 #include <gp_Pln.hxx>
@@ -163,27 +164,26 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
 
   // collect vertices for make fillet
   TopTools_ListOfShape aVertexList;
+  TopTools_MapOfShape mapShape;
   int aLen = aCI.GetLength();
-  if ( aLen > 0 )
-  {
+  if ( aLen > 0 ) {
     for (int ind = 1; ind <= aLen; ind++) {
       TopoDS_Shape aShapeVertex;
       if (GEOMImpl_ILocalOperations::GetSubShape
           (aWire, aCI.GetVertex(ind), aShapeVertex))
-        aVertexList.Append( aShapeVertex );
+        if (mapShape.Add(aShapeVertex))
+          aVertexList.Append( aShapeVertex );
     }
-  }
-  else
-  {
-     // get all vertices from wire
-     TopExp_Explorer anExp( aWire, TopAbs_VERTEX );
-     for ( ; anExp.More(); anExp.Next() )
-       aVertexList.Append( anExp.Current() );
+  } else { // get all vertices from wire
+    TopExp_Explorer anExp( aWire, TopAbs_VERTEX );
+    for ( ; anExp.More(); anExp.Next() ) {
+      if (mapShape.Add(anExp.Current()))
+        aVertexList.Append( anExp.Current() );
+    }
   }
   if (aVertexList.IsEmpty())
     Standard_ConstructionError::Raise("Invalid input no vertices to make fillet");
 
-  bool res = false;
   //INFO: this algorithm implemented in assumption that user can select both
   //  vertices of some edges to make fillet. In this case we should remember
   //  already modified initial edges to take care in next fillet step
@@ -196,8 +196,7 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
   TopTools_IndexedDataMapOfShapeListOfShape aMapVToEdges;
   TopExp::MapShapesAndAncestors( aWire, TopAbs_VERTEX, TopAbs_EDGE, aMapVToEdges );
   TopTools_ListIteratorOfListOfShape anIt( aVertexList );
-  for ( ; anIt.More(); anIt.Next() )
-  {
+  for ( ; anIt.More(); anIt.Next() ) {
     TopoDS_Vertex aV = TopoDS::Vertex( anIt.Value() );
     if ( aV.IsNull() || !aMapVToEdges.Contains( aV ) )
       continue;
@@ -227,33 +226,33 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     if (aNewE.IsNull())
       continue; // no result found
     
-    res |= true;
     // add  new created edges and take modified edges
     aListOfNewEdge.Append( aNewE );
     
     // check if face edges modified,
-    //  if yes, than map to original edges (from vertex-edges list), because edges can be modified before
-    if (!aModifE1.IsNull() || !aModifE1.IsSame( anEdge1 ))
+    // if yes, than map to original edges (from vertex-edges list), because edges can be modified before
+    if (!aModifE1.IsNull() && !aModifE1.IsSame( anEdge1 ))
       addEdgeRelation( anEdgeToEdgeMap, TopoDS::Edge(aVertexEdges.First()), aModifE1 );
-    if (!aModifE2.IsNull() || !aModifE2.IsSame( anEdge2 ))
+    if (!aModifE2.IsNull() && !aModifE2.IsSame( anEdge2 ))
       addEdgeRelation( anEdgeToEdgeMap, TopoDS::Edge(aVertexEdges.Last()), aModifE2 );
   }
 
-  if ( !res && anEdgeToEdgeMap.IsEmpty() && aListOfNewEdge.IsEmpty() )
-  {
+  if ( anEdgeToEdgeMap.IsEmpty() && aListOfNewEdge.IsEmpty() ) {
     StdFail_NotDone::Raise("1D Fillet can't be computed on the given shape with the given radius");
-    return 0; // nothing done :(
+    return 0;
   }
   
   // create new wire instead of original
-  for ( TopExp_Explorer anExp( aWire, TopAbs_EDGE ); anExp.More(); anExp.Next() )
-  {
-    TopoDS_Shape anEdge = anExp.Current();
+  for ( TopExp_Explorer anExp( aWire, TopAbs_EDGE ); anExp.More(); anExp.Next() ) {
+    TopoDS_Shape anEdge = anExp.Current(); 
     if ( !anEdgeToEdgeMap.IsBound( anEdge ) )
       aListOfNewEdge.Append( anEdge );
     else
       aListOfNewEdge.Append( anEdgeToEdgeMap.Find( anEdge ) );
   }
+
+  GEOMImpl_IShapesOperations::SortShapes( aListOfNewEdge );
+
   BRepBuilderAPI_MakeWire aWireTool;
   aWireTool.Add( aListOfNewEdge );
   aWireTool.Build();
