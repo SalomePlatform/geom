@@ -268,7 +268,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       for (int i=0; i < myBaseObjects.length(); i++) {
         GEOMBase::GetShape(myBaseObjects[i], S);
         if (S.ShapeType() == TopAbs_COMPSOLID ||
-            S.ShapeType() == TopAbs_COMPOUND ||
+            /*S.ShapeType() == TopAbs_COMPOUND ||*/
             S.ShapeType() == TopAbs_SOLID ||
             S.ShapeType() == TopAbs_SHAPE)
           return;
