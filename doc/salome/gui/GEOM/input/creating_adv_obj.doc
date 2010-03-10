@@ -14,4 +14,10 @@ entities:
 <li>\subpage create_compound_page</li>
 </ul>
 
+<b>New Entity -> Advanced </b> submenu allows to create additional complex topological objects.
+
+<ul>
+<!--@@ insert new functions before this line @@-->
+</ul>
+
 */

@@ -56,6 +56,7 @@
 ##       @defgroup l4_decompose     Decompose objects
 ##       @defgroup l4_access        Access to sub-shapes by their unique IDs inside the main shape
 ##       @defgroup l4_obtain        Access to subshapes by a criteria
+##       @defgroup l4_advanced      Advanced objects creation functions
 
 ##     @}
 
@@ -98,7 +99,7 @@ def RaiseIfFailed (Method_name, Operation):
 ## @ingroup l1_geompy_auxiliary
 def ParseParameters(*parameters):
     Result = []
-    StringResult = ""
+    StringResult = []
     for parameter in parameters:
         if isinstance(parameter,str):
             if notebook.isVariable(parameter):
@@ -109,11 +110,12 @@ def ParseParameters(*parameters):
             Result.append(parameter)
             pass
 
-        StringResult = StringResult + str(parameter)
-        StringResult = StringResult + ":"
+        StringResult.append(str(parameter))
         pass
-    StringResult = StringResult[:len(StringResult)-1]
-    Result.append(StringResult)
+    if Result:
+        Result.append(":".join(StringResult))
+    else:
+        Result = ":".join(StringResult)
     return Result
 
 ## Return list of variables value from salome notebook
@@ -281,6 +283,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.MeasuOp  = None
             self.BlocksOp = None
             self.GroupOp  = None
+            self.AdvOp    = None
             pass
 
         ## @addtogroup l1_geompy_auxiliary
@@ -312,6 +315,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
+            self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
             pass
 
         ## Get name for sub-shape aSubObj of shape aMainObj
@@ -4106,6 +4110,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return group_edges
 
         # end of l3_groups
+        ## @}
+
+        ## @addtogroup l4_advanced 
+        ## @{
+
+        #@@ insert new functions before this line @@#
+
+        # end of l4_advanced
         ## @}
 
         ## Create a copy of the given object

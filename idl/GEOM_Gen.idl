@@ -3128,6 +3128,14 @@ module GEOM
 
 
   /*!
+   *  GEOM_IAdvancedOperations: Interface for advanced modeling functions.
+   */
+  interface GEOM_IAdvancedOperations : GEOM_IOperations
+  {
+    /*@@ insert new functions before this line @@*/
+  };
+    
+  /*!
    *  GEOM_Gen: Interface to access other GEOM interfaces.
    *  Also contains some methods to access and manage GEOM objects.
    */
@@ -3206,6 +3214,7 @@ module GEOM
     GEOM_IMeasureOperations   GetIMeasureOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IAdvancedOperations  GetIAdvancedOperations (in long theStudyID) raises (SALOME::SALOME_Exception);
 
     /*!
      *  Objects Management

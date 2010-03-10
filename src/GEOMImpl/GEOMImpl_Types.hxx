@@ -299,3 +299,10 @@
 #define MARKER_CS      1
 #define MARKER_SHAPE   2
 #define MARKER_PNT2VEC 3
+
+// Advanced functions (base = 200)
+#define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
+/*@@ insert new functions before this line @@*/
+
+// Advanced functions sub-operations codes
+/*@@ insert new functions before this line @@*/

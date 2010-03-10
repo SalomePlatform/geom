@@ -2424,6 +2424,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Primitives</translation>
         </message>
         <message>
+            <source>MEN_ADVANCED</source>
+            <translation>Advanced</translation>
+        </message>
+        <message>
             <source>MEN_PROPAGATE</source>
             <translation>Propagate</translation>
         </message>
@@ -4419,4 +4423,5 @@ Would you like to continue?</translation>
             <translation>Load Texture</translation>
         </message>
     </context>
+    <!-- @@ insert new functions before this line @@ -->
 </TS>

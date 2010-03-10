@@ -228,5 +228,10 @@ remove_extra_edges.png		\
 coordsys.png			\
 translation.png
 
+ADVANCED_RESOURCES  =
+##@@ insert new functions before this line @@##
+
+dist_salomeres_DATA += $(ADVANCED_RESOURCES)
+
 # VSR: little trick to avoid putting if GEOMCatalog.xml to the distribution archive
 nodist_salomeres_SCRIPTS = GEOMCatalog.xml

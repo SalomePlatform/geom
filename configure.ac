@@ -392,6 +392,7 @@ AC_OUTPUT([ \
   doc/salome/tui/Makefile \
   doc/salome/tui/doxyfile \
   src/Makefile \
+  src/AdvancedGUI/Makefile \
   src/ARCHIMEDE/Makefile \
   src/BREPExport/Makefile \
   src/BREPImport/Makefile \

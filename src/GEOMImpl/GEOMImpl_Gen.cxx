@@ -79,6 +79,8 @@
 #include <GEOMImpl_FillingDriver.hxx>
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
+// Advanced operations
+/*@@ insert new functions before this line @@*/
 
 //=============================================================================
 /*!
@@ -157,6 +159,9 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // Measurements
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MeasureDriver::GetID(), new GEOMImpl_MeasureDriver());
+
+   // Advanced operations
+   /*@@ insert new functions before this line @@*/
 
    SetEngine(this);
 }
@@ -387,3 +392,18 @@ GEOMImpl_IGroupOperations* GEOMImpl_Gen::GetIGroupOperations(int theDocID)
 
   return _mapOfGroupOperations[theDocID];
 }
+
+//=============================================================================
+/*!
+ * GetIAdvancedOperations
+ */
+//=============================================================================
+GEOMImpl_IAdvancedOperations* GEOMImpl_Gen::GetIAdvancedOperations(int theDocID)
+{
+  if(_mapOfAdvancedOperations.find(theDocID) == _mapOfAdvancedOperations.end()) {
+    _mapOfAdvancedOperations[theDocID] = new GEOMImpl_IAdvancedOperations(this, theDocID);
+  }
+
+  return _mapOfAdvancedOperations[theDocID];
+}
+

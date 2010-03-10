@@ -1554,6 +1554,26 @@ GEOM::GEOM_IGroupOperations_ptr GEOM_Gen_i::GetIGroupOperations(CORBA::Long theS
   return operations._retn();
 }
 
+//============================================================================
+// function : GetIAdvancedOperations
+// purpose  :
+//============================================================================
+GEOM::GEOM_IAdvancedOperations_ptr GEOM_Gen_i::GetIAdvancedOperations(CORBA::Long theStudyID)
+     throw ( SALOME::SALOME_Exception )
+{
+  Unexpect aCatch(SALOME_SalomeException);
+  MESSAGE( "GEOM_Gen_i::GetIAdvancedOperations" );
+
+  GEOM::GEOM_Gen_ptr engine = _this();
+
+  GEOM_IAdvancedOperations_i* aServant =
+    new GEOM_IAdvancedOperations_i(_poa, engine, _impl->GetIAdvancedOperations(theStudyID));
+
+  // activate the CORBA servant
+  GEOM::GEOM_IAdvancedOperations_var operations = aServant->_this();
+  return operations._retn();
+}
+
 //=============================================================================
 /*!
  *  AddSubShape

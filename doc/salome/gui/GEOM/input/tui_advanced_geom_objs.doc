@@ -218,4 +218,5 @@ id_compound = geompy.addToStudy(compound,"Compound")
 gg.createAndDisplayGO(id_compound) 
 \endcode
 
+<!--@@ insert new functions before this line @@-->
 */

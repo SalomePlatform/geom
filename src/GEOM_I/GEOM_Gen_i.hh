@@ -49,6 +49,7 @@
 #include "GEOM_IInsertOperations_i.hh"
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
+#include "GEOM_IAdvancedOperations_i.hh"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -218,6 +219,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 
   //Returns a pointer to GroupOperations interface
   virtual GEOM::GEOM_IGroupOperations_ptr GetIGroupOperations (CORBA::Long theStudyID)
+    throw (SALOME::SALOME_Exception);
+
+  //Returns a pointer to AdvancedOperations interface
+  virtual GEOM::GEOM_IAdvancedOperations_ptr GetIAdvancedOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
 
   //Adds a new sub shape

@@ -499,6 +499,10 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpExplodeBlock:     // MENU BLOCKS - EXPLODE ON BLOCKS
     libName = "BlocksGUI";
     break;
+  case GEOMOp::OpAdvancedNoOp:     // NO OPERATION (advanced operations base)
+    //@@ insert new functions before this line @@//
+    libName = "AdvancedGUI";
+    break;
   default:
     break;
   }
@@ -723,6 +727,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShowChildren,     "POP_SHOW_CHILDREN" );
   createGeomAction( GEOMOp::OpHideChildren,     "POP_HIDE_CHILDREN" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
+  
+  //@@ insert new functions before this line @@//
 
   // ---- create menus --------------------------
 
@@ -763,6 +769,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpRevolution, genId, -1 );
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
+
+  int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+  //@@ insert new functions before this line @@//
 
   createMenu( separator(), newEntId, -1 );
 

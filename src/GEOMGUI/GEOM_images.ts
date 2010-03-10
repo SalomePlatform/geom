@@ -1077,5 +1077,6 @@
             <source>ICON_DLG_SCALE_ALONG_AXES</source>
             <translation>scale_along_axes.png</translation>
         </message>
+	<!-- @@ insert new functions before this line @@ -->
     </context>
 </TS>
