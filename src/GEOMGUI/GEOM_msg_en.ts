@@ -3200,6 +3200,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Operations</translation>
         </message>
         <message>
+            <source>TOOL_ADVANCED</source>
+            <translation>Advanced</translation>
+        </message>
+        <message>
             <source>TOP_ARC</source>
             <translation>Create an arc</translation>
         </message>

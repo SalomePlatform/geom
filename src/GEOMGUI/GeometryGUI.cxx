@@ -975,6 +975,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpSolid,    buildTbId );
   createTool( GEOMOp::OpCompound, buildTbId );
 
+  int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+  //@@ insert new functions before this line @@//
+
   // ---- create popup menus --------------------------
 
   QString clientOCCorVTK = "(client='OCCViewer' or client='VTKViewer')";
