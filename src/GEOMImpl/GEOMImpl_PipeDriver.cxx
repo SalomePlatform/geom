@@ -2014,7 +2014,7 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 
       // Make copy to prevent modifying of base object 0020766 : EDF 1320
       TopoDS_Shape aShapeBase;
-      BRepBuilderAPI_Copy Copy(aRefBase->GetValue()));
+      BRepBuilderAPI_Copy Copy(aRefBase->GetValue());
       if( Copy.IsDone() )
         aShapeBase = Copy.Shape();
 
