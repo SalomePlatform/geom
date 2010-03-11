@@ -51,6 +51,7 @@
 #include <GProp_GProps.hxx>
 #include <BRepGProp.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -1964,7 +1965,12 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
   if (aType == PIPE_BASE_PATH)
   {
     Handle(GEOM_Function) aRefBase = aCI->GetBase();
-    TopoDS_Shape aShapeBase = aRefBase->GetValue();
+    TopoDS_Shape aShapeBase;
+
+    // Make copy to prevent modifying of base object 0020766 : EDF 1320
+    BRepBuilderAPI_Copy Copy(aRefBase->GetValue());
+    if( Copy.IsDone() )
+      aShapeBase = Copy.Shape();
 
     if (aShapeBase.IsNull()) {
       if(aCI) delete aCI;
@@ -2002,9 +2008,16 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
       Handle(GEOM_Function) aRefBase = Handle(GEOM_Function)::DownCast(anItem);
       if(aRefBase.IsNull())
         continue;
-      TopoDS_Shape aShapeBase = aRefBase->GetValue();
-      if(aShapeBase.IsNull())
+
+      if(aRefBase->GetValue().IsNull())
         continue;
+
+      // Make copy to prevent modifying of base object 0020766 : EDF 1320
+      TopoDS_Shape aShapeBase;
+      BRepBuilderAPI_Copy Copy(aRefBase->GetValue()));
+      if( Copy.IsDone() )
+        aShapeBase = Copy.Shape();
+
       TopAbs_ShapeEnum aTypeBase = aShapeBase.ShapeType();
 
       //if for section was specified face with a few wires then a few
