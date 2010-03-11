@@ -103,92 +103,66 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
   if (aType == WIRE_EDGES) {
     Handle(TColStd_HSequenceOfTransient) aShapes = aCI.GetShapes();
-    unsigned int ind, nbshapes = aShapes->Length();
-
     TopoDS_Wire aWire;
     B.MakeWire(aWire);
-    BRepBuilderAPI_MakeWire MW;
-    bool isMWDone = true;
 
     // add edges
-    for (ind = 1; ind <= nbshapes; ind++) {
+    for (uint ind = 1; ind <= aShapes->Length(); ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("Shape for wire construction is null");
       }
-      if (aShape_i.ShapeType() == TopAbs_EDGE) {
-        B.Add(aWire, TopoDS::Edge(aShape_i));
-        MW.Add(TopoDS::Edge(aShape_i));
-        if (!MW.IsDone()) {
-          // check status after each edge/wire addition, because the final status
-          // can be OK even in case, when some edges/wires was not accepted.
-          isMWDone = false;
-        }
-      } else if (aShape_i.ShapeType() == TopAbs_WIRE) {
-        TopExp_Explorer exp (aShape_i, TopAbs_EDGE);
-        for (; exp.More(); exp.Next()) {
-          B.Add(aWire, TopoDS::Edge(exp.Current()));
-          MW.Add(TopoDS::Edge(exp.Current()));
-          if (!MW.IsDone()) {
-            // check status after each edge/wire addition, because the final status
-            // can be OK even in case, when some edges/wires was not accepted.
-            isMWDone = false;
-          }
-        }
-      } else {
-        Standard_TypeMismatch::Raise
-          ("Shape for wire construction is neither an edge nor a wire");
-      }
+     if (aShape_i.ShapeType() == TopAbs_EDGE || aShape_i.ShapeType() == TopAbs_WIRE) {
+       TopExp_Explorer exp (aShape_i, TopAbs_EDGE);
+       for (; exp.More(); exp.Next())
+         B.Add(aWire, TopoDS::Edge(exp.Current()));
+     } else {
+       Standard_TypeMismatch::Raise
+         ("Shape for wire construction is neither an edge nor a wire");
+     }
     }
 
-    if (isMWDone) {
-      aShape = MW;
+    // fix edges order
+    Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
+    aFW->Load(aWire);
+    aFW->FixReorder();
+    
+    if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
+      Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
+    } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
+      Standard_ConstructionError::Raise("Wire construction failed");
     } else {
-      // fix edges order
-      Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
-      aFW->Load(aWire);
-      aFW->FixReorder();
-
-      if        (aFW->StatusReorder(ShapeExtend_FAIL1)) {
-        Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
-      } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
-        Standard_ConstructionError::Raise("Wire construction failed");
-      //} else if (aFW->StatusReorder(ShapeExtend_DONE2)) {
-      //  Standard_ConstructionError::Raise("Wire construction failed: some gaps detected");
-      } else {
-      }
-
-      // IMP 0019766: Building a Wire from unconnected edges by introducing a tolerance
-      Standard_Real aTolerance = aCI.GetTolerance();
-      if (aTolerance < Precision::Confusion())
-        aTolerance = Precision::Confusion();
-
-      aFW->ClosedWireMode() = Standard_False;
-      aFW->FixConnected(aTolerance);
-      if (aFW->StatusConnected(ShapeExtend_FAIL)) {
-        Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
-      }
-      // IMP 0019766
-      if (aFW->StatusConnected(ShapeExtend_DONE3)) {
-        // Confused with <prec> but not Analyzer.Precision(), set the same
-        aFW->FixGapsByRangesMode() = Standard_True;
-        if (aFW->FixGaps3d()) {
-          Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
-          Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
-          for (Standard_Integer iedge = 1; iedge <= sbwd->NbEdges(); iedge++) {
-            TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(iedge));
-            aFe->FixVertexTolerance(aEdge);
-            aFe->FixSameParameter(aEdge);
-          }
-        }
-        else if (aFW->StatusGaps3d(ShapeExtend_FAIL)) {
-          Standard_ConstructionError::Raise("Wire construction failed: cannot fix 3d gaps");
-        }
-      }
-
-      aShape = aFW->WireAPIMake();
     }
+
+    // IMP 0019766: Building a Wire from unconnected edges by introducing a tolerance
+    Standard_Real aTolerance = aCI.GetTolerance();
+    if (aTolerance < Precision::Confusion())
+      aTolerance = Precision::Confusion();
+    
+    aFW->ClosedWireMode() = Standard_False;
+    aFW->FixConnected(aTolerance);
+    if (aFW->StatusConnected(ShapeExtend_FAIL)) {
+      Standard_ConstructionError::Raise("Wire construction failed: cannot build connected wire");
+    }
+    // IMP 0019766
+    if (aFW->StatusConnected(ShapeExtend_DONE3)) {
+      // Confused with <prec> but not Analyzer.Precision(), set the same
+      aFW->FixGapsByRangesMode() = Standard_True;
+      if (aFW->FixGaps3d()) {
+        Handle(ShapeExtend_WireData) sbwd = aFW->WireData();
+        Handle(ShapeFix_Edge) aFe = new ShapeFix_Edge;
+        for (Standard_Integer iedge = 1; iedge <= sbwd->NbEdges(); iedge++) {
+          TopoDS_Edge aEdge = TopoDS::Edge(sbwd->Edge(iedge));
+          aFe->FixVertexTolerance(aEdge);
+          aFe->FixSameParameter(aEdge);
+        }
+      }
+      else if (aFW->StatusGaps3d(ShapeExtend_FAIL)) {
+        Standard_ConstructionError::Raise("Wire construction failed: cannot fix 3d gaps");
+      }
+    }
+      aShape = aFW->WireAPIMake();
   }
   else if (aType == FACE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
