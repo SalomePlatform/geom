@@ -502,7 +502,8 @@ void RepairGUI_GlueDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
 
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-                                         aFindMethod, /*theInheritFirstArg=*/true );
+                                         aFindMethod, /*theInheritFirstArg=*/true,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }
 

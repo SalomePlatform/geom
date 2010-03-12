@@ -665,7 +665,8 @@ void TransformationGUI_PositionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true);
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
 

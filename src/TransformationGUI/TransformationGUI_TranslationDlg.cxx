@@ -678,7 +678,8 @@ void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   t
     anArgs[0] = myCurrObject;
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true);
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
 

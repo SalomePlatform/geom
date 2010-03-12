@@ -71,6 +71,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
 
   myMainFrame->GroupBoxPublish->setTitle( tr( "GEOM_PUBLISH_RESULT_GRP" ) );
   myMainFrame->CheckBoxRestoreSS->setText( tr( "GEOM_RESTORE_SUB_SHAPES" ) );
+  myMainFrame->CheckBoxAddPrefix->setText( tr( "GEOM_RSS_ADD_FREFIX" ) );
 
   buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
   buttonOk()->setText( tr( "GEOM_BUT_APPLY_AND_CLOSE" ) );
@@ -129,6 +130,7 @@ void GEOMBase_Skeleton::Init()
   myMainFrame->RadioButton5->hide();
 
   myMainFrame->CheckBoxRestoreSS->setChecked( false );
+  myMainFrame->CheckBoxAddPrefix->setChecked( true );
   myMainFrame->GroupBoxPublish->hide();
 }
 

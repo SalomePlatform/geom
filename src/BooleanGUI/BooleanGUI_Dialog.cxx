@@ -348,6 +348,7 @@ void BooleanGUI_Dialog::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
-                                         /*theInheritFirstArg=*/myOperation == BooleanGUI::CUT); // ? false
+                                         /*theInheritFirstArg=*/myOperation == BooleanGUI::CUT,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked()); // ? false
   }
 }

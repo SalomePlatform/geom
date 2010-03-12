@@ -308,6 +308,7 @@ void RepairGUI_RemoveExtraEdgesDlg::restoreSubShapes( SALOMEDS::Study_ptr   theS
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GetInPlaceByHistory
-                                         /*theInheritFirstArg=*/true );
+                                         /*theInheritFirstArg=*/true,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }

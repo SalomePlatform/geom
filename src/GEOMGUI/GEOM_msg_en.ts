@@ -3940,6 +3940,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Set presentation parameters and subshapes from arguments</translation>
         </message>
         <message>
+            <source>GEOM_RSS_ADD_FREFIX</source>
+            <translation>Add prefix to names of restored subshapes</translation>
+        </message>
+        <message>
             <source>GEOM_ALL_IMPORT_FILES</source>
             <translation>All supported formats ( %1 )</translation>
         </message>

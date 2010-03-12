@@ -250,6 +250,7 @@ void BuildGUI_CompoundDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlace, // ? GEOM::FSM_GetSame
-                                         /*theInheritFirstArg=*/false );
+                                         /*theInheritFirstArg=*/false,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }

@@ -3179,13 +3179,16 @@ module GEOM
      *                            operations, where only the first argument has to be considered.
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
+     *  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
+     *                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
      *  \return list of published sub-shapes
      */
     ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
 		 	        in GEOM_Object       theObject,
 			        in ListOfGO          theArgs,
 			        in find_shape_method theFindMethod,
-			        in boolean           theInheritFirstArg);
+			        in boolean           theInheritFirstArg,
+                                in boolean           theAddPrefix);
 
     /*!
      *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
@@ -3197,7 +3200,8 @@ module GEOM
 				 in SALOMEDS::SObject theSObject,
 				 in ListOfGO          theArgs,
 				 in find_shape_method theFindMethod,
-				 in boolean           theInheritFirstArg);
+				 in boolean           theInheritFirstArg,
+                                 in boolean           theAddPrefix);
 
     /*!
      *  Methods to access interfaces for objects creation and transformation

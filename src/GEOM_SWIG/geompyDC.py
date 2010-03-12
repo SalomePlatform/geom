@@ -391,14 +391,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                            operations, where only the first argument has to be considered.
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
+        #  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
+        #                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
         #  \return list of published sub-shapes
         #
         #  @ref tui_restore_prs_params "Example"
-        def RestoreSubShapes (self, theObject, theArgs=[],
-                              theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
+        def RestoreSubShapes (self, theObject, theArgs=[], theFindMethod=GEOM.FSM_GetInPlace,
+                              theInheritFirstArg=False, theAddPrefix=True):
             # Example: see GEOM_TestAll.py
             return self.RestoreSubShapesO(self.myStudy, theObject, theArgs,
-                                          theFindMethod, theInheritFirstArg)
+                                          theFindMethod, theInheritFirstArg, theAddPrefix)
 
         # end of l3_restore_ss
         ## @}

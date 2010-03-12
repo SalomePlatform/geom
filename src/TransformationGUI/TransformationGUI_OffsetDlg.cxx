@@ -329,7 +329,8 @@ void TransformationGUI_OffsetDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStu
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_Transformed,
-                                         /*theInheritFirstArg=*/true );
+                                         /*theInheritFirstArg=*/true,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }
 

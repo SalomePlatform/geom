@@ -121,9 +121,16 @@
      <property name="title" >
       <string/>
      </property>
-     <layout class="QHBoxLayout" >
+     <layout class="QVBoxLayout" >
       <item>
        <widget class="QCheckBox" name="CheckBoxRestoreSS" >
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="CheckBoxAddPrefix" >
         <property name="text" >
          <string/>
         </property>
@@ -210,6 +217,7 @@
  </widget>
  <tabstops>
   <tabstop>CheckBoxRestoreSS</tabstop>
+  <tabstop>CheckBoxAddPrefix</tabstop>
   <tabstop>buttonOk</tabstop>
   <tabstop>buttonApply</tabstop>
   <tabstop>buttonCancel</tabstop>
