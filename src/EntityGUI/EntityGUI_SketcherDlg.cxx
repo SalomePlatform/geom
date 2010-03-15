@@ -345,10 +345,11 @@ void EntityGUI_SketcherDlg::Init()
 
   MainWidget->RadioButton1->setChecked( true );
 
-  resize(100,100);
   TypeClicked( 0 );
 
   FindLocalCS();
+  resize(100,100);
+
 
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
@@ -367,8 +368,6 @@ void EntityGUI_SketcherDlg::InitClick()
   Group2Spin->hide();
   Group3Spin->hide();
   Group4Spin->hide();
-
-  resize(100,100);
 }
 
 
