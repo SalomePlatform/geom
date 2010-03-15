@@ -107,7 +107,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     B.MakeWire(aWire);
 
     // add edges
-    for (uint ind = 1; ind <= aShapes->Length(); ind++) {
+    for (unsigned int ind = 1; ind <= aShapes->Length(); ind++) {
       Handle(GEOM_Function) aRefShape = Handle(GEOM_Function)::DownCast(aShapes->Value(ind));
       TopoDS_Shape aShape_i = aRefShape->GetValue();
       if (aShape_i.IsNull()) {
