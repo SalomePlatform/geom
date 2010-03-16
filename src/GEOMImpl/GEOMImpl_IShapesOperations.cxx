@@ -276,7 +276,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
       pd << ", " << (*it++);
     }
   }
-  pd << "])";
+  pd << "], " << theTolerance << ")";
 
   SetErrorCode(OK);
   return aWire;

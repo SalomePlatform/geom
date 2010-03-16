@@ -155,12 +155,17 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
 
   Handle(GEOM_Function) aRefShape = aCI.GetShape();
   TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull())
+    return 0;
   if (aShape.ShapeType() != TopAbs_WIRE)
     Standard_ConstructionError::Raise("Wrong arguments: polyline as wire must be given");
 
   TopoDS_Wire aWire = TopoDS::Wire(aShape);
 
   double rad = aCI.GetR();
+
+  if ( rad < Precision::Confusion())
+    return 0;
 
   // collect vertices for make fillet
   TopTools_ListOfShape aVertexList;
