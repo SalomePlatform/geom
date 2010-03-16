@@ -51,6 +51,11 @@ inherited subshapes depend on the arguments.
 
 \image html restore-ss-OB.png
 
+<br><center><b>Add prefix to names of restored subshapes</b></center>
+Add prefix "from_" to names of restored sub-shapes, and prefix "from_subshapes_of_" to names of partially restored subshapes. 
+By default this option is On.
+
+
 \n You can also call this functionality from your python scripts.
 See our <b>TUI Scripts</b> for \ref tui_restore_prs_params "example".
 
