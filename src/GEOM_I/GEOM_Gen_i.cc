@@ -792,7 +792,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
 
   aParts = RestoreSubShapes(theStudy, theObject, aSO, theArgs,
                             theFindMethod, theInheritFirstArg, theAddPrefix);
-  aSO->Destroy();
+  if (!CORBA::is_nil(aSO)) aSO->Destroy();
   return aParts._retn();
 }
 
