@@ -3788,8 +3788,20 @@ Please, select face, shell or solid and try again</translation>
             <translation>Approximation</translation>
         </message>
         <message>
+            <source>GEOM_FILLING_METHOD</source>
+            <translation>Method</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_DEFAULT</source>
+            <translation>Default (standard behaviour)</translation>
+        </message>
+        <message>
             <source>GEOM_FILLING_USEORI</source>
-            <translation>Use orientation</translation>
+            <translation>Use edges orientation</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_AUTO</source>
+            <translation>Auto-correct edges orientation</translation>
         </message>
         <message>
             <source>GEOM_WRN_NO_APPROPRIATE_SELECTION</source>

@@ -30,7 +30,7 @@
 #define FILL_ARG_SHAPE    5
 #define FILL_ARG_NBITER   6
 #define FILL_ARG_APPROX   7
-#define FILL_ARG_USEORI   8
+#define FILL_ARG_METHOD   8
 
 class GEOMImpl_IFilling
 {
@@ -53,8 +53,8 @@ class GEOMImpl_IFilling
   void SetApprox(bool theApprox) { _func->SetInteger(FILL_ARG_APPROX, theApprox); }
   bool GetApprox() { return _func->GetInteger(FILL_ARG_APPROX); } 
 
-  void SetUseOri(bool theUseOri) { _func->SetInteger(FILL_ARG_USEORI, theUseOri); }
-  bool GetUseOri() { return _func->GetInteger(FILL_ARG_USEORI); } 
+  void SetMethod(int theMethod) { _func->SetInteger(FILL_ARG_METHOD, theMethod); }
+  int GetMethod() { return _func->GetInteger(FILL_ARG_METHOD); } 
 
   void SetShape(Handle(GEOM_Function) theShape) { _func->SetReference(FILL_ARG_SHAPE, theShape); }
   Handle(GEOM_Function) GetShape() { return _func->GetReference(FILL_ARG_SHAPE); }

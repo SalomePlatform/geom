@@ -704,14 +704,15 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle2Ways
  *  MakeFilling
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
-                                                            CORBA::Long theMinDeg,
-                                                            CORBA::Long theMaxDeg,
-                                                            CORBA::Double theTol2D,
-                                                            CORBA::Double theTol3D,
-                                                            CORBA::Long theNbIter,
-                                                            CORBA::Boolean theUseOri,
-                                                            CORBA::Boolean theApprox)
+GEOM::GEOM_Object_ptr
+GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
+                                      CORBA::Long theMinDeg,
+                                      CORBA::Long theMaxDeg,
+                                      CORBA::Double theTol2D,
+                                      CORBA::Double theTol3D,
+                                      CORBA::Long theNbIter,
+                                      GEOM::filling_oper_method theMethod,
+                                      CORBA::Boolean theApprox)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -723,10 +724,34 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_pt
 
   if (aShape.IsNull()) return aGEOMObject._retn();
 
+  int aMethod = 0;
+  switch (theMethod) {
+  case GEOM::FOM_Default:
+    {
+      // Default (standard behaviour)
+      aMethod = 0;
+    }
+    break;
+  case GEOM::FOM_UseOri:
+    {
+      // Use edges orientation
+      aMethod = 1;
+    }
+    break;
+  case GEOM::FOM_AutoCorrect:
+    {
+      // Auto-correct edges orientation
+      aMethod = 2;
+    }
+    break;
+  default:
+    {}
+  }
+
   //Create the Solid
   Handle(GEOM_Object) anObject = GetOperations()->MakeFilling
     (aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter,
-     theUseOri, theApprox);
+     aMethod, theApprox);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

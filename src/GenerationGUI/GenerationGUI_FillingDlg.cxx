@@ -70,7 +70,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   GroupPoints->TextLabel5->setText( tr( "GEOM_FILLING_MAX_DEG" ) );
   GroupPoints->TextLabel6->setText( tr( "GEOM_FILLING_TOL_3D" ) );
   GroupPoints->CheckBox1->setText( tr( "GEOM_FILLING_APPROX" ) );
-  GroupPoints->CheckBox2->setText( tr( "GEOM_FILLING_USEORI" ) );
+  GroupPoints->TextLabel7->setText( tr( "GEOM_FILLING_METHOD" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
@@ -109,7 +109,7 @@ void GenerationGUI_FillingDlg::Init()
   myTol3D = 0.0001;
   myTol2D = 0.0001;
   myNbIter = 0;
-  myIsUseOri = false;
+  myMethod = 0;
   myIsApprox = false;
   myOkCompound = false;
 
@@ -130,12 +130,18 @@ void GenerationGUI_FillingDlg::Init()
   GroupPoints->SpinBox4->setValue( myMaxDeg );
   GroupPoints->SpinBox5->setValue( myTol3D );
 
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_DEFAULT"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_USEORI"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_AUTO"));
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
+
+  connect( GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(MethodChanged()));
 
   connect( GroupPoints->SpinBox1, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
@@ -145,9 +151,6 @@ void GenerationGUI_FillingDlg::Init()
 
   connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ),
            this, SLOT( ApproxChanged() ) );
-
-  connect( GroupPoints->CheckBox2, SIGNAL( stateChanged( int ) ),
-           this, SLOT( UseOriChanged() ) );
 
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -322,12 +325,12 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 }
 
 //=================================================================================
-// function : UseOriChanged()
+// function : MethodChanged
 // purpose  :
 //=================================================================================
-void GenerationGUI_FillingDlg::UseOriChanged()
+void GenerationGUI_FillingDlg::MethodChanged()
 {
-  myIsUseOri = GroupPoints->CheckBox2->isChecked();
+  myMethod = GroupPoints->ComboBox1->currentIndex();
   displayPreview();
 }
 
@@ -375,9 +378,19 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_I3DPrimOperations_var anOper =
     GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
+  GEOM::filling_oper_method aMethod;
+  switch (GroupPoints->ComboBox1->currentIndex())
+  {
+    case 0:  aMethod = GEOM::FOM_Default; break;
+    case 1:  aMethod = GEOM::FOM_UseOri; break;
+    case 2:  aMethod = GEOM::FOM_AutoCorrect; break;
+    default: break;
+  }
+
   GEOM::GEOM_Object_var anObj =
     anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D,
-                         myNbIter, myIsUseOri, myIsApprox );
+                         myNbIter, aMethod, myIsApprox );
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )

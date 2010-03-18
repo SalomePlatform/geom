@@ -110,7 +110,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   Standard_Real tol2d = IF.GetTol3D();
   Standard_Integer nbiter = IF.GetNbIter();
   Standard_Boolean isApprox = IF.GetApprox();
-  Standard_Boolean isUseOri = IF.GetUseOri();
+  Standard_Integer aMethod = IF.GetMethod();
 
   if (mindeg > maxdeg) {
     Standard_RangeError::Raise("Minimal degree can not be more than maximal degree");
@@ -224,6 +224,8 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     // make filling as in old version of SALOME (before 4.1.1)
     GeomFill_SectionGenerator Section;
     Standard_Integer i = 0;
+    Handle(Geom_Curve) aLastC;
+    gp_Pnt PL1,PL2;
     for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
       Scurrent = Ex.Current();
       if (Scurrent.IsNull() || Scurrent.ShapeType() != TopAbs_EDGE) return 0;
@@ -235,9 +237,33 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
       //else
       //  C = new Geom_TrimmedCurve(C, First, Last);
       C = new Geom_TrimmedCurve(C, First, Last);
-      if( isUseOri && Scurrent.Orientation() == TopAbs_REVERSED ) {
+      gp_Pnt P1,P2;
+      C->D0(First,P1);
+      C->D0(Last,P2);
+
+      if( aMethod==1 && Scurrent.Orientation() == TopAbs_REVERSED ) {
         C->Reverse();
       }
+      else if( aMethod==2 ) {
+        if( i==0 ) {
+          PL1 = P1;
+          PL2 = P2;
+        }
+        else {
+          double d1 = PL1.Distance(P1) + PL2.Distance(P2);
+          double d2 = PL1.Distance(P2) + PL2.Distance(P1);
+          if(d2<d1) {
+            C->Reverse();
+            PL1 = P2;
+            PL2 = P1;
+          }
+          else {
+            PL1 = P1;
+            PL2 = P2;
+          }
+        }
+      }
+
       Section.AddCurve(C);
       i++;
     }

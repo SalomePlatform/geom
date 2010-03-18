@@ -1247,7 +1247,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
 						  CORBA::Double theTol2D,
                                                   CORBA::Double theTol3D,
 						  CORBA::Long theNbIter,
-                                                  CORBA::Boolean theUseOri,
+                                                  GEOM::filling_oper_method theMethod,
                                                   CORBA::Boolean theApprox)
 {
   beginService( " GEOM_Superv_i::MakeFilling" );
@@ -1255,7 +1255,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj =
     my3DPrimOp->MakeFilling(theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D,
-                            theNbIter, theUseOri, theApprox);
+                            theNbIter, theMethod, theApprox);
   endService( " GEOM_Superv_i::MakeFilling" );
   return anObj;
 }

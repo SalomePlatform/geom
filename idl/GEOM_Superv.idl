@@ -200,7 +200,8 @@ module GEOM
     GEOM_Object MakeFilling (in GEOM_Object theShape,
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
-			     in long theNbIter, in boolean theUseOri,
+			     in long theNbIter,
+                             in filling_oper_method theMethod,
                              in boolean theApprox) ;
     GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
 				 in boolean theModeSolid,

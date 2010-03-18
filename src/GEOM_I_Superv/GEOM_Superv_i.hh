@@ -288,7 +288,8 @@ public:
   GEOM::GEOM_Object_ptr MakeFilling (GEOM::GEOM_Object_ptr theShape,
 				     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
 				     CORBA::Double theTol2D, CORBA::Double theTol3D,
-				     CORBA::Long theNbIter, CORBA::Boolean theUseOri,
+				     CORBA::Long theNbIter,
+                                     GEOM::filling_oper_method theMethod,
                                      CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
