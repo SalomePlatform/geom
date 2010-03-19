@@ -1322,7 +1322,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTol2D a 2d tolerance to be reached
         #  @param theTol3D a 3d tolerance to be reached
         #  @param theNbIter a number of iteration of approximation algorithm
-        #  @param isUseOri flag for take into account orientation of edges
+        #  @param theMethod Kind of method to perform filling operation:
+        #                   0 - Default - standard behaviour
+        #                   1 - Use edges orientation - orientation of edges are
+        #                       used: if edge is reversed curve from this edge
+        #                       is reversed before using in filling algorithm.
+        #                   2 - Auto-correct orientation - change orientation
+        #                       of curves using minimization of sum of distances
+        #                       between ends points of edges.
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using Besier curves. The usage of
@@ -1332,13 +1339,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_filling "Example"
         def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D,
-                        theTol3D, theNbIter, isUseOri=0, isApprox=0):
+                        theTol3D, theNbIter, theMethod=GEOM.FOM_Default, isApprox=0):
             # Example: see GEOM_TestAll.py
-            theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg,
-                                                                                         theTol2D, theTol3D, theNbIter)
+            theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
             anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
                                             theTol2D, theTol3D, theNbIter,
-                                            isUseOri, isApprox)
+                                            theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj

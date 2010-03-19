@@ -37,7 +37,7 @@ rather complex cases.
 \n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree, MaxDegree, Tol2D, Tol3D, NbIter)</em>
 \n <b>Arguments:</b> Name + 1 List of edges + 7 Parameters
 (Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
-tolerance, Number of iterations, Use orientation, Approximation).
+tolerance, Number of iterations, Method, Approximation).
 
 \image html filling.png
 

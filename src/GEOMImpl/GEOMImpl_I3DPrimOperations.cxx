@@ -1507,10 +1507,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << aFilling << " = geompy.MakeFilling("
-    << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
-      << theTol2D << ", " << theTol3D << ", " << theNbIter;
+     << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
+     << theTol2D << ", " << theTol3D << ", " << theNbIter  << ", ";
+  if( theMethod==1 ) pd << "GEOM.FOM_UseOri"; 
+  else if( theMethod==2 ) pd << "GEOM.FOM_AutoCorrect";
+  else pd << "GEOM.FOM_Default";
   if(isApprox)
-    pd << ", " << isApprox;
+    pd << ", " << isApprox ;
   pd << ")";
 
   SetErrorCode(OK);
