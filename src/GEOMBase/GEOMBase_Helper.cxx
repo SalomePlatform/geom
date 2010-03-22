@@ -801,6 +801,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 
   erasePreview( false );
 
+  bool result = false;
+
   try {
     if ( ( !publish && !useTransaction ) || openCommand() ) {
       SUIT_OverrideCursor wc;
@@ -857,6 +859,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
           commitCommand();
           updateObjBrowser();
           SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
+	  result = true;
         }
         else
           abortCommand();
@@ -870,7 +873,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 
   updateViewer();
 
-  return true;
+  return result;
 }
 
 

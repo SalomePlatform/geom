@@ -28,6 +28,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
+class QButtonGroup;
 class QDoubleSpinBox;
 class EntityGUI_3Spin;
 class DlgRef_3Radio;
@@ -46,6 +47,14 @@ class DlgRef_3Radio;
 class EntityGUI_3DSketcherDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
+
+  struct XYZ
+  {
+    XYZ() { x = y = z = 0.0; xt = yt = zt = "0.0"; }
+    double  x,  y,  z;
+    QString xt, yt, zt;
+  };
+  typedef QList<XYZ> XYZList;
 
 public:
   EntityGUI_3DSketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0, const double = 2. );
@@ -77,13 +86,18 @@ private:
                                                    TopoDS_Shape&,
                                                    TopoDS_Shape& );
 
+  XYZ                                getLastPoint() const;
+  XYZ                                getCurrentPoint() const;
+
 private:
-  QList<double>                      myPointsList;
-  QList<double>                      myRedoList;
+  XYZList                            myPointsList;
+  XYZList                            myRedoList;
 
   EntityGUI_3Spin*                   Group3Spin;
   DlgRef_3Radio*                     GroupType;
+  QButtonGroup*                      myTypeGroup;
 
+  int                                myMode;
   bool                               myOK;
   double                             myLineWidth;
   GeometryGUI*                       myGeometryGUI;
@@ -94,8 +108,6 @@ private slots:
   bool                               ClickOnApply();
   //  bool                               isSameAsPrevious();
   void                               UpdateButtonsState();
-  void                               GetLastPoints(double&, double&, double&);
-  void                               GetCurrentPoints(double&, double&, double&);
 
   void                               ClickOnUndo();
   void                               ClickOnRedo();
@@ -103,7 +115,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               DeactivateActiveDialog();
   void                               ActivateThisDialog();
-  void                               TypeClicked();
+  void                               TypeClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
 };

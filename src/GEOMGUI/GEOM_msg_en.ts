@@ -26,6 +26,10 @@
     <context>
         <name>@default</name>
         <message>
+            <source>BRep_API: command not done</source>
+            <translation>Error: can't build object</translation>
+        </message>
+        <message>
             <source>CHANGE_ORIENTATION_NEW_OBJ_NAME</source>
             <translation>Invert</translation>
         </message>

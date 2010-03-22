@@ -101,16 +101,25 @@ def ParseParameters(*parameters):
     Result = []
     StringResult = []
     for parameter in parameters:
-        if isinstance(parameter,str):
-            if notebook.isVariable(parameter):
-                Result.append(notebook.get(parameter))
-            else:
-                raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
-        else:
-            Result.append(parameter)
+        if isinstance(parameter, list):
+            lResults = ParseParameters(*parameter)
+            if len(lResults) > 0:
+                Result.append(lResults[:-1])
+                StringResult += lResults[-1].split(":")
+                pass
             pass
-
-        StringResult.append(str(parameter))
+        else:
+            if isinstance(parameter,str):
+                if notebook.isVariable(parameter):
+                    Result.append(notebook.get(parameter))
+                else:
+                    raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+                pass
+            else:
+                Result.append(parameter)
+                pass
+            StringResult.append(str(parameter))
+            pass
         pass
     if Result:
         Result.append(":".join(StringResult))
@@ -946,8 +955,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_sketcher_page "Example"
         def Make3DSketcher(self, theCoordinates):
+            theCoordinates,Parameters = ParseParameters(theCoordinates)
             anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
             RaiseIfFailed("Make3DSketcher", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # end of l3_sketcher
