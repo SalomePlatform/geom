@@ -111,8 +111,9 @@ private slots:
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
-  void                               ClickParamCoord();
+  void                               ClickParamCoord( int );
   void                               onBtnPopup( QAction* );
+  void                               updateSize();
 };
 
 #endif // BASICGUI_POINTDLG_H

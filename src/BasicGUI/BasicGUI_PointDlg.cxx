@@ -43,6 +43,7 @@
 #include <QLabel>
 #include <QRadioButton>
 #include <QMenu>
+#include <QTimer>
 
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
@@ -263,8 +264,7 @@ void BasicGUI_PointDlg::Init()
 
   connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect( myParamCoord->button( PARAM_VALUE ), SIGNAL( clicked() ), this, SLOT( ClickParamCoord() ) );
-  connect( myParamCoord->button( COORD_VALUE ), SIGNAL( clicked() ), this, SLOT( ClickParamCoord() ) );
+  connect( myParamCoord,   SIGNAL( buttonClicked( int ) ), this, SLOT( ClickParamCoord( int ) ) );
   connect( GroupOnCurve->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupOnCurve->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
@@ -420,9 +420,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
   myY->setText( "" );
   myZ->setText( "" );
 
-  qApp->processEvents();
-  updateGeometry();
-  resize( 100, 100 );
+  QTimer::singleShot(50, this, SLOT(updateSize()));
 
   SelectionIntoArgument();
 }
@@ -952,7 +950,7 @@ void BasicGUI_PointDlg::addSubshapesToStudy()
 // function : ClickParamCoord()
 // purpose  :
 //=================================================================================
-void BasicGUI_PointDlg::ClickParamCoord()
+void BasicGUI_PointDlg::ClickParamCoord( int id )
 {
   updateParamCoord( true );
   displayPreview();
@@ -965,7 +963,6 @@ void BasicGUI_PointDlg::ClickParamCoord()
 void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
 {
   bool isParam = myParamCoord->checkedId() == PARAM_VALUE;
-  GroupXYZ->setShown( !isParam );
 
   const int id = getConstructorId();
   if ( id == GEOM_POINT_EDGE ) {
@@ -978,11 +975,11 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
     GroupOnSurface->SpinBox_DX->setShown( isParam );
     GroupOnSurface->SpinBox_DY->setShown( isParam );
   }
-  if ( theIsUpdate ) {
-    qApp->processEvents();
-    updateGeometry();
-    resize( minimumSizeHint() );
-  }
+
+  GroupXYZ->setShown( !isParam );
+
+  if ( theIsUpdate )
+    QTimer::singleShot(50, this, SLOT(updateSize()));
 }
 
 //=================================================================================
@@ -1000,4 +997,15 @@ void BasicGUI_PointDlg::onBtnPopup( QAction* a )
     myNeedType = TopAbs_WIRE;
   
   localSelection( GEOM::GEOM_Object::_nil(), myNeedType );
+}
+
+//=================================================================================
+// function : updateSize
+// purpose  : adjust dialog size to minimum
+//=================================================================================
+void BasicGUI_PointDlg::updateSize() 
+{
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSizeHint() );
 }
