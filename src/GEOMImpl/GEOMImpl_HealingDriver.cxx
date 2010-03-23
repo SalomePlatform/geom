@@ -35,8 +35,11 @@
 #include <ShHealOper_EdgeDivide.hxx>
 #include <ShHealOper_ChangeOrientation.hxx>
 
-#include <TopoDS.hxx>
+#include <BRep_Builder.hxx>
+
 #include <TopExp.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
 #include <StdFail_NotDone.hxx>
@@ -181,21 +184,74 @@ Standard_Boolean GEOMImpl_HealingDriver::ShapeProcess (GEOMImpl_IHealing* theHI,
 //function :  SupressFaces
 //purpose  :
 //=======================================================================
+void SuppressFacesRec (const TopTools_SequenceOfShape& theShapesFaces,
+                       const TopoDS_Shape&             theOriginalShape,
+                       TopoDS_Shape&                   theOutShape)
+{
+  if ((theOriginalShape.ShapeType() != TopAbs_COMPOUND &&
+       theOriginalShape.ShapeType() != TopAbs_COMPSOLID))
+  {
+    ShHealOper_RemoveFace aHealer (theOriginalShape);
+    Standard_Boolean aResult = aHealer.Perform(theShapesFaces);
+
+    if (aResult)
+      theOutShape = aHealer.GetResultShape();
+    else
+      raiseNotDoneExeption(aHealer.GetErrorStatus());
+  }
+  else
+  {
+    BRep_Builder BB;
+    TopoDS_Compound CC;
+    BB.MakeCompound(CC);
+
+    TopTools_MapOfShape mapShape;
+    TopoDS_Iterator It (theOriginalShape, Standard_True, Standard_True);
+
+    for (; It.More(); It.Next()) {
+      TopoDS_Shape aShape_i = It.Value();
+      if (mapShape.Add(aShape_i)) {
+        // check, if current shape contains at least one of faces to be removed
+        bool isFound = false;
+        TopTools_IndexedMapOfShape aShapes_i;
+        TopExp::MapShapes(aShape_i, aShapes_i);
+        for (int i = 1; i <= theShapesFaces.Length() && !isFound; i++) {
+          const TopoDS_Shape& aFace_i = theShapesFaces.Value(i);
+          if (aShapes_i.Contains(aFace_i)) isFound = true;
+        }
+        if (isFound) {
+          TopoDS_Shape anOutSh_i;
+          SuppressFacesRec(theShapesFaces, aShape_i, anOutSh_i);
+          BB.Add(CC, anOutSh_i);
+        }
+        else {
+          // nothing to do
+          BB.Add(CC, aShape_i);
+        }
+      }
+    }
+    theOutShape = CC;
+  }
+}
+
 Standard_Boolean GEOMImpl_HealingDriver::SuppressFaces (GEOMImpl_IHealing* theHI,
                                                         const TopoDS_Shape& theOriginalShape,
                                                         TopoDS_Shape& theOutShape) const
 {
   Handle(TColStd_HArray1OfInteger) aFaces = theHI->GetFaces();
 
-  ShHealOper_RemoveFace aHealer (theOriginalShape);
-
   Standard_Boolean aResult = Standard_False;
-  if (aFaces.IsNull()) // remove all faces
-  {
+
+  if (aFaces.IsNull()) {
+    ShHealOper_RemoveFace aHealer (theOriginalShape);
     aResult = aHealer.Perform();
+
+    if (aResult)
+      theOutShape = aHealer.GetResultShape();
+    else
+      raiseNotDoneExeption(aHealer.GetErrorStatus());
   }
-  else
-  {
+  else {
     TopTools_SequenceOfShape aShapesFaces;
     TopTools_IndexedMapOfShape aShapes;
     TopExp::MapShapes(theOriginalShape, aShapes);
@@ -204,16 +260,10 @@ Standard_Boolean GEOMImpl_HealingDriver::SuppressFaces (GEOMImpl_IHealing* theHI
       TopoDS_Shape aFace = aShapes.FindKey(indexOfFace);
       aShapesFaces.Append(aFace);
     }
-
-    aResult = aHealer.Perform(aShapesFaces);
+    SuppressFacesRec(aShapesFaces, theOriginalShape, theOutShape);
   }
 
-  if ( aResult )
-    theOutShape = aHealer.GetResultShape();
-  else
-    raiseNotDoneExeption( aHealer.GetErrorStatus() );
-
-  return aResult;
+  return Standard_True;
 }
 
 //=======================================================================
