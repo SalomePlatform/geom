@@ -3130,7 +3130,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   GProp_GProps     aProps;
 
   // Find the iType of the aWhat shape
-  if      ( aWhat.ShapeType() == TopAbs_EDGE  || aWhat.ShapeType() == TopAbs_WIRE )      iType = TopAbs_EDGE;
+  if      ( aWhat.ShapeType() == TopAbs_VERTEX )                                         iType = TopAbs_VERTEX;
+  else if ( aWhat.ShapeType() == TopAbs_EDGE  || aWhat.ShapeType() == TopAbs_WIRE )      iType = TopAbs_EDGE;
   else if ( aWhat.ShapeType() == TopAbs_FACE  || aWhat.ShapeType() == TopAbs_SHELL )     iType = TopAbs_FACE;
   else if ( aWhat.ShapeType() == TopAbs_SOLID || aWhat.ShapeType() == TopAbs_COMPSOLID ) iType = TopAbs_SOLID;
   else if ( aWhat.ShapeType() == TopAbs_COMPOUND ) {
@@ -3141,7 +3142,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       return NULL;
     }
     compType = It.Value().ShapeType();
-    if      ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
+    if      ( compType == TopAbs_VERTEX )                               iType = TopAbs_VERTEX;
+    else if ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
     else if ( compType == TopAbs_FACE  || compType == TopAbs_SHELL)     iType = TopAbs_FACE;
     else if ( compType == TopAbs_SOLID || compType == TopAbs_COMPSOLID) iType = TopAbs_SOLID;
   }
