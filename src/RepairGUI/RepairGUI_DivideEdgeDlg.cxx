@@ -162,6 +162,7 @@ void RepairGUI_DivideEdgeDlg::ValueChangedInSpinBox()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::displayPreview()
 {
+  erasePreview();
   if ( myObject->_is_nil() )
     return;
 
