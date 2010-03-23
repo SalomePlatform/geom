@@ -26,6 +26,8 @@
 #include <GEOMImpl_IHealing.hxx>
 #include <GEOM_Function.hxx>
 
+#include <GEOMImpl_GlueDriver.hxx>
+
 #include <ShHealOper_ShapeProcess.hxx>
 #include <ShHealOper_RemoveFace.hxx>
 #include <ShHealOper_CloseContour.hxx>
@@ -41,6 +43,8 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+
+#include <Precision.hxx>
 
 #include <StdFail_NotDone.hxx>
 
@@ -261,6 +265,11 @@ Standard_Boolean GEOMImpl_HealingDriver::SuppressFaces (GEOMImpl_IHealing* theHI
       aShapesFaces.Append(aFace);
     }
     SuppressFacesRec(aShapesFaces, theOriginalShape, theOutShape);
+    if ((theOriginalShape.ShapeType() == TopAbs_COMPOUND ||
+         theOriginalShape.ShapeType() == TopAbs_COMPSOLID)) {
+      TopoDS_Shape aSh = theOutShape;
+      theOutShape = GEOMImpl_GlueDriver::GlueFaces(aSh, Precision::Confusion(), Standard_True);
+    }
   }
 
   return Standard_True;
