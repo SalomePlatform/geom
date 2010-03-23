@@ -85,6 +85,10 @@ IGESEXPORT_EXPORT
       IGESControl_Writer ICW ("M", aBrepMode); // "write.iges.unit" ->> VSR 15.09.09: export explicitly in meters
       Interface_Static::SetCVal("xstep.cascade.unit","M");
 
+      // 09.03.2010 skl for bug 0020726
+      // change default value "Average" to "Max"
+      Interface_Static::SetCVal("write.precision.mode","Max");
+
       // perform shape writing
       ICW.AddShape( theShape );
       ICW.ComputeModel();
