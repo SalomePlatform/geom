@@ -225,6 +225,7 @@ void GEOMToolsGUI_MarkerDlg::accept()
         }
         GEOM_Displayer displayer( getStudy() );
         displayer.Redisplay( selected, true );
+        selMgr->setSelectedObjects( selected );
       }
     }
   }
