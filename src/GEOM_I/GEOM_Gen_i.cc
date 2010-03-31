@@ -231,6 +231,12 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   } else if ( aShape->GetType() == GEOM_MARKER ) {
     aPixmap->SetPixMap( "ICON_OBJBROWSER_LCS" );
     aShapeName = "LocalCS_";
+  } else if ( aShape->GetType() > ADVANCED_BASE ) {
+    char buf[20];
+    sprintf( buf, "%d", aShape->GetType() );
+    std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
+    aPixmap->SetPixMap( advId.c_str() );
+    aShapeName = "Advanced_";
   } else if ( aShape->GetShapeType() == GEOM::COMPOUND ) {
     aPixmap->SetPixMap( "ICON_OBJBROWSER_COMPOUND" );
     aShapeName = "Compound_";
