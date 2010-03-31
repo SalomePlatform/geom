@@ -3984,6 +3984,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Would you like to take into account the units?
 Otherwise the dimensions will be kept without modifications.</translation>
         </message>
+        <message>
+            <source>GEOM_ADVANCED</source>
+            <translation>Advanced shape: type %1</translation>
+        </message>
     </context>
     <context>
         <name>BasicGUI_CurveDlg</name>

@@ -155,6 +155,14 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   TopoDS_Shape aShape = aRefShape->GetValue();
   if (aShape.IsNull()) return aKind;
 
+  int geom_type = theShape->GetType();
+  
+  // check if it's advanced shape
+  if ( geom_type > ADVANCED_BASE ) {
+    SetErrorCode(OK);
+    return SK_ADVANCED;
+  }
+  
   // Call algorithm
   GEOMAlgo_ShapeInfoFiller aSF;
   aSF.SetShape(aShape);
