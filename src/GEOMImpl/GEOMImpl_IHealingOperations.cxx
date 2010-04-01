@@ -729,7 +729,8 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
     return false;
 
   // get free boundary shapes
-  ShapeAnalysis_FreeBounds anAnalizer( aShape );
+  ShapeAnalysis_FreeBounds anAnalizer(aShape, Standard_False,
+                                      Standard_True, Standard_True);
   TopoDS_Compound aClosed = anAnalizer.GetClosedWires();
   TopoDS_Compound anOpen = anAnalizer.GetOpenWires();
 
