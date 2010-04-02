@@ -226,7 +226,8 @@ void SuppressFacesRec (const TopTools_SequenceOfShape& theShapesFaces,
         if (isFound) {
           TopoDS_Shape anOutSh_i;
           SuppressFacesRec(theShapesFaces, aShape_i, anOutSh_i);
-          BB.Add(CC, anOutSh_i);
+          if ( !anOutSh_i.IsNull() )
+            BB.Add(CC, anOutSh_i);
         }
         else {
           // nothing to do
