@@ -550,7 +550,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape = new GEOM_AISShape (myShape, "");
         }
         // Temporary staff: vertex must be infinite for correct visualization
-        AISShape->SetInfiniteState( myShape.Infinite() || myShape.ShapeType() == TopAbs_VERTEX );
+        AISShape->SetInfiniteState( myShape.Infinite() ); // || myShape.ShapeType() == TopAbs_VERTEX // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
 
         // Setup shape properties here ..., e.g. display mode, color, transparency, etc
         AISShape->SetDisplayMode( myDisplayMode );
