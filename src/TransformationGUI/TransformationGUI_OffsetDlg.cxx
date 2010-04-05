@@ -105,7 +105,7 @@ void TransformationGUI_OffsetDlg::Init()
   double step = 1;
    
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupPoints->SpinBox_DX->setValue( 1e-05 );
   
   // Activate Create a Copy mode

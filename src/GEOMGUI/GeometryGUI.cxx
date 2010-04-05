@@ -1405,6 +1405,36 @@ void GeometryGUI::createPreferences()
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
+  
+  // Quantities with individual precision settings
+  int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
+  setPreferenceProperty( precGroup, "columns", 2 );
+  
+  const int nbQuantities = 8;
+  int prec[nbQuantities], ii = 0;
+  prec[ii++] = addPreference( tr( "GEOM_PREF_length_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "length_precision" );  
+  prec[ii++] = addPreference( tr( "GEOM_PREF_angle_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
+  prec[ii++] = addPreference( tr( "GEOM_PREF_len_tol_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "len_tol_precision" );
+  prec[ii++] = addPreference( tr( "GEOM_PREF_ang_tol_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );  
+  prec[ii++] = addPreference( tr( "GEOM_PREF_weight_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "weight_precision" ); 
+  prec[ii++] = addPreference( tr( "GEOM_PREF_density_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "density_precision" );   
+  prec[ii++] = addPreference( tr( "GEOM_PREF_parametric_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
+  prec[ii  ] = addPreference( tr( "GEOM_PREF_param_tol_precision" ), precGroup,
+                            LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );  
+  
+  // Set property for precision value for spinboxes
+  for ( ii = 0; ii < nbQuantities; ii++ ){
+    setPreferenceProperty( prec[ii], "min", -10 );
+    setPreferenceProperty( prec[ii], "max", 10 );
+    setPreferenceProperty( prec[ii], "precision", 2 );
+  }  
 
   int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
   setPreferenceProperty( VertexGroup, "columns", 2 );
@@ -1457,9 +1487,9 @@ void GeometryGUI::createPreferences()
   QList<QVariant> aMarkerScaleIndicesList;
   QStringList     aMarkerScaleValuesList;
 
-  for ( int i = GEOM::MS_10; i <= GEOM::MS_70; i++ ) {
-    aMarkerScaleIndicesList << i;
-    aMarkerScaleValuesList  << QString::number( (i-(int)GEOM::MS_10)*0.5 + 1.0 );
+  for ( int iii = GEOM::MS_10; iii <= GEOM::MS_70; iii++ ) {
+    aMarkerScaleIndicesList << iii;
+    aMarkerScaleValuesList  << QString::number( (iii-(int)GEOM::MS_10)*0.5 + 1.0 );
   }
 
   setPreferenceProperty( markerScale, "strings", aMarkerScaleValuesList );

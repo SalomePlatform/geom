@@ -72,7 +72,7 @@ public:
 protected:
   void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
                                                   double, double, double = 0.1, 
-                                                  int = 3 );
+                                                  const char* quantity = "length_precision" );
 
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();

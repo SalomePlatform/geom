@@ -50,5 +50,15 @@
     <parameter name="type_of_marker"      value="1"  />
     <parameter name="deflection_coeff"    value="0.001"  />
     <parameter name="marker_scale"        value="1"  />
+    <!-- Input field precisions -->
+    <parameter name="def_precision"       value="3"  />
+    <parameter name="length_precision"    value="6"  />
+    <parameter name="angle_precision"     value="3"  />
+    <parameter name="len_tol_precision"   value="-9"  />
+    <parameter name="ang_tol_precision"   value="-9"  />
+    <parameter name="weight_precision"    value="3"  />
+    <parameter name="density_precision"   value="3"  />
+    <parameter name="parametric_precision" value="6"  />
+    <parameter name="param_tol_precision" value="-9"  />
   </section>
 </document>

@@ -127,8 +127,8 @@ void BasicGUI_EllipseDlg::Init()
   double aMajorR( 200. ), aMinorR( 100. );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.000001, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DY, 0.000001, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DX, 0.000001, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupPoints->SpinBox_DY, 0.000001, COORD_MAX, step, "length_precision" );
   GroupPoints->SpinBox_DX->setValue( aMajorR );
   GroupPoints->SpinBox_DY->setValue( aMinorR );
 

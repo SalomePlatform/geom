@@ -118,9 +118,9 @@ void TransformationGUI_TranslationDlg::Init()
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox1, COORD_MIN, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox2, COORD_MIN, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox3, COORD_MIN, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox1, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox2, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox3, COORD_MIN, COORD_MAX, step, "length_precision" );
 
   GroupPoints->SpinBox1->setValue(0.0);
   GroupPoints->SpinBox2->setValue(0.0);

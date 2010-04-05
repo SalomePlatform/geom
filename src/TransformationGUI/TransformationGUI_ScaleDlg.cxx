@@ -155,9 +155,9 @@ void TransformationGUI_ScaleDlg::Init()
   double aFactor = 2.0;
   double SpecificStep = 0.5;
 
-  initSpinBox(SpinBox_FX, COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
-  initSpinBox(SpinBox_FY, COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
-  initSpinBox(SpinBox_FZ, COORD_MIN, COORD_MAX, SpecificStep, DBL_DIGITS_DISPLAY);
+  initSpinBox(SpinBox_FX, COORD_MIN, COORD_MAX, SpecificStep, "parametric_precision" );
+  initSpinBox(SpinBox_FY, COORD_MIN, COORD_MAX, SpecificStep, "parametric_precision" );
+  initSpinBox(SpinBox_FZ, COORD_MIN, COORD_MAX, SpecificStep, "parametric_precision" );
   SpinBox_FX->setValue(aFactor);
   SpinBox_FY->setValue(aFactor);
   SpinBox_FZ->setValue(aFactor);
@@ -182,8 +182,9 @@ void TransformationGUI_ScaleDlg::Init()
   connect(SpinBox_FX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(SpinBox_FY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(SpinBox_FZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
+  
+  // san : Commented so as not to override specific step settings
+  //connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   connect(CheckBoxCopy, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
 

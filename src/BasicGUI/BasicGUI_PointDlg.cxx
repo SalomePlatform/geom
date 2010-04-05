@@ -231,28 +231,28 @@ void BasicGUI_PointDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupXYZ->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupXYZ->SpinBox_DY, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupXYZ->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupXYZ->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupXYZ->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupXYZ->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupXYZ->SpinBox_DX->setValue( 0.0 );
   GroupXYZ->SpinBox_DY->setValue( 0.0 );
   GroupXYZ->SpinBox_DZ->setValue( 0.0 );
 
-  initSpinBox( GroupRefPoint->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupRefPoint->SpinBox_DY, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupRefPoint->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupRefPoint->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupRefPoint->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupRefPoint->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupRefPoint->SpinBox_DX->setValue( 0.0 );
   GroupRefPoint->SpinBox_DY->setValue( 0.0 );
   GroupRefPoint->SpinBox_DZ->setValue( 0.0 );
 
   step = 0.1;
 
-  initSpinBox( GroupOnCurve->SpinBox_DX, 0., 1., step, 6 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupOnCurve->SpinBox_DX, 0., 1., step, "parametric_precision" );
   GroupOnCurve->SpinBox_DX->setValue( 0.5 );
 
-  initSpinBox( GroupOnSurface->SpinBox_DX, 0., 1., step, 6 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupOnSurface->SpinBox_DX, 0., 1., step, "parametric_precision" );
   GroupOnSurface->SpinBox_DX->setValue( 0.5 );
-  initSpinBox( GroupOnSurface->SpinBox_DY, 0., 1., step, 6 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupOnSurface->SpinBox_DY, 0., 1., step, "parametric_precision" );
   GroupOnSurface->SpinBox_DY->setValue( 0.5 );
 
   /* signals and slots connections */
@@ -310,8 +310,6 @@ void BasicGUI_PointDlg::SetDoubleSpinBoxStep( double step )
   GroupRefPoint->SpinBox_DX->setSingleStep(step);
   GroupRefPoint->SpinBox_DY->setSingleStep(step);
   GroupRefPoint->SpinBox_DZ->setSingleStep(step);
-  GroupOnSurface->SpinBox_DX->setSingleStep(step);
-  GroupOnSurface->SpinBox_DY->setSingleStep(step);
 }
 
 

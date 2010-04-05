@@ -126,9 +126,9 @@ void BasicGUI_VectorDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6 ); // VSR:TODO : DBL_DIGITS_DISPLAY
-  initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, 6 ); // VSR:TODO : DBL_DIGITS_DISPLAY
-  initSpinBox( GroupDimensions->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 6 ); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupDimensions->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupDimensions->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
 
   double dx( 0. ), dy( 0. ), dz( 200. );
   GroupDimensions->SpinBox_DX->setValue( dx );

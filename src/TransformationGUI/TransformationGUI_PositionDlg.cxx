@@ -122,7 +122,7 @@ void TransformationGUI_PositionDlg::Init()
   Group1->LineEdit4->setText("");
   Group1->LineEdit5->setText("");
 
-  initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, "parametric_precision" );
   Group1->SpinBox_DX->setValue(0);
 
   Group1->CheckButton2->setEnabled(false);

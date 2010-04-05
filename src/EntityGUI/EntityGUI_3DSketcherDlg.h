@@ -61,10 +61,7 @@ public:
   ~EntityGUI_3DSketcherDlg();
 
 protected:
-  void                               initSpinBox( QDoubleSpinBox*, 
-                                                  double, double, double = 0.1, 
-                                                  int = 3 );
-
+ 
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );

@@ -72,7 +72,7 @@ BuildGUI_WireDlg::BuildGUI_WireDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   GroupArgs->TextLabel2->setText( tr( "GEOM_TOLERANCE" ) );
   double SpecificStep = 0.0001;
   double prec = Precision::Confusion();
-  initSpinBox(GroupArgs->SpinBox_DX, prec, MAX_NUMBER, SpecificStep, 9);
+  initSpinBox(GroupArgs->SpinBox_DX, prec, MAX_NUMBER, SpecificStep, "len_tol_precision" );
   GroupArgs->SpinBox_DX->setValue(prec);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );

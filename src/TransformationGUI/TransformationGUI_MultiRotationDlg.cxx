@@ -130,9 +130,9 @@ void TransformationGUI_MultiRotationDlg::Init()
   initSpinBox(GroupPoints->SpinBox_DX, 1, 999, SpecificStep2);
   GroupPoints->SpinBox_DX->setValue(myNbTimes1);
 
-  initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, SpecificStep1, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, SpecificStep1, "angle_precision" );
   initSpinBox(GroupDimensions->SpinBox_DY1, 1, 999, SpecificStep2);
-  initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step,"length_precision" );
   initSpinBox(GroupDimensions->SpinBox_DY2, 1, 999, SpecificStep2);
   GroupDimensions->SpinBox_DX1->setValue(myAng);
   GroupDimensions->SpinBox_DY1->setValue(myNbTimes1);
@@ -192,11 +192,13 @@ void TransformationGUI_MultiRotationDlg::Init()
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::SetDoubleSpinBoxStep (double step)
 {
-  GroupPoints->SpinBox_DX->setSingleStep((int)step);
-  GroupDimensions->SpinBox_DX1->setSingleStep(step);
-  GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
   GroupDimensions->SpinBox_DX2->setSingleStep(step);
-  GroupDimensions->SpinBox_DY2->setSingleStep((int)step);
+  
+  // san: Commented so as not to override specific step settings
+  //GroupPoints->SpinBox_DX->setSingleStep((int)step);
+  //GroupDimensions->SpinBox_DX1->setSingleStep(step);
+  //GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
+  //GroupDimensions->SpinBox_DY2->setSingleStep((int)step);
 }
 
 //=================================================================================

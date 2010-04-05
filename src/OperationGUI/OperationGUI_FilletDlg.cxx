@@ -110,13 +110,13 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg (GeometryGUI* theGeometryGUI, QWi
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, "length_precision" );
 
   setHelpFileName("fillet_operation_page.html");
 

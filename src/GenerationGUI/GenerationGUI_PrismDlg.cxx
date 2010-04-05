@@ -139,14 +139,14 @@ void GenerationGUI_PrismDlg::Init()
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints3->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints3->SpinBox_DY, COORD_MIN, COORD_MAX, step, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints3->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints3->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints3->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints3->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupPoints3->SpinBox_DX->setValue(0.0);
   GroupPoints3->SpinBox_DY->setValue(0.0);
   GroupPoints3->SpinBox_DZ->setValue(0.0);
 
-  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupPoints->SpinBox_DX->setValue(100.0);
 
   // init variables

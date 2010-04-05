@@ -109,7 +109,7 @@ void GenerationGUI_RevolDlg::Init()
 {
   // min, max, step and decimals for spin boxes & initial values
   double SpecificStep = 5;
-  initSpinBox(GroupPoints->SpinBox_DX, -360.0, 360.0, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, -360.0, 360.0, SpecificStep, "angle_precision" );
   GroupPoints->SpinBox_DX->setValue(45.0);
 
   // init variables
@@ -135,7 +135,8 @@ void GenerationGUI_RevolDlg::Init()
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)),        this, SLOT(onBothway()));
   connect(GroupPoints->CheckButton2, SIGNAL(toggled(bool)),        this, SLOT(onReverse()));
 
-  connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
+  // san: We don't need this, as the default step value is not used in this dialog box
+  //connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   initName(tr("GEOM_REVOLUTION"));
   resize(100,100);

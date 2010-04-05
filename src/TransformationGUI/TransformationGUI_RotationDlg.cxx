@@ -122,7 +122,7 @@ void TransformationGUI_RotationDlg::Init()
   double SpecificStep = 5;
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, "angle_precision" );
   GroupPoints->SpinBox_DX->setValue(anAngle);
 
   // init variables

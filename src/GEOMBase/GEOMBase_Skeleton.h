@@ -60,7 +60,7 @@ private:
 
 protected:
     void                initSpinBox( QSpinBox*, int, int, int = 1 );
-    void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, int = 3 );
+    void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, const char* = "length_precision" );
     
     void                updateAttributes( GEOM::GEOM_Object_ptr, const QStringList& );
 

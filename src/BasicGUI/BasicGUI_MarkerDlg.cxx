@@ -206,7 +206,7 @@ void BasicGUI_MarkerDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter ) {
-    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, "length_precision" );
     connect( anIter.value(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }

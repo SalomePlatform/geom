@@ -2600,6 +2600,42 @@ Please, select face, shell or solid and try again</translation>
             <translation>Deflection coefficient</translation>
         </message>
         <message>
+            <source>GEOM_PREF_def_precision</source>
+            <translation>Default precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_length_precision</source>
+            <translation>Length precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_angle_precision</source>
+            <translation>Angular precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_len_tol_precision</source>
+            <translation>Length tolerance precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_ang_tol_precision</source>
+            <translation>Angular tolerance precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_weight_precision</source>
+            <translation>Weight precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_density_precision</source>
+            <translation>Density precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_parametric_precision</source>
+            <translation>Parametric precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_param_tol_precision</source>
+            <translation>Parametric tolerance precision</translation>
+        </message>
+        <message>
             <source>PREF_DISPLAY_MODE</source>
             <translation>Default display mode</translation>
         </message>
@@ -2614,6 +2650,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>PREF_GROUP_OCCVIEWER</source>
             <translation>OCC Viewer 3d</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_GROUP_PRECISION</source>
+            <translation>Input fields precision</translation>
         </message>
         <message>
             <source>PREF_GROUP_VERTEX</source>
@@ -3987,6 +4027,12 @@ Otherwise the dimensions will be kept without modifications.</translation>
         <message>
             <source>GEOM_ADVANCED</source>
             <translation>Advanced shape: type %1</translation>
+        </message>
+        <message>
+            <source>GEOM_PRECISION_HINT</source>
+            <translation>
+Input value precision can be adjusted using
+'%1' parameter in Geometry module preferences.</translation>
         </message>
     </context>
     <context>

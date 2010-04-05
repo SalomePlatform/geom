@@ -88,7 +88,7 @@ OperationGUI_Fillet1d2dDlg::OperationGUI_Fillet1d2dDlg (GeometryGUI* theGeometry
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  initSpinBox(GroupVertexes->SpinBox_DX, 0.00001, COORD_MAX, SpecificStep, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupVertexes->SpinBox_DX, 0.00001, COORD_MAX, SpecificStep, "length_precision" );
 
   setHelpFileName(myIs1D ? "fillet1d_operation_page.html" : "fillet2d_operation_page.html");
 

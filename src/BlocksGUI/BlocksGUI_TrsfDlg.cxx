@@ -114,7 +114,6 @@ void BlocksGUI_TrsfDlg::Init()
   int SpecificStep = 1;
   QMap<int, SalomeApp_IntSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
-    //anIter.data()->RangeStepAndValidator(1, 999, SpecificStep);
     initSpinBox(anIter.value(), 1, 999, SpecificStep);
   }
 

@@ -126,8 +126,10 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myFixShapeTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
-      myFixShapeMaxTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myFixShapeTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myFixShapeTol3D, 0., 100., 1e-7, "len_tol_precision" );
+      myFixShapeMaxTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myFixShapeMaxTol3D, 0., 100., 1e-7, "len_tol_precision" );      
       
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixShapeTol3D, 0, 1 );
@@ -141,7 +143,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myFixFaceSizeTol = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myFixFaceSizeTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myFixFaceSizeTol, 0., 100., 1e-7, "len_tol_precision" );      
       
       aLay->addWidget( new QLabel( tr( "GEOM_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myFixFaceSizeTol, 0, 1 );
@@ -153,7 +156,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      myDropSmallEdgesTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myDropSmallEdgesTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myDropSmallEdgesTol3D, 0., 100., 1e-7, "len_tol_precision" );
   
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( myDropSmallEdgesTol3D, 0, 1 );
@@ -165,8 +169,10 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
       
-      mySplitAngleAngle = new SalomeApp_DoubleSpinBox( 0, 360, 1, 10, 10, w );
-      mySplitAngleMaxTol = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      mySplitAngleAngle = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitAngleAngle, 0, 360, 1, "angle_precision" );      
+      mySplitAngleMaxTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitAngleMaxTol, 0., 100., 1e-7, "ang_tol_precision" );      
       
       aLay->addWidget( new QLabel( tr( "GEOM_ANGLE_1" ), w ), 0, 0 );
       aLay->addWidget( mySplitAngleAngle, 0, 1 );
@@ -192,7 +198,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
 
-      mySplitContTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      mySplitContTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitContTol3D, 0., 100., 1e-7, "len_tol_precision" );
       mySplitContSurfCont = new QComboBox( w );
       mySplitContSurfCont->addItems( aContinueties );
       mySplitContCurvCont = new QComboBox( w );
@@ -216,9 +223,11 @@ void RepairGUI_ShapeProcessDlg::init()
       myBSpline3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), w );
       myBSpline2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
 
-      myBSplineTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myBSplineTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySplitContTol3D, 0., 100., 1e-7, "len_tol_precision" );
       
-      myBSplineTol2D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myBSplineTol2D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myBSplineTol2D, 0., 100., 1e-7, "param_tol_precision" );      
 
       myBSplineDegree = new SalomeApp_IntSpinBox( w );
       myBSplineSegments = new SalomeApp_IntSpinBox( w );
@@ -258,7 +267,8 @@ void RepairGUI_ShapeProcessDlg::init()
       myToBezier3DCurveChk = new QCheckBox( tr("GEOM_3D_CURVE_MODE"), w );
       myToBezier2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
   
-      myToBezierMaxTol = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      myToBezierMaxTol = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( myToBezierMaxTol, 0., 100., 1e-7, "len_tol_precision" );            
 
       aLay->addWidget( myToBezierSurfModeChk, 0, 0 );
       aLay->addWidget( myToBezier3DCurveChk, 1, 0 );
@@ -273,7 +283,8 @@ void RepairGUI_ShapeProcessDlg::init()
       QGridLayout* aLay = new QGridLayout( w );
       aLay->setMargin( 9 ); aLay->setSpacing( 6 );
 
-      mySameParameterTol3D = new SalomeApp_DoubleSpinBox( 0., 100., 1e-7, 10, 10, w );
+      mySameParameterTol3D = new SalomeApp_DoubleSpinBox( w );
+      initSpinBox( mySameParameterTol3D, 0., 100., 1e-7, "len_tol_precision" );            
       
       aLay->addWidget( new QLabel( tr( "GEOM_3D_TOLERANCE" ), w ), 0, 0 );
       aLay->addWidget( mySameParameterTol3D, 0, 1 );

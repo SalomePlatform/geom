@@ -115,14 +115,14 @@ void GenerationGUI_FillingDlg::Init()
 
   globalSelection( GEOM_COMPOUND );
 
-  double SpecificStep1 = 1;
+  int SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox1, 2.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, 5 );
-  initSpinBox( GroupPoints->SpinBox3, 0.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox4, 1.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, 5 );
+  initSpinBox( GroupPoints->SpinBox1, 2, MAX_NUMBER,  SpecificStep1 );
+  initSpinBox( GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, "len_tol_precision" );
+  initSpinBox( GroupPoints->SpinBox3, 0, MAX_NUMBER,  SpecificStep1 );
+  initSpinBox( GroupPoints->SpinBox4, 1, MAX_NUMBER,  SpecificStep1 );
+  initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, "len_tol_precision" );
 
   GroupPoints->SpinBox1->setValue( myMinDeg );
   GroupPoints->SpinBox2->setValue( myTol2D );
@@ -152,7 +152,8 @@ void GenerationGUI_FillingDlg::Init()
   connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ),
            this, SLOT( ApproxChanged() ) );
 
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
+  // san: Commented, as all spin boxes here either are integer or use specific non-default step value
+  //connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -167,10 +168,7 @@ void GenerationGUI_FillingDlg::Init()
 //=================================================================================
 void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep( double step )
 {
-  GroupPoints->SpinBox1->setSingleStep(step);
   GroupPoints->SpinBox2->setSingleStep(step);
-  GroupPoints->SpinBox3->setSingleStep(step);
-  GroupPoints->SpinBox4->setSingleStep(step);
   GroupPoints->SpinBox5->setSingleStep(step);
 }
 

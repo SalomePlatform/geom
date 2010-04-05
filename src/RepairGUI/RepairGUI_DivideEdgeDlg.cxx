@@ -86,7 +86,8 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   myIsParameterGr->addButton( rb2, 1 );
   rb1->setChecked( true );
 
-  myValEdt = new SalomeApp_DoubleSpinBox( 0., 1., 0.1, 3, 32, GroupPoints->Box );
+  myValEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
+  initSpinBox( myValEdt, 0., 1., 0.1, "parametric_precision" );
   myValEdt->setValue( 0.5 );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->Box );
 

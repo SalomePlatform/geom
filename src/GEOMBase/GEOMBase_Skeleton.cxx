@@ -151,13 +151,22 @@ void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
 //=================================================================================
 void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
                                      double min,  double max, 
-                                     double step, int decimals )
+                                     double step, const char* quantity )
 {
-  spinBox->setPrecision( decimals );
-  spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
+  
+  spinBox->setPrecision( aPrecision );
+  spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
+  
+  // Add a hint for the user saying how to tune precision
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  spinBox->setProperty( "validity_tune_hint", 
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
 //=================================================================================

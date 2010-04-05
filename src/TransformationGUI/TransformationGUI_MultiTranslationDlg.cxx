@@ -132,14 +132,14 @@ void TransformationGUI_MultiTranslationDlg::Init()
 
   int SpecificStep = 1;
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox(GroupPoints->SpinBox_DY, 1, 999, SpecificStep);
   GroupPoints->SpinBox_DX->setValue(myStepU);
   GroupPoints->SpinBox_DY->setValue(myNbTimesU);
 
-  initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DX1, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox(GroupDimensions->SpinBox_DY1, 1, 999, SpecificStep);
-  initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, 10); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupDimensions->SpinBox_DX2, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox(GroupDimensions->SpinBox_DY2, 1, 999, SpecificStep);
   GroupDimensions->SpinBox_DX1->setValue(myStepU);
   GroupDimensions->SpinBox_DY1->setValue(myNbTimesU);
@@ -209,11 +209,13 @@ void TransformationGUI_MultiTranslationDlg::Init()
 void TransformationGUI_MultiTranslationDlg::SetDoubleSpinBoxStep (double step)
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
-  GroupPoints->SpinBox_DY->setSingleStep((int)step);
-  GroupDimensions->SpinBox_DX1->setSingleStep(step);
-  GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
+  GroupDimensions->SpinBox_DX1->setSingleStep(step);  
   GroupDimensions->SpinBox_DX2->setSingleStep(step);
-  GroupDimensions->SpinBox_DY2->setSingleStep((int)step);
+  
+  // san : Commented so as not to override specific step settings
+  //GroupPoints->SpinBox_DY->setSingleStep((int)step);
+  //GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
+  //GroupDimensions->SpinBox_DY2->setSingleStep((int)step);
 }
 
 //=================================================================================

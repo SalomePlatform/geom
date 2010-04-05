@@ -132,8 +132,8 @@ void PrimitiveGUI_DiskDlg::Init()
   double aStep = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPntVecR->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPntVecR->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
 
   // init variables
   myEditCurrentArgument = GroupPntVecR->LineEdit1;

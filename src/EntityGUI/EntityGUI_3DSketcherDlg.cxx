@@ -146,9 +146,9 @@ void EntityGUI_3DSketcherDlg::Init()
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
 
   Group3Spin->SpinBox_DX->setValue(0.0);
   Group3Spin->SpinBox_DY->setValue(0.0);
@@ -463,20 +463,6 @@ bool EntityGUI_3DSketcherDlg::execute( ObjectList& objects )
   }
 
   return true;
-}
-
-//=================================================================================
-// function : initSpinBox()
-// purpose  :
-//=================================================================================
-
-void EntityGUI_3DSketcherDlg::initSpinBox( QDoubleSpinBox* spinBox,
-					   double min,  double max,
-					   double step, int decimals )
-{
-  spinBox->setDecimals( decimals );
-  spinBox->setRange( min, max );
-  spinBox->setSingleStep( step );
 }
 
 //=================================================================================

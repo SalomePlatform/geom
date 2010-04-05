@@ -106,9 +106,9 @@ void OperationGUI_ArchimedeDlg::Init()
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
   /* min, max, myStep and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, "weight_precision" );
+  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, "density_precision" );
+  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, "parametric_precision" );
 
   GroupPoints->SpinBox_DX->setValue( 100.0 );
   GroupPoints->SpinBox_DY->setValue( 1.0 );
@@ -141,8 +141,10 @@ void OperationGUI_ArchimedeDlg::Init()
 void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
-  GroupPoints->SpinBox_DY->setSingleStep(step);
-  GroupPoints->SpinBox_DZ->setSingleStep(step);
+  
+  // san: Commented so as not to override specific step settings
+  //GroupPoints->SpinBox_DY->setSingleStep(step);
+  //GroupPoints->SpinBox_DZ->setSingleStep(step);
 }
 
 //=================================================================================

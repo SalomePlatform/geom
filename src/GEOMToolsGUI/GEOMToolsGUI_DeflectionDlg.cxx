@@ -72,13 +72,13 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   GroupC1Layout->addWidget(TextLabel1, 0, 0);
 
   SpinBox = new QtxDoubleSpinBox (GroupC1);
-  SpinBox->setPrecision( 6 );
-  SpinBox->setDecimals( 6 );
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "parametric_precision", 6 );  
+  SpinBox->setPrecision( aPrecision );
+  SpinBox->setDecimals( aPrecision );
   SpinBox->setRange( DEFLECTION_MIN, 1.0 );
   SpinBox->setSingleStep( 1.0e-04 );
-  //SpinBox->setMinimum(1.0e-07);
-  //SpinBox->setMaximum(1.0);
-  //SpinBox->setStep(1.0e-04);
   SpinBox->setObjectName("SpinBoxU");
   SpinBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
   SpinBox->setValue(1.0e-04);

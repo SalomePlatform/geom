@@ -149,9 +149,9 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
   QMap< int, SalomeApp_DoubleSpinBox* >::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     if (anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24)
-      initSpinBox(anIter.value(), 0.001, 89.999, 5, 0);
+      initSpinBox(anIter.value(), 0.001, 89.999, 5, "angle_precision" );
     else
-      initSpinBox(anIter.value(), 0.001, COORD_MAX, SpecificStep, 3);
+      initSpinBox(anIter.value(), 0.001, COORD_MAX, SpecificStep, "length_precision" );
   }
 
   setHelpFileName("chamfer_operation_page.html");
