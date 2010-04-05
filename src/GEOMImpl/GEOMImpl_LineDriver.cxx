@@ -163,7 +163,7 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
   }
 
   if (aShape.IsNull()) return 0;
-  aShape.Infinite(true);
+  //aShape.Infinite(true); // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
 
   aFunction->SetValue(aShape);
 

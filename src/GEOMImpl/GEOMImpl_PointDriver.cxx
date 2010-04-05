@@ -223,7 +223,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     aShape = mkVertex.Shape();
   }
 
-  aShape.Infinite(Standard_True);
+  //aShape.Infinite(Standard_True); // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
