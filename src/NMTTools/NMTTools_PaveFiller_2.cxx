@@ -19,11 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:        NMTTools_PaveFiller_2.cxx
-// Created:     Mon Dec  8 12:02:56 2003
-// Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+//  File:        NMTTools_PaveFiller_2.cxx
+//  Created:     Mon Dec  8 12:02:56 2003
+//  Author:      Peter KURNEV
+//               <pkv@irinox>
+
 #include <NMTTools_PaveFiller.ixx>
 
 #include <Precision.hxx>
@@ -48,33 +48,47 @@
 #include <BOPTools_VEInterference.hxx>
 
 #include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
+
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
-//
-// Modified  Thu Sep 14 14:35:18 2006 
+
+#include <Standard_Version.hxx>
+
+// Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 #include <BOPTools_IndexedMapOfCoupleOfInteger.hxx>
 #include <BOPTools_CoupleOfInteger.hxx>
 #include <BooleanOperations_OnceExplorer.hxx>
-
 
 static
   Standard_Boolean Contains(const TopoDS_Edge& aE,
                             const TopoDS_Vertex& aV);
 // Contribution of Samtech www.samcef.com END
 
+// In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
+#ifdef OCC_VERSION_SERVICEPACK
+#if (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK) > 0x06030008
+#define OCCT_6_3_0_sp_9
+#endif
+#endif
+
 //=======================================================================
 // function: PerformVE
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformVE() 
+void NMTTools_PaveFiller::PerformVE()
 {
   myIsDone=Standard_False;
   //
   Standard_Boolean bJustAdd;
-  Standard_Integer n1, n2, anIndexIn, aFlag, aWhat, aWith, aNbVEs, aBlockLength, iSDV, nV1;
+  Standard_Integer n1, n2, anIndexIn, aFlag, aWhat;
+  Standard_Integer aWith, aNbVEs, aBlockLength, iSDV, nV1;
   Standard_Real aT;
+#ifdef OCCT_6_3_0_sp_9
+  Standard_Boolean bToUpdateVertex;
+  Standard_Real aDist;
+#endif
   TopoDS_Vertex aV1;
   TopoDS_Edge aE2;
   BOPTools_IndexedMapOfCoupleOfInteger aSnareMap;
@@ -103,7 +117,6 @@ static
       }
       //
       if(bJustAdd) {
-        //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexEdge, anIndexIn);
         continue;
       }
       // Edge
@@ -119,7 +132,7 @@ static
       if (iSDV) {
         nV1=iSDV;
         aV1=TopoDS::Vertex(myDS->Shape(nV1));
-        // Modified to find same domain vertex Thu Sep 14 14:35:18 2006 
+        // Modified to find same domain vertex Thu Sep 14 14:35:18 2006
         // Contribution of Samtech www.samcef.com BEGIN
         Standard_Integer nVE, iSDVE, iRet;
         //
@@ -145,7 +158,13 @@ static
         // Contribution of Samtech www.samcef.com END
       }
       //
+      //modified by NIZNHY-PKV Mon Dec 28 08:58:05 2009f
+#ifdef OCCT_6_3_0_sp_9
+      aFlag=myContext.ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
+#else
       aFlag=myContext.ComputeVE (aV1, aE2, aT);
+#endif
+      //modified by NIZNHY-PKV Mon Dec 28 08:58:13 2009t
       //
       if (!aFlag) {
         // Add Interference to the Pool
@@ -168,22 +187,30 @@ static
         // Insert Vertex in Interference Object
         BOPTools_VEInterference& aVE=aVEs(anIndexIn);
         aVE.SetNewShape(aWhat);
-        // qqf
-        {
-          myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VE);
-        }         
-        // qqt
-      }
-      //myIntrPool->AddInterference(aWhat, aWith, BooleanOperations_VertexEdge, anIndexIn);
+        //
+        myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VE);
+        //
+        //modified by NIZNHY-PKV Mon Dec 28 09:00:54 2009f
+#ifdef OCCT_6_3_0_sp_9
+        if (bToUpdateVertex) {
+          BRep_Builder aBB;
+          //
+          aBB.UpdateVertex(aV1, aDist);
+        }
+#endif
+        //modified by NIZNHY-PKV Mon Dec 28 09:00:57 2009t
+        //
+      } //if (!aFlag) {
     }
   }
   myIsDone=Standard_True;
 }
+
 //=======================================================================
 // function: PrepareEdges
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PrepareEdges() 
+void NMTTools_PaveFiller::PrepareEdges()
 {
   Standard_Integer  i, nV, ii, aNBSuc, ip, aNbShapesObject;
   Standard_Real aT;
@@ -214,22 +241,22 @@ static
         ip=FindSDVertex(nV);
         if (ip) {
           aV=TopoDS::Vertex(myDS->Shape(ip));
-          aV.Orientation(anOr);// XX ? if the edge is closed it'll be amazing result 
+          aV.Orientation(anOr);// XX ? if the edge is closed it'll be amazing result
           nV=ip;
         }
         //
-        BOPTools_Pave aPave(nV, aT); 
+        BOPTools_Pave aPave(nV, aT);
         aPaveSet.Append (aPave);
       }
     }
   }
 }
 
-// Modified  Thu Sep 14 14:35:18 2006 
+// Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Edge& aE,
                           const TopoDS_Vertex& aV)
