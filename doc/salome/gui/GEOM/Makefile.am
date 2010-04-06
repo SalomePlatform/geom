@@ -26,9 +26,12 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-EXTRA_DIST += images input static
+EXTRA_DIST += images input static/footer.html static/doxygen.css
 
-usr_docs: doxyfile_tui doxyfile_py doxyfile 
+guidocdir = $(docdir)/gui/GEOM
+guidoc_DATA = images/head.png
+
+usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
 	echo "Replacing geompyDC by geompy" ;					\
 	echo "===========================================" ;			\
@@ -46,13 +49,13 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
 	echo "Generating GUI documentation" ;					\
 	echo "===========================================" ;			\
-	$(DOXYGEN) doxyfile ; \
+	$(DOXYGEN) doxyfile ; 							\
 	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
 
 docs: usr_docs
 
 clean-local:
-	@for filen in `find . -maxdepth 1` ; do						\
+	@for filen in `find . -maxdepth 1` ; do					\
 	  case $${filen} in							\
 	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;	\
 	    . | .. ) ;;								\
@@ -62,7 +65,7 @@ clean-local:
 
 install-data-local: usr_docs
 	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM
-	@for filen in `find . -maxdepth 1` ; do								\
+	@for filen in `find . -maxdepth 1` ; do							\
 	  case $${filen} in									\
 	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;			\
 	    ./doxyfile.bak | ./doxyfile_py.bak | ./doxyfile_tui.bak ) ;;			\

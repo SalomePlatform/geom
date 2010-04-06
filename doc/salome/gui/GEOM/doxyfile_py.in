@@ -110,7 +110,7 @@ RECURSIVE         = NO
 #---------------------------------------------------------------------------
 GENERATE_HTML     = YES
 HTML_OUTPUT       = geompy_doc
-HTML_HEADER       = @srcdir@/static/header.html
+HTML_HEADER       = @builddir@/static/header.html
 HTML_FOOTER       = @srcdir@/static/footer.html
 #HTML_STYLESHEET  = @srcdir@/static/doxygen.css
 TOC_EXPAND        = YES

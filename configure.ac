@@ -389,8 +389,10 @@ AC_OUTPUT([ \
   doc/salome/gui/GEOM/doxyfile \
   doc/salome/gui/GEOM/doxyfile_py \
   doc/salome/gui/GEOM/doxyfile_tui \
+  doc/salome/gui/GEOM/static/header.html \
   doc/salome/tui/Makefile \
   doc/salome/tui/doxyfile \
+  doc/salome/tui/static/header.html \
   src/Makefile \
   src/AdvancedGUI/Makefile \
   src/ARCHIMEDE/Makefile \

@@ -48,7 +48,7 @@ EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
 #---------------------------------------------------------------------------
 GENERATE_HTML     = YES
 HTML_OUTPUT       = .
-HTML_HEADER       = @srcdir@/static/header.html
+HTML_HEADER       = @builddir@/static/header.html
 HTML_FOOTER       = @srcdir@/static/footer.html
 #HTML_STYLESHEET  = @srcdir@/static/doxygen.css
 TOC_EXPAND        = YES
