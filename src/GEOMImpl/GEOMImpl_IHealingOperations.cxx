@@ -54,6 +54,12 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+#ifdef OCC_VERSION_SERVICEPACK
+#if (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK) > 0x06030008
+#define OCCT_6_3_0_sp_9
+#endif
+#endif
+
 
 //=============================================================================
 /*!
@@ -729,8 +735,13 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
     return false;
 
   // get free boundary shapes
+
+#ifdef OCCT_6_3_0_sp_9
   ShapeAnalysis_FreeBounds anAnalizer(aShape, Standard_False,
                                       Standard_True, Standard_True);
+#else
+  ShapeAnalysis_FreeBounds anAnalizer(aShape);
+#endif
   TopoDS_Compound aClosed = anAnalizer.GetClosedWires();
   TopoDS_Compound anOpen = anAnalizer.GetOpenWires();
 
