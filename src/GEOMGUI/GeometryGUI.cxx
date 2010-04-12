@@ -23,6 +23,7 @@
 // File   : GeometryGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
+#include "Python.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
 #include "GEOMGUI_OCCSelector.h"
@@ -1097,6 +1098,21 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   setMenuShown( true );
   setToolShown( true );
+
+  // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
+  PyGILState_STATE gstate = PyGILState_Ensure();
+  PyObject* pluginsmanager=PyImport_ImportModule((char*)"salome_pluginsmanager");
+  if(pluginsmanager==NULL)
+    PyErr_Print();
+  else
+    {
+      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom","New Entity","Other");
+      if(result==NULL)
+        PyErr_Print();
+      Py_XDECREF(result);
+    }
+  PyGILState_Release(gstate);
+  // end of GEOM plugins loading
 
   connect( application()->desktop(), SIGNAL( windowActivated( SUIT_ViewWindow* ) ),
           this, SLOT( onWindowActivated( SUIT_ViewWindow* ) ) );
