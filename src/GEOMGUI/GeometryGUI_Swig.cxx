@@ -68,9 +68,6 @@
 
 #include <vtkRenderer.h>
 
-using namespace std;
-
-
 static GEOM_Client ShapeReader;
 
 inline OCCViewer_Viewer* GetOCCViewer(SUIT_Application* theApp){
@@ -135,7 +132,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
       if (CORBA::is_nil(Geom))
         return;
 
-      string aFatherIOR;
+      std::string aFatherIOR;
       _PTR(SComponent) father = aStudy->FindComponent("GEOM");
       if (!father)
         return;
@@ -154,14 +151,14 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
       if (!obj->FindAttribute(anAttr, "AttributeIOR"))
         return;
       _PTR(AttributeIOR) anIOR(anAttr);
-      string anIORValue = anIOR->Value();
+      std::string anIORValue = anIOR->Value();
 
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
       TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
       if (!Shape.IsNull()) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           _PTR(AttributeName) aName (anAttr);
-          string aNameValue = aName->Value();
+          std::string aNameValue = aName->Value();
           // open transaction
           /*SUIT_Operation* op = new SalomeApp_ImportOperation (app);
           op->start();

@@ -32,8 +32,6 @@
 
 #include "GEOM_InteractiveObject.ixx"
 
-using namespace std;
-
 GEOM_InteractiveObject::GEOM_InteractiveObject()
   : SALOME_InteractiveObject()
 {

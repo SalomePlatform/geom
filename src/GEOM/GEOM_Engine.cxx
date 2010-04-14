@@ -83,7 +83,6 @@ static int MYDEBUG = 0;
 
 static GEOM_Engine* TheEngine = NULL;
 
-using namespace std;
 
 static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
 {

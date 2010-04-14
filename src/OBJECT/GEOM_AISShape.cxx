@@ -70,7 +70,6 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
-using namespace std;
 
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
                              const Handle(AIS_InteractiveContext)& theIC,

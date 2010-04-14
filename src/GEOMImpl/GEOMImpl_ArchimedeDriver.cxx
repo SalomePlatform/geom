@@ -41,7 +41,6 @@
 
 #include <StdFail_NotDone.hxx>
 
-using namespace std;
 
 //=======================================================================
 //function : GetID

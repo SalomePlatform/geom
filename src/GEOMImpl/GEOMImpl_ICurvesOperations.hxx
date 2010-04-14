@@ -19,7 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-using namespace std;
 
 #ifndef _GEOMImpl_ICurvesOperations_HXX_
 #define _GEOMImpl_ICurvesOperations_HXX_
@@ -67,13 +66,13 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                                                         Handle(GEOM_Object) thePnt2,
                                                         Handle(GEOM_Object) thePnt3);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (list<Handle(GEOM_Object)> thePoints);
-  Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (list<Handle(GEOM_Object)> thePoints,
+  Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (std::list<Handle(GEOM_Object)> thePoints);
+  Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (std::list<Handle(GEOM_Object)> thePoints,
                                                                bool                      theIsClosed = false);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
-                                                    list<double> theWorkingPlane);
-  Standard_EXPORT Handle(GEOM_Object) Make3DSketcher (list<double> theCoordinates);
+                                                    std::list<double> theWorkingPlane);
+  Standard_EXPORT Handle(GEOM_Object) Make3DSketcher (std::list<double> theCoordinates);
   Standard_EXPORT Handle(GEOM_Object) MakeSketcherOnPlane (const char* theCommand,
                                                            Handle(GEOM_Object) theWorkingPlane);
 };

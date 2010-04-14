@@ -58,8 +58,6 @@
 // OCCT Includes
 #include <TCollection_AsciiString.hxx>
 
-using namespace std;
-
 typedef QMap<QString, QString> FilterMap;
 static QString lastUsedFilter;
 

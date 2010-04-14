@@ -59,7 +59,6 @@
 
 #include <AIS_InteractiveContext.hxx>
 
-using namespace std;
 
 //=================================================================================
 // class    : GEOMBase_TransparencyDlg()

@@ -91,7 +91,6 @@
 #include <GEOMImpl_Types.hxx>
 #include <Graphic3d_HArray1OfBytes.hxx>
 
-using namespace std;
 
 //================================================================
 // Function : getActiveStudy
@@ -190,7 +189,7 @@ SUIT_SelectionFilter* GEOM_Displayer::getComplexFilter( const QList<int>* aSubSh
 // Function : getEntry
 // Purpose  :
 //================================================================
-static string getEntry( GEOM::GEOM_Object_ptr object )
+static std::string getEntry( GEOM::GEOM_Object_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -200,7 +199,7 @@ static string getEntry( GEOM::GEOM_Object_ptr object )
     if ( strcmp(IOR.in(), "") != 0 )
     {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( string(IOR) ) );
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( std::string(IOR) ) );
       if ( SO )
         return SO->GetID();
     }
@@ -212,7 +211,7 @@ static string getEntry( GEOM::GEOM_Object_ptr object )
 // Function : getName
 // Purpose  :
 //================================================================
-static string getName( GEOM::GEOM_Object_ptr object )
+static std::string getName( GEOM::GEOM_Object_ptr object )
 {
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
@@ -222,7 +221,7 @@ static string getName( GEOM::GEOM_Object_ptr object )
     if ( strcmp(IOR.in(), "") != 0 )
     {
       SalomeApp_Study* study = ( SalomeApp_Study* )app->activeStudy();
-      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( string(IOR) ) );
+      _PTR(SObject) aSObj ( study->studyDS()->FindObjectIOR( std::string(IOR) ) );
 
       _PTR(GenericAttribute) anAttr;
 
@@ -327,7 +326,7 @@ void GEOM_Displayer::Display( GEOM::GEOM_Object_ptr theObj, const bool updateVie
   if ( theObj->_is_nil() )
     return;
 
-  string entry = getEntry( theObj );
+  std::string entry = getEntry( theObj );
   if ( entry != "" ) {
     Display(new SALOME_InteractiveObject(entry.c_str(), "GEOM", getName(theObj).c_str()),
             updateViewer);
@@ -371,7 +370,7 @@ void GEOM_Displayer::Erase( GEOM::GEOM_Object_ptr theObj,
                             const bool forced,
                             const bool updateViewer )
 {
-  string entry = getEntry( theObj );
+  std::string entry = getEntry( theObj );
   if ( entry != "" )
   {
     Erase(new SALOME_InteractiveObject(entry.c_str(), "GEOM", getName(theObj).c_str()),
@@ -699,7 +698,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                         if ( strcmp(IOR.in(), "") != 0 )
                         {
                           _PTR(Study) aStudy = study->studyDS();
-                          _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( string(IOR) ) );
+                          _PTR(SObject) aMainSObject( aStudy->FindObjectIOR( std::string(IOR) ) );
                           _PTR(ChildIterator) it( aStudy->NewChildIterator( aMainSObject ) );
                           for( ; it->More(); it->Next() )
                           {
@@ -1426,12 +1425,12 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
       if( aTolerance < 1 )
         break;
     }
-    //cout << "Iteration N" << anIterations << " (tolerance=" << aTolerance << ")"<< endl;
+    //std::cout << "Iteration N" << anIterations << " (tolerance=" << aTolerance << ")"<< std::endl;
 
     aHue = (int)( 360.0 * rand() / RAND_MAX );
-    //cout << "Hue = " << aHue << endl;
+    //std::cout << "Hue = " << aHue << std::endl;
 
-    //cout << "Auto colors : ";
+    //std::cout << "Auto colors : ";
     bool ok = true;
     QList<SALOMEDS::Color>::const_iterator it = theReservedColors.constBegin();
     QList<SALOMEDS::Color>::const_iterator itEnd = theReservedColors.constEnd();
@@ -1442,21 +1441,21 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
 
       int h, s, v;
       aQColor.getHsv( &h, &s, &v );
-      //cout << h << " ";
+      //std::cout << h << " ";
       if( abs( h - aHue ) < aTolerance )
       {
         ok = false;
-        //cout << "break (diff = " << abs( h - aHue ) << ")";
+        //std::cout << "break (diff = " << abs( h - aHue ) << ")";
         break;
       }
     }
-    //cout << endl;
+    //std::cout << std::endl;
 
     if( ok )
       break;
   }
 
-  //cout << "Hue of the returned color = " << aHue << endl;
+  //std::cout << "Hue of the returned color = " << aHue << std::endl;
   QColor aColor;
   aColor.setHsv( aHue, 255, 255 );
 

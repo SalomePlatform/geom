@@ -57,7 +57,6 @@
 
 #include "utilities.h"
 
-using namespace std;
 // SALOME
 
 #define MAX2(X, Y)      (  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
