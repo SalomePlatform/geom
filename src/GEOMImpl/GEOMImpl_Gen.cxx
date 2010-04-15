@@ -80,6 +80,7 @@
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
 // Advanced operations
+#include <GEOMImpl_PipeTShapeDriver.hxx>
 /*@@ insert new functions before this line @@*/
 
 //=============================================================================
@@ -161,6 +162,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MeasureDriver::GetID(), new GEOMImpl_MeasureDriver());
 
    // Advanced operations
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeTShapeDriver::GetID(), new GEOMImpl_PipeTShapeDriver());
    /*@@ insert new functions before this line @@*/
 
    SetEngine(this);

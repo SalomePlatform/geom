@@ -45,6 +45,27 @@ class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
 			    ::GEOMImpl_IAdvancedOperations* theImpl);
   ~GEOM_IAdvancedOperations_i();
 
+  GEOM::ListOfGO* MakePipeTShape (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+				  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+				  CORBA::Boolean theHexMesh);
+  GEOM::ListOfGO* MakePipeTShapeWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+					      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+					      CORBA::Boolean theHexMesh,
+					      GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
+  GEOM::ListOfGO* MakePipeTShapeChamfer (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+					 CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+					 CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh);
+  GEOM::ListOfGO* MakePipeTShapeChamferWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+						     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+						     CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
+						     GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
+  GEOM::ListOfGO* MakePipeTShapeFillet (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+				        CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
+				        CORBA::Double theRF, CORBA::Boolean theHexMesh);
+  GEOM::ListOfGO* MakePipeTShapeFilletWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+						    CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
+						    CORBA::Double theRF, CORBA::Boolean theHexMesh,
+						    GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
   /*@@ insert new functions before this line @@*/
 
   ::GEOMImpl_IAdvancedOperations* GetOperations()

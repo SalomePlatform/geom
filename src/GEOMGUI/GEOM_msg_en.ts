@@ -4497,5 +4497,143 @@ Would you like to continue?</translation>
             <translation>Load Texture</translation>
         </message>
     </context>
+    <context>
+        <name>AdvancedGUI_PipeTShapeDlg</name>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_TITLE</source>
+            <translation>Pipe TShape Construction</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE</source>
+            <translation>PipeTShape</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_MPIPE</source>
+            <translation>Main pipe</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_R</source>
+            <translation>Radius</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_W</source>
+            <translation>Width</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_L</source>
+            <translation>Half-length</translation>
+	    </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_IPIPE</source>
+            <translation>Incident pipe</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_CHAMFER</source>
+            <translation>Chamfer</translation>
+	    </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_CHAMFER_H</source>
+            <translation>Height</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_CHAMFER_W</source>
+            <translation>Width</translation>
+        </message>
+	    <message>
+            <source>GEOM_PIPE_TSHAPE_FILLET</source>
+            <translation>Fillet</translation>
+	    </message>
+	    <message>
+            <source>GEOM_PIPE_TSHAPE_HEX</source>
+            <translation>Prepare for hex mesh</translation>
+        </message>
+	    <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION</source>
+            <translation>Set position</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_P1</source>
+            <translation>Junction P1</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_P2</source>
+            <translation>Junction P2</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_P3</source>
+            <translation>Junction P3</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L1</source>
+            <translation>New L1</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
+            <translation>New L2</translation>
+        </message>
+    </context>
+    <context>
+        <name>@default</name>
+        <message>
+            <source>TOP_PIPETSHAPE</source>
+            <translation>Create Pipe TShape</translation>
+        </message>
+        <message>
+            <source>MEN_PIPETSHAPE</source>
+            <translation>Pipe TShape</translation>
+        </message>
+        <message>
+            <source>STB_PIPETSHAPE</source>
+            <translation>Create new Pipe TShape object</translation>
+	    </message>
+	    <message>
+            <source>GEOM_ADVANCED_201</source>
+            <translation>Pipe TShape</translation>
+        </message>
+        <message>
+            <source>HALF_LENGTH_MAIN_PIPE</source>
+            <translation>Main pipe half length</translation>
+        </message>
+        <message>
+            <source>HALF_LENGTH_INCIDENT_PIPE</source>
+            <translation>Incident pipe half length</translation>
+        </message>
+        <message>
+            <source>CIRCULAR_QUARTER_PIPE</source>
+            <translation>Circular quarter of pipe</translation>
+        </message>
+        <message>
+            <source>THICKNESS</source>
+            <translation>Thickness</translation>
+        </message>
+        <message>
+            <source>FLANGE</source>
+            <translation>Flange</translation>
+        </message>
+        <message>
+            <source>CHAMFER_OR_FILLET</source>
+            <translation>Chamfer or fillet</translation>
+        </message>
+        <message>
+            <source>CHAMFER</source>
+            <translation>Chamfer</translation>
+        </message>
+        <message>
+            <source>FILLET</source>
+            <translation>Fillet</translation>
+        </message>
+        <message>
+            <source>JUNCTION_FACE_1</source>
+            <translation>Junction 1</translation>
+        </message>
+        <message>
+            <source>JUNCTION_FACE_2</source>
+            <translation>Junction 2</translation>
+        </message>
+        <message>
+            <source>JUNCTION_FACE_3</source>
+            <translation>Junction 3</translation>
+        </message>
+    </context>
     <!-- @@ insert new functions before this line @@ -->
 </TS>

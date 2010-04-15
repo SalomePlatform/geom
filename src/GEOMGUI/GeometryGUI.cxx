@@ -501,6 +501,8 @@ void GeometryGUI::OnGUIEvent( int id )
     libName = "BlocksGUI";
     break;
   case GEOMOp::OpAdvancedNoOp:     // NO OPERATION (advanced operations base)
+  case GEOMOp::OpPipeTShape:       // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
+//   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
     //@@ insert new functions before this line @@//
     libName = "AdvancedGUI";
     break;
@@ -729,6 +731,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpHideChildren,     "POP_HIDE_CHILDREN" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
   
+  createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
+//   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   //@@ insert new functions before this line @@//
 
   // ---- create menus --------------------------
@@ -772,6 +776,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpPipe,       genId, -1 );
 
   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+  createMenu( GEOMOp::OpPipeTShape, advId, -1 );
+//   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
   //@@ insert new functions before this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -977,6 +983,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCompound, buildTbId );
 
   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+  createTool( GEOMOp::OpPipeTShape, advancedTbId );
   //@@ insert new functions before this line @@//
 
   // ---- create popup menus --------------------------
@@ -1049,30 +1056,30 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   QString selectOnly = "(client='OCCViewer' or client='VTKViewer') and (selcount=0)";
 
-  int selectolnyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
-  mgr->insert( action(GEOMOp::OpSelectVertex),   selectolnyId, -1);                                  //Vertex
+  int selectonlyId = mgr->insert( tr("MEN_SELECT_ONLY"), -1, -1);                //select only menu
+  mgr->insert( action(GEOMOp::OpSelectVertex),   selectonlyId, -1);                                  //Vertex
   mgr->setRule(action(GEOMOp::OpSelectVertex),   selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectVertex),   selectOnly + " and selectionmode='VERTEX'", QtxPopupMgr::ToggleRule);
-  mgr->insert( action(GEOMOp::OpSelectEdge),     selectolnyId, -1);                                  //Edge
+  mgr->insert( action(GEOMOp::OpSelectEdge),     selectonlyId, -1);                                  //Edge
   mgr->setRule(action(GEOMOp::OpSelectEdge),     selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectEdge),     selectOnly + " and selectionmode='EDGE'", QtxPopupMgr::ToggleRule);
-  mgr->insert( action(GEOMOp::OpSelectWire),     selectolnyId, -1);                                  //Wire
+  mgr->insert( action(GEOMOp::OpSelectWire),     selectonlyId, -1);                                  //Wire
   mgr->setRule(action(GEOMOp::OpSelectWire),     selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectWire),     selectOnly + " and selectionmode='WIRE'", QtxPopupMgr::ToggleRule);
-  mgr->insert( action(GEOMOp::OpSelectFace),     selectolnyId, -1);                                  //Face
+  mgr->insert( action(GEOMOp::OpSelectFace),     selectonlyId, -1);                                  //Face
   mgr->setRule(action(GEOMOp::OpSelectFace),     selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectFace),     selectOnly + " and selectionmode='FACE'", QtxPopupMgr::ToggleRule);
-  mgr->insert( action(GEOMOp::OpSelectShell),    selectolnyId, -1);                                  //Shell
+  mgr->insert( action(GEOMOp::OpSelectShell),    selectonlyId, -1);                                  //Shell
   mgr->setRule(action(GEOMOp::OpSelectShell),    selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectShell),    selectOnly + " and selectionmode='SHELL'", QtxPopupMgr::ToggleRule);
-  mgr->insert( action(GEOMOp::OpSelectSolid),    selectolnyId, -1);                                  //Solid
+  mgr->insert( action(GEOMOp::OpSelectSolid),    selectonlyId, -1);                                  //Solid
   mgr->setRule(action(GEOMOp::OpSelectSolid),    selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectSolid),    selectOnly + " and selectionmode='SOLID'", QtxPopupMgr::ToggleRule);
-  mgr->insert( action(GEOMOp::OpSelectCompound), selectolnyId, -1);                                  //Compound
+  mgr->insert( action(GEOMOp::OpSelectCompound), selectonlyId, -1);                                  //Compound
   mgr->setRule(action(GEOMOp::OpSelectCompound), selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectCompound), selectOnly + " and selectionmode='COMPOUND'", QtxPopupMgr::ToggleRule);
-  mgr->insert( separator(), selectolnyId, -1);
-  mgr->insert( action(GEOMOp::OpSelectAll),      selectolnyId, -1);                                  //Clear selection filter
+  mgr->insert( separator(), selectonlyId, -1);
+  mgr->insert( action(GEOMOp::OpSelectAll),      selectonlyId, -1);                                  //Clear selection filter
   mgr->setRule(action(GEOMOp::OpSelectAll),      selectOnly, QtxPopupMgr::VisibleRule);
   mgr->setRule(action(GEOMOp::OpSelectAll),      selectOnly + " and selectionmode='ALL'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(GEOMOp::OpShowOnly ), -1, -1 ); // display only

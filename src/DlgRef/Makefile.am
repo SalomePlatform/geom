@@ -89,6 +89,12 @@ UIC_FILES =					\
 	ui_DlgRef_6Sel_QTD.h			\
 	ui_DlgRef_Skeleton_QTD.h
 
+ADVANCED_UIC_FILES  = 
+ADVANCED_UIC_FILES += ui_DlgRef_PipeTShape_ScrollArea_QTD.h
+##@@ insert new functions before this line @@##
+
+UIC_FILES += $(ADVANCED_UIC_FILES)
+
 BUILT_SOURCES = $(UIC_FILES)
 
 nodist_libDlgRef_la_SOURCES =	\

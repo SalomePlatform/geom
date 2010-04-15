@@ -229,6 +229,16 @@ coordsys.png			\
 translation.png
 
 ADVANCED_RESOURCES  =
+ADVANCED_RESOURCES += pipetshape.png tree_pipetshape.png pipetshape_import_icon.png
+ADVANCED_RESOURCES += dlg_pipetshape.png dlg_pipetshapechamfer.png dlg_pipetshapefillet.png
+ADVANCED_RESOURCES += dlg_pipetshapel1.png dlg_pipetshaper1.png dlg_pipetshapew1.png
+ADVANCED_RESOURCES += dlg_pipetshapel2.png dlg_pipetshaper2.png dlg_pipetshapew2.png
+ADVANCED_RESOURCES += dlg_pipetshapechamferl1.png dlg_pipetshapechamferr1.png dlg_pipetshapechamferw1.png
+ADVANCED_RESOURCES += dlg_pipetshapechamferl2.png dlg_pipetshapechamferr2.png dlg_pipetshapechamferw2.png
+ADVANCED_RESOURCES += dlg_pipetshapechamferh.png dlg_pipetshapechamferw.png
+ADVANCED_RESOURCES += dlg_pipetshapefilletl1.png dlg_pipetshapefilletr1.png dlg_pipetshapefilletw1.png
+ADVANCED_RESOURCES += dlg_pipetshapefilletl2.png dlg_pipetshapefilletr2.png dlg_pipetshapefilletw2.png
+ADVANCED_RESOURCES += dlg_pipetshapefilletrf.png
 ##@@ insert new functions before this line @@##
 
 dist_salomeres_DATA += $(ADVANCED_RESOURCES)

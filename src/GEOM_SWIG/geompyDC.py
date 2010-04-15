@@ -4134,6 +4134,92 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @addtogroup l4_advanced 
         ## @{
 
+        ## Create a T-shape object with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length).
+        #  Center of the shape is (0,0,0). The main plane of the T-shape is
+        #  XOY.
+        #  @param theR1 Internal radius of main pipe
+        #  @param theW1 Width of main pipe
+        #  @param theL1 Half-length of main pipe
+        #  @param theR2 Internal radius of incident pipe (R2 < R1)
+        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
+        #  @param theL2 Half-length of incident pipe
+        #  @param theHexMesh false = no partition, true = with partition (default=true)
+        #  @param theP1 1st junction point of main pipe
+        #  @param theP2 2nd junction point of main pipe
+        #  @param theP3 Junction point of incident pipe
+        #  @return List of GEOM_Objects, containing the created shape and propagation groups.
+        #
+        #  @ref tui_creation_tshape "Example"
+        def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+            theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)
+	    if (theP1 and theP2 and theP3):
+	      anObj = self.AdvOp.MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3)
+	    else:
+	      anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
+	    RaiseIfFailed("MakePipeTShape", self.AdvOp)
+            if Parameters: anObj[0].SetParameters(Parameters)
+            return anObj
+
+	## Create a T-shape object with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). A chamfer is
+	#  created on the junction of the pipes.
+        #  Center of the shape is (0,0,0). The main plane of the T-shape is
+        #  XOY.
+        #  @param theR1 Internal radius of main pipe
+        #  @param theW1 Width of main pipe
+        #  @param theL1 Half-length of main pipe
+        #  @param theR2 Internal radius of incident pipe (R2 < R1)
+        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
+        #  @param theL2 Half-length of incident pipe
+        #  @param theH Height of the chamfer.
+        #  @param theW Width of the chamfer.
+	#  @param theHexMesh false = no partition, true = with partition (default=true)
+        #  @param theP1 1st junction point of main pipe
+        #  @param theP2 2nd junction point of main pipe
+        #  @param theP3 Junction point of incident pipe
+        #  @return List of GEOM_Objects, containing the created shape and propagation groups.
+        #
+        #  @ref tui_creation_tshape "Example"
+        def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+            theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW)
+	    if (theP1 and theP2 and theP3):
+	      anObj = self.AdvOp.MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh, theP1, theP2, theP3)
+	    else:
+	      anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
+            RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
+            if Parameters: anObj[0].SetParameters(Parameters)
+            return anObj
+
+	## Create a T-shape object with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). A fillet is
+	#  created on the junction of the pipes.
+        #  Center of the shape is (0,0,0). The main plane of the T-shape is
+        #  XOY.
+        #  @param theR1 Internal radius of main pipe
+        #  @param theW1 Width of main pipe
+        #  @param theL1 Half-length of main pipe
+        #  @param theR2 Internal radius of incident pipe (R2 < R1)
+        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
+        #  @param theL2 Half-length of incident pipe
+        #  @param theRF Radius of curvature of fillet.
+	#  @param theHexMesh false = no partition, true = with partition (default=true)
+        #  @param theP1 1st junction point of main pipe
+        #  @param theP2 2nd junction point of main pipe
+        #  @param theP3 Junction point of incident pipe
+        #  @return List of GEOM_Objects, containing the created shape and propagation groups.
+        #
+        #  @ref tui_creation_tshape "Example"
+        def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+            theR1, theW1, theL1, theR2, theW2, theL2, theRF, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF)
+	    if (theP1 and theP2 and theP3):
+	      anObj = self.AdvOp.MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh, theP1, theP2, theP3)
+	    else:
+	      anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
+            RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
+            if Parameters: anObj[0].SetParameters(Parameters)
+            return anObj
+
         #@@ insert new functions before this line @@#
 
         # end of l4_advanced

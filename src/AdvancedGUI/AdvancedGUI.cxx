@@ -31,6 +31,7 @@
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
 
+#include "AdvancedGUI_PipeTShapeDlg.h"
 //@@ insert new functions before this line @@//
 
 #include <QDialog>
@@ -65,6 +66,12 @@ bool AdvancedGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
+  case GEOMOp::OpPipeTShape:
+    aDlg = new AdvancedGUI_PipeTShapeDlg( getGeometryGUI(), parent );
+    break;
+//   case GEOMOp::OpPipeTShapeGroups:
+//     aDlg = new AdvancedGUI_PipeTShapeGroupsDlg( getGeometryGUI(), parent );
+//     break;
   //@@ insert new functions before this line @@//
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );

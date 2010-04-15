@@ -302,7 +302,9 @@
 
 // Advanced functions (base = 200)
 #define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
-/*@@ insert new functions before this line @@*/
-
+#define GEOM_TSHAPE 201
 // Advanced functions sub-operations codes
+#define TSHAPE_BASIC 1
+#define TSHAPE_CHAMFER 2
+#define TSHAPE_FILLET 3
 /*@@ insert new functions before this line @@*/

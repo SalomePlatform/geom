@@ -31,13 +31,51 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
-class GEOMImpl_IAdvancedOperations : public GEOM_IOperations
-{
-public:
-  Standard_EXPORT GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngine, int theDocID);
-  Standard_EXPORT ~GEOMImpl_IAdvancedOperations();
+#define Handle_GEOM_Object Handle(GEOM_Object)
+#define Handle_TColStd_HSequenceOfTransient Handle(TColStd_HSequenceOfTransient)
+#define Handle_TColStd_HSequenceOfInteger Handle(TColStd_HSequenceOfInteger)
 
-  /*@@ insert new functions before this line @@*/
+class GEOMImpl_IAdvancedOperations: public GEOM_IOperations {
+private:
+	bool MakePipeTShapePartition(/*std::vector<GEOM_IOperations*> theOperations, */Handle_GEOM_Object theShape, double theR1, double theW1, double theL1, double theR2,
+			double theW2, double theL2, double theH = 0, double theW = 0, double theRF = 0, bool isNormal = true);
+    bool MakePipeTShapeMirrorAndGlue(/*std::vector<GEOM_IOperations*> theOperations, */Handle_GEOM_Object theShape, double theR1, double theW1, double theL1, double theR2,
+            double theW2, double theL2);
+	bool MakeGroups(/*std::vector<GEOM_IOperations*> theOperations, */Handle_GEOM_Object theShape, int shapType, double theR1, double theW1, double theL1, double theR2,
+			double theW2, double theL2, Handle_TColStd_HSequenceOfTransient theSeq, gp_Trsf aTrsf);
+	gp_Trsf GetPositionTrsf(double theL1, double theL2, Handle_GEOM_Object P1 = NULL, Handle_GEOM_Object P2 = NULL,
+			Handle_GEOM_Object P3 = NULL);
+    bool CheckCompatiblePosition(double& theL1, double& theL2, Handle_GEOM_Object theP1, Handle_GEOM_Object theP2,
+            Handle_GEOM_Object theP3, double theTolerance);
+
+public:
+	Standard_EXPORT
+	GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngine, int theDocID);Standard_EXPORT
+	~GEOMImpl_IAdvancedOperations();
+
+	Standard_EXPORT Handle_TColStd_HSequenceOfTransient MakePipeTShape(double theR1, double theW1, double theL1,
+			double theR2, double theW2, double theL2, bool theHexMesh = true);
+	Standard_EXPORT Handle_TColStd_HSequenceOfTransient
+	MakePipeTShapeWithPosition(double theR1, double theW1, double theL1, double theR2, double theW2, double theL2,
+			bool theHexMesh = true, Handle_GEOM_Object P1 = NULL, Handle_GEOM_Object P2 = NULL, Handle_GEOM_Object P3 =
+					NULL);
+	Standard_EXPORT Handle_TColStd_HSequenceOfTransient MakePipeTShapeChamfer(double theR1, double theW1, double theL1,
+			double theR2, double theW2, double theL2, double theH, double theW, bool theHexMesh = true);
+	Standard_EXPORT Handle_TColStd_HSequenceOfTransient
+	MakePipeTShapeChamferWithPosition(double theR1, double theW1, double theL1, double theR2, double theW2,
+			double theL2, double theH, double theW, bool theHexMesh = true, Handle_GEOM_Object P1 = NULL,
+			Handle_GEOM_Object P2 = NULL, Handle_GEOM_Object P3 = NULL);
+	Standard_EXPORT Handle_TColStd_HSequenceOfTransient MakePipeTShapeFillet(double theR1, double theW1, double theL1,
+			double theR2, double theW2, double theL2, double theRF, bool theHexMesh = true);
+	Standard_EXPORT Handle_TColStd_HSequenceOfTransient
+	MakePipeTShapeFilletWithPosition(double theR1, double theW1, double theL1, double theR2, double theW2,
+			double theL2, double theRF, bool theHexMesh = true, Handle_GEOM_Object P1 = NULL, Handle_GEOM_Object P2 =
+					NULL, Handle_GEOM_Object P3 = NULL);
+	/*@@ insert new functions before this line @@*/
 };
+
+#undef Handle_GEOM_Object
+#undef Handle_TColStd_HSequenceOfTransient
+#undef Handle_TColStd_HSequenceOfInteger
 
 #endif

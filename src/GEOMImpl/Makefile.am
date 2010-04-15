@@ -147,6 +147,7 @@ salomeinclude_HEADERS =				\
 	GEOM_GEOMImpl.hxx
 
 ADVANCED_INCLUDES  =
+ADVANCED_INCLUDES += GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
 ##@@ insert new functions before this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
@@ -215,6 +216,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_GlueDriver.cxx
 
 ADVANCED_SOURCES  =
+ADVANCED_SOURCES += GEOMImpl_PipeTShapeDriver.cxx
 ##@@ insert new functions before this line @@##
 
 dist_libGEOMimpl_la_SOURCES += $(ADVANCED_SOURCES)
