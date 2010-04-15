@@ -30,7 +30,7 @@
 
 #include <QDialog>
 
-class QtxDoubleSpinBox;
+class SalomeApp_DoubleSpinBox;
 
 //=================================================================================
 // class    : GEOMToolsGUI_DeflectionDlg
@@ -54,7 +54,7 @@ private:
  void       keyPressEvent( QKeyEvent* );
 
 private:
- QtxDoubleSpinBox*         SpinBox;
+ SalomeApp_DoubleSpinBox*  SpinBox;
  QString                   myHelpFileName;
 };
 

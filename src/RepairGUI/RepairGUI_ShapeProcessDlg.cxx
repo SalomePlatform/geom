@@ -29,7 +29,6 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 #include <GEOMImpl_Types.hxx>
-#include <QtxDoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>

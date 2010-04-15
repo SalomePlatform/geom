@@ -25,7 +25,7 @@
 
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>

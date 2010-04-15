@@ -75,13 +75,13 @@
        </widget>
       </item>
       <item row="3" column="1" colspan="2" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox1" />
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox1" />
       </item>
       <item row="5" column="1" colspan="2" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox3" />
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox3" />
       </item>
       <item row="4" column="1" colspan="2" >
-       <widget class="QtxDoubleSpinBox" name="SpinBox2" />
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox2" />
       </item>
       <item row="1" column="1" >
        <widget class="QPushButton" name="PushButton2" >
@@ -236,9 +236,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>QtxDoubleSpinBox</class>
+   <class>SalomeApp_DoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header location="global" >QtxDoubleSpinBox.h</header>
+   <header location="global" >SalomeApp_DoubleSpinBox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

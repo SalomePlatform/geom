@@ -24,7 +24,7 @@
 // Author : Damien COQUERET, Open CASCADE S.A.S.
 //
 #include "OperationGUI_ChamferDlg.h"
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>

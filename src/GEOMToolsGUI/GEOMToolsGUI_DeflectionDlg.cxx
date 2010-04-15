@@ -26,7 +26,7 @@
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include <GeometryGUI.h>
 #include <LightApp_Application.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -71,10 +71,11 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   TextLabel1->setText(tr("GEOM_DEFLECTION"));
   GroupC1Layout->addWidget(TextLabel1, 0, 0);
 
-  SpinBox = new QtxDoubleSpinBox (GroupC1);
+  SpinBox = new SalomeApp_DoubleSpinBox (GroupC1);
   // Obtain precision from preferences
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  int aPrecision = resMgr->integerValue( "Geometry", "parametric_precision", 6 );  
+  int aPrecision = resMgr->integerValue( "Geometry", "parametric_precision", 6 ); 
+  SpinBox->setAcceptNames( false );
   SpinBox->setPrecision( aPrecision );
   SpinBox->setDecimals( aPrecision );
   SpinBox->setRange( DEFLECTION_MIN, 1.0 );
