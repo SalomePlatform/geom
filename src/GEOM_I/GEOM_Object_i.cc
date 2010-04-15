@@ -342,7 +342,7 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 
   if(aShape.IsNull()) return NULL;
 
-  ostrstream streamShape;
+  std::ostrstream streamShape;
   //Write TopoDS_Shape in ASCII format to the stream
   BRepTools::Write(aShape, streamShape);
   //Returns the number of bytes that have been stored in the stream's buffer.

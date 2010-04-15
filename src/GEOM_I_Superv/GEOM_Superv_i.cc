@@ -133,7 +133,7 @@ void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
   
   if ( isNewStudy(myLastStudyID,myStudyID) ) {
     if (CORBA::is_nil(myGeomEngine)) setGeomEngine();
-    string anEngine = _orb->object_to_string( myGeomEngine );
+    std::string anEngine = _orb->object_to_string( myGeomEngine );
     
     CORBA::Object_var anObj = name_service->Resolve("/myStudyManager");
     if ( !CORBA::is_nil(anObj) ) {

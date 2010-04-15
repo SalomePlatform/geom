@@ -199,7 +199,7 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   // collect all GEOM objects being deleted
   QMap<QString, GEOM::GEOM_Object_var> gobjects;
   QMap<QString, QString>::ConstIterator oit;
-  list<_PTR(SObject)> aSelectedSO;
+  std::list<_PTR(SObject)> aSelectedSO;
   for ( oit = objects.begin(); oit != objects.end(); ++oit ) {
     _PTR(SObject) so = study->FindObjectID( oit.key().toLatin1().data() );
     if ( !so )
@@ -213,7 +213,7 @@ static bool inUse( _PTR(Study) study, const QString& component, const QMap<QStri
   }
 
   // Search References with other Modules
-  list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
+  std::list< _PTR(SObject) >::iterator itSO = aSelectedSO.begin();
   for ( ; itSO != aSelectedSO.end(); ++itSO ) {
     std::vector<_PTR(SObject)> aReferences = study->FindDependances( *itSO  );    
     int aRefLength = aReferences.size();

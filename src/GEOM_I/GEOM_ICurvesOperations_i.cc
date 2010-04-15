@@ -343,7 +343,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  list<Handle(GEOM_Object)> aPoints;
+  std::list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
     Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -375,7 +375,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  list<Handle(GEOM_Object)> aPoints;
+  std::list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
     Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -408,7 +408,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  list<Handle(GEOM_Object)> aPoints;
+  std::list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
     Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -437,7 +437,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
 
   int ind = 0;
   int aLen = theWorkingPlane.length();
-  list<double> aWorkingPlane;
+  std::list<double> aWorkingPlane;
   for (; ind < aLen; ind++)
     aWorkingPlane.push_back(theWorkingPlane[ind]);
 
@@ -463,7 +463,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
 
   int ind = 0;
   int aLen = theCoordinates.length();
-  list<double> aCoords;
+  std::list<double> aCoords;
   for (; ind < aLen; ind++)
     aCoords.push_back(theCoordinates[ind]);
 

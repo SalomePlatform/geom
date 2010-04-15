@@ -85,7 +85,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	    }
 	    aStates->AddState(aState);
 	  }
-	  aVariableMap.insert(pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
+	  aVariableMap.insert(std::pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
 	}
       }
     }

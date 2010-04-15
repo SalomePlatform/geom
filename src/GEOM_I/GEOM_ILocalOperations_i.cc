@@ -95,7 +95,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> anEdges;
+  std::list<int> anEdges;
   for (; ind < aLen; ind++) {
     anEdges.push_back(theEdges[ind]);
   }
@@ -127,7 +127,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdgesR1R2
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> anEdges;
+  std::list<int> anEdges;
   for (; ind < aLen; ind++) {
     anEdges.push_back(theEdges[ind]);
   }
@@ -159,7 +159,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -191,7 +191,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFacesR1R2
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -223,7 +223,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
   //Get the reference vertex
   int ind = 0;
   int aLen = theVertexes.length();
-  list<int> aVertexes;
+  std::list<int> aVertexes;
   for (; ind < aLen; ind++) {
     aVertexes.push_back(theVertexes[ind]);
   }
@@ -255,7 +255,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
   //Get the reference vertex
   int ind = 0;
   int aLen = theVertexes.length();
-  list<int> aVertexes;
+  std::list<int> aVertexes;
   for (; ind < aLen; ind++) {
     aVertexes.push_back(theVertexes[ind]);
   }
@@ -360,7 +360,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -392,7 +392,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFacesAD
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -425,7 +425,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdges
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> aEdges;
+  std::list<int> aEdges;
   for (; ind < aLen; ind++) {
     aEdges.push_back(theEdges[ind]);
   }
@@ -458,7 +458,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgesAD
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> aEdges;
+  std::list<int> aEdges;
   for (; ind < aLen; ind++) {
     aEdges.push_back(theEdges[ind]);
   }

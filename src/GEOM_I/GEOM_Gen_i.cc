@@ -678,7 +678,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 
   // Retrieve a TopoDS_Shape from byte stream
   TopoDS_Shape aTopology;
-  istrstream aStreamedBrep((char*) &theStream[0], theStream.length());
+  std::istrstream aStreamedBrep((char*) &theStream[0], theStream.length());
   BRep_Builder aBuilder;
   try {
     BRepTools::Read(aTopology, aStreamedBrep, aBuilder);
@@ -1067,7 +1067,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
       }
     } // process arguments
   }
-  set<string> anObjEntryMap;
+  std::set<std::string> anObjEntryMap;
   GEOM::ListOfGO_var aResParts = new GEOM::ListOfGO;
   int nbRes = 0;
   int nb = aParts->length();

@@ -100,7 +100,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theEdgesAndWires.length();
@@ -160,7 +160,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theWires.length();
@@ -193,7 +193,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeShell
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theFacesAndShells.length();
@@ -251,7 +251,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShells
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theShells.length();
@@ -284,7 +284,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theShapes.length();
@@ -390,7 +390,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aFaces;
+  std::list<Handle(GEOM_Object)> aFaces;
   //Get the shapes
   aLen = theFaces.length();
   for (ind = 0; ind < aLen; ind++) {
