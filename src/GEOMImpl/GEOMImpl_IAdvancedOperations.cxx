@@ -1621,12 +1621,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -1843,12 +1843,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -2034,12 +2034,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -2223,12 +2223,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
