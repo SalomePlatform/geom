@@ -98,13 +98,14 @@ GEOMImpl_IAdvancedOperations::~GEOMImpl_IAdvancedOperations() {
 gp_Trsf GEOMImpl_IAdvancedOperations::GetPositionTrsf(double theL1, double theL2, Handle(GEOM_Object) theP1,
 		Handle(GEOM_Object) theP2, Handle(GEOM_Object) theP3) {
 	// Old Local Coordinates System oldLCS
+	gp_Pnt P0(0, 0, 0);
 	gp_Pnt P1(-theL1, 0, 0);
 	gp_Pnt P2(theL1, 0, 0);
 	gp_Pnt P3(0, 0, theL2);
 
 	gp_Dir oldX(gp_Vec(P1, P2));
-	gp_Dir oldZ(gp_Vec(gp::Origin(), P3));
-	gp_Ax3 oldLCS(gp::Origin(), oldZ, oldX);
+	gp_Dir oldZ(gp_Vec(P0, P3));
+	gp_Ax3 oldLCS(P0, oldZ, oldX);
 
 	// New Local Coordinates System newLCS
 	double LocX, LocY, LocZ;
