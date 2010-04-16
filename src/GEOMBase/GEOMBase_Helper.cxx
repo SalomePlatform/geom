@@ -19,10 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GEOMBase_Helper.cxx
-// Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GEOMBase_Helper.cxx
+//  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
+
 #include "GEOMBase_Helper.h"
 #include "GEOMBase.h"
 #include "GEOM_Operation.h"
@@ -54,7 +54,7 @@
 
 //To disable automatic genericobj management, the following line should be commented.
 //Otherwise, it should be uncommented. Refer to KERNEL_SRC/src/SALOMEDSImpl/SALOMEDSImpl_AttributeIOR.cxx
-//#define WITHGENERICOBJ
+#define WITHGENERICOBJ
 
 //================================================================
 // Function : getActiveView
@@ -107,7 +107,7 @@ GEOMBase_Helper::~GEOMBase_Helper()
     if(aGeomGUI)
       globalSelection(aGeomGUI->getLocalSelectionMode() , true );
   }
-  
+
   if (myDisplayer)
     delete myDisplayer;
   if ( !CORBA::is_nil( myOperation ) )
@@ -246,8 +246,8 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 void GEOMBase_Helper::displayPreview( const bool   activate,
                                       const bool   update,
                                       const bool   toRemoveFromEngine,
-                                      const double lineWidth, 
-                                      const int    displayMode, 
+                                      const double lineWidth,
+                                      const int    displayMode,
                                       const int    color )
 {
   isPreview = true;
@@ -295,8 +295,8 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
                                       const bool            append,
                                       const bool            activate,
                                       const bool            update,
-                                      const double          lineWidth, 
-                                      const int             displayMode, 
+                                      const double          lineWidth,
+                                      const int             displayMode,
                                       const int             color )
 {
   // Set color for preview shape
@@ -304,7 +304,7 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
 
   // set width of displayed shape
   getDisplayer()->SetWidth( lineWidth );
-  
+
   // set display mode of displayed shape
   int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );
 
@@ -859,7 +859,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
           commitCommand();
           updateObjBrowser();
           SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
-	  result = true;
+          result = true;
         }
         else
           abortCommand();
@@ -964,7 +964,7 @@ QString GEOMBase_Helper::getNewObjectName() const
 
 //================================================================
 // Function : extractPrefix
-// Purpose  : Redefine this method to return \c true if necessary 
+// Purpose  : Redefine this method to return \c true if necessary
 //            to extract prefix when generating new name for the
 //            object(s) being created
 //================================================================
@@ -1015,7 +1015,7 @@ SUIT_Desktop* GEOMBase_Helper::getDesktop() const
 
 //================================================================
 // Function : selectObjects
-// Purpose  : Selects list of objects 
+// Purpose  : Selects list of objects
 //================================================================
 bool GEOMBase_Helper::selectObjects( ObjectList& objects )
 {
@@ -1028,7 +1028,7 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
     LightApp_DataOwner* anOwher = new LightApp_DataOwner( aEntry );
     aList.append( anOwher );
   }
-  
+
   SUIT_Session* session = SUIT_Session::session();
   SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
   if ( !app )
@@ -1037,12 +1037,12 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
   LightApp_SelectionMgr* aMgr = app->selectionMgr();
   if ( !aMgr )
     return false;
-  
+
   aMgr->setSelected( aList, false );
-  
+
   return true;
 }
-  
+
 //================================================================
 // Function : findObjectInFather
 // Purpose  : It should return an object if its founded in study or
@@ -1074,11 +1074,11 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
 
   return GEOM::GEOM_Object::_nil();
 }
-  
+
 //================================================================
 // Function : addSubshapesToStudy
 // Purpose  : Virtual method to add subshapes if needs
-//================================================================  
+//================================================================
 void GEOMBase_Helper::addSubshapesToStudy()
 {
   //Impemented in Dialogs, called from Accept method
@@ -1087,7 +1087,7 @@ void GEOMBase_Helper::addSubshapesToStudy()
 //================================================================
 // Function : addSubshapesToFather
 // Purpose  : Method to add Father Subshapes to Study if it`s not exist
-//================================================================  
+//================================================================
 void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap )
 {
   //GetStudyDS
@@ -1097,12 +1097,12 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
   _PTR(Study) aDStudy = appStudy->studyDS();
 
   GEOM::GEOM_IGroupOperations_var anOp = getGeomEngine()->GetIGroupOperations( getStudyId() );
- 
+
   for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ ) {
     if ( !anOp->_is_nil() ) {
       GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.value() );
       if ( !aFatherObj->_is_nil() ) {
-        std::string aFatherEntry = getEntry( aFatherObj );      
+        std::string aFatherEntry = getEntry( aFatherObj );
         if ( aFatherEntry != "") { // additional checking that object is valid 0020598 EDF 1191
           GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
           //Add Object to study if its not exist
@@ -1116,5 +1116,3 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
     }
   }
 }
-
-  
