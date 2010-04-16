@@ -227,6 +227,8 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         return false;
     }
 
+    gp_Trsf aTrsfInv = aTrsf.Inverted();
+    
     int expectedGroups = 0;
     if (shapeType == TSHAPE_BASIC)
       if (Abs(theR2+theW2-theR1-theW1) <= Precision::Approximation())
@@ -256,7 +258,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
     
     //
-    // Uncomment the following lines when GetInPlace bug is solved
+    // Comment the following lines when GetInPlace bug is solved
     // == BEGIN
     // Workaround of GetInPlace bug
     // Create a bounding box that fits the shape
@@ -264,6 +266,11 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     aBox->GetLastFunction()->SetDescription("");
     aTransformOperations->TranslateDXDYDZ(aBox, -theL1, -aR1Ext, -aR1Ext);
     aBox->GetLastFunction()->SetDescription("");
+    // Apply transformation to box
+    BRepBuilderAPI_Transform aTransformationBox(aBox->GetValue(), aTrsf, Standard_False);
+    TopoDS_Shape aBoxShapeTrsf = aTransformationBox.Shape();
+    aBox->GetLastFunction()->SetValue(aBoxShapeTrsf);
+    
     // Get the shell of the box
     Handle(GEOM_Object) aShell = Handle(GEOM_Object)::DownCast(aShapesOperations->MakeExplode(aBox, TopAbs_SHELL, true)->Value(1));
     aBox->GetLastFunction()->SetDescription("");
@@ -291,9 +298,9 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         if (!aCompoundOfFaces.IsNull()) {
             aCompoundOfFaces->GetLastFunction()->SetDescription("");
             // Apply transformation to compound of faces
-            BRepBuilderAPI_Transform aTransformationCompoundOfFaces(aCompoundOfFaces->GetValue(), aTrsf, Standard_False);
-            TopoDS_Shape aTrsf_CompoundOfFacesShape = aTransformationCompoundOfFaces.Shape();
-            aCompoundOfFaces->GetLastFunction()->SetValue(aTrsf_CompoundOfFacesShape);
+//             BRepBuilderAPI_Transform aTransformationCompoundOfFaces(aCompoundOfFaces->GetValue(), aTrsf, Standard_False);
+//             TopoDS_Shape aTrsf_CompoundOfFacesShape = aTransformationCompoundOfFaces.Shape();
+//             aCompoundOfFaces->GetLastFunction()->SetValue(aTrsf_CompoundOfFacesShape);
             aCompoundOfFacesList.push_back(aCompoundOfFaces);
         }
     }
@@ -387,7 +394,13 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     //// Groups of Edges ////
     /////////////////////////
     // Result of propagate
+    
+    // Apply inverted transformation to shape
+    BRepBuilderAPI_Transform aTransformationShapeInv(theShape->GetValue(), aTrsfInv, Standard_False);
+    TopoDS_Shape aShapeTrsfInv = aTransformationShapeInv.Shape();
     Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+    aFunction->SetValue(aShapeTrsfInv);
+    
     TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfTransient) aSeqPropagate = aBlocksOperations->Propagate(theShape);
     if (aSeqPropagate.IsNull() || aSeqPropagate->Length() == 0) {
@@ -397,6 +410,12 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     Standard_Integer nbEdges, aNbGroups = aSeqPropagate->Length();
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
+    
+    
+    // Apply transformation to shape
+    BRepBuilderAPI_Transform aTransformationShape(theShape->GetValue(), aTrsf, Standard_False);
+    TopoDS_Shape aShapeTrsf = aTransformationShape.Shape();
+    aFunction->SetValue(aShapeTrsf);
     
     bool addGroup;
     bool circularFoundAndAdded = false;

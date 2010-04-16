@@ -50,7 +50,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	GEOMBase_Skeleton(theGeometryGUI, parent, false) {
 	QPixmap imageOp(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_PIPETSHAPE")));
 	QPixmap imageSel(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
-	QPixmap imageImp(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICO_PIPETSHAPE_IMPORT")));
+	imageImp = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICO_PIPETSHAPE_IMPORT"));
 	imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
 
 	setWindowTitle(tr("GEOM_PIPE_TSHAPE_TITLE"));
@@ -137,30 +137,6 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
     JunctionPointsSel->TextLabel6->setAttribute(Qt::WA_DeleteOnClose);
     JunctionPointsSel->TextLabel6->close();
 
-// 	QGridLayout* junctionLayout = (QGridLayout*)JunctionPointsSel->GroupBox1->layout();
-
-//     junctionLayout->addWidget(new QLabel(tr("GEOM_PIPE_TSHAPE_POSITION_LBL_L1"), JunctionPointsSel->GroupBox1), 3, 0, 1, 1);
-//     
-// 	QPushButton* ApplyNewL1 = new QPushButton(centralWidget());
-// // 	ApplyNewL1->setText("Apply new L1");
-// 	ApplyNewL1->setIcon(imageImp);
-// 	junctionLayout->addWidget(ApplyNewL1, 3, 1, 1, 1);
-// 
-// 	NewPosValL1 = new QLineEdit(JunctionPointsSel->GroupBox1);
-// 	NewPosValL1->setReadOnly(true);
-// 	junctionLayout->addWidget(NewPosValL1, 3, 2, 1, 1);
-//     
-//     junctionLayout->addWidget(new QLabel(tr("GEOM_PIPE_TSHAPE_POSITION_LBL_L2"), JunctionPointsSel->GroupBox1), 4, 0, 1, 1);
-// 
-// 	QPushButton* ApplyNewL2 = new QPushButton(centralWidget());
-// // 	ApplyNewL2->setText("Apply new L2");
-// 	ApplyNewL2->setIcon(imageImp);
-// 	junctionLayout->addWidget(ApplyNewL2, 4, 1, 1, 1);
-// 
-// 	NewPosValL2 = new QLineEdit(JunctionPointsSel->GroupBox1);
-// 	NewPosValL2->setReadOnly(true);
-// 	junctionLayout->addWidget(NewPosValL2, 4, 2, 1, 1);
-
 	// 1st row, height = 1, colspan = 3
 	int rowPict = 0, colPict = 0, rowspanPict = 1, colspanPict = 3;
 	// 2nd row, height = 4, col 1
@@ -235,7 +211,16 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 	ChamferGroupParams->SpinBox_DX->setValue(20);
 	ChamferGroupParams->SpinBox_DY->setValue(10);
 	FilletGroupParams->SpinBox_DX->setValue(20);
-
+    
+    CssNormal = QString("QDoubleSpinBox {");
+    CssNormal.append(MainTubeGroupParams->SpinBox_DZ->styleSheet());
+    CssNormal.append("}");
+    CssNormal.append("\nQPushButton {");
+    CssNormal.append(JunctionPointsSel->PushButton4->styleSheet());
+    CssNormal.append("}");
+    CssAcceptable = "QDoubleSpinBox, QPushButton {background-color: rgb(85, 170, 127)}";
+    CssRefused = "QDoubleSpinBox, QPushButton {background-color: rgb(255, 0, 0)}";
+    
 	// Signal/slot connections
 	connect(buttonOk(), SIGNAL(clicked()), this, SLOT(ClickOnOk()));
 	connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -754,8 +739,10 @@ bool AdvancedGUI_PipeTShapeDlg::isValid(QString& msg) {
 bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var theP1,
 		GEOM::GEOM_Object_var theP2, GEOM::GEOM_Object_var theP3, double theTolerance) {
 
-	MainTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 255, 255);");
-	IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 255, 255);");
+    MainTubeGroupParams->SpinBox_DZ->setStyleSheet(CssNormal);
+    IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet(CssNormal);
+    JunctionPointsSel->PushButton4->setStyleSheet(CssNormal);
+    JunctionPointsSel->PushButton5->setStyleSheet(CssNormal);
 
     CORBA::Double theL1 = MainTubeGroupParams->SpinBox_DZ->value();
     CORBA::Double theL2 = IncidentTubeGroupParams->SpinBox_DZ->value();
@@ -821,15 +808,19 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
 			MainTubeGroupParams->SpinBox_DZ->setValue(newL1);
             connect(MainTubeGroupParams->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
 			MainTubeGroupParams->SpinBox_DZ->setToolTip("Value was recomputed to fit with position");
-			MainTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(85, 170, 127);");
+            MainTubeGroupParams->SpinBox_DZ->setStyleSheet(CssAcceptable);
+            JunctionPointsSel->PushButton4->setStyleSheet(CssAcceptable);
 		}
 		else {
 			MainTubeGroupParams->SpinBox_DZ->setToolTip("Value is incompatible with position");
-			MainTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 0, 0);");
+            MainTubeGroupParams->SpinBox_DZ->setStyleSheet(CssRefused);
+            JunctionPointsSel->PushButton4->setStyleSheet(CssRefused);
 		}
 	}
-    else
-		MainTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 255, 255);");
+    else {
+        MainTubeGroupParams->SpinBox_DZ->setStyleSheet(CssNormal);
+        JunctionPointsSel->PushButton4->setStyleSheet(CssNormal);
+    }
 
 //    std::cerr << "fabs(newL2 - theL2) = " << fabs(newL2 - theL2) << std::endl;
 	if (fabs(newL2 - theL2) > Precision::Approximation()) {
@@ -840,15 +831,19 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
 			IncidentTubeGroupParams->SpinBox_DZ->setValue(newL2);
             connect(IncidentTubeGroupParams->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
 			IncidentTubeGroupParams->SpinBox_DZ->setToolTip("Value was recomputed to fit with position");
-			IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(85, 170, 127);");
+            IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet(CssAcceptable);
+            JunctionPointsSel->PushButton5->setStyleSheet(CssAcceptable);
 		}
 		else {
 			IncidentTubeGroupParams->SpinBox_DZ->setToolTip("Value is incompatible with position");
-			IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 0, 0);");
+            IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet(CssRefused);
+            JunctionPointsSel->PushButton5->setStyleSheet(CssRefused);
 		}
 	}
-	else
-		IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 255, 255);");
+	else {
+        IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet(CssNormal);
+        JunctionPointsSel->PushButton5->setStyleSheet(CssNormal);
+    }
 
 	return true;
 }

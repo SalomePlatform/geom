@@ -66,6 +66,8 @@ private:
 	DlgRef_2Spin* ChamferGroupParams;
 	DlgRef_1Spin* FilletGroupParams;
 	DlgRef_6Sel*  JunctionPointsSel;
+    QPixmap imageImp;
+    QString CssNormal, CssAcceptable, CssRefused;
 // 	QLineEdit* NewPosValL1;
 // 	QLineEdit* NewPosValL2;
 // 	QPushButton* ApplyNewL1;
