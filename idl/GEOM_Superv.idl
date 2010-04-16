@@ -575,7 +575,36 @@ module GEOM
     GEOM_Object  GetMainShape(in GEOM_Object theGroup) ;
     GEOM_List  GetObjects(in GEOM_Object theGroup) ;
 
-  };
+    //-----------------------------------------------------------//
+    // AdvancedOperations                                        //
+    //-----------------------------------------------------------//
+    GEOM_List MakePipeTShape (in double theR1, in double theW1, in double theL1, 
+                in double theR2, in double theW2, in double theL2,
+                in boolean theHexMesh);
+              
+    GEOM_List MakePipeTShapeWithPosition (in double theR1, in double theW1, in double theL1, 
+                        in double theR2, in double theW2, in double theL2,
+                        in boolean theHexMesh,
+                        in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                        
+    GEOM_List MakePipeTShapeChamfer (in double theR1, in double theW1, in double theL1,
+                    in double theR2, in double theW2, in double theL2,
+                    in double theH, in double theW, in boolean theHexMesh);
+                    
+    GEOM_List MakePipeTShapeChamferWithPosition (in double theR1, in double theW1, in double theL1, 
+                           in double theR2, in double theW2, in double theL2, 
+                           in double theH, in double theW, in boolean theHexMesh,
+                           in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                           
+    GEOM_List MakePipeTShapeFillet (in double theR1, in double theW1, in double theL1, 
+                      in double theR2, in double theW2, in double theL2, 
+                      in double theRF, in boolean theHexMesh);
+                      
+    GEOM_List MakePipeTShapeFilletWithPosition (in double theR1, in double theW1, in double theL1, 
+                          in double theR2, in double theW2, in double theL2, 
+                          in double theRF, in boolean theHexMesh,
+                          in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+ };
 };
 
 #endif

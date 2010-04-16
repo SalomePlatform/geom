@@ -344,6 +344,18 @@ void GEOM_Superv_i::getGroupOp()
   if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
     myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
 }
+    
+//=============================================================================
+//  getAdvancedOp:
+//=============================================================================
+void GEOM_Superv_i::getAdvancedOp()
+{
+  if (CORBA::is_nil(myGeomEngine))
+    setGeomEngine();
+  // get GEOM_IGroupOperations interface
+  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
+    myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
+}
 
 //=============================================================================
 //  GetServant:
@@ -3190,6 +3202,116 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
   MESSAGE(" List of "<<aListPtr->GetList().length()<<" element(s)");
   endService( " GEOM_Superv_i::GetObjects" );
   return aListPtr->_this();
+}
+
+//=============================== Advanced Operations =============================
+//=============================================================================
+//  MakePipeTShape
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShape (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh)
+{
+  beginService( " GEOM_Superv_i::MakePipeTShape" );
+  MESSAGE("GEOM_Superv_i::MakePipeTShape");
+  getAdvancedOp();
+
+  GEOM::ListOfGO* aSeq = myAdvancedOp->MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh);
+  GEOM_List_i<GEOM::ListOfGO>* aSeqPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aSeq));
+  MESSAGE(" List of "<<aSeqPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::MakePipeTShape" );
+  return aSeqPtr->_this();
+}
+
+//=============================================================================
+//  MakePipeTShapeWithPosition
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh,
+                                          GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+{
+  beginService( " GEOM_Superv_i::MakePipeTShapeWithPosition" );
+  MESSAGE("GEOM_Superv_i::MakePipeTShapeWithPosition");
+  getAdvancedOp();
+
+  GEOM::ListOfGO* aSeq = myAdvancedOp->MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3);
+  GEOM_List_i<GEOM::ListOfGO>* aSeqPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aSeq));
+  MESSAGE(" List of "<<aSeqPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::MakePipeTShapeWithPosition" );
+  return aSeqPtr->_this();
+}
+
+//=============================================================================
+//  MakePipeTShapeChamfer
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamfer (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                                    CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh)
+{
+  beginService( " GEOM_Superv_i::MakePipeTShapeChamfer" );
+  MESSAGE("GEOM_Superv_i::MakePipeTShapeChamfer");
+  getAdvancedOp();
+
+  GEOM::ListOfGO* aSeq = myAdvancedOp->MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh);
+  GEOM_List_i<GEOM::ListOfGO>* aSeqPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aSeq));
+  MESSAGE(" List of "<<aSeqPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::MakePipeTShapeChamfer" );
+  return aSeqPtr->_this();
+}
+
+//=============================================================================
+//  MakePipeTShapeChamferWithPosition
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamferWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
+                                             CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
+                                          GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+{
+  beginService( " GEOM_Superv_i::MakePipeTShapeChamferWithPosition" );
+  MESSAGE("GEOM_Superv_i::MakePipeTShapeChamferWithPosition");
+  getAdvancedOp();
+
+  GEOM::ListOfGO* aSeq = myAdvancedOp->MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh, theP1, theP2, theP3);
+  GEOM_List_i<GEOM::ListOfGO>* aSeqPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aSeq));
+  MESSAGE(" List of "<<aSeqPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::MakePipeTShapeChamferWithPosition" );
+  return aSeqPtr->_this();
+}
+
+//=============================================================================
+//  MakePipeTShapeFillet
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFillet (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                                    CORBA::Double theRF, CORBA::Boolean theHexMesh)
+{
+  beginService( " GEOM_Superv_i::MakePipeTShapeFillet" );
+  MESSAGE("GEOM_Superv_i::MakePipeTShapeFillet");
+  getAdvancedOp();
+
+  GEOM::ListOfGO* aSeq = myAdvancedOp->MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh);
+  GEOM_List_i<GEOM::ListOfGO>* aSeqPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aSeq));
+  MESSAGE(" List of "<<aSeqPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::MakePipeTShapeFillet" );
+  return aSeqPtr->_this();
+}
+
+//=============================================================================
+//  MakePipeTShapeFilletWithPosition
+//=============================================================================
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
+                                             CORBA::Double theRF, CORBA::Boolean theHexMesh,
+                                          GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+{
+  beginService( " GEOM_Superv_i::MakePipeTShapeFilletWithPosition" );
+  MESSAGE("GEOM_Superv_i::MakePipeTShapeFilletWithPosition");
+  getAdvancedOp();
+
+  GEOM::ListOfGO* aSeq = myAdvancedOp->MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh, theP1, theP2, theP3);
+  GEOM_List_i<GEOM::ListOfGO>* aSeqPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aSeq));
+  MESSAGE(" List of "<<aSeqPtr->GetList().length()<<" element(s)");
+  endService( " GEOM_Superv_i::MakePipeTShapeFilletWithPosition" );
+  return aSeqPtr->_this();
 }
 
 //=====================================================================================
