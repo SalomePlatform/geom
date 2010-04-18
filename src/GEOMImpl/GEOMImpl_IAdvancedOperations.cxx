@@ -1045,89 +1045,89 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
     theShapes.push_back(aPlnOXZ);
 
       // Partition
-    Handle(GEOM_Object) Part0 = aBooleanOperations->MakeHalfPartition(theShape, face_t);
-    if (Part0.IsNull()) {
-        std::cerr << "Impossible to build partition between TShape and 1st face" << std::endl;
-        SetErrorCode("Impossible to build partition between TShape and 1st face");
-        return false;
-    }
-    Part0->GetLastFunction()->SetDescription("");
-    
-    Handle(GEOM_Object) Te3 ;
-    if (isNormal) {
-      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()) {
-        std::cerr << "External radius are identical: we do not make partition with plane OXZ" << std::endl;
-        Te3 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOZ);
-      }
-      else {
-        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
-        if (Part1.IsNull()) {
-          std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
-          return false;
-        }
-        Part1->GetLastFunction()->SetDescription("");
-        Te3 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
-      }
-      if (Te3.IsNull()) {
-          std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OZ");
-          return false;
-      }
-      Te3->GetLastFunction()->SetDescription("");
-    }
-    else {
-      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()){ // We should never go here
-        SetErrorCode("Impossible to build TShape");
-        return false;
-      }
-      else {
-        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
-        if (Part1.IsNull()) {
-        std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
-          return false;
-        }
-        Part1->GetLastFunction()->SetDescription("");
-        Handle(GEOM_Object) Part2 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
-        if (Part2.IsNull()) {
-        std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OZ");
-          return false;
-        }
-        Part2->GetLastFunction()->SetDescription("");
-        Te3 = aBooleanOperations->MakeHalfPartition(Part2, face_t2);
-        if (Te3.IsNull()) {
-            std::cerr << "Impossible to build partition between TShape and 2nd face" << std::endl;
-            SetErrorCode("Impossible to build partition between TShape and 2nd face");
-            return false;
-        }
-        Te3->GetLastFunction()->SetDescription("");
-      }
-    }
+//    Handle(GEOM_Object) Part0 = aBooleanOperations->MakeHalfPartition(theShape, face_t);
+//    if (Part0.IsNull()) {
+//        std::cerr << "Impossible to build partition between TShape and 1st face" << std::endl;
+//        SetErrorCode("Impossible to build partition between TShape and 1st face");
+//        return false;
+//    }
+//    Part0->GetLastFunction()->SetDescription("");
+//
+//    Handle(GEOM_Object) Te3 ;
+//    if (isNormal) {
+//      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()) {
+//        std::cerr << "External radius are identical: we do not make partition with plane OXZ" << std::endl;
+//        Te3 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOZ);
+//      }
+//      else {
+//        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
+//        if (Part1.IsNull()) {
+//          std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
+//          return false;
+//        }
+//        Part1->GetLastFunction()->SetDescription("");
+//        Te3 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
+//      }
+//      if (Te3.IsNull()) {
+//          std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OZ");
+//          return false;
+//      }
+//      Te3->GetLastFunction()->SetDescription("");
+//    }
+//    else {
+//      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()){ // We should never go here
+//        SetErrorCode("Impossible to build TShape");
+//        return false;
+//      }
+//      else {
+//        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
+//        if (Part1.IsNull()) {
+//        std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
+//          return false;
+//        }
+//        Part1->GetLastFunction()->SetDescription("");
+//        Handle(GEOM_Object) Part2 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
+//        if (Part2.IsNull()) {
+//        std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OZ");
+//          return false;
+//        }
+//        Part2->GetLastFunction()->SetDescription("");
+//        Te3 = aBooleanOperations->MakeHalfPartition(Part2, face_t2);
+//        if (Te3.IsNull()) {
+//            std::cerr << "Impossible to build partition between TShape and 2nd face" << std::endl;
+//            SetErrorCode("Impossible to build partition between TShape and 2nd face");
+//            return false;
+//        }
+//        Te3->GetLastFunction()->SetDescription("");
+//      }
+//    }
 
-//     Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HArray1OfInteger) theMaterials;
-//     partitionShapes->Append(theShape);
-//     theTools->Append(aPlnOZ);
-//     theTools->Append(aPlnOXZ);
-//     theTools->Append(face_t);
-//     if (!isNormal)
-//         theTools->Append(face_t2);
-//         
-//     Handle(GEOM_Object) Te3 = aBooleanOperations->MakePartition(partitionShapes, theTools, theKeepInside, theRemoveInside, TopAbs_SOLID, false, theMaterials, 0, false);
-//     if (Te3.IsNull()) {
-//         SetErrorCode("Impossible to build partition of TShape");
+     Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HArray1OfInteger) theMaterials;
+     partitionShapes->Append(theShape);
+     theTools->Append(aPlnOZ);
+     theTools->Append(aPlnOXZ);
+     theTools->Append(face_t);
+     if (!isNormal)
+         theTools->Append(face_t2);
+
+     Handle(GEOM_Object) Te3 = aBooleanOperations->MakePartition(partitionShapes, theTools, theKeepInside, theRemoveInside, TopAbs_SOLID, false, theMaterials, 0, false);
+     if (Te3.IsNull()) {
+         SetErrorCode("Impossible to build partition of TShape");
 //         Handle(GEOM_Object) aCompound = aShapesOperations->MakeCompound(theShapes);
 //         TopoDS_Shape aCompoundShape = aCompound->GetValue();
 //         theShape->GetLastFunction()->SetValue(aCompoundShape);
-//         return false;
-//     }
-//     Te3->GetLastFunction()->SetDescription("");
-//
+         return false;
+     }
+     Te3->GetLastFunction()->SetDescription("");
+
 
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
@@ -1639,14 +1639,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     catch (Standard_Failure) {
       Handle(Standard_Failure) aFail = Standard_Failure::Caught();
       SetErrorCode(aFail->GetMessageString());
-      try {
-        aChamfer = aLocalOperations->MakeChamferEdges(aShape, theH, theW, theEdges);
-      }
-      catch (Standard_Failure) {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-        SetErrorCode(aFail->GetMessageString());
-        return NULL;
-      }
+      return NULL;
+    }
+    if (aChamfer.IsNull()) {
+    	SetErrorCode("Chamfer can not be computed on the given shape with the given parameters");
+    	return NULL;
     }
     aChamfer->GetLastFunction()->SetDescription("");
     
@@ -1853,8 +1850,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     try {
       aChamfer = aLocalOperations->MakeChamferEdges(aShape, theW, theH, theEdges);
     }
-    catch (...) {
-      aChamfer = aLocalOperations->MakeChamferEdges(aShape, theH, theW, theEdges);
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
+      return NULL;
+    }
+    if (aChamfer.IsNull()) {
+    	SetErrorCode("Chamfer can not be computed on the given shape with the given parameters");
+    	return NULL;
     }
     aChamfer->GetLastFunction()->SetDescription("");
     
@@ -2040,8 +2043,20 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         if (theHexMesh && nbEdgesInFillet == 1)
           break;
     }
-    
-    Handle(GEOM_Object) aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+
+    Handle(GEOM_Object) aFillet;
+    try {
+    	aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
+      return NULL;
+    }
+    if (aFillet.IsNull()) {
+    	SetErrorCode("Fillet can not be computed on the given shape with the given parameters");
+    	return NULL;
+    }
     aFillet->GetLastFunction()->SetDescription("");
     
     TopoDS_Shape aFilletShape = aFillet->GetValue();
@@ -2229,8 +2244,20 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         if (theHexMesh && nbEdgesInFillet == 1)
           break;
     }
-    
-    Handle(GEOM_Object) aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+
+    Handle(GEOM_Object) aFillet;
+    try {
+    	aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
+      return NULL;
+    }
+    if (aFillet.IsNull()) {
+    	SetErrorCode("Fillet can not be computed on the given shape with the given parameters");
+    	return NULL;
+    }
     aFillet->GetLastFunction()->SetDescription("");
     
     TopoDS_Shape aFilletShape = aFillet->GetValue();
