@@ -394,12 +394,14 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     //// Groups of Edges ////
     /////////////////////////
     // Result of propagate
-    
-    // Apply inverted transformation to shape
-    BRepBuilderAPI_Transform aTransformationShapeInv(theShape->GetValue(), aTrsfInv, Standard_False);
-    TopoDS_Shape aShapeTrsfInv = aTransformationShapeInv.Shape();
+
     Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-    aFunction->SetValue(aShapeTrsfInv);
+    
+
+    // Apply inverted transformation to shape
+//    BRepBuilderAPI_Transform aTransformationShapeInv(aShape, aTrsfInv, Standard_False);
+//    TopoDS_Shape aShapeTrsfInv = aTransformationShapeInv.Shape();
+//    aFunction->SetValue(aShapeTrsfInv);
     
     TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfTransient) aSeqPropagate = aBlocksOperations->Propagate(theShape);
@@ -413,9 +415,9 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     
     
     // Apply transformation to shape
-    BRepBuilderAPI_Transform aTransformationShape(theShape->GetValue(), aTrsf, Standard_False);
-    TopoDS_Shape aShapeTrsf = aTransformationShape.Shape();
-    aFunction->SetValue(aShapeTrsf);
+//    BRepBuilderAPI_Transform aTransformationShape(theShape->GetValue(), aTrsf, Standard_False);
+//    TopoDS_Shape aShapeTrsf = aTransformationShape.Shape();
+//    aFunction->SetValue(aShapeTrsf);
     
     bool addGroup;
     bool circularFoundAndAdded = false;
@@ -435,9 +437,11 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         continue;
       
       TopoDS_Shape aGroupShape = aGroup->GetValue();
+      BRepBuilderAPI_Transform aTransformationShapeInv(aGroupShape, aTrsfInv, Standard_False);
+      TopoDS_Shape aGroupShapeTrsfInv = aTransformationShapeInv.Shape();
       
       TopTools_IndexedMapOfShape anEdgesMap;
-      TopExp::MapShapes(aGroupShape,TopAbs_EDGE, anEdgesMap);
+      TopExp::MapShapes(aGroupShapeTrsfInv,TopAbs_EDGE, anEdgesMap);
       nbEdges = anEdgesMap.Extent();
 
       if (shapeType == TSHAPE_BASIC) {
@@ -458,7 +462,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
           radialFound =false;
           flangeFound = false;
           
-          TopExp_Explorer Ex(aGroupShape,TopAbs_VERTEX);
+          TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
           while (Ex.More()) {
             gp_Pnt aP =  BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
             double x=aP.X(), y=aP.Y(), z=aP.Z();
@@ -524,7 +528,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
           mainPipeFound = false;
           flangeFound = false;
           
-          TopExp_Explorer Ex(aGroupShape,TopAbs_VERTEX);
+          TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
           while (Ex.More()) {
             gp_Pnt aP =  BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
             double x=aP.X(), y=aP.Y(), z=aP.Z();
@@ -585,55 +589,6 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
       if (addGroup)
         theSeq->Append(aGroup);
     }
-
-//     Handle(GEOM_Object) aGroup;
-//     if (shapeType == TSHAPE_BASIC) {
-// //         if (aNbGroups != 11) {
-// //             SetErrorCode("Bad number of propagation groups");
-// //             return false;
-// //         }
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(1));
-//         aGroup->SetName("THICKNESS");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(2));
-//         aGroup->SetName("CIRCULAR_QUARTER_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(3));
-//         aGroup->SetName("HALF_LENGTH_MAIN_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(6));
-//         aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(5));
-//         aGroup->SetName("FLANGE");
-//         theSeq->Append(aGroup);
-//     } else if (shapeType == TSHAPE_CHAMFER || shapeType == TSHAPE_FILLET) {
-//         if (aNbGroups != 12) {
-//             SetErrorCode("Bad number of propagation groups");
-//             return false;
-//         }
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(3));
-//         aGroup->SetName("THICKNESS");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(1));
-//         aGroup->SetName("CIRCULAR_QUARTER_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(4));
-//         aGroup->SetName("HALF_LENGTH_MAIN_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(6));
-//         aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(2));
-//         aGroup->SetName("FLANGE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(7));
-//         if (shapeType == TSHAPE_CHAMFER)
-//         	aGroup->SetName("CHAMFER");
-//         else
-//         	aGroup->SetName("FILLET");
-//         theSeq->Append(aGroup);
-//     }
 
     SetErrorCode(OK);
     return true;
