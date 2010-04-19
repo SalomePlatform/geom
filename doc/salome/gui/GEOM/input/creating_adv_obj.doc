@@ -17,6 +17,7 @@ entities:
 <b>New Entity -> Advanced </b> submenu allows to create additional complex topological objects.
 
 <ul>
+<li>\subpage create_pipetshape_page</li>
 <!--@@ insert new functions before this line @@-->
 </ul>
 
