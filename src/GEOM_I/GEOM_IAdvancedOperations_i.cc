@@ -57,8 +57,9 @@ GEOM_IAdvancedOperations_i::~GEOM_IAdvancedOperations_i()
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
+ *  MakePipeTShape
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -66,7 +67,7 @@ GEOM_IAdvancedOperations_i::~GEOM_IAdvancedOperations_i()
  *  \param theR2 Internal radius of incident pipe (R2 < R1)
  *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
  *  \param theL2 Half-length of incident pipe
- *  \param theHexMesh false = no partition, true = with partition
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
@@ -93,16 +94,21 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShape (CORBA::Double theR1,
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
  *  \param theR2 Internal radius of incident pipe (R2 < R1)
  *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
  *  \param theL2 Half-length of incident pipe
- *  \param theHexMesh false = no partition, true = with partition
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \param theP1 1st junction point of main pipe
+ *  \param theP2 2nd junction point of main pipe
+ *  \param theP3 Junction point of incident pipe
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
@@ -136,9 +142,10 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeWithPosition (CORBA::D
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length). A chamfer is created on
- *  the junction of the pipes.
+ *  MakePipeTShapeChamfer
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -146,9 +153,9 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeWithPosition (CORBA::D
  *  \param theR2 Internal radius of incident pipe (R2 < R1)
  *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
  *  \param theL2 Half-length of incident pipe
- *  \param theH Height of the chamfer.
- *  \param theW Width of the chamfer.
- *  \param theHexMesh false = no partition, true = with partition
+ *  \param theH Height of chamfer.
+ *  \param theW Width of chamfer.
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
@@ -176,10 +183,12 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamfer(CORBA::Double 
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length). A chamfer is created on
- *  the junction of the pipes.
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeChamferWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -188,7 +197,10 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamfer(CORBA::Double 
  *  \param theL2 Half-length of incident pipe
  *  \param theH Height of the chamfer.
  *  \param theW Width of the chamfer.
- *  \param theHexMesh false = no partition, true = with partition
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \param theP1 1st junction point of main pipe
+ *  \param theP2 2nd junction point of main pipe
+ *  \param theP3 Junction point of incident pipe
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
@@ -223,9 +235,10 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamferWithPosition (C
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length). A fillet is created on
- *  the junction of the pipes.
+ *  MakePipeTShapeFillet
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -234,7 +247,7 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeChamferWithPosition (C
  *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
  *  \param theL2 Half-length of incident pipe
  *  \param theRF Radius of curvature of fillet.
- *  \param theHexMesh false = no partition, true = with partition
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================
@@ -262,18 +275,23 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFillet (CORBA::Double 
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length). A fillet is created on
- *  the junction of the pipes.
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeFilletWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
  *  \param theR2 Internal radius of incident pipe (R2 < R1)
  *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
  *  \param theL2 Half-length of incident pipe
- *  \param theRF Radius of curvature of fillet.
- *  \param theHexMesh false = no partition, true = with partition
+ *  \param theRF Radius of curvature of fillet
+ *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh
+ *  \param theP1 1st junction point of main pipe
+ *  \param theP2 2nd junction point of main pipe
+ *  \param theP3 Junction point of incident pipe
  *  \return List of GEOM_Objects, containing the created shape and propagation groups.
  */
 //=============================================================================

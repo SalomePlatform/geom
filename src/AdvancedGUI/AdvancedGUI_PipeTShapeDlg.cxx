@@ -161,7 +161,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	myMainLayout->addWidget(JunctionPointsSel, rowNewPosVal, colNewPosVal, rowspanNewPosVal, colspanNewPosVal);
 	/***************************************************************/
 
-	setHelpFileName("create_pipe_tshape_page.html");
+	setHelpFileName("create__pipetshape__page.html");
 
 	Init();
 }

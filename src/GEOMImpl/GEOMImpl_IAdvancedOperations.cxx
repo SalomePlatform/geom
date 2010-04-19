@@ -1236,8 +1236,8 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(/*std::vector<GEO
 //=============================================================================
 /*!
  *  MakePipeTShape
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -1369,9 +1369,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
- *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+ *  MakePipeTShapeWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -1514,8 +1516,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
+ *  MakePipeTShapeChamfer
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -1724,9 +1728,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeChamferWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -1931,9 +1938,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).A fillet is created on
- *  the junction of the pipes.
+ *  MakePipeTShapeFillet
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -2123,10 +2131,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length). A fillet is created on
- *  the junction of the pipes.
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeFilletWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe

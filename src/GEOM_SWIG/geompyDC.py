@@ -4136,21 +4136,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a T-shape object with specified caracteristics for the main
         #  and the incident pipes (radius, width, half-length).
-        #  Center of the shape is (0,0,0). The main plane of the T-shape is
-        #  XOY.
+        #  The extremities of the main pipe are located on junctions points P1 and P2.
+        #  The extremity of the incident pipe is located on junction point P3.
+        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
+        #  the main plane of the T-shape is XOY.
         #  @param theR1 Internal radius of main pipe
         #  @param theW1 Width of main pipe
         #  @param theL1 Half-length of main pipe
         #  @param theR2 Internal radius of incident pipe (R2 < R1)
         #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
         #  @param theL2 Half-length of incident pipe
-        #  @param theHexMesh false = no partition, true = with partition (default=true)
+        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
         #  @return List of GEOM_Objects, containing the created shape and propagation groups.
         #
-        #  @ref tui_creation_tshape "Example"
+        #  @ref tui_creation_pipetshape "Example"
         def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None):
             theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)
 	    if (theP1 and theP2 and theP3):
@@ -4164,8 +4166,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 	## Create a T-shape object with specified caracteristics for the main
         #  and the incident pipes (radius, width, half-length). A chamfer is
 	#  created on the junction of the pipes.
-        #  Center of the shape is (0,0,0). The main plane of the T-shape is
-        #  XOY.
+        #  The extremities of the main pipe are located on junctions points P1 and P2.
+        #  The extremity of the incident pipe is located on junction point P3.
+        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
+        #  the main plane of the T-shape is XOY.
         #  @param theR1 Internal radius of main pipe
         #  @param theW1 Width of main pipe
         #  @param theL1 Half-length of main pipe
@@ -4174,13 +4178,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theL2 Half-length of incident pipe
         #  @param theH Height of the chamfer.
         #  @param theW Width of the chamfer.
-	#  @param theHexMesh false = no partition, true = with partition (default=true)
+	#  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
         #  @return List of GEOM_Objects, containing the created shape and propagation groups.
         #
-        #  @ref tui_creation_tshape "Example"
+        #  @ref tui_creation_pipetshape "Example"
         def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None):
             theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW)
 	    if (theP1 and theP2 and theP3):
@@ -4194,8 +4198,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 	## Create a T-shape object with specified caracteristics for the main
         #  and the incident pipes (radius, width, half-length). A fillet is
 	#  created on the junction of the pipes.
-        #  Center of the shape is (0,0,0). The main plane of the T-shape is
-        #  XOY.
+        #  The extremities of the main pipe are located on junctions points P1 and P2.
+        #  The extremity of the incident pipe is located on junction point P3.
+        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
+        #  the main plane of the T-shape is XOY.
         #  @param theR1 Internal radius of main pipe
         #  @param theW1 Width of main pipe
         #  @param theL1 Half-length of main pipe
@@ -4203,13 +4209,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
         #  @param theL2 Half-length of incident pipe
         #  @param theRF Radius of curvature of fillet.
-	#  @param theHexMesh false = no partition, true = with partition (default=true)
+	#  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
         #  @return List of GEOM_Objects, containing the created shape and propagation groups.
         #
-        #  @ref tui_creation_tshape "Example"
+        #  @ref tui_creation_pipetshape "Example"
         def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None):
             theR1, theW1, theL1, theR2, theW2, theL2, theRF, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF)
 	    if (theP1 and theP2 and theP3):
