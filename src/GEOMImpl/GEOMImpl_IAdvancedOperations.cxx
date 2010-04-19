@@ -227,6 +227,8 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         return false;
     }
 
+    gp_Trsf aTrsfInv = aTrsf.Inverted();
+    
     int expectedGroups = 0;
     if (shapeType == TSHAPE_BASIC)
       if (Abs(theR2+theW2-theR1-theW1) <= Precision::Approximation())
@@ -256,7 +258,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
     
     //
-    // Uncomment the following lines when GetInPlace bug is solved
+    // Comment the following lines when GetInPlace bug is solved
     // == BEGIN
     // Workaround of GetInPlace bug
     // Create a bounding box that fits the shape
@@ -264,6 +266,11 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     aBox->GetLastFunction()->SetDescription("");
     aTransformOperations->TranslateDXDYDZ(aBox, -theL1, -aR1Ext, -aR1Ext);
     aBox->GetLastFunction()->SetDescription("");
+    // Apply transformation to box
+    BRepBuilderAPI_Transform aTransformationBox(aBox->GetValue(), aTrsf, Standard_False);
+    TopoDS_Shape aBoxShapeTrsf = aTransformationBox.Shape();
+    aBox->GetLastFunction()->SetValue(aBoxShapeTrsf);
+    
     // Get the shell of the box
     Handle(GEOM_Object) aShell = Handle(GEOM_Object)::DownCast(aShapesOperations->MakeExplode(aBox, TopAbs_SHELL, true)->Value(1));
     aBox->GetLastFunction()->SetDescription("");
@@ -291,9 +298,9 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         if (!aCompoundOfFaces.IsNull()) {
             aCompoundOfFaces->GetLastFunction()->SetDescription("");
             // Apply transformation to compound of faces
-            BRepBuilderAPI_Transform aTransformationCompoundOfFaces(aCompoundOfFaces->GetValue(), aTrsf, Standard_False);
-            TopoDS_Shape aTrsf_CompoundOfFacesShape = aTransformationCompoundOfFaces.Shape();
-            aCompoundOfFaces->GetLastFunction()->SetValue(aTrsf_CompoundOfFacesShape);
+//             BRepBuilderAPI_Transform aTransformationCompoundOfFaces(aCompoundOfFaces->GetValue(), aTrsf, Standard_False);
+//             TopoDS_Shape aTrsf_CompoundOfFacesShape = aTransformationCompoundOfFaces.Shape();
+//             aCompoundOfFaces->GetLastFunction()->SetValue(aTrsf_CompoundOfFacesShape);
             aCompoundOfFacesList.push_back(aCompoundOfFaces);
         }
     }
@@ -387,7 +394,15 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     //// Groups of Edges ////
     /////////////////////////
     // Result of propagate
+
     Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+    
+
+    // Apply inverted transformation to shape
+//    BRepBuilderAPI_Transform aTransformationShapeInv(aShape, aTrsfInv, Standard_False);
+//    TopoDS_Shape aShapeTrsfInv = aTransformationShapeInv.Shape();
+//    aFunction->SetValue(aShapeTrsfInv);
+    
     TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfTransient) aSeqPropagate = aBlocksOperations->Propagate(theShape);
     if (aSeqPropagate.IsNull() || aSeqPropagate->Length() == 0) {
@@ -397,6 +412,12 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     Standard_Integer nbEdges, aNbGroups = aSeqPropagate->Length();
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
+    
+    
+    // Apply transformation to shape
+//    BRepBuilderAPI_Transform aTransformationShape(theShape->GetValue(), aTrsf, Standard_False);
+//    TopoDS_Shape aShapeTrsf = aTransformationShape.Shape();
+//    aFunction->SetValue(aShapeTrsf);
     
     bool addGroup;
     bool circularFoundAndAdded = false;
@@ -416,9 +437,11 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         continue;
       
       TopoDS_Shape aGroupShape = aGroup->GetValue();
+      BRepBuilderAPI_Transform aTransformationShapeInv(aGroupShape, aTrsfInv, Standard_False);
+      TopoDS_Shape aGroupShapeTrsfInv = aTransformationShapeInv.Shape();
       
       TopTools_IndexedMapOfShape anEdgesMap;
-      TopExp::MapShapes(aGroupShape,TopAbs_EDGE, anEdgesMap);
+      TopExp::MapShapes(aGroupShapeTrsfInv,TopAbs_EDGE, anEdgesMap);
       nbEdges = anEdgesMap.Extent();
 
       if (shapeType == TSHAPE_BASIC) {
@@ -439,7 +462,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
           radialFound =false;
           flangeFound = false;
           
-          TopExp_Explorer Ex(aGroupShape,TopAbs_VERTEX);
+          TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
           while (Ex.More()) {
             gp_Pnt aP =  BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
             double x=aP.X(), y=aP.Y(), z=aP.Z();
@@ -505,7 +528,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
           mainPipeFound = false;
           flangeFound = false;
           
-          TopExp_Explorer Ex(aGroupShape,TopAbs_VERTEX);
+          TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
           while (Ex.More()) {
             gp_Pnt aP =  BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
             double x=aP.X(), y=aP.Y(), z=aP.Z();
@@ -566,55 +589,6 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
       if (addGroup)
         theSeq->Append(aGroup);
     }
-
-//     Handle(GEOM_Object) aGroup;
-//     if (shapeType == TSHAPE_BASIC) {
-// //         if (aNbGroups != 11) {
-// //             SetErrorCode("Bad number of propagation groups");
-// //             return false;
-// //         }
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(1));
-//         aGroup->SetName("THICKNESS");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(2));
-//         aGroup->SetName("CIRCULAR_QUARTER_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(3));
-//         aGroup->SetName("HALF_LENGTH_MAIN_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(6));
-//         aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(5));
-//         aGroup->SetName("FLANGE");
-//         theSeq->Append(aGroup);
-//     } else if (shapeType == TSHAPE_CHAMFER || shapeType == TSHAPE_FILLET) {
-//         if (aNbGroups != 12) {
-//             SetErrorCode("Bad number of propagation groups");
-//             return false;
-//         }
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(3));
-//         aGroup->SetName("THICKNESS");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(1));
-//         aGroup->SetName("CIRCULAR_QUARTER_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(4));
-//         aGroup->SetName("HALF_LENGTH_MAIN_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(6));
-//         aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(2));
-//         aGroup->SetName("FLANGE");
-//         theSeq->Append(aGroup);
-//         aGroup = Handle(GEOM_Object)::DownCast(aSeqPropagate->Value(7));
-//         if (shapeType == TSHAPE_CHAMFER)
-//         	aGroup->SetName("CHAMFER");
-//         else
-//         	aGroup->SetName("FILLET");
-//         theSeq->Append(aGroup);
-//     }
 
     SetErrorCode(OK);
     return true;
@@ -1071,89 +1045,89 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
     theShapes.push_back(aPlnOXZ);
 
       // Partition
-    Handle(GEOM_Object) Part0 = aBooleanOperations->MakeHalfPartition(theShape, face_t);
-    if (Part0.IsNull()) {
-        std::cerr << "Impossible to build partition between TShape and 1st face" << std::endl;
-        SetErrorCode("Impossible to build partition between TShape and 1st face");
-        return false;
-    }
-    Part0->GetLastFunction()->SetDescription("");
-    
-    Handle(GEOM_Object) Te3 ;
-    if (isNormal) {
-      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()) {
-        std::cerr << "External radius are identical: we do not make partition with plane OXZ" << std::endl;
-        Te3 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOZ);
-      }
-      else {
-        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
-        if (Part1.IsNull()) {
-          std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
-          return false;
-        }
-        Part1->GetLastFunction()->SetDescription("");
-        Te3 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
-      }
-      if (Te3.IsNull()) {
-          std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OZ");
-          return false;
-      }
-      Te3->GetLastFunction()->SetDescription("");
-    }
-    else {
-      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()){ // We should never go here
-        SetErrorCode("Impossible to build TShape");
-        return false;
-      }
-      else {
-        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
-        if (Part1.IsNull()) {
-        std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
-          return false;
-        }
-        Part1->GetLastFunction()->SetDescription("");
-        Handle(GEOM_Object) Part2 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
-        if (Part2.IsNull()) {
-        std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
-          SetErrorCode("Impossible to build partition between TShape and plane OZ");
-          return false;
-        }
-        Part2->GetLastFunction()->SetDescription("");
-        Te3 = aBooleanOperations->MakeHalfPartition(Part2, face_t2);
-        if (Te3.IsNull()) {
-            std::cerr << "Impossible to build partition between TShape and 2nd face" << std::endl;
-            SetErrorCode("Impossible to build partition between TShape and 2nd face");
-            return false;
-        }
-        Te3->GetLastFunction()->SetDescription("");
-      }
-    }
+//    Handle(GEOM_Object) Part0 = aBooleanOperations->MakeHalfPartition(theShape, face_t);
+//    if (Part0.IsNull()) {
+//        std::cerr << "Impossible to build partition between TShape and 1st face" << std::endl;
+//        SetErrorCode("Impossible to build partition between TShape and 1st face");
+//        return false;
+//    }
+//    Part0->GetLastFunction()->SetDescription("");
+//
+//    Handle(GEOM_Object) Te3 ;
+//    if (isNormal) {
+//      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()) {
+//        std::cerr << "External radius are identical: we do not make partition with plane OXZ" << std::endl;
+//        Te3 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOZ);
+//      }
+//      else {
+//        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
+//        if (Part1.IsNull()) {
+//          std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
+//          return false;
+//        }
+//        Part1->GetLastFunction()->SetDescription("");
+//        Te3 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
+//      }
+//      if (Te3.IsNull()) {
+//          std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OZ");
+//          return false;
+//      }
+//      Te3->GetLastFunction()->SetDescription("");
+//    }
+//    else {
+//      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()){ // We should never go here
+//        SetErrorCode("Impossible to build TShape");
+//        return false;
+//      }
+//      else {
+//        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
+//        if (Part1.IsNull()) {
+//        std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
+//          return false;
+//        }
+//        Part1->GetLastFunction()->SetDescription("");
+//        Handle(GEOM_Object) Part2 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
+//        if (Part2.IsNull()) {
+//        std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
+//          SetErrorCode("Impossible to build partition between TShape and plane OZ");
+//          return false;
+//        }
+//        Part2->GetLastFunction()->SetDescription("");
+//        Te3 = aBooleanOperations->MakeHalfPartition(Part2, face_t2);
+//        if (Te3.IsNull()) {
+//            std::cerr << "Impossible to build partition between TShape and 2nd face" << std::endl;
+//            SetErrorCode("Impossible to build partition between TShape and 2nd face");
+//            return false;
+//        }
+//        Te3->GetLastFunction()->SetDescription("");
+//      }
+//    }
 
-//     Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
-//     Handle(TColStd_HArray1OfInteger) theMaterials;
-//     partitionShapes->Append(theShape);
-//     theTools->Append(aPlnOZ);
-//     theTools->Append(aPlnOXZ);
-//     theTools->Append(face_t);
-//     if (!isNormal)
-//         theTools->Append(face_t2);
-//         
-//     Handle(GEOM_Object) Te3 = aBooleanOperations->MakePartition(partitionShapes, theTools, theKeepInside, theRemoveInside, TopAbs_SOLID, false, theMaterials, 0, false);
-//     if (Te3.IsNull()) {
-//         SetErrorCode("Impossible to build partition of TShape");
+     Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
+     Handle(TColStd_HArray1OfInteger) theMaterials;
+     partitionShapes->Append(theShape);
+     theTools->Append(aPlnOZ);
+     theTools->Append(aPlnOXZ);
+     theTools->Append(face_t);
+     if (!isNormal)
+         theTools->Append(face_t2);
+
+     Handle(GEOM_Object) Te3 = aBooleanOperations->MakePartition(partitionShapes, theTools, theKeepInside, theRemoveInside, TopAbs_SOLID, false, theMaterials, 0, false);
+     if (Te3.IsNull()) {
+         SetErrorCode("Impossible to build partition of TShape");
 //         Handle(GEOM_Object) aCompound = aShapesOperations->MakeCompound(theShapes);
 //         TopoDS_Shape aCompoundShape = aCompound->GetValue();
 //         theShape->GetLastFunction()->SetValue(aCompoundShape);
-//         return false;
-//     }
-//     Te3->GetLastFunction()->SetDescription("");
-//
+         return false;
+     }
+     Te3->GetLastFunction()->SetDescription("");
+
 
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
@@ -1262,8 +1236,8 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(/*std::vector<GEO
 //=============================================================================
 /*!
  *  MakePipeTShape
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -1395,9 +1369,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
- *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+ *  MakePipeTShapeWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length).
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -1540,8 +1516,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
+ *  MakePipeTShapeChamfer
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -1621,12 +1599,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -1665,14 +1643,11 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     catch (Standard_Failure) {
       Handle(Standard_Failure) aFail = Standard_Failure::Caught();
       SetErrorCode(aFail->GetMessageString());
-      try {
-        aChamfer = aLocalOperations->MakeChamferEdges(aShape, theH, theW, theEdges);
-      }
-      catch (Standard_Failure) {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-        SetErrorCode(aFail->GetMessageString());
-        return NULL;
-      }
+      return NULL;
+    }
+    if (aChamfer.IsNull()) {
+    	SetErrorCode("Chamfer can not be computed on the given shape with the given parameters");
+    	return NULL;
     }
     aChamfer->GetLastFunction()->SetDescription("");
     
@@ -1753,9 +1728,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeChamferWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A chamfer is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -1843,12 +1821,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -1879,8 +1857,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     try {
       aChamfer = aLocalOperations->MakeChamferEdges(aShape, theW, theH, theEdges);
     }
-    catch (...) {
-      aChamfer = aLocalOperations->MakeChamferEdges(aShape, theH, theW, theEdges);
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
+      return NULL;
+    }
+    if (aChamfer.IsNull()) {
+    	SetErrorCode("Chamfer can not be computed on the given shape with the given parameters");
+    	return NULL;
     }
     aChamfer->GetLastFunction()->SetDescription("");
     
@@ -1954,9 +1938,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length).A fillet is created on
- *  the junction of the pipes.
+ *  MakePipeTShapeFillet
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
  *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
@@ -2034,12 +2019,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -2066,8 +2051,20 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         if (theHexMesh && nbEdgesInFillet == 1)
           break;
     }
-    
-    Handle(GEOM_Object) aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+
+    Handle(GEOM_Object) aFillet;
+    try {
+    	aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
+      return NULL;
+    }
+    if (aFillet.IsNull()) {
+    	SetErrorCode("Fillet can not be computed on the given shape with the given parameters");
+    	return NULL;
+    }
     aFillet->GetLastFunction()->SetDescription("");
     
     TopoDS_Shape aFilletShape = aFillet->GetValue();
@@ -2134,10 +2131,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 
 //=============================================================================
 /*!
- *  Create a T-shape object with specified caracteristics for the main and the
- *  incident pipes (radius, width, half-length). A fillet is created on
- *  the junction of the pipes.
- *  The T-shape is placed at junction points P1, P2 and P3.
+ *  MakePipeTShapeFilletWithPosition
+ *  Create a T-shape object with specified caracteristics for the main and
+ *  the incident pipes (radius, width, half-length). A fillet is created
+ *  on the junction of the pipes.
+ *  The extremities of the main pipe are located on junctions points P1 and P2.
+ *  The extremity of the incident pipe is located on junction point P3.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -2223,12 +2222,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     else {
       box_e = a3DPrimOperations->MakeBoxDXDYDZ(2*(theR2+theW2), 2*(theR2+theW2), theR1+theW1);
     }
+    box_e->GetLastFunction()->SetDescription("");
     box_e = aTransformOperations->TranslateDXDYDZ(box_e, -(theR2+theW2), -(theR2+theW2), 0);
     box_e->GetLastFunction()->SetDescription("");
     
-    TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfInteger) edges_e = aShapesOperations->GetShapesOnBoxIDs(box_e, aShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-    aFunction->SetDescription(theDesc);
+    box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
 //        std::cerr << "Internal edges not found" << std::endl;
@@ -2255,8 +2254,20 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         if (theHexMesh && nbEdgesInFillet == 1)
           break;
     }
-    
-    Handle(GEOM_Object) aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+
+    Handle(GEOM_Object) aFillet;
+    try {
+    	aFillet = aLocalOperations->MakeFilletEdges(aShape, theRF, theEdges);
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
+      return NULL;
+    }
+    if (aFillet.IsNull()) {
+    	SetErrorCode("Fillet can not be computed on the given shape with the given parameters");
+    	return NULL;
+    }
     aFillet->GetLastFunction()->SetDescription("");
     
     TopoDS_Shape aFilletShape = aFillet->GetValue();
