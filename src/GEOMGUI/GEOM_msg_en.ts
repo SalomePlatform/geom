@@ -2097,7 +2097,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check Shape</translation>
         </message>
         <message>
             <source>MEN_CHECK_COMPOUND</source>
@@ -2529,7 +2529,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_TOLERANCE</source>
-            <translation>Compute Tolerance</translation>
+            <translation>Tolerance</translation>
         </message>
         <message>
             <source>MEN_TOOLS</source>
@@ -2729,11 +2729,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_BASIC_PROPS</source>
-            <translation>Basic properties</translation>
+            <translation>Show basic properties of the shape</translation>
         </message>
         <message>
             <source>STB_BND_BOX</source>
-            <translation>Compute bounding box</translation>
+            <translation>Compute bounding box of the shape</translation>
         </message>
         <message>
             <source>STB_BOX</source>
@@ -2749,7 +2749,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check shape validity</translation>
         </message>
         <message>
             <source>STB_CHECK_COMPOUND</source>
@@ -2921,7 +2921,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_INERTIA</source>
-            <translation>Compute intertia</translation>
+            <translation>Compute moments of intertia of the shape</translation>
         </message>
         <message>
             <source>STB_ISOS</source>
@@ -2937,11 +2937,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_MASS_CENTER</source>
-            <translation>Compute center of mass</translation>
+            <translation>Compute center of mass of the shape</translation>
         </message>
         <message>
             <source>STB_MIN_DIST</source>
-            <translation>Compute minimum distance</translation>
+            <translation>Compute minimum distance between two objects</translation>
         </message>
         <message>
             <source>STB_MIRROR</source>
@@ -2985,7 +2985,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_POINT_COORDS</source>
-            <translation>Point coordinates</translation>
+            <translation>Display point coordinates</translation>
         </message>
         <message>
             <source>STB_POINT_ON_EDGE</source>
@@ -3121,7 +3121,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Compute tolerance of the shape</translation>
         </message>
         <message>
             <source>STB_TORUS</source>
@@ -3252,6 +3252,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Advanced</translation>
         </message>
         <message>
+            <source>TOOL_MEASURES</source>
+            <translation>Measures</translation>
+        </message>
+        <message>
             <source>TOP_ARC</source>
             <translation>Create an arc</translation>
         </message>
@@ -3265,7 +3269,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_BND_BOX</source>
-            <translation>Compute bounding box</translation>
+            <translation>Bounding box</translation>
         </message>
         <message>
             <source>TOP_BOX</source>
@@ -3281,7 +3285,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check shape</translation>
         </message>
         <message>
             <source>TOP_CHECK_COMPOUND</source>
@@ -3437,7 +3441,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_INERTIA</source>
-            <translation>Compute intertia</translation>
+            <translation>Moments of intertia</translation>
         </message>
         <message>
             <source>TOP_ISOS</source>
@@ -3453,11 +3457,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_MASS_CENTER</source>
-            <translation>Compute center of mass</translation>
+            <translation>Center of mass</translation>
         </message>
         <message>
             <source>TOP_MIN_DIST</source>
-            <translation>Compute minimum distance</translation>
+            <translation>Minimum distance</translation>
         </message>
         <message>
             <source>TOP_MIRROR</source>
@@ -3625,7 +3629,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Tolerance</translation>
         </message>
         <message>
             <source>TOP_TORUS</source>
@@ -3777,7 +3781,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_NORMALE</source>
-            <translation>Compute normal to a face</translation>
+            <translation>Normal to a face</translation>
         </message>
         <message>
             <source>MEN_NORMALE</source>
@@ -3785,11 +3789,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_NORMALE</source>
-            <translation>Compute normal to a face in a point (optional)</translation>
+            <translation>Compute normal to the face</translation>
         </message>
         <message>
             <source>TOP_MEASURE_ANGLE</source>
-            <translation>Compute angle</translation>
+            <translation>Angle</translation>
         </message>
         <message>
             <source>MEN_MEASURE_ANGLE</source>

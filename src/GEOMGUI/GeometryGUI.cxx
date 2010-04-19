@@ -982,6 +982,25 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpSolid,    buildTbId );
   createTool( GEOMOp::OpCompound, buildTbId );
 
+  int measureTbId = createTool( tr( "TOOL_MEASURES" ) );
+  createTool( GEOMOp::OpPointCoordinates, measureTbId );
+  createTool( GEOMOp::OpProperties,       measureTbId );
+  createTool( GEOMOp::OpCenterMass,       measureTbId );
+  createTool( GEOMOp::OpInertia,          measureTbId );
+  createTool( GEOMOp::OpNormale,          measureTbId );
+  createTool( separator(),                measureTbId );
+  createTool( GEOMOp::OpBoundingBox,      measureTbId );
+  createTool( GEOMOp::OpMinDistance,      measureTbId );
+  createTool( GEOMOp::OpAngle,            measureTbId );
+  createTool( GEOMOp::OpTolerance  ,      measureTbId );
+  createTool( separator(),                measureTbId );
+  createTool( GEOMOp::OpFreeBoundaries,   measureTbId );
+  createTool( GEOMOp::OpFreeFaces,        measureTbId );
+  createTool( separator(),                measureTbId );
+  createTool( GEOMOp::OpWhatIs,           measureTbId );
+  createTool( GEOMOp::OpCheckShape,       measureTbId );
+  createTool( GEOMOp::OpCheckCompound,    measureTbId );
+
   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   createTool( GEOMOp::OpPipeTShape, advancedTbId );
   //@@ insert new functions before this line @@//
