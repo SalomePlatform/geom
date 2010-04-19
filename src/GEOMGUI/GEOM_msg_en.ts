@@ -633,7 +633,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_RECTANGLE_TITLE</source>
-            <translation>Face Construction</translation>
+            <translation>Rectangle Construction</translation>
+        </message>
+        <message>
+            <source>GEOM_RECTANGLE</source>
+            <translation>Rectangle</translation>
         </message>
         <message>
           <source>GEOM_FILLET</source>
@@ -2153,7 +2157,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_RECTANGLE</source>
-            <translation>Face</translation>
+            <translation>Rectangle</translation>
         </message>
         <message>
             <source>MEN_DELETE</source>

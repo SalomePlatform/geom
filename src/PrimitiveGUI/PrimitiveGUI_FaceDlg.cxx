@@ -60,7 +60,7 @@ PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget
   setWindowTitle( tr( "GEOM_RECTANGLE_TITLE" ) );
  
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FACE" ) );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_RECTANGLE" ) );
   mainFrame()->RadioButton1->setIcon( image2 );
   mainFrame()->RadioButton2->setIcon( image0 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
