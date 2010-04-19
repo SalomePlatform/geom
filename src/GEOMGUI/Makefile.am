@@ -80,6 +80,7 @@ libGEOM_la_CPPFLAGS =				\
 	-I$(top_builddir)/idl
 
 libGEOM_la_LDFLAGS =						\
+	$(PYTHON_LIBS)						\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\

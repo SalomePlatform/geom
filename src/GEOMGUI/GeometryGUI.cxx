@@ -23,6 +23,7 @@
 // File   : GeometryGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
+#include <Standard_math.hxx>  // E.A. must be included before Python.h to fix compilation on windows
 #include "Python.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
