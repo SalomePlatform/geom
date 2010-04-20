@@ -4163,8 +4163,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
-        ## Create a T-shape object with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). A chamfer is
+        ## Create a T-shape object with chamfer and with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). The chamfer is
         #  created on the junction of the pipes.
         #  The extremities of the main pipe are located on junctions points P1 and P2.
         #  The extremity of the incident pipe is located on junction point P3.
@@ -4195,8 +4195,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
-        ## Create a T-shape object with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). A fillet is
+        ## Create a T-shape object with fillet and with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). The fillet is
 	#  created on the junction of the pipes.
         #  The extremities of the main pipe are located on junctions points P1 and P2.
         #  The extremity of the incident pipe is located on junction point P3.
