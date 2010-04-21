@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,12 +19,13 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  GEOM GEOMClient : tool to transfer BREP files from GEOM server to GEOM client
 //  File   : GEOM_Client.cxx
 //  Author : Yves FRICAUD/Lucien PIGNOLONI
 //  Module : GEOM
 //  $Header$
-
+//
 #include <Standard_Stream.hxx>
 
 #include <Standard_Stream.hxx>

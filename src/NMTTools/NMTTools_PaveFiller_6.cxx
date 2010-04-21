@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,12 +19,13 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // IMPROVED by NIZNHY-PKV Thu Oct 12 16:03:33 2006
 // File:        NMTTools_PaveFiller_6.cxx
 // Created:     Fri Dec 19 10:27:31 2003
 // Author:      Peter KURNEV
 //              <pkv@irinox>
-
+//
 #include <NMTTools_PaveFiller.ixx>
 
 #include <Precision.hxx>
