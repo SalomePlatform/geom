@@ -342,10 +342,12 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
           }
         }
         else { // aMap.Extent() == 0
-          int pos = isPointInList( myOrderedSel, aSelectedObject );
-          if ( pos == -1 )
-            myOrderedSel.push_back( aSelectedObject );
-          aList.push_back( aSelectedObject );
+          if ( aShape.ShapeType() == TopAbs_VERTEX ) {
+            int pos = isPointInList( myOrderedSel, aSelectedObject );
+            if ( pos == -1 )
+              myOrderedSel.push_back( aSelectedObject );
+            aList.push_back( aSelectedObject );
+          }
         }
       }
     }
