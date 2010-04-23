@@ -38,6 +38,11 @@
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
 
+#include <BRepCheck_Analyzer.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
+
+#include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
 
 //=======================================================================
@@ -91,7 +96,22 @@ Standard_Integer GEOMImpl_OffsetDriver::Execute(TFunction_Logbook& log) const
                                       aTol);
     if (MO.IsDone()) {
       aShape = MO.Shape();
-    } else {
+      // 23.04.2010 skl for bug 21699 from Mantis
+      BRepCheck_Analyzer ana (aShape, Standard_True);
+      ana.Init(aShape);
+      if (!ana.IsValid()) {
+        ShapeFix_ShapeTolerance aSFT;
+        aSFT.LimitTolerance(aShape, Precision::Confusion(),
+                            Precision::Confusion(), TopAbs_SHAPE);
+        Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape(aShape);
+        aSfs->Perform();
+        aShape = aSfs->Shape();
+        ana.Init(aShape);
+        if (!ana.IsValid())
+          Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
+      }
+    }
+    else {
       StdFail_NotDone::Raise("Offset construction failed");
     }
   } else {
