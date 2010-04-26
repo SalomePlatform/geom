@@ -466,12 +466,13 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
     else if ( constructorId == 2 ) {  // Selection
       mySketchType = PT_SEL;
       myEditCurrentArgument = Group1Sel->LineEdit1;
-      connect( myGeometryGUI->getApp()->selectionMgr(),
-               SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       Group1Sel->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
     }
+
+    connect( myGeometryGUI->getApp()->selectionMgr(),
+             SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   }
 }
 
@@ -821,6 +822,9 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
     MainWidget->RadioButton1->setChecked( true );
     TypeClicked( 0 );
 
+    connect( myGeometryGUI->getApp()->selectionMgr(),
+             SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
     MainWidget->GroupConstructors->setEnabled( false );
     MainWidget->GroupDest1->setEnabled( false );
     setEnabledUndo( false );
@@ -888,6 +892,8 @@ void EntityGUI_SketcherDlg::setEnabledRedo( bool value )
 void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
+  double tmpX = myX;
+  double tmpY = myY;
   myX = myLastX1;
   myY = myLastY1;
 
@@ -914,6 +920,27 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
           myX = aPnt.X();
           myY = aPnt.Y();
           Group1Sel->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
+          if( Group2Spin->isVisible() && mySketchType == PT_ABS ) {
+            disconnect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            disconnect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            Group2Spin->SpinBox_DX->setValue(myX);
+            Group2Spin->SpinBox_DY->setValue(myY);
+            connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+          } else if ( Group2Spin->isVisible() && mySketchType == PT_RELATIVE ) {
+            if ( myLastX1 && myLastY1 ) {
+              Group2Spin->SpinBox_DX->setValue(myX - myLastX1);
+              Group2Spin->SpinBox_DY->setValue(myY - myLastY1);
+            } else {
+              if ( mySketchState != FIRST_POINT ) {
+                Group2Spin->SpinBox_DX->setValue(myX - tmpX);
+                Group2Spin->SpinBox_DY->setValue(myY - tmpY);
+              } else {
+                Group2Spin->SpinBox_DX->setValue(myX);
+                Group2Spin->SpinBox_DY->setValue(myY);
+              }
+            }
+          }
         }
       }
     }
