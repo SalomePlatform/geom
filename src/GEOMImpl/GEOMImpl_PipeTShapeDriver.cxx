@@ -153,10 +153,8 @@ GEOMImpl_PipeTShapeDriver::GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
   TopTools_ListIteratorOfListOfShape itSub (listSS);
   for (int index = 1; itSub.More(); itSub.Next(), ++index) {
     int id = anIndices.FindIndex(itSub.Value());
-    std::cerr << "Shape with ID " << id << " found" << std::endl;
-//     TopoDS_Shape s = anIndices.FindKey(id);
+//    std::cerr << "Shape with ID " << id << " found" << std::endl;
     aSeqOfIDs->Append(id);
-//     aSeqOfIDs->Append(itSub.Value());
   }
 
   return aSeqOfIDs;
@@ -288,9 +286,9 @@ void GEOMImpl_PipeTShapeDriver::GetCommonShapesOnCylinders(const TopoDS_Shape& t
   // # Search in theShape for common shape of type theShapeType on the intersection of 2 pipes
   found = false;
   for (int i=1; i<=aSeqExt2->Length();i++) {
-    std::cerr << "aSeqExt2->Value(i): " << aSeqExt2->Value(i) << std::endl;
+//    std::cerr << "aSeqExt2->Value(i): " << aSeqExt2->Value(i) << std::endl;
     for (int j=1; j<=aSeqExt1->Length();j++) {
-      std::cerr << "aSeqExt1->Value(j): " << aSeqExt1->Value(j) << std::endl;
+//      std::cerr << "aSeqExt1->Value(j): " << aSeqExt1->Value(j) << std::endl;
       if (aSeqExt1->Value(j) == aSeqExt2->Value(i)) {
 	myID = aSeqExt1->Value(j);
 	commonShapes->Append(aMapOfShapes.FindKey(myID));
@@ -412,14 +410,10 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
   double aR2Ext = aData.GetR2() + aData.GetW2();
   
   if (aData.GetR2() > aData.GetR1() + epsilon) {
-    std::cerr << "aData.GetR1(): " << aData.GetR1() << std::endl;
-    std::cerr << "aData.GetR2(): " << aData.GetR2() << std::endl;
     StdFail_NotDone::Raise("TShape cannot be computed if R2 > R1");
   }
 
   if (aR2Ext > aR1Ext + epsilon) {
-    std::cerr << "aR1Ext: " << aR1Ext << std::endl;
-    std::cerr << "aR2Ext: " << aR2Ext << std::endl;
     StdFail_NotDone::Raise("TShape cannot be computed if R2+W2 > R1+W1");
   }
   
@@ -431,10 +425,6 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
       StdFail_NotDone::Raise("TShape with fillet cannot be computed if R2+W2 = R1+W1");
     // internal radius are different => not possible
     if (fabs(aData.GetR2() - aData.GetR1()) > epsilon) {
-      std::cerr << "R1Ext: " << aR1Ext << std::endl;
-      std::cerr << "R2Ext: " << aR2Ext << std::endl;
-      std::cerr << "R1: " << aData.GetR1() << std::endl;
-      std::cerr << "R2: " << aData.GetR2() << std::endl;
       StdFail_NotDone::Raise("TShape cannot be computed if R2+W2 = R1+W1 and R2 != R1");
     }
   }
@@ -449,10 +439,6 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
 
   if (aType == TSHAPE_CHAMFER) {
     if (aData.GetH() >= (aData.GetL2() - aR1Ext + epsilon)) {
-      std::cerr << "H: " << aData.GetH() << std::endl;
-      std::cerr << "L2: " << aData.GetL2() << std::endl;
-      std::cerr << "R1Ext: " << aR1Ext << std::endl;
-      std::cerr << "aData.GetL2() - aR1Ext: " << aData.GetL2() - aR1Ext << std::endl;
       StdFail_NotDone::Raise("TShape cannot be computed: height of chamfer is too high");
     }
 
@@ -468,13 +454,13 @@ Standard_Integer GEOMImpl_PipeTShapeDriver::Execute(TFunction_Logbook& log) cons
 
   if (hexMesh) {
     // Create a quarter of a basic T-Shape pipe
-    std::cerr << "Create a quarter of a basic T-Shape pipe" << std::endl;
+//    std::cerr << "Create a quarter of a basic T-Shape pipe" << std::endl;
     Te4 = MakeQuarterPipeTShape(aData.GetR1(), aData.GetW1(), aData.GetL1(),
       aData.GetR2(), aData.GetW2(), aData.GetL2());
   }
   else {
     // No need to cut pipe t-shape
-    std::cerr << "Create a basic T-Shape pipe" << std::endl;
+//    std::cerr << "Create a basic T-Shape pipe" << std::endl;
     Te4 = MakePipeTShape(aData.GetR1(), aData.GetW1(), aData.GetL1(),
       aData.GetR2(), aData.GetW2(), aData.GetL2());
   }

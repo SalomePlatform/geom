@@ -812,7 +812,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
         
 //         extremVertices = aShapesOperations->GetShapesOnCylinder(theShape, TopAbs_VERTEX, Vector_Z, theVertCylinderRadius, GEOMAlgo_ST_ONIN);
         if (extremVertices.IsNull() || extremVertices->Length() == 0) {
-            std::cerr << "extremVertices.IsNull() || extremVertices->Length() == 0" << std::endl;
+//            std::cerr << "extremVertices.IsNull() || extremVertices->Length() == 0" << std::endl;
             if (theRF == 0)
                 SetErrorCode("Vertices on chamfer not found");
             else
@@ -1248,7 +1248,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(/*std::vector<GEO
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1,
         double theL1, double theR2, double theW2, double theL2, bool theHexMesh) {
-    std::cerr << "GEOMImpl_IAdvancedOperations::MakePipeTShape" << std::endl;
+    MESSAGE("GEOMImpl_IAdvancedOperations::MakePipeTShape");
     SetErrorCode(KO);
     //Add a new object
 //     std::cerr << "Add a new object" << std::endl;
@@ -1280,8 +1280,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         OCC_CATCH_SIGNALS;
 #endif
         if (!GetSolver()->ComputeFunction(aFunction)) {
-//             SetErrorCode("TShape driver failed");
-            std::cerr << "TShape driver failed" << std::endl;
+            SetErrorCode("TShape driver failed");
+//            MESSAGE("TShape driver failed");
             return NULL;
         }
 //         std::cerr << "aShape->GetName(): " << aShape->GetName() << std::endl;
@@ -1445,14 +1445,14 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     theOperations.push_back(aTransformOperations);
     
     if (theHexMesh) {
-        std::cerr << "Creating partition" << std::endl;
+//        std::cerr << "Creating partition" << std::endl;
         if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-        std::cerr << "Done" << std::endl;
-        std::cerr << "Creating mirrors and glue" << std::endl;
+//        std::cerr << "Done" << std::endl;
+//        std::cerr << "Creating mirrors and glue" << std::endl;
         if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-        std::cerr << "Done" << std::endl;
+//        std::cerr << "Done" << std::endl;
     }
 
     TopoDS_Shape Te = aShape->GetValue();
@@ -1604,29 +1604,22 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
-//        std::cerr << "Internal edges not found" << std::endl;
         SetErrorCode("External edges not found");
         return false;
     }
-//    std::cerr << "External edges found" << std::endl;
     int nbEdgesInChamfer = 0;
     std::list<int> theEdges;
     for (int i=1; i<=edges_e->Length();i++) {
-//         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
-//         anObj->GetLastFunction()->SetDescription("");
         int edgeID = edges_e->Value(i);
-//         std::cerr << "Edge #" << edgeID << std::endl;
         TopoDS_Shape theEdge = anEdgesIndices.FindKey(edgeID);
         TopExp_Explorer Ex(theEdge,TopAbs_VERTEX);
         int iv=0;
         while (Ex.More()) {
           iv ++;
           gp_Pnt aPt = BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
-//           std::cerr << "Vertex #" << iv << ": aPt.Z() - (theR1+theW1) = " << aPt.Z() - (theR1+theW1) << std::endl;
           if (Abs(aPt.Z() - (theR1+theW1)) <= Precision::Confusion()) {
             nbEdgesInChamfer ++;
             theEdges.push_back(edgeID);
-//             std::cerr << "Edge #" << edgeID << " added" << std::endl;
           }
           Ex.Next();
         }
@@ -1652,61 +1645,60 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     aFunction->SetValue(aChamferShape);
     // END of chamfer
 
-    bool doMesh = false;
+ //   bool doMesh = false;
     if (theHexMesh) {
-        doMesh = true;
-        std::cerr << "Creating partition" << std::endl;
+//        doMesh = true;
         if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false)) {
-            std::cerr << "PipeTShape partition failed" << std::endl;
-            doMesh = false;
-//             return NULL;
+            MESSAGE("PipeTShape partition failed");
+//            doMesh = false;
+            return NULL;
         }
-        std::cerr << "Done" << std::endl;
-        std::cerr << "Creating mirrors and glue" << std::endl;
         if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2)) {
-          std::cerr << "PipeTShape mirrors and glue failed" << std::endl;
-          doMesh = false;
-//           return NULL;
+          MESSAGE("PipeTShape mirrors and glue failed");
+//          doMesh = false;
+          return NULL;
         }
-        std::cerr << "Done" << std::endl;
     }
 
     Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
     aSeq->Append(aShape);
 
-    if (doMesh) {
+//    if (doMesh) {
+    if (theHexMesh) {
 //
 //         Get the groups: BEGIN
 //
-        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf())) {
-            //Make a Python command
-            GEOM::TPythonDump(aFunction) << "[" << aShape << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1
-                    << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW
-                    << ", " << theHexMesh << ")";
-//            return NULL;
-        }
-        else {
-            TCollection_AsciiString aListRes, anEntry;
-            // Iterate over the sequence aSeq
-            Standard_Integer aNbGroups = aSeq->Length();
-            Standard_Integer i = 2;
-            for (; i <= aNbGroups; i++) {
-                Handle(Standard_Transient) anItem = aSeq->Value(i);
-                if (anItem.IsNull()) continue;
-                Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
-                if (aGroup.IsNull()) continue;
-                //Make a Python command
-                TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
-                aListRes += anEntry + ", ";
-            }
+//        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf())) {
+//            //Make a Python command
+//            GEOM::TPythonDump(aFunction) << "[" << aShape << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1
+//                    << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW
+//                    << ", " << theHexMesh << ")";
+//        }
+//        else {
+        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+	  return NULL;
 
-            aListRes.Trunc(aListRes.Length() - 2);
+	TCollection_AsciiString aListRes, anEntry;
+	// Iterate over the sequence aSeq
+	Standard_Integer aNbGroups = aSeq->Length();
+	Standard_Integer i = 2;
+	for (; i <= aNbGroups; i++) {
+	  Handle(Standard_Transient) anItem = aSeq->Value(i);
+	  if (anItem.IsNull()) continue;
+	  Handle(GEOM_Object) aGroup = Handle(GEOM_Object)::DownCast(anItem);
+	  if (aGroup.IsNull()) continue;
+	  //Make a Python command
+	  TDF_Tool::Entry(aGroup->GetEntry(), anEntry);
+	  aListRes += anEntry + ", ";
+	}
 
-            //Make a Python command
-            GEOM::TPythonDump(aFunction) << "[" << aShape << ", " << aListRes.ToCString()
-                    << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2
-                    << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW << ", " << theHexMesh << ")";
-        }
+	aListRes.Trunc(aListRes.Length() - 2);
+
+	//Make a Python command
+	GEOM::TPythonDump(aFunction) << "[" << aShape << ", " << aListRes.ToCString()
+	  << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1 << ", " << theL1 << ", " << theR2
+	  << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW << ", " << theHexMesh << ")";
+	//        }
     }
 //
 //     Get the groups: END
@@ -1826,16 +1818,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
-//        std::cerr << "Internal edges not found" << std::endl;
         SetErrorCode("External edges not found");
         return false;
     }
-//    std::cerr << "External edges found" << std::endl;
     int nbEdgesInChamfer = 0;
     std::list<int> theEdges;
     for (int i=1; i<=edges_e->Length();i++) {
-//         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
-//         anObj->GetLastFunction()->SetDescription("");
         int edgeID = edges_e->Value(i);
         TopoDS_Shape theEdge = anEdgesIndices.FindKey(edgeID);
         TopExp_Explorer Ex(theEdge,TopAbs_VERTEX);
@@ -1870,14 +1858,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     // END of chamfer
     
     if (theHexMesh) {
-        std::cerr << "Creating partition" << std::endl;
         if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false))
           return NULL;
-        std::cerr << "Done" << std::endl;
-        std::cerr << "Creating mirrors and glue" << std::endl;
         if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-        std::cerr << "Done" << std::endl;
     }
 
     TopoDS_Shape Te = aShape->GetValue();
@@ -2024,16 +2008,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
-//        std::cerr << "Internal edges not found" << std::endl;
         SetErrorCode("External edges not found");
         return false;
     }
-//    std::cerr << "External edges found" << std::endl;
     int nbEdgesInFillet = 0;
     std::list<int> theEdges;
     for (int i=1; i<=edges_e->Length();i++) {
-//         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
-//         anObj->GetLastFunction()->SetDescription("");
         int edgeID = edges_e->Value(i);
         TopoDS_Shape theEdge = anEdgesIndices.FindKey(edgeID);
         TopExp_Explorer Ex(theEdge,TopAbs_VERTEX);
@@ -2069,14 +2049,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     // END of fillet
 
     if (theHexMesh) {
-        std::cerr << "Creating partition" << std::endl;
         if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
           return NULL;
-        std::cerr << "Done" << std::endl;
-        std::cerr << "Creating mirrors and glue" << std::endl;
         if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-        std::cerr << "Done" << std::endl;
     }
 
     Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
@@ -2227,16 +2203,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     box_e->GetLastFunction()->SetDescription("");
 
     if (edges_e.IsNull() || edges_e->Length() == 0) {
-//        std::cerr << "Internal edges not found" << std::endl;
         SetErrorCode("External edges not found");
         return false;
     }
-//    std::cerr << "External edges found" << std::endl;
     int nbEdgesInFillet = 0;
     std::list<int> theEdges;
     for (int i=1; i<=edges_e->Length();i++) {
-//         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
-//         anObj->GetLastFunction()->SetDescription("");
         int edgeID = edges_e->Value(i);
         TopoDS_Shape theEdge = anEdgesIndices.FindKey(edgeID);
         TopExp_Explorer Ex(theEdge,TopAbs_VERTEX);
@@ -2272,14 +2244,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     // END of fillet
 
     if (theHexMesh) {
-        std::cerr << "Creating partition" << std::endl;
         if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
           return NULL;
-        std::cerr << "Done" << std::endl;
-        std::cerr << "Creating mirrors and glue" << std::endl;
         if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-        std::cerr << "Done" << std::endl;
     }
 
     TopoDS_Shape Te = aShape->GetValue();

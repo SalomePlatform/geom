@@ -159,7 +159,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	myMainLayout->addWidget(JunctionPointsSel, rowNewPosVal, colNewPosVal, rowspanNewPosVal, colspanNewPosVal);
 	/***************************************************************/
 
-	setHelpFileName("create__pipetshape__page.html");
+	setHelpFileName("create_pipetshape_page.html");
 
 	Init();
 }
@@ -784,24 +784,16 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
 //         SetErrorCode("Junctions points P2 and P3 are identical");
         return false;
     }
-//	std::cerr << "theL1: " << theL1 << std::endl;
-//	std::cerr << "theL2: " << theL2 << std::endl;
-//	std::cerr << "d12: " << d12 << std::endl;
-//	std::cerr << "d13: " << d13 << std::endl;
-//	std::cerr << "d23: " << d23 << std::endl;
 
     long double newL1 = 0.5 * d12;
     long double newL2 = sqrt(pow(d13,2)-pow(newL1,2));
 
     JunctionPointsSel->LineEdit4->setText(QString::number(newL1,'f',7));
     JunctionPointsSel->LineEdit5->setText(QString::number(newL2,'f',7));
-//    std::cerr << "newL1: " << newL1 << std::endl;
-//    std::cerr << "newL2: " << newL2 << std::endl;
 
     if (fabs(newL1 - theL1) > Precision::Approximation()) {
 		if ((newL1 * (1 - theTolerance) - theL1 <= Precision::Approximation()) &&
 				(newL1 * (1 + theTolerance) - theL1 >= Precision::Approximation())) {
-//            std::cerr << "theL1 = newL1" << std::endl;
             disconnect(MainTubeGroupParams->SpinBox_DZ, 0, this, 0);
 			MainTubeGroupParams->SpinBox_DZ->setValue(newL1);
             connect(MainTubeGroupParams->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
@@ -820,11 +812,9 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
         JunctionPointsSel->PushButton4->setStyleSheet(CssNormal);
     }
 
-//    std::cerr << "fabs(newL2 - theL2) = " << fabs(newL2 - theL2) << std::endl;
 	if (fabs(newL2 - theL2) > Precision::Approximation()) {
 		if ((newL2 * (1 - theTolerance) - theL2 <= Precision::Approximation()) &&
 				(newL2 * (1 + theTolerance) - theL2 >= Precision::Approximation())) {
-//            std::cerr << "theL2 = newL2" << std::endl;
             disconnect(IncidentTubeGroupParams->SpinBox_DZ, 0, this, 0);
 			IncidentTubeGroupParams->SpinBox_DZ->setValue(newL2);
             connect(IncidentTubeGroupParams->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
@@ -961,7 +951,6 @@ void AdvancedGUI_PipeTShapeDlg::restoreSubShapes(SALOMEDS::Study_ptr theStudy, S
 	ObjectList::iterator it = pipeTShapeGroupObjects.begin();
 
 	for (int i = 0; it != pipeTShapeGroupObjects.end(); it++, i++) {
-		//     std::cerr << "Add group " << (*it)->GetName() << std::endl;
 		getGeomEngine()->AddInStudy(theStudy, (*it), tr((*it)->GetName()).toStdString().c_str(), theFather);
 	}
 
