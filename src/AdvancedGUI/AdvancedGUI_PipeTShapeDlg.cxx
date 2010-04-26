@@ -69,7 +69,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
     tshapeScreenShotLabel->setSizePolicy(QSizePolicy::Expanding,
                                          QSizePolicy::Expanding);
     tshapeScreenShotLabel->setAlignment(Qt::AlignCenter);
-    tshapeScreenShotLabel->setMinimumSize(240, 304);
+    tshapeScreenShotLabel->setMinimumSize(100, 100);
 
 	MainTubeGroupParams = new DlgRef_3Spin();
 	MainTubeGroupParams->GroupBox1->setTitle(tr("GEOM_PIPE_TSHAPE_MPIPE"));
