@@ -72,12 +72,18 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   SpinBox = new SalomeApp_DoubleSpinBox (GroupC1);
   // Obtain precision from preferences
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-  int aPrecision = resMgr->integerValue( "Geometry", "parametric_precision", 6 ); 
+  const char* quantity = "parametric_precision";
+  int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 ); 
   SpinBox->setAcceptNames( false );
   SpinBox->setPrecision( aPrecision );
   SpinBox->setDecimals( aPrecision );
   SpinBox->setRange( DEFLECTION_MIN, 1.0 );
   SpinBox->setSingleStep( 1.0e-04 );
+  // Add a hint for the user saying how to tune precision
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  SpinBox->setProperty( "validity_tune_hint", 
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
+  
   SpinBox->setObjectName("SpinBoxU");
   SpinBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
   SpinBox->setValue(1.0e-04);
