@@ -27,9 +27,9 @@ class DlgRef_2Spin;
 class DlgRef_3Spin;
 class DlgRef_3Sel;
 class DlgRef_6Sel;
-class DlgRef_PipeTShape_ScrollArea;
 class QCheckBox;
 class QLineEdit;
+class QLabel;
 
 //=================================================================================
 // class    : AdvancedGUI_PipeTShapeDlg
@@ -52,13 +52,15 @@ protected:
 private:
 	void Init();
 	void enterEvent(QEvent*);
+    void resizeEvent(QResizeEvent *event);
+    void updateTshapeScreenshotLabel();
 	bool CheckCompatiblePosition(GEOM::GEOM_Object_var theP1, 
                                  GEOM::GEOM_Object_var theP2,
                                  GEOM::GEOM_Object_var theP3, double theTolerance);
 
 private:
 	QPixmap imagePipeTShape;
-	DlgRef_PipeTShape_ScrollArea* PictureView;
+    QLabel* tshapeScreenShotLabel;
 	DlgRef_3Spin* MainTubeGroupParams;
 	DlgRef_3Spin* IncidentTubeGroupParams;
 	DlgRef_2Spin* ChamferGroupParams;
@@ -66,10 +68,6 @@ private:
 	DlgRef_6Sel*  JunctionPointsSel;
     QPixmap imageImp;
     QString CssNormal, CssAcceptable, CssRefused;
-// 	QLineEdit* NewPosValL1;
-// 	QLineEdit* NewPosValL2;
-// 	QPushButton* ApplyNewL1;
-// 	QPushButton* ApplyNewL2;
 	QCheckBox* HexMeshCheckBox;
 	GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 	bool myOkPoint1, myOkPoint2, myOkPoint3;

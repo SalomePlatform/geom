@@ -65,10 +65,11 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	myMainLayout->setMargin(0);
 	myMainLayout->setSpacing(6);
 
-	PictureView = new DlgRef_PipeTShape_ScrollArea();
-	PictureView->PipeTShape->setBackgroundRole(QPalette::Base);
-	PictureView->PipeTShape->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	PictureView->PipeTShape->setScaledContents(true);
+    tshapeScreenShotLabel = new QLabel();
+    tshapeScreenShotLabel->setSizePolicy(QSizePolicy::Expanding,
+                                         QSizePolicy::Expanding);
+    tshapeScreenShotLabel->setAlignment(Qt::AlignCenter);
+    tshapeScreenShotLabel->setMinimumSize(240, 304);
 
 	MainTubeGroupParams = new DlgRef_3Spin();
 	MainTubeGroupParams->GroupBox1->setTitle(tr("GEOM_PIPE_TSHAPE_MPIPE"));
@@ -147,7 +148,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	// 2nd row, height = 4, col 3
 	int rowNewPosVal = rowspanPict,                      colNewPosVal = 2, rowspanNewPosVal = 4, colspanNewPosVal = 1;
 
-	myMainLayout->addWidget(PictureView, rowPict, colPict, rowspanPict, colspanPict);
+    myMainLayout->addWidget(tshapeScreenShotLabel, rowPict, colPict, rowspanPict, colspanPict);
 
 	myMainLayout->addWidget(MainTubeGroupParams, rowMain, colMain, rowspanMain, colspanMain);
 	myMainLayout->addWidget(FilletGroupParams, rowFill, colFill, rowspanFill, colspanFill);
@@ -179,9 +180,6 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 	// Get setting of step value from file configuration
 	SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 	double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
-
-	PictureView->PipeTShape->setPixmap(imagePipeTShape);
-	PictureView->PipeTShape->adjustSize();
 
 	myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 	myOkPoint1 = myOkPoint2 = myOkPoint3 = false;
@@ -250,6 +248,7 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 	//@@ put additional signal/slot connections here @@//
 
 	initName(tr("GEOM_PIPE_TSHAPE"));
+    updateTshapeScreenshotLabel();
 	DisplayPreview();
 }
 
@@ -350,8 +349,7 @@ void AdvancedGUI_PipeTShapeDlg::UpdatePicture(QWidget* old, QWidget* now) {
 		else
 			imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
 
-	PictureView->PipeTShape->setPixmap(imagePipeTShape);
-	PictureView->PipeTShape->adjustSize();
+    updateTshapeScreenshotLabel();
 }
 
 //=================================================================================
@@ -613,6 +611,28 @@ void AdvancedGUI_PipeTShapeDlg::enterEvent(QEvent*) {
 }
 
 //=================================================================================
+// function : resizeEvent [REDEFINED]
+// purpose  :
+//=================================================================================
+void AdvancedGUI_PipeTShapeDlg::resizeEvent(QResizeEvent */*event*/) {
+    QSize scaledSize = imagePipeTShape.size();
+    scaledSize.scale(tshapeScreenShotLabel->size(), Qt::KeepAspectRatio);
+    if (!tshapeScreenShotLabel->pixmap()
+      || scaledSize != tshapeScreenShotLabel->pixmap()->size())
+        updateTshapeScreenshotLabel();
+}
+
+//=================================================================================
+// function : updateTshapeScreenshotLabel
+// purpose  :
+//=================================================================================
+void AdvancedGUI_PipeTShapeDlg::updateTshapeScreenshotLabel() {
+    tshapeScreenShotLabel->setPixmap(imagePipeTShape.scaled(tshapeScreenShotLabel->size(),
+                                                      Qt::KeepAspectRatio,
+                                                      Qt::SmoothTransformation));
+}
+
+//=================================================================================
 // function : ChamferOrFillet()
 // purpose  :
 //=================================================================================
@@ -628,7 +648,7 @@ void AdvancedGUI_PipeTShapeDlg::ChamferOrFillet(bool) {
 		}
 		else
 			imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
-		PictureView->PipeTShape->setPixmap(imagePipeTShape);
+        updateTshapeScreenshotLabel();
         if (myOkPoint1 && myOkPoint2 && myOkPoint3)
             CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
 		DisplayPreview();
@@ -641,7 +661,7 @@ void AdvancedGUI_PipeTShapeDlg::ChamferOrFillet(bool) {
 		}
 		else
 			imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
-		PictureView->PipeTShape->setPixmap(imagePipeTShape);
+        updateTshapeScreenshotLabel();
         if (myOkPoint1 && myOkPoint2 && myOkPoint3)
             CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
 		DisplayPreview();
