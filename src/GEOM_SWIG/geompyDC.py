@@ -358,7 +358,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
                 if doRestoreSubShapes:
                     self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
-                                            theFindMethod, theInheritFirstArg)
+                                            theFindMethod, theInheritFirstArg, True )
             except:
                 print "addToStudy() failed"
                 return ""
