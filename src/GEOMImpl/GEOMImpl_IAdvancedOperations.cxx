@@ -940,7 +940,8 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     Handle(TColStd_HArray1OfInteger) theMaterials;
     partitionShapes->Append(theShape);
     theTools->Append(aPlnOZ);
-    theTools->Append(aPlnOXZ);
+    if (Abs(aR1Ext - aR2Ext) > Precision::Confusion() )
+        theTools->Append(aPlnOXZ);
     theTools->Append(face_t);
     if (!isNormal)
         theTools->Append(face_t2);
