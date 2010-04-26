@@ -21,11 +21,6 @@
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
 #include <Standard_Stream.hxx>
-#include "GEOMImpl_IBasicOperations.hxx"
-#include "GEOMImpl_IShapesOperations.hxx"
-#include "GEOMImpl_IBlocksOperations.hxx"
-#include "GEOMImpl_IAdvancedOperations.hxx"
-#include "GEOMImpl_ILocalOperations.hxx"
 #include "GEOMImpl_Types.hxx"
 #include <GEOMImpl_Gen.hxx>
 
@@ -76,6 +71,13 @@
 GEOMImpl_IAdvancedOperations::GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngine, int theDocID) :
     GEOM_IOperations(theEngine, theDocID) {
     MESSAGE("GEOMImpl_IAdvancedOperations::GEOMImpl_IAdvancedOperations");
+    aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
+    aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
+    aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
+    aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
+    aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
+    a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
+    aLocalOperations = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
 }
 
 //=============================================================================
@@ -141,11 +143,6 @@ bool GEOMImpl_IAdvancedOperations::CheckCompatiblePosition(double& theL1, double
 	double d13 = P1.Distance(P3);
 	double d23 = P2.Distance(P3);
 	//    double d2 = newO.Distance(P3);
-//	std::cerr << "theL1: " << theL1 << std::endl;
-//	std::cerr << "theL2: " << theL2 << std::endl;
-//	std::cerr << "d12: " << d12 << std::endl;
-//	std::cerr << "d13: " << d13 << std::endl;
-//	std::cerr << "d23: " << d23 << std::endl;
 
 	if (Abs(d12) <= Precision::Confusion()) {
         SetErrorCode("Junctions points P1 and P2 are identical");
@@ -163,14 +160,9 @@ bool GEOMImpl_IAdvancedOperations::CheckCompatiblePosition(double& theL1, double
 
     double newL1 = 0.5 * d12;
     double newL2 = sqrt(pow(d13,2)-pow(newL1,2));
-//    std::cerr << "newL1: " << newL1 << std::endl;
-//    std::cerr << "newL2: " << newL2 << std::endl;
     //
     // theL1*(1-theTolerance) <= newL1 <= theL1*(1+theTolerance)
     //
-//    std::cerr << "1 - theTolerance: " << 1 - theTolerance << std::endl;
-
-//    std::cerr << "fabs(newL1 - theL1): " << fabs(newL1 - theL1) << std::endl;
     if (fabs(newL1 - theL1) > Precision::Approximation()) {
         if ( (newL1 * (1 - theTolerance) -theL1 <= Precision::Approximation()) &&
         		(newL1 * (1 + theTolerance) -theL1 >= Precision::Approximation()) ) {
@@ -186,11 +178,9 @@ bool GEOMImpl_IAdvancedOperations::CheckCompatiblePosition(double& theL1, double
     //
     // theL2*(1-theTolerance) <= newL2  <= theL2*(1+theTolerance)
     //
-//    std::cerr << "fabs(newL2 - theL2): " << fabs(newL2 - theL2) << std::endl;
     if (fabs(newL2 - theL2) > Precision::Approximation()) {
         if ( (newL2 * (1 - theTolerance) -theL2 <= Precision::Approximation()) &&
         		(newL2 * (1 + theTolerance) -theL2 >= Precision::Approximation()) ) {
-//            std::cerr << "theL2 = newL2" << std::endl;
             theL2 = newL2;
         } else {
             theL2 = -1;
@@ -198,8 +188,6 @@ bool GEOMImpl_IAdvancedOperations::CheckCompatiblePosition(double& theL1, double
             return false;
         }
     }
-//    std::cerr << "theL1: " << theL1 << std::endl;
-//    std::cerr << "theL2: " << theL2 << std::endl;
 
     SetErrorCode(OK);
     return true;
@@ -211,7 +199,7 @@ bool GEOMImpl_IAdvancedOperations::CheckCompatiblePosition(double& theL1, double
  *  Generate the propagation groups of a Pipe T-Shape used for hexa mesh
  */
 //=============================================================================
-bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> theOperations, */Handle(GEOM_Object) theShape,
+bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape,
         int shapeType, double theR1, double theW1, double theL1, double theR2, double theW2, double theL2, 
         Handle(TColStd_HSequenceOfTransient) theSeq, gp_Trsf aTrsf) {
     SetErrorCode(KO);
@@ -241,19 +229,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     /////////////////////////
     //// Groups of Faces ////
     /////////////////////////
-/*
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = (GEOMImpl_I3DPrimOperations*) &theOperations[0];
-    GEOMImpl_IBlocksOperations* aBlocksOperations = (GEOMImpl_IBlocksOperations*) &theOperations[2];
-    GEOMImpl_IBooleanOperations* aBooleanOperations = (GEOMImpl_IBooleanOperations*) &theOperations[3];
-    GEOMImpl_IShapesOperations* aShapesOperations = (GEOMImpl_IShapesOperations*) &theOperations[4];
-    GEOMImpl_ITransformOperations* aTransformOperations = (GEOMImpl_ITransformOperations*) &theOperations[5];*/
 
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    
     //
     // Comment the following lines when GetInPlace bug is solved
     // == BEGIN
@@ -280,10 +256,8 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     aCommonCompound->GetLastFunction()->SetDescription("");
     std::list<Handle(GEOM_Object)> aCompoundOfFacesList;
     
-//     std::cerr << "aCommonFaces->Length(): " << aCommonFaces->Length() << std::endl;
     for (int i=0 ; i<= aCommonFaces->Length()-4 ; i+=4) {
         std::list<Handle(GEOM_Object)> aFacesList;
-//         std::cerr << "Create compound for junction face " << i+1 << std::endl;
         for (int j = 1 ; j <= 4 ; j++) {
             Handle(GEOM_Object) aFace = Handle(GEOM_Object)::DownCast(aCommonFaces->Value(i+j)); // Junction faces
             if (!aFace.IsNull()) {
@@ -294,15 +268,10 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
         Handle(GEOM_Object) aCompoundOfFaces = aShapesOperations->MakeCompound(aFacesList);
         if (!aCompoundOfFaces.IsNull()) {
             aCompoundOfFaces->GetLastFunction()->SetDescription("");
-            // Apply transformation to compound of faces
-//             BRepBuilderAPI_Transform aTransformationCompoundOfFaces(aCompoundOfFaces->GetValue(), aTrsf, Standard_False);
-//             TopoDS_Shape aTrsf_CompoundOfFacesShape = aTransformationCompoundOfFaces.Shape();
-//             aCompoundOfFaces->GetLastFunction()->SetValue(aTrsf_CompoundOfFacesShape);
             aCompoundOfFacesList.push_back(aCompoundOfFaces);
         }
     }
 
-//     std::cerr << "aCompoundOfFacesList.size(): " << aCompoundOfFacesList.size() << std::endl;
     if (aCompoundOfFacesList.size() == 3) {
         Handle(GEOM_Object) aPln1 = aCompoundOfFacesList.front();
         aCompoundOfFacesList.pop_front();
@@ -394,12 +363,6 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
 
     Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
     
-
-    // Apply inverted transformation to shape
-//    BRepBuilderAPI_Transform aTransformationShapeInv(aShape, aTrsfInv, Standard_False);
-//    TopoDS_Shape aShapeTrsfInv = aTransformationShapeInv.Shape();
-//    aFunction->SetValue(aShapeTrsfInv);
-    
     TCollection_AsciiString theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfTransient) aSeqPropagate = aBlocksOperations->Propagate(theShape);
     if (aSeqPropagate.IsNull() || aSeqPropagate->Length() == 0) {
@@ -409,12 +372,6 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
     Standard_Integer nbEdges, aNbGroups = aSeqPropagate->Length();
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
-    
-    
-    // Apply transformation to shape
-//    BRepBuilderAPI_Transform aTransformationShape(theShape->GetValue(), aTrsf, Standard_False);
-//    TopoDS_Shape aShapeTrsf = aTransformationShape.Shape();
-//    aFunction->SetValue(aShapeTrsf);
     
     bool addGroup;
     bool circularFoundAndAdded = false;
@@ -593,23 +550,9 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(/*std::vector<GEOM_IOperations*> t
 
 
 
-bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IOperations*> theOperations, */Handle(GEOM_Object) theShape, 
+bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) theShape, 
       double theR1, double theW1, double theL1, double theR2, double theW2, double theL2, double theH, double theW, double theRF, bool isNormal) {
     SetErrorCode(KO);
-/*
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = (GEOMImpl_I3DPrimOperations*) &theOperations[0];
-    GEOMImpl_IBasicOperations* aBasicOperations = (GEOMImpl_IBasicOperations*) &theOperations[1];
-    GEOMImpl_IBlocksOperations* aBlocksOperations = (GEOMImpl_IBlocksOperations*) &theOperations[2];
-    GEOMImpl_IBooleanOperations* aBooleanOperations = (GEOMImpl_IBooleanOperations*) &theOperations[3];
-    GEOMImpl_IShapesOperations* aShapesOperations = (GEOMImpl_IShapesOperations*) &theOperations[4];
-    GEOMImpl_ITransformOperations* aTransformOperations = (GEOMImpl_ITransformOperations*) &theOperations[5];*/
-
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
 
     // Build tools for partition operation:
     // 1 face and 2 planes
@@ -630,7 +573,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
     double theHoriCylinderRadius = aR1Ext + theH + theRF;
 
     // Common edges on internal cylinder
-//    std::cerr << "Search for internal edges" << std::endl;
     Handle(GEOM_Object) box_i = a3DPrimOperations->MakeBoxDXDYDZ(theR2, theR2, theR1);
     box_i->GetLastFunction()->SetDescription("");
     box_i = aTransformOperations->TranslateDXDYDZ(box_i, -theR2, -theR2, 0);
@@ -641,29 +583,23 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
     Handle(TColStd_HSequenceOfTransient) edges_i = aShapesOperations->GetShapesOnBox(box_i, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
-//     Handle(TColStd_HSequenceOfTransient) edges_i = GetCommonShapesOnCylinders(theShape, TopAbs_EDGE, theR1, theR2);
     if (edges_i.IsNull() || edges_i->Length() == 0) {
-//        std::cerr << "Internal edges not found" << std::endl;
         SetErrorCode("Internal edges not found");
         return false;
     }
-//    std::cerr << "Internal edges found" << std::endl;
     for (int i=1; i<=edges_i->Length();i++) {
         Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_i->Value(i));
         anObj->GetLastFunction()->SetDescription("");
     }
     arete_intersect_int = Handle(GEOM_Object)::DownCast(edges_i->Value(1));
 
-//    std::cerr << "Search for internal vertices" << std::endl;
     // search for vertices located on both internal pipes
     aFunction = theShape->GetLastFunction();
     theDesc = aFunction->GetDescription();
     Handle(TColStd_HSequenceOfTransient) vertices_i = aShapesOperations->GetShapesOnBox(box_i, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
-//     Handle(TColStd_HSequenceOfTransient) vertices_i = GetCommonShapesOnCylinders(theShape, TopAbs_VERTEX, theR1, theR2);
     if (vertices_i.IsNull() || vertices_i->Length() == 0) {
-//        std::cerr << "Internal vertices not found" << std::endl;
         SetErrorCode("Internal vertices not found");
         return false;
     }
@@ -681,7 +617,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
             vi2 = v;
         }
     }
-//    std::cerr << "Internal vertices found" << std::endl;
 
     std::list<Handle(GEOM_Object)> theShapes;
             
@@ -693,15 +628,12 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
         box_e = aTransformOperations->TranslateDXDYDZ(box_e, -aR2Ext, -aR2Ext, 0);
         box_e->GetLastFunction()->SetDescription("");
         // Common edges on external cylinder
-//        std::cerr << "Search for external edges" << std::endl;
         aFunction = theShape->GetLastFunction();
         theDesc = aFunction->GetDescription();
         Handle(TColStd_HSequenceOfTransient) edges_e = aShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
         // Recover previous description to get rid of Propagate dump
         aFunction->SetDescription(theDesc);
-//         Handle(TColStd_HSequenceOfTransient) edges_e = GetCommonShapesOnCylinders(theShape, TopAbs_EDGE, aR1Ext, aR2Ext);
         if (edges_e.IsNull() || edges_e->Length() == 0) {
-//            std::cerr << "External edges not found" << std::endl;
             SetErrorCode("External edges not found");
             return false;
         }
@@ -709,18 +641,14 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
             Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
             anObj->GetLastFunction()->SetDescription("");
         }
-//        std::cerr << "External edges found" << std::endl;
 
-//        std::cerr << "Search for external vertices" << std::endl;
         // search for vertices located on both external pipes
         aFunction = theShape->GetLastFunction();
         theDesc = aFunction->GetDescription();
         Handle(TColStd_HSequenceOfTransient) vertices_e = aShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
         // Recover previous description to get rid of Propagate dump
         aFunction->SetDescription(theDesc);
-//         Handle(TColStd_HSequenceOfTransient) vertices_e = GetCommonShapesOnCylinders(theShape, TopAbs_VERTEX, aR1Ext, aR2Ext);
         if (vertices_e.IsNull() || vertices_e->Length() == 0) {
-//            std::cerr << "External vertices not found" << std::endl;
             SetErrorCode("External vertices not found");
             return false;
         }
@@ -738,7 +666,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
                     ve2 = v;
             }
         }
-//        std::cerr << "External vertices found" << std::endl;
         Handle(GEOM_Object) edge_e1, edge_e2;
         try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
@@ -798,7 +725,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
         double ZX=0, ZY=0;
         std::vector<int> LX;
         std::vector<int> LY;
-//         Handle(TColStd_HSequenceOfTransient) extremVertices;
         Handle(GEOM_Object) box_e = a3DPrimOperations->MakeBoxDXDYDZ(theVertCylinderRadius, theVertCylinderRadius, theHoriCylinderRadius);
         box_e->GetLastFunction()->SetDescription("");
         box_e = aTransformOperations->TranslateDXDYDZ(box_e, -theVertCylinderRadius, -theVertCylinderRadius, 0);
@@ -810,9 +736,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
         // Recover previous description to get rid of Propagate dump
         aFunction->SetDescription(theDesc);
         
-//         extremVertices = aShapesOperations->GetShapesOnCylinder(theShape, TopAbs_VERTEX, Vector_Z, theVertCylinderRadius, GEOMAlgo_ST_ONIN);
         if (extremVertices.IsNull() || extremVertices->Length() == 0) {
-//            std::cerr << "extremVertices.IsNull() || extremVertices->Length() == 0" << std::endl;
             if (theRF == 0)
                 SetErrorCode("Vertices on chamfer not found");
             else
@@ -820,7 +744,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
             return false;
         }
         
-//         std::cerr << "Found " << extremVertices->Length() << " vertices" << std::endl;
         theShapes.push_back(theShape);
         theShapes.push_back(box_e);
         if (extremVertices->Length() != 6) {
@@ -834,23 +757,10 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
           return false;
         }
         
-//         std::cerr << "BEGIN of parsing list of vertices" << std::endl;
         for (int i=1; i<=extremVertices->Length(); i++){
             Handle(GEOM_Object) aV = Handle(GEOM_Object)::DownCast(extremVertices->Value(i));
             aV->GetLastFunction()->SetDescription("");
-//             std::cerr << "Vertex #" <<  i << std::endl;
             gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aV->GetValue()));
-//             std::cerr << "aP.X() " <<  aP.X() << std::endl;
-//             std::cerr << "aP.Y() " <<  aP.Y() << std::endl;
-//             std::cerr << "aP.Z() " <<  aP.Z() << std::endl;
-//             if (Abs(aP.Z() - theL2) < Precision::Confusion()) {
-// //                std::cerr << "Vertex = L2 ==> OUT" << std::endl;
-//                 continue;
-//             }
-//             if (aP.Z() < 0) {
-// //                std::cerr << "Vertex < 0 ==> OUT" << std::endl;
-//                 continue;
-//             }
 
             if (Abs(aP.X()) <= Precision::Confusion()) {
                 if (Abs(aP.Y()) - theR2 > Precision::Confusion()) {
@@ -871,17 +781,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
                 }
             }
         }
-//         std::cerr << "END of parsing list of vertices" << std::endl;
-//         std::cerr << "LX:";
-//         for (int i=0;i<LX.size();i++)
-//           std::cerr << " " << LX.at(i);
-//         std::cerr << std::endl;
-//         std::cerr << "LY:";
-//         for (int i=0;i<LY.size();i++)
-//           std::cerr << " " << LY.at(i);
-//         std::cerr << std::endl;
-//         std::cerr << "PZX: " << PZX << std::endl;
-//         std::cerr << "PZY: " << PZY << std::endl;
 
         idP2 = PZX;
         idP4 = PZY;
@@ -892,28 +791,21 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
         if (LY.at(0) == PZY)
           idP3 = LY.at(1);
 
-//         std::cerr << "idP1: " << idP1 << std::endl;
-//         std::cerr << "idP2: " << idP2 << std::endl;
-//         std::cerr << "idP3: " << idP3 << std::endl;
-//         std::cerr << "idP4: " << idP4 << std::endl;
-
         P1 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP1));
         P2 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP2));
         P3 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP3));
         P4 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP4));
 
-//         std::cerr << "Building edge 1 in thickness" << std::endl;
         Handle(GEOM_Object) Cote_1 = aBasicOperations->MakeLineTwoPnt(P1, vi1);
         if (Cote_1.IsNull()) {
-            SetErrorCode("Impossilbe to build edge in thickness");
+            SetErrorCode("Impossible to build edge in thickness");
             return false;
         }
         Cote_1->GetLastFunction()->SetDescription("");
         
-//         std::cerr << "Building edge 2 in thickness" << std::endl;
         Handle(GEOM_Object) Cote_2 = aBasicOperations->MakeLineTwoPnt(vi2, P3);
         if (Cote_2.IsNull()) {
-            SetErrorCode("Impossilbe to build edge in thickness");
+            SetErrorCode("Impossible to build edge in thickness");
             return false;
         }
         Cote_2->GetLastFunction()->SetDescription("");
@@ -923,15 +815,14 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
 //         std::cerr << "Getting chamfer edge on main pipe" << std::endl;
         Handle(GEOM_Object) edge_chan_princ = aBlocksOperations->GetEdge(theShape, P1, P3);
         if (edge_chan_princ.IsNull()) {
-            SetErrorCode("Impossilbe to find edge on main pipe");
+            SetErrorCode("Impossible to find edge on main pipe");
             return false;
         }
         edge_chan_princ->GetLastFunction()->SetDescription("");
         
-//         std::cerr << "Getting chamfer edge on incident pipe" << std::endl;
         Handle(GEOM_Object) edge_chan_inc = aBlocksOperations->GetEdge(theShape, P2, P4);
         if (edge_chan_inc.IsNull()) {
-            SetErrorCode("Impossilbe to find edge on incident pipe");
+            SetErrorCode("Impossible to find edge on incident pipe");
             return false;
         }
         edge_chan_inc->GetLastFunction()->SetDescription("");
@@ -984,7 +875,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
 //         std::cerr << "Creating new line 1 from 2 previous points" << std::endl;
         Handle(GEOM_Object) Cote_3 = aBasicOperations->MakeLineTwoPnt(P5bis, P2);
         if (Cote_3.IsNull()) {
-            SetErrorCode("Impossilbe to build edge in thickness");
+            SetErrorCode("Impossible to build edge in thickness");
             return false;
         }
         Cote_3->GetLastFunction()->SetDescription("");
@@ -992,7 +883,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
 //         std::cerr << "Creating new line 2 from 2 previous points" << std::endl;
         Handle(GEOM_Object) Cote_4 = aBasicOperations->MakeLineTwoPnt(P6bis, P4);
         if (Cote_4.IsNull()) {
-            SetErrorCode("Impossilbe to build edge in thickness");
+            SetErrorCode("Impossible to build edge in thickness");
             return false;
         }
         Cote_4->GetLastFunction()->SetDescription("");
@@ -1000,7 +891,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
 //         std::cerr << "Creating new line 3 from 2 previous points" << std::endl;
         Handle(GEOM_Object) Cote_5 = aBasicOperations->MakeLineTwoPnt(P5bis, P6bis);
         if (Cote_4.IsNull()) {
-            SetErrorCode("Impossilbe to build edge in thickness");
+            SetErrorCode("Impossible to build edge in thickness");
             return false;
         }
         Cote_5->GetLastFunction()->SetDescription("");
@@ -1041,79 +932,18 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
     theShapes.push_back(aPlnOZ);
     theShapes.push_back(aPlnOXZ);
 
-      // Partition
-//    Handle(GEOM_Object) Part0 = aBooleanOperations->MakeHalfPartition(theShape, face_t);
-//    if (Part0.IsNull()) {
-//        std::cerr << "Impossible to build partition between TShape and 1st face" << std::endl;
-//        SetErrorCode("Impossible to build partition between TShape and 1st face");
-//        return false;
-//    }
-//    Part0->GetLastFunction()->SetDescription("");
-//
-//    Handle(GEOM_Object) Te3 ;
-//    if (isNormal) {
-//      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()) {
-//        std::cerr << "External radius are identical: we do not make partition with plane OXZ" << std::endl;
-//        Te3 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOZ);
-//      }
-//      else {
-//        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
-//        if (Part1.IsNull()) {
-//          std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
-//          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
-//          return false;
-//        }
-//        Part1->GetLastFunction()->SetDescription("");
-//        Te3 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
-//      }
-//      if (Te3.IsNull()) {
-//          std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
-//          SetErrorCode("Impossible to build partition between TShape and plane OZ");
-//          return false;
-//      }
-//      Te3->GetLastFunction()->SetDescription("");
-//    }
-//    else {
-//      if (Abs(aR1Ext - aR2Ext) <= Precision::Approximation()){ // We should never go here
-//        SetErrorCode("Impossible to build TShape");
-//        return false;
-//      }
-//      else {
-//        Handle(GEOM_Object) Part1 = aBooleanOperations->MakeHalfPartition(Part0, aPlnOXZ);
-//        if (Part1.IsNull()) {
-//        std::cerr << "Impossible to build partition between TShape and plane OXZ" << std::endl;
-//          SetErrorCode("Impossible to build partition between TShape and plane OXZ");
-//          return false;
-//        }
-//        Part1->GetLastFunction()->SetDescription("");
-//        Handle(GEOM_Object) Part2 = aBooleanOperations->MakeHalfPartition(Part1, aPlnOZ);
-//        if (Part2.IsNull()) {
-//        std::cerr << "Impossible to build partition between TShape and plane OZ" << std::endl;
-//          SetErrorCode("Impossible to build partition between TShape and plane OZ");
-//          return false;
-//        }
-//        Part2->GetLastFunction()->SetDescription("");
-//        Te3 = aBooleanOperations->MakeHalfPartition(Part2, face_t2);
-//        if (Te3.IsNull()) {
-//            std::cerr << "Impossible to build partition between TShape and 2nd face" << std::endl;
-//            SetErrorCode("Impossible to build partition between TShape and 2nd face");
-//            return false;
-//        }
-//        Te3->GetLastFunction()->SetDescription("");
-//      }
-//    }
 
-     Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
-     Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
-     Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
-     Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
-     Handle(TColStd_HArray1OfInteger) theMaterials;
-     partitionShapes->Append(theShape);
-     theTools->Append(aPlnOZ);
-     theTools->Append(aPlnOXZ);
-     theTools->Append(face_t);
-     if (!isNormal)
-         theTools->Append(face_t2);
+    Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HArray1OfInteger) theMaterials;
+    partitionShapes->Append(theShape);
+    theTools->Append(aPlnOZ);
+    theTools->Append(aPlnOXZ);
+    theTools->Append(face_t);
+    if (!isNormal)
+        theTools->Append(face_t2);
 
      Handle(GEOM_Object) Te3 = aBooleanOperations->MakePartition(partitionShapes, theTools, theKeepInside, theRemoveInside, TopAbs_SOLID, false, theMaterials, 0, false);
      if (Te3.IsNull()) {
@@ -1134,21 +964,13 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(/*std::vector<GEOM_IO
 }
 
 // Mirror and glue faces
-bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(/*std::vector<GEOM_IOperations*> theOperations, */Handle(GEOM_Object) theShape, 
+bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object) theShape, 
       double theR1, double theW1, double theL1, double theR2, double theW2, double theL2) {
     SetErrorCode(KO);
     
     // Useful values
     double aSize = 2*(theL1 + theL2);
     double aR1Ext = theR1 + theW1;
-    /*
-    GEOMImpl_IBasicOperations* aBasicOperations = (GEOMImpl_IBasicOperations*) &theOperations[1];
-    GEOMImpl_IShapesOperations* aShapesOperations = (GEOMImpl_IShapesOperations*) &theOperations[4];
-    GEOMImpl_ITransformOperations* aTransformOperations = (GEOMImpl_ITransformOperations*) &theOperations[5];*/
-
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
 
     // Planes
     Handle(GEOM_Object) aP0 = aBasicOperations->MakePointXYZ(0, 0, 0);
@@ -1167,16 +989,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(/*std::vector<GEO
         SetErrorCode("Impossible to build mirror of quarter TShape");
         return false;
     }
-
-//    std::list<Handle(GEOM_Object)> aShapes1, aShapes2;
-//    aShapes1.push_back(Te3);
-//    aShapes1.push_back(Te4);
-//    Handle(GEOM_Object) Te5 = aShapesOperations->MakeCompound(aShapes1);
-//    if (Te4.IsNull()) {
-//        SetErrorCode("Impossible to build compound");
-//        return false;
-//    }
-//    Te5->GetLastFunction()->SetDescription("");
 
     Handle(GEOM_Object) Te5 = aTransformOperations->MirrorPlaneCopy(theShape, aPlane_OY);
     if (Te5.IsNull()) {
@@ -1208,15 +1020,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(/*std::vector<GEO
     }
 
     TopoDS_Shape aShape = Te8->GetValue();
-//     TopTools_IndexedMapOfShape aMapOfShapes;
-//    TopExp::MapShapes(aShape, aMapOfShapes);
-//     TopExp::MapShapes(aShape, TopAbs_COMPOUND, aMapOfShapes);
-
-//    std::cerr << "aMapOfShapes.Extent(): " << aMapOfShapes.Extent() << std::endl;
-//    if (aMapOfShapes.Extent() != 1){
-//        SetErrorCode("Result of partition is not correct");
-//        return false;
-//    }
 
     theShape->GetLastFunction()->SetValue(aShape);
 
@@ -1251,16 +1054,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     MESSAGE("GEOMImpl_IAdvancedOperations::MakePipeTShape");
     SetErrorCode(KO);
     //Add a new object
-//     std::cerr << "Add a new object" << std::endl;
     Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_TSHAPE);
 
     //Add a new shape function with parameters
-//     std::cerr << "Add a new shape function with parameters" << std::endl;
     Handle(GEOM_Function) aFunction = aShape->AddFunction(GEOMImpl_PipeTShapeDriver::GetID(), TSHAPE_BASIC);
     if (aFunction.IsNull()) return NULL;
 
     //Check if the function is set correctly
-//     std::cerr << "Check if the function is set correctly" << std::endl;
     if (aFunction->GetDriverGUID() != GEOMImpl_PipeTShapeDriver::GetID()) return NULL;
 
     GEOMImpl_IPipeTShape aData(aFunction);
@@ -1273,7 +1073,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     aData.SetL2(theL2);
     aData.SetHexMesh(theHexMesh);
 
-//     std::cerr << "Compute the resulting value" << std::endl;
     //Compute the resulting value
     try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
@@ -1281,53 +1080,30 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 #endif
         if (!GetSolver()->ComputeFunction(aFunction)) {
             SetErrorCode("TShape driver failed");
-//            MESSAGE("TShape driver failed");
             return NULL;
         }
-//         std::cerr << "aShape->GetName(): " << aShape->GetName() << std::endl;
     } catch (Standard_Failure) {
         Handle(Standard_Failure) aFail = Standard_Failure::Caught();
         SetErrorCode(aFail->GetMessageString());
         return NULL;
     }
     
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    std::vector<GEOM_IOperations*> theOperations;
-    theOperations.push_back(a3DPrimOperations);
-    theOperations.push_back(aBasicOperations);
-    theOperations.push_back(aBlocksOperations);
-    theOperations.push_back(aBooleanOperations);
-    theOperations.push_back(aShapesOperations);
-    theOperations.push_back(aTransformOperations);
-    
     if (theHexMesh) {
-//         std::cerr << "Creating partition" << std::endl;
-        if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-//         std::cerr << "Done" << std::endl;
-//         std::cerr << "Creating mirrors and glue" << std::endl;
-        if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-//         std::cerr << "Done" << std::endl;
     }
 
     Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
-//     std::cerr << "Add shape in result list" << std::endl;
     aSeq->Append(aShape);
 
     if (theHexMesh) {
         /*
          * Get the groups: BEGIN
          */
-        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf())) {
-//            SetErrorCode("Make groups failed");
+        if (!MakeGroups(aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
             return NULL;
-        }
 
         TCollection_AsciiString aListRes, anEntry;
         // Iterate over the sequence aSeq
@@ -1429,30 +1205,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         SetErrorCode(aFail->GetMessageString());
         return NULL;
     }
-
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    std::vector<GEOM_IOperations*> theOperations;
-    theOperations.push_back(a3DPrimOperations);
-    theOperations.push_back(aBasicOperations);
-    theOperations.push_back(aBlocksOperations);
-    theOperations.push_back(aBooleanOperations);
-    theOperations.push_back(aShapesOperations);
-    theOperations.push_back(aTransformOperations);
     
     if (theHexMesh) {
-//        std::cerr << "Creating partition" << std::endl;
-        if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-//        std::cerr << "Done" << std::endl;
-//        std::cerr << "Creating mirrors and glue" << std::endl;
-        if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
-//        std::cerr << "Done" << std::endl;
     }
 
     TopoDS_Shape Te = aShape->GetValue();
@@ -1469,8 +1227,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         //
         // Get the groups: BEGIN
         //
-        if (!MakeGroups(/*theOperations, */aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf)) {
-//            SetErrorCode("Make groups failed");
+        if (!MakeGroups(aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf)) {
             return NULL;
         }
 
@@ -1569,21 +1326,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         return NULL;
     }
 
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    GEOMImpl_ILocalOperations* aLocalOperations = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-    std::vector<GEOM_IOperations*> theOperations;
-    theOperations.push_back(a3DPrimOperations);
-    theOperations.push_back(aBasicOperations);
-    theOperations.push_back(aBlocksOperations);
-    theOperations.push_back(aBooleanOperations);
-    theOperations.push_back(aShapesOperations);
-    theOperations.push_back(aTransformOperations);
-
     // BEGIN of chamfer
     TopoDS_Shape aShapeShape = aShape->GetValue();
     TopTools_IndexedMapOfShape anEdgesIndices;
@@ -1648,12 +1390,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
  //   bool doMesh = false;
     if (theHexMesh) {
 //        doMesh = true;
-        if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false)) {
+        if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false)) {
             MESSAGE("PipeTShape partition failed");
 //            doMesh = false;
             return NULL;
         }
-        if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2)) {
+        if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2)) {
           MESSAGE("PipeTShape mirrors and glue failed");
 //          doMesh = false;
           return NULL;
@@ -1668,15 +1410,15 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
 //
 //         Get the groups: BEGIN
 //
-//        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf())) {
+//        if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf())) {
 //            //Make a Python command
 //            GEOM::TPythonDump(aFunction) << "[" << aShape << "] = geompy.MakePipeTShapeChamfer(" << theR1 << ", " << theW1
 //                    << ", " << theL1 << ", " << theR2 << ", " << theW2 << ", " << theL2 << ", " << theH << ", " << theW
 //                    << ", " << theHexMesh << ")";
 //        }
 //        else {
-        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
-	  return NULL;
+        if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+            return NULL;
 
 	TCollection_AsciiString aListRes, anEntry;
 	// Iterate over the sequence aSeq
@@ -1783,21 +1525,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         return NULL;
     }
 
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    GEOMImpl_ILocalOperations* aLocalOperations = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-    std::vector<GEOM_IOperations*> theOperations;
-    theOperations.push_back(a3DPrimOperations);
-    theOperations.push_back(aBasicOperations);
-    theOperations.push_back(aBlocksOperations);
-    theOperations.push_back(aBooleanOperations);
-    theOperations.push_back(aShapesOperations);
-    theOperations.push_back(aTransformOperations);
-
     // BEGIN of chamfer
     TopoDS_Shape aShapeShape = aShape->GetValue();
     TopTools_IndexedMapOfShape anEdgesIndices;
@@ -1858,9 +1585,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     // END of chamfer
     
     if (theHexMesh) {
-        if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false))
+        if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, 0, false))
           return NULL;
-        if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
     }
 
@@ -1877,7 +1604,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         /*
          * Get the groups: BEGIN
          */
-        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+        if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
             return NULL;
 
         TCollection_AsciiString aListRes, anEntry;
@@ -1973,21 +1700,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         return NULL;
     }
 
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    GEOMImpl_ILocalOperations* aLocalOperations = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-    std::vector<GEOM_IOperations*> theOperations;
-    theOperations.push_back(a3DPrimOperations);
-    theOperations.push_back(aBasicOperations);
-    theOperations.push_back(aBlocksOperations);
-    theOperations.push_back(aBooleanOperations);
-    theOperations.push_back(aShapesOperations);
-    theOperations.push_back(aTransformOperations);
-
     // BEGIN of fillet
     TopoDS_Shape aShapeShape = aShape->GetValue();
     TopTools_IndexedMapOfShape anEdgesIndices;
@@ -2049,9 +1761,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     // END of fillet
 
     if (theHexMesh) {
-        if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
+        if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
           return NULL;
-        if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
     }
 
@@ -2061,7 +1773,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         /*
          * Get the groups: BEGIN
          */
-        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+        if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
             return NULL;
 
         TCollection_AsciiString aListRes, anEntry;
@@ -2168,21 +1880,6 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         return NULL;
     }
 
-    GEOMImpl_IBasicOperations* aBasicOperations = new GEOMImpl_IBasicOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBooleanOperations* aBooleanOperations = new GEOMImpl_IBooleanOperations(GetEngine(), GetDocID());
-    GEOMImpl_IShapesOperations* aShapesOperations = new GEOMImpl_IShapesOperations(GetEngine(), GetDocID());
-    GEOMImpl_ITransformOperations* aTransformOperations = new GEOMImpl_ITransformOperations(GetEngine(), GetDocID());
-    GEOMImpl_IBlocksOperations* aBlocksOperations = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
-    GEOMImpl_I3DPrimOperations* a3DPrimOperations = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
-    GEOMImpl_ILocalOperations* aLocalOperations = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
-    std::vector<GEOM_IOperations*> theOperations;
-    theOperations.push_back(a3DPrimOperations);
-    theOperations.push_back(aBasicOperations);
-    theOperations.push_back(aBlocksOperations);
-    theOperations.push_back(aBooleanOperations);
-    theOperations.push_back(aShapesOperations);
-    theOperations.push_back(aTransformOperations);
-
     // BEGIN of fillet
     TopoDS_Shape aShapeShape = aShape->GetValue();
     TopTools_IndexedMapOfShape anEdgesIndices;
@@ -2244,9 +1941,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
     // END of fillet
 
     if (theHexMesh) {
-        if (!MakePipeTShapePartition(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
+        if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
           return NULL;
-        if (!MakePipeTShapeMirrorAndGlue(/*theOperations, */aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
           return NULL;
     }
 
@@ -2263,7 +1960,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IAdvancedOperations::MakePipeTShap
         /*
          * Get the groups: BEGIN
          */
-        if (!MakeGroups(/*theOperations, */aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+        if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
             return NULL;
 
         TCollection_AsciiString aListRes, anEntry;

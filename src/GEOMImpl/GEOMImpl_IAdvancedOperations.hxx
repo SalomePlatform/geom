@@ -27,6 +27,11 @@
 #include "GEOM_IOperations.hxx"
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
+#include "GEOMImpl_IBasicOperations.hxx"
+#include "GEOMImpl_IShapesOperations.hxx"
+#include "GEOMImpl_IBlocksOperations.hxx"
+#include "GEOMImpl_IAdvancedOperations.hxx"
+#include "GEOMImpl_ILocalOperations.hxx"
 
 #define Handle_GEOM_Object Handle(GEOM_Object)
 #define Handle_TColStd_HSequenceOfTransient Handle(TColStd_HSequenceOfTransient)
@@ -34,16 +39,25 @@
 
 class GEOMImpl_IAdvancedOperations: public GEOM_IOperations {
 private:
-	bool MakePipeTShapePartition(/*std::vector<GEOM_IOperations*> theOperations, */Handle_GEOM_Object theShape, double theR1, double theW1, double theL1, double theR2,
+	bool MakePipeTShapePartition(Handle_GEOM_Object theShape, double theR1, double theW1, double theL1, double theR2,
 			double theW2, double theL2, double theH = 0, double theW = 0, double theRF = 0, bool isNormal = true);
-    bool MakePipeTShapeMirrorAndGlue(/*std::vector<GEOM_IOperations*> theOperations, */Handle_GEOM_Object theShape, double theR1, double theW1, double theL1, double theR2,
+    bool MakePipeTShapeMirrorAndGlue(Handle_GEOM_Object theShape, double theR1, double theW1, double theL1, double theR2,
             double theW2, double theL2);
-	bool MakeGroups(/*std::vector<GEOM_IOperations*> theOperations, */Handle_GEOM_Object theShape, int shapType, double theR1, double theW1, double theL1, double theR2,
+	bool MakeGroups(Handle_GEOM_Object theShape, int shapType, double theR1, double theW1, double theL1, double theR2,
 			double theW2, double theL2, Handle_TColStd_HSequenceOfTransient theSeq, gp_Trsf aTrsf);
 	gp_Trsf GetPositionTrsf(double theL1, double theL2, Handle_GEOM_Object P1 = NULL, Handle_GEOM_Object P2 = NULL,
 			Handle_GEOM_Object P3 = NULL);
     bool CheckCompatiblePosition(double& theL1, double& theL2, Handle_GEOM_Object theP1, Handle_GEOM_Object theP2,
             Handle_GEOM_Object theP3, double theTolerance);
+
+private:
+  GEOMImpl_IBasicOperations* aBasicOperations;
+  GEOMImpl_IBooleanOperations* aBooleanOperations;
+  GEOMImpl_IShapesOperations* aShapesOperations;
+  GEOMImpl_ITransformOperations* aTransformOperations;
+  GEOMImpl_IBlocksOperations* aBlocksOperations;
+  GEOMImpl_I3DPrimOperations* a3DPrimOperations;
+  GEOMImpl_ILocalOperations* aLocalOperations;
 
 public:
 	Standard_EXPORT
