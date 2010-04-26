@@ -771,20 +771,6 @@ DlgRef_Skeleton::~DlgRef_Skeleton()
 }
 
 //////////////////////////////////////////
-// DlgRef_PipeTShape_ScrollArea
-//////////////////////////////////////////
-
-DlgRef_PipeTShape_ScrollArea::DlgRef_PipeTShape_ScrollArea( QWidget* parent, Qt::WindowFlags f )
-: QWidget( parent, f )
-{
-  setupUi( this );
-}
-
-DlgRef_PipeTShape_ScrollArea::~DlgRef_PipeTShape_ScrollArea()
-{
-}
-
-//////////////////////////////////////////
 // Utility functions
 //////////////////////////////////////////
 
