@@ -1820,7 +1820,7 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
 	aTypeInfo = "Circle";
 	break;
       case GEOM::GEOM_IKindOfShape::ARC_CIRCLE:
-	aTypeInfo = "Ark";
+	aTypeInfo = "Arc Circle";
 	break;
       case GEOM::GEOM_IKindOfShape::ELLIPSE:
 	aTypeInfo = "Ellipse";
