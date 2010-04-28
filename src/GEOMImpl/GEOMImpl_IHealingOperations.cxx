@@ -24,6 +24,7 @@
 #pragma warning( disable:4786 )
 #endif
 
+#include <Standard_Version.hxx>
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IHealingOperations.hxx>
@@ -56,9 +57,9 @@
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #ifdef OCC_VERSION_SERVICEPACK
-#if (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK) > 0x06030008
-#define OCCT_6_3_0_sp_9
-#endif
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
 #endif
 
 
@@ -737,7 +738,7 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
 
   // get free boundary shapes
 
-#ifdef OCCT_6_3_0_sp_9
+#if OCC_VERSION_LARGE > 0x06030008
   ShapeAnalysis_FreeBounds anAnalizer(aShape, Standard_False,
                                       Standard_True, Standard_True);
 #else
