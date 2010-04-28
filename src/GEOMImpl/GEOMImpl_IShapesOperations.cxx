@@ -3021,12 +3021,17 @@ void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, 
   //TopoDS_Shape aPntShape;
   Standard_Real aShapeSize;
 
-  if      (aShape.ShapeType() == TopAbs_EDGE) BRepGProp::LinearProperties(aShape,  theProps);
+  if    (aShape.ShapeType() == TopAbs_VERTEX) aCenterMass = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
+  else if (aShape.ShapeType() == TopAbs_EDGE) BRepGProp::LinearProperties(aShape,  theProps);
   else if (aShape.ShapeType() == TopAbs_FACE) BRepGProp::SurfaceProperties(aShape, theProps);
   else                                        BRepGProp::VolumeProperties(aShape,  theProps);
 
-  aCenterMass = theProps.CentreOfMass();
-  aShapeSize  = theProps.Mass();
+  if (aShape.ShapeType() == TopAbs_VERTEX)
+    aShapeSize = 1;
+  else {
+    aCenterMass = theProps.CentreOfMass();
+    aShapeSize  = theProps.Mass();
+  }
 
 //   aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
 //   aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
@@ -3124,7 +3129,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
-  Standard_Real    min_l, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
+  Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
   Standard_Real    aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
   Bnd_Box          BoundingBox;
   gp_Pnt           aPnt, aPnt_aWhat, tab_Pnt[2];
@@ -3177,10 +3182,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   }
 
   // Compute tolerances
+  Tol_0D = dl_l;
   Tol_1D = dl_l * min_l;
   Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
   Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
 
+  if (Tol_0D < Precision::Confusion()) Tol_0D = Precision::Confusion();
   if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
   if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
   if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
@@ -3190,12 +3197,17 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   //if (Tol_3D > 1.0) Tol_3D = 1.0;
 
   Tol_Mass = Tol_3D;
-  if      ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
+  if ( iType == TopAbs_VERTEX )    Tol_Mass = Tol_0D;
+  else if ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
   else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
 
   // Compute the ShapeWhat Mass
   for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
-    if      ( iType == TopAbs_EDGE ) BRepGProp::LinearProperties(Exp_aWhat.Current(),  aProps);
+    if ( iType == TopAbs_VERTEX ) {
+      aWhat_Mass += 1;
+      continue;
+    }
+    else if ( iType == TopAbs_EDGE ) BRepGProp::LinearProperties(Exp_aWhat.Current(),  aProps);
     else if ( iType == TopAbs_FACE ) BRepGProp::SurfaceProperties(Exp_aWhat.Current(), aProps);
     else                             BRepGProp::VolumeProperties(Exp_aWhat.Current(),  aProps);
     aWhat_Mass += aProps.Mass();
