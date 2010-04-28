@@ -16,7 +16,6 @@ various algorithms;</li>
 <li>\subpage geometrical_obj_prop_page "Geometrical object properties".</li>
 <li>\subpage using_measurement_tools_page "provision of information about geometrical objects".</li>
 <li>\subpage using_notebook_geom_page.</li>
-<li>\subpage user_preferences_page.</li>
 </ul>
 
 Almost all geometry module functionalities are accessible via
