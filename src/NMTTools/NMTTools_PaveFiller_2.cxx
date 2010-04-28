@@ -25,6 +25,9 @@
 //  Author:      Peter KURNEV
 //               <pkv@irinox>
 //
+
+#include <Standard_Version.hxx>
+
 #include <NMTTools_PaveFiller.ixx>
 
 #include <Precision.hxx>
@@ -54,8 +57,6 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
 
-#include <Standard_Version.hxx>
-
 // Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 #include <BOPTools_IndexedMapOfCoupleOfInteger.hxx>
@@ -69,9 +70,9 @@ static
 
 // In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
 #ifdef OCC_VERSION_SERVICEPACK
-#if (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK) > 0x06030008
-#define OCCT_6_3_0_sp_9
-#endif
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
 #endif
 
 //=======================================================================
@@ -86,7 +87,7 @@ void NMTTools_PaveFiller::PerformVE()
   Standard_Integer n1, n2, anIndexIn, aFlag, aWhat;
   Standard_Integer aWith, aNbVEs, aBlockLength, iSDV, nV1;
   Standard_Real aT;
-#ifdef OCCT_6_3_0_sp_9
+#if OCC_VERSION_LARGE > 0x06030008
   Standard_Boolean bToUpdateVertex;
   Standard_Real aDist;
 #endif
@@ -160,7 +161,7 @@ void NMTTools_PaveFiller::PerformVE()
       }
       //
       //modified by NIZNHY-PKV Mon Dec 28 08:58:05 2009f
-#ifdef OCCT_6_3_0_sp_9
+#if OCC_VERSION_LARGE > 0x06030008
       aFlag=myContext.ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
 #else
       aFlag=myContext.ComputeVE (aV1, aE2, aT);
@@ -192,7 +193,7 @@ void NMTTools_PaveFiller::PerformVE()
         myIP->Add(aWhat, aWith, Standard_True, NMTDS_TI_VE);
         //
         //modified by NIZNHY-PKV Mon Dec 28 09:00:54 2009f
-#ifdef OCCT_6_3_0_sp_9
+#if OCC_VERSION_LARGE > 0x06030008
         if (bToUpdateVertex) {
           BRep_Builder aBB;
           //
