@@ -1859,6 +1859,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_TOOL_OBJECT</source>
             <translation>Tool Object</translation>
         </message>
+	<message>
+            <source>GEOM_TOOL_OBJECTS</source>
+            <translation>Tool Objects</translation>
+        </message>
         <message>
             <source>GEOM_TORUS</source>
             <translation>Torus</translation>

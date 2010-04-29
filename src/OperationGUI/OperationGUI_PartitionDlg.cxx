@@ -70,7 +70,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   GroupPoints = new DlgRef_2Sel1List1Check( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECTS" ) );
   GroupPoints->TextLabel3->setText( tr( "GEOM_RECONSTRUCTION_LIMIT" ) );
   GroupPoints->PushButton1->setIcon( image2 );
   GroupPoints->PushButton2->setIcon( image2 );
@@ -170,7 +170,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
   switch ( constructorId ) {
   case 0: /*Full partition */
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
-    GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
+    GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECTS" ) );
     GroupPoints->TextLabel3->show();
     GroupPoints->ComboBox1->show();
     GroupPoints->ComboBox1->setCurrentIndex( 0 );
@@ -225,8 +225,10 @@ bool OperationGUI_PartitionDlg::ClickOnApply()
   if ( !onAccept() )
     return false;
   
+
   initName();
-  ConstructorsClicked( getConstructorId() );
+  //  0020854: EDF 1398 GEOM: Ergonomy of Partition GUI window 
+  //  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
