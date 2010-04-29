@@ -448,6 +448,30 @@
                 </component-service>
                 <component-service>
                     <!-- service-identification -->
+                    <service-name>GetIAdvancedOperations</service-name>
+                    <service-author></service-author>
+                    <service-version></service-version>
+                    <service-comment></service-comment>
+                    <service-by-default>1</service-by-default>
+                    <!-- service-connexion -->
+                    <inParameter-list>
+                        <inParameter>
+                            <inParameter-name>theStudyID</inParameter-name>
+                            <inParameter-type>long</inParameter-type>
+                            <inParameter-comment></inParameter-comment>
+                        </inParameter>
+                    </inParameter-list>
+                    <outParameter-list>
+                        <outParameter>
+                            <outParameter-name>return</outParameter-name>
+                            <outParameter-type>GEOM_IAdvancedOperations</outParameter-type>
+                            <outParameter-comment></outParameter-comment>
+                        </outParameter>
+                    </outParameter-list>
+                    <DataStream-list></DataStream-list>
+                </component-service>
+                <component-service>
+                    <!-- service-identification -->
                     <service-name>RemoveObject</service-name>
                     <service-author></service-author>
                     <service-version></service-version>
@@ -5201,7 +5225,7 @@
                         </outParameter-list>
                         <DataStream-list></DataStream-list>
                     </component-service>
-                    
+                    <!-- @@ insert new functions before this line @@ -->
                 </component-service-list>
             </component-interface-list>
     </component>
