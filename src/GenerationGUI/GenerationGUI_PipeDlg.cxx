@@ -190,6 +190,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
+    aMap.Add(GEOM_COMPOUND);
     aMap.Add(GEOM_WIRE);
     aMap.Add(GEOM_LINE);
     globalSelection(aMap);
@@ -370,6 +371,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
     } else {
       TColStd_MapOfInteger aMap;
+      aMap.Add(GEOM_COMPOUND);
       aMap.Add(GEOM_WIRE);
       aMap.Add(GEOM_LINE);
       globalSelection(aMap);
