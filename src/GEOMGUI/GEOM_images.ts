@@ -1202,6 +1202,6 @@
             <translation>pipetshapegroups.png</translation>
         </message>
 -->
-	<!-- @@ insert new functions before this line @@ -->
+	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

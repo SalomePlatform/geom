@@ -63,7 +63,7 @@ class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
 						    CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
 						    CORBA::Double theRF, CORBA::Boolean theHexMesh,
 						    GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
-  /*@@ insert new functions before this line @@*/
+  /*@@ insert new functions before this line @@ do not remove this line @@*/
 
   ::GEOMImpl_IAdvancedOperations* GetOperations()
   { return (::GEOMImpl_IAdvancedOperations*)GetImpl(); }

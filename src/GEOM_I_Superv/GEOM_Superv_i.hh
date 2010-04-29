@@ -691,7 +691,7 @@ public:
 							CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
 							CORBA::Double theRF, CORBA::Boolean theHexMesh,
 							GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
-  /*@@ insert new functions before this line @@*/
+  /*@@ insert new functions before this line @@ do not remove this line @@*/
   
 private:
   SALOME_NamingService *  name_service; 

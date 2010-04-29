@@ -5225,7 +5225,7 @@
                         </outParameter-list>
                         <DataStream-list></DataStream-list>
                     </component-service>
-                    <!-- @@ insert new functions before this line @@ -->
+                    <!-- @@ insert new functions before this line @@ do not remove this line @@ -->
                 </component-service-list>
             </component-interface-list>
     </component>

@@ -88,7 +88,7 @@ UIC_FILES =					\
 	ui_DlgRef_Skeleton_QTD.h
 
 ADVANCED_UIC_FILES  = 
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@##
 
 UIC_FILES += $(ADVANCED_UIC_FILES)
 

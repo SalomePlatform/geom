@@ -3315,7 +3315,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition (CORBA::Doub
   return aSeqPtr->_this();
 }
 
-/*@@ insert new functions before this line @@*/
+/*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================
 // EXPORTED METHODS

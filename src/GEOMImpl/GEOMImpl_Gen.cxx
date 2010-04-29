@@ -82,7 +82,7 @@
 #include <GEOMImpl_MeasureDriver.hxx>
 // Advanced operations
 #include <GEOMImpl_PipeTShapeDriver.hxx>
-/*@@ insert new functions before this line @@*/
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 //=============================================================================
 /*!
@@ -164,7 +164,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
 
    // Advanced operations
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PipeTShapeDriver::GetID(), new GEOMImpl_PipeTShapeDriver());
-   /*@@ insert new functions before this line @@*/
+   /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
    SetEngine(this);
 }

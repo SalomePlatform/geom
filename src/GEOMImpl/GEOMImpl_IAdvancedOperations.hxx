@@ -108,6 +108,6 @@ public:
 						   Handle(GEOM_Object) P1 = 0,
 						   Handle(GEOM_Object) P2 = 0,
 						   Handle(GEOM_Object) P3 = 0);
-  /*@@ insert new functions before this line @@*/
+  /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

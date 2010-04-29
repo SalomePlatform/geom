@@ -606,7 +606,7 @@ module GEOM
                           in double theRF, in boolean theHexMesh,
                           in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
 
-    /*@@ insert new functions before this line @@*/
+    /*@@ insert new functions before this line @@ do not remove this line @@*/
  };
 };
 

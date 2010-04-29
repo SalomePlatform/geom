@@ -57,7 +57,7 @@
 #include <BRep_Tool.hxx>
 #include <cmath>
 
-/*@@ insert new functions before this line @@*/
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
@@ -2063,4 +2063,4 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   return aSeq;
 }
 
-/*@@ insert new functions before this line @@*/
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

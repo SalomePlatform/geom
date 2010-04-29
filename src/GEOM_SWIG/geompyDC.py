@@ -4224,7 +4224,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
-        #@@ insert new functions before this line @@#
+        #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced
         ## @}

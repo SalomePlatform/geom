@@ -28,7 +28,7 @@ salomeinclude_HEADERS =			\
 
 ADVANCED_INCLUDES  =
 ADVANCED_INCLUDES += AdvancedGUI_PipeTShapeDlg.h
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
 
@@ -41,7 +41,7 @@ dist_libAdvancedGUI_la_SOURCES =	\
 
 ADVANCED_SOURCES  =
 ADVANCED_SOURCES += AdvancedGUI_PipeTShapeDlg.h AdvancedGUI_PipeTShapeDlg.cxx
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 dist_libAdvancedGUI_la_SOURCES += $(ADVANCED_SOURCES)
 
@@ -49,7 +49,7 @@ MOC_FILES =
 
 ADVANCED_MOC_FILES  =
 ADVANCED_MOC_FILES += AdvancedGUI_PipeTShapeDlg_moc.cxx
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@##
 
 MOC_FILES += $(ADVANCED_MOC_FILES)
 
