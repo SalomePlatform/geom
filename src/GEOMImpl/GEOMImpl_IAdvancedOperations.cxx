@@ -43,6 +43,7 @@
 
 #include "GEOMImpl_PipeTShapeDriver.hxx"
 #include "GEOMImpl_IPipeTShape.hxx"
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -56,8 +57,6 @@
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
 #include <cmath>
-
-/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TFunction_DriverTable.hxx>
 #include <TFunction_Driver.hxx>
