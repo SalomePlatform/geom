@@ -353,8 +353,8 @@ void GEOM_Superv_i::getAdvancedOp()
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
-  // get GEOM_IGroupOperations interface
-  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
+  // get GEOM_IAdvancedOperations interface
+  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID))
     myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
 }
 
@@ -3314,6 +3314,8 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition (CORBA::Doub
   endService( " GEOM_Superv_i::MakePipeTShapeFilletWithPosition" );
   return aSeqPtr->_this();
 }
+
+/*@@ insert new functions before this line @@*/
 
 //=====================================================================================
 // EXPORTED METHODS
