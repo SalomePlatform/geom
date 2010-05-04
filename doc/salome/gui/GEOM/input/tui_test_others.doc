@@ -123,6 +123,12 @@
 \anchor swig_GetShapesOnCylinderIDs
 \until Group of edges
 
+\anchor swig_GetShapesOnCylinderWithLocation
+\until Edge out of
+
+\anchor swig_GetShapesOnCylinderWithLocationIDs
+\until Group of edges
+
 \anchor swig_GetShapesOnSphere
 \until Vertex on Sphere
 
