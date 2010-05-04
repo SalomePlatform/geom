@@ -168,12 +168,13 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfGO()
 //  AddItemToListOfGO:
 //=============================================================================
 void GEOM_Superv_i::AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
-				      GEOM::GEOM_Object_ptr    theObject)
+				      GEOM::GEOM_Object_ptr theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfGO(...)");
+  GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_duplicate(theObject);
   if (GEOM_List_i<GEOM::ListOfGO>* aList = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theList, myPOA).in())) {
-    aList->AddObject(theObject);
+    aList->AddObject(anObj);
     MESSAGE(" NewLength = "<<aList->GetList().length());
   }
 }
