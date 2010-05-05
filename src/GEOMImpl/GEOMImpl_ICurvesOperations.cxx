@@ -723,7 +723,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   while (it != thePoints.end()) {
     pd << ", " << (*it++);
   }
-  pd << "])";
+  pd << "]";
+  if ( theIsClosed ) pd << ", True";
+  pd << ")";
 
   SetErrorCode(OK);
   return aSpline;
