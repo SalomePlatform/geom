@@ -1,8 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-#
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -20,11 +17,12 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-
+#
 """
     \namespace geompy
     \brief Module geompy
@@ -360,7 +358,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
                 if doRestoreSubShapes:
                     self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
-                                            theFindMethod, theInheritFirstArg)
+                                            theFindMethod, theInheritFirstArg, True )
             except:
                 print "addToStudy() failed"
                 return ""
@@ -4163,9 +4161,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
-	## Create a T-shape object with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). A chamfer is
-	#  created on the junction of the pipes.
+        ## Create a T-shape object with chamfer and with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). The chamfer is
+        #  created on the junction of the pipes.
         #  The extremities of the main pipe are located on junctions points P1 and P2.
         #  The extremity of the incident pipe is located on junction point P3.
         #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
@@ -4178,7 +4176,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theL2 Half-length of incident pipe
         #  @param theH Height of the chamfer.
         #  @param theW Width of the chamfer.
-	#  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
+        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
@@ -4195,8 +4193,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
-	## Create a T-shape object with specified caracteristics for the main
-        #  and the incident pipes (radius, width, half-length). A fillet is
+        ## Create a T-shape object with fillet and with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). The fillet is
 	#  created on the junction of the pipes.
         #  The extremities of the main pipe are located on junctions points P1 and P2.
         #  The extremity of the incident pipe is located on junction point P3.
@@ -4226,7 +4224,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
-        #@@ insert new functions before this line @@#
+        #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced
         ## @}

@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // File   : DlgRef.h
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
@@ -841,22 +839,6 @@ class DLGREF_EXPORT DlgRef_Skeleton : public QWidget,
 public:
   DlgRef_Skeleton( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_Skeleton();
-};
-
-//////////////////////////////////////////
-// DlgRef_PipeTShape_ScrollArea
-//////////////////////////////////////////
-
-#include "ui_DlgRef_PipeTShape_ScrollArea_QTD.h"
-
-class DLGREF_EXPORT DlgRef_PipeTShape_ScrollArea : public QWidget, 
-                                      public Ui::DlgRef_PipeTShape_ScrollArea_QTD
-{
-  Q_OBJECT
-
-public:
-  DlgRef_PipeTShape_ScrollArea( QWidget* = 0, Qt::WindowFlags = 0 );
-  ~DlgRef_PipeTShape_ScrollArea();
 };
 
 //////////////////////////////////////////

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,10 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File:    BlockFix_BlockFixAPI.cxx
 //  Created: Tue Dec  7 11:59:05 2004
 //  Author:  Pavel DURANDIN
-
+//
 #include <BlockFix_BlockFixAPI.ixx>
 #include <BlockFix.hxx>
 #include <BlockFix_UnionFaces.hxx>

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,10 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-
+//
 #include "BasicGUI_CurveDlg.h"
 
 #include <DlgRef.h>
@@ -341,10 +342,12 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
           }
         }
         else { // aMap.Extent() == 0
-          int pos = isPointInList( myOrderedSel, aSelectedObject );
-          if ( pos == -1 )
-            myOrderedSel.push_back( aSelectedObject );
-          aList.push_back( aSelectedObject );
+          if ( aShape.ShapeType() == TopAbs_VERTEX ) {
+            int pos = isPointInList( myOrderedSel, aSelectedObject );
+            if ( pos == -1 )
+              myOrderedSel.push_back( aSelectedObject );
+            aList.push_back( aSelectedObject );
+          }
         }
       }
     }

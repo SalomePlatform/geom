@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -18,6 +15,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #ifndef ADVANCEDGUI_PIPETSHAPEDLG_H
 #define ADVANCEDGUI_PIPETSHAPEDLG_H
@@ -29,9 +27,9 @@ class DlgRef_2Spin;
 class DlgRef_3Spin;
 class DlgRef_3Sel;
 class DlgRef_6Sel;
-class DlgRef_PipeTShape_ScrollArea;
 class QCheckBox;
 class QLineEdit;
+class QLabel;
 
 //=================================================================================
 // class    : AdvancedGUI_PipeTShapeDlg
@@ -54,13 +52,15 @@ protected:
 private:
 	void Init();
 	void enterEvent(QEvent*);
+    void resizeEvent(QResizeEvent *event);
+    void updateTshapeScreenshotLabel();
 	bool CheckCompatiblePosition(GEOM::GEOM_Object_var theP1, 
                                  GEOM::GEOM_Object_var theP2,
                                  GEOM::GEOM_Object_var theP3, double theTolerance);
 
 private:
 	QPixmap imagePipeTShape;
-	DlgRef_PipeTShape_ScrollArea* PictureView;
+    QLabel* tshapeScreenShotLabel;
 	DlgRef_3Spin* MainTubeGroupParams;
 	DlgRef_3Spin* IncidentTubeGroupParams;
 	DlgRef_2Spin* ChamferGroupParams;
@@ -68,10 +68,6 @@ private:
 	DlgRef_6Sel*  JunctionPointsSel;
     QPixmap imageImp;
     QString CssNormal, CssAcceptable, CssRefused;
-// 	QLineEdit* NewPosValL1;
-// 	QLineEdit* NewPosValL2;
-// 	QPushButton* ApplyNewL1;
-// 	QPushButton* ApplyNewL2;
 	QCheckBox* HexMeshCheckBox;
 	GEOM::GEOM_Object_var myPoint1, myPoint2, myPoint3;
 	bool myOkPoint1, myOkPoint2, myOkPoint3;

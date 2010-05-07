@@ -1,6 +1,6 @@
 <!DOCTYPE TS>
 <!--
-  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 
   Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
   CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -633,7 +633,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_RECTANGLE_TITLE</source>
-            <translation>Face Construction</translation>
+            <translation>Rectangle Construction</translation>
+        </message>
+        <message>
+            <source>GEOM_RECTANGLE</source>
+            <translation>Rectangle</translation>
         </message>
         <message>
           <source>GEOM_FILLET</source>
@@ -1855,6 +1859,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_TOOL_OBJECT</source>
             <translation>Tool Object</translation>
         </message>
+	<message>
+            <source>GEOM_TOOL_OBJECTS</source>
+            <translation>Tool Objects</translation>
+        </message>
         <message>
             <source>GEOM_TORUS</source>
             <translation>Torus</translation>
@@ -2093,7 +2101,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check Shape</translation>
         </message>
         <message>
             <source>MEN_CHECK_COMPOUND</source>
@@ -2153,7 +2161,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_RECTANGLE</source>
-            <translation>Face</translation>
+            <translation>Rectangle</translation>
         </message>
         <message>
             <source>MEN_DELETE</source>
@@ -2525,7 +2533,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_TOLERANCE</source>
-            <translation>Compute Tolerance</translation>
+            <translation>Tolerance</translation>
         </message>
         <message>
             <source>MEN_TOOLS</source>
@@ -2725,11 +2733,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_BASIC_PROPS</source>
-            <translation>Basic properties</translation>
+            <translation>Show basic properties of the shape</translation>
         </message>
         <message>
             <source>STB_BND_BOX</source>
-            <translation>Compute bounding box</translation>
+            <translation>Compute bounding box of the shape</translation>
         </message>
         <message>
             <source>STB_BOX</source>
@@ -2745,7 +2753,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check shape validity</translation>
         </message>
         <message>
             <source>STB_CHECK_COMPOUND</source>
@@ -2917,7 +2925,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_INERTIA</source>
-            <translation>Compute intertia</translation>
+            <translation>Compute moments of intertia of the shape</translation>
         </message>
         <message>
             <source>STB_ISOS</source>
@@ -2933,11 +2941,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_MASS_CENTER</source>
-            <translation>Compute center of mass</translation>
+            <translation>Compute center of mass of the shape</translation>
         </message>
         <message>
             <source>STB_MIN_DIST</source>
-            <translation>Compute minimum distance</translation>
+            <translation>Compute minimum distance between two objects</translation>
         </message>
         <message>
             <source>STB_MIRROR</source>
@@ -2981,7 +2989,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_POINT_COORDS</source>
-            <translation>Point coordinates</translation>
+            <translation>Display point coordinates</translation>
         </message>
         <message>
             <source>STB_POINT_ON_EDGE</source>
@@ -3117,7 +3125,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Compute tolerance of the shape</translation>
         </message>
         <message>
             <source>STB_TORUS</source>
@@ -3248,6 +3256,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Advanced</translation>
         </message>
         <message>
+            <source>TOOL_MEASURES</source>
+            <translation>Measures</translation>
+        </message>
+        <message>
             <source>TOP_ARC</source>
             <translation>Create an arc</translation>
         </message>
@@ -3261,7 +3273,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_BND_BOX</source>
-            <translation>Compute bounding box</translation>
+            <translation>Bounding box</translation>
         </message>
         <message>
             <source>TOP_BOX</source>
@@ -3277,7 +3289,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check shape</translation>
         </message>
         <message>
             <source>TOP_CHECK_COMPOUND</source>
@@ -3433,7 +3445,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_INERTIA</source>
-            <translation>Compute intertia</translation>
+            <translation>Moments of intertia</translation>
         </message>
         <message>
             <source>TOP_ISOS</source>
@@ -3449,11 +3461,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_MASS_CENTER</source>
-            <translation>Compute center of mass</translation>
+            <translation>Center of mass</translation>
         </message>
         <message>
             <source>TOP_MIN_DIST</source>
-            <translation>Compute minimum distance</translation>
+            <translation>Minimum distance</translation>
         </message>
         <message>
             <source>TOP_MIRROR</source>
@@ -3621,7 +3633,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Tolerance</translation>
         </message>
         <message>
             <source>TOP_TORUS</source>
@@ -3773,7 +3785,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_NORMALE</source>
-            <translation>Compute normal to a face</translation>
+            <translation>Normal to a face</translation>
         </message>
         <message>
             <source>MEN_NORMALE</source>
@@ -3781,11 +3793,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_NORMALE</source>
-            <translation>Compute normal to a face in a point (optional)</translation>
+            <translation>Compute normal to the face</translation>
         </message>
         <message>
             <source>TOP_MEASURE_ANGLE</source>
-            <translation>Compute angle</translation>
+            <translation>Angle</translation>
         </message>
         <message>
             <source>MEN_MEASURE_ANGLE</source>
@@ -4635,5 +4647,5 @@ Would you like to continue?</translation>
             <translation>Junction 3</translation>
         </message>
     </context>
-    <!-- @@ insert new functions before this line @@ -->
+    <!-- @@ insert new functions before this line @@ do not remove this line @@ -->
 </TS>

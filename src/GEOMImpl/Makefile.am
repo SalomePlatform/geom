@@ -1,7 +1,4 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-#
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM : implementaion of GEOM_Gen.idl
 #  File   : Makefile.in
 #  Author : Damien COQUERET (OCC)
@@ -148,7 +146,7 @@ salomeinclude_HEADERS =				\
 
 ADVANCED_INCLUDES  =
 ADVANCED_INCLUDES += GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
 
@@ -217,7 +215,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 
 ADVANCED_SOURCES  =
 ADVANCED_SOURCES += GEOMImpl_PipeTShapeDriver.cxx
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 dist_libGEOMimpl_la_SOURCES += $(ADVANCED_SOURCES)
 

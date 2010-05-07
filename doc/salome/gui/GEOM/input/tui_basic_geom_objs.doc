@@ -16,6 +16,7 @@ p100 = geompy.MakeVertexWithRef(p0, 100., 100., 100.)
 px = geompy.MakeVertex(100., 0., 0.)
 py = geompy.MakeVertex(0., 100., 0.)
 pz = geompy.MakeVertex(0., 0., 100.)
+p1 = geompy.MakeVertex(50., 50., 30.)
 
 # create a curve and a vertices on it
 Arc = geompy.MakeArc(py, pz, px)
@@ -24,11 +25,16 @@ p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
 #create vertex by point projection
 p_on_arc2 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10)
 
+# create 2 lines and make point on its intersection
+line_1 = geompy.MakeLineTwoPnt(p0, p100)
+line_2 = geompy.MakeLineTwoPnt(p1, pz)
+p_inter = geompy.MakeVertexOnLinesIntersection(line_1, line_2)
+
 # create a face and vertices on it
 Add_line = geompy.MakeLineTwoPnt(px, py)
 arc_face = geompy.MakeFaceWires([Arc, Add_line], 1)
 p_on_face1 = geompy.MakeVertexOnSurface(arc_face, 0.5, 0.5)
-p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(Face_1, 35, 35, 35)
+p_on_face2 = geompy.MakeVertexOnSurfaceByCoord(arc_face, 35, 35, 35)
 
 
 # add objects in the study
@@ -38,8 +44,11 @@ id_px       = geompy.addToStudy(px,   "Vertex X")
 id_py       = geompy.addToStudy(py,   "Vertex Y")
 id_pz       = geompy.addToStudy(pz,   "Vertex Z")
 id_Arc      = geompy.addToStudy(Arc,  "Arc")
+id_line_1   = geompy.addToStudy(line_1,  "Line 1")
+id_line_2   = geompy.addToStudy(line_2,  "Line 2")
 id_p_on_arc = geompy.addToStudy(p_on_arc, "Vertex on Arc by parameter")
-id_p_on_arc2 = geompy.addToStudy(p_on_arc, "Vertex on Arc by point projection")
+id_p_on_arc2  = geompy.addToStudy(p_on_arc, "Vertex on Arc by point projection")
+id_p_inter    = geompy.addToStudy(p_inter,   "Vertex on Lines Intersection")
 id_p_on_face1 = geompy.addToStudy(p_on_face1, "Vertex on face by parameter")
 id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on face by point projection")
 
@@ -47,7 +56,8 @@ id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on face by point projectio
 gg.createAndDisplayGO(id_p0)
 gg.createAndDisplayGO(id_p100)
 gg.createAndDisplayGO(id_Arc)
-gg.createAndDisplayGO(id_p_on_arc) 
+gg.createAndDisplayGO(id_p_inter)
+gg.createAndDisplayGO(id_p_on_arc)
 \endcode
 
 \anchor tui_creation_line

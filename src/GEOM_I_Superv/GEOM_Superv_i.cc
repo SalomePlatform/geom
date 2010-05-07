@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
 
@@ -167,12 +168,13 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfGO()
 //  AddItemToListOfGO:
 //=============================================================================
 void GEOM_Superv_i::AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
-				      GEOM::GEOM_Object_ptr    theObject)
+				      GEOM::GEOM_Object_ptr theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfGO(...)");
+  GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_duplicate(theObject);
   if (GEOM_List_i<GEOM::ListOfGO>* aList = 
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theList, myPOA).in())) {
-    aList->AddObject(theObject);
+    aList->AddObject(anObj);
     MESSAGE(" NewLength = "<<aList->GetList().length());
   }
 }
@@ -352,8 +354,8 @@ void GEOM_Superv_i::getAdvancedOp()
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
-  // get GEOM_IGroupOperations interface
-  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
+  // get GEOM_IAdvancedOperations interface
+  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID))
     myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
 }
 
@@ -3313,6 +3315,8 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition (CORBA::Doub
   endService( " GEOM_Superv_i::MakePipeTShapeFilletWithPosition" );
   return aSeqPtr->_this();
 }
+
+/*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================
 // EXPORTED METHODS

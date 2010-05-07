@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,10 +16,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : GEOM_IAdvancedOperations.hh
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
-
 #ifndef _GEOM_IAdvancedOperations_i_HeaderFile
 #define _GEOM_IAdvancedOperations_i_HeaderFile
 
@@ -66,7 +63,7 @@ class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
 						    CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
 						    CORBA::Double theRF, CORBA::Boolean theHexMesh,
 						    GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
-  /*@@ insert new functions before this line @@*/
+  /*@@ insert new functions before this line @@ do not remove this line @@*/
 
   ::GEOMImpl_IAdvancedOperations* GetOperations()
   { return (::GEOMImpl_IAdvancedOperations*)GetImpl(); }

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,11 +18,13 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
 
+#include <Standard_Version.hxx>
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IHealingOperations.hxx>
@@ -55,9 +57,9 @@
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
 #ifdef OCC_VERSION_SERVICEPACK
-#if (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK) > 0x06030008
-#define OCCT_6_3_0_sp_9
-#endif
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
+#else
+#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
 #endif
 
 
@@ -736,7 +738,7 @@ bool GEOMImpl_IHealingOperations::GetFreeBoundary (Handle(GEOM_Object) theObject
 
   // get free boundary shapes
 
-#ifdef OCCT_6_3_0_sp_9
+#if OCC_VERSION_LARGE > 0x06030008
   ShapeAnalysis_FreeBounds anAnalizer(aShape, Standard_False,
                                       Standard_True, Standard_True);
 #else

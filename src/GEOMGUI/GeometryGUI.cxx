@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,10 +19,12 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GeometryGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
+#include <Standard_math.hxx>  // E.A. must be included before Python.h to fix compilation on windows
 #include "Python.h"
 #include "GeometryGUI.h"
 #include "GeometryGUI_Operations.h"
@@ -503,7 +505,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpAdvancedNoOp:     // NO OPERATION (advanced operations base)
   case GEOMOp::OpPipeTShape:       // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
 //   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
-    //@@ insert new functions before this line @@//
+    //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
     libName = "AdvancedGUI";
     break;
   default:
@@ -733,7 +735,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
-  //@@ insert new functions before this line @@//
+  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
 
@@ -778,7 +780,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
   createMenu( GEOMOp::OpPipeTShape, advId, -1 );
 //   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
-  //@@ insert new functions before this line @@//
+  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
 
@@ -982,9 +984,28 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpSolid,    buildTbId );
   createTool( GEOMOp::OpCompound, buildTbId );
 
+  int measureTbId = createTool( tr( "TOOL_MEASURES" ) );
+  createTool( GEOMOp::OpPointCoordinates, measureTbId );
+  createTool( GEOMOp::OpProperties,       measureTbId );
+  createTool( GEOMOp::OpCenterMass,       measureTbId );
+  createTool( GEOMOp::OpInertia,          measureTbId );
+  createTool( GEOMOp::OpNormale,          measureTbId );
+  createTool( separator(),                measureTbId );
+  createTool( GEOMOp::OpBoundingBox,      measureTbId );
+  createTool( GEOMOp::OpMinDistance,      measureTbId );
+  createTool( GEOMOp::OpAngle,            measureTbId );
+  createTool( GEOMOp::OpTolerance  ,      measureTbId );
+  createTool( separator(),                measureTbId );
+  createTool( GEOMOp::OpFreeBoundaries,   measureTbId );
+  createTool( GEOMOp::OpFreeFaces,        measureTbId );
+  createTool( separator(),                measureTbId );
+  createTool( GEOMOp::OpWhatIs,           measureTbId );
+  createTool( GEOMOp::OpCheckShape,       measureTbId );
+  createTool( GEOMOp::OpCheckCompound,    measureTbId );
+
   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   createTool( GEOMOp::OpPipeTShape, advancedTbId );
-  //@@ insert new functions before this line @@//
+  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------
 
@@ -1030,7 +1051,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpIsos ), -1, -1 ); // isos
   mgr->setRule( action( GEOMOp::OpIsos ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDeflection ), -1, -1 ); // deflection
-  mgr->setRule( action( GEOMOp::OpDeflection ), clientOCCorVTK_AndSomeVisible + " and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpDeflection ), "selcount>0 and isVisible and client='OCCViewer'", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg( GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------

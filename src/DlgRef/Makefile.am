@@ -1,7 +1,4 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-#
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 # GEOM DLGREF : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
@@ -90,8 +88,7 @@ UIC_FILES =					\
 	ui_DlgRef_Skeleton_QTD.h
 
 ADVANCED_UIC_FILES  = 
-ADVANCED_UIC_FILES += ui_DlgRef_PipeTShape_ScrollArea_QTD.h
-##@@ insert new functions before this line @@##
+##@@ insert new functions before this line @@ do not remove this line @@##
 
 UIC_FILES += $(ADVANCED_UIC_FILES)
 

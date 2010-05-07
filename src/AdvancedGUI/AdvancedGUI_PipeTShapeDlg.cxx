@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -18,6 +15,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include "AdvancedGUI_PipeTShapeDlg.h"
 
@@ -67,10 +65,11 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	myMainLayout->setMargin(0);
 	myMainLayout->setSpacing(6);
 
-	PictureView = new DlgRef_PipeTShape_ScrollArea();
-	PictureView->PipeTShape->setBackgroundRole(QPalette::Base);
-	PictureView->PipeTShape->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-	PictureView->PipeTShape->setScaledContents(true);
+    tshapeScreenShotLabel = new QLabel();
+    tshapeScreenShotLabel->setSizePolicy(QSizePolicy::Expanding,
+                                         QSizePolicy::Expanding);
+    tshapeScreenShotLabel->setAlignment(Qt::AlignCenter);
+    tshapeScreenShotLabel->setMinimumSize(100, 100);
 
 	MainTubeGroupParams = new DlgRef_3Spin();
 	MainTubeGroupParams->GroupBox1->setTitle(tr("GEOM_PIPE_TSHAPE_MPIPE"));
@@ -149,7 +148,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	// 2nd row, height = 4, col 3
 	int rowNewPosVal = rowspanPict,                      colNewPosVal = 2, rowspanNewPosVal = 4, colspanNewPosVal = 1;
 
-	myMainLayout->addWidget(PictureView, rowPict, colPict, rowspanPict, colspanPict);
+    myMainLayout->addWidget(tshapeScreenShotLabel, rowPict, colPict, rowspanPict, colspanPict);
 
 	myMainLayout->addWidget(MainTubeGroupParams, rowMain, colMain, rowspanMain, colspanMain);
 	myMainLayout->addWidget(FilletGroupParams, rowFill, colFill, rowspanFill, colspanFill);
@@ -161,7 +160,7 @@ AdvancedGUI_PipeTShapeDlg::AdvancedGUI_PipeTShapeDlg(GeometryGUI* theGeometryGUI
 	myMainLayout->addWidget(JunctionPointsSel, rowNewPosVal, colNewPosVal, rowspanNewPosVal, colspanNewPosVal);
 	/***************************************************************/
 
-	setHelpFileName("create__pipetshape__page.html");
+	setHelpFileName("create_pipetshape_page.html");
 
 	Init();
 }
@@ -181,9 +180,6 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 	// Get setting of step value from file configuration
 	SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 	double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
-
-	PictureView->PipeTShape->setPixmap(imagePipeTShape);
-	PictureView->PipeTShape->adjustSize();
 
 	myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 	myOkPoint1 = myOkPoint2 = myOkPoint3 = false;
@@ -252,6 +248,7 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 	//@@ put additional signal/slot connections here @@//
 
 	initName(tr("GEOM_PIPE_TSHAPE"));
+    updateTshapeScreenshotLabel();
 	DisplayPreview();
 }
 
@@ -352,8 +349,7 @@ void AdvancedGUI_PipeTShapeDlg::UpdatePicture(QWidget* old, QWidget* now) {
 		else
 			imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
 
-	PictureView->PipeTShape->setPixmap(imagePipeTShape);
-	PictureView->PipeTShape->adjustSize();
+    updateTshapeScreenshotLabel();
 }
 
 //=================================================================================
@@ -615,6 +611,28 @@ void AdvancedGUI_PipeTShapeDlg::enterEvent(QEvent*) {
 }
 
 //=================================================================================
+// function : resizeEvent [REDEFINED]
+// purpose  :
+//=================================================================================
+void AdvancedGUI_PipeTShapeDlg::resizeEvent(QResizeEvent */*event*/) {
+    QSize scaledSize = imagePipeTShape.size();
+    scaledSize.scale(tshapeScreenShotLabel->size(), Qt::KeepAspectRatio);
+    if (!tshapeScreenShotLabel->pixmap()
+      || scaledSize != tshapeScreenShotLabel->pixmap()->size())
+        updateTshapeScreenshotLabel();
+}
+
+//=================================================================================
+// function : updateTshapeScreenshotLabel
+// purpose  :
+//=================================================================================
+void AdvancedGUI_PipeTShapeDlg::updateTshapeScreenshotLabel() {
+    tshapeScreenShotLabel->setPixmap(imagePipeTShape.scaled(tshapeScreenShotLabel->size(),
+                                                      Qt::KeepAspectRatio,
+                                                      Qt::SmoothTransformation));
+}
+
+//=================================================================================
 // function : ChamferOrFillet()
 // purpose  :
 //=================================================================================
@@ -630,7 +648,7 @@ void AdvancedGUI_PipeTShapeDlg::ChamferOrFillet(bool) {
 		}
 		else
 			imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
-		PictureView->PipeTShape->setPixmap(imagePipeTShape);
+        updateTshapeScreenshotLabel();
         if (myOkPoint1 && myOkPoint2 && myOkPoint3)
             CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
 		DisplayPreview();
@@ -643,7 +661,7 @@ void AdvancedGUI_PipeTShapeDlg::ChamferOrFillet(bool) {
 		}
 		else
 			imagePipeTShape = SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("DLG_PIPETSHAPE"));
-		PictureView->PipeTShape->setPixmap(imagePipeTShape);
+        updateTshapeScreenshotLabel();
         if (myOkPoint1 && myOkPoint2 && myOkPoint3)
             CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
 		DisplayPreview();
@@ -786,24 +804,16 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
 //         SetErrorCode("Junctions points P2 and P3 are identical");
         return false;
     }
-//	std::cerr << "theL1: " << theL1 << std::endl;
-//	std::cerr << "theL2: " << theL2 << std::endl;
-//	std::cerr << "d12: " << d12 << std::endl;
-//	std::cerr << "d13: " << d13 << std::endl;
-//	std::cerr << "d23: " << d23 << std::endl;
 
     long double newL1 = 0.5 * d12;
     long double newL2 = sqrt(pow(d13,2)-pow(newL1,2));
 
     JunctionPointsSel->LineEdit4->setText(QString::number(newL1,'f',7));
     JunctionPointsSel->LineEdit5->setText(QString::number(newL2,'f',7));
-//    std::cerr << "newL1: " << newL1 << std::endl;
-//    std::cerr << "newL2: " << newL2 << std::endl;
 
     if (fabs(newL1 - theL1) > Precision::Approximation()) {
 		if ((newL1 * (1 - theTolerance) - theL1 <= Precision::Approximation()) &&
 				(newL1 * (1 + theTolerance) - theL1 >= Precision::Approximation())) {
-//            std::cerr << "theL1 = newL1" << std::endl;
             disconnect(MainTubeGroupParams->SpinBox_DZ, 0, this, 0);
 			MainTubeGroupParams->SpinBox_DZ->setValue(newL1);
             connect(MainTubeGroupParams->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
@@ -822,11 +832,9 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
         JunctionPointsSel->PushButton4->setStyleSheet(CssNormal);
     }
 
-//    std::cerr << "fabs(newL2 - theL2) = " << fabs(newL2 - theL2) << std::endl;
 	if (fabs(newL2 - theL2) > Precision::Approximation()) {
 		if ((newL2 * (1 - theTolerance) - theL2 <= Precision::Approximation()) &&
 				(newL2 * (1 + theTolerance) - theL2 >= Precision::Approximation())) {
-//            std::cerr << "theL2 = newL2" << std::endl;
             disconnect(IncidentTubeGroupParams->SpinBox_DZ, 0, this, 0);
 			IncidentTubeGroupParams->SpinBox_DZ->setValue(newL2);
             connect(IncidentTubeGroupParams->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
@@ -963,7 +971,6 @@ void AdvancedGUI_PipeTShapeDlg::restoreSubShapes(SALOMEDS::Study_ptr theStudy, S
 	ObjectList::iterator it = pipeTShapeGroupObjects.begin();
 
 	for (int i = 0; it != pipeTShapeGroupObjects.end(); it++, i++) {
-		//     std::cerr << "Add group " << (*it)->GetName() << std::endl;
 		getGeomEngine()->AddInStudy(theStudy, (*it), tr((*it)->GetName()).toStdString().c_str(), theFather);
 	}
 

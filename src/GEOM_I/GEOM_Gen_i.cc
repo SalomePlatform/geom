@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -1819,7 +1820,7 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
 	aTypeInfo = "Circle";
 	break;
       case GEOM::GEOM_IKindOfShape::ARC_CIRCLE:
-	aTypeInfo = "Ark";
+	aTypeInfo = "Arc Circle";
 	break;
       case GEOM::GEOM_IKindOfShape::ELLIPSE:
 	aTypeInfo = "Ellipse";

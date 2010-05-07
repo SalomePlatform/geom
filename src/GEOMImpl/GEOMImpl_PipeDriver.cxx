@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -1945,18 +1946,34 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     }
 
     // Get path contour
-    if (aShapePath.ShapeType() == TopAbs_WIRE) {
+    bool isOk = false;
+    if ( aShapePath.ShapeType() == TopAbs_COMPOUND ) {
+      TopTools_SequenceOfShape anEdges;
+      TopExp_Explorer anExp;
+      BRep_Builder B;
+      TopoDS_Wire W;
+      B.MakeWire(W);
+      for ( anExp.Init( aShapePath, TopAbs_EDGE ); anExp.More(); anExp.Next() ) {
+        B.Add( W, anExp.Current() );
+        isOk = true;
+      }
+      if ( isOk )
+        aWirePath = W;
+    }
+    else if (aShapePath.ShapeType() == TopAbs_WIRE) {
       aWirePath = TopoDS::Wire(aShapePath);
+      isOk = true;
     }
     else {
       if (aShapePath.ShapeType() == TopAbs_EDGE) {
         TopoDS_Edge anEdge = TopoDS::Edge(aShapePath);
         aWirePath = BRepBuilderAPI_MakeWire(anEdge);
+        isOk = true;
       }
-      else {
-        if(aCI) delete aCI;
-        Standard_TypeMismatch::Raise("MakePipe aborted : path shape is neither a wire nor an edge");
-      }
+    }
+    if ( !isOk ) {
+      if(aCI) delete aCI;
+      Standard_TypeMismatch::Raise("MakePipe aborted : path shape is neither a wire nor an edge");
     }
   }
 

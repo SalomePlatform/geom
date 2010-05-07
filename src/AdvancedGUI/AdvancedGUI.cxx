@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,10 +16,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : AdvancedGUI.cxx
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 //
-
 #include "AdvancedGUI.h"
 
 #include "GeometryGUI.h"
@@ -32,7 +29,7 @@
 #include <SalomeApp_Application.h>
 
 #include "AdvancedGUI_PipeTShapeDlg.h"
-//@@ insert new functions before this line @@//
+//@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
 
 #include <QDialog>
 
@@ -72,7 +69,7 @@ bool AdvancedGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //   case GEOMOp::OpPipeTShapeGroups:
 //     aDlg = new AdvancedGUI_PipeTShapeGroupsDlg( getGeometryGUI(), parent );
 //     break;
-  //@@ insert new functions before this line @@//
+  //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;
