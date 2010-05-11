@@ -57,6 +57,8 @@
 
 #include <gp_Pln.hxx>
 
+#include <Basics_Utils.hxx>
+
 //=================================================================================
 // class    : EntityGUI_SketcherDlg()
 // purpose  : Constructs a EntityGUI_SketcherDlg which is a child of 'parent', with the
@@ -1405,6 +1407,9 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
   else {
     //Test if the current point is the same as the last one
     TopoDS_Shape myShape1, myShape2;
+
+    // Set "C" numeric locale
+    Kernel_Utils::Localizer loc;
 
     //Last Shape
     QString Command1 = myCommand.join( "" );
