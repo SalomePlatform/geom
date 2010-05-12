@@ -35,6 +35,7 @@
 
 #include <TDataStd_IntegerArray.hxx>
 
+#include <BRepBuilderAPI_Copy.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
 
@@ -141,6 +142,12 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a shape is null");
       }
       //
+      BRepBuilderAPI_Copy aCopyTool (aShape_i);
+      if (aCopyTool.IsDone())
+        aShape_i = aCopyTool.Shape();
+      else
+        Standard_NullObject::Raise("Bad shape detected");
+      //
       TopTools_ListOfShape aSimpleShapes;
       PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
@@ -164,6 +171,12 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a tool shape is null");
       }
       //
+      BRepBuilderAPI_Copy aCopyTool (aShape_i);
+      if (aCopyTool.IsDone())
+        aShape_i = aCopyTool.Shape();
+      else
+        Standard_NullObject::Raise("Bad shape detected");
+      //
       TopTools_ListOfShape aSimpleShapes;
       PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
@@ -183,6 +196,12 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a Keep Inside shape is null");
       }
       //
+      BRepBuilderAPI_Copy aCopyTool (aShape_i);
+      if (aCopyTool.IsDone())
+        aShape_i = aCopyTool.Shape();
+      else
+        Standard_NullObject::Raise("Bad shape detected");
+      //
       TopTools_ListOfShape aSimpleShapes;
       PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
@@ -200,6 +219,12 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("In Partition a Remove Inside shape is null");
       }
+      //
+      BRepBuilderAPI_Copy aCopyTool (aShape_i);
+      if (aCopyTool.IsDone())
+        aShape_i = aCopyTool.Shape();
+      else
+        Standard_NullObject::Raise("Bad shape detected");
       //
       TopTools_ListOfShape aSimpleShapes;
       PrepareShapes(aShape_i, aType, aSimpleShapes);
