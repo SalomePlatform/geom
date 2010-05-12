@@ -1,8 +1,10 @@
 /*!
 
-\page restore_presentation_parameters_page Restore presentation parameters and a tree of subshapes
+\page restore_presentation_parameters_page Advanced Transformation Options
 
-\n This functionality allows the operation result to inherit colour
+<br><center><b>Set presentation parameters and subshapes from arguments</b></center>
+
+\n This option allows the operation result to inherit colour
 and subshapes from its arguments.
 
 \n To activate this functionality, check in "Set
@@ -38,7 +40,7 @@ operation arguments and their published subshapes. The resulting shape
 has a default colour, but its subshapes inherit colors corresponding
 to arguments and their subshapes.
 
-\image html restore-ss-viewer-after.png "Thev resulting shape"
+\image html restore-ss-viewer-after.png "The resulting shape"
 
 
 Please, note that when the resulting shape corresponds to one
@@ -51,12 +53,13 @@ inherited subshapes depend on the arguments.
 
 \image html restore-ss-OB.png
 
-<br><center><b>Add prefix to names of restored subshapes</b></center>
-Add prefix "from_" to names of restored sub-shapes, and prefix "from_subshapes_of_" to names of partially restored subshapes. 
-By default this option is On.
-
-
 \n You can also call this functionality from your python scripts.
 See our <b>TUI Scripts</b> for \ref tui_restore_prs_params "example".
+
+<br><center><b>Add prefix to names of restored subshapes</b></center>
+This option allows adding the prefix "from_" to the names of
+restored sub-shapes, and the prefix "from_subshapes_of_" to the names of partially restored subshapes. 
+By default this option is On.
+
 
 */

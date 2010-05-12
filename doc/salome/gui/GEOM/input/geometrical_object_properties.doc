@@ -8,7 +8,7 @@
 
 The <b>Type</b> property of the geometrical object specifies the 
 way the object has been created. It is an integer identifier that 
-has predefined value depending on the function type used for the 
+has a predefined value depending on the function type used for the 
 object creation. The type of the object can be retrieved using the 
 \b %GetType() function of the \b GEOM_Object interface.
 
@@ -70,10 +70,9 @@ The possible values of the geometrical objects are listed in the table below:
 </table>
 
 Also geompy.py module provides a helper function ShapeIdToType() 
-that allows converting of the geometrical object type id value 
-to its string representation.
+that allows converting the geometrical object id value to its string representation.
 
-For example:
+For example, the output of the following code:
 \code
 import geompy
 box = geompy.MakeBoxDXDYDZ(10,10,10)
@@ -81,12 +80,12 @@ type = geompy.ShapeIdToType(box.GetType())
 print type
 \endcode
 
-The above code prints "BOX" value.
+will be the "BOX" value.
 
 <b>GetShapeType function:</b>
 
 The ShapeType property specifies the geometrical object in terms of
-its topology nature.
+its topologic nature.
 
 The possible values are defined in the GEOM namespace: { COMPOUND, COMPSOLID,
 SOLID, SHELL, FACE, WIRE, EDGE, VERTEX, SHAPE }<br>
@@ -94,7 +93,7 @@ SOLID, SHELL, FACE, WIRE, EDGE, VERTEX, SHAPE }<br>
 This type can be retrieved using the \b %GetShapeType() function
 of the \b GEOM_Object interface.
 
-Example code:
+For example:
 \code
 import geompy
 import GEOM
@@ -103,6 +102,6 @@ type = box.GetShapeType()
 print type == GEOM.SOLID
 \endcode
 
-This code prints "True".
+The result is "True".
 
 */
