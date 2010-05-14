@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI_TranslationDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -118,9 +119,9 @@ void TransformationGUI_TranslationDlg::Init()
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox1, COORD_MIN, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox2, COORD_MIN, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox3, COORD_MIN, COORD_MAX, step, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox1, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox2, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox3, COORD_MIN, COORD_MAX, step, "length_precision" );
 
   GroupPoints->SpinBox1->setValue(0.0);
   GroupPoints->SpinBox2->setValue(0.0);
@@ -678,7 +679,8 @@ void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   t
     anArgs[0] = myCurrObject;
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true);
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
 

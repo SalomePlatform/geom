@@ -1,7 +1,4 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-#
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM : implementaion of GEOM_Gen.idl
 #  File   : Makefile.in
 #  Author : Patrick GOLDBRONN (CEA)
@@ -47,6 +45,7 @@ salomeinclude_HEADERS =			\
 	GEOM_ITransformOperations_i.hh	\
 	GEOM_IMeasureOperations_i.hh	\
 	GEOM_IGroupOperations_i.hh	\
+	GEOM_IAdvancedOperations_i.hh	\
 	GEOM_Gen_i.hh			\
 	GEOM_GEOM_I.hxx
 
@@ -65,6 +64,7 @@ dist_libGEOMEngine_la_SOURCES =		\
 	GEOM_ITransformOperations_i.cc	\
 	GEOM_IMeasureOperations_i.cc	\
 	GEOM_IGroupOperations_i.cc	\
+	GEOM_IAdvancedOperations_i.cc	\
 	GEOM_Gen_i.cc			\
 	GEOM_DumpPython.cc
 

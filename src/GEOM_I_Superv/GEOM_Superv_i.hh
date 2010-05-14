@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef __GEOM_SUPERV_I_H__
 #define __GEOM_SUPERV_I_H__
 
@@ -53,7 +54,8 @@ public:
   void getBlocksOp();
   void getCurvesOp();
   void getLocalOp();
-  void getGroupOp();  
+  void getGroupOp();
+  void getAdvancedOp();
 
   PortableServer::ServantBase_var GetServant(CORBA::Object_ptr       theObject,
 					     PortableServer::POA_ptr thePOA);
@@ -288,7 +290,9 @@ public:
   GEOM::GEOM_Object_ptr MakeFilling (GEOM::GEOM_Object_ptr theShape,
 				     CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
 				     CORBA::Double theTol2D, CORBA::Double theTol3D,
-				     CORBA::Long theNbIter, CORBA::Boolean theApprox);
+				     CORBA::Long theNbIter,
+                                     GEOM::filling_oper_method theMethod,
+                                     CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
 					 CORBA::Boolean theModeSolid,
@@ -663,6 +667,32 @@ public:
   GEOM::GEOM_Object_ptr GetMainShape (GEOM::GEOM_Object_ptr theGroup);
   GEOM::GEOM_List_ptr GetObjects (GEOM::GEOM_Object_ptr theGroup);
   
+  //-----------------------------------------------------------//
+  // Advanced Operations                                       //
+  //-----------------------------------------------------------//
+  GEOM::GEOM_List_ptr MakePipeTShape (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+				      CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+				      CORBA::Boolean theHexMesh);
+  GEOM::GEOM_List_ptr MakePipeTShapeWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+						  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+						  CORBA::Boolean theHexMesh,
+						  GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
+  GEOM::GEOM_List_ptr MakePipeTShapeChamfer (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+					     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+					     CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh);
+  GEOM::GEOM_List_ptr MakePipeTShapeChamferWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+							 CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+							 CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
+							 GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
+  GEOM::GEOM_List_ptr MakePipeTShapeFillet (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+					    CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
+					    CORBA::Double theRF, CORBA::Boolean theHexMesh);
+  GEOM::GEOM_List_ptr MakePipeTShapeFilletWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
+							CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
+							CORBA::Double theRF, CORBA::Boolean theHexMesh,
+							GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
+  /*@@ insert new functions before this line @@ do not remove this line @@*/
+  
 private:
   SALOME_NamingService *  name_service; 
   GEOM::GEOM_Gen_var      myGeomEngine;
@@ -680,7 +710,7 @@ private:
   GEOM::GEOM_ICurvesOperations_var    myCurvesOp;
   GEOM::GEOM_ILocalOperations_var     myLocalOp;
   GEOM::GEOM_IGroupOperations_var     myGroupOp;
-
+  GEOM::GEOM_IAdvancedOperations_var  myAdvancedOp;
 };
 
 #endif 

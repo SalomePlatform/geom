@@ -1,7 +1,4 @@
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-#
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : BasicGUI
@@ -38,8 +36,10 @@ salomeinclude_HEADERS =			\
 	BasicGUI_MarkerDlg.h		\
 	BasicGUI_PlaneDlg.h		\
 	BasicGUI_PointDlg.h		\
-	BasicGUI_VectorDlg.h		\
-	BasicGUI_WorkingPlaneDlg.h
+	BasicGUI_VectorDlg.h
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg.h
+#
 
 # Libraries targets
 
@@ -55,9 +55,11 @@ dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI_ArcDlg.cxx		\
 	BasicGUI_VectorDlg.cxx		\
 	BasicGUI_PlaneDlg.cxx		\
-	BasicGUI_WorkingPlaneDlg.cxx	\
 	BasicGUI_CurveDlg.cxx		\
 	BasicGUI_MarkerDlg.cxx
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg.cxx
+#
 
 MOC_FILES =					\
 	BasicGUI_PointDlg_moc.cxx		\
@@ -67,9 +69,11 @@ MOC_FILES =					\
 	BasicGUI_ArcDlg_moc.cxx			\
 	BasicGUI_VectorDlg_moc.cxx		\
 	BasicGUI_PlaneDlg_moc.cxx		\
-	BasicGUI_WorkingPlaneDlg_moc.cxx	\
 	BasicGUI_CurveDlg_moc.cxx		\
 	BasicGUI_MarkerDlg_moc.cxx
+#
+# OBSOLETE: BasicGUI_WorkingPlaneDlg_moc.cxx
+#
 
 nodist_libBasicGUI_la_SOURCES =			\
 	$(MOC_FILES)

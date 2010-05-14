@@ -67,7 +67,6 @@ The possible values of the geometrical objects are listed in the table below:
             <tr align=center><td>44</td><td>3DSKETCHER</td></tr>
             <tr align=center><td>45</td><td>FILLET_2D</td></tr>
             <tr align=center><td>46</td><td>FILLET_1D</td></tr>
-            <tr align=center><td>&nbps;</td><td>&nbps;</td></tr>
 </table>
 
 Also geompy.py module provides a helper function ShapeIdToType() 

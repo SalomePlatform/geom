@@ -1,25 +1,25 @@
-// Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-// 
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either 
-// version 2.1 of the License.
-// 
-// This library is distributed in the hope that it will be useful 
-// but WITHOUT ANY WARRANTY; without even the implied warranty of 
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
-// Lesser General Public License for more details.
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// You should have received a copy of the GNU Lesser General Public  
-// License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
 //  File   : GEOMImpl_Fillet1d.cxx
 //  Module : GEOMImpl
-
+//
 #include "GEOMImpl_Fillet1d.hxx"
 
 #include <BRep_Tool.hxx>
@@ -117,10 +117,9 @@ static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve
   for(a = anInter.NbPoints(); a > 0; a--) 
   {
     aPoint = anInter.Point(a);
-    if (aPoint.Distance(theStart) < aTol) 
-      if (!theStartConnected) 
-        return Standard_True;
-    if (aPoint.Distance(theEnd) < aTol) 
+    if ( aPoint.Distance(theStart) < aTol && !theStartConnected )
+      return Standard_True;
+    if (aPoint.Distance(theEnd) < aTol * 200)
       return Standard_True;
     if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol)) 
       return Standard_True;
@@ -345,7 +344,7 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
   }
 
   Standard_Real aDX = theRight->GetParam() - theLeft->GetParam();
-  if (aDX < gp::Resolution()/*Precision::Confusion() / 1000000.*/) 
+  if ( aDX < Precision::Confusion() / 1000000.) 
   {
     a = theRight->HasSolution(myRadius);
     if (a)
@@ -361,11 +360,14 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
   {
     Standard_Integer aNear = theLeft->GetNear(a);
     
-      Standard_Real aA = (theRight->GetDiff(aNear) - theLeft->GetDiff(a)) / aDX;
+    Standard_Real aA = (theRight->GetDiff(aNear) - theLeft->GetDiff(a)) / aDX;
     Standard_Real aB = theLeft->GetDiff(a) - aA * theLeft->GetParam();
     Standard_Real aC = theLeft->GetValue(a) - theLeft->GetDiff(a) * theLeft->GetParam() + 
                        aA * theLeft->GetParam() * theLeft->GetParam() / 2.0;
     Standard_Real aDet = aB * aB - 2.0 * aA * aC;
+
+    if ( fabs(aDet) < gp::Resolution() )
+      continue;
     
     if (fabs(aA) < Precision::Confusion()) 
     { // linear case
@@ -573,10 +575,10 @@ Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoin
     for(a = 1; a <= myV.Length(); a++) 
     {
       aDY = thePoint->myV.Value(a) - myV.Value(a);
-      if (aDiffsSet) 
-        myD.SetValue(a, aDY / aDX);
-      else 
-        myD.Append(aDY / aDX);
+      if ( aDiffsSet ) 
+        myD.SetValue(a, fabs(aDX) > gp::Resolution() ? (aDY/aDX) : 0);
+      else
+        myD.Append( fabs(aDX) > gp::Resolution() ? (aDY/aDX) : 0);
     }
     return Standard_True;
   }
@@ -591,12 +593,14 @@ Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoin
     }
     if (aDiffsSet) 
     {
-      if (fabs(aDY / aDX) < fabs(myD.Value(a)))
+      if ( fabs(aDX) > gp::Resolution() && fabs(aDY / aDX) < fabs(myD.Value(a)))
         myD.SetValue(a, aDY / aDX);
+      else
+        myD.SetValue(a, 0);
     } 
     else 
     {
-      myD.Append(aDY / aDX);
+      myD.Append( fabs(aDX) > gp::Resolution() ? aDY/aDX : 0);
     }
   }
   
@@ -664,7 +668,7 @@ void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
     
     if (aNear)
     {
-      if (fabs(aDiff / aDX) > 1.e+7) 
+      if (  fabs(aDX) < gp::Resolution() || fabs(aDiff / aDX) > 1.e+7) 
       {
         aNear = 0;
       }

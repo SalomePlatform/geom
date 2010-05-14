@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -566,7 +567,7 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
   if (aCompound.IsNull()) return isComp;
 
   //Check
-  list<GEOMImpl_IBlocksOperations::BCError> errList;
+  std::list<GEOMImpl_IBlocksOperations::BCError> errList;
   isComp = GetOperations()->CheckCompoundOfBlocks(aCompound, errList);
   if (!GetOperations()->IsDone())
     return isComp;
@@ -577,7 +578,7 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
   anErrArray->length(nbErr);
 
   // fill the local CORBA array with values from lists
-  list<GEOMImpl_IBlocksOperations::BCError>::iterator errIt = errList.begin();
+  std::list<GEOMImpl_IBlocksOperations::BCError>::iterator errIt = errList.begin();
   int i = 0;
   for (; errIt != errList.end(); i++, errIt++) {
     GEOM::GEOM_IBlocksOperations::BCError_var anError =
@@ -605,11 +606,11 @@ CORBA::Boolean GEOM_IBlocksOperations_i::CheckCompoundOfBlocks
       break;
     }
 
-    list<int> sshList = errStruct.incriminated;
+    std::list<int> sshList = errStruct.incriminated;
     GEOM::ListOfLong_var anIncrims = new GEOM::ListOfLong();
     anIncrims->length(sshList.size());
 
-    list<int>::iterator sshIt = sshList.begin();
+    std::list<int>::iterator sshIt = sshList.begin();
     int jj = 0;
     for (; sshIt != sshList.end(); jj++, sshIt++) {
       anIncrims[jj] = *sshIt;
@@ -640,7 +641,7 @@ char* GEOM_IBlocksOperations_i::PrintBCErrors
   if (aCompound.IsNull()) return NULL;
 
   // Convert the errors sequence
-  list<GEOMImpl_IBlocksOperations::BCError> anErrors;
+  std::list<GEOMImpl_IBlocksOperations::BCError> anErrors;
   int nbErr = theErrors.length();
   int ie = 0;
   for (; ie < nbErr; ie++) {

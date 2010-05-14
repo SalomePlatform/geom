@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,10 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_WireDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-
+//
 #include "BuildGUI_WireDlg.h"
 
 #include <GEOMImpl_Types.hxx>
@@ -72,7 +73,7 @@ BuildGUI_WireDlg::BuildGUI_WireDlg( GeometryGUI* theGeometryGUI, QWidget* parent
   GroupArgs->TextLabel2->setText( tr( "GEOM_TOLERANCE" ) );
   double SpecificStep = 0.0001;
   double prec = Precision::Confusion();
-  initSpinBox(GroupArgs->SpinBox_DX, prec, MAX_NUMBER, SpecificStep, 9);
+  initSpinBox(GroupArgs->SpinBox_DX, prec, MAX_NUMBER, SpecificStep, "len_tol_precision" );
   GroupArgs->SpinBox_DX->setValue(prec);
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );

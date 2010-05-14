@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_DivideEdgeDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -28,7 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -86,7 +87,8 @@ RepairGUI_DivideEdgeDlg::RepairGUI_DivideEdgeDlg( GeometryGUI* theGeometryGUI, Q
   myIsParameterGr->addButton( rb2, 1 );
   rb1->setChecked( true );
 
-  myValEdt = new SalomeApp_DoubleSpinBox( 0., 1., 0.1, 3, 32, GroupPoints->Box );
+  myValEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
+  initSpinBox( myValEdt, 0., 1., 0.1, "parametric_precision" );
   myValEdt->setValue( 0.5 );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_VALUE" ), GroupPoints->Box );
 
@@ -162,6 +164,7 @@ void RepairGUI_DivideEdgeDlg::ValueChangedInSpinBox()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::displayPreview()
 {
+  erasePreview();
   if ( myObject->_is_nil() )
     return;
 

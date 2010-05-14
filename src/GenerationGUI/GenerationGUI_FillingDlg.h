@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI_FillingDlg.h
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -60,6 +61,7 @@ private:
   Standard_Real                      myTol2D;
   Standard_Integer                   myNbIter;
   bool                               myIsApprox;
+  int                                myMethod;
   bool                               myOkCompound; /* to check when curv. compound is defined */
 
   DlgRef_1Sel5Spin1Check*            GroupPoints;
@@ -72,6 +74,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );
+  void                               MethodChanged();
   void                               ApproxChanged();
   void                               SetDoubleSpinBoxStep( double );
 };

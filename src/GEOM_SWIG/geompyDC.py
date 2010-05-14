@@ -1,8 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-#
-#  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-#  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Lesser General Public
@@ -20,11 +17,12 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-
+#
 """
     \namespace geompy
     \brief Module geompy
@@ -56,6 +54,7 @@
 ##       @defgroup l4_decompose     Decompose objects
 ##       @defgroup l4_access        Access to sub-shapes by their unique IDs inside the main shape
 ##       @defgroup l4_obtain        Access to subshapes by a criteria
+##       @defgroup l4_advanced      Advanced objects creation functions
 
 ##     @}
 
@@ -98,22 +97,32 @@ def RaiseIfFailed (Method_name, Operation):
 ## @ingroup l1_geompy_auxiliary
 def ParseParameters(*parameters):
     Result = []
-    StringResult = ""
+    StringResult = []
     for parameter in parameters:
-        if isinstance(parameter,str):
-            if notebook.isVariable(parameter):
-                Result.append(notebook.get(parameter))
-            else:
-                raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
-        else:
-            Result.append(parameter)
+        if isinstance(parameter, list):
+            lResults = ParseParameters(*parameter)
+            if len(lResults) > 0:
+                Result.append(lResults[:-1])
+                StringResult += lResults[-1].split(":")
+                pass
             pass
-
-        StringResult = StringResult + str(parameter)
-        StringResult = StringResult + ":"
+        else:
+            if isinstance(parameter,str):
+                if notebook.isVariable(parameter):
+                    Result.append(notebook.get(parameter))
+                else:
+                    raise RuntimeError, "Variable with name '" + parameter + "' doesn't exist!!!"
+                pass
+            else:
+                Result.append(parameter)
+                pass
+            StringResult.append(str(parameter))
+            pass
         pass
-    StringResult = StringResult[:len(StringResult)-1]
-    Result.append(StringResult)
+    if Result:
+        Result.append(":".join(StringResult))
+    else:
+        Result = ":".join(StringResult)
     return Result
 
 ## Return list of variables value from salome notebook
@@ -281,6 +290,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.MeasuOp  = None
             self.BlocksOp = None
             self.GroupOp  = None
+            self.AdvOp    = None
             pass
 
         ## @addtogroup l1_geompy_auxiliary
@@ -312,6 +322,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.MeasuOp  = self.GetIMeasureOperations  (self.myStudyId)
             self.BlocksOp = self.GetIBlocksOperations   (self.myStudyId)
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
+            self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
             pass
 
         ## Get name for sub-shape aSubObj of shape aMainObj
@@ -347,7 +358,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 aSObject = self.AddInStudy(self.myStudy, aShape, aName, None)
                 if doRestoreSubShapes:
                     self.RestoreSubShapesSO(self.myStudy, aSObject, theArgs,
-                                            theFindMethod, theInheritFirstArg)
+                                            theFindMethod, theInheritFirstArg, True )
             except:
                 print "addToStudy() failed"
                 return ""
@@ -387,14 +398,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                            operations, where only the first argument has to be considered.
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
+        #  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
+        #                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
         #  \return list of published sub-shapes
         #
         #  @ref tui_restore_prs_params "Example"
-        def RestoreSubShapes (self, theObject, theArgs=[],
-                              theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
+        def RestoreSubShapes (self, theObject, theArgs=[], theFindMethod=GEOM.FSM_GetInPlace,
+                              theInheritFirstArg=False, theAddPrefix=True):
             # Example: see GEOM_TestAll.py
             return self.RestoreSubShapesO(self.myStudy, theObject, theArgs,
-                                          theFindMethod, theInheritFirstArg)
+                                          theFindMethod, theInheritFirstArg, theAddPrefix)
 
         # end of l3_restore_ss
         ## @}
@@ -940,8 +953,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_sketcher_page "Example"
         def Make3DSketcher(self, theCoordinates):
+            theCoordinates,Parameters = ParseParameters(theCoordinates)
             anObj = self.CurvesOp.Make3DSketcher(theCoordinates)
             RaiseIfFailed("Make3DSketcher", self.CurvesOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         # end of l3_sketcher
@@ -1316,6 +1331,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTol2D a 2d tolerance to be reached
         #  @param theTol3D a 3d tolerance to be reached
         #  @param theNbIter a number of iteration of approximation algorithm
+        #  @param theMethod Kind of method to perform filling operation:
+        #                   0 - Default - standard behaviour
+        #                   1 - Use edges orientation - orientation of edges are
+        #                       used: if edge is reversed curve from this edge
+        #                       is reversed before using in filling algorithm.
+        #                   2 - Auto-correct orientation - change orientation
+        #                       of curves using minimization of sum of distances
+        #                       between ends points of edges.
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using Besier curves. The usage of
@@ -1324,12 +1347,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
-        def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, isApprox=0):
+        def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D,
+                        theTol3D, theNbIter, theMethod=GEOM.FOM_Default, isApprox=0):
             # Example: see GEOM_TestAll.py
-            theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg,
-                                                                                         theTol2D, theTol3D, theNbIter)
+            theMinDeg,theMaxDeg,theTol2D,theTol3D,theNbIter,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter)
             anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
-                                            theTol2D, theTol3D, theNbIter, isApprox)
+                                            theTol2D, theTol3D, theNbIter,
+                                            theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
@@ -4103,6 +4127,106 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return group_edges
 
         # end of l3_groups
+        ## @}
+
+        ## @addtogroup l4_advanced 
+        ## @{
+
+        ## Create a T-shape object with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length).
+        #  The extremities of the main pipe are located on junctions points P1 and P2.
+        #  The extremity of the incident pipe is located on junction point P3.
+        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
+        #  the main plane of the T-shape is XOY.
+        #  @param theR1 Internal radius of main pipe
+        #  @param theW1 Width of main pipe
+        #  @param theL1 Half-length of main pipe
+        #  @param theR2 Internal radius of incident pipe (R2 < R1)
+        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
+        #  @param theL2 Half-length of incident pipe
+        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
+        #  @param theP1 1st junction point of main pipe
+        #  @param theP2 2nd junction point of main pipe
+        #  @param theP3 Junction point of incident pipe
+        #  @return List of GEOM_Objects, containing the created shape and propagation groups.
+        #
+        #  @ref tui_creation_pipetshape "Example"
+        def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+            theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)
+	    if (theP1 and theP2 and theP3):
+	      anObj = self.AdvOp.MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3)
+	    else:
+	      anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
+	    RaiseIfFailed("MakePipeTShape", self.AdvOp)
+            if Parameters: anObj[0].SetParameters(Parameters)
+            return anObj
+
+        ## Create a T-shape object with chamfer and with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). The chamfer is
+        #  created on the junction of the pipes.
+        #  The extremities of the main pipe are located on junctions points P1 and P2.
+        #  The extremity of the incident pipe is located on junction point P3.
+        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
+        #  the main plane of the T-shape is XOY.
+        #  @param theR1 Internal radius of main pipe
+        #  @param theW1 Width of main pipe
+        #  @param theL1 Half-length of main pipe
+        #  @param theR2 Internal radius of incident pipe (R2 < R1)
+        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
+        #  @param theL2 Half-length of incident pipe
+        #  @param theH Height of the chamfer.
+        #  @param theW Width of the chamfer.
+        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
+        #  @param theP1 1st junction point of main pipe
+        #  @param theP2 2nd junction point of main pipe
+        #  @param theP3 Junction point of incident pipe
+        #  @return List of GEOM_Objects, containing the created shape and propagation groups.
+        #
+        #  @ref tui_creation_pipetshape "Example"
+        def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+            theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW)
+	    if (theP1 and theP2 and theP3):
+	      anObj = self.AdvOp.MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh, theP1, theP2, theP3)
+	    else:
+	      anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
+            RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
+            if Parameters: anObj[0].SetParameters(Parameters)
+            return anObj
+
+        ## Create a T-shape object with fillet and with specified caracteristics for the main
+        #  and the incident pipes (radius, width, half-length). The fillet is
+	#  created on the junction of the pipes.
+        #  The extremities of the main pipe are located on junctions points P1 and P2.
+        #  The extremity of the incident pipe is located on junction point P3.
+        #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
+        #  the main plane of the T-shape is XOY.
+        #  @param theR1 Internal radius of main pipe
+        #  @param theW1 Width of main pipe
+        #  @param theL1 Half-length of main pipe
+        #  @param theR2 Internal radius of incident pipe (R2 < R1)
+        #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
+        #  @param theL2 Half-length of incident pipe
+        #  @param theRF Radius of curvature of fillet.
+	#  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
+        #  @param theP1 1st junction point of main pipe
+        #  @param theP2 2nd junction point of main pipe
+        #  @param theP3 Junction point of incident pipe
+        #  @return List of GEOM_Objects, containing the created shape and propagation groups.
+        #
+        #  @ref tui_creation_pipetshape "Example"
+        def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None):
+            theR1, theW1, theL1, theR2, theW2, theL2, theRF, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF)
+	    if (theP1 and theP2 and theP3):
+	      anObj = self.AdvOp.MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh, theP1, theP2, theP3)
+	    else:
+	      anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
+            RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
+            if Parameters: anObj[0].SetParameters(Parameters)
+            return anObj
+
+        #@@ insert new functions before this line @@ do not remove this line @@#
+
+        # end of l4_advanced
         ## @}
 
         ## Create a copy of the given object

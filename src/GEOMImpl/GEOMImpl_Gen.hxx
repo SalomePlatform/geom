@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOMImpl_GEN_HXX_
 #define _GEOMImpl_GEN_HXX_
 
@@ -38,6 +39,7 @@
 #include "GEOMImpl_IInsertOperations.hxx"
 #include "GEOMImpl_IMeasureOperations.hxx"
 #include "GEOMImpl_IGroupOperations.hxx"
+#include "GEOMImpl_IAdvancedOperations.hxx"
 #include "GEOM_Engine.hxx"
 
 class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
@@ -70,6 +72,8 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
 
   GEOMImpl_IGroupOperations* GetIGroupOperations(int theDocID);
 
+  GEOMImpl_IAdvancedOperations* GetIAdvancedOperations(int theDocID);
+
  private:
 
   std::map <int, GEOMImpl_IBasicOperations*>     _mapOfBasicOperations;
@@ -83,7 +87,8 @@ class GEOMIMPL_EXPORT GEOMImpl_Gen : public GEOM_Engine
   std::map <int, GEOMImpl_ILocalOperations*>     _mapOfLocalOperations;
   std::map <int, GEOMImpl_IInsertOperations*>    _mapOfInsertOperations;
   std::map <int, GEOMImpl_IMeasureOperations*>   _mapOfMeasureOperations;
-  std::map <int, GEOMImpl_IGroupOperations*>   _mapOfGroupOperations;
+  std::map <int, GEOMImpl_IGroupOperations*>     _mapOfGroupOperations;
+  std::map <int, GEOMImpl_IAdvancedOperations*>  _mapOfAdvancedOperations;
 };
 
 #endif

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -100,7 +101,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeWire
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theEdgesAndWires.length();
@@ -160,7 +161,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theWires.length();
@@ -193,7 +194,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeShell
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theFacesAndShells.length();
@@ -251,7 +252,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShells
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theShells.length();
@@ -284,7 +285,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeCompound
   GetOperations()->SetNotDone();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aShapes;
+  std::list<Handle(GEOM_Object)> aShapes;
 
   //Get the shapes
   aLen = theShapes.length();
@@ -390,7 +391,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
   if (aShape.IsNull()) return aGEOMObject._retn();
 
   int ind, aLen;
-  list<Handle(GEOM_Object)> aFaces;
+  std::list<Handle(GEOM_Object)> aFaces;
   //Get the shapes
   aLen = theFaces.length();
   for (ind = 0; ind < aLen; ind++) {

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI_FillingDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -70,6 +71,7 @@ GenerationGUI_FillingDlg::GenerationGUI_FillingDlg( GeometryGUI* theGeometryGUI,
   GroupPoints->TextLabel5->setText( tr( "GEOM_FILLING_MAX_DEG" ) );
   GroupPoints->TextLabel6->setText( tr( "GEOM_FILLING_TOL_3D" ) );
   GroupPoints->CheckBox1->setText( tr( "GEOM_FILLING_APPROX" ) );
+  GroupPoints->TextLabel7->setText( tr( "GEOM_FILLING_METHOD" ) );
   GroupPoints->PushButton1->setIcon( image1 );
   GroupPoints->LineEdit1->setReadOnly( true );
 
@@ -108,25 +110,30 @@ void GenerationGUI_FillingDlg::Init()
   myTol3D = 0.0001;
   myTol2D = 0.0001;
   myNbIter = 0;
+  myMethod = 0;
   myIsApprox = false;
   myOkCompound = false;
 
   globalSelection( GEOM_COMPOUND );
 
-  double SpecificStep1 = 1;
+  int SpecificStep1 = 1;
   double SpecificStep2 = 0.0001;
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox1, 2.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, 5 );
-  initSpinBox( GroupPoints->SpinBox3, 0.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox4, 1.0, MAX_NUMBER,  SpecificStep1, 3 );
-  initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, 5 );
+  initSpinBox( GroupPoints->SpinBox1, 2, MAX_NUMBER,  SpecificStep1 );
+  initSpinBox( GroupPoints->SpinBox2, 0.00001, 10000.0, SpecificStep2, "len_tol_precision" );
+  initSpinBox( GroupPoints->SpinBox3, 0, MAX_NUMBER,  SpecificStep1 );
+  initSpinBox( GroupPoints->SpinBox4, 1, MAX_NUMBER,  SpecificStep1 );
+  initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, "len_tol_precision" );
 
   GroupPoints->SpinBox1->setValue( myMinDeg );
   GroupPoints->SpinBox2->setValue( myTol2D );
   GroupPoints->SpinBox3->setValue( myNbIter );
   GroupPoints->SpinBox4->setValue( myMaxDeg );
   GroupPoints->SpinBox5->setValue( myTol3D );
+
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_DEFAULT"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_USEORI"));
+  GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_AUTO"));
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -135,15 +142,19 @@ void GenerationGUI_FillingDlg::Init()
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
+  connect( GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(MethodChanged()));
+
   connect( GroupPoints->SpinBox1, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox3, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox4, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupPoints->SpinBox5, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ), this, SLOT( ApproxChanged() ) );
+  connect( GroupPoints->CheckBox1, SIGNAL( stateChanged( int ) ),
+           this, SLOT( ApproxChanged() ) );
 
-  connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
+  // san: Commented, as all spin boxes here either are integer or use specific non-default step value
+  //connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -158,10 +169,7 @@ void GenerationGUI_FillingDlg::Init()
 //=================================================================================
 void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep( double step )
 {
-  GroupPoints->SpinBox1->setSingleStep(step);
   GroupPoints->SpinBox2->setSingleStep(step);
-  GroupPoints->SpinBox3->setSingleStep(step);
-  GroupPoints->SpinBox4->setSingleStep(step);
   GroupPoints->SpinBox5->setSingleStep(step);
 }
 
@@ -224,7 +232,8 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
     if (GEOMBase::GetShape(aSelectedObject, S) && S.ShapeType() == TopAbs_COMPOUND) {
       // myCompound should be a compound of edges
       for (TopoDS_Iterator it (S); it.More(); it.Next())
-        if (it.Value().ShapeType() != TopAbs_EDGE)
+        if ( it.Value().ShapeType() != TopAbs_EDGE && 
+             it.Value().ShapeType() != TopAbs_WIRE )
           return;
       myCompound = aSelectedObject;
       myOkCompound = true;
@@ -315,6 +324,16 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 }
 
 //=================================================================================
+// function : MethodChanged
+// purpose  :
+//=================================================================================
+void GenerationGUI_FillingDlg::MethodChanged()
+{
+  myMethod = GroupPoints->ComboBox1->currentIndex();
+  displayPreview();
+}
+
+//=================================================================================
 // function : ApproxChanged()
 // purpose  :
 //=================================================================================
@@ -323,6 +342,7 @@ void GenerationGUI_FillingDlg::ApproxChanged()
   myIsApprox = GroupPoints->CheckBox1->isChecked();
   displayPreview();
 }
+
 
 //=================================================================================
 // function : createOperation
@@ -355,9 +375,21 @@ bool GenerationGUI_FillingDlg::isValid( QString& msg )
 //=================================================================================
 bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
 {
-  GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, 
-                                                     myTol2D, myTol3D, myNbIter, myIsApprox );
+  GEOM::GEOM_I3DPrimOperations_var anOper =
+    GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
+
+  GEOM::filling_oper_method aMethod;
+  switch (GroupPoints->ComboBox1->currentIndex())
+  {
+    case 0:  aMethod = GEOM::FOM_Default; break;
+    case 1:  aMethod = GEOM::FOM_UseOri; break;
+    case 2:  aMethod = GEOM::FOM_AutoCorrect; break;
+    default: break;
+  }
+
+  GEOM::GEOM_Object_var anObj =
+    anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D,
+                         myNbIter, aMethod, myIsApprox );
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )

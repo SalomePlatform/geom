@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // File      : GEOMImpl_IShapesOperations.cxx
 // Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
@@ -276,7 +277,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeWire
       pd << ", " << (*it++);
     }
   }
-  pd << "])";
+  pd << "], " << theTolerance << ")";
 
   SetErrorCode(OK);
   return aWire;
@@ -3020,12 +3021,17 @@ void GEOMImpl_IShapesOperations::GetShapeProperties( const TopoDS_Shape aShape, 
   //TopoDS_Shape aPntShape;
   Standard_Real aShapeSize;
 
-  if      (aShape.ShapeType() == TopAbs_EDGE) BRepGProp::LinearProperties(aShape,  theProps);
+  if    (aShape.ShapeType() == TopAbs_VERTEX) aCenterMass = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
+  else if (aShape.ShapeType() == TopAbs_EDGE) BRepGProp::LinearProperties(aShape,  theProps);
   else if (aShape.ShapeType() == TopAbs_FACE) BRepGProp::SurfaceProperties(aShape, theProps);
   else                                        BRepGProp::VolumeProperties(aShape,  theProps);
 
-  aCenterMass = theProps.CentreOfMass();
-  aShapeSize  = theProps.Mass();
+  if (aShape.ShapeType() == TopAbs_VERTEX)
+    aShapeSize = 1;
+  else {
+    aCenterMass = theProps.CentreOfMass();
+    aShapeSize  = theProps.Mass();
+  }
 
 //   aPntShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
 //   aVertex   = BRep_Tool::Pnt( TopoDS::Vertex( aPntShape ) );
@@ -3123,14 +3129,15 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
-  Standard_Real    min_l, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
+  Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
   Standard_Real    aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
   Bnd_Box          BoundingBox;
   gp_Pnt           aPnt, aPnt_aWhat, tab_Pnt[2];
   GProp_GProps     aProps;
 
   // Find the iType of the aWhat shape
-  if      ( aWhat.ShapeType() == TopAbs_EDGE  || aWhat.ShapeType() == TopAbs_WIRE )      iType = TopAbs_EDGE;
+  if      ( aWhat.ShapeType() == TopAbs_VERTEX )                                         iType = TopAbs_VERTEX;
+  else if ( aWhat.ShapeType() == TopAbs_EDGE  || aWhat.ShapeType() == TopAbs_WIRE )      iType = TopAbs_EDGE;
   else if ( aWhat.ShapeType() == TopAbs_FACE  || aWhat.ShapeType() == TopAbs_SHELL )     iType = TopAbs_FACE;
   else if ( aWhat.ShapeType() == TopAbs_SOLID || aWhat.ShapeType() == TopAbs_COMPSOLID ) iType = TopAbs_SOLID;
   else if ( aWhat.ShapeType() == TopAbs_COMPOUND ) {
@@ -3141,7 +3148,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       return NULL;
     }
     compType = It.Value().ShapeType();
-    if      ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
+    if      ( compType == TopAbs_VERTEX )                               iType = TopAbs_VERTEX;
+    else if ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
     else if ( compType == TopAbs_FACE  || compType == TopAbs_SHELL)     iType = TopAbs_FACE;
     else if ( compType == TopAbs_SOLID || compType == TopAbs_COMPSOLID) iType = TopAbs_SOLID;
   }
@@ -3174,10 +3182,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   }
 
   // Compute tolerances
+  Tol_0D = dl_l;
   Tol_1D = dl_l * min_l;
   Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
   Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
 
+  if (Tol_0D < Precision::Confusion()) Tol_0D = Precision::Confusion();
   if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
   if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
   if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
@@ -3187,12 +3197,17 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   //if (Tol_3D > 1.0) Tol_3D = 1.0;
 
   Tol_Mass = Tol_3D;
-  if      ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
+  if ( iType == TopAbs_VERTEX )    Tol_Mass = Tol_0D;
+  else if ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
   else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
 
   // Compute the ShapeWhat Mass
   for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
-    if      ( iType == TopAbs_EDGE ) BRepGProp::LinearProperties(Exp_aWhat.Current(),  aProps);
+    if ( iType == TopAbs_VERTEX ) {
+      aWhat_Mass += 1;
+      continue;
+    }
+    else if ( iType == TopAbs_EDGE ) BRepGProp::LinearProperties(Exp_aWhat.Current(),  aProps);
     else if ( iType == TopAbs_FACE ) BRepGProp::SurfaceProperties(Exp_aWhat.Current(), aProps);
     else                             BRepGProp::VolumeProperties(Exp_aWhat.Current(),  aProps);
     aWhat_Mass += aProps.Mass();

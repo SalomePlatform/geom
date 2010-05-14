@@ -1,6 +1,5 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
@@ -20,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GeometryGUI_Swig.cxx
 // Author : Nicolas REJNERI, Paul RASCLE
@@ -67,9 +67,6 @@
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
 #include <vtkRenderer.h>
-
-using namespace std;
-
 
 static GEOM_Client ShapeReader;
 
@@ -135,7 +132,7 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
       if (CORBA::is_nil(Geom))
         return;
 
-      string aFatherIOR;
+      std::string aFatherIOR;
       _PTR(SComponent) father = aStudy->FindComponent("GEOM");
       if (!father)
         return;
@@ -154,14 +151,14 @@ void GEOM_Swig::createAndDisplayGO (const char* Entry, bool isUpdated)
       if (!obj->FindAttribute(anAttr, "AttributeIOR"))
         return;
       _PTR(AttributeIOR) anIOR(anAttr);
-      string anIORValue = anIOR->Value();
+      std::string anIORValue = anIOR->Value();
 
       GEOM::GEOM_Object_var aShape = Geom->GetIORFromString(anIORValue.c_str());
       TopoDS_Shape Shape = ShapeReader.GetShape(Geom,aShape);
       if (!Shape.IsNull()) {
         if (obj->FindAttribute(anAttr, "AttributeName")) {
           _PTR(AttributeName) aName (anAttr);
-          string aNameValue = aName->Value();
+          std::string aNameValue = aName->Value();
           // open transaction
           /*SUIT_Operation* op = new SalomeApp_ImportOperation (app);
           op->start();

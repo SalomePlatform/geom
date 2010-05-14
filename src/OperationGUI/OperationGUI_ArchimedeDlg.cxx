@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ArchimedeDlg.cxx
 // Author : Nicolas REJNERI, Open CASCADE S.A.S.
@@ -106,9 +107,9 @@ void OperationGUI_ArchimedeDlg::Init()
   double SpecificStep1 = 0.1;
   double SpecificStep2 = 0.01;
   /* min, max, myStep and decimals for spin boxes & initial values */
-  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPoints->SpinBox_DX, 0.001, COORD_MAX, myStep, "weight_precision" );
+  initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, "density_precision" );
+  initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, "parametric_precision" );
 
   GroupPoints->SpinBox_DX->setValue( 100.0 );
   GroupPoints->SpinBox_DY->setValue( 1.0 );
@@ -141,8 +142,10 @@ void OperationGUI_ArchimedeDlg::Init()
 void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
-  GroupPoints->SpinBox_DY->setSingleStep(step);
-  GroupPoints->SpinBox_DZ->setSingleStep(step);
+  
+  // san: Commented so as not to override specific step settings
+  //GroupPoints->SpinBox_DY->setSingleStep(step);
+  //GroupPoints->SpinBox_DZ->setSingleStep(step);
 }
 
 //=================================================================================

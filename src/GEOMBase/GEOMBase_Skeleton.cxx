@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Skeleton.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -71,6 +72,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
 
   myMainFrame->GroupBoxPublish->setTitle( tr( "GEOM_PUBLISH_RESULT_GRP" ) );
   myMainFrame->CheckBoxRestoreSS->setText( tr( "GEOM_RESTORE_SUB_SHAPES" ) );
+  myMainFrame->CheckBoxAddPrefix->setText( tr( "GEOM_RSS_ADD_FREFIX" ) );
 
   buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
   buttonOk()->setText( tr( "GEOM_BUT_APPLY_AND_CLOSE" ) );
@@ -129,6 +131,7 @@ void GEOMBase_Skeleton::Init()
   myMainFrame->RadioButton5->hide();
 
   myMainFrame->CheckBoxRestoreSS->setChecked( false );
+  myMainFrame->CheckBoxAddPrefix->setChecked( true );
   myMainFrame->GroupBoxPublish->hide();
 }
 
@@ -149,13 +152,22 @@ void GEOMBase_Skeleton::initSpinBox( QSpinBox* spinBox,
 //=================================================================================
 void GEOMBase_Skeleton::initSpinBox( SalomeApp_DoubleSpinBox* spinBox, 
                                      double min,  double max, 
-                                     double step, int decimals )
+                                     double step, const char* quantity )
 {
-  spinBox->setPrecision( decimals );
-  spinBox->setDecimals( decimals ); // it's necessary to set decimals before the range setting,
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
+  
+  spinBox->setPrecision( aPrecision );
+  spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
                                     // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
+  
+  // Add a hint for the user saying how to tune precision
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  spinBox->setProperty( "validity_tune_hint", 
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
 //=================================================================================

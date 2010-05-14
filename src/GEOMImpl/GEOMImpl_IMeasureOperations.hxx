@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
 
@@ -78,7 +79,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
     SK_SEGMENT,      // segment
     SK_EDGE,         // other edge
     // VERTEX
-    SK_VERTEX
+    SK_VERTEX,
+    // ADVANCED shapes
+    SK_ADVANCED,     // all advanced shapes (temporary implementation)
   };
 
   Standard_EXPORT ShapeKind KindOfShape (Handle(GEOM_Object) theShape,

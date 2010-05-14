@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,12 +19,13 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ChamferDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
 //
 #include "OperationGUI_ChamferDlg.h"
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
@@ -149,9 +150,9 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
   QMap< int, SalomeApp_DoubleSpinBox* >::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
     if (anIter.key() == SpinBox44 || anIter.key() == SpinBox34 || anIter.key() == SpinBox24)
-      initSpinBox(anIter.value(), 0.001, 89.999, 5, 0);
+      initSpinBox(anIter.value(), 0.001, 89.999, 5, "angle_precision" );
     else
-      initSpinBox(anIter.value(), 0.001, COORD_MAX, SpecificStep, 3);
+      initSpinBox(anIter.value(), 0.001, COORD_MAX, SpecificStep, "length_precision" );
   }
 
   setHelpFileName("chamfer_operation_page.html");

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BlocksGUI_TrsfDlg.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S. (julia.dorovskikh@opencascade.com)
@@ -114,7 +115,6 @@ void BlocksGUI_TrsfDlg::Init()
   int SpecificStep = 1;
   QMap<int, SalomeApp_IntSpinBox*>::iterator anIter;
   for (anIter = mySpinBox.begin(); anIter != mySpinBox.end(); ++anIter) {
-    //anIter.data()->RangeStepAndValidator(1, 999, SpecificStep);
     initSpinBox(anIter.value(), 1, 999, SpecificStep);
   }
 

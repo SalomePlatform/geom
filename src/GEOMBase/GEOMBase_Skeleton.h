@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMBase_Skeleton.h
 // Author : Damine COQUERET, Open CASCADE S.A.S.
@@ -60,7 +61,7 @@ private:
 
 protected:
     void                initSpinBox( QSpinBox*, int, int, int = 1 );
-    void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, int = 3 );
+    void                initSpinBox( SalomeApp_DoubleSpinBox*, double, double, double = 0.1, const char* = "length_precision" );
     
     void                updateAttributes( GEOM::GEOM_Object_ptr, const QStringList& );
 

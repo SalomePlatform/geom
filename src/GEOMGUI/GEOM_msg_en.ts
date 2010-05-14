@@ -1,6 +1,6 @@
 <!DOCTYPE TS>
 <!--
-  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 
   Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
   CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -25,6 +25,10 @@
 <TS version="1.1" >
     <context>
         <name>@default</name>
+        <message>
+            <source>BRep_API: command not done</source>
+            <translation>Error: can't build object</translation>
+        </message>
         <message>
             <source>CHANGE_ORIENTATION_NEW_OBJ_NAME</source>
             <translation>Invert</translation>
@@ -497,7 +501,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
 	<message>
             <source>GEOM_DISK_TITLE</source>
-            <translation>Create A Disk</translation>
+            <translation>Disk Construction</translation>
         </message>
         <message>
             <source>GEOM_DIMENSIONS</source>
@@ -628,7 +632,15 @@ Please, select face, shell or solid and try again</translation>
             <translation>Create A Face</translation>
         </message>
         <message>
-            <source>GEOM_FILLET</source>
+            <source>GEOM_RECTANGLE_TITLE</source>
+            <translation>Rectangle Construction</translation>
+        </message>
+        <message>
+            <source>GEOM_RECTANGLE</source>
+            <translation>Rectangle</translation>
+        </message>
+        <message>
+          <source>GEOM_FILLET</source>
             <translation>Fillet</translation>
         </message>
 	<message>
@@ -685,7 +697,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_FILLING_COMPOUND</source>
-            <translation>Edges compound</translation>
+            <translation>Input compound</translation>
         </message>
         <message>
             <source>GEOM_FILLING_MAX_DEG</source>
@@ -1585,7 +1597,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_SKETCHER_TITLE</source>
-            <translation>Sketch Construction</translation>
+            <translation>2D Sketch Construction</translation>
         </message>
 	<message>
             <source>GEOM_3DSKETCHER_TITLE</source>
@@ -1847,6 +1859,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_TOOL_OBJECT</source>
             <translation>Tool Object</translation>
         </message>
+	<message>
+            <source>GEOM_TOOL_OBJECTS</source>
+            <translation>Tool Objects</translation>
+        </message>
         <message>
             <source>GEOM_TORUS</source>
             <translation>Torus</translation>
@@ -2085,7 +2101,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check Shape</translation>
         </message>
         <message>
             <source>MEN_CHECK_COMPOUND</source>
@@ -2142,6 +2158,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>MEN_CYLINDER</source>
             <translation>Cylinder</translation>
+        </message>
+        <message>
+            <source>MEN_RECTANGLE</source>
+            <translation>Rectangle</translation>
         </message>
         <message>
             <source>MEN_DELETE</source>
@@ -2225,7 +2245,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_FILLET</source>
-            <translation>Fillet</translation>
+            <translation>Fillet 3D</translation>
         </message>
 	<message>
             <source>MEN_FILLET_1D</source>
@@ -2309,7 +2329,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_MODIFY_LOCATION</source>
-            <translation>Modify the Location</translation>
+            <translation>Modify Location</translation>
         </message>
         <message>
             <source>MEN_MUL_ROTATION</source>
@@ -2341,7 +2361,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_PIPE</source>
-            <translation>Extrusion Along a Path</translation>
+            <translation>Extrusion Along Path</translation>
         </message>
         <message>
             <source>MEN_PLANE</source>
@@ -2416,6 +2436,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Primitives</translation>
         </message>
         <message>
+            <source>MEN_ADVANCED</source>
+            <translation>Advanced</translation>
+        </message>
+        <message>
             <source>MEN_PROPAGATE</source>
             <translation>Propagate</translation>
         </message>
@@ -2473,7 +2497,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_SKETCH</source>
-            <translation>Sketch</translation>
+            <translation>2D Sketch</translation>
         </message>
 	<message>
             <source>MEN_3DSKETCH</source>
@@ -2509,7 +2533,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>MEN_TOLERANCE</source>
-            <translation>Compute Tolerance</translation>
+            <translation>Tolerance</translation>
         </message>
         <message>
             <source>MEN_TOOLS</source>
@@ -2584,6 +2608,42 @@ Please, select face, shell or solid and try again</translation>
             <translation>Deflection coefficient</translation>
         </message>
         <message>
+            <source>GEOM_PREF_def_precision</source>
+            <translation>Default precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_length_precision</source>
+            <translation>Length precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_angle_precision</source>
+            <translation>Angular precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_len_tol_precision</source>
+            <translation>Length tolerance precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_ang_tol_precision</source>
+            <translation>Angular tolerance precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_weight_precision</source>
+            <translation>Weight precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_density_precision</source>
+            <translation>Density precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_parametric_precision</source>
+            <translation>Parametric precision</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_param_tol_precision</source>
+            <translation>Parametric tolerance precision</translation>
+        </message>
+        <message>
             <source>PREF_DISPLAY_MODE</source>
             <translation>Default display mode</translation>
         </message>
@@ -2598,6 +2658,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>PREF_GROUP_OCCVIEWER</source>
             <translation>OCC Viewer 3d</translation>
+        </message>
+        <message>
+            <source>GEOM_PREF_GROUP_PRECISION</source>
+            <translation>Input fields precision</translation>
         </message>
         <message>
             <source>PREF_GROUP_VERTEX</source>
@@ -2665,15 +2729,15 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_ARCHIMEDE</source>
-            <translation>Archimede</translation>
+            <translation>Archimede operation</translation>
         </message>
         <message>
             <source>STB_BASIC_PROPS</source>
-            <translation>Basic properties</translation>
+            <translation>Show basic properties of the shape</translation>
         </message>
         <message>
             <source>STB_BND_BOX</source>
-            <translation>Compute bounding box</translation>
+            <translation>Compute bounding box of the shape</translation>
         </message>
         <message>
             <source>STB_BOX</source>
@@ -2681,7 +2745,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_CHAMFER</source>
-            <translation>Chamfer</translation>
+            <translation>Create a chamfer</translation>
         </message>
         <message>
             <source>STB_CHANGE_ORIENTATION</source>
@@ -2689,7 +2753,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check shape validity</translation>
         </message>
         <message>
             <source>STB_CHECK_COMPOUND</source>
@@ -2746,6 +2810,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>STB_CYLINDER</source>
             <translation>Create a cylinder</translation>
+        </message>
+        <message>
+            <source>STB_RECTANGLE</source>
+            <translation>Create rectangular face</translation>
         </message>
         <message>
             <source>STB_DELETE</source>
@@ -2813,7 +2881,15 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_FILLET</source>
-            <translation>Fillet</translation>
+            <translation>Create 3D fillet</translation>
+        </message>
+        <message>
+            <source>STB_FILLET_1D</source>
+            <translation>Create 1D fillet</translation>
+        </message>
+        <message>
+            <source>STB_FILLET_2D</source>
+            <translation>Create 2D fillet</translation>
         </message>
         <message>
             <source>STB_FILLING</source>
@@ -2849,7 +2925,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_INERTIA</source>
-            <translation>Compute intertia</translation>
+            <translation>Compute moments of intertia of the shape</translation>
         </message>
         <message>
             <source>STB_ISOS</source>
@@ -2865,31 +2941,31 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_MASS_CENTER</source>
-            <translation>Compute center of mass</translation>
+            <translation>Compute center of mass of the shape</translation>
         </message>
         <message>
             <source>STB_MIN_DIST</source>
-            <translation>Compute minimum distance</translation>
+            <translation>Compute minimum distance between two objects</translation>
         </message>
         <message>
             <source>STB_MIRROR</source>
-            <translation>Mirror image</translation>
+            <translation>Mirror a shape</translation>
         </message>
         <message>
             <source>STB_MODIFY_LOCATION</source>
-            <translation>Modify the Location</translation>
+            <translation>Modify shape's location</translation>
         </message>
         <message>
             <source>STB_MUL_ROTATION</source>
-            <translation>Multi-Rotation</translation>
+            <translation>Perform multi-rotation</translation>
         </message>
         <message>
             <source>STB_MUL_TRANSFORM</source>
-            <translation>Multi-transformation</translation>
+            <translation>Perform multi-transformation</translation>
         </message>
         <message>
             <source>STB_MUL_TRANSLATION</source>
-            <translation>Multi-Translation</translation>
+            <translation>Perform multi-translation</translation>
         </message>
         <message>
             <source>STB_OFFSET</source>
@@ -2897,11 +2973,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_PARTITION</source>
-            <translation>Partition</translation>
+            <translation>Make a partition</translation>
         </message>
         <message>
             <source>STB_PIPE</source>
-            <translation>Create a shape by Extrusion along a path</translation>
+            <translation>Create a shape by extrusion along a path</translation>
         </message>
         <message>
             <source>STB_PLANE</source>
@@ -2913,7 +2989,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_POINT_COORDS</source>
-            <translation>Point coordinates</translation>
+            <translation>Display point coordinates</translation>
         </message>
         <message>
             <source>STB_POINT_ON_EDGE</source>
@@ -2973,11 +3049,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_ROTATION</source>
-            <translation>Rotation</translation>
+            <translation>Rotate a shape</translation>
         </message>
         <message>
             <source>STB_SCALE</source>
-            <translation>Scale transform</translation>
+            <translation>Scale a shape</translation>
         </message>
         <message>
             <source>STB_SECTION</source>
@@ -3013,7 +3089,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_SKETCH</source>
-            <translation>Sketch</translation>
+            <translation>Create 2D sketch</translation>
+        </message>
+        <message>
+            <source>STB_3DSKETCH</source>
+            <translation>Create 3D sketch</translation>
         </message>
         <message>
             <source>STB_SOLID</source>
@@ -3045,7 +3125,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Compute tolerance of the shape</translation>
         </message>
         <message>
             <source>STB_TORUS</source>
@@ -3053,7 +3133,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_TRANSLATION</source>
-            <translation>Translation</translation>
+            <translation>Translate shape</translation>
         </message>
         <message>
             <source>STB_VECTOR</source>
@@ -3164,6 +3244,22 @@ Please, select face, shell or solid and try again</translation>
             <translation>Transformation</translation>
         </message>
         <message>
+            <source>TOOL_BUILD</source>
+            <translation>Build</translation>
+        </message>
+        <message>
+            <source>TOOL_OPERATIONS</source>
+            <translation>Operations</translation>
+        </message>
+        <message>
+            <source>TOOL_ADVANCED</source>
+            <translation>Advanced</translation>
+        </message>
+        <message>
+            <source>TOOL_MEASURES</source>
+            <translation>Measures</translation>
+        </message>
+        <message>
             <source>TOP_ARC</source>
             <translation>Create an arc</translation>
         </message>
@@ -3177,7 +3273,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_BND_BOX</source>
-            <translation>Compute bounding box</translation>
+            <translation>Bounding box</translation>
         </message>
         <message>
             <source>TOP_BOX</source>
@@ -3193,7 +3289,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_CHECK</source>
-            <translation>Check</translation>
+            <translation>Check shape</translation>
         </message>
         <message>
             <source>TOP_CHECK_COMPOUND</source>
@@ -3229,7 +3325,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_COMPOUND</source>
-            <translation>Build a compound</translation>
+            <translation>Build compound</translation>
         </message>
         <message>
             <source>TOP_CONE</source>
@@ -3251,9 +3347,13 @@ Please, select face, shell or solid and try again</translation>
             <source>TOP_DELETE</source>
             <translation>Delete object</translation>
         </message>
+        <message>
+            <source>TOP_RECTANGLE</source>
+            <translation>Create rectangular face</translation>
+        </message>
 	<message>
             <source>TOP_DISK</source>
-            <translation>Build a Disk</translation>
+            <translation>Create a disk</translation>
         </message>
         <message>
             <source>TOP_DISPLAY</source>
@@ -3269,7 +3369,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_EDGE</source>
-            <translation>Build an edge</translation>
+            <translation>Build edge</translation>
         </message>
         <message>
             <source>TOP_ELLIPSE</source>
@@ -3301,11 +3401,19 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_FACE</source>
-            <translation>Build a face</translation>
+            <translation>Build face</translation>
         </message>
         <message>
             <source>TOP_FILLET</source>
-            <translation>Fillet</translation>
+            <translation>Fillet 3D</translation>
+        </message>
+        <message>
+            <source>TOP_FILLET_1D</source>
+            <translation>Fillet 1D</translation>
+        </message>
+        <message>
+            <source>TOP_FILLET_2D</source>
+            <translation>Fillet 2D</translation>
         </message>
         <message>
             <source>TOP_FILLING</source>
@@ -3337,7 +3445,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_INERTIA</source>
-            <translation>Compute intertia</translation>
+            <translation>Moments of intertia</translation>
         </message>
         <message>
             <source>TOP_ISOS</source>
@@ -3353,11 +3461,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_MASS_CENTER</source>
-            <translation>Compute center of mass</translation>
+            <translation>Center of mass</translation>
         </message>
         <message>
             <source>TOP_MIN_DIST</source>
-            <translation>Compute minimum distance</translation>
+            <translation>Minimum distance</translation>
         </message>
         <message>
             <source>TOP_MIRROR</source>
@@ -3365,7 +3473,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_MODIFY_LOCATION</source>
-            <translation>Modify the Location</translation>
+            <translation>Modify location</translation>
         </message>
         <message>
             <source>TOP_MUL_ROTATION</source>
@@ -3389,7 +3497,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_PIPE</source>
-            <translation>Extrusion along a path</translation>
+            <translation>Extrusion along path</translation>
         </message>
         <message>
             <source>TOP_PLANE</source>
@@ -3489,15 +3597,19 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_SHELL</source>
-            <translation>Build a shell</translation>
+            <translation>Build shell</translation>
         </message>
         <message>
             <source>TOP_SKETCH</source>
-            <translation>Sketch</translation>
+            <translation>2D sketch</translation>
+        </message>
+        <message>
+            <source>TOP_3DSKETCH</source>
+            <translation>3D sketch</translation>
         </message>
         <message>
             <source>TOP_SOLID</source>
-            <translation>Build a solid</translation>
+            <translation>Build solid</translation>
         </message>
         <message>
             <source>TOP_SPHERE</source>
@@ -3521,7 +3633,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_TOLERANCE</source>
-            <translation>Compute tolerance</translation>
+            <translation>Tolerance</translation>
         </message>
         <message>
             <source>TOP_TORUS</source>
@@ -3541,7 +3653,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_WIRE</source>
-            <translation>Build a wire</translation>
+            <translation>Build wire</translation>
         </message>
         <message>
             <source>TOP_WORK_PLANE</source>
@@ -3673,7 +3785,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>TOP_NORMALE</source>
-            <translation>Compute normal to a face</translation>
+            <translation>Normal to a face</translation>
         </message>
         <message>
             <source>MEN_NORMALE</source>
@@ -3681,11 +3793,11 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>STB_NORMALE</source>
-            <translation>Compute normal to a face in a point (optional)</translation>
+            <translation>Compute normal to the face</translation>
         </message>
         <message>
             <source>TOP_MEASURE_ANGLE</source>
-            <translation>Compute angle</translation>
+            <translation>Angle</translation>
         </message>
         <message>
             <source>MEN_MEASURE_ANGLE</source>
@@ -3730,6 +3842,22 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_FILLING_APPROX</source>
             <translation>Approximation</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_METHOD</source>
+            <translation>Method</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_DEFAULT</source>
+            <translation>Default (standard behaviour)</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_USEORI</source>
+            <translation>Use edges orientation</translation>
+        </message>
+        <message>
+            <source>GEOM_FILLING_AUTO</source>
+            <translation>Auto-correct edges orientation</translation>
         </message>
         <message>
             <source>GEOM_WRN_NO_APPROPRIATE_SELECTION</source>
@@ -3880,6 +4008,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Set presentation parameters and subshapes from arguments</translation>
         </message>
         <message>
+            <source>GEOM_RSS_ADD_FREFIX</source>
+            <translation>Add prefix to names of restored subshapes</translation>
+        </message>
+        <message>
             <source>GEOM_ALL_IMPORT_FILES</source>
             <translation>All supported formats ( %1 )</translation>
         </message>
@@ -3903,6 +4035,16 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_SCALE_DIMENSIONS</source>
             <translation>Would you like to take into account the units?
 Otherwise the dimensions will be kept without modifications.</translation>
+        </message>
+        <message>
+            <source>GEOM_ADVANCED</source>
+            <translation>Advanced shape: type %1</translation>
+        </message>
+        <message>
+            <source>GEOM_PRECISION_HINT</source>
+            <translation>
+Input value precision can be adjusted using
+'%1' parameter in Geometry module preferences.</translation>
         </message>
     </context>
     <context>
@@ -4367,4 +4509,143 @@ Would you like to continue?</translation>
             <translation>Load Texture</translation>
         </message>
     </context>
+    <context>
+        <name>AdvancedGUI_PipeTShapeDlg</name>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_TITLE</source>
+            <translation>Pipe TShape Construction</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE</source>
+            <translation>PipeTShape</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_MPIPE</source>
+            <translation>Main pipe</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_R</source>
+            <translation>Radius</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_W</source>
+            <translation>Width</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_L</source>
+            <translation>Half-length</translation>
+	    </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_IPIPE</source>
+            <translation>Incident pipe</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_CHAMFER</source>
+            <translation>Chamfer</translation>
+	    </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_CHAMFER_H</source>
+            <translation>Height</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_CHAMFER_W</source>
+            <translation>Width</translation>
+        </message>
+	    <message>
+            <source>GEOM_PIPE_TSHAPE_FILLET</source>
+            <translation>Fillet</translation>
+	    </message>
+	    <message>
+            <source>GEOM_PIPE_TSHAPE_HEX</source>
+            <translation>Prepare for hex mesh</translation>
+        </message>
+	    <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION</source>
+            <translation>Set position</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_P1</source>
+            <translation>Junction P1</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_P2</source>
+            <translation>Junction P2</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_P3</source>
+            <translation>Junction P3</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L1</source>
+            <translation>New L1</translation>
+        </message>
+        <message>
+            <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
+            <translation>New L2</translation>
+        </message>
+    </context>
+    <context>
+        <name>@default</name>
+        <message>
+            <source>TOP_PIPETSHAPE</source>
+            <translation>Create Pipe TShape</translation>
+        </message>
+        <message>
+            <source>MEN_PIPETSHAPE</source>
+            <translation>Pipe TShape</translation>
+        </message>
+        <message>
+            <source>STB_PIPETSHAPE</source>
+            <translation>Create new Pipe TShape object</translation>
+	    </message>
+	    <message>
+            <source>GEOM_ADVANCED_201</source>
+            <translation>Pipe TShape</translation>
+        </message>
+        <message>
+            <source>HALF_LENGTH_MAIN_PIPE</source>
+            <translation>Main pipe half length</translation>
+        </message>
+        <message>
+            <source>HALF_LENGTH_INCIDENT_PIPE</source>
+            <translation>Incident pipe half length</translation>
+        </message>
+        <message>
+            <source>CIRCULAR_QUARTER_PIPE</source>
+            <translation>Circular quarter of pipe</translation>
+        </message>
+        <message>
+            <source>THICKNESS</source>
+            <translation>Thickness</translation>
+        </message>
+        <message>
+            <source>FLANGE</source>
+            <translation>Flange</translation>
+        </message>
+        <message>
+            <source>CHAMFER_OR_FILLET</source>
+            <translation>Chamfer or fillet</translation>
+        </message>
+        <message>
+            <source>CHAMFER</source>
+            <translation>Chamfer</translation>
+        </message>
+        <message>
+            <source>FILLET</source>
+            <translation>Fillet</translation>
+        </message>
+        <message>
+            <source>JUNCTION_FACE_1</source>
+            <translation>Junction 1</translation>
+        </message>
+        <message>
+            <source>JUNCTION_FACE_2</source>
+            <translation>Junction 2</translation>
+        </message>
+        <message>
+            <source>JUNCTION_FACE_3</source>
+            <translation>Junction 3</translation>
+        </message>
+    </context>
+    <!-- @@ insert new functions before this line @@ do not remove this line @@ -->
 </TS>

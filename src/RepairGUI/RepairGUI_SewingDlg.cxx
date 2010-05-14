@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_SewingDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -28,7 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -75,7 +76,8 @@ RepairGUI_SewingDlg::RepairGUI_SewingDlg( GeometryGUI* theGeometryGUI, QWidget* 
 
   QGridLayout* aLay = new QGridLayout( GroupPoints->Box );
   aLay->setMargin( 0 ); aLay->setSpacing( 6 );
-  myTolEdt = new SalomeApp_DoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 10, GroupPoints->Box );
+  myTolEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
+  initSpinBox( myTolEdt, 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, "len_tol_precision" );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
   QLabel* aLbl1 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
   myFreeBoundBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GEOM_FREE_BOUNDARIES" ) ), 

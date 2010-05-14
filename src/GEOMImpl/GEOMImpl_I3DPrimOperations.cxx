@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -1453,7 +1454,8 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
        (Handle(GEOM_Object) theShape, int theMinDeg, int theMaxDeg,
-        double theTol2D, double theTol3D, int theNbIter, bool isApprox)
+        double theTol2D, double theTol3D, int theNbIter,
+        int theMethod, bool isApprox)
 {
   SetErrorCode(KO);
 
@@ -1482,6 +1484,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   aFI.SetTol3D(theTol3D);
   aFI.SetNbIter(theNbIter);
   aFI.SetApprox(isApprox);
+  aFI.SetMethod(theMethod);
 
   //Compute the Solid value
   try {
@@ -1505,10 +1508,13 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeFilling
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << aFilling << " = geompy.MakeFilling("
-    << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
-      << theTol2D << ", " << theTol3D << ", " << theNbIter;
+     << theShape << ", " << theMinDeg << ", " << theMaxDeg << ", "
+     << theTol2D << ", " << theTol3D << ", " << theNbIter  << ", ";
+  if( theMethod==1 ) pd << "GEOM.FOM_UseOri"; 
+  else if( theMethod==2 ) pd << "GEOM.FOM_AutoCorrect";
+  else pd << "GEOM.FOM_Default";
   if(isApprox)
-    pd << ", " << isApprox;
+    pd << ", " << isApprox ;
   pd << ")";
 
   SetErrorCode(OK);

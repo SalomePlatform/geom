@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : GEOM_Superv.idl
 //  Author : Lucien PIGNOLONI
 //
@@ -200,7 +201,9 @@ module GEOM
     GEOM_Object MakeFilling (in GEOM_Object theShape,
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
-			     in long theNbIter, in boolean theApprox) ;
+			     in long theNbIter,
+                             in filling_oper_method theMethod,
+                             in boolean theApprox) ;
     GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
 				 in boolean theModeSolid,
 				 in double thePreci,
@@ -573,7 +576,38 @@ module GEOM
     GEOM_Object  GetMainShape(in GEOM_Object theGroup) ;
     GEOM_List  GetObjects(in GEOM_Object theGroup) ;
 
-  };
+    //-----------------------------------------------------------//
+    // AdvancedOperations                                        //
+    //-----------------------------------------------------------//
+    GEOM_List MakePipeTShape (in double theR1, in double theW1, in double theL1, 
+                in double theR2, in double theW2, in double theL2,
+                in boolean theHexMesh);
+              
+    GEOM_List MakePipeTShapeWithPosition (in double theR1, in double theW1, in double theL1, 
+                        in double theR2, in double theW2, in double theL2,
+                        in boolean theHexMesh,
+                        in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                        
+    GEOM_List MakePipeTShapeChamfer (in double theR1, in double theW1, in double theL1,
+                    in double theR2, in double theW2, in double theL2,
+                    in double theH, in double theW, in boolean theHexMesh);
+                    
+    GEOM_List MakePipeTShapeChamferWithPosition (in double theR1, in double theW1, in double theL1, 
+                           in double theR2, in double theW2, in double theL2, 
+                           in double theH, in double theW, in boolean theHexMesh,
+                           in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                           
+    GEOM_List MakePipeTShapeFillet (in double theR1, in double theW1, in double theL1, 
+                      in double theR2, in double theW2, in double theL2, 
+                      in double theRF, in boolean theHexMesh);
+                      
+    GEOM_List MakePipeTShapeFilletWithPosition (in double theR1, in double theW1, in double theL1, 
+                          in double theR2, in double theW2, in double theL2, 
+                          in double theRF, in boolean theHexMesh,
+                          in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+
+    /*@@ insert new functions before this line @@ do not remove this line @@*/
+ };
 };
 
 #endif

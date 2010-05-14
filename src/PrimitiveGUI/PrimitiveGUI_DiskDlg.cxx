@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : PrimitiveGUI_DiskDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -132,8 +130,8 @@ void PrimitiveGUI_DiskDlg::Init()
   double aStep = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPntVecR->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPntVecR->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
 
   // init variables
   myEditCurrentArgument = GroupPntVecR->LineEdit1;

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -704,13 +705,15 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeRevolutionAxisAngle2Ways
  *  MakeFilling
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
-                                                            CORBA::Long theMinDeg,
-                                                            CORBA::Long theMaxDeg,
-                                                            CORBA::Double theTol2D,
-                                                            CORBA::Double theTol3D,
-                                                            CORBA::Long theNbIter,
-                                                            CORBA::Boolean theApprox)
+GEOM::GEOM_Object_ptr
+GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_ptr theShape,
+                                      CORBA::Long theMinDeg,
+                                      CORBA::Long theMaxDeg,
+                                      CORBA::Double theTol2D,
+                                      CORBA::Double theTol3D,
+                                      CORBA::Long theNbIter,
+                                      GEOM::filling_oper_method theMethod,
+                                      CORBA::Boolean theApprox)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -722,9 +725,34 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeFilling(GEOM::GEOM_Object_pt
 
   if (aShape.IsNull()) return aGEOMObject._retn();
 
+  int aMethod = 0;
+  switch (theMethod) {
+  case GEOM::FOM_Default:
+    {
+      // Default (standard behaviour)
+      aMethod = 0;
+    }
+    break;
+  case GEOM::FOM_UseOri:
+    {
+      // Use edges orientation
+      aMethod = 1;
+    }
+    break;
+  case GEOM::FOM_AutoCorrect:
+    {
+      // Auto-correct edges orientation
+      aMethod = 2;
+    }
+    break;
+  default:
+    {}
+  }
+
   //Create the Solid
   Handle(GEOM_Object) anObject = GetOperations()->MakeFilling
-    (aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter, theApprox);
+    (aShape, theMinDeg, theMaxDeg, theTol2D, theTol3D, theNbIter,
+     aMethod, theApprox);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

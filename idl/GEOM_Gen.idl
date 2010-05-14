@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,9 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  File   : GEOM_Gen.idl
 //  Author : Sergey RUIN
-
+//
 #ifndef __GEOM_GEN__
 #define __GEOM_GEN__
 
@@ -112,6 +113,22 @@ module GEOM
 
     /*! Use GetInPlaceByHistory method (can work only after Partition) */
     FSM_GetInPlaceByHistory
+  };
+
+  /*!
+   *  Kind of method to perform filling operation
+   *  Is used in functions GEOM_Gen.MakeFilling<xxx>()
+   */
+  enum filling_oper_method
+  {
+    /*! Default (standard behaviour) */
+    FOM_Default,
+
+    /*! Use edges orientation */
+    FOM_UseOri,
+
+    /*! Auto-correct edges orientation */
+    FOM_AutoCorrect
   };
 
 
@@ -1180,12 +1197,15 @@ module GEOM
      *  \param theTol2D a 2d tolerance to be reached
      *  \param theTol3D a 3d tolerance to be reached
      *  \param theNbIter a number of iteration of approximation algorithm
+     *  \param theMethod Kind of method to perform filling operation.
      *  \return New GEOM_Object, containing the created filling surface.
      */
     GEOM_Object MakeFilling (in GEOM_Object theShape,
 			     in long theMinDeg, in long theMaxDeg,
 			     in double theTol2D, in double theTol3D,
-			     in long theNbIter, in boolean theApprox);
+			     in long theNbIter,
+                             in filling_oper_method theMethod,
+                             in boolean theApprox);
 
     /*!
      *  Create a shell or solid passing through set of sections.Sections should be wires,edges or vertices.
@@ -2822,7 +2842,9 @@ module GEOM
       SEGMENT,      // segment
       EDGE,         // other edge
       // VERTEX
-      VERTEX
+      VERTEX,
+      // ADVANCED shapes
+      ADVANCED      // all advanced shapes (temporary implementation)
     };
   };
 
@@ -3127,6 +3149,135 @@ module GEOM
 
 
   /*!
+   *  GEOM_IAdvancedOperations: Interface for advanced modeling functions.
+   */
+  interface GEOM_IAdvancedOperations : GEOM_IOperations
+  {
+    /*!
+     *  Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length).
+     *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShape (in double theR1, in double theW1, in double theL1, 
+				in double theR2, in double theW2, in double theL2,
+				in boolean theHexMesh);
+    /*!
+     *  Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length).
+     *  The extremities of the main pipe are located on junctions points P1 and P2.
+     *  The extremity of the incident pipe is located on junction point P3.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \param theP1 1st junction point of main pipe
+     *  \param theP2 2nd junction point of main pipe
+     *  \param theP3 Junction point of incident pipe
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeWithPosition (in double theR1, in double theW1, in double theL1, 
+					    in double theR2, in double theW2, in double theL2,
+					    in boolean theHexMesh,
+					    in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+    /*!
+     *  Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). A chamfer is created
+     *  on the junction of the pipes.
+     *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *  \param theH Height of the chamfer.
+     *  \param theW Width of the chamfer.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeChamfer (in double theR1, in double theW1, in double theL1,
+				    in double theR2, in double theW2, in double theL2,
+				    in double theH, in double theW, in boolean theHexMesh);
+    /*!
+     *  Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). A chamfer is created
+     *  on the junction of the pipes.
+     *  The extremities of the main pipe are located on junctions points P1 and P2.
+     *  The extremity of the incident pipe is located on junction point P3.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *  \param theH Height of the chamfer.
+     *  \param theW Width of the chamfer.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \param theP1 1st junction point of main pipe
+     *  \param theP2 2nd junction point of main pipe
+     *  \param theP3 Junction point of incident pipe
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeChamferWithPosition (in double theR1, in double theW1, in double theL1, 
+						   in double theR2, in double theW2, in double theL2, 
+						   in double theH, in double theW, in boolean theHexMesh,
+						   in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+    /*!
+     *  Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). A fillet is created
+     *  on the junction of the pipes.
+     *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *  \param theRF Radius of curvature of fillet.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeFillet (in double theR1, in double theW1, in double theL1, 
+				      in double theR2, in double theW2, in double theL2, 
+				      in double theRF, in boolean theHexMesh);
+    /*!
+     *  Create a T-shape object with specified caracteristics for the main and
+     *  the incident pipes (radius, width, half-length). A fillet is created
+     *  on the junction of the pipes.
+     *  The extremities of the main pipe are located on junctions points P1 and P2.
+     *  The extremity of the incident pipe is located on junction point P3.
+     *  \param theR1 Internal radius of main pipe
+     *  \param theW1 Width of main pipe
+     *  \param theL1 Half-length of main pipe
+     *  \param theR2 Internal radius of incident pipe (R2 < R1)
+     *  \param theW2 Width of incident pipe (R2+W2 < R1+W1)
+     *  \param theL2 Half-length of incident pipe
+     *  \param theRF Radius of curvature of fillet.
+     *  \param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=true)
+     *  \param theP1 1st junction point of main pipe
+     *  \param theP2 2nd junction point of main pipe
+     *  \param theP3 Junction point of incident pipe
+     *  \return List of GEOM_Objects, containing the created shape and propagation groups.
+     */
+    ListOfGO MakePipeTShapeFilletWithPosition (in double theR1, in double theW1, in double theL1, 
+						  in double theR2, in double theW2, in double theL2, 
+						  in double theRF, in boolean theHexMesh,
+						  in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+    /*@@ insert new functions before this line @@ do not remove this line @@*/
+  };
+    
+  /*!
    *  GEOM_Gen: Interface to access other GEOM interfaces.
    *  Also contains some methods to access and manage GEOM objects.
    */
@@ -3170,13 +3321,16 @@ module GEOM
      *                            operations, where only the first argument has to be considered.
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
+     *  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
+     *                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
      *  \return list of published sub-shapes
      */
     ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
 		 	        in GEOM_Object       theObject,
 			        in ListOfGO          theArgs,
 			        in find_shape_method theFindMethod,
-			        in boolean           theInheritFirstArg);
+			        in boolean           theInheritFirstArg,
+                                in boolean           theAddPrefix);
 
     /*!
      *  Publish sub-shapes, standing for arguments and sub-shapes of arguments
@@ -3188,7 +3342,8 @@ module GEOM
 				 in SALOMEDS::SObject theSObject,
 				 in ListOfGO          theArgs,
 				 in find_shape_method theFindMethod,
-				 in boolean           theInheritFirstArg);
+				 in boolean           theInheritFirstArg,
+                                 in boolean           theAddPrefix);
 
     /*!
      *  Methods to access interfaces for objects creation and transformation
@@ -3205,6 +3360,7 @@ module GEOM
     GEOM_IMeasureOperations   GetIMeasureOperations  (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IBlocksOperations    GetIBlocksOperations   (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
+    GEOM_IAdvancedOperations  GetIAdvancedOperations (in long theStudyID) raises (SALOME::SALOME_Exception);
 
     /*!
      *  Objects Management

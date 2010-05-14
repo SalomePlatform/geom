@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,13 +19,14 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI_SketcherDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
 //
 #include "EntityGUI_SketcherDlg.h"
 #include "EntityGUI_Widgets.h"
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -326,16 +327,17 @@ void EntityGUI_SketcherDlg::Init()
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( Group1Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group1Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
+  // san: Note specific step values below!
+  initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
+  initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
+  initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., "length_precision" );
 
   /* displays Dialog */
   MainWidget->GroupConstructors->setEnabled( false );
@@ -345,10 +347,11 @@ void EntityGUI_SketcherDlg::Init()
 
   MainWidget->RadioButton1->setChecked( true );
 
-  resize(100,100);
   TypeClicked( 0 );
 
   FindLocalCS();
+  resize(100,100);
+
 
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
@@ -367,8 +370,6 @@ void EntityGUI_SketcherDlg::InitClick()
   Group2Spin->hide();
   Group3Spin->hide();
   Group4Spin->hide();
-
-  resize(100,100);
 }
 
 
@@ -434,8 +435,8 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
   if ( myConstructorId == 0 ) {  // SEGMENT
     if ( constructorId == 1 ) {  // XY
       mySketchType = PT_ABS;
-      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
       Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
       myX = 0.0;
@@ -449,8 +450,8 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
     }
     else if ( constructorId == 0 ) {  // DXDY
       mySketchType = PT_RELATIVE;
-      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
       Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
       myDX = 0.0;
@@ -465,12 +466,13 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
     else if ( constructorId == 2 ) {  // Selection
       mySketchType = PT_SEL;
       myEditCurrentArgument = Group1Sel->LineEdit1;
-      connect( myGeometryGUI->getApp()->selectionMgr(),
-               SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
       Group1Sel->show();
       Group1Sel->buttonApply->setFocus();
       SelectionIntoArgument();
     }
+
+    connect( myGeometryGUI->getApp()->selectionMgr(),
+             SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   }
 }
 
@@ -504,8 +506,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     myY = 0.0;
     myLength = 100.0;
     if ( myConstructorDirId == 2 ) {  // Angle
-      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-      initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., "length_precision" );
       Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
       Group2Spin->SpinBox_DX->setValue( myAngle );
       Group2Spin->buttonApply->setFocus();
@@ -513,16 +514,19 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
 
       if ( constructorId == 2 ) {  // Length
         mySketchType = DIR_ANGLE_LENGTH;
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_LENGTH2" ) );
         Group2Spin->SpinBox_DY->setValue( myLength );
       }
       else if ( constructorId == 0 ) {  // X
         mySketchType = DIR_ANGLE_X;
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "angle_precision" );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_X3" ) );
         Group2Spin->SpinBox_DY->setValue( myX );
       }
       else if ( constructorId == 1 ) {  // Y
         mySketchType = DIR_ANGLE_Y;
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "angle_precision" );        
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y3" ) );
         Group2Spin->SpinBox_DY->setValue( myY );
       }
@@ -568,9 +572,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
     }
     else if ( myConstructorDirId == 3 ) {  // DXDY
-      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-      initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-      initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+      initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
+      initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
+      initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
       Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_VX2" ) );
       Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_VY2" ) );
       myDX = 0.0;
@@ -601,9 +605,9 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     if ( myConstructorDirId == 2 ) {  // Angle
       if ( constructorId == 2 ) {  // Length
         mySketchType = DIR_ANGLE_LENGTH;
-        initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-        initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-        initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+        initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 5., "angle_precision" );
+        initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+        initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, 5., "angle_precision" );
         Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
         Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_ANGLE2" ));
@@ -619,8 +623,8 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     else if ( myConstructorDirId == 0 ) {  // Perpendicular
       if ( constructorId == 2 ) {  // Length
         mySketchType = DIR_PER_LENGTH;
-        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., "angle_precision" );
         Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
         myRadius = 100.0;
@@ -634,8 +638,8 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     else if ( myConstructorDirId == 1 ) {  // Tangent
       if ( constructorId == 2 ) {  // Length
         mySketchType = DIR_TAN_LENGTH;
-        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+        initSpinBox( Group2Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 5., "angle_precision" );
         Group2Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_RADIUS2" ) );
         Group2Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_ANGLE2" ) );
         myRadius = 100.0;
@@ -818,6 +822,9 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
     MainWidget->RadioButton1->setChecked( true );
     TypeClicked( 0 );
 
+    connect( myGeometryGUI->getApp()->selectionMgr(),
+             SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
     MainWidget->GroupConstructors->setEnabled( false );
     MainWidget->GroupDest1->setEnabled( false );
     setEnabledUndo( false );
@@ -885,6 +892,8 @@ void EntityGUI_SketcherDlg::setEnabledRedo( bool value )
 void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
+  double tmpX = myX;
+  double tmpY = myY;
   myX = myLastX1;
   myY = myLastY1;
 
@@ -911,6 +920,27 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
           myX = aPnt.X();
           myY = aPnt.Y();
           Group1Sel->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
+          if( Group2Spin->isVisible() && mySketchType == PT_ABS ) {
+            disconnect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            disconnect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            Group2Spin->SpinBox_DX->setValue(myX);
+            Group2Spin->SpinBox_DY->setValue(myY);
+            connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+          } else if ( Group2Spin->isVisible() && mySketchType == PT_RELATIVE ) {
+            if ( myLastX1 && myLastY1 ) {
+              Group2Spin->SpinBox_DX->setValue(myX - myLastX1);
+              Group2Spin->SpinBox_DY->setValue(myY - myLastY1);
+            } else {
+              if ( mySketchState != FIRST_POINT ) {
+                Group2Spin->SpinBox_DX->setValue(myX - tmpX);
+                Group2Spin->SpinBox_DY->setValue(myY - tmpY);
+              } else {
+                Group2Spin->SpinBox_DX->setValue(myX);
+                Group2Spin->SpinBox_DY->setValue(myY);
+              }
+            }
+          }
         }
       }
     }
@@ -1602,13 +1632,31 @@ void  EntityGUI_SketcherDlg::keyPressEvent( QKeyEvent* e )
   }
 }
 
+//=================================================================================
+// function : initSpinBox()
+// purpose  :
+//=================================================================================
 void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
                                          double min,  double max,
-                                         double step, int decimals )
+                                         double step, const char* quantity )
 {
-  spinBox->setDecimals( decimals );
+  // The same stuff as in GEOMBase_Skeleton::initSpinBox()!
+  // TODO: Think how to keep the single piece of code...
+
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
+  
+  spinBox->setPrecision( aPrecision );
+  spinBox->setDecimals( aPrecision ); // it's necessary to set decimals before the range setting,
+                                    // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
+  
+  // Add a hint for the user saying how to tune precision
+  QString userPropName = QObject::tr( QString( "PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  spinBox->setProperty( "validity_tune_hint", 
+                        QVariant( QObject::tr( "PRECISION_HINT" ).arg( userPropName ) ) );  
 }
 
 //=================================================================================
@@ -1623,10 +1671,13 @@ void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
   Group3Spin->SpinBox_DX->setSingleStep(step);
   Group3Spin->SpinBox_DY->setSingleStep(step);
   Group3Spin->SpinBox_DZ->setSingleStep(step);
-  Group4Spin->SpinBox_DX->setSingleStep(step);
-  Group4Spin->SpinBox_DY->setSingleStep(step);
   Group4Spin->SpinBox_DZ->setSingleStep(step);
-  Group4Spin->SpinBox_DS->setSingleStep(step);
+
+  // san: Do NOT override the step when a speicifc step value is used
+  // in some input fields!
+  //Group4Spin->SpinBox_DX->setSingleStep(step);
+  //Group4Spin->SpinBox_DY->setSingleStep(step);
+  //Group4Spin->SpinBox_DS->setSingleStep(step);
 }
 
 //=================================================================================

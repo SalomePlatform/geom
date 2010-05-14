@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CircleDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -158,7 +159,7 @@ void BasicGUI_CircleDlg::Init()
   double aStep = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   /* min, max, step and decimals for spin boxes & initial values */
-  initSpinBox( GroupPntVecR->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPntVecR->SpinBox_DX, 0.000001, COORD_MAX, aStep, "length_precision" );
   GroupPntVecR->SpinBox_DX->setValue( 100 );
 
   /* signals and slots connections */

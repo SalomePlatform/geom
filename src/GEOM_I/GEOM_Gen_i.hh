@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef __GEOM_GEN_I_H__
 #define __GEOM_GEN_I_H__
 
@@ -49,6 +50,7 @@
 #include "GEOM_IInsertOperations_i.hh"
 #include "GEOM_IMeasureOperations_i.hh"
 #include "GEOM_IGroupOperations_i.hh"
+#include "GEOM_IAdvancedOperations_i.hh"
 
 #include <TopTools_IndexedMapOfShape.hxx>
 
@@ -147,7 +149,8 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 				     GEOM::GEOM_Object_ptr   theObject,
                                      const GEOM::ListOfGO&   theArgs,
                                      GEOM::find_shape_method theFindMethod,
-                                     CORBA::Boolean          theInheritFirstArg);
+                                     CORBA::Boolean          theInheritFirstArg,
+                                     CORBA::Boolean          theAddPrefix);
 
   /*! \brief Publish sub-shapes, standing for arguments and sub-shapes of arguments.
    *         To be used from GUI and from geompy.addToStudy
@@ -156,7 +159,8 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 				      SALOMEDS::SObject_ptr   theSObject,
                                       const GEOM::ListOfGO&   theArgs,
                                       GEOM::find_shape_method theFindMethod,
-                                      CORBA::Boolean          theInheritFirstArg);
+                                      CORBA::Boolean          theInheritFirstArg,
+                                      CORBA::Boolean          theAddPrefix);
 
   //-----------------------------------------------------------------------//
   // Transaction methods                                                   //
@@ -220,6 +224,10 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_IGroupOperations_ptr GetIGroupOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
 
+  //Returns a pointer to AdvancedOperations interface
+  virtual GEOM::GEOM_IAdvancedOperations_ptr GetIAdvancedOperations (CORBA::Long theStudyID)
+    throw (SALOME::SALOME_Exception);
+
   //Adds a new sub shape
   virtual GEOM::GEOM_Object_ptr AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
 					     const GEOM::ListOfLong& theIndices);
@@ -253,14 +261,16 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 					    SALOMEDS::SObject_ptr   theOldSO,
 					    SALOMEDS::SObject_ptr   theNewSO,
 					    GEOM::GEOM_Object_ptr   theNewO,
-					    GEOM::find_shape_method theFindMethod);
+					    GEOM::find_shape_method theFindMethod,
+                                            CORBA::Boolean          theAddPrefix);
 
   GEOM::ListOfGO* RestoreSubShapes (SALOMEDS::Study_ptr     theStudy,
 				    GEOM::GEOM_Object_ptr   theObject,
                                     SALOMEDS::SObject_ptr   theSObject,
                                     const GEOM::ListOfGO&   theArgs,
                                     GEOM::find_shape_method theFindMethod,
-                                    CORBA::Boolean          theInheritFirstArg);
+                                    CORBA::Boolean          theInheritFirstArg,
+                                    CORBA::Boolean          theAddPrefix);
 
   // auxilary for PublishNamedShapesInStudy
   void CreateAndPublishGroup(SALOMEDS::Study_ptr theStudy,

@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-#  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 #  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 #  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,6 +20,7 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
+
 #  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
@@ -555,14 +556,14 @@ def TestOtherOperations (geompy, math):
   edges_out_cyl = geompy.GetShapesOnCylinderWithLocation(blocksComp, geompy.ShapeType["EDGE"],
                                                          vy, p11, 55, geompy.GEOM.ST_OUT)
   for edge_i in edges_out_cyl:
-    geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0), r = 55)")
+    geompy.addToStudy(edge_i, "Edge out of Cylinder (axis = (0, 1, 0),  loc = (0, 0, 0), r = 55)")
 
-  # GetShapesOnCylinderIDs
-  edges_in_cyl_ids = geompy.GetShapesOnCylinderIDs(blocksComp, geompy.ShapeType["EDGE"],
-                                                   vy, 80, geompy.GEOM.ST_IN)
+  # GetShapesOnCylinderWithLocationIDs
+  edges_in_cyl_ids = geompy.GetShapesOnCylinderWithLocationIDs(blocksComp, geompy.ShapeType["EDGE"],
+                                                               vy, p11, 80, geompy.GEOM.ST_IN)
   edges_in = geompy.CreateGroup(blocksComp, geompy.ShapeType["EDGE"])
   geompy.UnionIDs(edges_in, edges_in_cyl_ids)
-  geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), r = 55)")
+  geompy.addToStudy(edges_in, "Group of edges inside Cylinder (axis = (0, 1, 0), loc = (0, 0, 0), r = 80)")
 
   # GetShapesOnSphere
   vertices_on_sph = geompy.GetShapesOnSphere(blocksComp, geompy.ShapeType["VERTEX"],

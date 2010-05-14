@@ -1,0 +1,58 @@
+/*!
+
+\page create_pipetshape_page PipeTShape
+
+To create a \b PipeTShape in the <b>Main Menu</b> select <b>New Entity - >
+Advanced - > PipeTShape </b>
+
+Specify the parameters of the PipeTShape object creation in the opened dialog
+box and press "Apply" or "Apply & Close" button.
+Result of each operation will be a GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakePipeTShape(R1, W1, L1, R2, W2, L2, HexMesh=True, P1=None, P2=None, P3=None)</em>
+
+<b>Arguments:</b>
+- \b R1 - Radius of main T-shape pipe.
+- \b W1 - Thickness of main T-shape pipe.
+- \b L1 - Length of main T-shape pipe.
+- \b R2 - Radius of incident T-shape pipe.
+- \b W2 - Thickness of incident T-shape pipe.
+- \b L2 - Length of incident T-shape pipe.
+- \b HexMesh - If True, the shape is splitted in blocks (suitable for hexaedral mesh).
+- \b P1 - First junction point of main pipe (GEOM Vertex).
+- \b P2 - Second junction point of main pipe (GEOM Vertex).
+- \b P3 - Junction point of incident pipe (GEOM Vertex).
+
+\image html pipetshape_dlg.png
+
+Example:
+
+\image html pipetshape.png
+
+A Pipe T-Shape can be created with a chamfer at the junction of the main and the incident pipes:
+
+<b>TUI Command:</b> <em>geompy.MakePipeTShapeChamfer(R1, W1, L1, R2, W2, L2, H, W, HexMesh=True, P1=None, P2=None, P3=None)</em>
+
+<b>Arguments are the same as normal Pipe T-Shape plus:</b>
+- \b H - Height of the chamfer along incident pipe.
+- \b W - Width of the chamfer along the main pipe.
+
+Example:
+
+\image html pipetshapechamfer.png
+
+A Pipe T-Shape can be created with a fillet at the junction of the main and the incident pipes:
+
+<b>TUI Command:</b> <em>geompy.MakePipeTShapeFillet(R1, W1, L1, R2, W2, L2, RF, HexMesh=True, P1=None, P2=None, P3=None)</em>
+
+<b>Arguments are the same as normal Pipe T-Shape plus:</b>
+- \b RF - Radius of the fillet.
+
+Example:
+
+\image html pipetshapefillet.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_pipetshape "Advanced objects".
+
+*/

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI_PositionDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -122,7 +123,7 @@ void TransformationGUI_PositionDlg::Init()
   Group1->LineEdit4->setText("");
   Group1->LineEdit5->setText("");
 
-  initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, 6); // VSR:TODO : DBL_DIGITS_DISPLAY
+  initSpinBox(Group1->SpinBox_DX, 0, 1, 0.05, "parametric_precision" );
   Group1->SpinBox_DX->setValue(0);
 
   Group1->CheckButton2->setEnabled(false);
@@ -665,7 +666,8 @@ void TransformationGUI_PositionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, GEOM::ListOfGO(),
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true);
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
 

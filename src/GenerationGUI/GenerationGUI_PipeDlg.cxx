@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI_PipeDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -189,6 +190,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
   } else {
     TColStd_MapOfInteger aMap;
+    aMap.Add(GEOM_COMPOUND);
     aMap.Add(GEOM_WIRE);
     aMap.Add(GEOM_LINE);
     globalSelection(aMap);
@@ -268,7 +270,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
       for (int i=0; i < myBaseObjects.length(); i++) {
         GEOMBase::GetShape(myBaseObjects[i], S);
         if (S.ShapeType() == TopAbs_COMPSOLID ||
-            S.ShapeType() == TopAbs_COMPOUND ||
+            /*S.ShapeType() == TopAbs_COMPOUND ||*/
             S.ShapeType() == TopAbs_SOLID ||
             S.ShapeType() == TopAbs_SHAPE)
           return;
@@ -369,6 +371,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
       localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
     } else {
       TColStd_MapOfInteger aMap;
+      aMap.Add(GEOM_COMPOUND);
       aMap.Add(GEOM_WIRE);
       aMap.Add(GEOM_LINE);
       globalSelection(aMap);

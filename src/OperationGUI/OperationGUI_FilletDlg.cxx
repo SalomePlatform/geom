@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_FilletDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -110,13 +111,13 @@ OperationGUI_FilletDlg::OperationGUI_FilletDlg (GeometryGUI* theGeometryGUI, QWi
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(Group1->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group2->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DX, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DY, 0.001, COORD_MAX, SpecificStep, "length_precision" );
+  initSpinBox(Group3->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep, "length_precision" );
 
   setHelpFileName("fillet_operation_page.html");
 

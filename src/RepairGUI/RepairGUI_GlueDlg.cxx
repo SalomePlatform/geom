@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM RepairGUI : GUI for Geometry component
 // File   : RepairGUI_GlueDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S. 
@@ -28,7 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -82,7 +83,8 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupPoints->LineEdit1->setReadOnly( true );
   
   QLabel* aTolLab = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints->Box );
-  myTolEdt = new SalomeApp_DoubleSpinBox( 0.0, 100.0, DEFAULT_TOLERANCE_VALUE, 7, 7, GroupPoints->Box );
+  myTolEdt = new SalomeApp_DoubleSpinBox( GroupPoints->Box );
+  initSpinBox( myTolEdt, 0., 100., DEFAULT_TOLERANCE_VALUE, "len_tol_precision" );
   myTolEdt->setValue( DEFAULT_TOLERANCE_VALUE );
 
   QGridLayout* boxLayout = new QGridLayout( GroupPoints->Box );
@@ -99,7 +101,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   QLabel* aTolLab2 = new QLabel( tr( "GEOM_TOLERANCE" ), GroupPoints2->Box );
   myTolEdt2 = new SalomeApp_DoubleSpinBox( GroupPoints2->Box );
-  initSpinBox( myTolEdt2, 0, 100, 1e-7, 7 );
+  initSpinBox( myTolEdt2, 0., 100., DEFAULT_TOLERANCE_VALUE, "len_tol_precision" );
   myTolEdt2->setValue( DEFAULT_TOLERANCE_VALUE );
 
   myDetectBtn = new QPushButton( tr( "GEOM_DETECT" ) + QString( " [%1]" ).arg( tr( "GLUE_FACES" ) ), 
@@ -502,7 +504,8 @@ void RepairGUI_GlueDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy,
 
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
-                                         aFindMethod, /*theInheritFirstArg=*/true );
+                                         aFindMethod, /*theInheritFirstArg=*/true,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() );
   }
 }
 

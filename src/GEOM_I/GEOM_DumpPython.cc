@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifdef WNT
 #pragma warning( disable:4786 )
 #endif
@@ -85,7 +86,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	    }
 	    aStates->AddState(aState);
 	  }
-	  aVariableMap.insert(pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
+	  aVariableMap.insert(std::pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
 	}
       }
     }

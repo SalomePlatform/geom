@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include "GEOM_WireframeFace.h" 
  
 #include <vtkObjectFactory.h> 
@@ -224,29 +222,33 @@ CreateIso(const TopoDS_Face& theFace,
   Standard_Real confusion = Min(DeltaU, DeltaV) * HATHCER_CONFUSION_3D ;
   aHatcher.Confusion3d (confusion) ;
 
-  Standard_Real StepU = DeltaU / (Standard_Real)theNbIso[0];
-  if(StepU > confusion){
-    Standard_Real UPrm = anUMin + StepU / 2.;
-    gp_Dir2d Dir(0., 1.) ;
-    for(IIso = 1 ; IIso <= theNbIso[0] ; IIso++) {
-      anUPrm(IIso) = UPrm ;
-      gp_Pnt2d Ori (UPrm, 0.) ;
-      Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
-      anUInd(IIso) = aHatcher.AddHatching (HCur) ;
-      UPrm += StepU ;
+  if ( theNbIso[0] ) {
+    Standard_Real StepU = DeltaU / (Standard_Real)theNbIso[0];
+    if(StepU > confusion){
+      Standard_Real UPrm = anUMin + StepU / 2.;
+      gp_Dir2d Dir(0., 1.) ;
+      for(IIso = 1 ; IIso <= theNbIso[0] ; IIso++) {
+        anUPrm(IIso) = UPrm ;
+        gp_Pnt2d Ori (UPrm, 0.) ;
+        Geom2dAdaptor_Curve HCur (new Geom2d_Line (Ori, Dir)) ;
+        anUInd(IIso) = aHatcher.AddHatching (HCur) ;
+        UPrm += StepU ;
+      }
     }
   }
 
-  Standard_Real StepV = DeltaV / (Standard_Real) theNbIso[1] ;
-  if(StepV > confusion){
-    Standard_Real VPrm = aVMin + StepV / 2.;
-    gp_Dir2d Dir(1., 0.);
-    for(IIso = 1 ; IIso <= theNbIso[1] ; IIso++){
-      aVPrm(IIso) = VPrm;
-      gp_Pnt2d Ori (0., VPrm);
-      Geom2dAdaptor_Curve HCur(new Geom2d_Line (Ori, Dir));
-      aVInd(IIso) = aHatcher.AddHatching (HCur) ;
-      VPrm += StepV ;
+  if ( theNbIso[1] ) {
+    Standard_Real StepV = DeltaV / (Standard_Real) theNbIso[1] ;
+    if(StepV > confusion){
+      Standard_Real VPrm = aVMin + StepV / 2.;
+      gp_Dir2d Dir(1., 0.);
+      for(IIso = 1 ; IIso <= theNbIso[1] ; IIso++){
+        aVPrm(IIso) = VPrm;
+        gp_Pnt2d Ori (0., VPrm);
+        Geom2dAdaptor_Curve HCur(new Geom2d_Line (Ori, Dir));
+        aVInd(IIso) = aHatcher.AddHatching (HCur) ;
+        VPrm += StepV ;
+      }
     }
   }
 

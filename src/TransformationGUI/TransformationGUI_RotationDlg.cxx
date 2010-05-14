@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI_RotationDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -122,7 +123,7 @@ void TransformationGUI_RotationDlg::Init()
   double SpecificStep = 5;
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, 3); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, COORD_MIN, COORD_MAX, SpecificStep, "angle_precision" );
   GroupPoints->SpinBox_DX->setValue(anAngle);
 
   // init variables
@@ -615,7 +616,8 @@ void TransformationGUI_RotationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
     anArgs[0] = myCurrObject;
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true);
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
 

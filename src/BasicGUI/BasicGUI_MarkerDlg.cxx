@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_MarkerDlg.cxx
 // Author : Sergey LITONIN, Open CASCADE S.A.S. (sergey.litonin@opencascade.com)
@@ -206,7 +207,7 @@ void BasicGUI_MarkerDlg::Init()
   double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter ) {
-    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+    initSpinBox( anIter.value(), COORD_MIN, COORD_MAX, step, "length_precision" );
     connect( anIter.value(), SIGNAL( valueChanged( double ) ),
              this, SLOT( onValueChanged( double ) ) );
   }

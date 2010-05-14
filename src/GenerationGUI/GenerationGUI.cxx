@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -26,6 +27,7 @@
 #include "GenerationGUI.h"
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Desktop.h>
 #include <SalomeApp_Application.h>
@@ -67,10 +69,10 @@ bool GenerationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 4031: aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent ); break;
-  case 4032: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent ); break;
-  case 4033: aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent ); break;
-  case 4034: aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPrism:      aDlg = new GenerationGUI_PrismDlg   ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpRevolution: aDlg = new GenerationGUI_RevolDlg   ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpFilling:    aDlg = new GenerationGUI_FillingDlg ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpPipe:       aDlg = new GenerationGUI_PipeDlg    ( getGeometryGUI(), parent ); break;
     
   default: app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); break;
   }

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ClippingDlg.cxx
 // Author : Michael Zorin, Open CASCADE S.A.S. (mikhail.zorin@opencascade.com)
@@ -28,7 +29,7 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -74,13 +75,15 @@ OperationGUI_ClippingDlg::OperationGUI_ClippingDlg( GeometryGUI* theGeometryGUI,
   TextLabelNear = new QLabel( tr( "Near" ), GroupArguments );
   GroupArgumentsLayout->addWidget( TextLabelNear, 0, 0 );
 
-  SpinBox_Near = new SalomeApp_DoubleSpinBox( COORD_MIN, COORD_MAX, 10.0, 3, 10, GroupArguments );
+  SpinBox_Near = new SalomeApp_DoubleSpinBox( GroupArguments );
+  initSpinBox( SpinBox_Near, COORD_MIN, COORD_MAX, 10.0, "length_precision" );
   GroupArgumentsLayout->addWidget( SpinBox_Near, 0, 1 );
 
   TextLabelFar = new QLabel( tr( "Far" ), GroupArguments );
   GroupArgumentsLayout->addWidget( TextLabelFar, 0, 2 );
 
-  SpinBox_Far = new SalomeApp_DoubleSpinBox( COORD_MIN, COORD_MAX, 10.0, 3, 10, GroupArguments );
+  SpinBox_Far = new SalomeApp_DoubleSpinBox( GroupArguments );
+  initSpinBox( SpinBox_Far, COORD_MIN, COORD_MAX, 10.0, "length_precision" );
   GroupArgumentsLayout->addWidget( SpinBox_Far, 0, 3 );
 
   resetButton  = new QPushButton( tr( "Reset" ), GroupArguments );

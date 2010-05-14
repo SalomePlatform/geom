@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -343,7 +344,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  list<Handle(GEOM_Object)> aPoints;
+  std::list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
     Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -375,7 +376,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  list<Handle(GEOM_Object)> aPoints;
+  std::list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
     Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -408,7 +409,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
   //Get the reference point
   int ind = 0;
   int aLen = thePoints.length();
-  list<Handle(GEOM_Object)> aPoints;
+  std::list<Handle(GEOM_Object)> aPoints;
   for (; ind < aLen; ind++) {
     Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
     if (aPnt.IsNull()) return aGEOMObject._retn();
@@ -437,7 +438,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSketcher
 
   int ind = 0;
   int aLen = theWorkingPlane.length();
-  list<double> aWorkingPlane;
+  std::list<double> aWorkingPlane;
   for (; ind < aLen; ind++)
     aWorkingPlane.push_back(theWorkingPlane[ind]);
 
@@ -463,7 +464,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::Make3DSketcher
 
   int ind = 0;
   int aLen = theCoordinates.length();
-  list<double> aCoords;
+  std::list<double> aCoords;
   for (; ind < aLen; ind++)
     aCoords.push_back(theCoordinates[ind]);
 

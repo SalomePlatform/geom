@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_PlaneDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -184,15 +185,15 @@ void BasicGUI_PlaneDlg::Init()
   double aTrimSize = 2000.0;
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupPntDir->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPntDir->SpinBox_DX, 0.000001, COORD_MAX, aStep, "length_precision" );
   GroupPntDir->SpinBox_DX->setValue( aTrimSize );
-  initSpinBox( Group3Pnts->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Pnts->SpinBox_DX, 0.000001, COORD_MAX, aStep, "length_precision" );
   Group3Pnts->SpinBox_DX->setValue( aTrimSize );
-  initSpinBox( GroupFace->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupFace->SpinBox_DX, 0.000001, COORD_MAX, aStep, "length_precision" );
   GroupFace->SpinBox_DX->setValue( aTrimSize );
-  initSpinBox( Group2Vec->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group2Vec->SpinBox_DX, 0.000001, COORD_MAX, aStep, "length_precision" );
   Group2Vec->SpinBox_DX->setValue( aTrimSize );
-  initSpinBox( GroupLCS->SpinBox_DX, 0.000001, COORD_MAX, aStep, 6 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupLCS->SpinBox_DX, 0.000001, COORD_MAX, aStep, "length_precision" );
   GroupLCS->SpinBox_DX->setValue( aTrimSize );
 
   /* signals and slots connections */

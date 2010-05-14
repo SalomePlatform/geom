@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IMeasureOperations.hxx>
@@ -155,6 +156,14 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   TopoDS_Shape aShape = aRefShape->GetValue();
   if (aShape.IsNull()) return aKind;
 
+  int geom_type = theShape->GetType();
+  
+  // check if it's advanced shape
+  if ( geom_type > ADVANCED_BASE ) {
+    SetErrorCode(OK);
+    return SK_ADVANCED;
+  }
+  
   // Call algorithm
   GEOMAlgo_ShapeInfoFiller aSF;
   aSF.SetShape(aShape);

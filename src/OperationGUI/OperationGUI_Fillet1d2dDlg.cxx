@@ -1,28 +1,26 @@
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
 // GEOM GEOMGUI : GUI for Geometry component
-//
-// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 // File   : OperationGUI_Fillet1d2dDlg.cxx
 // Author : DMV, OCN.
 //
-
 #include "OperationGUI_Fillet1d2dDlg.h"
 
 #include <DlgRef.h>
@@ -88,7 +86,7 @@ OperationGUI_Fillet1d2dDlg::OperationGUI_Fillet1d2dDlg (GeometryGUI* theGeometry
 
   // Set range of spinboxes
   double SpecificStep = 10.0;
-  initSpinBox(GroupVertexes->SpinBox_DX, 0.00001, COORD_MAX, SpecificStep, 5); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupVertexes->SpinBox_DX, 0.00001, COORD_MAX, SpecificStep, "length_precision" );
 
   setHelpFileName(myIs1D ? "fillet1d_operation_page.html" : "fillet2d_operation_page.html");
 

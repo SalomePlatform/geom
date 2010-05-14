@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -33,10 +34,10 @@
 #include "BasicGUI_CurveDlg.h"        // Method CURVE
 #include "BasicGUI_VectorDlg.h"       // Method VECTOR
 #include "BasicGUI_PlaneDlg.h"        // Method PLANE
-#include "BasicGUI_WorkingPlaneDlg.h" // Method WORKING PLANE
-#include "BasicGUI_MarkerDlg.h"       // Method REPAIR
+#include "BasicGUI_MarkerDlg.h"       // Method LOCAL COORDINATE SYSTEM
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -81,34 +82,31 @@ bool BasicGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = NULL;
 
   switch ( theCommandID ) {
-  case 4011: // POINT
+  case GEOMOp::OpPoint:    // POINT
     aDlg = new BasicGUI_PointDlg( getGeometryGUI(), parent ); 
     break;
-  case 4012:  // LINE
+  case GEOMOp::OpLine:     // LINE
     aDlg = new BasicGUI_LineDlg( getGeometryGUI(), parent );
     break;
-  case 4013:  // CIRCLE
+  case GEOMOp::OpCircle:   // CIRCLE
     aDlg = new BasicGUI_CircleDlg( getGeometryGUI(), parent );
     break;
-  case 4014:  // ELLIPSE
+  case GEOMOp::OpEllipse:  // ELLIPSE
     aDlg = new BasicGUI_EllipseDlg( getGeometryGUI(), parent );
     break;
-  case 4015:  // ARC
+  case GEOMOp::OpArc:      // ARC
     aDlg = new BasicGUI_ArcDlg( getGeometryGUI(), parent );
     break ;
-  case 4016: // VECTOR
+  case GEOMOp::OpVector:   // VECTOR
     aDlg = new BasicGUI_VectorDlg( getGeometryGUI(), parent );
     break;
-  case 4017: // PLANE
+  case GEOMOp::OpPlane:    // PLANE
     aDlg = new BasicGUI_PlaneDlg( getGeometryGUI(), parent );
     break;
-/*  case 4018: // WORKING PLANE
-    aDlg = new BasicGUI_WorkingPlaneDlg( getGeometryGUI(), parent );
-    break;*/ // DEPRECATED!
-  case 4019: // CURVE
+  case GEOMOp::OpCurve:    // CURVE
     aDlg = new BasicGUI_CurveDlg( getGeometryGUI(), parent );
     break;
-  case 4020: // REPAIR
+  case GEOMOp::OpLCS:      // LOCAL COORDINATE SYSTEM
     aDlg = new BasicGUI_MarkerDlg( getGeometryGUI(), parent );
     break;      
   default:

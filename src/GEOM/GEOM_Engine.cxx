@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -83,7 +84,6 @@ static int MYDEBUG = 0;
 
 static GEOM_Engine* TheEngine = NULL;
 
-using namespace std;
 
 static TCollection_AsciiString BuildIDFromObject(Handle(GEOM_Object)& theObject)
 {
@@ -116,7 +116,7 @@ bool ProcessFunction(Handle(GEOM_Function)&   theFunction,
                      std::set<std::string>&   theIgnoreObjs,
                      bool&                    theIsDumpCollected);
 
-void ReplaceVariables(TCollection_AsciiString& theCommand, 
+void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables);
 
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
@@ -125,7 +125,9 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
                             Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
                             const bool                                theIsPublished,
                             Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
-                            TColStd_SequenceOfAsciiString&            theObjListToPublish);
+                            TColStd_SequenceOfAsciiString&            theObjListToPublish,
+                            Standard_Integer&                         objectCounter,
+                            Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
 void AddObjectColors (int                                             theDocID,
                       TCollection_AsciiString&                        theScript,
@@ -401,7 +403,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   int aDocID = theObject->GetDocID();
   if(!_mapIDDocument.IsBound(aDocID))
     return false;  // document is closed...
-  
+
   //Remove an object from the map of available objects
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
@@ -565,7 +567,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   // collect objects entries to be published
   TColStd_SequenceOfAsciiString aObjListToPublish;
-  
+
   // iterates on functions till critical (that requiers publication of objects)
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
@@ -574,6 +576,10 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   TCollection_AsciiString aFuncScript;
   Resource_DataMapOfAsciiStringAsciiString anEntryToBadName;
+
+  // Mantis issue 0020768
+  Standard_Integer objectCounter = 0;
+  Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
 
   if (aDoc->Main().FindAttribute(GEOM_Function::GetFunctionTreeID(), aRoot)) {
     TDataStd_ChildNodeIterator Itr(aRoot);
@@ -596,8 +602,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       if (isDumpCollected ) {
         // Replace entries by the names
         ReplaceEntriesByNames( aFuncScript, theObjectNames,
-                               isPublished, anEntryToBadName, aObjListToPublish );
-        
+                               isPublished, anEntryToBadName, aObjListToPublish,
+                               objectCounter, aNameToEntry );
+
         // publish collected objects
         std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
         int i = 1, n = aObjListToPublish.Length();
@@ -614,7 +621,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
         for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
           aFuncScript += (char*)anEntryToCommand->second.c_str();
-        
+
         // PTv, 0020001 add result objects from RestoreSubShapes into ignore list,
         //  because they will be published during command execution
         int indx = anAfterScript.Search( "RestoreSubShapes" );
@@ -641,8 +648,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   // Replace entries by the names
   aObjListToPublish.Clear();
   ReplaceEntriesByNames( aFuncScript, theObjectNames,
-                         isPublished, anEntryToBadName, aObjListToPublish );
-  
+                         isPublished, anEntryToBadName, aObjListToPublish,
+                         objectCounter, aNameToEntry );
+
   aScript += aFuncScript;
 
   // ouv : NPAL12872
@@ -732,7 +740,7 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 #define TEXTURE_LABEL_HEIGHT   4
 #define TEXTURE_LABEL_DATA     5
 
-int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight, 
+int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
                             const Handle(TDataStd_HArray1OfByte)& theTexture,
                             const TCollection_AsciiString& theFileName)
 {
@@ -770,7 +778,7 @@ int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
   TDataStd_Integer::Set(aChild.FindChild(TEXTURE_LABEL_HEIGHT), theHeight);
 
   Handle(TDataStd_ByteArray) anAttr =
-    TDataStd_ByteArray::Set(aChild.FindChild(TEXTURE_LABEL_DATA), 
+    TDataStd_ByteArray::Set(aChild.FindChild(TEXTURE_LABEL_DATA),
                             theTexture.IsNull() ? 0 : theTexture->Lower(),
                             theTexture.IsNull() ? 0 : theTexture->Upper());
   anAttr->ChangeArray(theTexture);
@@ -794,7 +802,7 @@ Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theText
     if (aTextureLabel.IsAttribute( GetTextureGUID())) {
       TDF_Label anIDLabel = aTextureLabel.FindChild(TEXTURE_LABEL_ID, Standard_False);
       Handle(TDataStd_Integer) anIdAttr;
-      if(!anIDLabel.IsNull() && anIDLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr) && 
+      if(!anIDLabel.IsNull() && anIDLabel.FindAttribute(TDataStd_Integer::GetID(), anIdAttr) &&
          anIdAttr->Get() == theTextureID) {
         TDF_Label aFileLabel   = aTextureLabel.FindChild(TEXTURE_LABEL_FILE,    Standard_False);
         TDF_Label aWidthLabel  = aTextureLabel.FindChild(TEXTURE_LABEL_WIDTH,   Standard_False);
@@ -975,11 +983,11 @@ Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theStrin
 
 //=============================================================================
 /*!
- *  ReplaceVariables: Replace parameters of the function by variales from 
+ *  ReplaceVariables: Replace parameters of the function by variales from
  *                    Notebook if need
  */
 //=============================================================================
-void ReplaceVariables(TCollection_AsciiString& theCommand, 
+void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables)
 {
   if (MYDEBUG)
@@ -1038,7 +1046,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       if(MYDEBUG)
         cout<<"Sub-entry : '" <<anEntry<<"'"<<endl;
     }
-    
+
     //Find variables used for object construction
     ObjectStates* aStates = 0;
     TVariablesList::const_iterator it = theVariables.find(anEntry);
@@ -1083,7 +1091,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
         if(aTotalNbParams - aNbEntries > 0 )
           aEndPos = aCommand.Location(aFirstParam, COMMA, 1, aCommand.Length());
         else
-          aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length()); 
+          aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
       }
       //Replace last parameter (bettwen ',' character and ')' character)
       else if(i == aTotalNbParams)
@@ -1105,14 +1113,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       if ( aStartPos == aEndPos )
         continue; // PAL20889: for "[]"
 
-      if(MYDEBUG) 
+      if(MYDEBUG)
         cout<<"aStartPos = "<<aStartPos<<", aEndPos = "<<aEndPos<<endl;
 
       aVar = aCommand.SubString(aStartPos, aEndPos-1);
       aVar.RightAdjust();
       aVar.LeftAdjust();
-    
-      if(MYDEBUG) 
+
+      if(MYDEBUG)
         cout<<"Variable: '"<< aVar <<"'"<<endl;
 
       // specific case for sketcher
@@ -1132,7 +1140,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             aEndSectionPos = aVar.Length();
 
           aSection = aVar.SubString(aStartSectionPos, aEndSectionPos-1);
-          if(MYDEBUG) 
+          if(MYDEBUG)
             cout<<"aSection: "<<aSection<<endl;
 
           Standard_Integer aNbParams = 1;
@@ -1150,7 +1158,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
               aEndParamPos = aSection.Length() + 1;
 
             aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
-            if(MYDEBUG) 
+            if(MYDEBUG)
               cout<<"aParameter: "<<aParameter<<endl;
 
             if(iVar >= aVariables.size())
@@ -1167,27 +1175,27 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
               aReplacedParameter.InsertAfter(aReplacedParameter.Length(),"'");
             }
 
-            if(MYDEBUG) 
+            if(MYDEBUG)
               cout<<"aSection before : "<<aSection<<endl;
             aSection.Remove(aStartParamPos, aEndParamPos - aStartParamPos);
             aSection.Insert(aStartParamPos, aReplacedParameter);
-            if(MYDEBUG) 
+            if(MYDEBUG)
               cout<<"aSection after  : "<<aSection<<endl<<endl;
             iVar++;
           }
-          if(MYDEBUG) 
+          if(MYDEBUG)
             cout<<"aVar before : "<<aVar<<endl;
           aVar.Remove(aStartSectionPos, aEndSectionPos - aStartSectionPos);
           aVar.Insert(aStartSectionPos, aSection);
-          if(MYDEBUG) 
+          if(MYDEBUG)
             cout<<"aVar after  : "<<aVar<<endl<<endl;
         }
 
-        if(MYDEBUG) 
+        if(MYDEBUG)
           cout<<"aCommand before : "<<aCommand<<endl;
         aCommand.Remove(aStartPos, aEndPos - aStartPos);
         aCommand.Insert(aStartPos, aVar);
-        if(MYDEBUG) 
+        if(MYDEBUG)
           cout<<"aCommand after  : "<<aCommand<<endl;
 
         break;
@@ -1237,11 +1245,14 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
                             Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
                             const bool                                theIsPublished,
                             Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
-                            TColStd_SequenceOfAsciiString&            theObjListToPublish)
+                            TColStd_SequenceOfAsciiString&            theObjListToPublish,
+                            Standard_Integer&                         objectCounter,
+                            Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
 {
   Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(theScript);
-  Standard_Integer aLen = aSeq->Length(), objectCounter = 0, aStart = 1, aScriptLength = theScript.Length();
-  Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
+  //Standard_Integer objectCounter = 0;
+  Standard_Integer aLen = aSeq->Length(), aStart = 1, aScriptLength = theScript.Length();
+  //Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
 
   //Replace entries by the names
   TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_"),
@@ -1345,7 +1356,7 @@ void AddObjectColors (int                                             theDocID,
       aCommand += aName + ".SetColor(SALOMEDS.Color(" + aColor.R + "," + aColor.G + "," + aColor.B + "))";
       theScript += aCommand.ToCString();
     }
-    
+
     Aspect_TypeOfMarker aMarkerType = obj->GetMarkerType();
     if (aMarkerType >= Aspect_TOM_POINT && aMarkerType < Aspect_TOM_USERDEFINED) {
       TCollection_AsciiString aCommand( "\n\t" );
@@ -1423,7 +1434,7 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
 
   if (allTextures.size() > 0) {
     theScript += "\n\ttexture_map = {}\n";
-    
+
     for (it = allTextures.begin(); it != allTextures.end(); ++it) {
       if (*it <= 0) continue;
       Standard_Integer aWidth, aHeight;
@@ -1531,7 +1542,7 @@ TState ObjectStates::GetCurrectState() const
 
 //================================================================================
 /*!
- * \brief Add new object state 
+ * \brief Add new object state
  * \param theState - Object state (vector of notebook variable)
  */
 //================================================================================

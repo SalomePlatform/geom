@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #ifndef _GEOMImpl_I3DPrimOperations_HXX_
 #define _GEOMImpl_I3DPrimOperations_HXX_
@@ -100,7 +101,8 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeFilling (Handle(GEOM_Object) theShape,
                                                    int theMinDeg, int theMaxDeg,
                                                    double theTol2D, double theTol3D,
-                                                   int theNbIter, bool isApprox);
+                                                   int theNbIter, int theMethod,
+                                                   bool isApprox);
 
   Standard_EXPORT Handle(GEOM_Object) MakeThruSections
                                       (const Handle(TColStd_HSequenceOfTransient)& theSeqSections,

@@ -1,6 +1,6 @@
 <!DOCTYPE TS>
 <!--
-  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 
   Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
   CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -818,6 +818,10 @@
             <translation>build_face.png</translation>
         </message>
         <message>
+            <source>ICO_RECTANGLE</source>
+            <translation>build_face.png</translation>
+        </message>
+        <message>
             <source>ICO_FACE_SEL_ONLY</source>
             <translation>build_face.png</translation>
         </message>
@@ -1073,5 +1077,131 @@
             <source>ICON_DLG_SCALE_ALONG_AXES</source>
             <translation>scale_along_axes.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_PIPETSHAPE</source>
+            <translation>pipetshape.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPETSHAPE</source>
+            <translation>pipetshape.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPETSHAPE_IMPORT</source>
+            <translation>pipetshape_import_icon.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE</source>
+            <translation>dlg_pipetshape.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_L1</source>
+            <translation>dlg_pipetshapel1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_R1</source>
+            <translation>dlg_pipetshaper1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_W1</source>
+            <translation>dlg_pipetshapew1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_L2</source>
+            <translation>dlg_pipetshapel2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_R2</source>
+            <translation>dlg_pipetshaper2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_W2</source>
+            <translation>dlg_pipetshapew2.png</translation>
+        </message>
+        
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET</source>
+            <translation>dlg_pipetshapefillet.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_L1</source>
+            <translation>dlg_pipetshapefilletl1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_R1</source>
+            <translation>dlg_pipetshapefilletr1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_W1</source>
+            <translation>dlg_pipetshapefilletw1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_L2</source>
+            <translation>dlg_pipetshapefilletl2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_R2</source>
+            <translation>dlg_pipetshapefilletr2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_W2</source>
+            <translation>dlg_pipetshapefilletw2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_FILLET_RF</source>
+            <translation>dlg_pipetshapefilletrf.png</translation>
+        </message>
+        
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER</source>
+            <translation>dlg_pipetshapechamfer.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_L1</source>
+            <translation>dlg_pipetshapechamferl1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_R1</source>
+            <translation>dlg_pipetshapechamferr1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_W1</source>
+            <translation>dlg_pipetshapechamferw1.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_L2</source>
+            <translation>dlg_pipetshapechamferl2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_R2</source>
+            <translation>dlg_pipetshapechamferr2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_W2</source>
+            <translation>dlg_pipetshapechamferw2.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_H</source>
+            <translation>dlg_pipetshapechamferh.png</translation>
+        </message>
+        <message>
+            <source>DLG_PIPETSHAPE_CHAMFER_W</source>
+            <translation>dlg_pipetshapechamferw.png</translation>
+        </message>
+        
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_201</source>
+            <translation>tree_pipetshape.png</translation>
+	</message>
+<!--
+	<message>
+            <source>ICON_DLG_PIPETSHAPEGROUPS</source>
+            <translation>pipetshapegroups.png</translation>
+        </message>
+        <message>
+            <source>ICO_PIPETSHAPEGROUPS</source>
+            <translation>pipetshapegroups.png</translation>
+        </message>
+-->
+	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

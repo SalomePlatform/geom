@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : PrimitiveGUI_TorusDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -115,10 +116,10 @@ void PrimitiveGUI_TorusDlg::Init()
   double step = resMgr->doubleValue("Geometry", "SettingsGeomStep", 100);
 
   // min, max, step and decimals for spin boxes & initial values
-  initSpinBox(GroupPoints->SpinBox_DX, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupPoints->SpinBox_DY, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DX, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox(GroupDimensions->SpinBox_DY, 0.000001, COORD_MAX, step, 6); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox(GroupPoints->SpinBox_DX, 0.000001, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPoints->SpinBox_DY, 0.000001, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DX, 0.000001, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupDimensions->SpinBox_DY, 0.000001, COORD_MAX, step, "length_precision" );
 
   // init variables
   GroupPoints->LineEdit1->setReadOnly(true);

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
 
@@ -134,7 +135,12 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 						      GEOM::GEOM_Object_ptr theAxis,
 						      CORBA::Double theAngle);
 
-  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape, CORBA::Long theMinDeg, CORBA::Long theMaxDeg, CORBA::Double theTol2D, CORBA::Double theTol3D, CORBA::Long theNbIter, CORBA::Boolean theApprox);
+  GEOM::GEOM_Object_ptr MakeFilling(GEOM::GEOM_Object_ptr theShape,
+                                    CORBA::Long theMinDeg, CORBA::Long theMaxDeg,
+                                    CORBA::Double theTol2D, CORBA::Double theTol3D,
+                                    CORBA::Long theNbIter,
+                                    GEOM::filling_oper_method theMethod,
+                                    CORBA::Boolean theApprox);
 
   GEOM::GEOM_Object_ptr MakeThruSections(const GEOM::ListOfGO& theSeqSections,
 					 CORBA::Boolean theModeSolid,

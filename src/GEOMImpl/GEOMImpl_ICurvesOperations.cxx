@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ICurvesOperations.hxx>
@@ -80,7 +81,7 @@ GEOMImpl_ICurvesOperations::~GEOMImpl_ICurvesOperations()
  *  MakePolyline
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (list<Handle(GEOM_Object)> thePoints)
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(GEOM_Object)> thePoints)
 {
   SetErrorCode(KO);
 
@@ -101,7 +102,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (list<Handle(GEOM_O
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
+  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
   for (; it != thePoints.end(); it++, ind++) {
     Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
     if (aRefPnt.IsNull()) {
@@ -597,7 +598,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
-                                          (list<Handle(GEOM_Object)> thePoints)
+                                          (std::list<Handle(GEOM_Object)> thePoints)
 {
   SetErrorCode(KO);
 
@@ -618,7 +619,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
+  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
   for (; it != thePoints.end(); it++, ind++) {
     Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
 
@@ -664,7 +665,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
-                                          (list<Handle(GEOM_Object)> thePoints,
+                                          (std::list<Handle(GEOM_Object)> thePoints,
                                            bool                      theIsClosed)
 {
   SetErrorCode(KO);
@@ -686,7 +687,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   aCI.SetLength(aLen);
 
   int ind = 1;
-  list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
+  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
   for (; it != thePoints.end(); it++, ind++) {
     Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
 
@@ -722,7 +723,9 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   while (it != thePoints.end()) {
     pd << ", " << (*it++);
   }
-  pd << "])";
+  pd << "]";
+  if ( theIsClosed ) pd << ", True";
+  pd << ")";
 
   SetErrorCode(OK);
   return aSpline;
@@ -734,7 +737,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCommand,
-                                                              list<double> theWorkingPlane)
+                                                              std::list<double> theWorkingPlane)
 {
   SetErrorCode(KO);
 
@@ -757,7 +760,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
   aCI.SetCommand(aCommand);
 
   int ind = 1;
-  list<double>::iterator it = theWorkingPlane.begin();
+  std::list<double>::iterator it = theWorkingPlane.begin();
   for (; it != theWorkingPlane.end(); it++, ind++)
     aCI.SetWorkingPlane(ind, *it);
 
@@ -797,7 +800,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
  *  Make3DSketcher
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (list<double> theCoordinates)
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double> theCoordinates)
 {
   SetErrorCode(KO);
 
@@ -815,7 +818,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (list<double> the
   GEOMImpl_I3DSketcher aCI (aFunction);
 
   int nbOfCoords = 0;
-  list<double>::iterator it = theCoordinates.begin();
+  std::list<double>::iterator it = theCoordinates.begin();
   for (; it != theCoordinates.end(); it++)
     nbOfCoords++;
 

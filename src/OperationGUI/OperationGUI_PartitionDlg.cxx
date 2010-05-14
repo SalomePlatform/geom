@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_PartitionDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -69,7 +70,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   GroupPoints = new DlgRef_2Sel1List1Check( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
-  GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
+  GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECTS" ) );
   GroupPoints->TextLabel3->setText( tr( "GEOM_RECONSTRUCTION_LIMIT" ) );
   GroupPoints->PushButton1->setIcon( image2 );
   GroupPoints->PushButton2->setIcon( image2 );
@@ -169,7 +170,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
   switch ( constructorId ) {
   case 0: /*Full partition */
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
-    GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECT" ) );
+    GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECTS" ) );
     GroupPoints->TextLabel3->show();
     GroupPoints->ComboBox1->show();
     GroupPoints->ComboBox1->setCurrentIndex( 0 );
@@ -224,8 +225,10 @@ bool OperationGUI_PartitionDlg::ClickOnApply()
   if ( !onAccept() )
     return false;
   
+
   initName();
-  ConstructorsClicked( getConstructorId() );
+  //  0020854: EDF 1398 GEOM: Ergonomy of Partition GUI window 
+  //  ConstructorsClicked( getConstructorId() );
   return true;
 }
 
@@ -438,7 +441,8 @@ void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy
     // empty list of arguments means that all arguments should be restored
     getGeomEngine()->RestoreSubShapesSO( theStudy, theSObject, GEOM::ListOfGO(),
                                          /*theFindMethod=*/GEOM::FSM_GetInPlaceByHistory,
-                                         /*theInheritFirstArg=*/myListShapes.length() == 1 ); // ? false
+                                         /*theInheritFirstArg=*/myListShapes.length() == 1,
+                                         mainFrame()->CheckBoxAddPrefix->isChecked() ); // ? false
   }
 }
 

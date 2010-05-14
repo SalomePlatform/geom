@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //GEOM_Object types
 //
 #define GEOM_COPY    0
@@ -299,3 +300,13 @@
 #define MARKER_CS      1
 #define MARKER_SHAPE   2
 #define MARKER_PNT2VEC 3
+
+// Advanced functions (base = 200)
+#define ADVANCED_BASE 200  // NO OPERATION (advanced operations base)
+#define GEOM_TSHAPE 201
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
+// Advanced functions sub-operations codes
+#define TSHAPE_BASIC 1
+#define TSHAPE_CHAMFER 2
+#define TSHAPE_FILLET 3
+/*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/

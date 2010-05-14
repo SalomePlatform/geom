@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -145,7 +146,7 @@ void GEOM_IHealingOperations_i::GetShapeProcessParameters(GEOM::string_array_out
   GEOM::string_array_var aValArray = new GEOM::string_array();
 
   // retrieve the values as stl-lists
-  list<string> operationsList, paramsList, valuesList;
+  std::list<std::string> operationsList, paramsList, valuesList;
   GetOperations()->GetShapeProcessParameters( operationsList, paramsList, valuesList );
   const int opSize = operationsList.size(),
   parSize = paramsList.size(),
@@ -158,7 +159,7 @@ void GEOM_IHealingOperations_i::GetShapeProcessParameters(GEOM::string_array_out
     aValArray->length(valSize);
 
     // fill the local CORBA arrays with values from lists
-    list<string>::iterator opIt, parIt, valIt;
+    std::list<std::string>::iterator opIt, parIt, valIt;
     int i = 0;
     for ( opIt = operationsList.begin(); opIt != operationsList.end(); i++,++opIt )
       anOpArray[i] = CORBA::string_dup( (*opIt).c_str() );
@@ -189,7 +190,7 @@ void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,
   GEOM::string_array_var aValArray = new GEOM::string_array();
 
   // retrieve the values as stl-lists
-  list<string> paramsList, valuesList;
+  std::list<std::string> paramsList, valuesList;
   if ( GetOperations()->GetOperatorParameters( theOperator, paramsList, valuesList ) ) {
     const int parSize = paramsList.size(), valSize = valuesList.size();
 
@@ -198,7 +199,7 @@ void GEOM_IHealingOperations_i::GetOperatorParameters (const char* theOperator,
       aValArray->length(valSize);
 
       // fill the local CORBA arrays with values from lists
-      list<string>::iterator parIt, valIt;
+      std::list<std::string>::iterator parIt, valIt;
       int i;
       for ( i = 0, parIt = paramsList.begin(), valIt = valuesList.begin();
             parIt != paramsList.end(); i++, ++parIt,++valIt ) {

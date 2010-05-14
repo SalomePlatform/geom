@@ -14,4 +14,11 @@ entities:
 <li>\subpage create_compound_page</li>
 </ul>
 
+<b>New Entity -> Advanced </b> submenu allows to create additional complex topological objects.
+
+<ul>
+<li>\subpage create_pipetshape_page</li>
+<!--@@ insert new functions before this line @@ do not remove this line @@-->
+</ul>
+
 */

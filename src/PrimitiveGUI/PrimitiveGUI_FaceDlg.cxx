@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,6 +16,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : PrimitiveGUI_FaceDlg.cxx
 // Author : Dmitry Matveitchev, OCN.
@@ -57,10 +55,10 @@ PrimitiveGUI_FaceDlg::PrimitiveGUI_FaceDlg( GeometryGUI* theGeometryGUI, QWidget
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
   QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_FACE_HW")));
 
-  setWindowTitle( tr( "GEOM_FACE_TITLE" ) );
+  setWindowTitle( tr( "GEOM_RECTANGLE_TITLE" ) );
  
   /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_FACE" ) );
+  mainFrame()->GroupConstructors->setTitle( tr( "GEOM_RECTANGLE" ) );
   mainFrame()->RadioButton1->setIcon( image2 );
   mainFrame()->RadioButton2->setIcon( image0 );
   mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
@@ -139,14 +137,14 @@ void PrimitiveGUI_FaceDlg::Init()
 
   double aDefaultSize = 100.0;
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( GroupPlane->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPlane->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupPlane->SpinBox_DX->setValue( aDefaultSize );
-  initSpinBox( GroupPlane->SpinBox_DY, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupPlane->SpinBox_DY, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupPlane->SpinBox_DY->setValue( aDefaultSize );
 
-  initSpinBox( GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DX, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupDimensions->SpinBox_DX->setValue( aDefaultSize );
-  initSpinBox( GroupDimensions->SpinBox_DY, 0.00001, COORD_MAX, aStep, 5 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( GroupDimensions->SpinBox_DY, 0.00001, COORD_MAX, aStep, "length_precision" );
   GroupDimensions->SpinBox_DY->setValue( aDefaultSize );
 
         
@@ -191,6 +189,8 @@ void PrimitiveGUI_FaceDlg::SetDoubleSpinBoxStep( double step )
 {
   GroupPlane->SpinBox_DX->setSingleStep(step);
   GroupPlane->SpinBox_DY->setSingleStep(step);
+  GroupDimensions->SpinBox_DX->setSingleStep(step);
+  GroupDimensions->SpinBox_DY->setSingleStep(step);
 }
 
 //=================================================================================

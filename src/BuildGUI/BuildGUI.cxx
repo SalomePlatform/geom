@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,6 +19,7 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BooleanGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
@@ -36,6 +37,7 @@
 #include "BuildGUI_CompoundDlg.h"   // Method COMPOUND
 
 #include <GeometryGUI.h>
+#include "GeometryGUI_Operations.h"
 
 //=======================================================================
 // function : BuildGUI()
@@ -66,12 +68,12 @@ bool BuildGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   QDialog* aDlg = 0;
 
   switch ( theCommandID ) {
-  case 4081: aDlg = new BuildGUI_EdgeDlg    ( getGeometryGUI(), parent ); break;
-  case 4082: aDlg = new BuildGUI_WireDlg    ( getGeometryGUI(), parent ); break;
-  case 4083: aDlg = new BuildGUI_FaceDlg    ( getGeometryGUI(), parent ); break;
-  case 4084: aDlg = new BuildGUI_ShellDlg   ( getGeometryGUI(), parent ); break;
-  case 4085: aDlg = new BuildGUI_SolidDlg   ( getGeometryGUI(), parent ); break;
-  case 4086: aDlg = new BuildGUI_CompoundDlg( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpEdge:     aDlg = new BuildGUI_EdgeDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpWire:     aDlg = new BuildGUI_WireDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpFace:     aDlg = new BuildGUI_FaceDlg    ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpShell:    aDlg = new BuildGUI_ShellDlg   ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpSolid:    aDlg = new BuildGUI_SolidDlg   ( getGeometryGUI(), parent ); break;
+  case GEOMOp::OpCompound: aDlg = new BuildGUI_CompoundDlg( getGeometryGUI(), parent ); break;
   default: 
     getGeometryGUI()->getApp()->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) ); 
     break;

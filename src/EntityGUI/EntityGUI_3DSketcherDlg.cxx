@@ -1,31 +1,29 @@
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
 // GEOM GEOMGUI : GUI for Geometry component
-//
-// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 // File   : EntityGUI_3DSketcherDlg.cxx
 // Author : DMV, OCN
 //
-
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -70,8 +68,10 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
                                                   bool modal, Qt::WindowFlags fl,
                                                   const double lineWidth )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl ),
-    myGeometryGUI( theGeometryGUI ),
-    myLineWidth( lineWidth )
+    myMode( -1 ),
+    myOK( false ),
+    myLineWidth( lineWidth ),
+    myGeometryGUI( theGeometryGUI )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO" ) ) );
@@ -92,6 +92,9 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
   GroupType->RadioButton1->setText(tr("GEOM_SKETCHER_ABS"));
   GroupType->RadioButton2->setText(tr("GEOM_SKETCHER_REL"));
   GroupType->RadioButton3->close();
+  myTypeGroup = new QButtonGroup( this );
+  myTypeGroup->addButton( GroupType->RadioButton1, 0 );
+  myTypeGroup->addButton( GroupType->RadioButton2, 1 );
 
   Group3Spin = new EntityGUI_3Spin( centralWidget() );
   Group3Spin->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
@@ -141,13 +144,15 @@ void EntityGUI_3DSketcherDlg::Init()
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
   /* min, max, step and decimals for spin boxes */
-  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
-  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, 3 ); // VSR: TODO: DBL_DIGITS_DISPLAY
+  initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
+
+  Group3Spin->SpinBox_DX->setValue(0.0);
+  Group3Spin->SpinBox_DY->setValue(0.0);
+  Group3Spin->SpinBox_DZ->setValue(0.0);
 
   /* signals and slots connections */
-  connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( PointClicked( int ) ) );
-
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
@@ -157,8 +162,7 @@ void EntityGUI_3DSketcherDlg::Init()
   connect( Group3Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
   connect( Group3Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) ) ;
 
-  connect( GroupType->RadioButton1,  SIGNAL( clicked() ), this, SLOT( TypeClicked() ) );
-  connect( GroupType->RadioButton2,  SIGNAL( clicked() ), this, SLOT( TypeClicked() ) );
+  connect( myTypeGroup, SIGNAL( buttonClicked( int ) ),  this, SLOT( TypeClicked( int ) ) );
 
   connect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
@@ -179,35 +183,43 @@ void EntityGUI_3DSketcherDlg::Init()
 // function : TypeClicked()
 // purpose  : Radio button management
 //=================================================================================
-void EntityGUI_3DSketcherDlg::TypeClicked()
+void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
 {
+  if ( mode == myMode ) return;
+
   bool blocked = Group3Spin->SpinBox_DX->signalsBlocked();
   Group3Spin->SpinBox_DX->blockSignals(true);
   Group3Spin->SpinBox_DY->blockSignals(true);
   Group3Spin->SpinBox_DZ->blockSignals(true);
   // Get setting of step value from file configuration
-  double x, y, z;
-  GetLastPoints(x, y, z);
-  if ( GroupType->RadioButton1->isChecked() ) {  // XY
+  XYZ xyz = getLastPoint();
+  bool okx, oky, okz;
+  Group3Spin->SpinBox_DX->text().toDouble( &okx );
+  Group3Spin->SpinBox_DY->text().toDouble( &oky );
+  Group3Spin->SpinBox_DZ->text().toDouble( &okz );
+  if ( mode == 0 ) {  // XY
     Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
     Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
     Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_Z2" ) );
-    Group3Spin->SpinBox_DX->setValue( x + Group3Spin->SpinBox_DX->value() );
-    Group3Spin->SpinBox_DY->setValue( y + Group3Spin->SpinBox_DY->value() );
-    Group3Spin->SpinBox_DZ->setValue( z + Group3Spin->SpinBox_DZ->value() );
+    if ( okx ) Group3Spin->SpinBox_DX->setValue( xyz.x + Group3Spin->SpinBox_DX->value() );
+    if ( oky ) Group3Spin->SpinBox_DY->setValue( xyz.y + Group3Spin->SpinBox_DY->value() );
+    if ( okz ) Group3Spin->SpinBox_DZ->setValue( xyz.z + Group3Spin->SpinBox_DZ->value() );
     Group3Spin->buttonApply->setFocus();
-  } else if ( GroupType->RadioButton2->isChecked() ) {  // DXDY
+  }
+  else { // DXDY
     Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
     Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
     Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_DZ2" ) );
-    Group3Spin->SpinBox_DX->setValue( Group3Spin->SpinBox_DX->value() - x );
-    Group3Spin->SpinBox_DY->setValue( Group3Spin->SpinBox_DY->value() - y );
-    Group3Spin->SpinBox_DZ->setValue( Group3Spin->SpinBox_DZ->value() - z );
+    if ( okx ) Group3Spin->SpinBox_DX->setValue( Group3Spin->SpinBox_DX->value() - xyz.x );
+    if ( oky ) Group3Spin->SpinBox_DY->setValue( Group3Spin->SpinBox_DY->value() - xyz.y );
+    if ( okz ) Group3Spin->SpinBox_DZ->setValue( Group3Spin->SpinBox_DZ->value() - xyz.z );
     Group3Spin->buttonApply->setFocus();
   }
   Group3Spin->SpinBox_DX->blockSignals(blocked);
   Group3Spin->SpinBox_DY->blockSignals(blocked);
   Group3Spin->SpinBox_DZ->blockSignals(blocked);
+
+  myMode = mode;
 }
 
 //=================================================================================
@@ -216,23 +228,22 @@ void EntityGUI_3DSketcherDlg::TypeClicked()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
 {
-  Locker lock( myOK );
+  QString msg;
+  if ( !isValid( msg ) ) {
+    showError( msg );
+    return;
+  }
 
-  double x, y, z;
-  GetCurrentPoints(x, y, z);
-  myPointsList.append(x);
-  myPointsList.append(y);
-  myPointsList.append(z);
-
+  myPointsList.append( getCurrentPoint() );
   myRedoList.clear();
 
-  if ( GroupType->RadioButton2->isChecked() ) {
+  if ( myMode == 1 ) {
     Group3Spin->SpinBox_DX->setValue( 0.0 );
     Group3Spin->SpinBox_DY->setValue( 0.0 );
     Group3Spin->SpinBox_DZ->setValue( 0.0 );
   }
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
   UpdateButtonsState();
+  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -241,11 +252,10 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::UpdateButtonsState()
 {
-  if ( !myPointsList.count() )
-    GroupType->RadioButton1->setChecked( true );
-  GroupType->RadioButton2->setEnabled( myPointsList.count() > 2 );
-  Group3Spin->buttonUndo->setEnabled( myPointsList.count() > 2 );
-  Group3Spin->buttonRedo->setEnabled( myRedoList.count() > 2 );
+  if ( myPointsList.count() == 0 ) GroupType->RadioButton1->click();
+  GroupType->RadioButton2->setEnabled( myPointsList.count() > 0 );
+  Group3Spin->buttonUndo->setEnabled( myPointsList.count() > 0 );
+  Group3Spin->buttonRedo->setEnabled( myRedoList.count() > 0 );
 }
 
 //=================================================================================
@@ -254,16 +264,8 @@ void EntityGUI_3DSketcherDlg::UpdateButtonsState()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnUndo()
 {
-  if (myPointsList.count() > 2) {
-    double x, y, z;
-    GetLastPoints(x, y, z);
-    myRedoList.append(x);
-    myRedoList.append(y);
-    myRedoList.append(z);
-    myPointsList.removeLast();
-    myPointsList.removeLast();
-    myPointsList.removeLast();
-
+  if (myPointsList.count() > 0) {
+    myRedoList.append( myPointsList.takeLast() );
     UpdateButtonsState();
     GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
   }
@@ -275,15 +277,8 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ClickOnRedo()
 {
-  int count = myRedoList.count();
-  if ( count > 2 ) {
-    myPointsList.append( myRedoList[count-3] );
-    myPointsList.append( myRedoList[count-2] );
-    myPointsList.append( myRedoList[count-1] );
-    myRedoList.removeLast();
-    myRedoList.removeLast();
-    myRedoList.removeLast();
-
+  if ( myRedoList.count() > 0) {
+    myPointsList.append( myRedoList.takeLast() );
     UpdateButtonsState();
     GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
   }
@@ -335,11 +330,10 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
             Group3Spin->SpinBox_DY->setValue( aY );
             Group3Spin->SpinBox_DZ->setValue( aZ );
           } else if ( GroupType->RadioButton2->isChecked() ) {
-            double x, y, z;
-            GetLastPoints(x, y, z);
-            Group3Spin->SpinBox_DX->setValue( aX - x );
-            Group3Spin->SpinBox_DY->setValue( aY - y );
-            Group3Spin->SpinBox_DZ->setValue( aZ - z );
+            XYZ xyz = getLastPoint();
+            Group3Spin->SpinBox_DX->setValue( aX - xyz.x );
+            Group3Spin->SpinBox_DY->setValue( aY - xyz.y );
+            Group3Spin->SpinBox_DZ->setValue( aZ - xyz.z );
           }
           Group3Spin->SpinBox_DX->blockSignals(blocked);
           Group3Spin->SpinBox_DY->blockSignals(blocked);
@@ -416,7 +410,11 @@ GEOM::GEOM_IOperations_ptr EntityGUI_3DSketcherDlg::createOperation()
 //=================================================================================
 bool EntityGUI_3DSketcherDlg::isValid( QString& msg )
 {
-  return true;
+  bool ok = true;
+  ok = Group3Spin->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  ok = Group3Spin->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+  ok = Group3Spin->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  return ok;
 }
 
 //=================================================================================
@@ -427,46 +425,42 @@ bool EntityGUI_3DSketcherDlg::execute( ObjectList& objects )
 {
   GEOM::ListOfDouble_var aCoordsArray = new GEOM::ListOfDouble;
   if (!myOK || myPointsList.size() == 0)
-    aCoordsArray->length(myPointsList.size()+3);
+    aCoordsArray->length((myPointsList.size()+1)*3);
   else
-    aCoordsArray->length(myPointsList.size());
+    aCoordsArray->length(myPointsList.size()*3);
+
+  QStringList aParameters;
 
   int i = 0;
-  QList<double>::const_iterator it;
+  QList<XYZ>::const_iterator it;
   for(it = myPointsList.begin(); it != myPointsList.end(); ++it ) {
-    aCoordsArray[i] = *it;
-    i++;
+    aCoordsArray[i++] = (*it).x;
+    aCoordsArray[i++] = (*it).y;
+    aCoordsArray[i++] = (*it).z;
+    aParameters << (*it).xt;
+    aParameters << (*it).yt;
+    aParameters << (*it).zt;
   }
 
   if (!myOK || myPointsList.size() == 0) {
-    double x, y, z;
-    GetCurrentPoints(x, y, z);
-    aCoordsArray[i] = x;
-    aCoordsArray[i+1] = y;
-    aCoordsArray[i+2] = z;
+    XYZ xyz = getCurrentPoint();
+    aCoordsArray[i++] = xyz.x;
+    aCoordsArray[i++] = xyz.y;
+    aCoordsArray[i++] = xyz.z;
+    aParameters << xyz.xt;
+    aParameters << xyz.yt;
+    aParameters << xyz.zt;
   } 
 
   GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
   GEOM::GEOM_Object_var anObj = anOper->Make3DSketcher( aCoordsArray );
 
-  if ( !anObj->_is_nil() )
+  if ( !anObj->_is_nil() ) {
+    if ( !IsPreview() ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
     objects.push_back( anObj._retn() );
+  }
 
   return true;
-}
-
-//=================================================================================
-// function : initSpinBox()
-// purpose  :
-//=================================================================================
-
-void EntityGUI_3DSketcherDlg::initSpinBox( QDoubleSpinBox* spinBox,
-                                         double min,  double max,
-                                         double step, int decimals )
-{
-  spinBox->setDecimals( decimals );
-  spinBox->setRange( min, max );
-  spinBox->setSingleStep( step );
 }
 
 //=================================================================================
@@ -500,11 +494,14 @@ void EntityGUI_3DSketcherDlg::ClickOnOk()
 //=================================================================================
 bool EntityGUI_3DSketcherDlg::ClickOnApply()
 {
-  if (myPointsList.count() > 3) {
-    myPointsList.append(myPointsList[0]);
-    myPointsList.append(myPointsList[1]);
-    myPointsList.append(myPointsList[2]);
+  QString msg;
+  if ( !isValid( msg ) ) {
+    showError( msg );
+    return false;
   }
+
+  if (myPointsList.count() > 0)
+    myPointsList.append(myPointsList[0]);
 
   Locker lock( myOK );
 
@@ -516,33 +513,36 @@ bool EntityGUI_3DSketcherDlg::ClickOnApply()
 }
 
 //=================================================================================
-// function : GetLastPoints()
+// function : getLastPoint()
 // purpose  : return last points from list
 //=================================================================================
-void EntityGUI_3DSketcherDlg::GetLastPoints(double& x, double& y, double& z)
+EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getLastPoint() const
 {
-  int count = myPointsList.count();
-  x = count > 2 ? myPointsList[count-3] : 0.0;
-  y = count > 2 ? myPointsList[count-2] : 0.0;
-  z = count > 2 ? myPointsList[count-1] : 0.0;
+  return myPointsList.count() > 0 ? myPointsList.last() : XYZ();
 }
 
 //=================================================================================
-// function : GetCurrentPoints()
+// function : getCurrentPoint()
 // purpose  : returns current points
 //=================================================================================
-void EntityGUI_3DSketcherDlg::GetCurrentPoints(double& x, double& y, double& z)
+EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getCurrentPoint() const
 {
-  if ( GroupType->RadioButton1->isChecked() ) {
-    x = Group3Spin->SpinBox_DX->value();
-    y = Group3Spin->SpinBox_DY->value();
-    z = Group3Spin->SpinBox_DZ->value();
-  } else { // if (GroupType->RadioButton2->isChecked())
-    GetLastPoints(x, y, z);
-    x += Group3Spin->SpinBox_DX->value();
-    y += Group3Spin->SpinBox_DY->value();
-    z += Group3Spin->SpinBox_DZ->value();
+  XYZ xyz;
+  if ( myMode == 0 ) {
+    xyz.x = Group3Spin->SpinBox_DX->value();
+    xyz.y = Group3Spin->SpinBox_DY->value();
+    xyz.z = Group3Spin->SpinBox_DZ->value();
+  } 
+  else {
+    xyz = getLastPoint();
+    xyz.x += Group3Spin->SpinBox_DX->value();
+    xyz.y += Group3Spin->SpinBox_DY->value();
+    xyz.z += Group3Spin->SpinBox_DZ->value();
   }
+  xyz.xt = Group3Spin->SpinBox_DX->text();
+  xyz.yt = Group3Spin->SpinBox_DY->text();
+  xyz.zt = Group3Spin->SpinBox_DZ->text();
+  return xyz;
 }
 
 //================================================================
@@ -571,7 +571,7 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   CORBA::String_var objStr = myGeometryGUI->getApp()->orb()->object_to_string( object );
   getDisplayer()->SetName( objStr.in() );
 
-  // Create wire from applayed object
+  // Create wire from applied object
   TopoDS_Shape anApplyedWire, aLastSegment;
   if ( !createShapes( object, anApplyedWire, aLastSegment ) )
     return;
@@ -605,17 +605,16 @@ bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
        aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX )
     return false;
 
-  if ( myOK  ) {
-     theApplyedWire = aShape;
+  theApplyedWire = aShape;
+  if ( myOK  )
      return true;
-  }
 
   BRepBuilderAPI_MakeWire aBuilder;
-  TopExp_Explorer anExp( aShape, TopAbs_EDGE );
+  TopExp_Explorer edgeExp( aShape, TopAbs_EDGE );
   while ( 1 ) {
-    TopoDS_Shape anEdge = anExp.Current();
-    anExp.Next();
-    if ( anExp.More() ) // i.e. non-last edge
+    TopoDS_Shape anEdge = edgeExp.Current();
+    edgeExp.Next();
+    if ( edgeExp.More() ) // i.e. non-last edge
       aBuilder.Add( TopoDS::Edge( anEdge ) );
     else {
       theLastSegment = anEdge;
@@ -623,8 +622,13 @@ bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
     }
   }
 
-  if ( aBuilder.IsDone() )
+  if ( aBuilder.IsDone() ) {
     theApplyedWire = aBuilder.Shape();
+  }
+  else if ( !theLastSegment.IsNull() ) {
+    TopExp_Explorer vertexExp( theLastSegment, TopAbs_VERTEX );
+    theApplyedWire = vertexExp.Current();
+  }
 
   return true;
 }

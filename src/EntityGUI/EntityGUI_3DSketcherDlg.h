@@ -1,33 +1,32 @@
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
+
 // GEOM GEOMGUI : GUI for Geometry component
-//
-// Copyright (C) 2003  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
-//
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
-//
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 // File   : EntityGUI_3DSketcherDlg.h
 // Author : DMV, OCN
 //
-
 #ifndef ENTITYGUI_3DSKETCHERDLG_H
 #define ENTITYGUI_3DSKETCHERDLG_H
 
 #include <GEOMBase_Skeleton.h>
 
+class QButtonGroup;
 class QDoubleSpinBox;
 class EntityGUI_3Spin;
 class DlgRef_3Radio;
@@ -47,15 +46,20 @@ class EntityGUI_3DSketcherDlg : public GEOMBase_Skeleton
 { 
   Q_OBJECT
 
+  struct XYZ
+  {
+    XYZ() { x = y = z = 0.0; xt = yt = zt = "0.0"; }
+    double  x,  y,  z;
+    QString xt, yt, zt;
+  };
+  typedef QList<XYZ> XYZList;
+
 public:
   EntityGUI_3DSketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0, const double = 2. );
   ~EntityGUI_3DSketcherDlg();
 
 protected:
-  void                               initSpinBox( QDoubleSpinBox*, 
-                                                  double, double, double = 0.1, 
-                                                  int = 3 );
-
+ 
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
@@ -77,13 +81,18 @@ private:
                                                    TopoDS_Shape&,
                                                    TopoDS_Shape& );
 
+  XYZ                                getLastPoint() const;
+  XYZ                                getCurrentPoint() const;
+
 private:
-  QList<double>                      myPointsList;
-  QList<double>                      myRedoList;
+  XYZList                            myPointsList;
+  XYZList                            myRedoList;
 
   EntityGUI_3Spin*                   Group3Spin;
   DlgRef_3Radio*                     GroupType;
+  QButtonGroup*                      myTypeGroup;
 
+  int                                myMode;
   bool                               myOK;
   double                             myLineWidth;
   GeometryGUI*                       myGeometryGUI;
@@ -94,8 +103,6 @@ private slots:
   bool                               ClickOnApply();
   //  bool                               isSameAsPrevious();
   void                               UpdateButtonsState();
-  void                               GetLastPoints(double&, double&, double&);
-  void                               GetCurrentPoints(double&, double&, double&);
 
   void                               ClickOnUndo();
   void                               ClickOnRedo();
@@ -103,7 +110,7 @@ private slots:
   void                               SelectionIntoArgument();
   void                               DeactivateActiveDialog();
   void                               ActivateThisDialog();
-  void                               TypeClicked();
+  void                               TypeClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
 };

@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -95,7 +96,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdges
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> anEdges;
+  std::list<int> anEdges;
   for (; ind < aLen; ind++) {
     anEdges.push_back(theEdges[ind]);
   }
@@ -127,7 +128,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletEdgesR1R2
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> anEdges;
+  std::list<int> anEdges;
   for (; ind < aLen; ind++) {
     anEdges.push_back(theEdges[ind]);
   }
@@ -159,7 +160,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFaces
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -191,7 +192,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFilletFacesR1R2
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -223,7 +224,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
   //Get the reference vertex
   int ind = 0;
   int aLen = theVertexes.length();
-  list<int> aVertexes;
+  std::list<int> aVertexes;
   for (; ind < aLen; ind++) {
     aVertexes.push_back(theVertexes[ind]);
   }
@@ -255,7 +256,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
   //Get the reference vertex
   int ind = 0;
   int aLen = theVertexes.length();
-  list<int> aVertexes;
+  std::list<int> aVertexes;
   for (; ind < aLen; ind++) {
     aVertexes.push_back(theVertexes[ind]);
   }
@@ -360,7 +361,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFaces
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -392,7 +393,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferFacesAD
   //Get the reference faces
   int ind = 0;
   int aLen = theFaces.length();
-  list<int> aFaces;
+  std::list<int> aFaces;
   for (; ind < aLen; ind++) {
     aFaces.push_back(theFaces[ind]);
   }
@@ -425,7 +426,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdges
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> aEdges;
+  std::list<int> aEdges;
   for (; ind < aLen; ind++) {
     aEdges.push_back(theEdges[ind]);
   }
@@ -458,7 +459,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeChamferEdgesAD
   //Get the reference edges
   int ind = 0;
   int aLen = theEdges.length();
-  list<int> aEdges;
+  std::list<int> aEdges;
   for (; ind < aLen; ind++) {
     aEdges.push_back(theEdges[ind]);
   }

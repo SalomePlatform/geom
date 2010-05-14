@@ -1,7 +1,4 @@
-//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
-//
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
@@ -19,14 +16,15 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GEOMToolsGUI_DeflectionDlg.cxx
 //  Author : OCC Team
-
+//
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include <GeometryGUI.h>
 #include <LightApp_Application.h>
-#include <QtxDoubleSpinBox.h>
+#include <SalomeApp_DoubleSpinBox.h>
 
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -71,14 +69,21 @@ GEOMToolsGUI_DeflectionDlg::GEOMToolsGUI_DeflectionDlg (QWidget* parent)
   TextLabel1->setText(tr("GEOM_DEFLECTION"));
   GroupC1Layout->addWidget(TextLabel1, 0, 0);
 
-  SpinBox = new QtxDoubleSpinBox (GroupC1);
-  SpinBox->setPrecision( 6 );
-  SpinBox->setDecimals( 6 );
+  SpinBox = new SalomeApp_DoubleSpinBox (GroupC1);
+  // Obtain precision from preferences
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  const char* quantity = "parametric_precision";
+  int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 ); 
+  SpinBox->setAcceptNames( false );
+  SpinBox->setPrecision( aPrecision );
+  SpinBox->setDecimals( aPrecision );
   SpinBox->setRange( DEFLECTION_MIN, 1.0 );
   SpinBox->setSingleStep( 1.0e-04 );
-  //SpinBox->setMinimum(1.0e-07);
-  //SpinBox->setMaximum(1.0);
-  //SpinBox->setStep(1.0e-04);
+  // Add a hint for the user saying how to tune precision
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  SpinBox->setProperty( "validity_tune_hint", 
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
+  
   SpinBox->setObjectName("SpinBoxU");
   SpinBox->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
   SpinBox->setValue(1.0e-04);
@@ -137,12 +142,12 @@ GEOMToolsGUI_DeflectionDlg::~GEOMToolsGUI_DeflectionDlg()
   // no need to delete child widgets, Qt does it all for us
 }
 
-double GEOMToolsGUI_DeflectionDlg::getDC() const
+double GEOMToolsGUI_DeflectionDlg::getTheDC() const
 {
   return SpinBox->text().toDouble();
 }
 
-void GEOMToolsGUI_DeflectionDlg::setDC (const double v)
+void GEOMToolsGUI_DeflectionDlg::setTheDC (const double v)
 {
   SpinBox->setValue(v);
 }
