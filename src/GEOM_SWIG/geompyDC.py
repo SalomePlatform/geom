@@ -2375,10 +2375,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #           in order to avoid possible intersection between shapes from
         #           this compound.
         #  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
-        #  @param KeepNonlimitShapes: if this parameter == 0 - only shapes with
-        #                             type <= Limit are kept in the result,
-        #                             else - shapes with type > Limit are kept
-        #                             also (if they exist)
+        #  @param KeepNonlimitShapes: if this parameter == 0, then only shapes of
+        #                             target type (equal to Limit) are kept in the result,
+        #                             else standalone shapes of lower dimension
+        #                             are kept also (if they exist).
         #
         #  After implementation new version of PartitionAlgo (October 2006)
         #  other parameters are ignored by current functionality. They are kept
