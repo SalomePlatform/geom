@@ -1555,6 +1555,10 @@ Please, select face, shell or solid and try again</translation>
             <source>GEOM_SKETCHER_EL</source>
             <translation>Element Type</translation>
         </message>
+	<message>
+            <source>GEOM_SKETCHER_RESTORE</source>
+            <translation>Restore</translation>
+        </message>
         <message>
             <source>GEOM_SKETCHER_LENGTH</source>
             <translation>Length</translation>

@@ -54,13 +54,14 @@ is predefined and is equal to 90 degrees);</li>
 
 \b Buttons:
 
-<b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
+<b>"Restore"</b> button orientates the viewer correspondingly to the chosen working plane and fits the scene to show all its objects. 
+\n <b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
 \n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it.
 
 \n <b>Dialog Box:</b>
 
 \image html neo-scetcher1.png
-
+<br>
 \image html neo-scetcher2.png
 
 \n <b>Example:</b>

@@ -145,6 +145,7 @@ private:
 
   QGroupBox*                         GroupBox1;
   QComboBox*                         ComboBox1;
+  QPushButton*                       planeButton;
 
   GeometryGUI*                       myGeometryGUI;
 
@@ -184,6 +185,7 @@ private slots:
   void                               SetDoubleSpinBoxStep( double );
   void                               FindLocalCS();
   gp_Ax3                             GetActiveLocalCS();
+  void                               ActivateLocalCS();
 };
 
 #endif // ENTITYGUI_SKETCHERDLG_H

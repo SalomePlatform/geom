@@ -1278,7 +1278,7 @@ void GeometryGUI::viewManagers( QStringList& lst ) const
 
 void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
 {
-  if ( vm->getType() == OCCViewer_Viewer::Type() )
+  if ( vm && vm->getType() == OCCViewer_Viewer::Type() )
   {
     qDebug( "connect" );
     connect( vm, SIGNAL( keyPress  ( SUIT_ViewWindow*, QKeyEvent* ) ),

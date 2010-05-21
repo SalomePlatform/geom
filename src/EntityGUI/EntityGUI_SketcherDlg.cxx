@@ -105,12 +105,17 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   /***************************************************************/
 
   GroupBox1 = new QGroupBox(tr("GEOM_CS"), this);
-  QGridLayout* OwnLayout = new QGridLayout(GroupBox1);
-  OwnLayout->setSpacing(6);
-  OwnLayout->setMargin(11);
+  QHBoxLayout* planeLayout = new QHBoxLayout(GroupBox1);
+  planeLayout->setSpacing(6);
+  planeLayout->setMargin(11);
 
   ComboBox1 = new QComboBox(GroupBox1);
-  OwnLayout->addWidget(ComboBox1);
+  ComboBox1->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
+  planeLayout->addWidget(ComboBox1);
+
+  planeButton = new QPushButton (GroupBox1);
+  planeButton->setText( tr( "GEOM_SKETCHER_RESTORE" ) );
+  planeLayout->addWidget(planeButton);
 
   topLayout->addWidget(GroupBox1);
   topLayout->addWidget( MainWidget );
@@ -233,6 +238,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
   connect( ComboBox1, SIGNAL( activated( int ) ), this, SLOT( SelectionIntoArgument() ) );
+  connect( planeButton, SIGNAL( clicked() ), this, SLOT( ActivateLocalCS() ) );
 
   connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -352,7 +358,7 @@ void EntityGUI_SketcherDlg::Init()
   FindLocalCS();
   resize(100,100);
 
-
+  ActivateLocalCS();
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
@@ -896,6 +902,12 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   double tmpY = myY;
   myX = myLastX1;
   myY = myLastY1;
+  //  printf ("\nmyX = %f         myY = %f", myX, myY);
+  //  printf ("\nmyLastX1 = %f    myLastY1 = %f", myLastX1, myLastY1);
+  //  printf ("\nmyLastX2 = %f    myLastY2 = %f", myLastX2, myLastY2);
+
+  if ( sender() == ComboBox1 )
+      ActivateLocalCS();
 
   LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
@@ -1747,7 +1759,7 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 
 //=================================================================================
 // function : GetActiveLocalCS()
-// purpose  : Find All Coordinates systems in study
+// purpose  : Get Working plane
 //=================================================================================
 gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 {
@@ -1757,7 +1769,15 @@ gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 
   gp_Ax3 aLCS = myLCSList.at(ind);
 
-  myGeometryGUI->SetWorkingPlane( aLCS );
-  myGeometryGUI->ActiveWorkingPlane();
   return aLCS;
+}
+
+//=================================================================================
+// function : ActivateLocalCS()
+// purpose  : Activate & Fit Working plane
+//=================================================================================
+void EntityGUI_SketcherDlg::ActivateLocalCS()
+{
+    myGeometryGUI->SetWorkingPlane( GetActiveLocalCS() );
+    myGeometryGUI->ActiveWorkingPlane();
 }
