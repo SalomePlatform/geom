@@ -18,6 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -28,11 +29,12 @@
 #include <GEOM_Object.hxx>
 #include <GEOM_Function.hxx>
 
+//#include <NMTAlgo_Splitter1.hxx>
 #include <GEOMAlgo_Splitter.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <TDataStd_IntegerArray.hxx>
 
-#include <BRepBuilderAPI_Copy.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
 
@@ -44,9 +46,7 @@
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_MapOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_DataMapOfShapeShape.hxx>
 
 #include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeFix_Shape.hxx>
@@ -117,8 +117,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   //sklNMTAlgo_Splitter1 PS;
   GEOMAlgo_Splitter PS;
 
-  TopTools_DataMapOfShapeShape aCopyMap;
-
   if (aType == PARTITION_PARTITION || aType == PARTITION_NO_SELF_INTERSECTIONS)
   {
     Handle(TColStd_HSequenceOfTransient) aShapes  = aCI.GetShapes();
@@ -143,26 +141,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a shape is null");
       }
       //
-      BRepBuilderAPI_Copy aCopyTool (aShape_i);
-      TopoDS_Shape aShape_i_copy;
-      if (aCopyTool.IsDone())
-        aShape_i_copy = aCopyTool.Shape();
-      else
-        Standard_NullObject::Raise("Bad shape detected");
-      //
-      // fill aCopyMap for history
-      TopTools_IndexedMapOfShape aShape_i_inds;
-      TopTools_IndexedMapOfShape aShape_i_copy_inds;
-      TopExp::MapShapes(aShape_i, aShape_i_inds);
-      TopExp::MapShapes(aShape_i_copy, aShape_i_copy_inds);
-      Standard_Integer nbInds = aShape_i_inds.Extent();
-      for (Standard_Integer ie = 1; ie <= nbInds; ie++) {
-        aCopyMap.Bind(aShape_i_inds.FindKey(ie), aShape_i_copy_inds.FindKey(ie));
-      }
-      //
       TopTools_ListOfShape aSimpleShapes;
-      //PrepareShapes(aShape_i, aType, aSimpleShapes);
-      PrepareShapes(aShape_i_copy, aType, aSimpleShapes);
+      PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
@@ -184,26 +164,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a tool shape is null");
       }
       //
-      BRepBuilderAPI_Copy aCopyTool (aShape_i);
-      TopoDS_Shape aShape_i_copy;
-      if (aCopyTool.IsDone())
-        aShape_i_copy = aCopyTool.Shape();
-      else
-        Standard_NullObject::Raise("Bad shape detected");
-      //
-      // fill aCopyMap for history
-      TopTools_IndexedMapOfShape aShape_i_inds;
-      TopTools_IndexedMapOfShape aShape_i_copy_inds;
-      TopExp::MapShapes(aShape_i, aShape_i_inds);
-      TopExp::MapShapes(aShape_i_copy, aShape_i_copy_inds);
-      Standard_Integer nbInds = aShape_i_inds.Extent();
-      for (Standard_Integer ie = 1; ie <= nbInds; ie++) {
-        aCopyMap.Bind(aShape_i_inds.FindKey(ie), aShape_i_copy_inds.FindKey(ie));
-      }
-      //
       TopTools_ListOfShape aSimpleShapes;
-      //PrepareShapes(aShape_i, aType, aSimpleShapes);
-      PrepareShapes(aShape_i_copy, aType, aSimpleShapes);
+      PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
@@ -221,26 +183,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a Keep Inside shape is null");
       }
       //
-      BRepBuilderAPI_Copy aCopyTool (aShape_i);
-      TopoDS_Shape aShape_i_copy;
-      if (aCopyTool.IsDone())
-        aShape_i_copy = aCopyTool.Shape();
-      else
-        Standard_NullObject::Raise("Bad shape detected");
-      //
-      // fill aCopyMap for history
-      TopTools_IndexedMapOfShape aShape_i_inds;
-      TopTools_IndexedMapOfShape aShape_i_copy_inds;
-      TopExp::MapShapes(aShape_i, aShape_i_inds);
-      TopExp::MapShapes(aShape_i_copy, aShape_i_copy_inds);
-      Standard_Integer nbInds = aShape_i_inds.Extent();
-      for (Standard_Integer ie = 1; ie <= nbInds; ie++) {
-        aCopyMap.Bind(aShape_i_inds.FindKey(ie), aShape_i_copy_inds.FindKey(ie));
-      }
-      //
       TopTools_ListOfShape aSimpleShapes;
-      //PrepareShapes(aShape_i, aType, aSimpleShapes);
-      PrepareShapes(aShape_i_copy, aType, aSimpleShapes);
+      PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
@@ -257,26 +201,8 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
         Standard_NullObject::Raise("In Partition a Remove Inside shape is null");
       }
       //
-      BRepBuilderAPI_Copy aCopyTool (aShape_i);
-      TopoDS_Shape aShape_i_copy;
-      if (aCopyTool.IsDone())
-        aShape_i_copy = aCopyTool.Shape();
-      else
-        Standard_NullObject::Raise("Bad shape detected");
-      //
-      // fill aCopyMap for history
-      TopTools_IndexedMapOfShape aShape_i_inds;
-      TopTools_IndexedMapOfShape aShape_i_copy_inds;
-      TopExp::MapShapes(aShape_i, aShape_i_inds);
-      TopExp::MapShapes(aShape_i_copy, aShape_i_copy_inds);
-      Standard_Integer nbInds = aShape_i_inds.Extent();
-      for (Standard_Integer ie = 1; ie <= nbInds; ie++) {
-        aCopyMap.Bind(aShape_i_inds.FindKey(ie), aShape_i_copy_inds.FindKey(ie));
-      }
-      //
       TopTools_ListOfShape aSimpleShapes;
-      //PrepareShapes(aShape_i, aType, aSimpleShapes);
-      PrepareShapes(aShape_i_copy, aType, aSimpleShapes);
+      PrepareShapes(aShape_i, aType, aSimpleShapes);
       TopTools_ListIteratorOfListOfShape aSimpleIter (aSimpleShapes);
       for (; aSimpleIter.More(); aSimpleIter.Next()) {
         const TopoDS_Shape& aSimpleSh = aSimpleIter.Value();
@@ -319,50 +245,11 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       Standard_NullObject::Raise("In Half Partition a shape or a plane is null");
     }
 
-    TopoDS_Shape aShapeArg_copy;
-    TopoDS_Shape aPlaneArg_copy;
-    {
-      BRepBuilderAPI_Copy aCopyTool (aShapeArg);
-      if (aCopyTool.IsDone())
-        aShapeArg_copy = aCopyTool.Shape();
-      else
-        Standard_NullObject::Raise("Bad shape detected");
-      //
-      // fill aCopyMap for history
-      TopTools_IndexedMapOfShape aShapeArg_inds;
-      TopTools_IndexedMapOfShape aShapeArg_copy_inds;
-      TopExp::MapShapes(aShapeArg, aShapeArg_inds);
-      TopExp::MapShapes(aShapeArg_copy, aShapeArg_copy_inds);
-      Standard_Integer nbInds = aShapeArg_inds.Extent();
-      for (Standard_Integer ie = 1; ie <= nbInds; ie++) {
-        aCopyMap.Bind(aShapeArg_inds.FindKey(ie), aShapeArg_copy_inds.FindKey(ie));
-      }
-    }
-    {
-      BRepBuilderAPI_Copy aCopyTool (aPlaneArg);
-      if (aCopyTool.IsDone())
-        aPlaneArg_copy = aCopyTool.Shape();
-      else
-        Standard_NullObject::Raise("Bad shape detected");
-      //
-      // fill aCopyMap for history
-      TopTools_IndexedMapOfShape aPlaneArg_inds;
-      TopTools_IndexedMapOfShape aPlaneArg_copy_inds;
-      TopExp::MapShapes(aPlaneArg, aPlaneArg_inds);
-      TopExp::MapShapes(aPlaneArg_copy, aPlaneArg_copy_inds);
-      Standard_Integer nbInds = aPlaneArg_inds.Extent();
-      for (Standard_Integer ie = 1; ie <= nbInds; ie++) {
-        aCopyMap.Bind(aPlaneArg_inds.FindKey(ie), aPlaneArg_copy_inds.FindKey(ie));
-      }
-    }
-
     // add object shapes that are in ListShapes;
-    PS.AddShape(aShapeArg_copy);
-    //PS.AddShape(aShapeArg);
+    PS.AddShape(aShapeArg);
 
     // add tool shapes that are in ListTools and not in ListShapes;
-    PS.AddTool(aPlaneArg_copy);
-    //PS.AddTool(aPlaneArg);
+    PS.AddTool(aPlaneArg);
 
     //skl PS.Compute();
     PS.Perform();
@@ -406,7 +293,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
   const TopTools_IndexedDataMapOfShapeListOfShape& aMR = PS.ImagesResult();
 
   // history for all argument shapes
-  // be sure to use aCopyMap
   TDF_LabelSequence aLabelSeq;
   aFunction->GetDependency(aLabelSeq);
   Standard_Integer nbArg = aLabelSeq.Length();
@@ -428,10 +314,6 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
 
     for (Standard_Integer ie = 1; ie <= nbArgumentEntities; ie++) {
       TopoDS_Shape anEntity = anArgumentIndices.FindKey(ie);
-      // be sure to use aCopyMap here
-      if (aCopyMap.IsBound(anEntity))
-        anEntity = aCopyMap.Find(anEntity);
-      //
       if (!aMR.Contains(anEntity)) continue;
 
       const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
@@ -464,12 +346,14 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_PartitionDriver_Type_()
 {
+
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PartitionDriver",
@@ -495,5 +379,5 @@ const Handle(GEOMImpl_PartitionDriver) Handle(GEOMImpl_PartitionDriver)::DownCas
      }
   }
 
-  return _anOtherObject;
+  return _anOtherObject ;
 }
