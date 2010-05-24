@@ -228,7 +228,6 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
   qApp->processEvents();
   updateGeometry();
   resize( minimumSizeHint() );
-
   SelectionIntoArgument();
 }
 

@@ -271,6 +271,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   qApp->processEvents();
   updateGeometry();
   resize( minimumSizeHint() );
+  SelectionIntoArgument();
 
   myEditCurrentArgument->setFocus();
   globalSelection(); // close local contexts, if any

@@ -54,8 +54,7 @@
 //=================================================================================
 PrimitiveGUI_ConeDlg::PrimitiveGUI_ConeDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                             bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
-    myInitial(true)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_CONE_PV")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_CONE_DXYZ")));
@@ -211,15 +210,9 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
+  SelectionIntoArgument();
 
-  if (myInitial) {
-    // on dialog initialization we init the first field with a selected object (if any)
-    SelectionIntoArgument();
-    myInitial = false;
-  }
-  else {
-    displayPreview();
-  }
+  displayPreview();
 }
 
 //=================================================================================

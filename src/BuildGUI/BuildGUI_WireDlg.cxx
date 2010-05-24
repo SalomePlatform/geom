@@ -123,6 +123,7 @@ void BuildGUI_WireDlg::Init()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
   initName( tr( "GEOM_WIRE" ) );
+  SelectionIntoArgument();
 }
 
 

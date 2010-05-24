@@ -54,8 +54,7 @@
 //=================================================================================
 PrimitiveGUI_TorusDlg::PrimitiveGUI_TorusDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                               bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
-    myInitial(true)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_TORUS_PV")));
@@ -201,20 +200,9 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
+  SelectionIntoArgument();
 
-  if (myInitial) {
-    myInitial = false;
-    if (constructorId == 0) {
-      // on dialog initialization we init the first field with a selected object (if any)
-      SelectionIntoArgument();
-    }
-    else {
-      displayPreview();
-    }
-  }
-  else {
-    displayPreview();
-  }
+  displayPreview();
 }
 
 //=================================================================================
