@@ -103,6 +103,7 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_SurfaceTools.cxx		\
 	GEOMAlgo_Tools3D.cxx			\
 	GEOMAlgo_Tools.cxx			\
+	GEOMAlgo_Tools_1.cxx			\
 	GEOMAlgo_VertexSolid.cxx		\
 	GEOMAlgo_WESCorrector.cxx		\
 	GEOMAlgo_WireEdgeSet.cxx		\
