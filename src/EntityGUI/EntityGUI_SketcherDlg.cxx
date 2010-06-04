@@ -1653,15 +1653,15 @@ void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
   int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
   
   spinBox->setPrecision( aPrecision );
-  spinBox->setDecimals( aPrecision ); // it's necessary to set decimals before the range setting,
-                                    // by default Qt rounds boundaries to 2 decimals at setRange
+  spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
+                                              // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
   
   // Add a hint for the user saying how to tune precision
-  QString userPropName = QObject::tr( QString( "PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
   spinBox->setProperty( "validity_tune_hint", 
-                        QVariant( QObject::tr( "PRECISION_HINT" ).arg( userPropName ) ) );  
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
 //=================================================================================
