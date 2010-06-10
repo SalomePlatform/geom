@@ -116,6 +116,7 @@ void BuildGUI_FaceDlg::Init()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_FACE" ) );
+  SelectionIntoArgument();
 }
 
 

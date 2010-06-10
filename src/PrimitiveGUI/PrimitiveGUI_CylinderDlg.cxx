@@ -202,20 +202,9 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
+  SelectionIntoArgument();
 
-  if (myInitial) {
-    myInitial = false;
-    if (constructorId == 0) {
-      // on dialog initialization we init the first field with a selected object (if any)
-      SelectionIntoArgument();
-    }
-    else {
-      displayPreview();
-    }
-  }
-  else {
-    displayPreview();
-  }
+  displayPreview();
 }
 
 //=================================================================================

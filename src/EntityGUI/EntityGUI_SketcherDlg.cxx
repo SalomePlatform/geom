@@ -57,6 +57,8 @@
 
 #include <gp_Pln.hxx>
 
+#include <Basics_Utils.hxx>
+
 //=================================================================================
 // class    : EntityGUI_SketcherDlg()
 // purpose  : Constructs a EntityGUI_SketcherDlg which is a child of 'parent', with the
@@ -105,12 +107,17 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   /***************************************************************/
 
   GroupBox1 = new QGroupBox(tr("GEOM_CS"), this);
-  QGridLayout* OwnLayout = new QGridLayout(GroupBox1);
-  OwnLayout->setSpacing(6);
-  OwnLayout->setMargin(11);
+  QHBoxLayout* planeLayout = new QHBoxLayout(GroupBox1);
+  planeLayout->setSpacing(6);
+  planeLayout->setMargin(11);
 
   ComboBox1 = new QComboBox(GroupBox1);
-  OwnLayout->addWidget(ComboBox1);
+  ComboBox1->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
+  planeLayout->addWidget(ComboBox1);
+
+  planeButton = new QPushButton (GroupBox1);
+  planeButton->setText( tr( "GEOM_SKETCHER_RESTORE" ) );
+  planeLayout->addWidget(planeButton);
 
   topLayout->addWidget(GroupBox1);
   topLayout->addWidget( MainWidget );
@@ -233,6 +240,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
   connect( ComboBox1, SIGNAL( activated( int ) ), this, SLOT( SelectionIntoArgument() ) );
+  connect( planeButton, SIGNAL( clicked() ), this, SLOT( ActivateLocalCS() ) );
 
   connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -352,7 +360,7 @@ void EntityGUI_SketcherDlg::Init()
   FindLocalCS();
   resize(100,100);
 
-
+  ActivateLocalCS();
   GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
 }
 
@@ -896,6 +904,12 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   double tmpY = myY;
   myX = myLastX1;
   myY = myLastY1;
+  //  printf ("\nmyX = %f         myY = %f", myX, myY);
+  //  printf ("\nmyLastX1 = %f    myLastY1 = %f", myLastX1, myLastY1);
+  //  printf ("\nmyLastX2 = %f    myLastY2 = %f", myLastX2, myLastY2);
+
+  if ( sender() == ComboBox1 )
+      ActivateLocalCS();
 
   LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
@@ -1406,6 +1420,9 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     //Test if the current point is the same as the last one
     TopoDS_Shape myShape1, myShape2;
 
+    // Set "C" numeric locale
+    Kernel_Utils::Localizer loc;
+
     //Last Shape
     QString Command1 = myCommand.join( "" );
     Sketcher_Profile aProfile1( Command1.toAscii() );
@@ -1648,15 +1665,15 @@ void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
   int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
   
   spinBox->setPrecision( aPrecision );
-  spinBox->setDecimals( aPrecision ); // it's necessary to set decimals before the range setting,
-                                    // by default Qt rounds boundaries to 2 decimals at setRange
+  spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
+                                              // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
   
   // Add a hint for the user saying how to tune precision
-  QString userPropName = QObject::tr( QString( "PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
   spinBox->setProperty( "validity_tune_hint", 
-                        QVariant( QObject::tr( "PRECISION_HINT" ).arg( userPropName ) ) );  
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
 //=================================================================================
@@ -1747,7 +1764,7 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 
 //=================================================================================
 // function : GetActiveLocalCS()
-// purpose  : Find All Coordinates systems in study
+// purpose  : Get Working plane
 //=================================================================================
 gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 {
@@ -1757,7 +1774,15 @@ gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 
   gp_Ax3 aLCS = myLCSList.at(ind);
 
-  myGeometryGUI->SetWorkingPlane( aLCS );
-  myGeometryGUI->ActiveWorkingPlane();
   return aLCS;
+}
+
+//=================================================================================
+// function : ActivateLocalCS()
+// purpose  : Activate & Fit Working plane
+//=================================================================================
+void EntityGUI_SketcherDlg::ActivateLocalCS()
+{
+    myGeometryGUI->SetWorkingPlane( GetActiveLocalCS() );
+    myGeometryGUI->ActiveWorkingPlane();
 }

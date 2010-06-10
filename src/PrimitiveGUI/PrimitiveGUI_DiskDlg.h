@@ -60,9 +60,6 @@ private:
 private:
   GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
-  // to initialize the first selection field with a selected object on the dialog creation
-  bool                               myInitial;
-
   DlgRef_2Sel1Spin*                  GroupPntVecR;
   DlgRef_3Sel*                       Group3Pnts;
   DlgRef_1Spin*                      GroupDimensions;

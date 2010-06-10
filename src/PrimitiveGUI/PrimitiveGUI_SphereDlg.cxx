@@ -193,6 +193,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
   qApp->processEvents();
   updateGeometry();
   resize( minimumSizeHint() );
+  SelectionIntoArgument();
 
   displayPreview();
 }

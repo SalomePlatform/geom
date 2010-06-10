@@ -158,6 +158,10 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
   myPoints->length( 0 );
 
   myEditCurrentArgument->setText( "" );
+  qApp->processEvents();
+  updateGeometry();
+  resize( minimumSizeHint() );
+  SelectionIntoArgument();
 }
 
 

@@ -298,6 +298,7 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
+  SelectionIntoArgument();
 }
 
 //=================================================================================

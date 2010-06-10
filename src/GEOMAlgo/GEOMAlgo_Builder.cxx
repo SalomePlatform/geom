@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,7 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:        GEOMAlgo_Builder.cxx
 // Created:     
 // Author:      Peter KURNEV 
@@ -42,6 +41,7 @@
 
 #include <BRepLib.hxx>
 #include <NMTTools_PaveFiller.hxx>
+#include <GEOMAlgo_Tools.hxx>
 
 //=======================================================================
 //function : 
@@ -158,28 +158,7 @@
     AddShape1(aS);
   }
 }
-//=======================================================================
-//function : PostTreat
-//purpose  : 
-//=======================================================================
-  void GEOMAlgo_Builder::PostTreat()
-{
-  Standard_Integer aNbS;
-  TopoDS_Iterator aIt;
-  TopTools_ListOfShape aLS;
-  //
-  aIt.Initialize(myShape);
-  for (; aIt.More(); aIt.Next()) {
-    const TopoDS_Shape& aS=aIt.Value();
-    aLS.Append(aS);
-  }
-  aNbS=aLS.Extent();
-  if (aNbS==1) {
-    myShape=aLS.First();
-  }
-  
-  BRepLib::SameParameter(myShape, 1.e-7, Standard_True);
-}
+
 //=======================================================================
 //function : AddShape1
 //purpose  : 
@@ -399,6 +378,34 @@
   PostTreat();
 }
 //
+static 
+  void CorrectWires(const TopoDS_Shape& aS);
+//
+//=======================================================================
+//function : PostTreat
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_Builder::PostTreat()
+{
+  Standard_Integer aNbS;
+  TopoDS_Iterator aIt;
+  TopTools_ListOfShape aLS;
+  //
+  aIt.Initialize(myShape);
+  for (; aIt.More(); aIt.Next()) {
+    const TopoDS_Shape& aS=aIt.Value();
+    aLS.Append(aS);
+  }
+  aNbS=aLS.Extent();
+  if (aNbS==1) {
+    myShape=aLS.First();
+  }
+  
+  BRepLib::SameParameter(myShape, 1.e-7, Standard_True);
+  //
+  GEOMAlgo_Tools::CorrectWires(myShape);
+}
+//
 // myErrorStatus
 // 
 // 0  - Ok
@@ -406,3 +413,4 @@
 // 2  - PaveFiller is failed
 // 10 - No shapes to process
 // 30 - SolidBuilder failed
+

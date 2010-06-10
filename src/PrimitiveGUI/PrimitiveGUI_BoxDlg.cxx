@@ -54,8 +54,7 @@
 //=================================================================================
 PrimitiveGUI_BoxDlg::PrimitiveGUI_BoxDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                           bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
-    myInitial(true)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
 {
   QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOX_2P")));
   QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BOX_DXYZ")));
@@ -196,15 +195,9 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
+  SelectionIntoArgument();
 
-  if (myInitial) {
-    // on dialog initialization we init the first field with a selected object (if any)
-    SelectionIntoArgument();
-    myInitial = false;
-  }
-  else {
-    displayPreview();
-  }
+  displayPreview();
 }
 
 //=================================================================================
@@ -331,10 +324,6 @@ void PrimitiveGUI_BoxDlg::SetEditCurrentArgument()
 
   // clear selection
   //disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  //if (myInitial)
-  //  myInitial = false;
-  //else
-  //  myGeomGUI->getApp()->selectionMgr()->clearSelected();
 
   if (send == GroupPoints->PushButton1) {
     myEditCurrentArgument = GroupPoints->LineEdit1;

@@ -58,9 +58,6 @@ private:
 private:
   GEOM::GEOM_Object_var              myPoint1, myPoint2; /* Points containing the vector */
 
-  // to initialize the first selection field with a selected object on the dialog creation
-  bool                               myInitial;
-
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_3Spin*                      GroupDimensions;
 

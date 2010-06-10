@@ -158,7 +158,8 @@ void BasicGUI_EllipseDlg::Init()
 
   initName( tr( "GEOM_ELLIPSE" ) );
 
-  resize(100,100);
+  resize( minimumSizeHint() );
+  SelectionIntoArgument();
   displayPreview();
 }
 

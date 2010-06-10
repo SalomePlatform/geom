@@ -202,6 +202,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), 
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  SelectionIntoArgument();
 }
 
 

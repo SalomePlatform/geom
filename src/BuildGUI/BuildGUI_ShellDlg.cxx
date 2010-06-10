@@ -111,7 +111,6 @@ void BuildGUI_ShellDlg::Init()
   QList<int> aSubShapes;
   aSubShapes.append( GEOM_FACE );
   globalSelection( aMap, aSubShapes );
-  
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -123,6 +122,7 @@ void BuildGUI_ShellDlg::Init()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_SHELL" ) );
+  SelectionIntoArgument();
 }
 
 

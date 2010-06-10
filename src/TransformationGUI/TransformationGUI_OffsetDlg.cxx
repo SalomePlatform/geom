@@ -130,6 +130,7 @@ void TransformationGUI_OffsetDlg::Init()
 
   globalSelection( GEOM_ALLSHAPES );
   resize(100,100);
+  SelectionIntoArgument();
 }
 
 

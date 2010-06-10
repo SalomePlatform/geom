@@ -231,6 +231,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
   qApp->processEvents();
   updateGeometry();
   resize( minimumSizeHint() );
+  SelectionIntoArgument();
 
   displayPreview();
 }

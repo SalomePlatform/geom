@@ -438,13 +438,14 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   //}
 
   //Alternative case to check shape result Mantis 0020604: EDF 1172
-  TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+/*  TopoDS_Iterator It (aShape, Standard_True, Standard_True);
   int nbSubshapes=0;
   for (; It.More(); It.Next())
     nbSubshapes++;
   if (!nbSubshapes)
-    Standard_ConstructionError::Raise("Boolean operation aborted : result object is empty compound");
+    Standard_ConstructionError::Raise("Boolean operation aborted : result object is empty compound");*/
   //end of 0020604: EDF 1172
+  //! the changes temporary commented because of customer needs (see the same mantis bug)
 
   aFunction->SetValue(aShape);
 
