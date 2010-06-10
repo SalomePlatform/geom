@@ -69,24 +69,31 @@ Standard_Integer GEOMImpl_3DSketcherDriver::Execute(TFunction_Logbook& log) cons
   TopoDS_Shape aShape;
 
   Handle(TColStd_HArray1OfReal) aCoordsArray = aCI.GetCoordinates();
-
-  BRepBuilderAPI_MakePolygon aMakePoly;
   int anArrayLength = aCoordsArray->Length();
-  double x, y, z;
-  gp_Pnt aPnt;
-  for (int i = 0; i <=(anArrayLength - 3); i+=3) {
-    x = aCoordsArray->Value(i+1);
-    y = aCoordsArray->Value(i+2);
-    z = aCoordsArray->Value(i+3);
-    aPnt = gp_Pnt(x, y, z);
-    aMakePoly.Add(aPnt);
+
+  std::list<gp_Pnt> points;
+  
+  for (int i = 0; i <= (anArrayLength-3); i += 3) {
+    gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
+    if (points.empty() || aPnt.Distance(points.back()) > gp::Resolution())
+      points.push_back(aPnt);
   }
-  if ( anArrayLength == 3) { // Only Start Point
-    BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+
+  if ( points.size() == 1) { // Only Start Point
+    BRepBuilderAPI_MakeVertex mkVertex (points.back());
     aShape = mkVertex.Shape();
   }
-  else { // Make Wire
-    if (aCoordsArray->Value(1) == x && aCoordsArray->Value(2) == y && aCoordsArray->Value(3) == z)
+  else if ( points.size() > 1) { // Make Wire
+    BRepBuilderAPI_MakePolygon aMakePoly;
+    std::list<gp_Pnt>::iterator it;
+    for (it = points.begin(); it != points.end(); ++it) {
+      aMakePoly.Add(*it);
+    }
+
+    if (points.size() > 2 && 
+	points.back().X() == points.front().X() && 
+	points.back().Y() == points.front().Y() && 
+	points.back().Z() == points.front().Z())
       aMakePoly.Close();
     
     if (aMakePoly.IsDone())

@@ -39,14 +39,17 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
-#include <BRep_Tool.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS.hxx>
+//#include <BRep_Tool.hxx>
+//#include <TopExp.hxx>
+//#include <TopExp_Explorer.hxx>
+//#include <TopoDS_Vertex.hxx>
+//#include <TopoDS.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
-#include <BRepBuilderAPI_Transform.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
+//#include <BRepBuilderAPI_Transform.hxx>
+//#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_MakePolygon.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 
 class Locker
 {
@@ -596,13 +599,48 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
 // Function : createShapes
 // Purpose  : Create applyed wire, and last segment from entry object
 //================================================================
-bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
+bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr /*theObject*/,
                                             TopoDS_Shape&         theApplyedWire,
                                             TopoDS_Shape&         theLastSegment )
 {
+  QList<gp_Pnt> points;
+  foreach( XYZ xyz, myPointsList) {
+    gp_Pnt p(xyz.x, xyz.y, xyz.z);
+    if ( points.isEmpty() || points.last().Distance(p) > gp::Resolution())
+      points << p;
+  } 
+  
+  if ( points.count() == 1 ) {
+    // only one point is created
+    BRepBuilderAPI_MakeVertex mkVertex (points.last());
+    theApplyedWire = mkVertex.Shape();
+  }
+  else if ( points.count() > 1 ) {
+    // wire is created
+    BRepBuilderAPI_MakePolygon mkWire;
+    foreach( gp_Pnt p, points )
+      mkWire.Add(p);
+    theApplyedWire = mkWire.Shape();
+  }
+
+  XYZ curxyz = getCurrentPoint();
+  gp_Pnt curpnt(curxyz.x, curxyz.y, curxyz.z);
+  
+  if ( points.isEmpty() || points.last().Distance(curpnt) <= gp::Resolution() ) {
+    BRepBuilderAPI_MakeVertex mkVertex (curpnt);
+    theLastSegment = mkVertex.Shape();
+  }
+  else {
+    BRepBuilderAPI_MakeEdge mkEdge(points.last(), curpnt);
+    theLastSegment = mkEdge.Shape();
+  }
+
+  /* VSR: old algorithm does not work properly, see bug 0020899
   TopoDS_Shape aShape;
-  if ( !GEOMBase::GetShape( theObject, aShape ) ||
-       aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX )
+  if ( !GEOMBase::GetShape( theObject, aShape ) )
+    return false;
+
+  if( aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX )
     return false;
 
   theApplyedWire = aShape;
@@ -628,7 +666,8 @@ bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
   else if ( !theLastSegment.IsNull() ) {
     TopExp_Explorer vertexExp( theLastSegment, TopAbs_VERTEX );
     theApplyedWire = vertexExp.Current();
-  }
+    }
+  */
 
   return true;
 }
