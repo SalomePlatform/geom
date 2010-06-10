@@ -2,8 +2,8 @@
 
 \page deflection_page Deflection
 
-\n In this menu you can change the deviation coefficient of the
-shape. Smaller coefficient provides better quality of the shape in the
+\n In this menu you can change the deflection coefficient of the
+shape. The less is the coefficient the better is the quality of the shape in the
 viewer.
 
 \n <b>Arguments: </b>1 floating point value (deviation coefficient).

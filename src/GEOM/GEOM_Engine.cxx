@@ -35,6 +35,8 @@
 
 #include "utilities.h"
 
+#include <Basics_Utils.hxx>
+
 #include <TDF_Tool.hxx>
 #include <TDF_Data.hxx>
 #include <TDF_Reference.hxx>
@@ -528,6 +530,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                                                 bool isPublished,
                                                 bool& aValidScript)
 {
+  // Set "C" numeric locale to save numbers correctly
+  Kernel_Utils::Localizer loc;
+
   TCollection_AsciiString aScript;
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
 

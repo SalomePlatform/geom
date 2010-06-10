@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : RepairGUI_SuppressFacesDlg.cxx
 //  Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "RepairGUI_SuppressFacesDlg.h"
 
 #include <DlgRef.h>
@@ -111,7 +110,7 @@ void RepairGUI_SuppressFacesDlg::Init()
   myObject = GEOM::GEOM_Object::_nil();
   myFacesInd = new GEOM::short_array();
   myFacesInd->length(0);
-  
+
   mainFrame()->GroupBoxPublish->show();
 
   // signals and slots connections
@@ -207,6 +206,8 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
     }
 
     if (aMap.IsEmpty() && aSelList.Extent() > 0) { // try to detect selected published sub-shape
+      TColStd_MapOfInteger anIds;
+
       SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(myGeomGUI->getApp()->activeStudy());
       if (!appStudy) return;
       _PTR(Study) aStudy = appStudy->studyDS();
@@ -232,10 +233,29 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
               int anIndex = aMainMap.FindIndex(aSubShape);
               if (anIndex >= 0) {
                 aMap.Add(anIndex);
+                anIds.Add(anIndex);
               }
             }
           }
         }
+      }
+      if (!aMap.IsEmpty()) {
+        // highlight local faces, correspondent to OB selection
+        disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
+        aSelMgr->clearSelected();
+
+        Standard_Boolean isOk;
+        char* objIOR = GEOMBase::GetIORFromObject(myObject);
+        Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape(objIOR, isOk, true);
+        free(objIOR);
+        if (!isOk || aSh.IsNull())
+          return;
+
+        aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);
+
+        connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+                this, SLOT(SelectionIntoArgument()));
       }
     }
 

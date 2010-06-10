@@ -26,8 +26,8 @@ of the LCS are calculated automatically basing on the selected object.
 coordinates of origin by a point and axes directions by a line or a
 vector.
 \n <b>TUI command:</b> <em>geompy.MakeMarkerPntTwoVec(Center, VectorX, 
-VectorY)</em> where Center is a point specified the coordinate system location,
-VectorX is a derection of OX axis and VectorY direction of OY axis.
+VectorY)</em> where Center is the origin of the coordinate system,
+VectorX is the direction of OX axis and VectorY is the direction of OY axis.
 \n <b>Arguments:</b> Name + 1 point of origin + X axis direction, Y axis direction.
 
 \image html neo-localcs3.png
@@ -40,6 +40,6 @@ and in 3D viewer.
 
 \image html image145.png "Local Coordinate System"
 
-<b>TUI Script</b> provide you with useful example of creation of
-\ref tui_creation_lcs "Local Coordinate System".
+<b>TUI Script</b> provides you with a useful example of
+\ref tui_creation_lcs "Local Coordinate System" creation.
 */

@@ -1475,8 +1475,8 @@ void GeometryGUI::createPreferences()
   
   // Set property for precision value for spinboxes
   for ( ii = 0; ii < nbQuantities; ii++ ){
-    setPreferenceProperty( prec[ii], "min", -10 );
-    setPreferenceProperty( prec[ii], "max", 10 );
+    setPreferenceProperty( prec[ii], "min", -14 );
+    setPreferenceProperty( prec[ii], "max", 14 );
     setPreferenceProperty( prec[ii], "precision", 2 );
   }  
 

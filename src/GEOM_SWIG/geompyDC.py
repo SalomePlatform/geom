@@ -17,12 +17,11 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
-#
+
 """
     \namespace geompy
     \brief Module geompy
@@ -535,13 +534,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFace The face for which tangent plane should be built.
         #  @param theParameterV vertical value of the center point (0.0 - 1.0).
         #  @param theParameterU horisontal value of the center point (0.0 - 1.0).
-	#  @param theTrimSize the size of plane.
+        #  @param theTrimSize the size of plane.
         #  @return New GEOM_Object, containing the created tangent.
         #
         #  @ref swig_MakeTangentPlaneOnFace "Example"
-	def MakeTangentPlaneOnFace(self, theFace, theParameterU, theParameterV, theTrimSize):
-	    anObj = self.BasicOp.MakeTangentPlaneOnFace(theFace, theParameterU, theParameterV, theTrimSize)
-	    RaiseIfFailed("MakeTangentPlaneOnFace", self.BasicOp)
+        def MakeTangentPlaneOnFace(self, theFace, theParameterU, theParameterV, theTrimSize):
+            anObj = self.BasicOp.MakeTangentPlaneOnFace(theFace, theParameterU, theParameterV, theTrimSize)
+            RaiseIfFailed("MakeTangentPlaneOnFace", self.BasicOp)
             return anObj
 
         ## Create a vector with the given components.
@@ -699,7 +698,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeMarker", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
-	    
+
         ## Create a local coordinate system from shape.
         #  @param theShape The initial shape to detect the coordinate system.
         #  @return New GEOM_Object, containing the created coordinate system.
@@ -716,7 +715,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theYVec Vector of Y direction
         #  @return New GEOM_Object, containing the created coordinate system.
         #
-	#  @ref tui_creation_lcs "Example"
+        #  @ref tui_creation_lcs "Example"
         def MakeMarkerPntTwoVec(self, theOrigin, theXVec, theYVec):
             anObj = self.BasicOp.MakeMarkerPntTwoVec(theOrigin, theXVec, theYVec)
             RaiseIfFailed("MakeMarkerPntTwoVec", self.BasicOp)
@@ -754,7 +753,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeArcCenter(thePnt1, thePnt2, thePnt3, theSense)
             RaiseIfFailed("MakeArcCenter", self.CurvesOp)
             return anObj
-	
+
         ##  Create an arc of ellipse, of center and two points.
         #  @param theCenter Center of the arc.
         #  @param thePnt1 defines major radius of the arc by distance from Pnt1 to Pnt2.
@@ -945,9 +944,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeSketcherOnPlane", self.CurvesOp)
             return anObj
 
-	## Create a sketcher wire, following the numerical description,
+        ## Create a sketcher wire, following the numerical description,
         #  passed through <VAR>theCoordinates</VAR> argument. \n
-	#  @param theCoordinates double values, defining points to create a wire,
+        #  @param theCoordinates double values, defining points to create a wire,
         #                                                      passing from it.
         #  @return New GEOM_Object, containing the created wire.
         #
@@ -1008,7 +1007,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  with edges, parallel to this coordinate axes.
         #  @param theH height of Face.
         #  @param theW width of Face.
-	#  @param theOrientation orientation belong axis OXY OYZ OZX
+        #  @param theOrientation orientation belong axis OXY OYZ OZX
         #  @return New GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -1023,7 +1022,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a face from another plane and two sizes,
         #  vertical size and horisontal size.
         #  @param theObj   Normale vector to the creating face or
-	#  the face object.
+        #  the face object.
         #  @param theH     Height (vertical size).
         #  @param theW     Width (horisontal size).
         #  @return New GEOM_Object, containing the created face.
@@ -1065,7 +1064,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a disk with specified dimensions along OX-OY coordinate axes.
         #  @param theR Radius of Face.
-	#  @param theOrientation set the orientation belong axis OXY or OYZ or OZX
+        #  @param theOrientation set the orientation belong axis OXY or OYZ or OZX
         #  @return New GEOM_Object, containing the created disk.
         #
         #  @ref tui_creation_face "Example"
@@ -1387,7 +1386,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a shape by extrusion of the profile shape along
         #  the path shape. The path shape can be a wire or an edge.
-        #  the several profiles can be specified in the several locations of path.	
+        #  the several profiles can be specified in the several locations of path.
         #  @param theSeqBases - list of  Bases shape to be extruded.
         #  @param theLocations - list of locations on the path corresponding
         #                        specified list of the Bases shapes. Number of locations
@@ -1411,7 +1410,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a shape by extrusion of the profile shape along
         #  the path shape. The path shape can be a wire or a edge.
-        #  the several profiles can be specified in the several locations of path.	
+        #  the several profiles can be specified in the several locations of path.
         #  @param theSeqBases - list of  Bases shape to be extruded. Base shape must be
         #                       shell or face. If number of faces in neighbour sections
         #                       aren't coincided result solid between such sections will
@@ -2118,10 +2117,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing processed shape.
         #
         #  @ref tui_shape_processing "Example"
-        def ProcessShape(self,theShape, theOperators, theParameters, theValues):
+        def ProcessShape(self, theShape, theOperators, theParameters, theValues):
             # Example: see GEOM_TestHealing.py
             theValues,Parameters = ParseList(theValues)
             anObj = self.HealOp.ProcessShape(theShape, theOperators, theParameters, theValues)
+            # To avoid script failure in case of good argument shape
+            if self.HealOp.GetErrorCode() == "ShHealOper_NotError_msg":
+                return theShape
             RaiseIfFailed("ProcessShape", self.HealOp)
             for string in (theOperators + theParameters):
                 Parameters = ":" + Parameters
@@ -2375,10 +2377,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #           in order to avoid possible intersection between shapes from
         #           this compound.
         #  @param Limit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
-        #  @param KeepNonlimitShapes: if this parameter == 0 - only shapes with
-        #                             type <= Limit are kept in the result,
-        #                             else - shapes with type > Limit are kept
-        #                             also (if they exist)
+        #  @param KeepNonlimitShapes: if this parameter == 0, then only shapes of
+        #                             target type (equal to Limit) are kept in the result,
+        #                             else standalone shapes of lower dimension
+        #                             are kept also (if they exist).
         #
         #  After implementation new version of PartitionAlgo (October 2006)
         #  other parameters are ignored by current functionality. They are kept
@@ -2701,9 +2703,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Modify the Location of the given object by Path,
         #  @param  theObject The object to be displaced.
         #  @param  thePath Wire or Edge along that the object will be translated.
-	#  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
-	#  @param  theCopy is to create a copy objects if true.
-	#  @param  theReverse - 0 for usual direction, 1 to reverse path direction.
+        #  @param  theDistance progress of Path (0 = start location, 1 = end of path location).
+        #  @param  theCopy is to create a copy objects if true.
+        #  @param  theReverse - 0 for usual direction, 1 to reverse path direction.
         #  @return New GEOM_Object, containing the displaced shape.
         #
         #  @ref tui_modify_location "Example"
@@ -4129,7 +4131,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         # end of l3_groups
         ## @}
 
-        ## @addtogroup l4_advanced 
+        ## @addtogroup l4_advanced
         ## @{
 
         ## Create a T-shape object with specified caracteristics for the main
@@ -4153,11 +4155,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_pipetshape "Example"
         def MakePipeTShape(self, theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh=True, theP1=None, theP2=None, theP3=None):
             theR1, theW1, theL1, theR2, theW2, theL2, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2)
-	    if (theP1 and theP2 and theP3):
-	      anObj = self.AdvOp.MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3)
-	    else:
-	      anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
-	    RaiseIfFailed("MakePipeTShape", self.AdvOp)
+            if (theP1 and theP2 and theP3):
+                anObj = self.AdvOp.MakePipeTShapeWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh, theP1, theP2, theP3)
+            else:
+                anObj = self.AdvOp.MakePipeTShape(theR1, theW1, theL1, theR2, theW2, theL2, theHexMesh)
+            RaiseIfFailed("MakePipeTShape", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
@@ -4185,17 +4187,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_pipetshape "Example"
         def MakePipeTShapeChamfer(self, theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh=True, theP1=None, theP2=None, theP3=None):
             theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW)
-	    if (theP1 and theP2 and theP3):
-	      anObj = self.AdvOp.MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh, theP1, theP2, theP3)
-	    else:
-	      anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
+            if (theP1 and theP2 and theP3):
+              anObj = self.AdvOp.MakePipeTShapeChamferWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh, theP1, theP2, theP3)
+            else:
+              anObj = self.AdvOp.MakePipeTShapeChamfer(theR1, theW1, theL1, theR2, theW2, theL2, theH, theW, theHexMesh)
             RaiseIfFailed("MakePipeTShapeChamfer", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
         ## Create a T-shape object with fillet and with specified caracteristics for the main
         #  and the incident pipes (radius, width, half-length). The fillet is
-	#  created on the junction of the pipes.
+        #  created on the junction of the pipes.
         #  The extremities of the main pipe are located on junctions points P1 and P2.
         #  The extremity of the incident pipe is located on junction point P3.
         #  If P1, P2 and P3 are not given, the center of the shape is (0,0,0) and
@@ -4207,7 +4209,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theW2 Width of incident pipe (R2+W2 < R1+W1)
         #  @param theL2 Half-length of incident pipe
         #  @param theRF Radius of curvature of fillet.
-	#  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
+        #  @param theHexMesh Boolean indicating if shape is prepared for hex mesh (default=True)
         #  @param theP1 1st junction point of main pipe
         #  @param theP2 2nd junction point of main pipe
         #  @param theP3 Junction point of incident pipe
@@ -4216,10 +4218,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_creation_pipetshape "Example"
         def MakePipeTShapeFillet(self, theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh=True, theP1=None, theP2=None, theP3=None):
             theR1, theW1, theL1, theR2, theW2, theL2, theRF, Parameters = ParseParameters(theR1, theW1, theL1, theR2, theW2, theL2, theRF)
-	    if (theP1 and theP2 and theP3):
-	      anObj = self.AdvOp.MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh, theP1, theP2, theP3)
-	    else:
-	      anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
+            if (theP1 and theP2 and theP3):
+              anObj = self.AdvOp.MakePipeTShapeFilletWithPosition(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh, theP1, theP2, theP3)
+            else:
+              anObj = self.AdvOp.MakePipeTShapeFillet(theR1, theW1, theL1, theR2, theW2, theL2, theRF, theHexMesh)
             RaiseIfFailed("MakePipeTShapeFillet", self.AdvOp)
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj

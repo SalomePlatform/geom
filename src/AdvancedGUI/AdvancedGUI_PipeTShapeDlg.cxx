@@ -207,7 +207,7 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 	ChamferGroupParams->SpinBox_DX->setValue(20);
 	ChamferGroupParams->SpinBox_DY->setValue(10);
 	FilletGroupParams->SpinBox_DX->setValue(20);
-    
+
     CssNormal = QString("QDoubleSpinBox {");
     CssNormal.append(MainTubeGroupParams->SpinBox_DZ->styleSheet());
     CssNormal.append("}");
@@ -216,7 +216,7 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
     CssNormal.append("}");
     CssAcceptable = "QDoubleSpinBox, QPushButton {background-color: rgb(85, 170, 127)}";
     CssRefused = "QDoubleSpinBox, QPushButton {background-color: rgb(255, 0, 0)}";
-    
+
 	// Signal/slot connections
 	connect(buttonOk(), SIGNAL(clicked()), this, SLOT(ClickOnOk()));
 	connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -258,7 +258,7 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 //=================================================================================
 void AdvancedGUI_PipeTShapeDlg::ApplyNewDimensions() {
     QPushButton* send = (QPushButton*) sender();
-    
+
     bool ok = false;
     double newVal;
     if (send == JunctionPointsSel->PushButton4) {
@@ -379,7 +379,7 @@ void AdvancedGUI_PipeTShapeDlg::SetPosition(bool isChecked) {
 //=================================================================================
 void AdvancedGUI_PipeTShapeDlg::ValueChangedInSpinBox(double newValue)
 {
-    if (myOkPoint1 && myOkPoint2 && myOkPoint3)
+    if (JunctionPointsSel->GroupBox1->isChecked() && myOkPoint1 && myOkPoint2 && myOkPoint3)
         CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
     DisplayPreview();
 }
@@ -530,7 +530,7 @@ void AdvancedGUI_PipeTShapeDlg::SetEditCurrentArgument() {
 		JunctionPointsSel->LineEdit1->setEnabled(false);
 		JunctionPointsSel->PushButton2->setDown(false);
 		JunctionPointsSel->LineEdit2->setEnabled(false);
-	} 
+	}
 
 	// enable line edit
 	myEditCurrentArgument->setEnabled(true);
@@ -541,7 +541,7 @@ void AdvancedGUI_PipeTShapeDlg::SetEditCurrentArgument() {
 
     JunctionPointsSel->LineEdit4->setText("");
     JunctionPointsSel->LineEdit5->setText("");
-    
+
 	disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 //	globalSelection(GEOM_POINT);
     globalSelection(); // close local contexts, if any
@@ -764,10 +764,10 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
 
     CORBA::Double theL1 = MainTubeGroupParams->SpinBox_DZ->value();
     CORBA::Double theL2 = IncidentTubeGroupParams->SpinBox_DZ->value();
-    
+
     JunctionPointsSel->LineEdit4->setText("");
     JunctionPointsSel->LineEdit5->setText("");
-    
+
     MainTubeGroupParams->SpinBox_DZ->setToolTip("");
     IncidentTubeGroupParams->SpinBox_DZ->setToolTip("");
 
@@ -791,7 +791,7 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
     double d12 = P1.Distance(P2);
     double d13 = P1.Distance(P3);
     double d23 = P2.Distance(P3);
-    
+
     if (Abs(d12) <= Precision::Confusion()) {
 //         SetErrorCode("Junctions points P1 and P2 are identical");
         return false;
@@ -857,7 +857,7 @@ bool AdvancedGUI_PipeTShapeDlg::CheckCompatiblePosition(GEOM::GEOM_Object_var th
 }
 
 bool AdvancedGUI_PipeTShapeDlg::execute(ObjectList& objects) {
-    
+
     if (JunctionPointsSel->GroupBox1->isChecked() && myOkPoint1 && myOkPoint2 && myOkPoint3)
         CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
 

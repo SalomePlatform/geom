@@ -57,6 +57,8 @@
 
 #include <gp_Pln.hxx>
 
+#include <Basics_Utils.hxx>
+
 //=================================================================================
 // class    : EntityGUI_SketcherDlg()
 // purpose  : Constructs a EntityGUI_SketcherDlg which is a child of 'parent', with the
@@ -1418,6 +1420,9 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     //Test if the current point is the same as the last one
     TopoDS_Shape myShape1, myShape2;
 
+    // Set "C" numeric locale
+    Kernel_Utils::Localizer loc;
+
     //Last Shape
     QString Command1 = myCommand.join( "" );
     Sketcher_Profile aProfile1( Command1.toAscii() );
@@ -1660,15 +1665,15 @@ void EntityGUI_SketcherDlg::initSpinBox( SalomeApp_DoubleSpinBox* spinBox,
   int aPrecision = resMgr->integerValue( "Geometry", quantity, 6 );
   
   spinBox->setPrecision( aPrecision );
-  spinBox->setDecimals( aPrecision ); // it's necessary to set decimals before the range setting,
-                                    // by default Qt rounds boundaries to 2 decimals at setRange
+  spinBox->setDecimals( qAbs( aPrecision ) ); // it's necessary to set decimals before the range setting,
+                                              // by default Qt rounds boundaries to 2 decimals at setRange
   spinBox->setRange( min, max );
   spinBox->setSingleStep( step );
   
   // Add a hint for the user saying how to tune precision
-  QString userPropName = QObject::tr( QString( "PREF_%1" ).arg( quantity ).toLatin1().constData() );
+  QString userPropName = QObject::tr( QString( "GEOM_PREF_%1" ).arg( quantity ).toLatin1().constData() );
   spinBox->setProperty( "validity_tune_hint", 
-                        QVariant( QObject::tr( "PRECISION_HINT" ).arg( userPropName ) ) );  
+                        QVariant( QObject::tr( "GEOM_PRECISION_HINT" ).arg( userPropName ) ) );
 }
 
 //=================================================================================
