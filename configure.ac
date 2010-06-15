@@ -423,6 +423,7 @@ AC_OUTPUT([ \
   src/NMTDS/Makefile \
   src/NMTTools/Makefile \
   src/OBJECT/Makefile \
+  src/OCC2VTK/Makefile \
   src/OperationGUI/Makefile \
   src/PrimitiveGUI/Makefile \
   src/RepairGUI/Makefile \
@@ -432,6 +433,7 @@ AC_OUTPUT([ \
   src/STLExport/Makefile \
   src/ShHealOper/Makefile \
   src/TransformationGUI/Makefile \
+  src/VTKExport/Makefile \
   resources/Makefile \
   resources/GEOMCatalog.xml \
   idl/Makefile \

@@ -43,12 +43,7 @@ salomeinclude_HEADERS =				\
 	GEOM_OBJECT_defs.hxx			\
 	GEOM_OCCReader.h			\
 	GEOM_SmartPtr.h				\
-	GEOM_DeviceActor.h			\
-	GEOM_EdgeSource.h			\
-	GEOM_FaceSource.h			\
-	GEOM_ShadingFace.h			\
-	GEOM_VertexSource.h			\
-	GEOM_WireframeFace.h
+	GEOM_DeviceActor.h
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOMObject.la
@@ -62,12 +57,7 @@ dist_libGEOMObject_la_SOURCES =		\
 	GEOM_AISTrihedron.cxx		\
 	GEOM_VTKTrihedron.cxx		\
 	GEOM_AISVector.cxx		\
-	GEOM_DeviceActor.cxx		\
-	GEOM_EdgeSource.cxx		\
-	GEOM_FaceSource.cxx		\
-	GEOM_ShadingFace.cxx		\
-	GEOM_VertexSource.cxx		\
-	GEOM_WireframeFace.cxx
+	GEOM_DeviceActor.cxx
 
 
 libGEOMObject_la_CPPFLAGS =	\
@@ -78,9 +68,11 @@ libGEOMObject_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(VTK_INCLUDES)		\
 	$(KERNEL_CXXFLAGS)	\
-	$(GUI_CXXFLAGS) 
-	
+	$(GUI_CXXFLAGS) 	\
+	-I$(srcdir)/../OCC2VTK
+
 libGEOMObject_la_LDFLAGS  =			\
+	../OCC2VTK/libOCC2VTK.la		\
 	$(QT_MT_LIBS) \
 	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKV3d -lTKMesh -lTKGeomBase -lTKGeomAlgo -lTKTopAlgo -lTKService \
 	$(VTK_LIBS) \

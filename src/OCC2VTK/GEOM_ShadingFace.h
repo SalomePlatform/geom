@@ -17,46 +17,34 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef GEOM_VERTEXSOURCE_H 
-#define GEOM_VERTEXSOURCE_H 
+#ifndef GEOM_SHADINGFACE_H 
+#define GEOM_SHADINGFACE_H 
  
-#include "GEOM_DeviceActor.h" 
- 
-#include <TopoDS_Vertex.hxx> 
-#include <NCollection_Set.hxx> 
- 
-typedef NCollection_Set<TopoDS_Vertex> TVertexSet; 
- 
-#include <vtkPolyDataSource.h> 
- 
- 
-class VTK_EXPORT GEOM_VertexSource: public vtkPolyDataSource 
+#include "OCC2VTK.h" 
+#include "GEOM_FaceSource.h" 
+
+class OCC2VTK_EXPORT GEOM_ShadingFace: public GEOM_FaceSource 
 { 
 public: 
-  vtkTypeMacro(GEOM_VertexSource,vtkPolyDataSource); 
-  static GEOM_VertexSource* New(); 
- 
-  void AddVertex(const TopoDS_Vertex& theVertex); 
-  void Clear(){ myVertexSet.Clear();} 
+  vtkTypeMacro(GEOM_ShadingFace,GEOM_FaceSource); 
+  static GEOM_ShadingFace* New(); 
  
   static  
-  void OCC2VTK(const TopoDS_Vertex& theVertex,  
-               vtkPolyData* thePolyData, 
+  void OCC2VTK(const TopoDS_Face& theFace,  
+               vtkPolyData* theCells, 
                vtkPoints* thePts); 
  
 protected: 
-  TVertexSet myVertexSet; 
- 
   void Execute(); 
  
-  GEOM_VertexSource(); 
-  ~GEOM_VertexSource(); 
+  GEOM_ShadingFace(); 
+  ~GEOM_ShadingFace(); 
  
 private: 
   // Not implememnted 
-  GEOM_VertexSource(const GEOM_VertexSource&); 
-  void operator=(const GEOM_VertexSource&); 
+  GEOM_ShadingFace(const GEOM_ShadingFace&); 
+  void operator=(const GEOM_ShadingFace&); 
 }; 
  
  
-#endif //GEOM_VERTEXSOURCE_H 
+#endif //GEOM_SHADINGFACE_H 

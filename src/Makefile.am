@@ -21,10 +21,10 @@
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : src (source files directory)
 #
-SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER GEOM BREPExport	\
-          BREPImport IGESExport IGESImport STEPExport STEPImport	\
-          STLExport ShHealOper GEOMImpl GEOM_I GEOMClient GEOM_I_Superv	\
-          GEOM_SWIG
+SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM	\
+          BREPExport BREPImport IGESExport IGESImport STEPExport	\
+          STEPImport STLExport VTKExport ShHealOper GEOMImpl GEOM_I	\
+          GEOMClient GEOM_I_Superv GEOM_SWIG
 
 if GEOM_ENABLE_GUI
   SUBDIRS += OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI	\
@@ -35,8 +35,9 @@ endif
 
 DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER GEOM BREPExport	\
                BREPImport IGESExport IGESImport STEPExport STEPImport STLExport \
-               ShHealOper GEOMImpl GEOM_I GEOMClient GEOM_I_Superv GEOM_SWIG	\
-               OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI	\
-               DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI		\
-               BuildGUI BooleanGUI TransformationGUI OperationGUI RepairGUI	\
-               MeasureGUI GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
+               VTKExport ShHealOper GEOMImpl GEOM_I GEOMClient GEOM_I_Superv	\
+               GEOM_SWIG OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase	\
+               GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI	\
+               EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI	\
+               RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI 		\
+               GEOM_SWIG_WITHIHM

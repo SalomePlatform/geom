@@ -1,5 +1,8 @@
 //  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
 //
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
 //  This library is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU Lesser General Public
 //  License as published by the Free Software Foundation; either
@@ -17,34 +20,17 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef GEOM_SHADINGFACE_H 
-#define GEOM_SHADINGFACE_H 
- 
-#include "GEOM_FaceSource.h" 
- 
- 
-class VTK_EXPORT GEOM_ShadingFace: public GEOM_FaceSource 
-{ 
-public: 
-  vtkTypeMacro(GEOM_ShadingFace,GEOM_FaceSource); 
-  static GEOM_ShadingFace* New(); 
- 
-  static  
-  void OCC2VTK(const TopoDS_Face& theFace,  
-               vtkPolyData* theCells, 
-               vtkPoints* thePts); 
- 
-protected: 
-  void Execute(); 
- 
-  GEOM_ShadingFace(); 
-  ~GEOM_ShadingFace(); 
- 
-private: 
-  // Not implememnted 
-  GEOM_ShadingFace(const GEOM_ShadingFace&); 
-  void operator=(const GEOM_ShadingFace&); 
-}; 
- 
- 
-#endif //GEOM_SHADINGFACE_H 
+#ifndef OCC2VTK_H
+#define OCC2VTK_H
+
+#if defined WIN32
+#  if defined OCC2VTK_EXPORTS
+#    define OCC2VTK_EXPORT __declspec( dllexport )
+#  else
+#    define OCC2VTK_EXPORT __declspec( dllimport )
+#  endif
+#else
+#  define OCC2VTK_EXPORT
+#endif
+
+#endif // OCC2VTK_H
