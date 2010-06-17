@@ -274,15 +274,15 @@ if test "${gui_ok}" = "yes"; then
     echo
 
     CHECK_QT
-
-    echo
-    echo ---------------------------------------------
-    echo testing VTK
-    echo ---------------------------------------------
-    echo
-
-    CHECK_VTK
 fi
+
+echo
+echo ---------------------------------------------
+echo testing VTK
+echo ---------------------------------------------
+echo
+
+CHECK_VTK
 
 echo
 echo ---------------------------------------------
@@ -335,9 +335,9 @@ echo Configure
 if test "${gui_ok}" = "yes"; then
   variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
 elif test "${SalomeGUI_need}" != "no"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
 else
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
 fi
 
 for var in $variables

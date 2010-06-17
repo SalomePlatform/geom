@@ -41,13 +41,11 @@ dist_libOCC2VTK_la_SOURCES =	\
 	GEOM_WireframeFace.cxx
 
 libOCC2VTK_la_CPPFLAGS =	\
-	$(QT_INCLUDES)		\
 	$(CAS_CPPFLAGS)		\
 	$(VTK_INCLUDES)		\
 	$(KERNEL_CXXFLAGS)
 
 libOCC2VTK_la_LDFLAGS  =	\
-	$(QT_MT_LIBS) \
 	$(CAS_KERNEL) -lTKBRep -lTKG2d -lTKG3d -lTKV3d -lTKMesh -lTKGeomBase -lTKGeomAlgo -lTKTopAlgo -lTKService \
 	$(VTK_LIBS) \
 	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace
