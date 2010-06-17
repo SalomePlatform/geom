@@ -28,8 +28,7 @@
 
 #include "utilities.h"
 #include <fstream>
-#include <strstream>
-//#include <sstream>
+#include <sstream>
 
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
@@ -343,18 +342,16 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 
   if(aShape.IsNull()) return NULL;
 
-  std::ostrstream streamShape;
+  std::ostringstream streamShape;
   //Write TopoDS_Shape in ASCII format to the stream
   BRepTools::Write(aShape, streamShape);
   //Returns the number of bytes that have been stored in the stream's buffer.
-  int size = streamShape.pcount();
+  int size = streamShape.str().size();
   char* buf = new char [size];
   //Get pointer on internal character array in ostrstream
-  char* valueOfStream = streamShape.str();
+  const char* valueOfStream = streamShape.str().c_str();
   //Create copy of ostrstream content
   memcpy(buf, valueOfStream, size);
-  //Allow automatic deletion of ostrstream content
-  streamShape.rdbuf()->freeze(0);
 
   CORBA::Octet* OctetBuf =  (CORBA::Octet*)buf;
   SALOMEDS::TMPFile_var SeqFile = new SALOMEDS::TMPFile(size,size,OctetBuf,1);

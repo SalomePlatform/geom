@@ -30,8 +30,7 @@
 #include "GEOM_Object_i.hh"
 
 #include <set>
-#include <strstream>
-//#include <sstream>
+#include <sstream>
 
 #include "Utils_CorbaException.hxx"
 #include "OpUtil.hxx"
@@ -679,7 +678,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
 
   // Retrieve a TopoDS_Shape from byte stream
   TopoDS_Shape aTopology;
-  std::istrstream aStreamedBrep((char*) &theStream[0], theStream.length());
+  std::istringstream aStreamedBrep((char*) &theStream[0]);
   BRep_Builder aBuilder;
   try {
     BRepTools::Read(aTopology, aStreamedBrep, aBuilder);

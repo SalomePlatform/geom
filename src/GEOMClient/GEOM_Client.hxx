@@ -32,6 +32,9 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 #
+#ifdef HAVE_FINITE
+#undef HAVE_FINITE // E.A. fix a warning about redefinition of HAVE_FINITE in re-inclusion of Standard_values.h
+#endif
 #ifndef _TColStd_SequenceOfAsciiString_HeaderFile
 #include <TColStd_SequenceOfAsciiString.hxx>
 #endif
