@@ -38,6 +38,7 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <BRepTools.hxx>
 
 static 
   inline Standard_Boolean IsEqual(const TopoDS_Shape& aS1, 
@@ -72,7 +73,7 @@ static
       const Handle(Geom_Surface)& aS=BRep_Tool::Surface(aF, aLoc);
       aGAS.Load(aS);
       aTS=aGAS.GetType();
-      if (aTS==GeomAbs_Cylinder) {
+      if (aTS==GeomAbs_Cylinder || aTS==GeomAbs_Plane) {
 	aItF.Initialize(aF);
 	for (; aItF.More(); aItF.Next()) {
 	  const TopoDS_Wire& aW=*((TopoDS_Wire*)&aItF.Value());

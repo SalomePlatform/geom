@@ -1,30 +1,27 @@
---  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+-- Copyright (C) 2005  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+-- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+-- 
+-- This library is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU Lesser General Public
+-- License as published by the Free Software Foundation; either 
+-- version 2.1 of the License.
+-- 
+-- This library is distributed in the hope that it will be useful 
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of 
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+-- Lesser General Public License for more details.
 --
---  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
---  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+-- You should have received a copy of the GNU Lesser General Public  
+-- License along with this library; if not, write to the Free Software 
+-- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
---  This library is free software; you can redistribute it and/or
---  modify it under the terms of the GNU Lesser General Public
---  License as published by the Free Software Foundation; either
---  version 2.1 of the License.
+-- See http:--www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 --
---  This library is distributed in the hope that it will be useful,
---  but WITHOUT ANY WARRANTY; without even the implied warranty of
---  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
---  Lesser General Public License for more details.
---
---  You should have received a copy of the GNU Lesser General Public
---  License along with this library; if not, write to the Free Software
---  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
---
---  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
---
-
 -- File:	GEOMAlgo.cdl
 -- Created:	Sat Dec 04 12:36:22 2004
 -- Author:	Peter KURNEV
 --		<peter@PREFEX>
---
+
 package GEOMAlgo 
 
 	---Purpose: 
@@ -117,7 +114,7 @@ is
     deferred class Clsf;
     class ClsfSurf; 
     class ClsfBox; 
-    class FinderShapeOn2; 
+    --class FinderShapeOn2; 
     class PassKeyShapeMapHasher; 
     -- 
     --  classes 
@@ -131,7 +128,8 @@ is
     --  gluer    	     
     class Gluer; 
     class Gluer1;  
-    class GlueAnalyser; 
+    class GlueAnalyser;  
+    
     class CoupleOfShapes; 
     class PassKey;  
     class PassKeyMapHasher; 
@@ -146,20 +144,14 @@ is
     class ShellSolid; 
     class VertexSolid; 
     class SolidSolid; 
-    class FinderShapeOn; 
+    --class FinderShapeOn; 
     -- 
-    class FinderShapeOn1;
+    --class FinderShapeOn1;
     class StateCollector; 
-    --  adds
-    deferred class HAlgo;
-    deferred class Clsf;
-    class ClsfSurf; 
-    class ClsfBox;  
-    --modified by NIZNHY-PKV Mon Jan 29 10:27:44 2007f
+
     class ClsfSolid;  
-    --modified by NIZNHY-PKV Mon Jan 29 10:27:46 2007t
-    class FinderShapeOn2; 
-    class PassKeyShapeMapHasher;
+--    class FinderShapeOn2; 
+--    class PassKeyShapeMapHasher;
     --
     -- Builder/Splitter 
     deferred class BuilderShape; 
@@ -177,6 +169,7 @@ is
     class WireSplitter; 
     class WireEdgeSet; 
     class WESCorrector; 
+    class WESScaler; 
     -- 
     --  Pointers
     --     
@@ -243,20 +236,9 @@ is
 					       Shape from TopoDS, 
      	    	    	    	    	       PassKeyShapeMapHasher from GEOMAlgo); 
 
-    class DataMapOfShapeShapeSet instantiates 
-    	DataMap from TCollection(Shape from TopoDS, 
-	                         ShapeSet from GEOMAlgo, 
-	                         ShapeMapHasher from TopTools); 
-	 
-    class DataMapOfShapeReal instantiates 
-    	DataMap from TCollection(Shape from TopoDS, 
-	                         Real from Standard, 
-	                         ShapeMapHasher from TopTools);		 
-				  
-    
-    class DataMapOfRealListOfShape instantiates  
-    	DataMap from TCollection(Real from Standard, 
-    	    	    	    	 ListOfShape from TopTools,  
-	                         MapRealHasher from TColStd);	   
+    class DataMapOfOrientedShapeShape instantiates
+        DataMap from TCollection (Shape                  from TopoDS,
+                                  Shape                  from TopoDS,
+                                  OrientedShapeMapHasher from TopTools);
     
 end GEOMAlgo;

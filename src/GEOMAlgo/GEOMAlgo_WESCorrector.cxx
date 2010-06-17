@@ -1,4 +1,4 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 //  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 //  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,7 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:        NMTAlgo_WESCorrector.cxx
 // Created:     
 // Author:      Peter KURNEV
@@ -53,12 +52,18 @@
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <GEOMAlgo_WireSplitter.hxx>
+#include <GEOMAlgo_WESScaler.hxx>
 
 
 static
   void MakeWire(const TopTools_ListOfShape& aLE, 
                 TopoDS_Wire& newWire);
 
+//modified by NIZNHY-PKV Thu Jun 10 11:26:55 2010f
+static
+  Standard_Boolean IsToScale(const TopoDS_Face& aF, 
+			     Standard_Real& aScale);
+//modified by NIZNHY-PKV Thu Jun 10 11:27:02 2010t
 //=======================================================================
 // function: 
 // purpose: 
@@ -215,12 +220,7 @@ static
         aER.Orientation(TopAbs_REVERSED);
         aLEC.Append(aER);
         //
-        //modified by NIZNHY-PKV Tue Nov 28 12:02:29 2006f
-        //bClosed=BRep_Tool::IsClosed(TopoDS::Edge(aER), myWES->Face());
-        //if (!bClosed) {
-          bRegular=Standard_False;
-        //}
-        //modified by NIZNHY-PKV Tue Nov 28 12:02:33 2006t
+	bRegular=Standard_False;
       }
       else {
         aLEC.Append(aER);
@@ -266,21 +266,25 @@ static
 //=======================================================================
   void GEOMAlgo_WESCorrector::DoCorrections()
 {
-  Standard_Boolean bIsRegular, bIsNothingToDo;
+  Standard_Boolean bIsRegular, bIsNothingToDo, bToScale;
   Standard_Integer iErr;
+  Standard_Real aScale;
   TopoDS_Wire aW;
   BOP_ListIteratorOfListOfConnexityBlock aCBIt;
+  GEOMAlgo_WESScaler aWSC;
   //
   const TopoDS_Face& aF=myWES->Face();
+  //modified by NIZNHY-PKV Thu Jun 10 11:27:45 2010f
+  bToScale=IsToScale(aF, aScale);
+  //modified by NIZNHY-PKV Thu Jun 10 11:27:49 2010t
   //
   myNewWES.SetFace(aF);
   aCBIt.Initialize(myConnexityBlocks);
   for (; aCBIt.More(); aCBIt.Next()) {
     const BOP_ConnexityBlock& aCB=aCBIt.Value();
     const TopTools_ListOfShape& aLE=aCB.Shapes();
-
+    //
     bIsRegular=aCB.IsRegular();
-
     if (bIsRegular) {
       MakeWire(aLE, aW);
       myNewWES.AddShape (aW);
@@ -289,30 +293,86 @@ static
     //
     GEOMAlgo_WireSplitter aWS;
     //
-    aWS.SetFace(aF);
-    aWS.SetEdges(aLE);
-    //
-    aWS.Perform();
-    iErr=aWS.ErrorStatus();
-    if (iErr) {
-      continue;
-    }
-    bIsNothingToDo=aWS.IsNothingToDo();
-    if (bIsNothingToDo) {
-      MakeWire(aLE, aW);
-      myNewWES.AddShape (aW);
-      continue;
-    }
-    //
-    const BOPTColStd_ListOfListOfShape& aSSS=aWS.Shapes();
-    
-    BOPTColStd_ListIteratorOfListOfListOfShape aWireIt(aSSS);
-    for (; aWireIt.More(); aWireIt.Next()) {
-      const TopTools_ListOfShape& aLEx=aWireIt.Value();
+    //modified by NIZNHY-PKV Thu Jun 10 10:40:43 2010f
+    if(bToScale) {
+      TopoDS_Shape aE;
+      TopTools_ListIteratorOfListOfShape aIt;
+      BOPTColStd_ListIteratorOfListOfListOfShape aItLLSS;
       //
-      MakeWire(aLEx, aW);
-      myNewWES.AddShape (aW);
-    }
+      aWSC.SetScale(aScale);
+      aWSC.SetFace(aF);
+      aWSC.SetEdges(aLE);
+      //
+      aWSC.Perform();
+      iErr=aWSC.ErrorStatus();
+      if (iErr) {
+	return;
+      }
+      //
+      const TopoDS_Face& aFS=aWSC.FaceScaled();
+      const TopTools_ListOfShape& aLES=aWSC.EdgesScaled();
+      //
+      aWS.SetFace(aFS);
+      aWS.SetEdges(aLES);
+      //
+      aWS.Perform();
+      iErr=aWS.ErrorStatus();
+      if (iErr) {
+	continue;
+      }
+      //
+      bIsNothingToDo=aWS.IsNothingToDo();
+      if (bIsNothingToDo) {
+	MakeWire(aLE, aW);
+	myNewWES.AddShape (aW);
+	continue;
+      }
+      //
+      const BOPTColStd_ListOfListOfShape& aLLSS=aWS.Shapes();
+      aItLLSS.Initialize(aLLSS);
+      for (; aItLLSS.More(); aItLLSS.Next()) {
+	TopTools_ListOfShape aLS;
+	//
+	const TopTools_ListOfShape& aLSS=aItLLSS.Value();
+	aIt.Initialize(aLSS);
+	for (; aIt.More(); aIt.Next()) {
+	  const TopoDS_Shape& aES=aIt.Value();
+	  aE=aWSC.Origin(aES);
+	  aLS.Append(aE);
+	}
+	//
+	MakeWire(aLS, aW);
+	myNewWES.AddShape (aW);
+      }
+    }//if(bToScale)
+    //modified by NIZNHY-PKV Thu Jun 10 10:40:48 2010t
+    //
+    else {
+      aWS.SetFace(aF);
+      aWS.SetEdges(aLE);
+      //
+      aWS.Perform();
+      iErr=aWS.ErrorStatus();
+      if (iErr) {
+	continue;
+      }
+      bIsNothingToDo=aWS.IsNothingToDo();
+      if (bIsNothingToDo) {
+	MakeWire(aLE, aW);
+	myNewWES.AddShape (aW);
+	continue;
+      }
+      //
+      const BOPTColStd_ListOfListOfShape& aSSS=aWS.Shapes();
+    
+      BOPTColStd_ListIteratorOfListOfListOfShape aWireIt(aSSS);
+      for (; aWireIt.More(); aWireIt.Next()) {
+	const TopTools_ListOfShape& aLEx=aWireIt.Value();
+	//
+	MakeWire(aLEx, aW);
+	myNewWES.AddShape (aW);
+      }
+    }// else
   }
 }
 //=======================================================================
@@ -331,3 +391,41 @@ static
     aBB.Add(newWire, aE);
   }
 }
+//
+//modified by NIZNHY-PKV Thu Jun 10 11:14:09 2010f
+
+#include <Geom_Surface.hxx>
+#include <TopLoc_Location.hxx>
+#include <BRepAdaptor_Surface.hxx>
+ 
+//=======================================================================
+//function : IsToScale
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsToScale(const TopoDS_Face& aF, 
+			   Standard_Real& aScale)
+{
+  Standard_Boolean bRet;
+  Standard_Real aV1, aV2, dV, aTr;
+  GeomAbs_SurfaceType aType;
+  BRepAdaptor_Surface aBAS;
+  //
+  bRet=Standard_False;
+  aScale=1.;
+  //
+  aBAS.Initialize(aF);
+  aType=aBAS.GetType();
+  if (aType==GeomAbs_Cylinder) {
+    aTr=1.e5;
+    aV1=aBAS.FirstVParameter();
+    aV2=aBAS.LastVParameter();
+    dV=aV2-aV1;
+    if (dV>aTr) {
+      bRet=!bRet;
+      aScale=1./aTr;
+    }
+  }
+  return bRet;
+}
+//modified by NIZNHY-PKV Thu Jun 10 11:14:12 2010t
+
