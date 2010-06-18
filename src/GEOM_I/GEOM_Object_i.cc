@@ -39,6 +39,7 @@
 #include <BRepTools_ShapeSet.hxx>
 #include <BRepTools.hxx>
 #include <TopAbs.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -114,6 +115,30 @@ GEOM::shape_type GEOM_Object_i::GetShapeType()
   TopoDS_Shape _geom = _impl->GetValue();
   if(_geom.IsNull()) return GEOM::SHAPE;
   return (GEOM::shape_type)_geom.ShapeType();
+}
+
+//=============================================================================
+/*!
+ *  GetTopologyType
+ */
+//=============================================================================
+GEOM::shape_type GEOM_Object_i::GetTopologyType()
+{
+  TopoDS_Shape shape = _impl->GetValue();
+  if(shape.IsNull()) return GEOM::SHAPE;
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND || shape.ShapeType() == TopAbs_COMPSOLID ) {
+    TopoDS_Shape shape_i;
+    TopoDS_Iterator It (shape, Standard_True, Standard_False);
+    for (; It.More(); It.Next()) {
+      if ( !shape_i.IsNull() ) return (GEOM::shape_type)shape.ShapeType();
+      shape_i = It.Value();
+    }
+    if ( !shape_i.IsNull() )
+      return (GEOM::shape_type) shape_i.ShapeType();
+  }
+
+  return (GEOM::shape_type)shape.ShapeType();
 }
 
 //=============================================================================

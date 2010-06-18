@@ -166,6 +166,15 @@ module GEOM
      *  Get a <VAR>shape_type</VAR> of the object value.
      */
     shape_type GetShapeType();
+    
+    /*!
+     *  Get the topology type of the object value.
+     *  In contrast to the shape type, this function returns type of the most 
+     *  top-level sub-shape of the COMPOUND or COMPSOLID, if there is only one
+     *  sub-shape there.
+     *  \sa GetShapeType()
+     */
+    shape_type GetTopologyType();
 
     /*!
      *  Set name of the object.

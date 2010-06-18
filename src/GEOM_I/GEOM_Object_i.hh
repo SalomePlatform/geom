@@ -51,6 +51,8 @@ class GEOM_I_EXPORT GEOM_Object_i : public virtual POA_GEOM::GEOM_Object, public
 
   virtual GEOM::shape_type GetShapeType();
 
+  virtual GEOM::shape_type GetTopologyType();
+
   virtual void SetName(const char* theName);
 
   virtual char* GetName();
