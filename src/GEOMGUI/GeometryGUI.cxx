@@ -1195,6 +1195,37 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   if ( viewMenu )
     connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ) );
 
+  // 0020836 (Basic vectors and origin)
+  SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+  bool isAutoCreatedObjects = aResourceMgr->booleanValue( "Geometry", "auto_created_objects", false );
+  if( isAutoCreatedObjects && !CORBA::is_nil( GetGeomGen() ) ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+    if( appStudy ) {
+      _PTR(Study) studyDS = appStudy->studyDS();
+      if( studyDS ) {
+        _PTR(SComponent) aSComponent = studyDS->FindComponent("GEOM");
+        if( !aSComponent ) {
+          GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations( studyDS->StudyId() );
+          if( !aBasicOperations->_is_nil() ) {
+            double aLength = aResourceMgr->doubleValue( "Geometry", "auto_vectors_length", 1.0 );
+            GEOM::GEOM_Object_var anOrigin = aBasicOperations->MakePointXYZ( 0.0, 0.0, 0.0 );
+            GEOM::GEOM_Object_var anOX = aBasicOperations->MakeVectorDXDYDZ( aLength, 0.0, 0.0 );
+            GEOM::GEOM_Object_var anOY = aBasicOperations->MakeVectorDXDYDZ( 0.0, aLength, 0.0 );
+            GEOM::GEOM_Object_var anOZ = aBasicOperations->MakeVectorDXDYDZ( 0.0, 0.0, aLength );
+
+            SALOMEDS::Study_var aDSStudy = ClientStudyToStudy( studyDS );
+            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOrigin, "O" );
+            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
+            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
+            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+
+            getApp()->updateObjectBrowser( false );
+          }
+        }
+      }
+    }
+  }
+
   return true;
 }
 
@@ -1450,6 +1481,13 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
   
+  int autoGroup = addPreference( tr( "PREF_GROUP_AUTO_CREATED_OBJECTS" ), tabId,
+                                 LightApp_Preferences::Auto, "Geometry", "auto_created_objects" );
+  int autoVectorsLength = addPreference( tr( "PREF_VECTORS_LENGTH" ), autoGroup,
+                                         LightApp_Preferences::DblSpin, "Geometry", "auto_vectors_length" );
+  setPreferenceProperty( autoVectorsLength, "min", 0.01 );
+  setPreferenceProperty( autoVectorsLength, "max", 1000 );
+
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
   setPreferenceProperty( precGroup, "columns", 2 );

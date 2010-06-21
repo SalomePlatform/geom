@@ -2656,6 +2656,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Color of free boundaries</translation>
         </message>
         <message>
+            <source>PREF_GROUP_AUTO_CREATED_OBJECTS</source>
+            <translation>Automatically created objects</translation>
+        </message>
+        <message>
             <source>PREF_GROUP_GENERAL</source>
             <translation>General</translation>
         </message>
@@ -2702,6 +2706,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>PREF_TYPE_OF_MARKER</source>
             <translation>Type</translation>
+        </message>
+        <message>
+            <source>PREF_VECTORS_LENGTH</source>
+            <translation>Length of vectors</translation>
         </message>
         <message>
             <source>PREF_WIREFRAME_COLOR</source>
