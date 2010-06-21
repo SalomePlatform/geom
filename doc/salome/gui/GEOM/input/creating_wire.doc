@@ -4,10 +4,14 @@
 
 \n To create a \b Wire in the <b>Main Menu</b> select <b>New Entity - > Build - > Wire</b>
 
-\n You can create a \b Wire from several connected edges and wires by
+\n You can create a \b Wire from several connected edges or wires by
 selecting them in the object browser or in the viewer holding Shift
-button. 
-\n Select \b Tolerance which will be used to check the
+button.
+
+It is possible to select wires or edges from objects. To specify subshape type, use
+the <b>Object Type</b> radio buttons.
+
+Select \b Tolerance which will be used to check the
 connections. If the \b Tolerance value is more than 1e-07, and a gap
 within this tolerance is detected, the corresponding edges will be modified to
 connect in the middle of the gap.

@@ -30,6 +30,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1Sel1Spin;
+class DlgRef_3Radio;
 
 //=================================================================================
 // class    : BuildGUI_WireDlg
@@ -47,7 +48,8 @@ protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );    
+  virtual bool                       execute( ObjectList& );
+  virtual void                       addSubshapesToStudy(); 
 
 private:
   void                               Init();
@@ -58,13 +60,18 @@ private:
   bool                               myOkEdgesAndWires;   /* to check when arguments is defined */
   
   DlgRef_1Sel1Spin*                  GroupArgs;
+  DlgRef_3Radio*                     GroupType;
+
+  QMap<QString, GEOM::GEOM_Object_var> myMapToStudy;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
+  void                               DeactivateActiveDialog();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               TypeButtonClicked();
 };
 
 #endif // BUILDGUI_WIREDLG_H
