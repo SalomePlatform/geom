@@ -72,3 +72,4 @@ GENERATE_RTF      = NO
 #---------------------------------------------------------------------------
 TAGFILES          = geompy_doc.tag=geompy_doc
 ALLEXTERNALS      = NO
+SEARCHENGINE      = YES

@@ -56,7 +56,7 @@ clean-local:
 	@for filen in `find . -maxdepth 1` ; do					\
 	  case $${filen} in							\
 	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;	\
-	    . | .. ) ;;								\
+	    . | .. | ./static ) ;;								\
 	    *) echo "Removing $${filen}" ; rm -rf $${filen} ;;			\
 	  esac ;								\
 	done ;
@@ -67,7 +67,7 @@ install-data-local: usr_docs
 	  case $${filen} in									\
 	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;			\
 	    ./doxyfile.bak | ./doxyfile_py.bak | ./doxyfile_tui.bak ) ;;			\
-	    . | .. ) ;;										\
+	    . | .. | ./static ) ;;										\
 	    *) echo "Installing $${filen}" ; cp -rp $${filen} $(DESTDIR)$(docdir)/gui/GEOM ;;	\
 	  esac ;										\
 	done ;
