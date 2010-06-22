@@ -360,6 +360,9 @@ void GeometryGUI::OnGUIEvent( int id )
   QString libName;
   // find corresponding GUI library
   switch ( id ) {
+  case GEOMOp::OpOriginAndVectors: // MENU BASIC - ORIGIN AND BASE VECTORS
+    createOriginAndBaseVectors(); // internal operation
+    return;
   case GEOMOp::OpImport:           // MENU FILE - IMPORT
   case GEOMOp::OpExport:           // MENU FILE - EXPORT
   case GEOMOp::OpSelectVertex:     // POPUP MENU - SELECT ONLY - VERTEX
@@ -404,7 +407,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpVector:           // MENU BASIC - VECTOR
   case GEOMOp::OpPlane:            // MENU BASIC - PLANE
   case GEOMOp::OpCurve:            // MENU BASIC - CURVE
-  case GEOMOp::OpLCS:              // MENU BASIC - REPAIR
+  case GEOMOp::OpLCS:              // MENU BASIC - LOCAL COORDINATE SYSTEM
     libName = "BasicGUI";
     break;
   case GEOMOp::OpBox:              // MENU PRIMITIVE - BOX
@@ -585,7 +588,36 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
 		this, SLOT( OnGUIEvent() )  );
 }
 
+//=======================================================================
+// function : createGeomAction
+// purpose  :
+//=======================================================================
+void GeometryGUI::createOriginAndBaseVectors()
+{
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  if( appStudy ) {
+    _PTR(Study) studyDS = appStudy->studyDS();
+    if( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
+      GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations( studyDS->StudyId() );
+      if( !aBasicOperations->_is_nil() ) {
+        SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+        double aLength = aResourceMgr->doubleValue( "Geometry", "base_vectors_length", 1.0 );
+        GEOM::GEOM_Object_var anOrigin = aBasicOperations->MakePointXYZ( 0.0, 0.0, 0.0 );
+        GEOM::GEOM_Object_var anOX = aBasicOperations->MakeVectorDXDYDZ( aLength, 0.0, 0.0 );
+        GEOM::GEOM_Object_var anOY = aBasicOperations->MakeVectorDXDYDZ( 0.0, aLength, 0.0 );
+        GEOM::GEOM_Object_var anOZ = aBasicOperations->MakeVectorDXDYDZ( 0.0, 0.0, aLength );
 
+        SALOMEDS::Study_var aDSStudy = ClientStudyToStudy( studyDS );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOrigin, "O" );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+
+        getApp()->updateObjectBrowser( false );
+      }
+    }
+  }
+}
 
 //=======================================================================
 // function : GeometryGUI::initialize()
@@ -611,6 +643,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpVector,     "VECTOR" );
   createGeomAction( GEOMOp::OpPlane,      "PLANE" );
   createGeomAction( GEOMOp::OpLCS,        "LOCAL_CS" );
+  createGeomAction( GEOMOp::OpOriginAndVectors, "ORIGIN_AND_VECTORS" );
 
   createGeomAction( GEOMOp::OpBox,        "BOX" );
   createGeomAction( GEOMOp::OpCylinder,   "CYLINDER" );
@@ -761,6 +794,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpVector,  basicId, -1 );
   createMenu( GEOMOp::OpPlane,   basicId, -1 );
   createMenu( GEOMOp::OpLCS,     basicId, -1 );
+  createMenu( GEOMOp::OpOriginAndVectors, basicId, -1 );
 
   int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
   createMenu( GEOMOp::OpBox,       primId, -1 );
@@ -928,6 +962,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpVector,  basicTbId );
   createTool( GEOMOp::OpPlane,   basicTbId );
   createTool( GEOMOp::OpLCS,     basicTbId );
+  createTool( GEOMOp::OpOriginAndVectors, basicTbId );
 
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
   createTool( GEOMOp::OpBox,       primTbId );
@@ -1197,31 +1232,14 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // 0020836 (Basic vectors and origin)
   SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
-  bool isAutoCreatedObjects = aResourceMgr->booleanValue( "Geometry", "auto_created_objects", false );
-  if( isAutoCreatedObjects && !CORBA::is_nil( GetGeomGen() ) ) {
+  if( aResourceMgr->booleanValue( "Geometry", "auto_create_base_objects", false ) ) {
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
     if( appStudy ) {
       _PTR(Study) studyDS = appStudy->studyDS();
       if( studyDS ) {
         _PTR(SComponent) aSComponent = studyDS->FindComponent("GEOM");
-        if( !aSComponent ) {
-          GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations( studyDS->StudyId() );
-          if( !aBasicOperations->_is_nil() ) {
-            double aLength = aResourceMgr->doubleValue( "Geometry", "auto_vectors_length", 1.0 );
-            GEOM::GEOM_Object_var anOrigin = aBasicOperations->MakePointXYZ( 0.0, 0.0, 0.0 );
-            GEOM::GEOM_Object_var anOX = aBasicOperations->MakeVectorDXDYDZ( aLength, 0.0, 0.0 );
-            GEOM::GEOM_Object_var anOY = aBasicOperations->MakeVectorDXDYDZ( 0.0, aLength, 0.0 );
-            GEOM::GEOM_Object_var anOZ = aBasicOperations->MakeVectorDXDYDZ( 0.0, 0.0, aLength );
-
-            SALOMEDS::Study_var aDSStudy = ClientStudyToStudy( studyDS );
-            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOrigin, "O" );
-            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
-            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
-            GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
-
-            getApp()->updateObjectBrowser( false );
-          }
-        }
+        if( !aSComponent ) // create objects automatically only if there is no GEOM component
+          createOriginAndBaseVectors();
       }
     }
   }
@@ -1481,13 +1499,6 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
   
-  int autoGroup = addPreference( tr( "PREF_GROUP_AUTO_CREATED_OBJECTS" ), tabId,
-                                 LightApp_Preferences::Auto, "Geometry", "auto_created_objects" );
-  int autoVectorsLength = addPreference( tr( "PREF_VECTORS_LENGTH" ), autoGroup,
-                                         LightApp_Preferences::DblSpin, "Geometry", "auto_vectors_length" );
-  setPreferenceProperty( autoVectorsLength, "min", 0.01 );
-  setPreferenceProperty( autoVectorsLength, "max", 1000 );
-
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
   setPreferenceProperty( precGroup, "columns", 2 );
@@ -1576,6 +1587,18 @@ void GeometryGUI::createPreferences()
 
   setPreferenceProperty( markerScale, "strings", aMarkerScaleValuesList );
   setPreferenceProperty( markerScale, "indexes", aMarkerScaleIndicesList );
+
+  int originGroup = addPreference( tr( "PREF_GROUP_ORIGIN_AND_BASE_VECTORS" ), tabId );
+  setPreferenceProperty( originGroup, "columns", 2 );
+
+  int baseVectorsLength = addPreference( tr( "PREF_BASE_VECTORS_LENGTH" ), originGroup,
+                                         LightApp_Preferences::DblSpin, "Geometry", "base_vectors_length" );
+  setPreferenceProperty( baseVectorsLength, "min", 0.01 );
+  setPreferenceProperty( baseVectorsLength, "max", 1000 );
+
+  addPreference( tr( "PREF_AUTO_CREATE" ), originGroup,
+                 LightApp_Preferences::Bool, "Geometry", "auto_create_base_objects" );
+
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )

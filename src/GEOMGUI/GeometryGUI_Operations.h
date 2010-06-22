@@ -69,6 +69,7 @@ namespace GEOMOp {
     OpPlane             = 3006,   // MENU NEW ENTITY - BASIC - PLANE
     OpCurve             = 3007,   // MENU NEW ENTITY - BASIC - CURVE
     OpLCS               = 3008,   // MENU NEW ENTITY - BASIC - LOCAL COORDINATE SYSTEM
+    OpOriginAndVectors  = 3009,   // MENU NEW ENTITY - BASIC - ORIGIN AND BASE VECTORS
     // PrimitiveGUI --------------//--------------------------------
     OpBox               = 3100,   // MENU NEW ENTITY - PRIMITIVES - BOX
     OpCylinder          = 3101,   // MENU NEW ENTITY - PRIMITIVES - CYLINDER

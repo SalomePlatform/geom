@@ -906,6 +906,10 @@
             <translation>offset.png</translation>
         </message>
         <message>
+            <source>ICO_ORIGIN_AND_VECTORS</source>
+            <translation>origin_and_vectors.png</translation>
+        </message>
+        <message>
             <source>ICO_PARTITION</source>
             <translation>partition.png</translation>
         </message>

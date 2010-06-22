@@ -2360,6 +2360,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Operations</translation>
         </message>
         <message>
+            <source>MEN_ORIGIN_AND_VECTORS</source>
+            <translation>Origin and Base Vectors</translation>
+        </message>
+        <message>
             <source>MEN_PARTITION</source>
             <translation>Partition</translation>
         </message>
@@ -2648,6 +2652,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Parametric tolerance precision</translation>
         </message>
         <message>
+            <source>PREF_AUTO_CREATE</source>
+            <translation>Auto create</translation>
+        </message>
+        <message>
             <source>PREF_DISPLAY_MODE</source>
             <translation>Default display mode</translation>
         </message>
@@ -2656,8 +2664,8 @@ Please, select face, shell or solid and try again</translation>
             <translation>Color of free boundaries</translation>
         </message>
         <message>
-            <source>PREF_GROUP_AUTO_CREATED_OBJECTS</source>
-            <translation>Automatically created objects</translation>
+            <source>PREF_GROUP_ORIGIN_AND_BASE_VECTORS</source>
+            <translation>Origin and base vectors</translation>
         </message>
         <message>
             <source>PREF_GROUP_GENERAL</source>
@@ -2708,8 +2716,8 @@ Please, select face, shell or solid and try again</translation>
             <translation>Type</translation>
         </message>
         <message>
-            <source>PREF_VECTORS_LENGTH</source>
-            <translation>Length of vectors</translation>
+            <source>PREF_BASE_VECTORS_LENGTH</source>
+            <translation>Length of base vectors</translation>
         </message>
         <message>
             <source>PREF_WIREFRAME_COLOR</source>
@@ -2982,6 +2990,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>STB_OFFSET</source>
             <translation>Offset surface</translation>
+        </message>
+        <message>
+            <source>STB_ORIGIN_AND_VECTORS</source>
+            <translation>Create an origin and base Vectors</translation>
         </message>
         <message>
             <source>STB_PARTITION</source>
@@ -3502,6 +3514,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>TOP_OFFSET</source>
             <translation>Offset surface</translation>
+        </message>
+        <message>
+            <source>TOP_ORIGIN_AND_VECTORS</source>
+            <translation>Create an origin and base Vectors</translation>
         </message>
         <message>
             <source>TOP_PARTITION</source>

@@ -153,6 +153,8 @@ private:
                                                const bool isExpandAll = false, const bool isOCC = false,
                                                const int parentId = -1 );
 
+  void                        createOriginAndBaseVectors();
+
 public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!
 
