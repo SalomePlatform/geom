@@ -3169,6 +3169,11 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   if( min_l < fabs(aYmax - aYmin) ) min_l = fabs(aYmax - aYmin);
   if( min_l < fabs(aZmax - aZmin) ) min_l = fabs(aZmax - aZmin);
   min_l /= dl_l;
+  // Mantis issue 0020908 BEGIN
+  if (!Exp_Edge.More()) {
+    min_l = Precision::Confusion();
+  }
+  // Mantis issue 0020908 END
   for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
     TopExp_Explorer Exp_Vertex( Exp_Edge.Current(), TopAbs_VERTEX);
     for ( Standard_Integer nbVertex = 0; Exp_Vertex.More(); Exp_Vertex.Next(), nbVertex++ ) {

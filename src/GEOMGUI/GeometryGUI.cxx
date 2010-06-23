@@ -1088,7 +1088,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpDeflection ), -1, -1 ); // deflection
   mgr->setRule( action( GEOMOp::OpDeflection ), "selcount>0 and isVisible and client='OCCViewer'", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
-  mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg( GEOM_POINT ), QtxPopupMgr::VisibleRule );
+  //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM::VERTEX), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );

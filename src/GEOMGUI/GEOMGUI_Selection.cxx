@@ -129,7 +129,8 @@ int GEOMGUI_Selection::typeId( const int index ) const
   int aType = -1;
   GEOM::GEOM_Object_var anObj = getObject( index );
   if ( !CORBA::is_nil( anObj ) )
-    aType = anObj->GetType();
+    //aType = anObj->GetType();
+    aType = (int)anObj->GetShapeType();
   return aType;
 }
 
