@@ -627,9 +627,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
           aFuncScript += (char*)anEntryToCommand->second.c_str();
 
-        // PTv, 0020001 add result objects from RestoreSubShapes into ignore list,
+        // PTv, 0020001 add result objects from RestoreGivenSubShapes into ignore list,
         //  because they will be published during command execution
-        int indx = anAfterScript.Search( "RestoreSubShapes" );
+        int indx = anAfterScript.Search( "RestoreGivenSubShapes" );
+        if ( indx == -1 )
+          indx = anAfterScript.Search( "RestoreSubShapes" );
         if ( indx != -1 ) {
           TCollection_AsciiString aSubStr = anAfterScript.SubString(1, indx);
           Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(aSubStr);
@@ -922,9 +924,11 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
   // 0020001 PTv, check for critical functions, which requier dump of objects
   if (theIsPublished)
   {
-    // currently, there is only one function "RestoreSubShapes",
+    // currently, there is only one function "RestoreGivenSubShapes",
     // later this check could be replaced by iterations on list of such functions
-    if (aDescr.Search( "RestoreSubShapes" ) != -1)
+    if (aDescr.Search( "RestoreGivenSubShapes" ) != -1)
+      theIsDumpCollected = true;
+    else if (aDescr.Search( "RestoreSubShapes" ) != -1)
       theIsDumpCollected = true;
   }
 
@@ -935,7 +939,9 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
     bool isBefore = true;
     TCollection_AsciiString aSubStr = aDescr.Token("\n\t", i++);
     while (!aSubStr.IsEmpty()) {
-      if (isBefore && aSubStr.Search( "RestoreSubShapes" ) == -1)
+      if (isBefore &&
+          aSubStr.Search( "RestoreGivenSubShapes" ) == -1 &&
+          aSubStr.Search( "RestoreSubShapes" ) == -1)
         theScript += TCollection_AsciiString("\n\t") + aSubStr;
       else
         theAfterScript += TCollection_AsciiString("\n\t") + aSubStr;

@@ -408,6 +408,33 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return self.RestoreSubShapesO(self.myStudy, theObject, theArgs,
                                           theFindMethod, theInheritFirstArg, theAddPrefix)
 
+        ## Publish sub-shapes, standing for arguments and sub-shapes of arguments
+        #  To be used from python scripts out of geompy.addToStudy (non-default usage)
+        #  \param theObject published GEOM object, arguments of which will be published
+        #  \param theArgs   list of GEOM_Object, operation arguments to be published.
+        #                   If this list is empty, all operation arguments will be published
+        #  \param theFindMethod method to search subshapes, corresponding to arguments and
+        #                       their subshapes. Value from enumeration GEOM::find_shape_method.
+        #  \param theInheritFirstArg set properties of the first argument for <VAR>theObject</VAR>.
+        #                            Do not publish subshapes in place of arguments, but only
+        #                            in place of subshapes of the first argument,
+        #                            because the whole shape corresponds to the first argument.
+        #                            Mainly to be used after transformations, but it also can be
+        #                            usefull after partition with one object shape, and some other
+        #                            operations, where only the first argument has to be considered.
+        #                            If theObject has only one argument shape, this flag is automatically
+        #                            considered as True, not regarding really passed value.
+        #  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
+        #                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
+        #  \return list of published sub-shapes
+        #
+        #  @ref tui_restore_prs_params "Example"
+        def RestoreGivenSubShapes (self, theObject, theArgs=[], theFindMethod=GEOM.FSM_GetInPlace,
+                                   theInheritFirstArg=False, theAddPrefix=True):
+            # Example: see GEOM_TestAll.py
+            return self.RestoreGivenSubShapesO(self.myStudy, theObject, theArgs,
+                                               theFindMethod, theInheritFirstArg, theAddPrefix)
+
         # end of l3_restore_ss
         ## @}
 
