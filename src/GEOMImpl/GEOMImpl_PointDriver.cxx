@@ -190,6 +190,10 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       Standard_TypeMismatch::Raise
         ("Creation Point On Lines Intersection Aborted : Line shape is not an edge or wire");
     }
+
+    if (aRefShape1.IsSame(aRefShape2))
+      Standard_ConstructionError::Raise("The lines to make intersection must be different");
+
     //Calculate Lines Intersection Point
     BRepExtrema_DistShapeShape dst (aRefShape1, aRefShape2);
     if (dst.IsDone()) {
