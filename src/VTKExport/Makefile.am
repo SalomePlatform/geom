@@ -40,6 +40,6 @@ libVTKExport_la_CPPFLAGS =	\
 
 libVTKExport_la_LDFLAGS  =			\
 	../OCC2VTK/libOCC2VTK.la		\
-	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
 	$(CAS_LDPATH)
