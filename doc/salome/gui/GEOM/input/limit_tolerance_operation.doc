@@ -1,0 +1,23 @@
+/*!
+
+\page limit_tolerance_operation_page Limit Tolerance
+
+\n To produce a <b>Limit Tolerance</b> operation in the <b>Main
+   Menu</b> select <b>Repair - > Limit Tolerance</b>.
+
+\n It is possible on all kind of shapes.
+
+\n The \b Result will be a \b GEOM_Object. 
+
+\n <b>TUI Command:</b> <em>geompy.LimitTolerance(Shape, Tolerance),</em>
+ where \em Shape is a shape with presumably incorrect tolerance, \em
+ Tolerance is a desired value of tolerance.
+
+\image html limit_tolerance_dlg.png
+
+\n <b>Arguments:</b> Name + 1 shape + 1 value (new tolerance).
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_limit_tolerance "Repairing Operations".
+
+*/

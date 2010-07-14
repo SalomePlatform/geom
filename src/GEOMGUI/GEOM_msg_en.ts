@@ -772,6 +772,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Glue faces</translation>
         </message>
         <message>
+            <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
+            <translation>Limit tolerance</translation>
+        </message>
+        <message>
             <source>GEOM_HEIGHT</source>
             <translation>Height :</translation>
         </message>
@@ -2056,6 +2060,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Glue</translation>
         </message>
         <message>
+            <source>LIMIT_TOLERANCE_NEW_OBJ_NAME</source>
+            <translation>Limit_tolerance</translation>
+        </message>
+        <message>
             <source>MEN_ALL_SEL_ONLY</source>
             <translation>Select All</translation>
         </message>
@@ -2306,6 +2314,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>MEN_ISOS</source>
             <translation>Isos</translation>
+        </message>
+        <message>
+            <source>MEN_LIMIT_TOLERANCE</source>
+            <translation>Limit tolerance</translation>
         </message>
         <message>
             <source>MEN_LINE</source>
@@ -2956,6 +2968,10 @@ Please, select face, shell or solid and try again</translation>
             <translation>Create a line</translation>
         </message>
         <message>
+            <source>STB_LIMIT_TOLERANCE</source>
+            <translation>Limit tolerance</translation>
+        </message>
+        <message>
             <source>STB_LOCAL_CS</source>
             <translation>Create a local coordinate system</translation>
         </message>
@@ -3478,6 +3494,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>TOP_LINE</source>
             <translation>Create a line</translation>
+        </message>
+        <message>
+            <source>TOP_LIMIT_TOLERANCE</source>
+            <translation>Limit tolerance</translation>
         </message>
         <message>
             <source>TOP_LOCAL_CS</source>

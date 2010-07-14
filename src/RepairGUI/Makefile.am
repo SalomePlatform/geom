@@ -38,6 +38,7 @@ salomeinclude_HEADERS =				\
 	RepairGUI_FreeFacesDlg.h		\
 	RepairGUI_ChangeOrientationDlg.h	\
 	RepairGUI_GlueDlg.h			\
+	RepairGUI_LimitToleranceDlg.h		\
 	RepairGUI_RemoveExtraEdgesDlg.h
 
 # Libraries targets
@@ -56,6 +57,7 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_FreeFacesDlg.h		\
 	RepairGUI_ChangeOrientationDlg.h	\
 	RepairGUI_GlueDlg.h			\
+	RepairGUI_LimitToleranceDlg.h		\
 	RepairGUI_RemoveExtraEdgesDlg.h		\
 						\
 	RepairGUI.cxx				\
@@ -70,6 +72,7 @@ dist_libRepairGUI_la_SOURCES =			\
 	RepairGUI_FreeFacesDlg.cxx		\
 	RepairGUI_ChangeOrientationDlg.cxx	\
 	RepairGUI_GlueDlg.cxx			\
+	RepairGUI_LimitToleranceDlg.cxx		\
 	RepairGUI_RemoveExtraEdgesDlg.cxx
 
 MOC_FILES = 					\
@@ -84,6 +87,7 @@ MOC_FILES = 					\
 	RepairGUI_FreeFacesDlg_moc.cxx		\
 	RepairGUI_ChangeOrientationDlg_moc.cxx	\
 	RepairGUI_GlueDlg_moc.cxx     		\
+	RepairGUI_LimitToleranceDlg_moc.cxx	\
 	RepairGUI_RemoveExtraEdgesDlg_moc.cxx
 
 nodist_libRepairGUI_la_SOURCES =		\

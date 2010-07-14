@@ -500,6 +500,17 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudyInFather(blocksComp, pb0_top_1, "point from blocksComp (-50,  50,  50)")
   geompy.addToStudyInFather(blocksComp, pb0_bot_1, "point from blocksComp (-50, -50, -50)")
 
+  # GetVertexNearPoint(theShape, thePoint)
+  pb0_top_2_near = geompy.MakeVertex(40, 40, 40)
+  pb0_top_2      = geompy.GetVertexNearPoint(blocksComp, pb0_top_2_near)
+
+  geompy.addToStudyInFather(blocksComp, pb0_top_2, "point from blocksComp near (40,  40,  40)")
+
+  # GetEdge(theShape, thePoint1, thePoint2)
+  edge_top_y50 = geompy.GetEdge(blocksComp, pb0_top_1, pb0_top_2)
+
+  geompy.addToStudyInFather(blocksComp, edge_top_y50, "edge from blocksComp by two points")
+
   # GetEdgeNearPoint(theShape, thePoint)
   pmidle = geompy.MakeVertex(50, 0, 50)
   edge1 = geompy.GetEdgeNearPoint(blocksComp, pmidle)
@@ -510,6 +521,11 @@ def TestOtherOperations (geompy, math):
   b0_image = geompy.GetBlockByParts(blocksComp, [pb0_top_1, pb0_bot_1, edge1])
 
   geompy.addToStudyInFather(blocksComp, b0_image, "b0 image")
+
+  # GetShapesNearPoint(theShape, thePoint, theShapeType, theTolerance)
+  b0_faces_plus = geompy.GetShapesNearPoint(blocksComp, pb0_top_2_near, geompy.ShapeType["FACE"], 0.01)
+
+  geompy.addToStudyInFather(blocksComp, b0_faces_plus, "faces near point (40,  40,  40)")
 
   # GetShapesOnPlane
   faces_on_pln = geompy.GetShapesOnPlane(blocksComp, geompy.ShapeType["FACE"],

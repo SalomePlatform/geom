@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GeometryGUI.cxx
+//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GeometryGUI.cxx
-// Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
 #include <Standard_math.hxx>  // E.A. must be included before Python.h to fix compilation on windows
 #include "Python.h"
 #include "GeometryGUI.h"
@@ -476,6 +475,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpFreeFaces:        // MENU MEASURE - FREE FACES
   case GEOMOp::OpOrientation:      // MENU REPAIR - CHANGE ORIENTATION
   case GEOMOp::OpGlueFaces:        // MENU REPAIR - GLUE FACES
+  case GEOMOp::OpLimitTolerance:   // MENU REPAIR - LIMIT TOLERANCE
   case GEOMOp::OpRemoveExtraEdges: // MENU REPAIR - REMOVE EXTRA EDGES
     libName = "RepairGUI";
     break;
@@ -580,7 +580,7 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
   createAction( id,
 		tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
 		icon,
-		tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ), 
+		tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ),
 		tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
 		accel,
 		application()->desktop(),
@@ -706,6 +706,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpSewing,           "SEWING" );
   createGeomAction( GEOMOp::OpGlueFaces,        "GLUE_FACES" );
+  createGeomAction( GEOMOp::OpLimitTolerance,   "LIMIT_TOLERANCE" );
   createGeomAction( GEOMOp::OpSuppressFaces,    "SUPPRESS_FACES" );
   createGeomAction( GEOMOp::OpSuppressHoles,    "SUPPERSS_HOLES" );
   createGeomAction( GEOMOp::OpShapeProcess,     "SHAPE_PROCESS" );
@@ -765,7 +766,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShowChildren,     "POP_SHOW_CHILDREN" );
   createGeomAction( GEOMOp::OpHideChildren,     "POP_HIDE_CHILDREN" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
-  
+
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
@@ -891,6 +892,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpSuppressHoles,   repairId, -1 );
   createMenu( GEOMOp::OpSewing,          repairId, -1 );
   createMenu( GEOMOp::OpGlueFaces,       repairId, -1 );
+  createMenu( GEOMOp::OpLimitTolerance,  repairId, -1 );
   createMenu( GEOMOp::OpAddPointOnEdge,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeBoundaries,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeFaces,       repairId, -1 );
@@ -1210,7 +1212,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   SALOME_ListIO selected;
   sm->selectedObjects( selected );
   sm->clearSelected();
-  
+
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
@@ -1473,7 +1475,7 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( genGroup, "columns", 2 );
 
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
-                                LightApp_Preferences::Selector, 
+                                LightApp_Preferences::Selector,
                                 "Geometry", "display_mode" );
 
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
@@ -1499,36 +1501,36 @@ void GeometryGUI::createPreferences()
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
-  
+
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
   setPreferenceProperty( precGroup, "columns", 2 );
-  
+
   const int nbQuantities = 8;
   int prec[nbQuantities], ii = 0;
   prec[ii++] = addPreference( tr( "GEOM_PREF_length_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "length_precision" );  
+                              LightApp_Preferences::IntSpin, "Geometry", "length_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_angle_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_len_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "len_tol_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "len_tol_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_ang_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );  
+                              LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_weight_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "weight_precision" ); 
+                              LightApp_Preferences::IntSpin, "Geometry", "weight_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_density_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "density_precision" );   
+                              LightApp_Preferences::IntSpin, "Geometry", "density_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_parametric_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
   prec[ii  ] = addPreference( tr( "GEOM_PREF_param_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );  
-  
+                              LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );
+
   // Set property for precision value for spinboxes
   for ( ii = 0; ii < nbQuantities; ii++ ){
     setPreferenceProperty( prec[ii], "min", -14 );
     setPreferenceProperty( prec[ii], "max", 14 );
     setPreferenceProperty( prec[ii], "precision", 2 );
-  }  
+  }
 
   int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
   setPreferenceProperty( VertexGroup, "columns", 2 );

@@ -99,11 +99,20 @@
 \anchor swig_GetPoint
 \until blocksComp (-50, -50, -50)
 
+\anchor swig_GetVertexNearPoint
+\until near (40,  40,  40)
+
+\anchor swig_GetEdge
+\until by two points
+
 \anchor swig_GetEdgeNearPoint
 \until edge near point
 
 \anchor swig_GetBlockByParts
 \until "b0 image"
+
+\anchor swig_GetShapesNearPoint
+\until "faces near point"
 
 \anchor swig_GetShapesOnPlane
 \until Face on Plane

@@ -19,10 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GEOMImpl_HealingDriver.hxx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_HealingDriver_HeaderFile
 #define _GEOMImpl_HealingDriver_HeaderFile
 
@@ -156,7 +155,7 @@ Standard_EXPORT ~GEOMImpl_HealingDriver() {};
  //
 Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_HealingDriver_Type_();
 Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_HealingDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_HealingDriver) == AType || TFunction_Driver::IsKind(AType)); } 
+Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_HealingDriver) == AType || TFunction_Driver::IsKind(AType)); }
 
 private:
 Standard_Boolean ShapeProcess  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
@@ -167,7 +166,7 @@ Standard_Boolean RemoveHoles   ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS
 Standard_Boolean Sew           ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
 Standard_Boolean AddPointOnEdge( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
 Standard_Boolean ChangeOrientation( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-
+void             LimitTolerance( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
 
 };
 

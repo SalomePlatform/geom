@@ -1906,6 +1906,15 @@ module GEOM
 			  in double      theEpsilon);
 
     /*!
+     *  Find a vertex of the given shape, which has minimal distance to the given point.
+     *  \param theShape Any shape.
+     *  \param thePoint Point, close to the desired vertex.
+     *  \return New GEOM_Object, containing the found vertex.
+     */
+    GEOM_Object GetVertexNearPoint (in GEOM_Object theShape,
+                                    in GEOM_Object thePoint);
+
+    /*!
      *  Get an edge, found in the given shape by two given vertices.
      *  \param theShape Block or a compound of blocks.
      *  \param thePoint1,thePoint2 Points, close to the ends of the desired edge.
@@ -1972,6 +1981,22 @@ module GEOM
      */
     GEOM_Object GetFaceByNormale (in GEOM_Object theBlock,
 				  in GEOM_Object theVector);
+
+    /*!
+     *  Find all subshapes of type \a theShapeType of the given shape,
+     *  which have minimal distance to the given point.
+     *  \param theShape Any shape.
+     *  \param thePoint Point, close to the desired shape.
+     *  \param theShapeType Defines what kind of subshapes is searched.
+     *  \param theTolerance The tolerance for distances comparison. All shapes
+     *                      with distances to the given point in interval
+     *                      [minimal_distance, minimal_distance + theTolerance] will be gathered.
+     *  \return New GEOM_Object, containing a group of all found shapes.
+     */
+    GEOM_Object GetShapesNearPoint (in GEOM_Object theShape,
+                                    in GEOM_Object thePoint,
+                                    in long        theShapeType,
+                                    in double      theTolerance);
 
     /*!
      *  Extract blocks from blocks compounds
@@ -2725,6 +2750,14 @@ module GEOM
      */
     GEOM_Object ChangeOrientation (in GEOM_Object theObject);
     GEOM_Object ChangeOrientationCopy (in GEOM_Object theObject);
+
+    /*!
+     *  Try to limit tolerance of the given object by value \a theTolerance.
+     *  \param theObject Shape to be processed.
+     *  \param theTolerance Required tolerance value.
+     *  \return New GEOM_Object, containing processed shape.
+     */
+    GEOM_Object LimitTolerance (in GEOM_Object theObject, in double theTolerance);
 
   };
 

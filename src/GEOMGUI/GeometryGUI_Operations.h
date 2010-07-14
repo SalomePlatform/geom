@@ -16,10 +16,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GeometryGUI_Operations.h
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #ifndef GEOMETRYGUI_OPERATIONS_H
 #define GEOMETRYGUI_OPERATIONS_H
 
@@ -131,6 +130,7 @@ namespace GEOMOp {
     OpOrientation       = 4009,   // MENU REPAIR - CHANGE ORIENTATION
     OpGlueFaces         = 4010,   // MENU REPAIR - GLUE FACES
     OpRemoveExtraEdges  = 4011,   // MENU REPAIR - REMOVE EXTRA EDGES
+    OpLimitTolerance    = 4012,   // MENU REPAIR - LIMIT TOLERANCE
     // MeasureGUI ----------------//--------------------------------
     OpProperties        = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass        = 5001,   // MENU MEASURES - CENTRE OF MASS
@@ -160,6 +160,6 @@ namespace GEOMOp {
 //     OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
-} 
+}
 
 #endif // GEOMETRYGUI_OPERATIONS_H

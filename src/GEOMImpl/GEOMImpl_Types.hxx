@@ -269,6 +269,7 @@
 #define SEWING             6
 #define DIVIDE_EDGE        7
 #define CHANGE_ORIENTATION 8
+#define LIMIT_TOLERANCE    9
 
 #define BASIC_FILLING 1
 

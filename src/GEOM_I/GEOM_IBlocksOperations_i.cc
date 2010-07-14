@@ -271,6 +271,34 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetPoint (GEOM::GEOM_Object_ptr 
 
 //=============================================================================
 /*!
+ *  GetVertexNearPoint
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetVertexNearPoint
+                                                (GEOM::GEOM_Object_ptr theShape,
+                                                 GEOM::GEOM_Object_ptr thePoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the reference Objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+  if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
+
+  // Create the Point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetVertexNearPoint(aShape, aPoint);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  GetEdge
  */
 //=============================================================================
@@ -475,6 +503,37 @@ GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetFaceByNormale (GEOM::GEOM_Obj
   //Create the Face
   Handle(GEOM_Object) anObject =
     GetOperations()->GetFaceByNormale(aShape, aVector);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetShapesNearPoint
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBlocksOperations_i::GetShapesNearPoint
+                      (GEOM::GEOM_Object_ptr theShape,
+                       GEOM::GEOM_Object_ptr thePoint,
+                       CORBA::Long           theShapeType,
+                       CORBA::Double         theTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the reference Objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  Handle(GEOM_Object) aPoint = GetObjectImpl(thePoint);
+
+  if (aShape.IsNull() || aPoint.IsNull()) return aGEOMObject._retn();
+
+  // Create the Shape
+  Handle(GEOM_Object) anObject =
+    GetOperations()->GetShapesNearPoint(aShape, aPoint, theShapeType, theTolerance);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -93,6 +93,7 @@ filletface.png			\
 filling.png			\
 fuse.png			\
 geometry.png			\
+limit_tolerance.png		\
 line.png			\
 line2points.png			\
 line2faces.png			\

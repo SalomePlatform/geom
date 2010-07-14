@@ -289,6 +289,31 @@ gg.createAndDisplayGO(id_glue)
 gg.setDisplayMode(id_glue,1) 
 \endcode
 
+\anchor tui_limit_tolerance
+<br><h2>Limit Tolerance</h2>
+
+\code
+import geompy
+gg = salome.ImportComponentGUI("GEOM")
+
+# import initial topology
+bad_shape = geompy.ImportBREP("my_bad_shape.brep")
+
+# limit tolerance
+tolerance = 1e-07
+good_shape = geompy.LimitTolerance(bad_shape, tolerance)
+
+# add objects in the study
+id_bad_shape  = geompy.addToStudy(bad_shape, "My Bad Shape")
+id_good_shape = geompy.addToStudy(good_shape, "My Good Shape")
+
+# display the results
+gg.createAndDisplayGO(id_bad_shape)
+gg.setDisplayMode(id_bad_shape, 1)
+gg.createAndDisplayGO(id_good_shape)
+gg.setDisplayMode(id_good_shape, 1) 
+\endcode
+
 \anchor tui_add_point_on_edge
 <br><h2>Add Point on Edge</h2>
 
