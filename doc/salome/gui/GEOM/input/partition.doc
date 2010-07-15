@@ -37,6 +37,12 @@ the box, see corresponding \ref partition_picture_3 "picture" below).
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
 
+\note Partition is a kind of complex operation, result of it depends
+      on the initial shapes quality. Sometimes, if partition fails,
+      some healing operations could help. Try <b>Shape Processing</b>
+      and <b>Limit Tolerance</b> in such cases. See also \ref
+      tui_limit_tolerance "TUI example" of shape healing.
+
 \n <b>TUI Command:</b> <em>geompy.MakePartition(ListOfShapes,
 ListOfTools, ListOfKeepInside, ListOfRemoveInside, Limit, RemoveWebs,
 ListOfMaterials, KeepNonlimitShapes),</em> where where \em
