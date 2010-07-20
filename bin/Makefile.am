@@ -28,6 +28,7 @@ nodist_salomescript_DATA = VERSION
 
 # python files
 dist_salomescript_PYTHON = \
+	addvars2notebook_GEOM.py \
 	geom_setenv.py
 
 # distributed files
