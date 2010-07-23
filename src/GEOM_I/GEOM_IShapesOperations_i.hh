@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IShapesOperations_i_HeaderFile
 #define _GEOM_IShapesOperations_i_HeaderFile
@@ -39,21 +38,21 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 {
  public:
   GEOM_IShapesOperations_i (PortableServer::POA_ptr       thePOA,
-			    GEOM::GEOM_Gen_ptr            theEngine,
-			    ::GEOMImpl_IShapesOperations* theImpl);
+                            GEOM::GEOM_Gen_ptr            theEngine,
+                            ::GEOMImpl_IShapesOperations* theImpl);
   ~GEOM_IShapesOperations_i();
 
   GEOM::GEOM_Object_ptr MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
-				  GEOM::GEOM_Object_ptr thePnt2);
+                                  GEOM::GEOM_Object_ptr thePnt2);
 
   GEOM::GEOM_Object_ptr MakeWire (const GEOM::ListOfGO& theEdgesAndWires,
                                   const CORBA::Double   theTolerance);
 
   GEOM::GEOM_Object_ptr MakeFace (GEOM::GEOM_Object_ptr theWire,
-				  CORBA::Boolean  isPlanarWanted);
+                                  CORBA::Boolean  isPlanarWanted);
 
   GEOM::GEOM_Object_ptr MakeFaceWires (const GEOM::ListOfGO& theWires,
-				       CORBA::Boolean  isPlanarWanted);
+                                       CORBA::Boolean  isPlanarWanted);
 
   GEOM::GEOM_Object_ptr MakeShell (const GEOM::ListOfGO& theFacesAndShells);
 
@@ -64,34 +63,36 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeCompound (const GEOM::ListOfGO& theShapes);
 
   GEOM::GEOM_Object_ptr MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-				       CORBA::Double         theTolerance,
+                                       CORBA::Double         theTolerance,
                                        CORBA::Boolean        doKeepNonSolids);
 
   GEOM::ListOfGO* GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
-			        CORBA::Double         theTolerance);
+                                CORBA::Double         theTolerance);
 
   GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
-					     CORBA::Double         theTolerance,
-					     const GEOM::ListOfGO& theFaces,
-						 CORBA::Boolean  doKeepNonSolids);
+                                             CORBA::Double         theTolerance,
+                                             const GEOM::ListOfGO& theFaces,
+                                             CORBA::Boolean  doKeepNonSolids);
 
+  GEOM::ListOfGO* GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
+                                         CORBA::Boolean        theGroupsOnly);
 
   GEOM::ListOfGO* MakeExplode (GEOM::GEOM_Object_ptr theShape,
-			       CORBA::Long           theShapeType,
-			       CORBA::Boolean  isSorted);
+                               CORBA::Long           theShapeType,
+                               CORBA::Boolean  isSorted);
 
   GEOM::ListOfLong* SubShapeAllIDs (GEOM::GEOM_Object_ptr theShape,
-				    CORBA::Long           theShapeType,
-				    CORBA::Boolean  isSorted);
+                                    CORBA::Long           theShapeType,
+                                    CORBA::Boolean  isSorted);
 
   GEOM::GEOM_Object_ptr GetSubShape (GEOM::GEOM_Object_ptr theMainShape,
-				     CORBA::Long           theID);
+                                     CORBA::Long           theID);
 
   CORBA::Long GetSubShapeIndex (GEOM::GEOM_Object_ptr theMainShape,
-				GEOM::GEOM_Object_ptr theSubShape);
+                                GEOM::GEOM_Object_ptr theSubShape);
 
   CORBA::Long GetTopologyIndex (GEOM::GEOM_Object_ptr theMainShape,
-				GEOM::GEOM_Object_ptr theSubShape);
+                                GEOM::GEOM_Object_ptr theSubShape);
 
   char* GetShapeTypeString (GEOM::GEOM_Object_ptr theShape);
 
@@ -105,25 +106,25 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::ListOfLong* GetFreeFacesIDs (GEOM::GEOM_Object_ptr theShape);
 
   GEOM::ListOfGO* GetSharedShapes (GEOM::GEOM_Object_ptr theShape1,
-				   GEOM::GEOM_Object_ptr theShape2,
-				   CORBA::Long           theShapeType);
+                                   GEOM::GEOM_Object_ptr theShape2,
+                                   CORBA::Long           theShapeType);
 
   GEOM::ListOfGO* GetShapesOnPlane (GEOM::GEOM_Object_ptr theShape,
-				    CORBA::Long           theShapeType,
-				    GEOM::GEOM_Object_ptr theAx1,
-				    GEOM::shape_state     theState);
+                                    CORBA::Long           theShapeType,
+                                    GEOM::GEOM_Object_ptr theAx1,
+                                    GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnPlaneWithLocation(GEOM::GEOM_Object_ptr theShape,
-					       CORBA::Long           theShapeType,
-					       GEOM::GEOM_Object_ptr theAx1,
-					       GEOM::GEOM_Object_ptr thePnt,
-					       GEOM::shape_state     theState);
+                                               CORBA::Long           theShapeType,
+                                               GEOM::GEOM_Object_ptr theAx1,
+                                               GEOM::GEOM_Object_ptr thePnt,
+                                               GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnCylinder (GEOM::GEOM_Object_ptr theShape,
-				       CORBA::Long           theShapeType,
-				       GEOM::GEOM_Object_ptr theAxis,
-				       CORBA::Double         theRadius,
-				       GEOM::shape_state     theState);
+                                       CORBA::Long           theShapeType,
+                                       GEOM::GEOM_Object_ptr theAxis,
+                                       CORBA::Double         theRadius,
+                                       GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnCylinderWithLocation (GEOM::GEOM_Object_ptr theShape,
                                                    CORBA::Long           theShapeType,
@@ -133,10 +134,10 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                                    GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnSphere (GEOM::GEOM_Object_ptr theShape,
-				     CORBA::Long           theShapeType,
-				     GEOM::GEOM_Object_ptr theCenter,
-				     CORBA::Double         theRadius,
-				     GEOM::shape_state     theState);
+                                     CORBA::Long           theShapeType,
+                                     GEOM::GEOM_Object_ptr theCenter,
+                                     CORBA::Double         theRadius,
+                                     GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnQuadrangle (GEOM::GEOM_Object_ptr theShape,
                                          CORBA::Long           theShapeType,
@@ -147,21 +148,21 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                          GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnPlaneIDs (GEOM::GEOM_Object_ptr theShape,
-					 CORBA::Long           theShapeType,
-					 GEOM::GEOM_Object_ptr theAx1,
-					 GEOM::shape_state     theState);
+                                         CORBA::Long           theShapeType,
+                                         GEOM::GEOM_Object_ptr theAx1,
+                                         GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnPlaneWithLocationIDs (GEOM::GEOM_Object_ptr theShape,
-						     CORBA::Long           theShapeType,
-						     GEOM::GEOM_Object_ptr theAx1,
-						     GEOM::GEOM_Object_ptr thePnt,
-						     GEOM::shape_state     theState);
+                                                     CORBA::Long           theShapeType,
+                                                     GEOM::GEOM_Object_ptr theAx1,
+                                                     GEOM::GEOM_Object_ptr thePnt,
+                                                     GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnCylinderIDs (GEOM::GEOM_Object_ptr theShape,
-					    CORBA::Long           theShapeType,
-					    GEOM::GEOM_Object_ptr theAxis,
-					    CORBA::Double         theRadius,
-					    GEOM::shape_state     theState);
+                                            CORBA::Long           theShapeType,
+                                            GEOM::GEOM_Object_ptr theAxis,
+                                            CORBA::Double         theRadius,
+                                            GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnCylinderWithLocationIDs (GEOM::GEOM_Object_ptr theShape,
                                                         CORBA::Long           theShapeType,
@@ -171,10 +172,10 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                                         GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnSphereIDs (GEOM::GEOM_Object_ptr theShape,
-					  CORBA::Long           theShapeType,
-					  GEOM::GEOM_Object_ptr theCenter,
-					  CORBA::Double         theRadius,
-					  GEOM::shape_state     theState);
+                                          CORBA::Long           theShapeType,
+                                          GEOM::GEOM_Object_ptr theCenter,
+                                          CORBA::Double         theRadius,
+                                          GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnQuadrangleIDs (GEOM::GEOM_Object_ptr theShape,
                                               CORBA::Long           theShapeType,
@@ -185,39 +186,39 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                               GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnBox (GEOM::GEOM_Object_ptr theBox,
-				  GEOM::GEOM_Object_ptr theShape,
-				  CORBA::Long           theShapeType,
-				  GEOM::shape_state     theState);
+                                  GEOM::GEOM_Object_ptr theShape,
+                                  CORBA::Long           theShapeType,
+                                  GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnBoxIDs (GEOM::GEOM_Object_ptr theBox,
-				       GEOM::GEOM_Object_ptr theShape,
-				       CORBA::Long           theShapeType,
-				       GEOM::shape_state     theState);
+                                       GEOM::GEOM_Object_ptr theShape,
+                                       CORBA::Long           theShapeType,
+                                       GEOM::shape_state     theState);
 
   GEOM::ListOfGO* GetShapesOnShape (GEOM::GEOM_Object_ptr theSheckShape,
-				    GEOM::GEOM_Object_ptr theShape,
-				    CORBA::Short          theShapeType,
-				    GEOM::shape_state     theState);
+                                    GEOM::GEOM_Object_ptr theShape,
+                                    CORBA::Short          theShapeType,
+                                    GEOM::shape_state     theState);
 
   GEOM::GEOM_Object_ptr GetShapesOnShapeAsCompound
                                    (GEOM::GEOM_Object_ptr theSheckShape,
-				    GEOM::GEOM_Object_ptr theShape,
-				    CORBA::Short          theShapeType,
-				    GEOM::shape_state     theState);
+                                    GEOM::GEOM_Object_ptr theShape,
+                                    CORBA::Short          theShapeType,
+                                    GEOM::shape_state     theState);
 
   GEOM::ListOfLong* GetShapesOnShapeIDs (GEOM::GEOM_Object_ptr theCheckShape,
-					 GEOM::GEOM_Object_ptr theShape,
-					 CORBA::Short          theShapeType,
-					 GEOM::shape_state     theState);
+                                         GEOM::GEOM_Object_ptr theShape,
+                                         CORBA::Short          theShapeType,
+                                         GEOM::shape_state     theState);
 
   GEOM::GEOM_Object_ptr GetInPlace (GEOM::GEOM_Object_ptr theShapeWhere,
-				    GEOM::GEOM_Object_ptr theShapeWhat);
+                                    GEOM::GEOM_Object_ptr theShapeWhat);
 
   GEOM::GEOM_Object_ptr GetInPlaceByHistory (GEOM::GEOM_Object_ptr theShapeWhere,
-					     GEOM::GEOM_Object_ptr theShapeWhat);
+                                             GEOM::GEOM_Object_ptr theShapeWhat);
 
   GEOM::GEOM_Object_ptr GetSame (GEOM::GEOM_Object_ptr theShapeWhere,
-				 GEOM::GEOM_Object_ptr theShapeWhat);
+                                 GEOM::GEOM_Object_ptr theShapeWhat);
 
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }

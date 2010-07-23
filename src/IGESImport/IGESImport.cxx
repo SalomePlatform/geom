@@ -19,12 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  File:        IGESImport.cxx
+//  Created:     Wed May 19 14:36:35 2004
+//  Author:      Pavel TELKOV
+//               <ptv@mutex.nnov.opencascade.com>
 
-// File:        IGESImport.cxx
-// Created:     Wed May 19 14:36:35 2004
-// Author:      Pavel TELKOV
-//              <ptv@mutex.nnov.opencascade.com>
-//
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>

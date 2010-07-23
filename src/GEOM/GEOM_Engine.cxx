@@ -310,7 +310,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
                                              Handle(TColStd_HArray1OfInteger) theIndices,
                                              bool isStandaloneOperation)
 {
-  if(theMainShape.IsNull() || theIndices.IsNull()) return NULL;
+  if (theMainShape.IsNull() || theIndices.IsNull()) return NULL;
 
   Handle(TDocStd_Document) aDoc = GetDocument(theMainShape->GetDocID());
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
@@ -319,21 +319,6 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   //            if this label has been freed (object deleted)
   bool useExisting = false;
   TDF_Label aChild;
-  /*
-  if (!_lastCleared.IsNull()) {
-    if (_lastCleared.Root() == aDoc->Main().Root()) {
-      useExisting = true;
-      aChild = _lastCleared;
-      // 0020229: if next label exists and is empty, try to reuse it
-      Standard_Integer aNextTag = aChild.Tag() + 1;
-      TDF_Label aNextL = aDoc->Main().FindChild(aNextTag, Standard_False);
-      if (!aNextL.IsNull() && !aNextL.HasAttribute())
-        _lastCleared = aNextL;
-      else
-        _lastCleared.Nullify();
-    }
-  }
-  */
   int aDocID = theMainShape->GetDocID();
   if (_freeLabels.find(aDocID) != _freeLabels.end()) {
     std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
@@ -349,10 +334,10 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   }
 
   Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
-  Handle(GEOM_Object) anObject = new GEOM_Object(aChild, 28); //28 is SUBSHAPE type
+  Handle(GEOM_Object) anObject = new GEOM_Object (aChild, 28); //28 is SUBSHAPE type
   Handle(GEOM_Function) aFunction = anObject->AddFunction(GEOM_Object::GetSubShapeID(), 1);
 
-  GEOM_ISubShape aSSI(aFunction);
+  GEOM_ISubShape aSSI (aFunction);
   aSSI.SetMainShape(aMainShape);
   aSSI.SetIndices(theIndices);
 
@@ -372,10 +357,13 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
     return NULL;
   }
 
-  //Put an object in the map of created objects
+  // Put an object in the map of created objects
   TCollection_AsciiString anID = BuildIDFromObject(anObject);
-  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  if (_objects.IsBound(anID)) _objects.UnBind(anID);
   _objects.Bind(anID, anObject);
+
+  // Put this subshape in the list of subshapes of theMainShape
+  aMainShape->AddSubShapeReference(aFunction);
 
   GEOM::TPythonDump pd (aFunction);
 
@@ -410,9 +398,17 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
 
+  // If subshape, remove it from the list of subshapes of its main shape
+  if (!theObject->IsMainShape()) {
+    Handle(GEOM_Function) aFunction = theObject->GetFunction(1);
+    GEOM_ISubShape aSSI (aFunction);
+    Handle(GEOM_Function) aMainShape = aSSI.GetMainShape();
+    aMainShape->RemoveSubShapeReference(aFunction);
+  }
+
   int nb = theObject->GetNbFunctions();
   Handle(TDataStd_TreeNode) aNode;
-  for (int i = 1; i<=nb; i++) {
+  for (int i = 1; i <= nb; i++) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(i);
     if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode))
       aNode->Remove();

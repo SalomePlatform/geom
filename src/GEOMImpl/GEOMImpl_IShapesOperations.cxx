@@ -19,13 +19,12 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File      : GEOMImpl_IShapesOperations.cxx
 // Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
 // Project   : SALOME
 // $Header$
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOMImpl_IShapesOperations.hxx"
@@ -66,6 +65,7 @@
 #include <TFunction_Logbook.hxx>
 #include <TDataStd_Integer.hxx>
 #include <TDataStd_IntegerArray.hxx>
+#include <TDataStd_ListIteratorOfListOfExtendedString.hxx>
 #include <TDF_Tool.hxx>
 
 #include <BRepExtrema_ExtCF.hxx>
@@ -801,6 +801,70 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   // to provide warning
   if (!isWarning) SetErrorCode(OK);
   return aGlued;
+}
+
+//=============================================================================
+/*!
+ *  GetExistingSubObjects
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubObjects
+                                          (Handle(GEOM_Object)    theShape,
+                                           const Standard_Boolean theGroupsOnly)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aMainShape = theShape->GetLastFunction();
+  if (aMainShape.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  SetErrorCode(NOT_FOUND_ANY);
+
+  if (!aMainShape->HasSubShapeReferences()) return aSeq;
+  const TDataStd_ListOfExtendedString& aListEntries = aMainShape->GetSubShapeReferences();
+  if (aListEntries.IsEmpty()) return aSeq;
+
+  SetErrorCode(KO);
+
+  TCollection_AsciiString anAsciiList;
+
+  TDataStd_ListIteratorOfListOfExtendedString anIt (aListEntries);
+  for (; anIt.More(); anIt.Next()) {
+    TCollection_ExtendedString anEntry = anIt.Value();
+    Standard_Integer aStrLen = anEntry.LengthOfCString();
+    char* anEntryStr = new char[aStrLen];
+    anEntry.ToUTF8CString(anEntryStr);
+    Handle(GEOM_Object) anObj = GetEngine()->GetObject(GetDocID(), anEntryStr, false);
+    if (!anObj.IsNull()) {
+      if (!theGroupsOnly || anObj->GetType() == GEOM_GROUP) {
+        aSeq->Append(anObj);
+
+        // for python command
+        anAsciiList += anEntryStr;
+        anAsciiList += ",";
+      }
+    }
+    delete [] anEntryStr;
+  }
+
+  if (aSeq->Length() == 0) {
+    SetErrorCode(NOT_FOUND_ANY);
+    return aSeq;
+  }
+
+  //Make a Python command
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
+
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString();
+  pd << "] = geompy.GetExistingSubObjects(";
+  pd << theShape << ", " << (int)theGroupsOnly << ")";
+
+  SetErrorCode(OK);
+
+  return aSeq;
 }
 
 //=============================================================================

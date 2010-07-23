@@ -85,6 +85,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                            std::list<Handle(GEOM_Object)> theFaces,
                                                            const Standard_Boolean doKeepNonSolids);
 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects
+    (Handle(GEOM_Object)    theShape,
+     const Standard_Boolean theGroupsOnly);
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
                                                                     const Standard_Integer theShapeType,
                                                                     const Standard_Boolean isSorted);

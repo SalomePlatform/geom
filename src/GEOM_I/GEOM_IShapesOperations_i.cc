@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -411,6 +410,31 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  GetExistingSubObjects
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
+                                                                 CORBA::Boolean        theGroupsOnly)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetExistingSubObjects(aShape, theGroupsOnly);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
 
 //=============================================================================
 /*!

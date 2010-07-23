@@ -2052,6 +2052,32 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @addtogroup l4_decompose
         ## @{
 
+        ## Get all sub-shapes and groups of \a theShape,
+        #  that were created already by any other methods.
+        #  @param theShape Any shape.
+        #  @param theGroupsOnly If this parameter is TRUE, only groups will be
+        #                       returned, else all found sub-shapes and groups.
+        #  @return List of existing sub-objects of \a theShape.
+        #
+        #  @ref swig_all_decompose "Example"
+        def GetExistingSubObjects(self, theShape, theGroupsOnly = False):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetExistingSubObjects(theShape, theGroupsOnly)
+            RaiseIfFailed("GetExistingSubObjects", self.ShapesOp)
+            return ListObj
+
+        ## Get all groups of \a theShape,
+        #  that were created already by any other methods.
+        #  @param theShape Any shape.
+        #  @return List of existing groups of \a theShape.
+        #
+        #  @ref swig_all_decompose "Example"
+        def GetGroups(self, theShape):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.GetExistingSubObjects(theShape, True)
+            RaiseIfFailed("GetExistingSubObjects", self.ShapesOp)
+            return ListObj
+
         ## Explode a shape on subshapes of a given type.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
