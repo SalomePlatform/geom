@@ -269,10 +269,13 @@ public:
   Standard_EXPORT TDF_Label GetArgumentHistoryEntry (const TDF_Label&       theArgumentRefEntry,
                                                      const Standard_Boolean create = Standard_True);
 
+  //Returns top label of this function's naming tree
+  Standard_EXPORT TDF_Label GetNamingEntry (const Standard_Boolean create = Standard_True);
+
 private:
 
-  TDF_Label    _label;
-  bool _isDone;
+  TDF_Label _label;
+  bool      _isDone;
 };
 
 #endif

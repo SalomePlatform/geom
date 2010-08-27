@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -109,7 +108,7 @@ Standard_Integer GEOMImpl_ImportDriver::Execute(TFunction_Logbook& log) const
 
   // perform the import
   TCollection_AsciiString anError;
-  TopoDS_Shape aShape = fp( aFileName, aFormatName, anError, aFunction->GetEntry() );
+  TopoDS_Shape aShape = fp(aFileName, aFormatName, anError, aFunction->GetNamingEntry());
 
   // unload plugin library
   // commented by enk:
@@ -159,7 +158,8 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_ImportDriver_Type_()
 //function : DownCast
 //purpose  :
 //=======================================================================
-const Handle(GEOMImpl_ImportDriver) Handle(GEOMImpl_ImportDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
+const Handle(GEOMImpl_ImportDriver) Handle(GEOMImpl_ImportDriver)::DownCast
+                               (const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOMImpl_ImportDriver) _anOtherObject;
 
@@ -169,5 +169,5 @@ const Handle(GEOMImpl_ImportDriver) Handle(GEOMImpl_ImportDriver)::DownCast(cons
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

@@ -65,6 +65,7 @@
 #define DESCRIPTION_LABEL 3
 #define HISTORY_LABEL 4
 #define SUBSHAPES_LABEL 5 // 0020756: GetGroups
+#define NAMING_LABEL 6 // 002020750: Naming during STEP import
 
 #define ARGUMENTS _label.FindChild((ARGUMENT_LABEL))
 #define ARGUMENT(thePosition) _label.FindChild((ARGUMENT_LABEL)).FindChild((thePosition))
@@ -791,6 +792,16 @@ TDF_Label GEOM_Function::GetArgumentHistoryEntry (const TDF_Label&       theArgu
   }
 
   return aHistoryCurLabel;
+}
+
+//=============================================================================
+/*!
+ *  GetNamingEntry
+ */
+//=============================================================================
+TDF_Label GEOM_Function::GetNamingEntry (const Standard_Boolean create)
+{
+  return _label.FindChild(NAMING_LABEL, create);
 }
 
 //=======================================================================

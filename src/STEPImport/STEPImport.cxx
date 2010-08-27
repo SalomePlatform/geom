@@ -19,12 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  File:        STEPImport.cxx
+//  Created:     Wed May 19 14:41:10 2004
+//  Author:      Pavel TELKOV
 
-// File:        STEPImport.cxx
-// Created:     Wed May 19 14:41:10 2004
-// Author:      Pavel TELKOV
-//              <ptv@mutex.nnov.opencascade.com>
-//
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
@@ -34,12 +32,30 @@
 #include <IFSelect_ReturnStatus.hxx>
 
 #include <STEPControl_Reader.hxx>
+#include <StepBasic_ProductDefinition.hxx>
+#include <StepBasic_ProductDefinitionFormation.hxx>
+#include <StepBasic_Product.hxx>
+#include <Interface_InterfaceModel.hxx>
+#include <XSControl_TransferReader.hxx>
+#include <XSControl_WorkSession.hxx>
+
+#include <Transfer_Binder.hxx>
+#include <TNaming_Builder.hxx>
+#include <TDataStd_Name.hxx>
+#include <Transfer_TransientProcess.hxx>
+#include <TransferBRep.hxx>
 
 #include <TCollection_AsciiString.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
+#include <TDF_Tool.hxx>
 #include <Interface_Static.hxx>
+
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopExp.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <BRepTools.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -70,11 +86,11 @@
 
 extern "C"
 {
-STEPIMPORT_EXPORT
+  STEPIMPORT_EXPORT
   TopoDS_Shape Import (const TCollection_AsciiString& theFileName,
                        const TCollection_AsciiString& /*theFormatName*/,
                        TCollection_AsciiString&       theError,
-                       const TDF_Label&)
+                       const TDF_Label&               theShapeLabel)
   {
     MESSAGE("Import STEP model from file " << theFileName.ToCString());
     // Set "C" numeric locale to save numbers correctly
@@ -87,7 +103,7 @@ STEPIMPORT_EXPORT
     //VRV: OCC 4.0 migration
     TopoDS_Compound compound;
     BRep_Builder B;
-    B.MakeCompound( compound );
+    B.MakeCompound(compound);
     try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
       OCC_CATCH_SIGNALS;
@@ -95,13 +111,13 @@ STEPIMPORT_EXPORT
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());
 
       if (status == IFSelect_RetDone) {
-        Standard_Boolean failsonly = Standard_False ;
-        aReader.PrintCheckLoad (failsonly, IFSelect_ItemsByEntity);
+        Standard_Boolean failsonly = Standard_False;
+        aReader.PrintCheckLoad(failsonly, IFSelect_ItemsByEntity);
         /* Root transfers */
         Standard_Integer nbr = aReader.NbRootsForTransfer();
-        aReader.PrintCheckTransfer (failsonly, IFSelect_ItemsByEntity);
+        aReader.PrintCheckTransfer(failsonly, IFSelect_ItemsByEntity);
 
-        for ( Standard_Integer n=1; n <= nbr; n++) {
+        for (Standard_Integer n = 1; n <= nbr; n++) {
           Standard_Boolean ok = aReader.TransferRoot(n);
           /* Collecting resulting entities */
           Standard_Integer nbs = aReader.NbShapes();
@@ -116,22 +132,76 @@ STEPIMPORT_EXPORT
             break;
           }
 
-          for ( Standard_Integer i=1; i<=nbs; i++ ) {
+          for (Standard_Integer i = 1; i <= nbs; i++) {
             TopoDS_Shape aShape = aReader.Shape(i);
-            if ( aShape.IsNull() ) {
+            if (aShape.IsNull()) {
               // THROW_SALOME_CORBA_EXCEPTION("Null shape in GEOM_Gen_i::ImportStep", SALOME::BAD_PARAM) ;
               //return aResShape;
               continue;
             }
             else {
-              B.Add( compound, aShape ) ;
+              B.Add(compound, aShape);
             }
           }
         }
-        if ( aResShape.IsNull() )
+        if (aResShape.IsNull())
           aResShape = compound;
 
-      } else {
+        // BEGIN: Store names of sub-shapes from file
+        TopTools_IndexedMapOfShape anIndices;
+        TopExp::MapShapes(aResShape, anIndices);
+
+        Handle(Interface_InterfaceModel) Model = aReader.WS()->Model();
+        Handle(XSControl_TransferReader) TR = aReader.WS()->TransferReader();
+        if (!TR.IsNull()) {
+          Handle(Transfer_TransientProcess) TP = TR->TransientProcess();
+          Handle(Standard_Type) tPD  = STANDARD_TYPE(StepBasic_ProductDefinition);
+
+          Standard_Integer nb = Model->NbEntities();
+          for (Standard_Integer ie = 1; ie <= nb; ie++) {
+            Handle(Standard_Transient) enti = Model->Value(ie);
+            if (enti->DynamicType() != tPD) continue;
+
+            Handle(StepBasic_ProductDefinition) PD =
+              Handle(StepBasic_ProductDefinition)::DownCast(enti);
+            if (PD.IsNull()) continue;
+
+            Handle(StepBasic_Product) Prod = PD->Formation()->OfProduct();
+            if (Prod->Name()->UsefullLength() <= 0) continue;
+
+            Handle(TCollection_HAsciiString) aName = Prod->Name();
+            TCollection_ExtendedString aNameExt (aName->ToCString());
+
+            // find target shape
+            Handle(Transfer_Binder) binder = TP->Find(enti);
+            if (binder.IsNull()) continue;
+            TopoDS_Shape S = TransferBRep::ShapeResult(binder);
+            if (S.IsNull()) continue;
+
+            // as PRODUCT can be included in the main shape
+            // several times, we look here for all iclusions.
+            Standard_Integer isub, nbSubs = anIndices.Extent();
+            for (isub = 1; isub <= nbSubs; isub++)
+            {
+              TopoDS_Shape aSub = anIndices.FindKey(isub);
+              if (aSub.IsPartner(S)) {
+                // create label and set shape
+                TDF_Label L;
+                TDF_TagSource aTag;
+                L = aTag.NewChild(theShapeLabel);
+                TNaming_Builder tnBuild (L);
+                //tnBuild.Generated(S);
+                tnBuild.Generated(aSub);
+
+                // set a name
+                TDataStd_Name::Set(L, aNameExt);
+              }
+            }
+          }
+        }
+        // END: Store names
+      }
+      else {
 //        switch (status) {
 //        case IFSelect_RetVoid:
 //          theError = "Nothing created or No data to process";

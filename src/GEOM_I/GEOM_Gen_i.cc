@@ -265,7 +265,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
 
-  // try to find existed name for current shape
+  // BEGIN: try to find existed name for current shape
   bool HasName = false;
   // recieve current TopoDS shape
   CORBA::String_var entry = aShape->GetEntry();
@@ -278,24 +278,28 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   entry = aMainSh->GetEntry();
   Handle(GEOM_Object) anObj = _impl->GetObject(aMainSh->GetStudyID(), entry);
-  TDF_Label aMainLbl = anObj->GetEntry();
+  TDF_Label aMainLbl = anObj->GetFunction(1)->GetNamingEntry();
+
   // check all named shapes using iterator
-  TDF_ChildIDIterator anIt(aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
-  for(; anIt.More(); anIt.Next()) {
+  TDF_ChildIDIterator anIt (aMainLbl, TNaming_NamedShape::GetID(), Standard_True);
+
+  for (; anIt.More() && !HasName; anIt.Next()) {
     Handle(TNaming_NamedShape) anAttr =
       Handle(TNaming_NamedShape)::DownCast(anIt.Value());
-    if(anAttr.IsNull()) continue;
+    if (anAttr.IsNull()) continue;
     TopoDS_Shape S = anAttr->Get();
-    if( !S.IsEqual(TopoSh) ) continue;
-    TDF_Label L = anAttr->Label();
-    Handle(TDataStd_Name) aName;
-    if(L.FindAttribute(TDataStd_Name::GetID(),aName)) {
-      aShapeName = aName->Get();
-      HasName = true;
+    if (S.IsEqual(TopoSh)) {
+      TDF_Label L = anAttr->Label();
+      Handle(TDataStd_Name) aName;
+      if (L.FindAttribute(TDataStd_Name::GetID(), aName)) {
+        aShapeName = aName->Get();
+        HasName = true;
+      }
     }
   }
+  // END: try to find existed name for current shape
 
-  if(!HasName) {
+  if (!HasName) {
     // asv : 11.11.04 Introducing a more sofisticated method of name creation, just as
     //       it is done in GUI in GEOMBase::GetDefaultName() - not just add a Tag() == number
     //       of objects in the study, but compute a number of objects with the same prefix
