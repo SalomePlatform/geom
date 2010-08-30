@@ -52,6 +52,8 @@ public:
   bool         OnGUIEvent( int, SUIT_Desktop* );
   virtual void deactivate();
 
+  enum ActionType { SHOWDLG, INCR, DECR };
+
 private:
   // Import and export topology methods
   bool         Import();
@@ -67,11 +69,14 @@ private:
   void         OnDisableAutoColor();
   void         OnColor();
   void         OnTransparency();
-  void         OnNbIsos();
+  void         OnNbIsos( ActionType actionType = SHOWDLG );
   void         OnDeflection();
   void         OnSelectOnly(int mode);
   void         OnShowHideChildren( bool );
   void         OnPointMarker();
+
+  // Shortcut commands
+  void         OnChangeTransparency( bool );
 
   // Recursive deletion of object with children
   void         removeObjectWithChildren( _PTR(SObject),

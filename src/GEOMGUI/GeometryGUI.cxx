@@ -377,7 +377,11 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpDeflection:       // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:            // POPUP MENU - COLOR
   case GEOMOp::OpTransparency:     // POPUP MENU - TRANSPARENCY
+  case GEOMOp::OpIncrTransparency: // SHORTCUT   - INCREASE TRANSPARENCY
+  case GEOMOp::OpDecrTransparency: // SHORTCUT   - DECREASE TRANSPARENCY
   case GEOMOp::OpIsos:             // POPUP MENU - ISOS
+  case GEOMOp::OpIncrNbIsos:       // SHORTCUT   - INCREASE NB ISOS
+  case GEOMOp::OpDecrNbIsos:       // SHORTCUT   - DECREASE NB ISOS
   case GEOMOp::OpAutoColor:        // POPUP MENU - AUTO COLOR
   case GEOMOp::OpNoAutoColor:      // POPUP MENU - DISABLE AUTO COLOR
   case GEOMOp::OpShowChildren:     // POPUP MENU - SHOW CHILDREN
@@ -572,7 +576,8 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* w, QMouseEvent* e )
 // function : createGeomAction
 // purpose  :
 //=======================================================================
-void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel, const int accel, const bool toggle  )
+void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel, 
+				    const int accel, const bool toggle, const QString& shortcutAction )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap icon = icolabel.isEmpty() ? resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+label).toLatin1().constData() ), false )
@@ -585,11 +590,12 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
 		accel,
 		application()->desktop(),
 		toggle,
-		this, SLOT( OnGUIEvent() )  );
+		this, SLOT( OnGUIEvent() ),
+		shortcutAction );
 }
 
 //=======================================================================
-// function : createGeomAction
+// function : createOriginAndBaseVectors
 // purpose  :
 //=======================================================================
 void GeometryGUI::createOriginAndBaseVectors()
@@ -768,6 +774,19 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
+  
+  // Create actions for increase/decrease transparency shortcuts
+  createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false, 
+		    "Geometry:Increase transparency");
+  createGeomAction( GEOMOp::OpDecrTransparency, "", "", 0, false, 
+		    "Geometry:Decrease transparency");
+
+  // Create actions for increase/decrease number of isolines
+  createGeomAction( GEOMOp::OpIncrNbIsos, "", "", 0, false, 
+		    "Geometry:Increase number of isolines");
+  createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false, 
+		    "Geometry:Decrease number of isolines");
+
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 

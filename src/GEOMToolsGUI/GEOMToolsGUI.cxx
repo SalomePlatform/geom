@@ -334,8 +334,20 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpTransparency:   // POPUP - TRANSPARENCY
     OnTransparency();
     break;
+  case GEOMOp::OpIncrTransparency: // SHORTCUT   - INCREASE TRANSPARENCY
+    OnChangeTransparency( true );
+    break;
+  case GEOMOp::OpDecrTransparency: // SHORTCUT   - DECREASE TRANSPARENCY
+    OnChangeTransparency( false );
+    break;
   case GEOMOp::OpIsos:           // POPUP - ISOS
     OnNbIsos();
+    break;
+  case GEOMOp::OpIncrNbIsos:     // SHORTCUT   - INCREASE NB ISOLINES
+    OnNbIsos( INCR );
+    break;
+  case GEOMOp::OpDecrNbIsos:     // SHORTCUT   - DECREASE NB ISOLINES
+    OnNbIsos( DECR );
     break;
   case GEOMOp::OpAutoColor:      // POPUP - AUTO COLOR
     OnAutoColor();

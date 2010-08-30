@@ -147,7 +147,8 @@ private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
   void                        createGeomAction( const int id, const QString& po_id,
                                                 const QString& icon_id = QString(""),
-                                                const int key = 0, const bool toggle = false );
+                                                const int key = 0, const bool toggle = false,
+						const QString& shortcutAction = QString() );
   void                        createPopupItem( const int, const QString& clients, const QString& types,
                                                const bool isSingle = false, const int isVisible = -1,
                                                const bool isExpandAll = false, const bool isOCC = false,
