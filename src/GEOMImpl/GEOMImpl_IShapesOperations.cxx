@@ -2005,9 +2005,31 @@ Handle(TColStd_HSequenceOfInteger)
     return aSeqOfIDs;
   }
 
+  // BEGIN: Mantis issue 0020961: Error on a pipe T-Shape
+  // Compute tolerance
+  Standard_Real T, VertMax = -RealLast();
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    for (TopExp_Explorer ExV (theShape, TopAbs_VERTEX); ExV.More(); ExV.Next()) {
+      TopoDS_Vertex Vertex = TopoDS::Vertex(ExV.Current());
+      T = BRep_Tool::Tolerance(Vertex);
+      if (T > VertMax)
+        VertMax = T;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return aSeqOfIDs;
+  }
+  // END: Mantis issue 0020961
+
   // Call algo
   GEOMAlgo_FinderShapeOn1 aFinder;
-  Standard_Real aTol = 0.0001; // default value
+  //Standard_Real aTol = 0.0001; // default value
+  Standard_Real aTol = VertMax; // Mantis issue 0020961
 
   aFinder.SetShape(theShape);
   aFinder.SetTolerance(aTol);
@@ -2640,7 +2662,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = 
+  Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape, GEOM::GetCreatedLast(thePnt,theAxis))->GetLastFunction();
 
   // Make a Python command
