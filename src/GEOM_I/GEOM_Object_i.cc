@@ -372,16 +372,13 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
   BRepTools::Write(aShape, streamShape);
   //Returns the number of bytes that have been stored in the stream's buffer.
   int size = streamShape.str().size();
-  char* buf = new char [size];
-  //Get pointer on internal character array in ostrstream
-  const char* valueOfStream = streamShape.str().c_str();
-  //Create copy of ostrstream content
-  memcpy(buf, valueOfStream, size);
-
-  CORBA::Octet* OctetBuf =  (CORBA::Octet*)buf;
+  //Allocate octect buffer of required size
+  CORBA::Octet* OctetBuf = SALOMEDS::TMPFile::allocbuf(size);
+  //Copy ostrstream content to the octect buffer
+  memcpy(OctetBuf, streamShape.str().c_str(), size);
+  //Create and return TMPFile
   SALOMEDS::TMPFile_var SeqFile = new SALOMEDS::TMPFile(size,size,OctetBuf,1);
   return SeqFile._retn();
-
 }
 
 
