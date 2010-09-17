@@ -281,6 +281,10 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
   aShell->GetLastFunction()->SetDescription("");
   // Get the common shapes between shell and shape
   Handle(GEOM_Object) aCommonCompound = myBooleanOperations->MakeBoolean (theShape, aShell, 1); // MakeCommon
+  if (aCommonCompound.IsNull()) {
+    SetErrorCode(myBooleanOperations->GetErrorCode());
+    return false;
+  }
   aCommonCompound->GetLastFunction()->SetDescription("");
   // Explode the faces of common shapes => 3 faces
   Handle(TColStd_HSequenceOfTransient) aCommonFaces = myShapesOperations->MakeExplode(aCommonCompound, TopAbs_FACE, true);
@@ -316,34 +320,34 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
     
     //     Uncomment the following lines when GetInPlace bug is solved
     //     == BEGIN
-    //         Handle(GEOM_Object) aP1 = myBasicOperations->MakePointXYZ(-theL1, 0, 0);
-    //         Handle(GEOM_Object) aP2 = myBasicOperations->MakePointXYZ(-0, 0, theL2);
-    //         Handle(GEOM_Object) aP3 = myBasicOperations->MakePointXYZ(theL1, 0, 0);
-    //         aP1->GetLastFunction()->SetDescription("");
-    //         aP2->GetLastFunction()->SetDescription("");
-    //         aP3->GetLastFunction()->SetDescription("");
-    //         Handle(GEOM_Object) aV1 = myBasicOperations->MakeVectorDXDYDZ(-1, 0, 0);
-    //         Handle(GEOM_Object) aV2 = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
-    //         Handle(GEOM_Object) aV3 = myBasicOperations->MakeVectorDXDYDZ(1, 0, 0);
-    //         aV1->GetLastFunction()->SetDescription("");
-    //         aV2->GetLastFunction()->SetDescription("");
-    //         aV3->GetLastFunction()->SetDescription("");
-    //         Handle(GEOM_Object) aPln1 = myBasicOperations->MakePlanePntVec(aP1, aV1, 2*(theR1+theW1+theL2));
-    //         Handle(GEOM_Object) aPln2 = myBasicOperations->MakePlanePntVec(aP2, aV2, 2*(theR2+theW2));
-    //         Handle(GEOM_Object) aPln3 = myBasicOperations->MakePlanePntVec(aP3, aV3, 2*(theR1+theW1+theL2));
-    //         aPln1->GetLastFunction()->SetDescription("");
-    //         aPln2->GetLastFunction()->SetDescription("");
-    //         aPln3->GetLastFunction()->SetDescription("");
-
-    //         BRepBuilderAPI_Transform aTransformation1(aPln1->GetValue(), aTrsf, Standard_False);
-    //         TopoDS_Shape aTrsf_Shape1 = aTransformation1.Shape();
-    //         aPln1->GetLastFunction()->SetValue(aTrsf_Shape1);
-    //         BRepBuilderAPI_Transform aTransformation2(aPln2->GetValue(), aTrsf, Standard_False);
-    //         TopoDS_Shape aTrsf_Shape2 = aTransformation2.Shape();
-    //         aPln2->GetLastFunction()->SetValue(aTrsf_Shape2);
-    //         BRepBuilderAPI_Transform aTransformation3(aPln3->GetValue(), aTrsf, Standard_False);
-    //         TopoDS_Shape aTrsf_Shape3 = aTransformation3.Shape();
-    //         aPln3->GetLastFunction()->SetValue(aTrsf_Shape3);
+//     Handle(GEOM_Object) aP1 = myBasicOperations->MakePointXYZ(-theL1, 0, 0);
+//     Handle(GEOM_Object) aP2 = myBasicOperations->MakePointXYZ(-0, 0, theL2);
+//     Handle(GEOM_Object) aP3 = myBasicOperations->MakePointXYZ(theL1, 0, 0);
+//     aP1->GetLastFunction()->SetDescription("");
+//     aP2->GetLastFunction()->SetDescription("");
+//     aP3->GetLastFunction()->SetDescription("");
+//     Handle(GEOM_Object) aV1 = myBasicOperations->MakeVectorDXDYDZ(-1, 0, 0);
+//     Handle(GEOM_Object) aV2 = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
+//     Handle(GEOM_Object) aV3 = myBasicOperations->MakeVectorDXDYDZ(1, 0, 0);
+//     aV1->GetLastFunction()->SetDescription("");
+//     aV2->GetLastFunction()->SetDescription("");
+//     aV3->GetLastFunction()->SetDescription("");
+//     Handle(GEOM_Object) aPln1 = myBasicOperations->MakePlanePntVec(aP1, aV1, 2*(aR1Ext+theL2));
+//     Handle(GEOM_Object) aPln2 = myBasicOperations->MakePlanePntVec(aP2, aV2, 2*(aR2Ext));
+//     Handle(GEOM_Object) aPln3 = myBasicOperations->MakePlanePntVec(aP3, aV3, 2*(aR1Ext+theL2));
+//     aPln1->GetLastFunction()->SetDescription("");
+//     aPln2->GetLastFunction()->SetDescription("");
+//     aPln3->GetLastFunction()->SetDescription("");
+// 
+//     BRepBuilderAPI_Transform aTransformation1(aPln1->GetValue(), aTrsf, Standard_False);
+//     TopoDS_Shape aTrsf_Shape1 = aTransformation1.Shape();
+//     aPln1->GetLastFunction()->SetValue(aTrsf_Shape1);
+//     BRepBuilderAPI_Transform aTransformation2(aPln2->GetValue(), aTrsf, Standard_False);
+//     TopoDS_Shape aTrsf_Shape2 = aTransformation2.Shape();
+//     aPln2->GetLastFunction()->SetValue(aTrsf_Shape2);
+//     BRepBuilderAPI_Transform aTransformation3(aPln3->GetValue(), aTrsf, Standard_False);
+//     TopoDS_Shape aTrsf_Shape3 = aTransformation3.Shape();
+//     aPln3->GetLastFunction()->SetValue(aTrsf_Shape3);
     //     == END
     //
     
@@ -386,7 +390,10 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
       //        theSeq->Append(aPln3);
       //        return false;
     }
+  // Comment the following lines when GetInPlace bug is solved
+  // == BEGIN    
   }
+  //     == END
   /////////////////////////
   //// Groups of Edges ////
   /////////////////////////
@@ -510,7 +517,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
       }
       else if (nbEdges == 8) {
 	incidentPipeFound = true;
-	mainPipeFound = false;
+	mainPipeFound = true;
 	flangeFound = false;
           
 	TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
@@ -1141,8 +1148,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1, double 
     /*
      * Get the groups: BEGIN
      */
-    if (!MakeGroups(aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+    try {
+      if (!MakeGroups(aShape, TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+        return NULL;
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
+    }
 
     TCollection_AsciiString aListRes, anEntry;
     // Iterate over the sequence aSeq
@@ -1271,7 +1285,14 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
     //
     // Get the groups: BEGIN
     //
-    if (!MakeGroups(aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf)) {
+    try {
+      if (!MakeGroups(aShape,TSHAPE_BASIC, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf)) {
+        return NULL;
+      }
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
     }
 
@@ -1465,8 +1486,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
     //                    << ", " << theHexMesh << ")";
     //        }
     //        else {
-    if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+    try {
+      if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+        return NULL;
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
+    }
 
     TCollection_AsciiString aListRes, anEntry;
     // Iterate over the sequence aSeq
@@ -1658,8 +1686,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
     /*
      * Get the groups: BEGIN
      */
-    if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+    try {
+      if (!MakeGroups(aShape, TSHAPE_CHAMFER, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+        return NULL;
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
+    }
 
     TCollection_AsciiString aListRes, anEntry;
     // Iterate over the sequence aSeq
@@ -1830,8 +1865,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
     /*
      * Get the groups: BEGIN
      */
-    if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+    try {
+      if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, gp_Trsf()))
+        return NULL;
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
+    }
 
     TCollection_AsciiString aListRes, anEntry;
     // Iterate over the sequence aSeq
@@ -2022,8 +2064,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
     /*
      * Get the groups: BEGIN
      */
-    if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+    try {
+      if (!MakeGroups(aShape, TSHAPE_FILLET, theR1, theW1, theL1, theR2, theW2, theL2, aSeq, aTrsf))
+        return NULL;
+    }
+    catch (Standard_Failure) {
+      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+      SetErrorCode(aFail->GetMessageString());
       return NULL;
+    }
 
     TCollection_AsciiString aListRes, anEntry;
     // Iterate over the sequence aSeq
