@@ -996,7 +996,12 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
   }
   Te3->GetLastFunction()->SetDescription("");
 
-
+  // Last verification: result should be a block
+  std::list<GEOMImpl_IBlocksOperations::BCError> errList;
+  if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
+    SetErrorCode("TShape is not a block");
+    return false;
+  }
   TopoDS_Shape aShape = Te3->GetValue();
   theShape->GetLastFunction()->SetValue(aShape);
     
@@ -1843,7 +1848,8 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
     return NULL;
   }
   if (aFillet.IsNull()) {
-    SetErrorCode("Fillet can not be computed on the given shape with the given parameters");
+//     SetErrorCode("Fillet can not be computed on the given shape with the given parameters");
+    SetErrorCode(myLocalOperations->GetErrorCode());
     return NULL;
   }
   aFillet->GetLastFunction()->SetDescription("");
