@@ -781,13 +781,12 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
   if ( qAbs(theValue) < prec )
     return "0";
 
-  QString aRes;
-  aRes.setNum( theValue, 'g', thePrecision );
+  QString aRes = QLocale().toString( theValue, 'g', qAbs( thePrecision ) );
 
   if ( prec > 0 ) {
     int p = 0;
     while ( p < thePrecision ) {
-      aRes.setNum( theValue, 'g', p++ );
+      QString aRes = QLocale().toString( theValue, 'g', qAbs( p++ ) );
       double v = aRes.toDouble();
       double err = qAbs( theValue - v );
       if ( err > 0 && err <= prec )
@@ -796,7 +795,7 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
   }
 
   // remove trailing zeroes
-  QString delim( "." );
+  QString delim( QLocale().decimalPoint() );
 
   int idx = aRes.lastIndexOf( delim );
   if ( idx == -1 )

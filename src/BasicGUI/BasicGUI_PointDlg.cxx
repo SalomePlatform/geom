@@ -899,9 +899,9 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
     if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() &&
          aShape.ShapeType() == TopAbs_VERTEX ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-      myX->setText( QString( "%1" ).arg( aPnt.X() ) );
-      myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
-      myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
+      myX->setText( DlgRef::PrintDoubleValue( aPnt.X() ) );
+      myY->setText( DlgRef::PrintDoubleValue( aPnt.Y() ) );
+      myZ->setText( DlgRef::PrintDoubleValue( aPnt.Z() ) );
     }
     else {
       myX->setText( "" );
