@@ -26,6 +26,7 @@
 //
 #include "MeasureGUI_MaxToleranceDlg.h"
 #include "MeasureGUI_Widgets.h"
+#include "DlgRef.h"
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
@@ -131,14 +132,17 @@ void MeasureGUI_MaxToleranceDlg::processObject()
   double invalidMin = RealLast();
   double invalidMax = -RealLast();
 
-  myGrp->LineEdit11->setText( aMinFaceToler != invalidMin ? QString( "%1" ).arg( aMinFaceToler, 5, 'e', 8 ) : QString("") );
-  myGrp->LineEdit12->setText( aMaxFaceToler != invalidMax ? QString( "%1" ).arg( aMaxFaceToler, 5, 'e', 8 ) : QString("") );
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "len_tol_precision", -9);
 
-  myGrp->LineEdit21->setText( aMinEdgeToler != invalidMin ? QString( "%1" ).arg( aMinEdgeToler, 5, 'e', 8 ) : QString("") );
-  myGrp->LineEdit22->setText( aMaxEdgeToler != invalidMax ? QString( "%1" ).arg( aMaxEdgeToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit11->setText( aMinFaceToler != invalidMin ? DlgRef::PrintDoubleValue( aMinFaceToler, aPrecision ) : QString("") );
+  myGrp->LineEdit12->setText( aMaxFaceToler != invalidMax ? DlgRef::PrintDoubleValue( aMaxFaceToler, aPrecision ) : QString("") );
 
-  myGrp->LineEdit31->setText( aMinVertexToler != invalidMin ? QString( "%1" ).arg( aMinVertexToler, 5, 'e', 8 ) : QString("") );
-  myGrp->LineEdit32->setText( aMaxVertexToler != invalidMax ? QString( "%1" ).arg( aMaxVertexToler, 5, 'e', 8 ) : QString("") );
+  myGrp->LineEdit21->setText( aMinEdgeToler != invalidMin ? DlgRef::PrintDoubleValue( aMinEdgeToler, aPrecision ) : QString("") );
+  myGrp->LineEdit22->setText( aMaxEdgeToler != invalidMax ? DlgRef::PrintDoubleValue( aMaxEdgeToler, aPrecision ) : QString("") );
+
+  myGrp->LineEdit31->setText( aMinVertexToler != invalidMin ? DlgRef::PrintDoubleValue( aMinVertexToler, aPrecision ) : QString("") );
+  myGrp->LineEdit32->setText( aMaxVertexToler != invalidMax ? DlgRef::PrintDoubleValue( aMaxVertexToler, aPrecision ) : QString("") );
 }
 
 //=================================================================================

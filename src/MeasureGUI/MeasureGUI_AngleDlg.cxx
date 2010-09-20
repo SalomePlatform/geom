@@ -196,7 +196,9 @@ void MeasureGUI_AngleDlg::processObject()
 
   double anAngle = 0.;
   if (getParameters(anAngle)) {
-    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle));
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "angle_precision", 6 );
+    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(anAngle, aPrecision));
     redisplayPreview();
   }
   else {

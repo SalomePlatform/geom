@@ -30,6 +30,7 @@
 #include "GeometryGUI.h"
 
 #include <GEOMBase.h>
+#include <DlgRef.h>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_Object.hxx>
@@ -143,14 +144,17 @@ void MeasureGUI_BndBoxDlg::processObject()
     myGrp->LineEdit32->setText( "" );
   }
   else {
-    myGrp->LineEdit11->setText( tr( "%1" ).arg( aXMin, 12, 'f', 6 ) );
-    myGrp->LineEdit12->setText( tr( "%1" ).arg( aXMax, 12, 'f', 6 ) );
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
 
-    myGrp->LineEdit21->setText( tr( "%1" ).arg( aYMin, 12, 'f', 6 ) );
-    myGrp->LineEdit22->setText( tr( "%1" ).arg( aYMax, 12, 'f', 6 ) );
+    myGrp->LineEdit11->setText( DlgRef::PrintDoubleValue( aXMin, aPrecision ) );
+    myGrp->LineEdit12->setText( DlgRef::PrintDoubleValue( aXMax, aPrecision ) );
 
-    myGrp->LineEdit31->setText( tr( "%1" ).arg( aZMin, 12, 'f', 6 ) );
-    myGrp->LineEdit32->setText( tr( "%1" ).arg( aZMax, 12, 'f', 6 ) );            
+    myGrp->LineEdit21->setText( DlgRef::PrintDoubleValue( aYMin, aPrecision ) );
+    myGrp->LineEdit22->setText( DlgRef::PrintDoubleValue( aYMax, aPrecision ) );
+
+    myGrp->LineEdit31->setText( DlgRef::PrintDoubleValue( aZMin, aPrecision ) );
+    myGrp->LineEdit32->setText( DlgRef::PrintDoubleValue( aZMax, aPrecision ) );
   }
 }
 

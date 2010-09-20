@@ -139,9 +139,11 @@ void MeasureGUI_PropertiesDlg::processObject()
     myGrp->LineEdit4->setText( "" );
   }
   else {
-    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aLength ) );
-    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( anArea ) );
-    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aVolume ) );
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aLength, aPrecision ) );
+    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( anArea,  aPrecision ) );
+    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aVolume, aPrecision ) );
   }
 }
 
