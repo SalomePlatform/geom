@@ -1358,13 +1358,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTol3D a 3d tolerance to be reached
         #  @param theNbIter a number of iteration of approximation algorithm
         #  @param theMethod Kind of method to perform filling operation:
-        #                   0 - Default - standard behaviour
-        #                   1 - Use edges orientation - orientation of edges are
-        #                       used: if edge is reversed curve from this edge
-        #                       is reversed before using in filling algorithm.
-        #                   2 - Auto-correct orientation - change orientation
-        #                       of curves using minimization of sum of distances
-        #                       between ends points of edges.
+        #                   GEOM.FOM_Default - Default - standard behaviour
+        #                   /GEOM.FOM_UseOri - Use edges orientation - orientation of edges is
+        #                       used: if the edge is reversed, the curve from this edge
+        #                       is reversed before using it in the filling algorithm.
+        #                   /GEOM.FOM_AutoCorrect - Auto-correct orientation - changes the orientation
+        #                       of the curves using minimization of sum of distances
+        #                       between the end points of the edges.
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
         #                  the surface is created using Besier curves. The usage of
