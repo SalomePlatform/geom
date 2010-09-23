@@ -787,6 +787,7 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+    int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
     SUIT_ViewWindow* aViewWindow = 0;
     SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
@@ -829,6 +830,7 @@ void GroupGUI_GroupDlg::activateSelection()
       }
     }
     aDisplayer->UpdateViewer();
+    aDisplayer->SetDisplayMode(prevDisplayMode);
   }
 
   globalSelection(GEOM_ALLSHAPES);
