@@ -291,9 +291,15 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
   TopoDS_Shape aResult = myContext->Apply(Shape);
 
   // processing each solid
-  TopExp_Explorer exps;
-  for(exps.Init(Shape, TopAbs_SOLID); exps.More(); exps.Next()) {
-    TopoDS_Solid aSolid = TopoDS::Solid(exps.Current());
+  TopAbs_ShapeEnum aType = TopAbs_SOLID;
+  TopExp_Explorer exps (Shape, aType);
+  if (!exps.More()) {
+    aType = TopAbs_SHELL;
+    exps.Init(Shape, aType);
+  }
+  for (; exps.More(); exps.Next()) {
+    //TopoDS_Solid aSolid = TopoDS::Solid(exps.Current());
+    TopoDS_Shape aSolid = exps.Current();
 
     TopTools_IndexedMapOfShape ChangedFaces;
 
@@ -307,21 +313,21 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
 
     // processing each face
     TopExp_Explorer exp;
-    for(exp.Init(aRes, TopAbs_FACE); exp.More(); exp.Next()) {
+    for (exp.Init(aRes, TopAbs_FACE); exp.More(); exp.Next()) {
       TopoDS_Face aFace =
         TopoDS::Face(aContext->Apply(exp.Current().Oriented(TopAbs_FORWARD)));
       TopTools_IndexedDataMapOfShapeListOfShape aMapFacesEdges;
 
-      for(TopExp_Explorer expe(aFace,TopAbs_EDGE); expe.More(); expe.Next()) {
+      for (TopExp_Explorer expe(aFace,TopAbs_EDGE); expe.More(); expe.Next()) {
         TopoDS_Edge edge = TopoDS::Edge(expe.Current());
-        if(!aMapEdgeFaces.Contains(edge)) continue;
+        if (!aMapEdgeFaces.Contains(edge)) continue;
         const TopTools_ListOfShape& aList = aMapEdgeFaces.FindFromKey(edge);
         TopTools_ListIteratorOfListOfShape anIter(aList);
-        for( ; anIter.More(); anIter.Next()) {
+        for ( ; anIter.More(); anIter.Next()) {
           TopoDS_Face face = TopoDS::Face(anIter.Value());
           TopoDS_Face face1 = TopoDS::Face(aContext->Apply(anIter.Value()));
-          if(face1.IsSame(aFace)) continue;
-          if(aMapFacesEdges.Contains(face)) {
+          if (face1.IsSame(aFace)) continue;
+          if (aMapFacesEdges.Contains(face)) {
             aMapFacesEdges.ChangeFromKey(face).Append(edge);
           }
           else {
@@ -332,27 +338,27 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
         }
       }
 
-      for(Standard_Integer i=1; i<=aMapFacesEdges.Extent(); i++) {
+      for (Standard_Integer i=1; i<=aMapFacesEdges.Extent(); i++) {
         const TopTools_ListOfShape& ListEdges = aMapFacesEdges.FindFromIndex(i);
         TopTools_SequenceOfShape SeqEdges;
         TopTools_ListIteratorOfListOfShape anIter(ListEdges);
-        for( ; anIter.More(); anIter.Next()) {
+        for ( ; anIter.More(); anIter.Next()) {
           SeqEdges.Append(anIter.Value());
         }
-        if(SeqEdges.Length()==1) continue;
+        if (SeqEdges.Length()==1) continue;
         TopoDS_Edge E;
-        if( MergeEdges(SeqEdges,aFace,Tol,E) ) {
+        if ( MergeEdges(SeqEdges,aFace,Tol,E) ) {
           // now we have only one edge - aChain.Value(1)
           // we have to replace old ListEdges with this new edge
           aContext->Replace(SeqEdges(1),E);
-          for(Standard_Integer j=2; j<=SeqEdges.Length(); j++) {
+          for (Standard_Integer j=2; j<=SeqEdges.Length(); j++) {
             aContext->Remove(SeqEdges(j));
           }
           TopoDS_Face tmpF = TopoDS::Face(exp.Current());
-          if( !ChangedFaces.Contains(tmpF) )
+          if ( !ChangedFaces.Contains(tmpF) )
             ChangedFaces.Add(tmpF);
           tmpF = TopoDS::Face(aMapFacesEdges.FindKey(i));
-          if( !ChangedFaces.Contains(tmpF) )
+          if ( !ChangedFaces.Contains(tmpF) )
             ChangedFaces.Add(tmpF);
         }
       }
@@ -360,7 +366,7 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
     } // end processing each face
 
     // fix changed faces and replace them in the local context
-    for(Standard_Integer i=1; i<=ChangedFaces.Extent(); i++) {
+    for (Standard_Integer i=1; i<=ChangedFaces.Extent(); i++) {
       TopoDS_Face aFace = TopoDS::Face(aContext->Apply(ChangedFaces.FindKey(i)));
       Handle(ShapeFix_Face) sff = new ShapeFix_Face(aFace);
       sff->SetContext(myContext);
@@ -371,11 +377,11 @@ TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
       aContext->Replace(aFace,sff->Face());
     }
 
-    if(ChangedFaces.Extent()>0) {
+    if (ChangedFaces.Extent() > 0) {
       // fix changed shell and replace it in the local context
       TopoDS_Shape aRes1 = aContext->Apply(aRes);
       TopExp_Explorer expsh;
-      for(expsh.Init(aRes1, TopAbs_SHELL); expsh.More(); expsh.Next()) {
+      for (expsh.Init(aRes1, TopAbs_SHELL); expsh.More(); expsh.Next()) {
         TopoDS_Shell aShell = TopoDS::Shell(expsh.Current());
         Handle(ShapeFix_Shell) sfsh = new ShapeFix_Shell;
         sfsh->FixFaceOrientation(aShell);

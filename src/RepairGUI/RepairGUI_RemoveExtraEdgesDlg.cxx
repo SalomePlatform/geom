@@ -252,6 +252,7 @@ void RepairGUI_RemoveExtraEdgesDlg::enterEvent(QEvent* e)
 void RepairGUI_RemoveExtraEdgesDlg::activateSelection()
 {
   TColStd_MapOfInteger aTypes;
+  aTypes.Add( GEOM_SHELL );
   aTypes.Add( GEOM_SOLID );
   aTypes.Add( GEOM_COMPOUND );
   globalSelection( aTypes );
