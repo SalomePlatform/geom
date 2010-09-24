@@ -342,6 +342,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
     aView->SetDisplayMode( mode );
+    GeometryGUI::Modified();
   } 
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
@@ -363,6 +364,7 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
     }
 
     ic->SetDisplayMode( newmode, Standard_False );
+    GeometryGUI::Modified();
   }
 }
 
@@ -413,6 +415,7 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
         }
       }
     }
+    GeometryGUI::Modified();
   }
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     viewWindow->setCustomData( "VectorsMode", QVariant( mode ) );
@@ -433,6 +436,7 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
       }
       ite.Next();
     }
+    GeometryGUI::Modified();
   }
 }
 
@@ -504,6 +508,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       }
     }
     aView->Repaint();
+    GeometryGUI::Modified();
   }
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
@@ -534,6 +539,7 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       }
     }
     ic->UpdateCurrentViewer();
+    GeometryGUI::Modified();
   }
 }
 

@@ -151,6 +151,17 @@ SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
   return aDSStudy._retn();
 }
 
+void GeometryGUI::Modified( bool theIsUpdateActions )
+{
+  if( SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() ) ) {
+    if( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) ) {
+      appStudy->Modified();
+      if( theIsUpdateActions )
+        app->updateActions();
+    }
+  }
+}
+
 //=======================================================================
 // function : GeometryGUI::GeometryGUI()
 // purpose  : Constructor

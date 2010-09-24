@@ -325,6 +325,7 @@ void GEOMToolsGUI::OnColor()
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
               aView->SetColor( It.Value(), c );
             }
+	    GeometryGUI::Modified();
           }
         } // if ( isVTK )
         else if ( isOCC ) {
@@ -382,6 +383,7 @@ void GEOMToolsGUI::OnColor()
                   anObject->SetColor( aSColor );
                   anObject->SetAutoColor( false );
                 }
+		GeometryGUI::Modified();
               }
             } // if c.isValid()
           } // first IO is not null
@@ -444,6 +446,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
       aView->SetTransparency( It.Value(), transp );
     }
     aView->Repaint();
+    GeometryGUI::Modified();
   } // if ( isVTK )
         
   else if ( isOCC ) {
@@ -475,6 +478,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
       }
     } // for...
     ic->UpdateCurrentViewer();
+    GeometryGUI::Modified();
   } // if ( isOCC )
 }
 
@@ -538,6 +542,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 	ic->Redisplay(CurObject);
       }
     }
+    GeometryGUI::Modified();
   }
   else if(isVTK){ // if is VTKViewer
     //
@@ -627,6 +632,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
       anAct = aCollection->GetNextActor();
     }
     view->Repaint();
+    GeometryGUI::Modified();
   } // end vtkviewer
 }
 
@@ -673,6 +679,7 @@ void GEOMToolsGUI::OnDeflection()
         }
       }
     }
+    GeometryGUI::Modified();
   }
   else if (isVTK) { // if is VTKViewer
     SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>
@@ -737,6 +744,7 @@ void GEOMToolsGUI::OnDeflection()
         anAct = aCollection->GetNextActor();
       }
     }
+    GeometryGUI::Modified();
   } // end vtkviewer
 }
 

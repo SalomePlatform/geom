@@ -269,6 +269,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aView->SetTransparency( It.Value(), newValue );
     }
+    GeometryGUI::Modified();
     aView->Repaint();
   } // if ( isVTK )
         
@@ -300,6 +301,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       }
     } // for...
     ic->UpdateCurrentViewer();
+    GeometryGUI::Modified();
   } // if ( isOCC )
 
   ValueHasChanged();
