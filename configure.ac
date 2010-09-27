@@ -318,6 +318,13 @@ CHECK_HTML_GENERATORS
 
 echo
 echo ---------------------------------------------
+echo testing sphinx
+echo ---------------------------------------------
+echo
+CHECK_SPHINX
+
+echo
+echo ---------------------------------------------
 echo Testing Kernel
 echo ---------------------------------------------
 echo
@@ -333,7 +340,7 @@ echo
 echo Configure
 
 if test "${gui_ok}" = "yes"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok Kernel_ok gui_ok"
 elif test "${SalomeGUI_need}" != "no"; then
   variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
 else
@@ -381,6 +388,7 @@ AC_OUTPUT([ \
   bin/Makefile \
   GEOM_version.h \
   doc/Makefile \
+  doc/docutils/Makefile \
   doc/salome/Makefile \
   doc/salome/gui/Makefile \
   doc/salome/gui/GEOM/Makefile \
@@ -415,6 +423,8 @@ AC_OUTPUT([ \
   src/GEOM_I_Superv/Makefile \
   src/GEOM_SWIG/Makefile \
   src/GEOM_SWIG_WITHIHM/Makefile \
+  src/GEOM_PY/Makefile \
+  src/GEOM_PY/structelem/Makefile \
   src/GenerationGUI/Makefile \
   src/GroupGUI/Makefile \
   src/IGESExport/Makefile \

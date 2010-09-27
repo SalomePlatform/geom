@@ -23,6 +23,9 @@ various algorithms;</li>
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
 
+\n Have a look also at the
+<a href="../../gui/GEOM/geompypkg_page.html"> documentation of the GEOM python packages</a>
+
 \image html image3.png "Example of Geometry module usage for engineering tasks"
 
 
