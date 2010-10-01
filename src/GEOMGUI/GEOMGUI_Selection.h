@@ -48,6 +48,10 @@ public:
   
   virtual bool          processOwner( const LightApp_DataOwner* );
 
+  static bool           hasChildren( const _PTR(SObject)& );
+  static bool           expandable( const _PTR(SObject)& );
+  static bool           isCompoundOfVertices( GEOM::GEOM_Object_ptr );
+
 private:
   bool                  isVisible( const int ) const;
   bool                  isAutoColor( const int ) const;
@@ -58,9 +62,7 @@ private:
   bool                  isVectorsMode( const int ) const;
   bool                  hasHiddenChildren( const int ) const;
   bool                  hasShownChildren( const int ) const;
-
-  static bool           hasChildren( const _PTR(SObject)& );
-  static bool           expandable( const _PTR(SObject)& );
+  bool                  compoundOfVertices( const int ) const;
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;

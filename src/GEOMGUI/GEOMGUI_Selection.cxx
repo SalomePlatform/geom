@@ -98,6 +98,8 @@ QVariant GEOMGUI_Selection::parameter( const int ind, const QString& p ) const
     return QVariant( hasHiddenChildren( ind ) );
   else if ( p == "hasShownChildren" )
     return QVariant( hasShownChildren( ind ) );
+  else if ( p == "compoundOfVertices" )
+    return QVariant( compoundOfVertices( ind ) );
   else
     return LightApp_Selection::parameter( ind, p );
 }
@@ -274,6 +276,29 @@ bool GEOMGUI_Selection::expandable( const _PTR(SObject)& obj )
   return exp;
 }
 
+bool GEOMGUI_Selection::isCompoundOfVertices( GEOM::GEOM_Object_ptr obj )
+{
+  bool ret = false;
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>
+    (SUIT_Session::session()->activeApplication()->activeStudy());
+  if ( appStudy && !CORBA::is_nil( obj ) && obj->GetShapeType() == GEOM::COMPOUND ) {
+    GEOM::GEOM_IMeasureOperations_var anOper = GeometryGUI::GetGeomGen()->GetIMeasureOperations( appStudy->id() );
+    QString whatIs = anOper->WhatIs( obj );
+    QStringList data = whatIs.split( "\n", QString::SkipEmptyParts );
+    int nbVertices = 0, nbCompounds = 0, nbOther = 0;
+    foreach ( QString s, data ) {
+      QString type = s.section( ":", 0, 0 ).trimmed().toLower();
+      int cnt = s.section( ":", 1, 1 ).trimmed().toInt();
+      if ( type == "vertex" ) nbVertices += cnt;
+      else if ( type == "compound" ) nbCompounds += cnt;
+      else if ( type != "shape" ) nbOther += cnt;
+    }
+    ret = nbVertices > 0 && nbCompounds == 1 && nbOther == 0;
+    anOper->Destroy();
+  }
+  return ret;
+}
+
 bool GEOMGUI_Selection::hasHiddenChildren( const int index ) const
 {
   bool OK = false;
@@ -308,6 +333,11 @@ bool GEOMGUI_Selection::hasShownChildren( const int index ) const
     }
   }
   return OK;
+}
+
+bool GEOMGUI_Selection::compoundOfVertices( const int index ) const
+{
+  return isCompoundOfVertices( getObject( index ) );
 }
 
 bool GEOMGUI_Selection::isComponent( const int index ) const
