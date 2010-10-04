@@ -114,11 +114,12 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 
       if (!entryStr.isEmpty())
       {
+        Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(io->GetOwner()); 
         LightApp_DataOwner* owner;
         if (index > -1) // Local Selection
           owner = new LightApp_DataSubOwner (entryStr, index);
-        else // Global Selection
-          owner = new LightApp_DataOwner (entryStr);
+        else if ( !anIO.IsNull() ) // Global Selection
+          owner = new LightApp_DataOwner( anIO );
 
         aList.append(SUIT_DataOwnerPtr(owner));
       }
@@ -134,8 +135,11 @@ void GEOMGUI_OCCSelector::getSelection( SUIT_DataOwnerPtrList& aList ) const
 
       if ( !entryStr.isEmpty() )
       {
-        LightApp_DataOwner* owner = new LightApp_DataOwner( entryStr );
-        aList.append( SUIT_DataOwnerPtr( owner ) );
+        Handle(SALOME_InteractiveObject) anIO = Handle(SALOME_InteractiveObject)::DownCast(io->GetOwner()); 
+        if ( !anIO.IsNull() ) {
+          LightApp_DataOwner* owner = new LightApp_DataOwner( anIO );
+          aList.append( SUIT_DataOwnerPtr( owner ) );
+        }
       }
     }
   }
@@ -196,11 +200,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
   Handle(AIS_InteractiveContext) ic = vw->getAISContext();
 
   // "entry - list_of_int" map for LOCAL selection
-#ifndef WNT
   NCollection_DataMap<TCollection_AsciiString, TColStd_IndexedMapOfInteger> indexesMap;
-#else
-  NCollection_DataMap<Standard_CString, TColStd_IndexedMapOfInteger> indexesMap;
-#endif
 
   QMap<QString,int> globalSelMap; // only Key=entry from this map is used.  value(int) is NOT used at all.
   SelectMgr_IndexedMapOfOwner ownersmap; // map of owners to be selected
@@ -216,11 +216,7 @@ void GEOMGUI_OCCSelector::setSelection( const SUIT_DataOwnerPtrList& aList )
     if ( subOwner )
     {
       QString entry = subOwner->entry();
-#ifndef WNT
       if ( indexesMap.IsBound( TCollection_AsciiString(entry.toLatin1().data())))
-#else
-      if ( indexesMap.IsBound( entry.toLatin1().data() ) )
-#endif
       {
         TColStd_IndexedMapOfInteger& subIndexes = indexesMap.ChangeFind(entry.toLatin1().data());
         subIndexes.Add( subOwner->index() );

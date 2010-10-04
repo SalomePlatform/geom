@@ -95,7 +95,8 @@ GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
 //================================================================
 GEOMBase_Helper::~GEOMBase_Helper()
 {
-  if ( !SUIT_Session::session()->activeApplication()->desktop() )
+  //rnv: Fix for the "IPAL21922 : WinTC5.1.4: incorrect quit salome"
+  if ( !SUIT_Session::session()->activeApplication() || !SUIT_Session::session()->activeApplication()->desktop() )
     return;
 
   if ( myPreview.size() )
@@ -1072,7 +1073,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
   }
   if (inStudy)
     return aReturnObject._retn();
-
+  
   return GEOM::GEOM_Object::_nil();
 }
 
@@ -1107,7 +1108,7 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
         if ( aFatherEntry != "") { // additional checking that object is valid 0020598 EDF 1191
           GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
           //Add Object to study if its not exist
-          if ( aFindedObject == GEOM::GEOM_Object::_nil() )
+		  if ( aFindedObject->_is_nil() )
             GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
                                                   it.value(), it.key().toLatin1().data(), aFatherObj );
         }

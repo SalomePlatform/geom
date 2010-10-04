@@ -1047,7 +1047,7 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
 //=================================================================================
 void EntityGUI_SketcherDlg::enterEvent( QEvent* )
 {
-  if ( !MainWidget->GroupConstructors->isEnabled() )
+  if ( !isEnabled() )
     ActivateThisDialog();
 }
 

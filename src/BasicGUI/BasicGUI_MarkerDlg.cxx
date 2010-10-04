@@ -441,7 +441,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
             
             //Find SubShape Object in Father
             GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObj, aName );
-            if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+            if ( aFindedObject->_is_nil() ) { // Object not found in study
               GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
               aSelectedObj = aShapesOp->GetSubShape( aSelectedObj, anIndex );
             } 

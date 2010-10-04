@@ -266,7 +266,7 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
           //Find SubShape Object in Father
           GEOM::GEOM_Object_var aFindedObject = findObjectInFather(myArgument, aName);
 
-          if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+          if (aFindedObject->_is_nil()) { // Object not found in study
             GEOM::GEOM_IShapesOperations_var aShapesOp =
               getGeomEngine()->GetIShapesOperations(getStudyId());
             myArgument = aShapesOp->GetSubShape(myArgument, anIndex);
