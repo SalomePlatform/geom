@@ -43,7 +43,7 @@ ALLSPHINXOPTS   = -d doctrees $(PAPEROPT_a4) $(SPHINXOPTS) $(SOURCEDIR)
 
 SPHINX_PYTHONPATH = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(KERNEL_ROOT_DIR)/bin/salome:$(KERNEL_ROOT_DIR)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(OMNIORB_ROOT)/lib/python$(PYTHON_VERSION)/site-packages
 
-SPHINX_LD_LIBRARY_PATH = $(OMNIORB_ROOT)/lib
+SPHINX_LD_LIBRARY_PATH = $(KERNEL_ROOT_DIR)/lib/salome:$(OMNIORB_ROOT)/lib
 
 htm:
 	mkdir -p html doctrees
