@@ -216,6 +216,17 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
     gp_Vec Vec1,Vec2;
     BRepAdaptor_Surface SF (aFace);
     SF.D1(pUV.X(), pUV.Y(), p1, Vec1, Vec2);
+    if (Vec1.Magnitude() < Precision::Confusion()) {
+      gp_Vec tmpV;
+      gp_Pnt tmpP;
+      SF.D1(pUV.X(), pUV.Y()-0.1, tmpP, Vec1, tmpV);
+    }
+    else if (Vec2.Magnitude() < Precision::Confusion()) {
+      gp_Vec tmpV;
+      gp_Pnt tmpP;
+      SF.D1(pUV.X()-0.1, pUV.Y(), tmpP, tmpV, Vec2);
+    }
+
     gp_Vec V = Vec1.Crossed(Vec2);
     Standard_Real mod = V.Magnitude();
     if (mod < Precision::Confusion())
