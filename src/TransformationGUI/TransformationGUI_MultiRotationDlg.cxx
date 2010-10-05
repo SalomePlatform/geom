@@ -153,6 +153,8 @@ void TransformationGUI_MultiRotationDlg::Init()
 
   myBase = myVector = GEOM::GEOM_Object::_nil();
 
+  mainFrame()->GroupBoxPublish->show();
+
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -619,4 +621,25 @@ void TransformationGUI_MultiRotationDlg::addSubshapesToStudy()
     break;
   }
   addSubshapesToFather(objMap);
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiRotationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                           SALOMEDS::SObject_ptr theSObject)
+{
+  if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
+    // we pass here the first operation argument (object) through the list of arguments
+    // because the rotation operation place its arguments in the data structure in another order,
+    // and we need to point the first argument directly
+    GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
+    anArgs->length(1);
+    anArgs[0] = myBase;
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+                                        /*theFindMethod=*/GEOM::FSM_Transformed,
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
+  }
 }
