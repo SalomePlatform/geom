@@ -229,8 +229,11 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShell
   Handle(GEOM_Object) aShell = GetObjectImpl(theShell);
   if (aShell.IsNull()) return aGEOMObject._retn();
 
+  std::list<Handle(GEOM_Object)> aShapes;
+  aShapes.push_back(aShell);
+
   //Create the Solid
-  Handle(GEOM_Object) anObject = GetOperations()->MakeSolidShell(aShell);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeSolidShells(aShapes);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

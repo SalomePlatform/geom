@@ -67,8 +67,6 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
-
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (std::list<Handle(GEOM_Object)> theShells);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCompound (std::list<Handle(GEOM_Object)> theShapes);

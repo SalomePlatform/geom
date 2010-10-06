@@ -437,60 +437,6 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShells
 
 //=============================================================================
 /*!
- *  MakeSolidShell
- */
-//=============================================================================
-Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeSolidShell (Handle(GEOM_Object) theShell)
-{
-  SetErrorCode(KO);
-
-  if (theShell.IsNull()) return NULL;
-
-  //Add a new Solid object
-  Handle(GEOM_Object) aSolid = GetEngine()->AddObject(GetDocID(), GEOM_SOLID);
-
-  //Add a new Solid function for creation of a solid from a shell
-  Handle(GEOM_Function) aFunction =
-    aSolid->AddFunction(GEOMImpl_ShapeDriver::GetID(), SOLID_SHELL);
-  if (aFunction.IsNull()) return NULL;
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
-
-  GEOMImpl_IShapes aCI (aFunction);
-
-  Handle(GEOM_Function) aRefShell = theShell->GetLastFunction();
-
-  if (aRefShell.IsNull()) return NULL;
-
-  aCI.SetBase(aRefShell);
-
-  //Compute the Solid value
-  try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
-    OCC_CATCH_SIGNALS;
-#endif
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Solid driver failed");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  GEOM::TPythonDump(aFunction) << aSolid
-    << " = geompy.MakeSolid(" << theShell << ")";
-
-  SetErrorCode(OK);
-  return aSolid;
-}
-
-//=============================================================================
-/*!
  *  MakeCompound
  */
 //=============================================================================
