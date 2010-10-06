@@ -1822,6 +1822,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Tolerance</translation>
     </message>
     <message>
+        <source>GEOM_LINEAR_TOLERANCE</source>
+        <translation>Linear Tolerance</translation>
+    </message>
+    <message>
+        <source>GEOM_ANGULAR_TOLERANCE</source>
+        <translation>Angular Tolerance</translation>
+    </message>
+    <message>
         <source>GEOM_TOLERANCE_CONSTR</source>
         <translation>Object And Its Tolerances</translation>
     </message>

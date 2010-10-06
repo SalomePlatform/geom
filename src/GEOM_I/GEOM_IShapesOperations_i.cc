@@ -87,6 +87,34 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
 
 //=============================================================================
 /*!
+ *  MakeEdgeWire
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeWire
+                      (GEOM::GEOM_Object_ptr theWire,
+		       const CORBA::Double theLinearTolerance,
+		       const CORBA::Double theAngularTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the source wire
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+
+  if (aWire.IsNull()) return aGEOMObject._retn();
+
+  //Create the Edge
+  Handle(GEOM_Object) anObject = GetOperations()->MakeEdgeWire(aWire, theLinearTolerance, theAngularTolerance);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeWire
  */
 //=============================================================================

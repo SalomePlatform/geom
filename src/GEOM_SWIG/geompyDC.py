@@ -1551,6 +1551,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeEdge", self.ShapesOp)
             return anObj
 
+        ## Create an edge from specified wire.
+        #  @param theWire source Wire.
+        #  @param theLinearTolerance linear tolerance value.
+        #  @param theAngularTolerance angular tolerance value.
+        #  @return New GEOM_Object, containing the created edge.
+        #
+        #  @ref tui_creation_edge "Example"
+        def MakeEdgeWire(self, theWire, theLinearTolerance = 1e-07, theAngularTolerance = 1e-12):
+            # Example: see GEOM_TestAll.py
+            anObj = self.ShapesOp.MakeEdgeWire(theWire, theLinearTolerance, theAngularTolerance)
+            RaiseIfFailed("MakeEdgeWire", self.ShapesOp)
+            return anObj
+
         ## Create a wire from the set of edges and wires.
         #  @param theEdgesAndWires List of edges and/or wires.
         #  @param theTolerance Maximum distance between vertices, that will be merged.

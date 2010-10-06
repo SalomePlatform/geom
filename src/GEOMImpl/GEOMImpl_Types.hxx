@@ -257,6 +257,7 @@
 #define SUBSHAPE_NOT_SORTED 8
 #define FACE_WIRES          9
 #define REVERSE_ORIENTATION 10
+#define EDGE_WIRE           11
 
 #define ARCHIMEDE_TYPE 1
 

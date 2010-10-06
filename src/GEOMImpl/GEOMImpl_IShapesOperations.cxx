@@ -212,6 +212,77 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
 
 //=============================================================================
 /*!
+ *  MakeEdgeWire
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
+                    (Handle(GEOM_Object) theWire,
+		     const Standard_Real theLinearTolerance,
+		     const Standard_Real theAngularTolerance)
+{
+  SetErrorCode(KO);
+
+  if (theWire.IsNull()) return NULL;
+
+  //Add a new Edge object
+  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+
+  //Add a new Vector function
+  Handle(GEOM_Function) aFunction =
+    anEdge->AddFunction(GEOMImpl_ShapeDriver::GetID(), EDGE_WIRE);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
+
+  GEOMImpl_IShapes aCI (aFunction);
+
+  Handle(GEOM_Function) aWire = theWire->GetLastFunction();
+
+  if (aWire.IsNull()) return NULL;
+
+  aCI.SetBase(aWire);
+  aCI.SetTolerance(theLinearTolerance);
+  aCI.SetAngularTolerance(theAngularTolerance);
+
+  //Compute the Edge value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  const double DEF_LIN_TOL = Precision::Confusion();
+  const double DEF_ANG_TOL = Precision::Angular();
+  //Make a Python command
+  if ( theAngularTolerance == DEF_ANG_TOL ) {
+    if ( theLinearTolerance == DEF_LIN_TOL )
+      GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
+				   << theWire << ")";
+    else 
+      GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
+				   << theWire << ", " << theLinearTolerance << ")";
+  }
+  else {
+    GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
+				 << theWire << ", " << theLinearTolerance << ", "
+				 << theAngularTolerance << ")";
+  }
+
+  SetErrorCode(OK);
+  return anEdge;
+}
+
+//=============================================================================
+/*!
  *  MakeWire
  */
 //=============================================================================

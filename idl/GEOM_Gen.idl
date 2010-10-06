@@ -1314,6 +1314,17 @@ module GEOM
     GEOM_Object MakeEdge (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
 
     /*!
+     *  Create an edge from specified wire.
+     *  \param theWire source Wire.
+     *  \param theLinearTolerance linear tolerance value
+     *  \param theAngularTolerance angular tolerance value
+     *  \return New GEOM_Object, containing the created edge.
+     */
+    GEOM_Object MakeEdgeWire (in GEOM_Object theWire,
+			      in double theLinearTolerance, 
+			      in double theAngularTolerance);
+
+    /*!
      *  Create a wire from the set of edges and wires.
      *  \param theEdgesAndWires List of edge and/or wires.
      *  \param theTolerance Maximum distance between vertices, that will be merged.

@@ -38,7 +38,8 @@ class GEOMImpl_IShapes
     SHAPE_ARG_PLANAR    = 3, // for Face
     SHAPE_ARG_SUBTYPE   = 4, // for Sub-shape
     SHAPE_ARG_INDICES   = 5, // for Sub-shape
-    SHAPE_ARG_TOLERANCE = 6  // for Wire
+    SHAPE_ARG_TOLERANCE = 6, // linear tolerance (for Wire, Edge)
+    SHAPE_ARG_ANGLE_TOL = 7, // angular tolerance (for Edge)
   };
 
   GEOMImpl_IShapes(Handle(GEOM_Function) theFunction): _func(theFunction) {}
@@ -74,6 +75,11 @@ class GEOMImpl_IShapes
   { _func->SetReal(SHAPE_ARG_TOLERANCE, theValue); }
 
   Standard_Real GetTolerance() { return _func->GetReal(SHAPE_ARG_TOLERANCE); }
+
+  void SetAngularTolerance(const Standard_Real theValue)
+  { _func->SetReal(SHAPE_ARG_ANGLE_TOL, theValue); }
+
+  Standard_Real GetAngularTolerance() { return _func->GetReal(SHAPE_ARG_ANGLE_TOL); }
 
  private:
 

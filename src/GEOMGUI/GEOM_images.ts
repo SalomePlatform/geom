@@ -110,6 +110,10 @@
             <translation>build_edge.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_BUILD_EDGE_WIRE</source>
+            <translation>build_edge_wire.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
         </message>

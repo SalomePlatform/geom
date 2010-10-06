@@ -29,6 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
+class DlgRef_1Sel2Spin;
 class DlgRef_2Sel;
 
 //=================================================================================
@@ -48,19 +49,21 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );    
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::GEOM_Object_var              myPoint1, myPoint2;   /* Points containing the edge */ 
-  bool                               myOkPoint1;   /* true when myPoint is defined */    
-  bool                               myOkPoint2;
+  GEOM::GEOM_Object_var              myPoint1, myPoint2;   /* Points containing the edge */
+  GEOM::GEOM_Object_var              myWire;               /* Wire */
   
   DlgRef_2Sel*                       GroupPoints;
+  DlgRef_1Sel2Spin*                  GroupWire;
 
 private slots:
+  void                               ConstructorsClicked( int );
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
