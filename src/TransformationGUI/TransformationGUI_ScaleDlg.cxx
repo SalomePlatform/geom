@@ -202,6 +202,9 @@ void TransformationGUI_ScaleDlg::ConstructorsClicked (int constructorId)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
+  myPoint = GEOM::GEOM_Object::_nil();
+  LineEdit2->clear();
+  
   switch (constructorId) {
   case 0: // translation an object by dx, dy, dz
     TextLabel3->setText(tr("GEOM_SCALE_FACTOR"));
@@ -258,6 +261,11 @@ bool TransformationGUI_ScaleDlg::ClickOnApply()
     return false;
 
   initName(tr("GEOM_SCALE"));
+
+  myObjects.length(0);
+  myEditCurrentArgument = LineEdit1;
+  myEditCurrentArgument->setText("");
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;

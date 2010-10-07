@@ -272,6 +272,11 @@ bool TransformationGUI_TranslationDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myObjects.length(0);
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument->setText("");
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;

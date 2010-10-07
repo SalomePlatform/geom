@@ -300,6 +300,11 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myObjects.length(0);
+  myEditCurrentArgument = Group1->LineEdit1;
+  myEditCurrentArgument->setText("");
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;
@@ -340,8 +345,8 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     else
       myEditCurrentArgument->setText(aName);
 
-    if (getConstructorId() == 2)
-      Group1->PushButton5->click();
+    /*    if (getConstructorId() == 2)
+          Group1->PushButton5->click();*/
   }
   else if (myEditCurrentArgument == Group1->LineEdit2) {
     if (aSelList.Extent() != 1)
