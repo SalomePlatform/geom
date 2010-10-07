@@ -403,7 +403,9 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
     Handle(GEOM_Function) aFunction = theObject->GetFunction(1);
     GEOM_ISubShape aSSI (aFunction);
     Handle(GEOM_Function) aMainShape = aSSI.GetMainShape();
-    aMainShape->RemoveSubShapeReference(aFunction);
+    //If main shape is not null, then remove
+    if(!aMainShape.IsNull())
+      aMainShape->RemoveSubShapeReference(aFunction);
   }
 
   int nb = theObject->GetNbFunctions();
