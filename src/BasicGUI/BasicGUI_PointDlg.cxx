@@ -76,7 +76,8 @@
 //=================================================================================
 BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* parent,
                                       bool modal, Qt::WindowFlags fl )
-  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
+  : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl ),
+    myBusy ( false )
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT") ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_POINT_EDGE" ) ) );
@@ -531,6 +532,8 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
       if ( aShape.IsNull() || aShape.ShapeType() != myNeedType)
         return;
 
+      myBusy = true;
+
       if ( id == GEOM_POINT_XYZ ) {
         gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
         GroupXYZ->SpinBox_DX->setValue( aPnt.X() );
@@ -571,6 +574,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         myFace = aSelectedObject;
         GroupOnSurface->LineEdit1->setText( aName );
       }
+      myBusy = false;
     }
   }
 
@@ -637,6 +641,10 @@ void BasicGUI_PointDlg::SetEditCurrentArgument()
     GroupLineIntersection->LineEdit2->setEnabled(true);
   }
   send->setDown(true);
+
+  if ( ( send == GroupLineIntersection->PushButton1 ||
+         send == GroupLineIntersection->PushButton2 ) && !myBusy )
+    SelectionIntoArgument();
 }
 
 
