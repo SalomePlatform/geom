@@ -298,7 +298,6 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
-  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -398,7 +397,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     }
   }
 
-  // clear selection
+  // clear selection of the faces or edges
   if (!(myEditCurrentArgument == Group2->LineEdit2 ||
         myEditCurrentArgument == Group3->LineEdit2)) {
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
