@@ -623,14 +623,12 @@ char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 {
   SalomeApp_Study* study = getStudy();
   if ( study )  {
-    char * objIOR = GEOMBase::GetIORFromObject( object );
+    CORBA::String_var objIOR = GEOMBase::GetIORFromObject( object );
     std::string IOR( objIOR );
-    free( objIOR );
     if ( IOR != "" ) {
       _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
-      if ( SO ) {
-              return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
-      }
+      if ( SO )
+        return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
     }
   }
   return (char*)"";
@@ -1108,7 +1106,7 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
         if ( aFatherEntry != "") { // additional checking that object is valid 0020598 EDF 1191
           GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
           //Add Object to study if its not exist
-		  if ( aFindedObject->_is_nil() )
+	  if ( aFindedObject->_is_nil() )
             GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
                                                   it.value(), it.key().toLatin1().data(), aFatherObj );
         }

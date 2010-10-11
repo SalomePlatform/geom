@@ -529,5 +529,5 @@ void TransformationGUI_MirrorDlg::addSubshapesToStudy()
       return;
     }
     addSubshapesToFather(objMap);
-  }
+    }
 }

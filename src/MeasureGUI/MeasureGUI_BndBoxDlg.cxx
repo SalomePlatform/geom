@@ -177,7 +177,7 @@ bool MeasureGUI_BndBoxDlg::getParameters( double& theXmin, double& theXmax,
       if ( CORBA::is_nil(aGeomGen) )
         return false;
 
-      char* IOR = GEOMBase::GetIORFromObject( myObj );
+      CORBA::String_var IOR = GEOMBase::GetIORFromObject( myObj );
       GEOM::GEOM_Object_var anObject = aGeomGen->GetIORFromString(IOR);
       if ( CORBA::is_nil(anObject) )
         return false;
