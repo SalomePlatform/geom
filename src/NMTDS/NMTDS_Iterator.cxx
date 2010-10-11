@@ -195,14 +195,11 @@
 {
   Standard_Boolean bFlag;
   Standard_Integer aNb, i, aNbB, aNbR, iFlag;
-  Standard_Integer i1, i2, aNbSD, iX, j, iDS, jB, iR, k, aNbLV;
+  Standard_Integer i1, i2, aNbSD, iX, j, iDS, jB, iR, k, aNbLV, aNbLV1;
   TColStd_ListIteratorOfListOfInteger aIt;
   TColStd_DataMapOfIntegerInteger aMII;
-  //modified by NIZNHY-PKV Mon Jan 22 15:08:00 2007f
-  //TColStd_MapOfInteger aMFence;
   TColStd_DataMapOfIntegerListOfInteger aMVSD;
   TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItVSD;
-  //modified by NIZNHY-PKV Mon Jan 22 10:21:50 2007t
   TopTools_DataMapOfShapeInteger aMSI;
   TopAbs_ShapeEnum aTi, aTj;
   NMTDS_PassKeyBoolean aPKXB; 
@@ -319,7 +316,14 @@
             aMPKXB.Remove(aPKXB);
           }
         }
-        aMVSD.Bind(i, aLV1);
+	//
+	//modified by NIZNHY-PKV Mon Sep 27 08:31:04 2010f
+	aNbLV1=aLV1.Extent();
+	if (aNbLV1) {
+	  aMVSD.Bind(i, aLV1);
+	}
+	//aMVSD.Bind(i, aLV1);
+	//modified by NIZNHY-PKV Mon Sep 27 08:31:21 2010t
       }
     }//for (i=i1; i<=i2; ++i) {
   }//for (iR=1; iR<aNbR; ++iR) {
