@@ -893,7 +893,7 @@ GEOM::GEOM_Object_ptr GEOMBase::GetObjectFromIOR( const char* theIOR )
 // function : GetIORFromObject()
 // purpose  : returns IOR of a given GEOM_Object
 //=======================================================================
-char* GEOMBase::GetIORFromObject( const GEOM::GEOM_Object_ptr& theObject )
+QString GEOMBase::GetIORFromObject( const GEOM::GEOM_Object_ptr& theObject )
 {
   if ( CORBA::is_nil( theObject ) )
     return NULL;

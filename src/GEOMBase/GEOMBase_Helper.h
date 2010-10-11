@@ -177,7 +177,7 @@ protected:
   SUIT_Desktop*               getDesktop() const;
 
 private:
-  char* getEntry              ( GEOM::GEOM_Object_ptr ) const;
+  QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
   void                        clearShapeBuffer( GEOM::GEOM_Object_ptr );
 
 private:

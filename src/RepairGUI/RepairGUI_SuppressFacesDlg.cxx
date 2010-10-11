@@ -246,8 +246,8 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
         aSelMgr->clearSelected();
 
         Standard_Boolean isOk;
-        CORBA::String_var objIOR = GEOMBase::GetIORFromObject(myObject);
-        Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape(objIOR, isOk, true);
+        QString objIOR = GEOMBase::GetIORFromObject(myObject);
+        Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape(objIOR.toLatin1().constData(), isOk, true);
         if (!isOk || aSh.IsNull())
           return;
 

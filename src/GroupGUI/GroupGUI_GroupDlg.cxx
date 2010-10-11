@@ -1059,10 +1059,9 @@ bool GroupGUI_GroupDlg::execute(ObjectList& objects)
 
   SalomeApp_Study* study = getStudy();
   if (study) {
-    CORBA::String_var objIOR = GEOMBase::GetIORFromObject(aGroup);
-    std::string IOR(objIOR);
-    if (IOR != "") {
-      _PTR(SObject) SO (study->studyDS()->FindObjectIOR(IOR));
+    QString objIOR = GEOMBase::GetIORFromObject(aGroup);
+    if (objIOR != "") {
+      _PTR(SObject) SO (study->studyDS()->FindObjectIOR(objIOR.toLatin1().constData()));
       if (SO) {
         _PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
         aBuilder->SetName(SO, getNewObjectName().toLatin1().constData());
