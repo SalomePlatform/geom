@@ -55,6 +55,7 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               createPathPreview( GEOM::GEOM_Object_var );
 
 private:
   GEOM::ListOfGO                     myObjects;
