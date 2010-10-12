@@ -31,6 +31,7 @@
 #include <BRepAlgo.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
 
 #include <TopAbs.hxx>
 #include <TopoDS.hxx>
@@ -102,7 +103,12 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   GEOMImpl_IFilling IF (aFunction);
   Handle(GEOM_Function) aShapeFunction = IF.GetShape();
   if (aShapeFunction.IsNull()) return 0;
-  TopoDS_Shape aShape = aShapeFunction->GetValue();
+  TopoDS_Shape aShape;
+
+  BRepBuilderAPI_Copy Copy(aShapeFunction->GetValue());
+  if( Copy.IsDone() )
+    aShape = Copy.Shape();
+
   if (aShape.IsNull() || aShape.ShapeType() != TopAbs_COMPOUND) return 0;
 
   Standard_Integer mindeg = IF.GetMinDeg();
