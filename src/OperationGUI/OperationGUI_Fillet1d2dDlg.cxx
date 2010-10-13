@@ -370,9 +370,12 @@ GEOM::GEOM_IOperations_ptr OperationGUI_Fillet1d2dDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_Fillet1d2dDlg::isValid (QString&)
+bool OperationGUI_Fillet1d2dDlg::isValid (QString& msg)
 {
-  return !myShape->_is_nil() && (myIs1D || myVertexes.Extent() > 0);
+  bool ok = !myShape->_is_nil();
+  ok = GroupVertexes->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  ok = (myIs1D || myVertexes.Extent() > 0) && ok;
+  return ok;
 }
 
 //=================================================================================
