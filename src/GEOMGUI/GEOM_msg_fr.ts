@@ -555,15 +555,15 @@ Choisissez face, coque ou solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV</source>
-        <translation>Forme de Base + Vecteur</translation>
+        <translation>Formes de Base + Vecteur</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV_2P</source>
-        <translation>Forme de Base + 2 Points</translation>
+        <translation>Formes de Base + 2 Points</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_DXDYDZ</source>
-        <translation>Forme de Base  + Vecteur DX DY DZ</translation>
+        <translation>Formes de Base  + Vecteur DX DY DZ</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_TITLE</source>

@@ -555,15 +555,15 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV</source>
-        <translation>Base Shape + Vector</translation>
+        <translation>Base Shapes + Vector</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV_2P</source>
-        <translation>Base Shape + 2 Points</translation>
+        <translation>Base Shapes + 2 Points</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_DXDYDZ</source>
-        <translation>Base Shape + DX DY DZ Vector</translation>
+        <translation>Base Shapes + DX DY DZ Vector</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_TITLE</source>
