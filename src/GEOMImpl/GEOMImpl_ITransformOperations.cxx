@@ -1236,9 +1236,6 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
   Handle(GEOM_Function) anOriginal = theObject->GetLastFunction();
   if (anOriginal.IsNull()) return NULL; //There is no function which creates an object to be set in position
 
-  Handle(GEOM_Function) aSrcF;
-  if (!theStartLCS.IsNull()) aSrcF = theStartLCS->GetLastFunction();
-
   //Add a Position function
   Standard_Integer aType = POSITION_SHAPE;
   if (theStartLCS.IsNull()) aType = POSITION_SHAPE_FROM_GLOBAL;
@@ -1255,7 +1252,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
   aTI.SetShape(anOriginal);
   aTI.SetEndLCS(theEndLCS->GetLastFunction());
   if (!theStartLCS.IsNull())
-    aTI.SetStartLCS(aSrcF);
+    aTI.SetStartLCS(theObject == theStartLCS ? anOriginal : theStartLCS->GetLastFunction());
 
   //Compute the Position
   try {
