@@ -633,7 +633,6 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   case 1:
     {
       for (int i = 0; i < myObjects.length(); i++) {
-        if (toCreateCopy)
           anObj = toCreateCopy ? 
             anOper->PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS) :
             anOper->PositionShape(myObjects[i], myStartLCS, myEndLCS);
