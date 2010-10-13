@@ -308,7 +308,7 @@ Standard_Boolean GEOMImpl_Fillet1d::processPoint(GEOMImpl_Fillet1dPoint* theLeft
     GEOMImpl_Fillet1dPoint* aPoint1 = theLeft->Copy();
     GEOMImpl_Fillet1dPoint* aPoint2 = new GEOMImpl_Fillet1dPoint(theParameter);
     fillPoint(aPoint2);
-    fillDiff(aPoint2, aDX / 1000., Standard_True);
+    fillDiff(aPoint2, aDX / 10., Standard_True);
     
     aPoint1->FilterPoints(aPoint2);
     performNewton(aPoint1, aPoint2);
