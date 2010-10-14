@@ -3787,7 +3787,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_NO_SELF_INTERSECTION</source>
-        <translation>No shapes self-intersection</translation>
+        <translation>No sub-shapes intersection (Compounds only)</translation>
     </message>
     <message>
         <source>GEOM_CENTER_2POINTS</source>

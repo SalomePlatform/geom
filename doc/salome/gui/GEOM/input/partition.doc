@@ -36,7 +36,7 @@ type</b> checkbox, you will obtain a compound of two solids and one
 face (the face will have a hole where the original face lays inside
 the box, see corresponding \ref partition_picture_3 "picture" below).
 
-<b>No shapes self intersection</b> check box affects only input shapes
+<b>No sub-shapes intersection (Compounds only)</b> check box affects only input shapes
 of the Compound type. If this option is switched off (default
 behavior) each input compound will be automatically exploded to the
 sub-shapes and intersection between those shapes will be also
