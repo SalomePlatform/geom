@@ -97,4 +97,6 @@ libTransformationGUI_la_CPPFLAGS =		\
 
 libTransformationGUI_la_LDFLAGS  =				\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
-	../GEOMBase/libGEOMBase.la
+	../GEOMBase/libGEOMBase.la				\
+	$(CAS_LDPATH) -lTKShHealing
+
