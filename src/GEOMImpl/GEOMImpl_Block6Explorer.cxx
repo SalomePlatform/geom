@@ -1211,12 +1211,10 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     for (; wexpl.More(); wexpl.Next()) {
       if (!p1set) {
         p1set = true;
-        is3Pnts = true;
-        p1 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+         p1 = BRep_Tool::Pnt(wexpl.CurrentVertex());
       }
       else if (!p2set) {
         p2set = true;
-        is3Pnts = true;
         p2 = BRep_Tool::Pnt(wexpl.CurrentVertex());
       }
       else if (!p3set) {
