@@ -289,6 +289,20 @@ DlgRef_2Sel1List1Check::~DlgRef_2Sel1List1Check()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel1List2Check
+//////////////////////////////////////////
+
+DlgRef_2Sel1List2Check::DlgRef_2Sel1List2Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel1List2Check::~DlgRef_2Sel1List2Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 

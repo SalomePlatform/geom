@@ -3786,6 +3786,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Keep shapes of lower type</translation>
     </message>
     <message>
+        <source>GEOM_NO_SELF_INTERSECTION</source>
+        <translation>No shapes self-intersection</translation>
+    </message>
+    <message>
         <source>GEOM_CENTER_2POINTS</source>
         <translation>Center and two points</translation>
     </message>

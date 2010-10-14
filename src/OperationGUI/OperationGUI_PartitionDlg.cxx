@@ -67,7 +67,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   mainFrame()->RadioButton3->close();
 
   // Full partition (contains half-space partition)
-  GroupPoints = new DlgRef_2Sel1List1Check( centralWidget() );
+  GroupPoints = new DlgRef_2Sel1List2Check( centralWidget() );
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
   GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECTS" ) );
@@ -76,9 +76,10 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   GroupPoints->PushButton2->setIcon( image2 );
   GroupPoints->LineEdit1->setReadOnly( true );
   GroupPoints->LineEdit2->setReadOnly( true );
-  GroupPoints->LineEdit1->setEnabled(true);
-  GroupPoints->LineEdit2->setEnabled(false);
+  GroupPoints->LineEdit1->setEnabled( true );
+  GroupPoints->LineEdit2->setEnabled( false );
   GroupPoints->CheckButton1->setText( tr( "GEOM_KEEP_NONLIMIT_SHAPES" ) );
+  GroupPoints->CheckButton2->setText( tr( "GEOM_NO_SELF_INTERSECTION" ) );
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -161,20 +162,22 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   globalSelection();
   
-  myListShapes.length( 0 );
-  myListTools.length( 0 );  
-  myListKeepInside.length( 0 );
-  myListRemoveInside.length( 0 );
-  myListMaterials.length( 0 );
+  //myListShapes.length( 0 );
+  //myListTools.length( 0 );  
+  //myListKeepInside.length( 0 );   // obsolete
+  //myListRemoveInside.length( 0 ); // obsolete
+  //myListMaterials.length( 0 );    // obsolete
   
   switch ( constructorId ) {
   case 0: /*Full partition */
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
+    GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECTS" ) );
     GroupPoints->TextLabel2->setText( tr( "GEOM_TOOL_OBJECTS" ) );
     GroupPoints->TextLabel3->show();
     GroupPoints->ComboBox1->show();
     GroupPoints->ComboBox1->setCurrentIndex( 0 );
     GroupPoints->CheckButton1->show();
+    GroupPoints->CheckButton2->show();
     GroupPoints->PushButton1->setDown( true );
     GroupPoints->PushButton2->setDown( false );
     GroupPoints->LineEdit1->setEnabled(true);
@@ -184,8 +187,10 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION_HALFSPACE" ) );
     GroupPoints->TextLabel3->hide();
     GroupPoints->ComboBox1->hide();
+    GroupPoints->TextLabel1->setText( tr( "GEOM_OBJECT" ) );
     GroupPoints->TextLabel2->setText( tr( "GEOM_PLANE" ) );
     GroupPoints->CheckButton1->hide();
+    GroupPoints->CheckButton2->hide();
     GroupPoints->PushButton1->setDown( true );
     GroupPoints->LineEdit1->setEnabled(true);
     break;
@@ -249,27 +254,38 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 
   int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
     
-  if ( nbSel < 1 ) {
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-      myListShapes.length( 0 );
-      myListMaterials.length( 0 );
+  if ( getConstructorId() == 1 ) {
+    // for half-selection, only one shape can be selected as an object
+    // and only one plane as a tool
+    if ( nbSel != 1 ) {
+      if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+	myListShapes.length( 0 );
+	// myListMaterials.length( 0 ); // obsolete
+	return;
+      }
+      else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+	myListTools.length( 0 );
+	return;
+      }
     }
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 )
-      myListTools.length( 0 );
   }
-  
-  // One and only one plane can be selected
-  
-  if ( getConstructorId() == 1 &&
-       myEditCurrentArgument == GroupPoints->LineEdit2 && 
-       nbSel != 1 ) {
-    myListTools.length( 0 );
-    return;
+  else {
+    if ( nbSel < 1 ) {
+      if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+	myListShapes.length( 0 );
+	//myListMaterials.length( 0 ); // obsolete
+	return;
+      }
+      else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+	myListTools.length( 0 );
+	return;
+      }
+    }
   }
   
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
     GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListShapes, true);
-    myListMaterials.length( 0 );
+    //myListMaterials.length( 0 ); // obsolete
     if ( !myListShapes.length() )
       return;
   }
@@ -277,6 +293,17 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListTools, true);
     if ( !myListTools.length() )
       return;
+    else if ( myListTools.length() == 1 && getConstructorId() == 1 ) {
+      GEOM::GEOM_IMeasureOperations_var mOp = getGeomEngine()->GetIMeasureOperations( getStudyId() );
+      GEOM::ListOfLong_var   intList;
+      GEOM::ListOfDouble_var dblList;
+      GEOM::GEOM_IKindOfShape::shape_kind kind = mOp->KindOfShape( myListTools[0].in(), intList.out(), dblList.out() );
+      mOp->Destroy();
+      if ( kind < GEOM::GEOM_IKindOfShape::DISK_CIRCLE || kind > GEOM::GEOM_IKindOfShape::PLANAR ) {
+	myListTools.length( 0 );
+	return;
+      }
+    }
   }
   
   myEditCurrentArgument->setText( aString );
@@ -372,8 +399,9 @@ GEOM::GEOM_IOperations_ptr OperationGUI_PartitionDlg::createOperation()
 //=================================================================================
 bool OperationGUI_PartitionDlg::isValid( QString& )
 {
-  return ( myListShapes.length()     || myListTools.length() ||
-           myListKeepInside.length() || myListRemoveInside.length() );
+  printf("OperationGUI_PartitionDlg::isValid:myListShapes.length()=%d\n",myListShapes.length());
+  printf("OperationGUI_PartitionDlg::isValid:myListTools.length()=%d\n",myListTools.length());
+  return ( myListShapes.length() || myListTools.length() ); // || myListKeepInside.length() || myListRemoveInside.length()  // obsolete
 }
 
 
@@ -384,50 +412,47 @@ bool OperationGUI_PartitionDlg::isValid( QString& )
 bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
 {
   bool res = false;
-
   GEOM::GEOM_Object_var anObj;
-  QString msg;
 
-  int aLimit = GetLimit();
-  int aConstructorId = getConstructorId();
-  int aKeepNonlimitShapes = 0;
+  int aLimit               = GetLimit();
+  int aKeepNonlimitShapes  = GroupPoints->CheckButton1->isChecked();
+  bool aNoSelfIntersection = GroupPoints->CheckButton2->isChecked();
 
-  if ( aConstructorId == 1 ) {
-    aLimit = GEOM::SHAPE;
-  }
-  else {
-    if ( GroupPoints->CheckButton1->isChecked() ) {
-      aKeepNonlimitShapes = 1;
-    }
-    else {
-      aKeepNonlimitShapes = 0;
-    }
-  }
+  GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() );
 
-  if ( isValid( msg ) ) {
-    GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
-    anObj = anOper->MakePartition( myListShapes, myListTools,
-                                   myListKeepInside, myListRemoveInside,
-                                   aLimit, false, myListMaterials, aKeepNonlimitShapes );
+  switch ( getConstructorId() ) {
+  case 0:
+    anObj = aNoSelfIntersection ?
+      anOper->MakePartitionNonSelfIntersectedShape( myListShapes, myListTools,
+						    myListKeepInside, myListRemoveInside,
+						    aLimit, false, myListMaterials, aKeepNonlimitShapes ) :
+      anOper->MakePartition( myListShapes, myListTools,
+			     myListKeepInside, myListRemoveInside,
+			     aLimit, false, myListMaterials, aKeepNonlimitShapes );
     res = true;
+    break;
+  case 1:
+    anObj = anOper->MakeHalfPartition( myListShapes[0].in(), myListTools[0].in() );
+    res = true;
+    break;
   }
 
   if ( !anObj->_is_nil() ) {
     TopoDS_Shape aShape;
-    GEOMBase::GetShape(anObj, aShape, TopAbs_SHAPE);
-    TopoDS_Iterator It (aShape, Standard_True, Standard_True);
-    int nbSubshapes=0;
-    for (; It.More(); It.Next())
+    GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE );
+    TopoDS_Iterator It( aShape, Standard_True, Standard_True );
+    int nbSubshapes = 0;
+    for ( ; It.More(); It.Next() )
       nbSubshapes++;
 
-    if (nbSubshapes)
+    if ( nbSubshapes )
       objects.push_back( anObj._retn() );
     else
-      SUIT_MessageBox::warning(this,
-                               QObject::tr("GEOM_ERROR"),
-                               QObject::tr("GEOM_WRN_PARTITION_RESULT_EMPTY"));
+      SUIT_MessageBox::warning( this,
+				QObject::tr( "GEOM_ERROR" ),
+				QObject::tr( "GEOM_WRN_PARTITION_RESULT_EMPTY" ) );
   }
-
+  
   return res;
 }
 

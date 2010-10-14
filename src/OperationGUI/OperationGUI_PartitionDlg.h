@@ -29,7 +29,7 @@
 
 #include <GEOMBase_Skeleton.h>
 
-class DlgRef_2Sel1List1Check;
+class DlgRef_2Sel1List2Check;
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg
@@ -65,7 +65,7 @@ private:
   GEOM::ListOfGO                     myListRemoveInside;
   GEOM::ListOfGO                     myListKeepInside;
 
-  DlgRef_2Sel1List1Check*            GroupPoints;
+  DlgRef_2Sel1List2Check*            GroupPoints;
 
 private slots:
   void                               ClickOnOk();
