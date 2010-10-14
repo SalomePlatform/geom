@@ -21,7 +21,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 SUBDIRS= structelem
 
-salomepypkgdir = $(salomepythondir)/salome/geom
-salomepypkg_PYTHON = \
+mypkgpythondir = $(salomepythondir)/salome/geom
+mypkgpython_PYTHON = \
 	__init__.py \
 	geomtools.py
