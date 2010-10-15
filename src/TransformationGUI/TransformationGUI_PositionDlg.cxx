@@ -304,6 +304,7 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
   myObjects.length(0);
   myEditCurrentArgument = Group1->LineEdit1;
   myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
 
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());

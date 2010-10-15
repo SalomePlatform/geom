@@ -265,6 +265,7 @@ bool TransformationGUI_ScaleDlg::ClickOnApply()
   myObjects.length(0);
   myEditCurrentArgument = LineEdit1;
   myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
 
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());

@@ -240,6 +240,7 @@ bool TransformationGUI_RotationDlg::ClickOnApply()
   myObjects.length(0);
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
 
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
