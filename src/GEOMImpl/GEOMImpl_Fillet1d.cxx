@@ -504,18 +504,15 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   else
     anEnd = aNearest->GetParam();
 
-  //Check the case when start and end are identical. This happens
-  //when the edge decreases to size 0. Old ww5 allows such
-  //cases. So we are again bug compatible
-  if (fabs(aStart - anEnd) < Precision::PConfusion()/*gp::Resolution()*/)
-    anEnd = 0.01;
-  //Divide edge
-  BRepBuilderAPI_MakeEdge aDivider1(aCurve, aStart, anEnd);
-  if (myEdgesExchnged) 
-    theEdge2 = aDivider1.Edge();
-  else 
-    theEdge1 = aDivider1.Edge();
-
+  if (fabs(aStart - anEnd) > Precision::Confusion())
+  {
+      //Divide edge
+      BRepBuilderAPI_MakeEdge aDivider1(aCurve, aStart, anEnd);
+      if (myEdgesExchnged) 
+        theEdge2 = aDivider1.Edge();
+      else 
+        theEdge1 = aDivider1.Edge();
+  }
 
   aCurve = BRep_Tool::Curve(myEdge2, aStart, anEnd);
   aCurve->D1(aNearest->GetParam2(), aPoint2, aDir);
@@ -526,16 +523,14 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   else
     anEnd = aNearest->GetParam2();
 
-  //Check the case when start and end are identical. This happens
-  //when the edge decreases to size 0. Old ww5 allows such
-  //cases. So we are again bug compatible
-  if (fabs(aStart - anEnd) < Precision::PConfusion()/*gp::Resolution()*/)
-    anEnd = 0.01;
-  BRepBuilderAPI_MakeEdge aDivider2(aCurve, aStart, anEnd);
-  if (myEdgesExchnged) 
-    theEdge1 = aDivider2.Edge();
-  else 
-    theEdge2 = aDivider2.Edge();
+  if (fabs(aStart - anEnd) > Precision::Confusion())
+  {
+      BRepBuilderAPI_MakeEdge aDivider2(aCurve, aStart, anEnd);
+      if (myEdgesExchnged) 
+        theEdge1 = aDivider2.Edge();
+      else 
+        theEdge2 = aDivider2.Edge();
+  }
 
   delete aNearest;
   return aResult;

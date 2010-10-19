@@ -235,9 +235,9 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     
     // check if face edges modified,
     // if yes, than map to original edges (from vertex-edges list), because edges can be modified before
-    if (!aModifE1.IsNull() && !aModifE1.IsSame( anEdge1 ))
+    if (aModifE1.IsNull() || !anEdge1.IsSame( aModifE1 ))
       addEdgeRelation( anEdgeToEdgeMap, TopoDS::Edge(aVertexEdges.First()), aModifE1 );
-    if (!aModifE2.IsNull() && !aModifE2.IsSame( anEdge2 ))
+    if (aModifE2.IsNull() || !anEdge2.IsSame( aModifE2 ))
       addEdgeRelation( anEdgeToEdgeMap, TopoDS::Edge(aVertexEdges.Last()), aModifE2 );
   }
 
@@ -251,7 +251,7 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Shape anEdge = anExp.Current(); 
     if ( !anEdgeToEdgeMap.IsBound( anEdge ) )
       aListOfNewEdge.Append( anEdge );
-    else
+    else if (!anEdgeToEdgeMap.Find( anEdge ).IsNull())
       aListOfNewEdge.Append( anEdgeToEdgeMap.Find( anEdge ) );
   }
 
