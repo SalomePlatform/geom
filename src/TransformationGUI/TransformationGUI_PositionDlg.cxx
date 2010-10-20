@@ -91,7 +91,6 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
 
   // Activate Create a Copy mode
   Group1->CheckButton1->setChecked(true);
-  Group1->CheckButton1->setChecked(false);
   CreateCopyModeChanged(true);
 
   Init();
