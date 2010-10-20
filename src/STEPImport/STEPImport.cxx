@@ -172,6 +172,13 @@ extern "C"
             Handle(TCollection_HAsciiString) aName = Prod->Name();
             TCollection_ExtendedString aNameExt (aName->ToCString());
 
+            // special check to pass names like "Open CASCADE STEP translator 6.3 1"
+            TCollection_AsciiString aSkipName ("Open CASCADE STEP translator");
+            if (aName->Length() >= aSkipName.Length()) {
+              if (aName->String().SubString(1, aSkipName.Length()).IsEqual(aSkipName))
+                continue;
+            }
+
             // find target shape
             Handle(Transfer_Binder) binder = TP->Find(enti);
             if (binder.IsNull()) continue;
