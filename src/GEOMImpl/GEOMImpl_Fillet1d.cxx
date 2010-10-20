@@ -223,6 +223,7 @@ void GEOMImpl_Fillet1d::fillDiff(GEOMImpl_Fillet1dPoint* thePoint, Standard_Real
 //=======================================================================
 Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius) 
 {
+  myDegreeOfRecursion = 0;
   myResultParams.Clear();
   myResultOrientation.Clear();
 
@@ -305,10 +306,26 @@ Standard_Boolean GEOMImpl_Fillet1d::processPoint(GEOMImpl_Fillet1dPoint* theLeft
       theParameter = theRight->GetParam() - aDX / 100.;
     }
 
+    // Protection on infinite loop.
+    myDegreeOfRecursion++;
+    Standard_Real diffx = 0.001 * aDX;
+    if (myDegreeOfRecursion > 1000)
+    {
+        diffx *= 10.0;
+        if (myDegreeOfRecursion > 10000)
+        {
+            diffx *= 10.0;
+            if (myDegreeOfRecursion > 100000)
+            {
+                return Standard_True;
+            }
+        }
+    }
+
     GEOMImpl_Fillet1dPoint* aPoint1 = theLeft->Copy();
     GEOMImpl_Fillet1dPoint* aPoint2 = new GEOMImpl_Fillet1dPoint(theParameter);
     fillPoint(aPoint2);
-    fillDiff(aPoint2, aDX / 10., Standard_True);
+    fillDiff(aPoint2, diffx, Standard_True);
     
     aPoint1->FilterPoints(aPoint2);
     performNewton(aPoint1, aPoint2);
