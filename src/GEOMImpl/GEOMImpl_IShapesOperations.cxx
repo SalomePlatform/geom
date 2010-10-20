@@ -3229,7 +3229,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   bool isFound = false;
   Standard_Integer iType = TopAbs_SOLID;
   Standard_Integer compType = TopAbs_SOLID;
-  Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
+  //Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
   Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
@@ -3310,6 +3310,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
 
   // Compute the ShapeWhat Mass
+  /*
   for ( ; Exp_aWhat.More(); Exp_aWhat.Next() ) {
     if ( iType == TopAbs_VERTEX ) {
       aWhat_Mass += 1;
@@ -3320,6 +3321,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     else                             BRepGProp::VolumeProperties(Exp_aWhat.Current(),  aProps);
     aWhat_Mass += aProps.Mass();
   }
+  */
 
   // Searching for the sub-shapes inside the ShapeWhere shape
   TopTools_MapOfShape map_aWhere;
@@ -3361,12 +3363,13 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       if ( isFound ) {
         aWhereIndex = aWhereIndices.FindIndex(Exp_aWhere.Current());
         aModifiedList.Append(aWhereIndex);
-        aWhere_Mass += tab_aWhere[3];
+        //aWhere_Mass += tab_aWhere[3];
         isFound = false;
         break;
       }
     }
-    if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass ) break;
+    //if ( fabs( aWhat_Mass - aWhere_Mass ) <= Tol_Mass )
+      //break;
   }
 
   if (aModifiedList.Extent() == 0) { // Not found any Results
