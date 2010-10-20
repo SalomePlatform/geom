@@ -15,16 +15,16 @@ is a list of operators ("FixShape", "SplitClosedFaces", etc.),
 etc), \em Values is a list of values of parameters placed in the same
 order as in the list of Parameters.
 
-\note <b>Shape Processing</b> is usefull not only on invalid shapes,
-      but sometimes also on shapes, that are classified as valid by
-      the <b>Check</b> functionality. Use it, if some operation (for
+\note <b>Shape Processing</b> is useful not only on invalid shapes,
+      but also on the shapes, that are classified as valid by
+      the <b>Check</b> functionality. Use it, if an operation (for
       example, <b>Partition</b>) fails.
       Example of usage:
       <ol>
-      <li>Try a partition on objects obj1 and obj2.</li>
+      <li>Try to partition objects obj1 and obj2.</li>
       <li>Partition fails.</li>
       <li>Perform Shape Processing on objects obj1 and obj2.</li>
-      <li>Try again the partition.</li>
+      <li>Try to partition them again.</li>
       </ol>
       See also \ref tui_limit_tolerance "TUI example".
 
