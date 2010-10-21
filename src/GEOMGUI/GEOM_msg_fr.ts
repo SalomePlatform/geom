@@ -1822,6 +1822,14 @@ Choisissez face, coque ou solide et essayez de nouveau</translation>
         <translation>Tolérance</translation>
     </message>
     <message>
+        <source>GEOM_LINEAR_TOLERANCE</source>
+        <translation>Tolérance Linéaire</translation>
+    </message>
+    <message>
+        <source>GEOM_ANGULAR_TOLERANCE</source>
+        <translation>Tolérance Angulaire</translation>
+    </message>
+    <message>
         <source>GEOM_TOLERANCE_CONSTR</source>
         <translation>Objet et ses Tolérances</translation>
     </message>
@@ -3776,6 +3784,10 @@ Choisissez face, coque ou solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_KEEP_NONLIMIT_SHAPES</source>
         <translation>Préserver les formes inférieures</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTION</source>
+        <translation>Pas d&apos;intersection des sous-formes (assemblages seuls)</translation>
     </message>
     <message>
         <source>GEOM_CENTER_2POINTS</source>
