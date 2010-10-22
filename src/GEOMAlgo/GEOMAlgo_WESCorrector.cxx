@@ -26,7 +26,11 @@
 //
 #include <GEOMAlgo_WESCorrector.ixx>
 
+#include <Geom_Surface.hxx>
+
+#include <TopLoc_Location.hxx>
 #include <TopoDS.hxx>
+
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Face.hxx>
@@ -34,6 +38,7 @@
 
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Surface.hxx>
 
 #include <TopTools_IndexedMapOfOrientedShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -54,16 +59,15 @@
 #include <GEOMAlgo_WireSplitter.hxx>
 #include <GEOMAlgo_WESScaler.hxx>
 
-
 static
   void MakeWire(const TopTools_ListOfShape& aLE, 
                 TopoDS_Wire& newWire);
 
-//modified by NIZNHY-PKV Thu Jun 10 11:26:55 2010f
+
 static
   Standard_Boolean IsToScale(const TopoDS_Face& aF, 
 			     Standard_Real& aScale);
-//modified by NIZNHY-PKV Thu Jun 10 11:27:02 2010t
+
 //=======================================================================
 // function: 
 // purpose: 
@@ -227,7 +231,14 @@ static
       }
       //
       if (bRegular) {
-        TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+	//modified by NIZNHY-PKV Wed Oct 20 14:45:52 2010f
+	const  TopoDS_Edge& aEx=*((TopoDS_Edge*)&aER);
+	if (!BRep_Tool::Degenerated(aEx)) {
+	  TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+	}
+	//
+        //TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+	//modified by NIZNHY-PKV Wed Oct 20 14:46:48 2010t
       }
     }//for (j=1; j<=aNbC; ++j) {
     //
@@ -274,9 +285,8 @@ static
   GEOMAlgo_WESScaler aWSC;
   //
   const TopoDS_Face& aF=myWES->Face();
-  //modified by NIZNHY-PKV Thu Jun 10 11:27:45 2010f
+  //
   bToScale=IsToScale(aF, aScale);
-  //modified by NIZNHY-PKV Thu Jun 10 11:27:49 2010t
   //
   myNewWES.SetFace(aF);
   aCBIt.Initialize(myConnexityBlocks);
@@ -293,7 +303,6 @@ static
     //
     GEOMAlgo_WireSplitter aWS;
     //
-    //modified by NIZNHY-PKV Thu Jun 10 10:40:43 2010f
     if(bToScale) {
       TopoDS_Shape aE;
       TopTools_ListIteratorOfListOfShape aIt;
@@ -345,7 +354,6 @@ static
 	myNewWES.AddShape (aW);
       }
     }//if(bToScale)
-    //modified by NIZNHY-PKV Thu Jun 10 10:40:48 2010t
     //
     else {
       aWS.SetFace(aF);
@@ -392,11 +400,7 @@ static
   }
 }
 //
-//modified by NIZNHY-PKV Thu Jun 10 11:14:09 2010f
 
-#include <Geom_Surface.hxx>
-#include <TopLoc_Location.hxx>
-#include <BRepAdaptor_Surface.hxx>
  
 //=======================================================================
 //function : IsToScale
@@ -427,5 +431,4 @@ Standard_Boolean IsToScale(const TopoDS_Face& aF,
   }
   return bRet;
 }
-//modified by NIZNHY-PKV Thu Jun 10 11:14:12 2010t
 
