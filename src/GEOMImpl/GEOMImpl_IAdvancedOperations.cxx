@@ -55,7 +55,6 @@
 #include <gp_Ax3.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
-#include <BRepTools.hxx>
 #include <cmath>
 
 #include <TFunction_DriverTable.hxx>
@@ -947,11 +946,11 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     }
     Cote_5->GetLastFunction()->SetDescription("");
 
-    std::list<Handle(GEOM_Object)> edgeList2;
-    edgeList2.push_back(edge_chan_inc);
-    edgeList2.push_back(Cote_3);
-    edgeList2.push_back(Cote_5);
-    edgeList2.push_back(Cote_4);
+    //std::list<Handle(GEOM_Object)> edgeList2;
+    //edgeList2.push_back(edge_chan_inc);
+    //edgeList2.push_back(Cote_3);
+    //edgeList2.push_back(Cote_5);
+    //edgeList2.push_back(Cote_4);
     //         std::cerr << "Creating wire 2" << std::endl;
     //wire_t2 = myShapesOperations->MakeWire(edgeList2, 1e-7);
     //if (wire_t2.IsNull()) {
@@ -983,20 +982,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
   aPlnOXZ->GetLastFunction()->SetDescription("");
   theShapes.push_back(aPlnOZ);
   theShapes.push_back(aPlnOXZ);
-
-  // tmp
-  /*
-  BRepTools::Write(theShape->GetValue(),
-                   "/dn25/salome/jfa/DATA/Salome/BUGS/M_0020998_Some_limitations_to_the_PipeTShape/theShape.brep");
-  BRepTools::Write(aPlnOZ->GetValue(),
-                   "/dn25/salome/jfa/DATA/Salome/BUGS/M_0020998_Some_limitations_to_the_PipeTShape/aPlnOZ.brep");
-  BRepTools::Write(aPlnOXZ->GetValue(),
-                   "/dn25/salome/jfa/DATA/Salome/BUGS/M_0020998_Some_limitations_to_the_PipeTShape/aPlnOXZ.brep");
-  BRepTools::Write(face_t->GetValue(),
-                   "/dn25/salome/jfa/DATA/Salome/BUGS/M_0020998_Some_limitations_to_the_PipeTShape/face_t.brep");
-  BRepTools::Write(face_t2->GetValue(),
-                   "/dn25/salome/jfa/DATA/Salome/BUGS/M_0020998_Some_limitations_to_the_PipeTShape/face_t2.brep");
-  */
 
   // Partition
   Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
@@ -2099,6 +2084,15 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   TopoDS_Shape aFilletShape = aFillet->GetValue();
   aFunction->SetValue(aFilletShape);
   // END of fillet
+
+  // BEGIN: Limit tolerances (debug)
+  GEOMImpl_IHealingOperations myHealingOperations (GetEngine(), GetDocID());
+
+  Handle(GEOM_Object) aCorr1 = myHealingOperations.LimitTolerance(aShape, 1e-07);
+  TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
+  aShape->GetLastFunction()->SetValue(aCorr1Shape);
+  aCorr1->GetLastFunction()->SetDescription("");
+  // END: Limit tolerances (debug)
 
   if (theHexMesh) {
     if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
