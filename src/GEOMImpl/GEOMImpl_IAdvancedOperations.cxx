@@ -90,6 +90,7 @@ GEOMImpl_IAdvancedOperations::GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngin
   myBlocksOperations    = new GEOMImpl_IBlocksOperations(GetEngine(), GetDocID());
   my3DPrimOperations    = new GEOMImpl_I3DPrimOperations(GetEngine(), GetDocID());
   myLocalOperations     = new GEOMImpl_ILocalOperations(GetEngine(), GetDocID());
+  myHealingOperations   = new GEOMImpl_IHealingOperations(GetEngine(), GetDocID());
 }
 
 //=============================================================================
@@ -107,6 +108,7 @@ GEOMImpl_IAdvancedOperations::~GEOMImpl_IAdvancedOperations()
   delete myBlocksOperations;
   delete my3DPrimOperations;
   delete myLocalOperations;
+  delete myHealingOperations;
 }
 
 //=============================================================================
@@ -1884,9 +1886,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
   // END of fillet
 
   // BEGIN: Limit tolerances (debug)
-  GEOMImpl_IHealingOperations myHealingOperations (GetEngine(), GetDocID());
-
-  Handle(GEOM_Object) aCorr1 = myHealingOperations.LimitTolerance(aShape, 1e-07);
+  Handle(GEOM_Object) aCorr1 = myHealingOperations->LimitTolerance(aShape, 1e-07);
   TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
   aShape->GetLastFunction()->SetValue(aCorr1Shape);
   aCorr1->GetLastFunction()->SetDescription("");
@@ -2086,9 +2086,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   // END of fillet
 
   // BEGIN: Limit tolerances (debug)
-  GEOMImpl_IHealingOperations myHealingOperations (GetEngine(), GetDocID());
-
-  Handle(GEOM_Object) aCorr1 = myHealingOperations.LimitTolerance(aShape, 1e-07);
+  Handle(GEOM_Object) aCorr1 = myHealingOperations->LimitTolerance(aShape, 1e-07);
   TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
   aShape->GetLastFunction()->SetValue(aCorr1Shape);
   aCorr1->GetLastFunction()->SetDescription("");
