@@ -47,12 +47,14 @@ import geompy
 
 #To Make Arc
 #"C radius length" : Create by direction, radius and length(in degree)
+#"AA x y": Create by point at X & Y
+#"A dx dy" : Create by point with DX & DY
 
 #To finish
 #"WW" : Close Wire
 
 #Create Sketcher
-Cmd = "Sketch:F 0 0:TT 0 100:C 100 180:WW"
+Cmd = "Sketch:F 0 0:TT 0 100:C 100 180:AA -100 100:WW"
 Sketcher = geompy.MakeSketcher(Cmd) #(string)->GEOM_Shape_ptr
 
 #Add In Study

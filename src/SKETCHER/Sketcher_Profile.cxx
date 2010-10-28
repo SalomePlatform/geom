@@ -244,7 +244,36 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
           else
             move = none;
           break;
-        }
+        }    
+      case 'A':
+        { 
+          if (n1 != 3) goto badargs;
+	  Standard_Real vx = a(1).RealValue();
+          Standard_Real vy = a(2).RealValue(); 
+	  if (a(0) == "AA") {
+            vx -= x;
+            vy -= y;
+          }
+	  Standard_Real det = (dx * vy - dy * vx);
+	  if ( Abs(det) > Precision::Confusion()) {
+	    Standard_Real c = (dx * vx + dy * vy)   // Cosine of alpha = arc angle / 2
+	                      / Sqrt((dx * dx + dy * dy)    
+		                   * (vx * vx + vy * vy));  
+            radius = (vx * vx + vy * vy)       // radius = distance between start  
+	             * Sqrt(dx * dx + dy * dy) // and end point / 2 * sin(alpha)
+	             / (2.0 * det);	       // radius is > 0 or < 0
+	    if (Abs(radius) > Precision::Confusion()) {
+	      angle = 2.0 * acos(c); 	       // angle in [0,Pi]  
+	      move = circle;
+            }
+	    else
+	      move = none;
+	    break;
+          } 
+          else
+            move = none;
+          break;
+        }	 
       case 'I':
         {
           if (n1 != 2) goto badargs;

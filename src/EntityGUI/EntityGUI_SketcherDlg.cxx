@@ -396,7 +396,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
   }
   else if (  myConstructorId == 1 ) { // ARC
     GroupD2->setEnabled( false );
-    MainWidget->RB_Dest1->setEnabled( false );
+    MainWidget->RB_Dest1->setEnabled( true ); 
     MainWidget->RB_Dest2->setChecked( true );
     DestClicked( 0 );
   }
@@ -440,7 +440,7 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
   // Get setting of step value from file configuration
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
 
-  if ( myConstructorId == 0 ) {  // SEGMENT
+  if ( (myConstructorId == 0) || (myConstructorId == 1) ) {  // SEGMENT OR ARC
     if ( constructorId == 1 ) {  // XY
       mySketchType = PT_ABS;
       initSpinBox( Group2Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
@@ -1214,6 +1214,18 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     }
   }
   else if ( myConstructorId == 1 ) {  // ARC
+    if ( mySketchType == PT_ABS ) {  
+      myX = vx;
+      myY = vy;
+      myXStr = vxStr;
+      myYStr = vyStr;
+    }
+    else if ( mySketchType == PT_RELATIVE ) {
+      myDX = vx;
+      myDY = vy;
+      myDXStr = vxStr;
+      myDYStr = vyStr;
+    } 
     if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myAngle = vx;
       myRadius = vy;
@@ -1338,6 +1350,14 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
     }
   }
   else if ( myConstructorId == 1 ) {  // ARC
+    if ( mySketchType == PT_ABS || mySketchType == PT_SEL ) {
+      myNewCommand = myNewCommand + "AA " + QString::number( myX ) + " " + QString::number( myY );
+      theParameters = myXStr + ":" + myYStr;
+    }
+    if ( mySketchType == PT_RELATIVE) {
+      myNewCommand = myNewCommand + "A " + QString::number( myDX ) + " " + QString::number( myDY );
+      theParameters = myDXStr + ":" + myDYStr;
+    } 
     if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myNewCommand = myNewCommand + "R " + QString::number( myAngle );
       myNewCommand = myNewCommand + ":" + "C " + QString::number( myRadius ) + " " + QString::number( myLength );

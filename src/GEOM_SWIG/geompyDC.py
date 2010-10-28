@@ -910,6 +910,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #     .
         #       \n
         #     - "C radius length" : Create arc by direction, radius and length(in degree)
+	#     - "AA x y": Create arc by point at X & Y
+        #     - "A dx dy" : Create arc by point with DX & DY
         #     .
         #       \n
         #     - "WW" : Close Wire (to finish)
