@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -62,8 +61,11 @@
 #include <Geom_TrimmedCurve.hxx>
 #include <GeomFill_Generator.hxx>
 
+#include <gce_MakePln.hxx>
+
 #include <Precision.hxx>
 #include <gp_Pnt.hxx>
+#include <gp_Pln.hxx>
 #include <TColgp_Array1OfPnt.hxx>
 
 #include <StdFail_NotDone.hxx>
@@ -1198,11 +1200,70 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
                                         const Standard_Boolean isPlanarWanted,
                                         TopoDS_Shape&          theResult)
 {
-  // try to build face on plane or on any surface under the edges of the wire
-  BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
-  if (MK.IsDone()) {
-    theResult = MK.Shape();
-    return;
+  // Workaround for Mantis issue 0020956
+  if (isPlanarWanted) {
+    // Count the number of points in the wire.
+    // Collect the first three points.
+    gp_Pnt p1, p2, p3;
+    bool is3Pnts(false);
+    bool p1set(false), p2set(false), p3set(false);
+    BRepTools_WireExplorer wexpl(theWire);
+    for (; wexpl.More(); wexpl.Next()) {
+      if (!p1set) {
+        p1set = true;
+         p1 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+      }
+      else if (!p2set) {
+        p2set = true;
+        p2 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+      }
+      else if (!p3set) {
+        p3set = true;
+        is3Pnts = true;
+        p3 = BRep_Tool::Pnt(wexpl.CurrentVertex());
+      }
+      else {
+        is3Pnts = false;
+        break;
+      }
+    }
+
+    // Construct a plane for the case of three points in the wire.
+    gp_Pln plane;
+    if (is3Pnts) {
+      gce_MakePln mkPln(p1, p2, p3);
+      if (mkPln.IsDone()) {
+        plane = mkPln.Value();
+      }
+      else {
+        is3Pnts = false;
+      }
+    }
+
+    // Construct a face based on the plane (in case of three points in the wire) or
+    // allow MakeFace to build the plane itself (in case of the number of points is greater than 3).
+    if (is3Pnts) {
+      BRepBuilderAPI_MakeFace MK (plane, theWire, isPlanarWanted);
+      if (MK.IsDone()) {
+        theResult = MK.Shape();
+        return;
+      }
+    }
+    else {
+      BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
+      if (MK.IsDone()) {
+        theResult = MK.Shape();
+        return;
+      }
+    }
+  }
+  else {
+    // try to build face on plane or on any surface under the edges of the wire
+    BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
+    if (MK.IsDone()) {
+      theResult = MK.Shape();
+      return;
+    }
   }
 
   if (!isPlanarWanted) {
