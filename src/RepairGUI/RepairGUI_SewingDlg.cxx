@@ -137,6 +137,7 @@ void RepairGUI_SewingDlg::Init()
 
   initName( tr( "SEWING_NEW_OBJ_NAME" ) );
   resize(100,100);
+  SelectionIntoArgument();
 }
 
 

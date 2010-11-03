@@ -322,6 +322,7 @@ void RepairGUI_ShapeProcessDlg::init()
   reset();
 
   initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ) );
+  selectionChanged();
 }
 
 //=================================================================================

@@ -113,6 +113,7 @@ void BuildGUI_CompoundDlg::Init()
   globalSelection( GEOM_ALLSHAPES );
 
   initName( tr( "GEOM_COMPOUND" ) );
+  SelectionIntoArgument();
 }
 
 
