@@ -3988,7 +3988,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def AddObject(self,theGroup, theSubShapeID):
             # Example: see GEOM_TestOthers.py
             self.GroupOp.AddObject(theGroup, theSubShapeID)
-            RaiseIfFailed("AddObject", self.GroupOp)
+            if self.GroupOp.GetErrorCode() != "PAL_ELEMENT_ALREADY_PRESENT":
+                RaiseIfFailed("AddObject", self.GroupOp)
+                pass
             pass
 
         ## Removes a sub object with ID \a theSubShapeId from the group
