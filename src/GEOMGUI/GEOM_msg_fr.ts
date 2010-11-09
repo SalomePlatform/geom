@@ -191,7 +191,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BLOCK_TITLE</source>
-        <translation>Construction d&apos;un Solide Hexahédrique</translation>
+        <translation>Construction d&apos;un solide hexaédrique</translation>
     </message>
     <message>
         <source>GEOM_BNDBOX</source>
