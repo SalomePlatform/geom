@@ -278,9 +278,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Center</translation>
     </message>
     <message>
+        <source>GEOM_CENTER_DEFAULT</source>
+        <translation>(Origin by default)</translation>
+    </message>
+    <message>
         <source>GEOM_CENTER_POINT</source>
         <translation>Center Point</translation>
     </message>
+
     <message>
         <source>GEOM_CENTRAL_POINT</source>
         <translation>Central Point</translation>
@@ -1905,6 +1910,11 @@ Please, select face, shell or solid and try again</translation>
         <source>GEOM_VECTOR</source>
         <translation>Vector</translation>
     </message>
+    <message>
+        <source>GEOM_AXIS_DEFAULT</source>
+        <translation>(Z axis by default)</translation>
+    </message>
+
     <message>
         <source>GEOM_VECTOR_LENGTH</source>
         <translation>Vector Length :</translation>

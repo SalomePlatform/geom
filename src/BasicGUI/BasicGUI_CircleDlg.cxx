@@ -70,8 +70,8 @@ BasicGUI_CircleDlg::BasicGUI_CircleDlg( GeometryGUI* theGeometryGUI, QWidget* pa
   GroupPntVecR = new DlgRef_2Sel1Spin( centralWidget() );
   GroupPntVecR->GroupBox1->setTitle( tr( "GEOM_ARGUMENTS" ) );
   
-  GroupPntVecR->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) + " (Origin by default)" );
-  GroupPntVecR->TextLabel2->setText( tr( "GEOM_VECTOR" ) + " (Z axis by default)" );
+  GroupPntVecR->TextLabel1->setText( tr( "GEOM_CENTER_POINT" ) + " " + tr( "GEOM_CENTER_DEFAULT" )  );
+  GroupPntVecR->TextLabel2->setText( tr( "GEOM_VECTOR" ) + " " + tr( "GEOM_AXIS_DEFAULT" ) );
   GroupPntVecR->TextLabel3->setText( tr( "GEOM_RADIUS" ) );
   GroupPntVecR->PushButton1->setIcon( image1 );
   GroupPntVecR->PushButton2->setIcon( image1 );

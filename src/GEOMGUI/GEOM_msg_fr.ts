@@ -278,6 +278,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Centre</translation>
     </message>
     <message>
+        <source>GEOM_CENTER_DEFAULT</source>
+        <translation> (Origine par défaut)</translation>
+    </message>
+    <message>
         <source>GEOM_CENTER_POINT</source>
         <translation>Point Central </translation>
     </message>
@@ -1904,6 +1908,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_VECTOR</source>
         <translation>Vecteur</translation>
+    </message>
+    <message>
+      <source>GEOM_AXIS_DEFAULT</source>
+        <translation> (Axe Z par défaut)</translation>
     </message>
     <message>
         <source>GEOM_VECTOR_LENGTH</source>
