@@ -4397,6 +4397,18 @@ Number of sketch points too small</translation>
         <translation>Remove</translation>
     </message>
     <message>
+        <source>SHOW_ONLY_SELECTED</source>
+        <translation>Show only selected</translation>
+    </message>
+    <message>
+        <source>HIDE_SELECTED</source>
+        <translation>Hide selected</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_SUB_SHAPES</source>
+        <translation>Show all sub-shapes</translation>
+    </message> 
+    <message>
         <source>SELECT_ALL</source>
         <translation>Select All</translation>
     </message>

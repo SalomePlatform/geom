@@ -141,9 +141,9 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   myRestrictGroupBox->setEnabled(!CORBA::is_nil(myMainObj));
   allSubs->setChecked(true);
 
-  myShowOnlyBtn = new QPushButton(tr("Show only selected"), GroupMedium);
-  myHideSelBtn  = new QPushButton(tr("Hide selected"), GroupMedium);
-  myShowAllBtn  = new QPushButton(tr("Show all sub-shapes"), GroupMedium);
+  myShowOnlyBtn = new QPushButton(tr("SHOW_ONLY_SELECTED"), GroupMedium);
+  myHideSelBtn  = new QPushButton(tr("HIDE_SELECTED"), GroupMedium);
+  myShowAllBtn  = new QPushButton(tr("SHOW_ALL_SUB_SHAPES"), GroupMedium);
 
   mySelAllBtn   = new QPushButton(tr("SELECT_ALL"), GroupMedium);
   myAddBtn      = new QPushButton(tr("ADD"), GroupMedium);
