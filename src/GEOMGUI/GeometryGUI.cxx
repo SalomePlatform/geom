@@ -1202,7 +1202,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     PyErr_Print();
   else
     {
-      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom","New Entity","Other");
+      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom",tr("MEN_NEW_ENTITY").toStdString().c_str(),tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
       if(result==NULL)
         PyErr_Print();
       Py_XDECREF(result);

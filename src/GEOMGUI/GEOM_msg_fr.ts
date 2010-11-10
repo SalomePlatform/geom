@@ -4151,6 +4151,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>JUNCTION_FACE_3</source>
         <translation>Jonction 3</translation>
     </message>
+    <message>
+        <source>GEOM_PLUGINS_OTHER</source>
+        <translation>Autre</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>

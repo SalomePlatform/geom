@@ -4154,6 +4154,10 @@ Input value precision can be adjusted using
         <source>JUNCTION_FACE_3</source>
         <translation>Junction 3</translation>
     </message>
+    <message>
+        <source>GEOM_PLUGINS_OTHER</source>
+        <translation>Other</translation>
+    </message>  
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
