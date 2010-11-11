@@ -1,4 +1,4 @@
---  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+--  Copyright (C) 2007-2008  CEA/DEN, EDF R&D, OPEN CASCADE
 --
 --  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 --  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,7 +19,6 @@
 --
 --  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 --
-
 -- File:	NMTTools_PaveFiller.cdl
 -- Created:	Fri Dec  5 14:35:00 2003
 -- Author:	Peter KURNEV
@@ -36,13 +35,10 @@ uses
     Vertex     from  TopoDS, 
     Face       from  TopoDS,  
     Shape      from TopoDS, 
-    -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN 
     Edge       from  TopoDS, 
     ListOfShape from TopTools,  
     DataMapOfShapeShape from TopTools,
     ListOfInteger from TColStd,  
-    -- Contribution of Samtech www.samcef.com END 
     
     Context     from IntTools, 
     ShrunkRange from IntTools,
@@ -68,12 +64,9 @@ uses
    
     ShapesDataStructure  from NMTDS,  
 
-    -- Modified to add new definitions Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN
     PShapesDataStructure from NMTDS, 
     Iterator             from NMTDS, 
     IndexedDataMapOfIndexedMapOfInteger from NMTTools,  
-    -- Contribution of Samtech www.samcef.com END
      
     PIterator from NMTDS, 
     PInterfPool from NMTDS
@@ -104,12 +97,8 @@ is
     IP(me:out)  
     	returns PInterfPool from NMTDS; 
     --	 
-    --  Perform the algo  
-    -- Modified to add new method Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN      
     Init       (me:out) 
     	is virtual  protected; 
-    -- Contribution of Samtech www.samcef.com END
 	 
     Clear   (me:out) 
     	is virtual  protected;
@@ -369,14 +358,12 @@ is
 	returns PaveBlock from BOPTools; 
     ---C++: return const & 	   
     
-    --modified by NIZNHY-PKV Fri Nov 30 10:30:54 2007  f
     RealPaveBlock(me:out;   
     	    aPB:PaveBlock from BOPTools; 
     	    aLB:out ListOfInteger from TColStd; 
     	    aIsCommonBlock:out  Integer from Standard) 
 	returns PaveBlock from BOPTools; 
     ---C++: return const & 	 
-    --modified by NIZNHY-PKV Fri Nov 30 10:30:58 2007  t 
      
     RealSplitsFace  (me:out;  
     	         nF2 :Integer from Standard;  
@@ -457,8 +444,6 @@ is
 	  
     MakePCurves (me:out); 
      
-    -- Modified to add new methods Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN
     PerformVF1(me:out) 
     	is protected;  
 	 
@@ -468,7 +453,6 @@ is
     AloneVertices(me)  
     	returns IndexedDataMapOfIndexedMapOfInteger from NMTTools; 
     ---C++: return const & 
-    -- Contribution of Samtech www.samcef.com END 
      
     IsExistingPaveBlock (me:out; 
     	    	    aPB : PaveBlock   from BOPTools; 
@@ -489,19 +473,30 @@ is
      	    	    aTol: Real  from  Standard) 
     	returns Integer from Standard; 	 
 
-    -- Modified to add new method Thu Sep 14 14:35:18 2006 
-    -- Contribution of Samtech www.samcef.com BEGIN
     SharedEdges(me:out;  
     	         nF1  :Integer from Standard;  
     	         nF2  :Integer from Standard;  
     	         aLNE :out ListOfInteger from TColStd; 
     	         aLSE :out ListOfShape   from TopTools); 
-    -- Contribution of Samtech www.samcef.com END 
 
     FuseVertices(me; 
     	aC:Shape from TopoDS; 
 	aDMVV:  out  DataMapOfShapeShape from TopTools);  
-     
+    --
+    TreatPaveBlocks(me:out; 
+    	    theLCB:out ListOfCommonBlock from NMTTools); 
+	     
+    ChangePavePoolNew(me:out) 
+    	returns PavePool from BOPTools; 
+    ---C++:return &  
+
+    --modified by NIZNHY-PKV Thu Nov 11 08:12:50 2010f 
+    CheckCoincidence (me:out; 
+    	    	    aPB1 : PaveBlock   from BOPTools; 
+    	    	    aPB2 : PaveBlock   from BOPTools) 
+    	returns Boolean from Standard;   
+    --modified by NIZNHY-PKV Thu Nov 11 08:12:54 2010t
+
 fields 
     myDS               :  PShapesDataStructure from NMTDS   	is protected;   
     myIsDone           :  Boolean from Standard                 is protected; 

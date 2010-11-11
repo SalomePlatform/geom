@@ -32,6 +32,8 @@
 #include <gp_Pnt.hxx>
 #include <Bnd_Box.hxx>
 
+#include <GeomAPI_ProjectPointOnCurve.hxx>
+
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
@@ -62,6 +64,7 @@
 #include <IntTools_SequenceOfRanges.hxx>
 #include <IntTools_EdgeEdge.hxx>
 #include <IntTools_SequenceOfCommonPrts.hxx>
+#include <IntTools_Tools.hxx>
 
 #include <BOPTools_Pave.hxx>
 #include <BOPTools_PaveSet.hxx>
@@ -170,16 +173,10 @@ void NMTTools_PaveFiller::PerformEE()
   for (; myDSIt->More(); myDSIt->Next()) {
     myDSIt->Current(n1, n2, bJustAdd);
     anIndexIn = 0;
-    //
-    //if (myIntrPool->IsComputed(n1, n2)) {
-    //  continue;
-    //}
-    //
     nE1=n1;
     nE2=n2;
     //
     if(bJustAdd) {
-      //myIntrPool->AddInterference (nE1, nE2, BooleanOperations_EdgeEdge, anIndexIn);
       continue;
     }
     //
@@ -281,9 +278,7 @@ void NMTTools_PaveFiller::PerformEE()
                 aR1 = (aEE.Order()) ? anewSR2 : anewSR1;
                 aR2 = (aEE.Order()) ? anewSR1 : anewSR2;
                 //
-                //modified by NIZNHY-PKV Mon Jun 07 11:01:40 2010f
                 aTol=0.8*aTol;
-                //modified by NIZNHY-PKV Mon Jun 07 11:01:43 2010t
                 bIsOnPave1=IsOnPave(aT1, aR1, aTol);
                 bIsOnPave2=IsOnPave(aT2, aR2, aTol);
                 //
@@ -362,7 +357,6 @@ void NMTTools_PaveFiller::PerformEE()
                 aCoinsideFlag=IsBlocksCoinside(aPB1, aPB2);
                 //
                 if (aNbComPrt2>1 || !aCoinsideFlag) {
-                  //myIntrPool->AddInterference (aWhat, aWith, BooleanOperations_EdgeEdge, anIndexIn);
                   break;
                 }
                 //
@@ -1276,6 +1270,7 @@ void NMTTools_PaveFiller::RemoveCommonBlocks(const NMTTools_ListOfCommonBlock& a
 void NMTTools_PaveFiller::SplitCommonBlock(const NMTTools_CommonBlock& aCB,
                                            NMTTools_ListOfCommonBlock& aLCBx)
 {
+  Standard_Boolean bIsCoincided;
   Standard_Integer i, j,nE, aNbE, aNbSPBx, aNbPB, k;
   BOPTools_SequenceOfPaveBlock aSPBx;
   BOPTools_ListIteratorOfListOfPaveBlock anItLPB;
@@ -1355,8 +1350,6 @@ void NMTTools_PaveFiller::SplitCommonBlock(const NMTTools_CommonBlock& aCB,
   aNbSPBx=aSPBx.Length();
   aNbPB=aNbSPBx/aNbE;
   //
-  //modified by NIZNHY-PKV Fri Jun 04 14:07:37 2010f
-  //
   Standard_Integer k1, k2, n11, n12, n21, n22;
   //
   for (i=1; i<=aNbPB; ++i) {
@@ -1378,28 +1371,20 @@ void NMTTools_PaveFiller::SplitCommonBlock(const NMTTools_CommonBlock& aCB,
         n21=aPB2.Pave1().Index();
         n22=aPB2.Pave2().Index();
         if ((n21==n11 && n22==n12) || (n21==n12 && n22==n11)) {
-          aCBx.AddPaveBlock(aPB2);
-          break;
+	  //modified by NIZNHY-PKV Thu Nov 11 08:13:24 2010f
+	  bIsCoincided=CheckCoincidence(aPB2, aPB1);
+	  if (bIsCoincided) {
+	    aCBx.AddPaveBlock(aPB2);
+	    break;
+	  }
+	  //aCBx.AddPaveBlock(aPB2);
+	  //break;
+	  //modified by NIZNHY-PKV Thu Nov 11 08:13:31 2010t
         }
       }
     }
     aLCBx.Append(aCBx);
   }
-  /*
-  for (i=1; i<=aNbPB; ++i) {
-    NMTTools_CommonBlock aCBx;
-    //
-    aCBx.AddFaces(aLF);
-    //
-    for (j=1; j<=aNbE; ++j) {
-      k=i+(j-1)*aNbPB;
-      const BOPTools_PaveBlock& aPB=aSPBx(k);
-      aCBx.AddPaveBlock(aPB);
-    }
-    aLCBx.Append(aCBx);
-  }
-  */
-  //modified by NIZNHY-PKV Fri Jun 04 14:07:42 2010t
 }
 
 //=======================================================================
@@ -1507,7 +1492,6 @@ void ProcessBlock(const BOPTools_PaveBlock& aPB,
     ProcessBlock(aPBx, aMapCB, aProcessedBlocks, aChain);
   }
 }
-
 // Modified  to provide VS interference between
 // vertex as result of EE and a Face of argument
 // Thu Sep 14 14:35:18 2006
@@ -1581,3 +1565,48 @@ void ProcessBlock(const BOPTools_PaveBlock& aPB,
   }
 }
 // Contribution of Samtech www.samcef.com END
+//modified by NIZNHY-PKV Thu Nov 11 08:13:48 2010f
+//=======================================================================
+// function: CheckCoincidence
+// purpose:
+//=======================================================================
+Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock& aPB1,
+						       const BOPTools_PaveBlock& aPB2)
+{
+  Standard_Boolean bRet;
+  Standard_Integer nE1, nE2, aNbPoints;
+  Standard_Real aT11, aT12, aT21, aT22, aT1m, aD, aTol, aT2x;
+  gp_Pnt aP1m;
+  //
+  bRet=Standard_False;
+  //
+  aT11=aPB1.Pave1().Param();
+  aT12=aPB1.Pave2().Param();
+  aT1m=IntTools_Tools::IntermediatePoint (aT11, aT12);
+  nE1=aPB1.OriginalEdge();
+  const TopoDS_Edge& aE1=(*(TopoDS_Edge*)(&myDS->Shape(nE1)));
+  BOPTools_Tools::PointOnEdge(aE1, aT1m, aP1m);
+  //
+  aT21=aPB2.Pave1().Param();
+  aT22=aPB2.Pave2().Param();
+  nE2=aPB2.OriginalEdge();
+  const TopoDS_Edge& aE2=(*(TopoDS_Edge*)(&myDS->Shape(nE2)));
+  //
+  GeomAPI_ProjectPointOnCurve& aPPC=myContext.ProjPC(aE2);
+  aPPC.Perform(aP1m);
+  aNbPoints=aPPC.NbPoints();
+  if (aNbPoints) {
+    aD=aPPC.LowerDistance();
+    //
+    aTol=BRep_Tool::Tolerance(aE1);
+    aTol=aTol+BRep_Tool::Tolerance(aE2);
+    if (aD<aTol) {
+      aT2x=aPPC.LowerDistanceParameter();
+      if (aT2x>aT21 && aT2x<aT22) {
+	return !bRet;
+      }
+    }
+  }
+  return bRet;
+}
+//modified by NIZNHY-PKV Thu Nov 11 08:13:55 2010t
