@@ -2207,7 +2207,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_EDIT</source>
-        <translation>Editer</translation>
+        <translation>Edition</translation>
     </message>
     <message>
         <source>MEN_ELLIPSE</source>
@@ -3463,11 +3463,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_GROUP_CREATE</source>
-        <translation>Créer une groupe</translation>
+        <translation>Créer un groupe</translation>
     </message>
     <message>
         <source>TOP_GROUP_EDIT</source>
-        <translation>Editer une groupe</translation>
+        <translation>Editer un groupe</translation>
     </message>
     <message>
         <source>TOP_HEX_SOLID</source>
@@ -3475,7 +3475,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_IMPORT</source>
-        <translation>Importer une géométry d&apos;un fichier BREP</translation>
+        <translation>Importer une géométrie d&apos;un fichier BREP</translation>
     </message>
     <message>
         <source>TOP_INERTIA</source>
@@ -3495,7 +3495,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_LOCAL_CS</source>
-        <translation>Créer un système local de coordonnées </translation>
+        <translation>Créer un système local de coordonnées</translation>
     </message>
     <message>
         <source>TOP_MASS_CENTER</source>
@@ -3503,7 +3503,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_MIN_DIST</source>
-        <translation>Distance minimale </translation>
+        <translation>Distance minimale</translation>
     </message>
     <message>
         <source>TOP_MIRROR</source>
