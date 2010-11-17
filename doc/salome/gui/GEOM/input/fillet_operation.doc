@@ -3,7 +3,7 @@
 \page fillet_operation_page Fillet
 
 \n To produce a \b Fillet in the <b>Main Menu</b> select 
-<b>Operations - > Transformation - > Fillet</b>
+<b>Operations - > Fillet</b>
 
 \n This operation creates fillets on the edges of a shape.
 \n The \b Result will be a \b GEOM_Object.

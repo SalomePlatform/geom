@@ -10,7 +10,7 @@ constructed, have to lie in the same plane.
 \image html fillet1d_2.png
 
 To produce a \b Fillet 1D in the <b>Main Menu</b> select 
-<b>Operations - > Transformation - > Fillet 1D</b>
+<b>Operations - > Fillet 1D</b>
 
 Define the <b>Wire with planar Edges</b> to create a fillet on, select the necessary 
 vertexes on this wire in the OCC Viewer and define the \b Radius of the Fillet.
