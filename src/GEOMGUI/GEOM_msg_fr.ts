@@ -1910,7 +1910,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Vecteur</translation>
     </message>
     <message>
-      <source>GEOM_AXIS_DEFAULT</source>
+        <source>GEOM_AXIS_DEFAULT</source>
         <translation> (Axe Z par défaut)</translation>
     </message>
     <message>
@@ -3387,7 +3387,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_DISK</source>
-        <translation>Créer une disque</translation>
+        <translation>Créer un disque</translation>
     </message>
     <message>
         <source>TOP_DISPLAY</source>
@@ -4408,7 +4408,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>SHOW_ALL_SUB_SHAPES</source>
         <translation>Afficher tous les sous-objets</translation>
-    </message> 
+    </message>
     <message>
         <source>SELECT_ALL</source>
         <translation>Tout sélectionner</translation>
@@ -4638,7 +4638,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE</source>
-        <translation>TuyauT</translation>
+        <translation>Tuyau en T</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TSHAPE_MPIPE</source>
