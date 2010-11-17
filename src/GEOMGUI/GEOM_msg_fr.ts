@@ -1127,11 +1127,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PIPE</source>
-        <translation>tuyau</translation>
+        <translation>Tuyau</translation>
     </message>
     <message>
         <source>GEOM_PIPE_TITLE</source>
-        <translation>Construction d&apos;un Tuyau </translation>
+        <translation>Construction d&apos;un tuyau</translation>
     </message>
     <message>
         <source>GEOM_SEGMENT</source>
