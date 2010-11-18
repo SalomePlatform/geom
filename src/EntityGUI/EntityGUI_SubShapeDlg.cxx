@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI_SubShapeDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "EntityGUI_SubShapeDlg.h"
 
 #include <DlgRef.h>
@@ -560,7 +559,7 @@ bool EntityGUI_SubShapeDlg::isValid (QString& msg)
 bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
-  GEOM::ListOfGO_var aList = anOper->MakeExplode(myObject, shapeType(), true);
+  GEOM::ListOfGO_var aList = anOper->MakeAllSubShapes(myObject, shapeType(), true);
 
   if (!aList->length())
     return false;

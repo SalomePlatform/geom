@@ -51,6 +51,7 @@
 ##     @defgroup l3_advanced      Creating Advanced Geometrical Objects
 ##     @{
 ##       @defgroup l4_decompose     Decompose objects
+##       @defgroup l4_decompose_d   Decompose objects deprecated methods
 ##       @defgroup l4_access        Access to sub-shapes by their unique IDs inside the main shape
 ##       @defgroup l4_obtain        Access to subshapes by a criteria
 ##       @defgroup l4_advanced      Advanced objects creation functions
@@ -1714,6 +1715,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetSharedShapes", self.ShapesOp)
             return aList
 
+        ## Get all sub-shapes, shared by all shapes in the list <VAR>theShapes</VAR>.
+        #  @param theShapes Shapes to find common sub-shapes of.
+        #  @param theShapeType Type of sub-shapes to be retrieved.
+        #  @return List of objects, that are sub-shapes of all given shapes.
+        #
+        #  @ref swig_GetSharedShapes "Example"
+        def GetSharedShapesMulti(self, theShapes, theShapeType):
+            # Example: see GEOM_TestOthers.py
+            aList = self.ShapesOp.GetSharedShapesMulti(theShapes, theShapeType)
+            RaiseIfFailed("GetSharedShapesMulti", self.ShapesOp)
+            return aList
+
         ## Find in <VAR>theShape</VAR> all sub-shapes of type <VAR>theShapeType</VAR>,
         #  situated relatively the specified plane by the certain way,
         #  defined through <VAR>theState</VAR> parameter.
@@ -2035,8 +2048,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref swig_all_decompose "Example"
         def SubShapeAll(self, aShape, aType):
             # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.MakeExplode(aShape,aType,0)
-            RaiseIfFailed("MakeExplode", self.ShapesOp)
+            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, aType, False)
+            RaiseIfFailed("SubShapeAll", self.ShapesOp)
             return ListObj
 
         ## Explode a shape on subshapes of a given type.
@@ -2046,34 +2059,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref swig_all_decompose "Example"
         def SubShapeAllIDs(self, aShape, aType):
-            ListObj = self.ShapesOp.SubShapeAllIDs(aShape,aType,0)
+            ListObj = self.ShapesOp.GetAllSubShapesIDs(aShape, aType, False)
             RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
             return ListObj
-
-        ## Explode a shape on subshapes of a given type.
-        #  Sub-shapes will be sorted by coordinates of their gravity centers.
-        #  @param aShape Shape to be exploded.
-        #  @param aType Type of sub-shapes to be retrieved.
-        #  @return List of sub-shapes of type theShapeType, contained in theShape.
-        #
-        #  @ref swig_SubShapeAllSorted "Example"
-        def SubShapeAllSorted(self, aShape, aType):
-            # Example: see GEOM_TestAll.py
-            ListObj = self.ShapesOp.MakeExplode(aShape,aType,1)
-            RaiseIfFailed("MakeExplode", self.ShapesOp)
-            return ListObj
-
-        ## Explode a shape on subshapes of a given type.
-        #  Sub-shapes will be sorted by coordinates of their gravity centers.
-        #  @param aShape Shape to be exploded.
-        #  @param aType Type of sub-shapes to be retrieved.
-        #  @return List of IDs of sub-shapes.
-        #
-        #  @ref swig_all_decompose "Example"
-        def SubShapeAllSortedIDs(self, aShape, aType):
-            ListIDs = self.ShapesOp.SubShapeAllIDs(aShape,aType,1)
-            RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
-            return ListIDs
 
         ## Obtain a compound of sub-shapes of <VAR>aShape</VAR>,
         #  selected by they indices in list of all sub-shapes of type <VAR>aType</VAR>.
@@ -2083,27 +2071,85 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def SubShape(self, aShape, aType, ListOfInd):
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
-            AllShapeList = self.SubShapeAll(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllIDs(aShape, aType)
             for ind in ListOfInd:
-                ListOfIDs.append(self.GetSubShapeID(aShape, AllShapeList[ind - 1]))
+                ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
+
+        ## Explode a shape on subshapes of a given type.
+        #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  @param aShape Shape to be exploded.
+        #  @param aType Type of sub-shapes to be retrieved.
+        #  @return List of sub-shapes of type theShapeType, contained in theShape.
+        #
+        #  @ref swig_SubShapeAllSorted "Example"
+        def SubShapeAllSortedCentres(self, aShape, aType):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.MakeAllSubShapes(aShape, aType, True)
+            RaiseIfFailed("SubShapeAllSortedCentres", self.ShapesOp)
+            return ListObj
+
+        ## Explode a shape on subshapes of a given type.
+        #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  @param aShape Shape to be exploded.
+        #  @param aType Type of sub-shapes to be retrieved.
+        #  @return List of IDs of sub-shapes.
+        #
+        #  @ref swig_all_decompose "Example"
+        def SubShapeAllSortedCentresIDs(self, aShape, aType):
+            ListIDs = self.ShapesOp.GetAllSubShapesIDs(aShape, aType, True)
+            RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
+            return ListIDs
 
         ## Obtain a compound of sub-shapes of <VAR>aShape</VAR>,
         #  selected by they indices in sorted list of all sub-shapes of type <VAR>aType</VAR>.
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #
         #  @ref swig_all_decompose "Example"
-        def SubShapeSorted(self,aShape, aType, ListOfInd):
+        def SubShapeSortedCentres(self, aShape, aType, ListOfInd):
             # Example: see GEOM_TestAll.py
             ListOfIDs = []
-            AllShapeList = self.SubShapeAllSorted(aShape, aType)
+            AllShapeIDsList = self.SubShapeAllSortedCentresIDs(aShape, aType)
             for ind in ListOfInd:
-                ListOfIDs.append(self.GetSubShapeID(aShape, AllShapeList[ind - 1]))
+                ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
 
         # end of l4_decompose
+        ## @}
+
+        ## @addtogroup l4_decompose_d
+        ## @{
+
+        ## Deprecated method
+        #  It works like SubShapeAllSortedCentres, but wrongly
+        #  defines centres of faces, shells and solids.
+        def SubShapeAllSorted(self, aShape, aType):
+            ListObj = self.ShapesOp.MakeExplode(aShape, aType, True)
+            RaiseIfFailed("MakeExplode", self.ShapesOp)
+            return ListObj
+
+        ## Deprecated method
+        #  It works like SubShapeAllSortedCentresIDs, but wrongly
+        #  defines centres of faces, shells and solids.
+        def SubShapeAllSortedIDs(self, aShape, aType):
+            ListIDs = self.ShapesOp.SubShapeAllIDs(aShape, aType, True)
+            RaiseIfFailed("SubShapeAllIDs", self.ShapesOp)
+            return ListIDs
+
+        ## Deprecated method
+        #  It works like SubShapeSortedCentres, but has a bug
+        #  (wrongly defines centres of faces, shells and solids).
+        def SubShapeSorted(self, aShape, aType, ListOfInd):
+            ListOfIDs = []
+            AllShapeIDsList = self.SubShapeAllSortedIDs(aShape, aType)
+            for ind in ListOfInd:
+                ListOfIDs.append(AllShapeIDsList[ind - 1])
+            anObj = self.GetSubShape(aShape, ListOfIDs)
+            return anObj
+
+        # end of l4_decompose_d
         ## @}
 
         ## @addtogroup l3_healing

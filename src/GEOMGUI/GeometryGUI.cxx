@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GeometryGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include <Standard_math.hxx>  // E.A. must be included before Python.h to fix compilation on windows
 #include "Python.h"
 #include "GeometryGUI.h"
@@ -342,12 +341,12 @@ void GeometryGUI::OnGUIEvent( int id )
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   QList<int> NotViewerDependentCommands;
   NotViewerDependentCommands << GEOMOp::OpRename
-			     << GEOMOp::OpDelete
-			     << GEOMOp::OpShow
-			     << GEOMOp::OpShowOnly
-			     << GEOMOp::OpShowChildren
-			     << GEOMOp::OpHideChildren
-			     << GEOMOp::OpPointMarker;
+                             << GEOMOp::OpDelete
+                             << GEOMOp::OpShow
+                             << GEOMOp::OpShowOnly
+                             << GEOMOp::OpShowChildren
+                             << GEOMOp::OpHideChildren
+                             << GEOMOp::OpPointMarker;
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) )
       return;
 
@@ -460,6 +459,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpShapesOnShape:    // MENU OPERATION - GET SHAPES ON SHAPE
   case GEOMOp::OpFillet2d:         // MENU OPERATION - FILLET 2D
   case GEOMOp::OpFillet1d:         // MENU OPERATION - FILLET 1D
+  case GEOMOp::OpSharedShapes:     // MENU OPERATION - GET SHARED SHAPES
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:           // MENU REPAIR - SEWING
@@ -575,14 +575,14 @@ void GeometryGUI::createGeomAction( const int id, const QString& label, const QS
   QPixmap icon = icolabel.isEmpty() ? resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+label).toLatin1().constData() ), false )
                                     : resMgr->loadPixmap( "GEOM", tr( icolabel.toLatin1().constData() ) );
   createAction( id,
-		tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
-		icon,
-		tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ), 
-		tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
-		accel,
-		application()->desktop(),
-		toggle,
-		this, SLOT( OnGUIEvent() )  );
+                tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
+                icon,
+                tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ),
+                tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
+                accel,
+                application()->desktop(),
+                toggle,
+                this, SLOT( OnGUIEvent() )  );
 }
 
 
@@ -663,7 +663,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpFillet3d,       "FILLET" );
   createGeomAction( GEOMOp::OpChamfer,        "CHAMFER" );
   //createGeomAction( GEOMOp::OpClipping,        "CLIPPING" );
-  createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPES" );
+  createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
+  createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
   createGeomAction( GEOMOp::OpFillet2d,       "FILLET_2D" );
 
@@ -732,7 +733,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShowChildren,     "POP_SHOW_CHILDREN" );
   createGeomAction( GEOMOp::OpHideChildren,     "POP_HIDE_CHILDREN" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
-  
+
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
@@ -840,6 +841,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpPartition,     operId, -1 );
   createMenu( GEOMOp::OpArchimede,     operId, -1 );
   createMenu( GEOMOp::OpShapesOnShape, operId, -1 );
+  createMenu( GEOMOp::OpSharedShapes,  operId, -1 );
 
   createMenu( separator(), operId, -1 );
 
@@ -970,6 +972,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpPartition,       operTbId );
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
+  createTool( GEOMOp::OpSharedShapes,    operTbId );
   createTool( separator(),               operTbId );
   createTool( GEOMOp::OpFillet1d,        operTbId );
   createTool( GEOMOp::OpFillet2d,        operTbId );
@@ -1174,7 +1177,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   SALOME_ListIO selected;
   sm->selectedObjects( selected );
   sm->clearSelected();
-  
+
   // disable OCC selectors
   getApp()->selectionMgr()->setEnabled( false, OCCViewer_Viewer::Type() );
   QListIterator<GEOMGUI_OCCSelector*> itOCCSel( myOCCSelectors );
@@ -1423,7 +1426,7 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( genGroup, "columns", 2 );
 
   int dispmode = addPreference( tr( "PREF_DISPLAY_MODE" ), genGroup,
-                                LightApp_Preferences::Selector, 
+                                LightApp_Preferences::Selector,
                                 "Geometry", "display_mode" );
 
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
@@ -1449,36 +1452,36 @@ void GeometryGUI::createPreferences()
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
-  
+
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
   setPreferenceProperty( precGroup, "columns", 2 );
-  
+
   const int nbQuantities = 8;
   int prec[nbQuantities], ii = 0;
   prec[ii++] = addPreference( tr( "GEOM_PREF_length_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "length_precision" );  
+                            LightApp_Preferences::IntSpin, "Geometry", "length_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_angle_precision" ), precGroup,
                             LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_len_tol_precision" ), precGroup,
                             LightApp_Preferences::IntSpin, "Geometry", "len_tol_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_ang_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );  
+                            LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_weight_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "weight_precision" ); 
+                            LightApp_Preferences::IntSpin, "Geometry", "weight_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_density_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "density_precision" );   
+                            LightApp_Preferences::IntSpin, "Geometry", "density_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_parametric_precision" ), precGroup,
                             LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
   prec[ii  ] = addPreference( tr( "GEOM_PREF_param_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );  
-  
+                            LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );
+
   // Set property for precision value for spinboxes
   for ( ii = 0; ii < nbQuantities; ii++ ){
     setPreferenceProperty( prec[ii], "min", -14 );
     setPreferenceProperty( prec[ii], "max", 14 );
     setPreferenceProperty( prec[ii], "precision", 2 );
-  }  
+  }
 
   int VertexGroup = addPreference( tr( "PREF_GROUP_VERTEX" ), tabId );
   setPreferenceProperty( VertexGroup, "columns", 2 );

@@ -20,17 +20,17 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
 #  GEOM GEOM_SWIG : binding of C++ implementaion with Python
 #  File   : GEOM_TestOthers.py
 #  Author : Julia DOROVSKIKH
 #  Module : GEOM
 #  $Header$
+#
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_others.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
-#
+
 import os
 
 def TestExportImport (geompy, shape):
@@ -181,7 +181,7 @@ def TestOtherOperations (geompy, math):
 
   # MakeFilletAll
   radius_fillet = 10.
-  face5 = geompy.SubShapeSorted(Box, geompy.ShapeType["FACE"], [5])
+  face5 = geompy.SubShapeSortedCentres(Box, geompy.ShapeType["FACE"], [5])
   f_glob_id = geompy.GetSubShapeID(Box, face5)
   SuppFace = geompy.SuppressFaces(Box, [f_glob_id])
 
@@ -196,7 +196,7 @@ def TestOtherOperations (geompy, math):
   # MakeChamfer
   d1 = 13.
   d2 = 7.
-  box_faces = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+  box_faces = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
   f_ind_1 = geompy.GetSubShapeID(Box, box_faces[0])
   f_ind_2 = geompy.GetSubShapeID(Box, box_faces[1])
   f_ind_3 = geompy.GetSubShapeID(Box, box_faces[2])
@@ -426,7 +426,7 @@ def TestOtherOperations (geompy, math):
   Partition_1 = geompy.MakePartition([Sphere], tools, [], [], geompy.ShapeType["SOLID"], 0, [])
   geompy.addToStudy(Partition_1, "Partition_1")
 
-  faces = geompy.SubShapeAllSorted(Partition_1, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(Partition_1, geompy.ShapeType["FACE"])
 
   Face_1 = faces[0]
   Face_2 = faces[39]
@@ -471,9 +471,19 @@ def TestOtherOperations (geompy, math):
   # GetSharedShapes
   sharedFaces = geompy.GetSharedShapes(part, freeFacesWithoutExtra,
                                        geompy.ShapeType["FACE"])
-
+  ind = 1
   for shFace in sharedFaces:
-    geompy.addToStudy(shFace, "sharedFace")
+    geompy.addToStudy(shFace, "sharedFace_" + `ind`)
+    ind = ind + 1
+    pass
+
+  sharedEdges = geompy.GetSharedShapesMulti([part, freeFacesWithoutExtra],
+                                             geompy.ShapeType["EDGE"])
+  ind = 1
+  for shEdge in sharedEdges:
+    geompy.addToStudy(shEdge, "sharedEdge_" + `ind`)
+    ind = ind + 1
+    pass
 
   # CheckAndImprove
   blocksComp = geompy.CheckAndImprove(part)

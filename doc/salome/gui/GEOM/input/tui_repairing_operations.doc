@@ -65,7 +65,7 @@ box = geompy.MakeBoxDXDYDZ(200, 200, 200)
 
 # The list of IDs (IDList) for suppress faces
 sup_faces = []
-sup_faces = geompy.SubShapeAllSorted(box, geompy.ShapeType["FACE"])
+sup_faces = geompy.SubShapeAllSortedCentres(box, geompy.ShapeType["FACE"])
 
 # get indices of the sub-shape
 f1_id = geompy.GetSubShapeID(box, sup_faces[3])
@@ -182,7 +182,7 @@ cut = geompy.MakeCut(cone, cylinder)
 
 # get faces as sub-shapes
 faces = []
-faces = geompy.SubShapeAllSorted(cut, geompy.ShapeType["FACE"])
+faces = geompy.SubShapeAllSortedCentres(cut, geompy.ShapeType["FACE"])
 f_2 = geompy.GetSubShapeID(cut, faces[2])
 
 # remove one face from the shape
@@ -190,7 +190,7 @@ cut_without_f_2 = geompy.SuppressFaces(cut, [f_2])
 
 # get wires as sub-shapes
 wires = []
-wires = geompy.SubShapeAllSorted(cut_without_f_2, geompy.ShapeType["WIRE"])
+wires = geompy.SubShapeAllSortedCentres(cut_without_f_2, geompy.ShapeType["WIRE"])
 w_0 = geompy.GetSubShapeID(cut_without_f_2, wires[0])
 
 # suppress the selected wire
@@ -308,12 +308,12 @@ divide = geompy.DivideEdge(edge, -1, 0.5, 0)
 
 # add objects in the study
 id_edge = geompy.addToStudy(edge, "Edge")
-edge_points = geompy.SubShapeAllSorted(edge, geompy.ShapeType["VERTEX"])
+edge_points = geompy.SubShapeAllSortedCentres(edge, geompy.ShapeType["VERTEX"])
 for point in edge_points:
     geompy.addToStudyInFather(edge, point, "Edge's point")
 
 id_divide = geompy.addToStudy(divide, "Divided edge")
-edge_points = geompy.SubShapeAllSorted(divide, geompy.ShapeType["VERTEX"])
+edge_points = geompy.SubShapeAllSortedCentres(divide, geompy.ShapeType["VERTEX"])
 for point in edge_points:
     geompy.addToStudyInFather(divide, point, "Edge's point after divide")
 

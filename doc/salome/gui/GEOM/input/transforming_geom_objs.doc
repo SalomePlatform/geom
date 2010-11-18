@@ -18,6 +18,8 @@ plane corresponding to the modelled waterline of the object plunged
 into water.</li>
 <li>\subpage shapesonshape_page "Get shapes on shape" operation, a
 special case of \b Explode operation. </li>
+<li>\subpage shared_shapes_page "Get shared shapes" operation, a
+special case of \b Explode operation. </li>
 
 <li>Operations with \subpage blocks_operations_page "Blocks".</li>
 

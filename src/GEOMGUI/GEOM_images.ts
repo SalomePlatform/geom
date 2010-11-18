@@ -1062,8 +1062,12 @@
             <translation>planeWorking.png</translation>
         </message>
         <message>
-            <source>ICO_GET_SHAPES_ON_SHAPES</source>
+            <source>ICO_GET_SHAPES_ON_SHAPE</source>
             <translation>shapesonshape.png</translation>
+        </message>
+        <message>
+            <source>ICO_GET_SHARED_SHAPES</source>
+            <translation>shared_shapes.png</translation>
         </message>
         <message>
             <source>ICON_DLG_POINT_FACE</source>
@@ -1072,6 +1076,10 @@
         <message>
             <source>ICON_DLG_SHAPES_ON_SHAPE</source>
             <translation>shapesonshape.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_SHARED_SHAPES</source>
+            <translation>shared_shapes.png</translation>
         </message>
         <message>
             <source>ICON_DLG_SCALE_ALONG_AXES</source>

@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : OperationGUI.cxx
+//  Author : Damien COQUERET, Open CASCADE S.A.S.
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : OperationGUI.cxx
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
 #include "OperationGUI.h"
 
 #include <GeometryGUI.h>
@@ -44,6 +43,7 @@
 #include "OperationGUI_ChamferDlg.h"     // Method CHAMFER
 #include "OperationGUI_ClippingDlg.h"    // Clipping dialog box
 #include "OperationGUI_GetShapesOnShapeDlg.h"
+#include "OperationGUI_GetSharedShapesDlg.h"
 
 //=======================================================================
 // function : OperationGUI()
@@ -67,24 +67,25 @@ OperationGUI::~OperationGUI()
 // function : OnGUIEvent()
 // purpose  : 
 //=======================================================================
-bool OperationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
+bool OperationGUI::OnGUIEvent (int theCommandID, SUIT_Desktop* parent)
 {
   SalomeApp_Application* app = getGeometryGUI()->getApp();
-  if ( !app ) return false;
+  if (!app) return false;
 
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
-  switch ( theCommandID ) {
-  case GEOMOp::OpPartition:     ( new OperationGUI_PartitionDlg       ( getGeometryGUI(), parent ) )->show(); break;
-  case GEOMOp::OpArchimede:     ( new OperationGUI_ArchimedeDlg       ( getGeometryGUI(), parent ) )->show(); break;
-  case GEOMOp::OpFillet3d:      ( new OperationGUI_FilletDlg          ( getGeometryGUI(), parent ) )->show(); break;
-  case GEOMOp::OpChamfer:       ( new OperationGUI_ChamferDlg         ( getGeometryGUI(), parent ) )->show(); break;
-  case GEOMOp::OpClipping:      ( new OperationGUI_ClippingDlg        ( getGeometryGUI(), parent ) )->show(); break;
-  case GEOMOp::OpShapesOnShape: ( new OperationGUI_GetShapesOnShapeDlg( getGeometryGUI(), parent ) )->show(); break;
-  case GEOMOp::OpFillet1d:      ( new OperationGUI_Fillet1d2dDlg      ( getGeometryGUI(), parent, true ) )->show(); break;
-  case GEOMOp::OpFillet2d:      ( new OperationGUI_Fillet1d2dDlg      ( getGeometryGUI(), parent, false ) )->show(); break;
+  switch (theCommandID) {
+  case GEOMOp::OpPartition:     (new OperationGUI_PartitionDlg       (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpArchimede:     (new OperationGUI_ArchimedeDlg       (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpFillet3d:      (new OperationGUI_FilletDlg          (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpChamfer:       (new OperationGUI_ChamferDlg         (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpClipping:      (new OperationGUI_ClippingDlg        (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpShapesOnShape: (new OperationGUI_GetShapesOnShapeDlg(getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpSharedShapes:  (new OperationGUI_GetSharedShapesDlg (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpFillet1d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, true))->show(); break;
+  case GEOMOp::OpFillet2d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, false))->show(); break;
   default:
-    app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
   }
 
   return true;

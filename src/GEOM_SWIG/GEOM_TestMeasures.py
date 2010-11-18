@@ -115,7 +115,7 @@ def TestMeasureOperations (geompy, math):
 
   ####### GetNormal #######
 
-  faces = geompy.SubShapeAllSorted(box, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(box, geompy.ShapeType["FACE"])
   face0 = faces[0]
   vnorm = geompy.GetNormal(face0)
   if vnorm is None:

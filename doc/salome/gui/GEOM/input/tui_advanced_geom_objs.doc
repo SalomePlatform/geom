@@ -132,7 +132,7 @@ face = geompy.MakeFaces([sketcher1, sketcher2],isPlanarFace)
 prism = geompy.MakePrism(face, p0, pxyz)
 
 # explode the prism into faces
-prism_faces = geompy.SubShapeAllSorted(prism, geompy.ShapeType["FACE"])
+prism_faces = geompy.SubShapeAllSortedCentres(prism, geompy.ShapeType["FACE"])
 
 # create a shell from a set of faces
 shell = geompy.MakeShell([prism_faces[0], prism_faces[2], prism_faces[3],
@@ -168,7 +168,7 @@ face = geompy.MakeFace(sketcher,1)
 prism = geompy.MakePrism(face, p0, pz)
 
 # explode the prism into faces
-prism_faces = geompy.SubShapeAllSorted(prism, geompy.ShapeType["FACE"])
+prism_faces = geompy.SubShapeAllSortedCentres(prism, geompy.ShapeType["FACE"])
 
 # create a shell from a set of faces
 shell = geompy.MakeShell([prism_faces[0], prism_faces[1],

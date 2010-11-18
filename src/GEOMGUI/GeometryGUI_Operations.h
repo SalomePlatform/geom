@@ -16,10 +16,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GeometryGUI_Operations.h
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #ifndef GEOMETRYGUI_OPERATIONS_H
 #define GEOMETRYGUI_OPERATIONS_H
 
@@ -117,6 +116,7 @@ namespace GEOMOp {
     OpFillet2d          = 3705,   // MENU OPERATION - FILLET 2D
     OpFillet1d          = 3706,   // MENU OPERATION - FILLET 1D
     OpClipping          = 3707,   // MENU OPERATION - CLIPPING RANGE
+    OpSharedShapes      = 3708,   // MENU OPERATION - GET SHARED SHAPES
     // RepairGUI -----------------//--------------------------------
     OpSewing            = 4000,   // MENU REPAIR - SEWING
     OpSuppressFaces     = 4001,   // MENU REPAIR - SUPPRESS FACES

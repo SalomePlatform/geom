@@ -19,13 +19,12 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File      : GEOMImpl_IShapesOperations.cxx
 // Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
 // Project   : SALOME
 // $Header$
-//
+
 #include <Standard_Stream.hxx>
 
 #include "GEOMImpl_IShapesOperations.hxx"
@@ -811,7 +810,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
                                           (Handle(GEOM_Object)    theShape,
                                            const Standard_Integer theShapeType,
-                                           const Standard_Boolean isSorted)
+                                           const Standard_Boolean isSorted,
+                                           const Standard_Boolean isOldSorting)
 {
   SetErrorCode(KO);
 
@@ -853,7 +853,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   }
 
   if (isSorted)
-    SortShapes(listShape);
+    SortShapes(listShape, isOldSorting);
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aShape, anIndices);
@@ -899,7 +899,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
 
   GEOM::TPythonDump pd (aMainShape, /*append=*/true);
   pd << "[" << anAsciiList.ToCString();
-  pd << "] = geompy.SubShapeAll" << (isSorted ? "Sorted(" : "(");
+  if (isSorted)
+    pd << "] = geompy.SubShapeAllSorted" << (isOldSorting ? "(" : "Centres(");
+  else
+    pd << "] = geompy.SubShapeAll(";
   pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
 
   SetErrorCode(OK);
@@ -915,7 +918,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
 Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
                                           (Handle(GEOM_Object)    theShape,
                                            const Standard_Integer theShapeType,
-                                           const Standard_Boolean isSorted)
+                                           const Standard_Boolean isSorted,
+                                           const Standard_Boolean isOldSorting)
 {
   SetErrorCode(KO);
 
@@ -954,7 +958,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   }
 
   if (isSorted)
-    SortShapes(listShape);
+    SortShapes(listShape, isOldSorting);
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aShape, anIndices);
@@ -971,7 +975,10 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   //Make a Python command
   GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "listSubShapeIDs = geompy.SubShapeAll";
-  pd << (isSorted ? "SortedIDs(" : "IDs(");
+  if (isSorted)
+    pd << "Sorted" << (isOldSorting ? "IDs(" : "CentresIDs(");
+  else
+    pd << "IDs(";
   pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
 
   SetErrorCode(OK);
@@ -1408,6 +1415,112 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   GEOM::TPythonDump(aFunction) << "[" << anAsciiList.ToCString()
     << "] = geompy.GetSharedShapes(" << theShape1 << ", "
       << theShape2 << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
+
+  SetErrorCode(OK);
+  return aSeq;
+}
+
+//=======================================================================
+//function : GetSharedShapes
+//purpose  :
+//=======================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
+                                     (std::list<Handle(GEOM_Object)> theShapes,
+                                      const Standard_Integer         theShapeType)
+{
+  SetErrorCode(KO);
+
+  int aLen = theShapes.size();
+  if (aLen < 1) return NULL;
+
+  int ind = 1;
+  std::list<Handle(GEOM_Object)>::iterator it = theShapes.begin();
+
+  Handle(GEOM_Object) aMainObj = (*it++);
+  Handle(GEOM_Function) aMainShape = aMainObj->GetLastFunction();
+  if (aMainShape.IsNull()) {
+    SetErrorCode("NULL shape for GetSharedShapes");
+    return NULL;
+  }
+
+  TopoDS_Shape aShape1 = aMainShape->GetValue();
+  if (aShape1.IsNull()) return NULL;
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape1, anIndices);
+
+  TopTools_IndexedMapOfShape mapSelected;
+  TopExp::MapShapes(aShape1, TopAbs_ShapeEnum(theShapeType), mapSelected);
+
+  // Find shared shapes
+  BRep_Builder B;
+  TopoDS_Compound aCurrSelection;
+
+  for (; it != theShapes.end(); it++, ind++) {
+    Handle(GEOM_Function) aRefShape = (*it)->GetLastFunction();
+    if (aRefShape.IsNull()) {
+      SetErrorCode("NULL shape for GetSharedShapes");
+      return NULL;
+    }
+
+    TopoDS_Compound aCompound;
+    B.MakeCompound(aCompound);
+
+    TopoDS_Shape aShape2 = aRefShape->GetValue();
+    if (aShape2.IsNull()) return NULL;
+
+    TopTools_MapOfShape mapShape2;
+    TopExp_Explorer exp (aShape2, TopAbs_ShapeEnum(theShapeType));
+    for (; exp.More(); exp.Next()) {
+      TopoDS_Shape aSS = exp.Current();
+      if (mapShape2.Add(aSS) && mapSelected.Contains(aSS)) {
+        B.Add(aCompound, aSS);
+      }
+    }
+
+    mapSelected.Clear();
+    TopExp::MapShapes(aCompound, TopAbs_ShapeEnum(theShapeType), mapSelected);
+    aCurrSelection = aCompound;
+  }
+
+  // Create GEOM_Object for each found shared shape (collected in aCurrSelection)
+  Handle(GEOM_Object) anObj;
+  Handle(TColStd_HArray1OfInteger) anArray;
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+  TCollection_AsciiString anAsciiList, anEntry;
+
+  TopoDS_Iterator itSel (aCurrSelection, Standard_True, Standard_True);
+  for (; itSel.More(); itSel.Next()) {
+    anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(itSel.Value()));
+    anObj = GetEngine()->AddSubShape(aMainObj, anArray);
+    aSeq->Append(anObj);
+
+    // for python command
+    TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+    anAsciiList += anEntry;
+    anAsciiList += ",";
+  }
+
+  if (aSeq->IsEmpty()) {
+    SetErrorCode("The given shapes have no shared sub-shapes of the requested type");
+    return aSeq;
+  }
+
+  // Make a Python command
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
+
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString()
+     << "] = geompy.GetSharedShapesMulti([";
+
+  it = theShapes.begin();
+  pd << (*it++);
+  while (it != theShapes.end()) {
+    pd << ", " << (*it++);
+  }
+
+  pd << "], " << TopAbs_ShapeEnum(theShapeType) << ")";
 
   SetErrorCode(OK);
   return aSeq;
@@ -2576,7 +2689,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnCylind
   aSeq = getShapesOnSurfaceIDs( aCylinder, aShape, aShapeType, theState );
 
   // The GetShapesOnCylinder() doesn't change object so no new function is required.
-  Handle(GEOM_Function) aFunction = 
+  Handle(GEOM_Function) aFunction =
     GEOM::GetCreatedLast(theShape, GEOM::GetCreatedLast(thePnt,theAxis))->GetLastFunction();
 
   // Make a Python command
@@ -3373,7 +3486,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
 //function : SortShapes
 //purpose  :
 //=======================================================================
-void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
+void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
+                                            const Standard_Boolean isOldSorting)
 {
   Standard_Integer MaxShapes = SL.Extent();
   TopTools_Array1OfShape  aShapes (1,MaxShapes);
@@ -3392,16 +3506,29 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL)
     SL.Remove( it ); // == it.Next()
     aShapes(Index) = S;
     OrderInd.SetValue (Index, Index);
-    if (S.ShapeType() == TopAbs_VERTEX)
-    {
+    if (S.ShapeType() == TopAbs_VERTEX) {
       GPoint = BRep_Tool::Pnt( TopoDS::Vertex( S ));
       Length.SetValue( Index, (Standard_Real) S.Orientation());
     }
-    else
-    {
-      BRepGProp::LinearProperties (S, GPr);
+    else {
+      // BEGIN: fix for Mantis issue 0020842
+      if (isOldSorting) {
+        BRepGProp::LinearProperties (S, GPr);
+      }
+      else {
+        if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
+          BRepGProp::LinearProperties (S, GPr);
+        }
+        else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
+          BRepGProp::SurfaceProperties(S, GPr);
+        }
+        else {
+          BRepGProp::VolumeProperties(S, GPr);
+        }
+      }
+      // END: fix for Mantis issue 0020842
       GPoint = GPr.CentreOfMass();
-      Length.SetValue( Index, GPr.Mass() );
+      Length.SetValue(Index, GPr.Mass());
     }
     MidXYZ.SetValue(Index,
                     GPoint.X()*999 + GPoint.Y()*99 + GPoint.Z()*0.9);

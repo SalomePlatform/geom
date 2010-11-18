@@ -140,6 +140,7 @@ select1.png			\
 sewing.png			\
 shading.png			\
 shapesonshape.png		\
+shared_shapes.png		\
 sketch.png			\
 sphere.png			\
 spheredxyz.png			\

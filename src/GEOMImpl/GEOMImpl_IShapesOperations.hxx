@@ -18,16 +18,15 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //=============================================================================
 // File      : GEOMImpl_IShapesOperations.hxx
-// Created   : 
+// Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
 // Project   : SALOME
 // $Header$
 //=============================================================================
-//
+
 #ifndef _GEOMImpl_IShapesOperations_HXX_
 #define _GEOMImpl_IShapesOperations_HXX_
 
@@ -55,7 +54,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT ~GEOMImpl_IShapesOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
-                                Handle(GEOM_Object) thePoint2);
+                                                Handle(GEOM_Object) thePoint2);
 
   Standard_EXPORT Handle(GEOM_Object) MakeWire (std::list<Handle(GEOM_Object)> theEdgesAndWires,
                                                 const Standard_Real            theTolerance);
@@ -63,7 +62,7 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeFace (Handle(GEOM_Object) theWire, const bool isPlanarWanted);
 
   Standard_EXPORT Handle(GEOM_Object) MakeFaceWires (std::list<Handle(GEOM_Object)> theWires,
-                                     const bool isPlanarWanted);
+                                                     const bool isPlanarWanted);
 
   Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
 
@@ -85,13 +84,17 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                            std::list<Handle(GEOM_Object)> theFaces,
                                                            const Standard_Boolean doKeepNonSolids);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode (Handle(GEOM_Object)    theShape,
-                                                                    const Standard_Integer theShapeType,
-                                                                    const Standard_Boolean isSorted);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode
+    (Handle(GEOM_Object)    theShape,
+     const Standard_Integer theShapeType,
+     const Standard_Boolean isSorted,
+     const Standard_Boolean isOldSorting = Standard_False);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) SubShapeAllIDs (Handle(GEOM_Object)    theShape,
-                                                                     const Standard_Integer theShapeType,
-                                                                     const Standard_Boolean isSorted);
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) SubShapeAllIDs
+    (Handle(GEOM_Object)    theShape,
+     const Standard_Integer theShapeType,
+     const Standard_Boolean isSorted,
+     const Standard_Boolean isOldSorting = Standard_False);
 
   Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
                                                    const Standard_Integer theID);
@@ -111,14 +114,20 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetFreeFacesIDs (Handle(GEOM_Object) theShape);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetSharedShapes (Handle(GEOM_Object)    theShape1,
-                                                        Handle(GEOM_Object)    theShape2,
-                                                        const Standard_Integer theShapeType);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetSharedShapes (Handle(GEOM_Object)    theShape1,
+                     Handle(GEOM_Object)    theShape2,
+                     const Standard_Integer theShapeType);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetShapesOnPlane (const Handle(GEOM_Object)& theShape,
-                                                         const Standard_Integer     theShapeType,
-                                                         const Handle(GEOM_Object)& theAx1,
-                                                         const GEOMAlgo_State       theState);
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetSharedShapes (std::list<Handle(GEOM_Object)> theShapes,
+                     const Standard_Integer         theShapeType);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
+    GetShapesOnPlane (const Handle(GEOM_Object)& theShape,
+                      const Standard_Integer     theShapeType,
+                      const Handle(GEOM_Object)& theAx1,
+                      const GEOMAlgo_State       theState);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
     GetShapesOnPlaneWithLocation (const Handle(GEOM_Object)& theShape,
@@ -226,14 +235,14 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                               const GEOMAlgo_State       theState);
 
   Standard_EXPORT Handle(GEOM_Object) GetShapesOnCylinderOld (Handle(GEOM_Object)    theShape,
-                                              const Standard_Integer theShapeType,
-                                              Handle(GEOM_Object)    theAxis,
-                                              const Standard_Real    theRadius);
+                                                              const Standard_Integer theShapeType,
+                                                              Handle(GEOM_Object)    theAxis,
+                                                              const Standard_Real    theRadius);
 
   Standard_EXPORT Handle(GEOM_Object) GetShapesOnSphereOld (Handle(GEOM_Object)    theShape,
-                                            const Standard_Integer theShapeType,
-                                            Handle(GEOM_Object)    theCenter,
-                                            const Standard_Real    theRadius);
+                                                            const Standard_Integer theShapeType,
+                                                            Handle(GEOM_Object)    theCenter,
+                                                            const Standard_Real    theRadius);
 
   void GetShapeProperties(const TopoDS_Shape aShape, Standard_Real propertiesArray[], gp_Pnt & aPnt);
 
@@ -318,7 +327,8 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \brief Sort shapes in the list by their coordinates.
    * \param SL The list of shapes to sort.
    */
-  Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL);
+  Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL,
+                                          const Standard_Boolean isOldSorting = Standard_True);
 
   /*!
    * \brief Convert TopoDS_COMPSOLID to TopoDS_COMPOUND.

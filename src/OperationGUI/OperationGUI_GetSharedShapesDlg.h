@@ -20,49 +20,43 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  GEOM GEOMGUI : GUI for Geometry component
-//  File   : OperationGUI_PartitionDlg.h
-//  Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
+//  File   : OperationGUI_GetSharedShapesDlg.h
+//  Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
 
-#ifndef OPERATIONGUI_PARTITIONDLG_H
-#define OPERATIONGUI_PARTITIONDLG_H
+#ifndef OPERATIONGUI_GETSHAREDSHAPESDLG_H
+#define OPERATIONGUI_GETSHAREDSHAPESDLG_H
 
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Sel1List1Check;
 
 //=================================================================================
-// class    : OperationGUI_PartitionDlg
+// class    : OperationGUI_GetSharedShapesDlg
 // purpose  :
 //=================================================================================
-class OperationGUI_PartitionDlg : public GEOMBase_Skeleton
+class OperationGUI_GetSharedShapesDlg : public GEOMBase_Skeleton
 {
   Q_OBJECT
 
 public:
-  OperationGUI_PartitionDlg( GeometryGUI*, QWidget* = 0 );
-  ~OperationGUI_PartitionDlg();
-
-  void                               SetListMaterials( GEOM::ListOfLong );
-  GEOM::ListOfLong                   GetListMaterials();
+  OperationGUI_GetSharedShapesDlg (GeometryGUI*, QWidget* = 0);
+  ~OperationGUI_GetSharedShapesDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
-  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
+  virtual GEOM::GEOM_Object_ptr      getFather (GEOM::GEOM_Object_ptr);
+  virtual QString                    getNewObjectName() const;
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
-  int                                GetLimit() const;
+  void                               enterEvent (QEvent*);
+  int                                GetType() const;
 
 private:
   GEOM::ListOfGO                     myListShapes;
-  GEOM::ListOfLong                   myListMaterials;
-  GEOM::ListOfGO                     myListTools;
-  GEOM::ListOfGO                     myListRemoveInside;
-  GEOM::ListOfGO                     myListKeepInside;
 
   DlgRef_2Sel1List1Check*            GroupPoints;
 
@@ -70,11 +64,10 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ConstructorsClicked (int);
   void                               ComboTextChanged();
-  void                               ConstructorsClicked( int );
 };
 
-#endif // OPERATIONGUI_PARTITIONDLG_H
+#endif // OPERATIONGUI_GETSHAREDSHAPESDLG_H

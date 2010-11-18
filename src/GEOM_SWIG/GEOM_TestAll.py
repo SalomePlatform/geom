@@ -165,7 +165,7 @@ def TestAll (geompy, math):
   Shell    = geompy.MakeShell([Face, Face1])         #(List of GEOM_Object_ptr)->GEOM_Object_ptr
 
   Prism1   = geompy.MakePrism(Face2, p0, pxyz)       #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  prism1_faces = geompy.SubShapeAllSorted(Prism1, ShapeTypeFace)
+  prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, ShapeTypeFace)
   Shell1   = geompy.MakeShell([prism1_faces[0], prism1_faces[1],
                                prism1_faces[3], prism1_faces[4],
                                prism1_faces[5], prism1_faces[2]])
@@ -230,7 +230,7 @@ def TestAll (geompy, math):
   Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
-  prism_edges = geompy.SubShapeAllSorted(Prism, ShapeTypeEdge)
+  prism_edges = geompy.SubShapeAllSortedCentres(Prism, ShapeTypeEdge)
 
   for anEdge in prism_edges:
     eid = geompy.GetSubShapeID(Prism, anEdge)
@@ -245,7 +245,7 @@ def TestAll (geompy, math):
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[1]))
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[2]))
 
-  prism_faces = geompy.SubShapeAllSorted(Prism, ShapeTypeFace)
+  prism_faces = geompy.SubShapeAllSortedCentres(Prism, ShapeTypeFace)
 
   f_ind_1 = geompy.GetSubShapeID(Prism, prism_faces[0])
   f_ind_2 = geompy.GetSubShapeID(Prism, prism_faces[1])
@@ -432,8 +432,8 @@ def TestAll (geompy, math):
   name       = geompy.SubShapeName(SubFace, Box)
   id_SubFace = geompy.addToStudyInFather(Box, SubFace, name)
 
-  # SubShapeSorted
-  SubFaceS   = geompy.SubShapeSorted(Box, geompy.ShapeType["FACE"], [5])
+  # SubShapeSortedCentres
+  SubFaceS   = geompy.SubShapeSortedCentres(Box, geompy.ShapeType["FACE"], [5])
   nameS      = geompy.SubShapeName(SubFaceS, Box)
   id_SubFace = geompy.addToStudyInFather(Box, SubFaceS, nameS)
 
@@ -451,8 +451,8 @@ def TestAll (geompy, math):
   geompy.UnionIDs(group, SubEdgeIDsList)
   geompy.addToStudyInFather(SubFace, group, "Group of all edges")
 
-  # SubShapeAllSortedIDs
-  SubEdgeIDsList = geompy.SubShapeAllSortedIDs(SubFace, geompy.ShapeType["EDGE"])
+  # SubShapeAllSortedCentresIDs
+  SubEdgeIDsList = geompy.SubShapeAllSortedCentresIDs(SubFace, geompy.ShapeType["EDGE"])
   print "IDs of edges of SubFace:", SubEdgeIDsList, "(sorted)"
 
   # GetSubShape and GetSubShapeID

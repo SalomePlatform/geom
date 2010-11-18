@@ -1737,7 +1737,7 @@ Please, select face, shell or solid and try again</translation>
         </message>
         <message>
             <source>GEOM_SUBSHAPE_TYPE</source>
-            <translation>Sub Shapes Type :</translation>
+            <translation>Sub Shapes Type</translation>
         </message>
         <message>
             <source>GEOM_SUB_SHAPE</source>
@@ -3992,16 +3992,28 @@ Please, select face, shell or solid and try again</translation>
             <translation>INOUT</translation>
         </message>
         <message>
-            <source>TOP_GET_SHAPES_ON_SHAPES</source>
+            <source>TOP_GET_SHAPES_ON_SHAPE</source>
             <translation>Get shapes on shape</translation>
         </message>
         <message>
-            <source>MEN_GET_SHAPES_ON_SHAPES</source>
+            <source>MEN_GET_SHAPES_ON_SHAPE</source>
             <translation>Get Shapes on Shape</translation>
         </message>
         <message>
-            <source>STB_GET_SHAPES_ON_SHAPES</source>
+            <source>STB_GET_SHAPES_ON_SHAPE</source>
             <translation>Get shapes on shape</translation>
+        </message>
+        <message>
+            <source>TOP_GET_SHARED_SHAPES</source>
+            <translation>Get shared shapes</translation>
+        </message>
+        <message>
+            <source>MEN_GET_SHARED_SHAPES</source>
+            <translation>Get Shared Shapes</translation>
+        </message>
+        <message>
+            <source>STB_GET_SHARED_SHAPES</source>
+            <translation>Get shared shapes</translation>
         </message>
         <message>
             <source>GEOM_PUBLISH_RESULT_GRP</source>
@@ -4511,6 +4523,29 @@ Would you like to continue?</translation>
         <message>
             <source>LOAD_TEXTURE_TLT</source>
             <translation>Load Texture</translation>
+        </message>
+    </context>
+    <context>
+        <name>OperationGUI_GetSharedShapesDlg</name>
+        <message>
+            <source>GEOM_SHARED_SHAPES_TITLE</source>
+            <translation>Get Shared Shapes</translation>
+        </message>
+        <message>
+            <source>GEOM_GET_SHARED_SHAPES</source>
+            <translation>Shared shapes</translation>
+        </message>
+        <message>
+            <source>GEOM_SHARED_SHAPES_INPUT</source>
+            <translation>Input data</translation>
+        </message>
+        <message>
+            <source>MSG_SHARED_SHAPES_TOO_FEW_SHAPES</source>
+            <translation>To few shapes selected.</translation>
+        </message>
+        <message>
+            <source>GEOM_SHARED_SHAPE</source>
+            <translation>Shared_%1</translation>
         </message>
     </context>
     <context>

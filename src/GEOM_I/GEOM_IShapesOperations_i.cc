@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -411,7 +410,6 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
   return GetObject(anObject);
 }
 
-
 //=============================================================================
 /*!
  *  MakeExplode
@@ -427,7 +425,34 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr the
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->MakeExplode(aShape, theShapeType, isSorted);
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted, Standard_True);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeAllSubShapes
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeAllSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                                            const CORBA::Long     theShapeType,
+                                                            const CORBA::Boolean  isSorted)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted, Standard_False);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
@@ -454,7 +479,33 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::SubShapeAllIDs (GEOM::GEOM_Object_pt
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfInteger) aHSeq =
-    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted);
+    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted, Standard_True);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetAllSubShapesIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetAllSubShapesIDs (GEOM::GEOM_Object_ptr theShape,
+                                                                const CORBA::Long     theShapeType,
+                                                                const CORBA::Boolean  isSorted)
+{
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfInteger) aHSeq =
+    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted, Standard_False);
   if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();
@@ -661,6 +712,42 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapes
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
     GetOperations()->GetSharedShapes(aShape1, aShape2, theShapeType);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  GetSharedShapesMulti
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetSharedShapesMulti
+                                          (const GEOM::ListOfGO& theShapes,
+                                           const CORBA::Long     theShapeType)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Get the shapes
+  std::list<Handle(GEOM_Object)> aShapes;
+  int aLen = theShapes.length();
+  for (int ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theShapes[ind]);
+    if (aSh.IsNull()) return aSeq._retn();
+    aShapes.push_back(aSh);
+  }
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetSharedShapes(aShapes, theShapeType);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 

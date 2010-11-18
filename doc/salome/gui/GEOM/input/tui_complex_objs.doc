@@ -271,7 +271,7 @@ faces.append(f3)
 faces.append(f4)
 shell = geompy.MakeSewing(faces,1.e-6)
 shells.append(shell)
-faces = geompy.SubShapeAllSorted(shell, geompy.ShapeType["FACE"])
+faces = geompy.SubShapeAllSortedCentres(shell, geompy.ShapeType["FACE"])
 subbases.append(faces[0])
 
 # 2 section
@@ -311,7 +311,7 @@ faces.append(f3)
 faces.append(f4)
 shell = geompy.MakeSewing(faces,1.e-6)
 shells.append(shell)
-faces = geompy.SubShapeAllSorted(shell, geompy.ShapeType["FACE"])
+faces = geompy.SubShapeAllSortedCentres(shell, geompy.ShapeType["FACE"])
 subbases.append(faces[0])
 
 # 3 section
@@ -356,7 +356,7 @@ faces.append(f3)
 faces.append(f4)
 shell = geompy.MakeSewing(faces,1.e-6)
 shells.append(shell)
-faces = geompy.SubShapeAllSorted(shell, geompy.ShapeType["FACE"])
+faces = geompy.SubShapeAllSortedCentres(shell, geompy.ShapeType["FACE"])
 subbases.append(faces[2])
 
 # 4 section
@@ -391,7 +391,7 @@ vp = geompy.MakeVertex(c3[0]-20,c3[1],c3[2])
 ff = geompy.MakePlane(vp,vec,40)
 fs.append(ff)
 aPartition = geompy.MakePartition(shellsph,fs)
-fs = geompy.SubShapeAllSorted(aPartition, geompy.ShapeType["FACE"])
+fs = geompy.SubShapeAllSortedCentres(aPartition, geompy.ShapeType["FACE"])
 
 faces.append(fs[0])
 faces.append(fs[1])
@@ -399,7 +399,7 @@ faces.append(fs[2])
 faces.append(fs[3])
 shell = geompy.MakeSewing(faces,1.e-6)
 shells.append(shell)
-faces = geompy.SubShapeAllSorted(shell, geompy.ShapeType["FACE"])
+faces = geompy.SubShapeAllSortedCentres(shell, geompy.ShapeType["FACE"])
 
 
 #===========================================================
@@ -501,25 +501,25 @@ locs = []
 # 1 section
 shell = MakeComplexSect(vs[0], geompy.MakeVectorDXDYDZ(1,0,0), 60, 40, 16)
 shells.append(shell)
-vs1 = geompy.SubShapeAllSorted(shell,geompy.ShapeType["VERTEX"])
+vs1 = geompy.SubShapeAllSortedCentres(shell,geompy.ShapeType["VERTEX"])
 locs.append(vs1[17])
 
 # 2 section
 shell = MakeComplexSect(vs[1], geompy.MakeVectorDXDYDZ(1,0,0), 80, 30, 16)
 shells.append(shell)
-vs2 = geompy.SubShapeAllSorted(shell,geompy.ShapeType["VERTEX"])
+vs2 = geompy.SubShapeAllSortedCentres(shell,geompy.ShapeType["VERTEX"])
 locs.append(vs2[17])
 
 # 3 section
 shell = MakeComplexSect(vs[2], geompy.MakeVectorDXDYDZ(1,0,0), 60, 40, 16)
 shells.append(shell)
-vs3 = geompy.SubShapeAllSorted(shell,geompy.ShapeType["VERTEX"])
+vs3 = geompy.SubShapeAllSortedCentres(shell,geompy.ShapeType["VERTEX"])
 locs.append(vs3[17])
 
 # 4 section
 shell = MakeComplexSect(vs[3], geompy.MakeVectorDXDYDZ(0,1,0), 40, 35, 16)
 shells.append(shell)
-vs4 = geompy.SubShapeAllSorted(shell,geompy.ShapeType["VERTEX"])
+vs4 = geompy.SubShapeAllSortedCentres(shell,geompy.ShapeType["VERTEX"])
 locs.append(vs4[17])
 
 

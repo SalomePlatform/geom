@@ -16,12 +16,11 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
 # GEOM OPERATIONGUI : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : OperationGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -33,6 +32,7 @@ salomeinclude_HEADERS =				\
 	OperationGUI_Fillet1d2dDlg.h		\
 	OperationGUI_ChamferDlg.h		\
 	OperationGUI_GetShapesOnShapeDlg.h	\
+	OperationGUI_GetSharedShapesDlg.h	\
 	OperationGUI_ClippingDlg.h
 
 # Libraries targets
@@ -43,6 +43,7 @@ dist_libOperationGUI_la_SOURCES =		\
 	OperationGUI_ArchimedeDlg.cxx		\
 	OperationGUI_PartitionDlg.cxx		\
 	OperationGUI_GetShapesOnShapeDlg.cxx	\
+	OperationGUI_GetSharedShapesDlg.cxx	\
 	OperationGUI_FilletDlg.cxx		\
 	OperationGUI_Fillet1d2dDlg.cxx		\
 	OperationGUI_ChamferDlg.cxx		\
@@ -52,6 +53,7 @@ MOC_FILES =					\
 	OperationGUI_ArchimedeDlg_moc.cxx	\
 	OperationGUI_PartitionDlg_moc.cxx	\
 	OperationGUI_GetShapesOnShapeDlg_moc.cxx\
+	OperationGUI_GetSharedShapesDlg_moc.cxx \
 	OperationGUI_FilletDlg_moc.cxx		\
 	OperationGUI_Fillet1d2dDlg_moc.cxx	\
 	OperationGUI_ChamferDlg_moc.cxx		\

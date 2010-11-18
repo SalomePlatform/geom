@@ -86,7 +86,7 @@ def TestSuppressFaces (geompy):
 
   #IDList for SuppHole
   faces = []
-  faces = geompy.SubShapeAllSorted(Box, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["FACE"])
 
   f_glob_id = geompy.GetSubShapeID(Box, faces[5])
 
@@ -237,7 +237,7 @@ def TestSuppressHoles (geompy):
 
   #IDList for SuppressFaces
   faces = []
-  faces = geompy.SubShapeAllSorted(Cut, geompy.ShapeType["FACE"])
+  faces = geompy.SubShapeAllSortedCentres(Cut, geompy.ShapeType["FACE"])
   ind = 0
   for face in faces:
       f_name = "FACE %d"%(ind)
@@ -249,9 +249,10 @@ def TestSuppressHoles (geompy):
 
   f_glob_id_0 = geompy.GetSubShapeID(Cut, faces[0])
   cut_without_f_0 = geompy.SuppressFaces(Cut, [f_glob_id_0])
+  geompy.addToStudy(cut_without_f_0, "Cut without face 0")
 
   faces1 = []
-  faces1 = geompy.SubShapeAllSorted(cut_without_f_0, geompy.ShapeType["FACE"])
+  faces1 = geompy.SubShapeAllSortedCentres(cut_without_f_0, geompy.ShapeType["FACE"])
   ind = 0
   for face in faces1:
       f_name = "FACE %d"%(ind)
@@ -261,25 +262,25 @@ def TestSuppressHoles (geompy):
       print "face ", ind, " global index = ", f_glob_id
       ind = ind + 1
 
-  f_glob_id_5 = geompy.GetSubShapeID(cut_without_f_0, faces1[5])
-  cut_without_f_0_5 = geompy.SuppressFaces(cut_without_f_0, [f_glob_id_5])
-  cut_without_f_0_5_id = geompy.addToStudy(cut_without_f_0_5, "Cut without faces 0 and 5")
+  f_glob_id_3 = geompy.GetSubShapeID(cut_without_f_0, faces1[3])
+  cut_without_f_0_3 = geompy.SuppressFaces(cut_without_f_0, [f_glob_id_3])
+  cut_without_f_0_3_id = geompy.addToStudy(cut_without_f_0_3, "Cut without faces 0 and 3")
 
   #IDList for SuppHole
   wires = []
-  wires = geompy.SubShapeAllSorted(cut_without_f_0_5, geompy.ShapeType["WIRE"])
+  wires = geompy.SubShapeAllSortedCentres(cut_without_f_0_3, geompy.ShapeType["WIRE"])
   ind = 0
   for wire in wires:
       w_name = "WIRE %d"%(ind)
-      w_id = geompy.addToStudyInFather(cut_without_f_0_5, wire, w_name)
+      w_id = geompy.addToStudyInFather(cut_without_f_0_3, wire, w_name)
 
-      w_glob_id = geompy.GetSubShapeID(cut_without_f_0_5, wire)
+      w_glob_id = geompy.GetSubShapeID(cut_without_f_0_3, wire)
       print "wire ", ind, " global index = ", w_glob_id
       ind = ind + 1
 
-  w_3 = geompy.GetSubShapeID(cut_without_f_0_5, wires[3])
+  w_3 = geompy.GetSubShapeID(cut_without_f_0_3, wires[3])
 
-  SuppHole3 = geompy.SuppressHoles(cut_without_f_0_5, [w_3])
+  SuppHole3 = geompy.SuppressHoles(cut_without_f_0_3, [w_3])
   SuppHole3_id = geompy.addToStudy(SuppHole3, "Supp Hole 3")
 
 def TestMakeSewing (geompy, math):
@@ -314,7 +315,7 @@ def TestDivideEdge (geompy):
   Box = geompy.MakeBoxDXDYDZ(200., 200., 200.)
 
   #Divide Edge
-  box_edges = geompy.SubShapeAllSorted(Box, geompy.ShapeType["EDGE"])
+  box_edges = geompy.SubShapeAllSortedCentres(Box, geompy.ShapeType["EDGE"])
   edge_ind = geompy.GetSubShapeID(Box, box_edges[1])
 
   Divide = geompy.DivideEdge(Box, edge_ind, 0.5, 1) # Obj, ind, param, is_curve_param

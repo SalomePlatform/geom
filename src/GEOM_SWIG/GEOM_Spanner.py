@@ -105,7 +105,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
   else:
     print "Prism 1 is not a hexahedral solid"
 
-  Prism1_faces = geompy.SubShapeAllSorted(Prism1, geompy.ShapeType["FACE"])
+  Prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, geompy.ShapeType["FACE"])
   ii = 1
   for aFace in  Prism1_faces:
     name = geompy.SubShapeName(aFace, Prism1)
@@ -383,7 +383,7 @@ def MakeSpanner (geompy, math, isBlocksTest = 0, isMeshTest = 0, smesh = None):
 
     # ---- add long edges of the top face in study
 
-    FaceTop_edges = geompy.SubShapeAllSorted(FaceTop, geompy.ShapeType["EDGE"])
+    FaceTop_edges = geompy.SubShapeAllSortedCentres(FaceTop, geompy.ShapeType["EDGE"])
     Edge1 = FaceTop_edges[0]
     Edge2 = FaceTop_edges[3]
     Id_Edge1 = geompy.addToStudyInFather(FaceTop, Edge1, "Edge 1")
