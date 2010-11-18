@@ -2979,8 +2979,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_fillet2d "Example"
         def MakeFillet1D(self,theShape, theR, theListOfVertexes):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet1D", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a fillet on the specified edges/faces of the given shape
@@ -2993,8 +2995,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @ref tui_fillet2d "Example"
         def MakeFillet2D(self,theShape, theR, theListOfVertexes):
             # Example: see GEOM_TestAll.py
+            theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
             RaiseIfFailed("MakeFillet2D", self.LocalOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Perform a symmetric chamfer on all edges of the given shape.
