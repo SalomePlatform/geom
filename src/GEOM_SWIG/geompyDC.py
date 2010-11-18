@@ -1995,8 +1995,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeWhat Shape, specifying what to find.
         #  @return Group of all found sub-shapes or a single found sub-shape.
         #
+        #  @note This function has a restriction on argument shapes.
+        #        If \a theShapeWhere has curved parts with significantly
+        #        outstanding centres (i.e. the mass centre of a part is closer to
+        #        \a theShapeWhat than to the part), such parts will not be found.
+        #        @image html get_in_place_lost_part.png
+        #
         #  @ref swig_GetInPlace "Example"
-        def GetInPlace(self,theShapeWhere, theShapeWhat):
+        def GetInPlace(self, theShapeWhere, theShapeWhat):
             # Example: see GEOM_TestOthers.py
             anObj = self.ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
             RaiseIfFailed("GetInPlace", self.ShapesOp)
