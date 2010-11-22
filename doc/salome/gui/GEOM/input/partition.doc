@@ -97,8 +97,7 @@ previous versions of SALOME.
 \image html partitionsn2.png "Result of intersection"
 
 \anchor partition_picture_3
-\image html partitionsn3.png "Result of intersection of a box and a
-plane (both as \em Objects, no tools) with the Resulting type \em Solid and checked <em> "Keep shapes of lower type"</em>
+\image html partitionsn3.png "Result of intersection of a box and a plane (both as \em Objects, no tools) with the Resulting type \em Solid and checked 'Keep shapes of lower type'"
 
 Our <b>TUI Scripts</b> provide you with useful examples of \ref tui_partition "Basic Operations".
 
