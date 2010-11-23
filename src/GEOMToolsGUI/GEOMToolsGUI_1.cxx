@@ -419,7 +419,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
     return;
 
   // Delta
-  float delta = 0.01;
+  float delta = 0.1; // VSR: 23/11/2010 (transparency value <= 0.05 is ignored)
   if ( !increase )
     delta *= -1;
         
