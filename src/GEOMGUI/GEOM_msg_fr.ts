@@ -1100,6 +1100,10 @@
         <message>
             <source>GEOM_SKETCHER_POINT2</source>
             <translation>Point :</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_END_POINT2</source>
+            <translation>End Point :</translation>
         </message>
         <message>
             <source>GEOM_SKETCHER_RADIUS2</source>

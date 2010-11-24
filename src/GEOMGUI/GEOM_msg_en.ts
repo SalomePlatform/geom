@@ -1514,6 +1514,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_SKETCHER_ABS</source>
             <translation>Absolute</translation>
+	</message>
+        <message>
+            <source>GEOM_SKETCHER_ADD_PARAMS</source>
+            <translation>Additionnal Parameters</translation>
         </message>
         <message>
             <source>GEOM_SKETCHER_ANGLE</source>
@@ -1530,8 +1534,32 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_SKETCHER_ARC</source>
             <translation>Arc</translation>
-        </message>
+	</message>
         <message>
+            <source>GEOM_SKETCHER_CENTER</source>
+            <translation>Center</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_CENTER2</source>
+            <translation>Center :</translation>
+	</message>  
+	<message>
+            <source>GEOM_SKETCHER_CENTER_X</source>
+            <translation>Center X coord. :</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_CENTER_Y</source>
+            <translation>Center Y coord. :</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_CENTER_DX</source>
+            <translation>Center DX coord. :</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_CENTER_DY</source>
+            <translation>Center DY coord. :</translation>
+	</message>
+	<message>
             <source>GEOM_SKETCHER_DEST</source>
             <translation>Destination</translation>
         </message>
@@ -1566,6 +1594,10 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_SKETCHER_LENGTH2</source>
             <translation>Length :</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_NONE</source>
+            <translation>None (Tangential)</translation>
         </message>
         <message>
             <source>GEOM_SKETCHER_PER</source>
@@ -1578,7 +1610,15 @@ Please, select face, shell or solid and try again</translation>
         <message>
             <source>GEOM_SKETCHER_POINT2</source>
             <translation>Point :</translation>
-        </message>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_END_POINT2</source>
+            <translation>End Point :</translation>
+	</message>
+	<message>
+            <source>GEOM_SKETCHER_RADIUS</source>
+            <translation>Radius</translation>
+        </message> 
         <message>
             <source>GEOM_SKETCHER_RADIUS2</source>
             <translation>Radius :</translation>

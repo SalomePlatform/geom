@@ -913,11 +913,27 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #     - "C radius length" : Create arc by direction, radius and length(in degree)
 	#     - "AA x y": Create arc by point at X & Y
         #     - "A dx dy" : Create arc by point with DX & DY
-        #     .
+        #     - "A dx dy" : Create arc by point with DX & DY
+	#     - "UU x y radius flag1": Create arc by point at X & Y with given radiUs 
+	#     - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
+	#     - "EE x y xc yc flag1 flag2": Create arc by point at X & Y with given cEnter coordinates 
+	#     - "E dx dy dxc dyc radius flag1 flag2" : Create arc by point with DX & DY with given cEnter coordinates
+	#     .
         #       \n
         #     - "WW" : Close Wire (to finish)
         #     - "WF" : Close Wire and build face (to finish)
-        #
+        #     .
+	#	\n
+	#  - Flag1 (= reverse) is 0 or 2 ... 
+	#     - if 0 the drawn arc is the one of lower angle (< Pi)
+	#     - if 2 the drawn arc ius the one of greater angle (> Pi)
+	#     .
+	#	\n
+	#  - Flag2 (= control tolerance) is 0 or 1 ...
+	#     - if 0 the specified end point can be at a distance of the arc greater than the tolerance (10^-7)
+	#     - if 1 the wire is built only if the end point is on the arc 
+	#       with a tolerance of 10^-7 on the distance else the creation fails
+	#
         #  @param theCommand String, defining the sketcher in local
         #                    coordinates of the working plane.
         #  @param theWorkingPlane Nine double values, defining origin,

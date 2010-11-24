@@ -29,6 +29,7 @@
 #include <gp_Pnt.hxx>
 #include <gp_Dir.hxx>
 #include <TopoDS_Shape.hxx>
+#include <string>
 
 class Sketcher_Profile
 {
@@ -43,6 +44,7 @@ private:
 
   TopoDS_Shape myShape;
   bool myOK;
+  std::string myErrMsg;
 
 public:
   Standard_EXPORT gp_Pnt GetLastPoint(){return myLastPoint;};
@@ -50,5 +52,6 @@ public:
 
   Standard_EXPORT const TopoDS_Shape& GetShape(){return myShape;};
   Standard_EXPORT bool IsDone(){return myOK;};
+  Standard_EXPORT std::string ErrMsg(){return myErrMsg;};
 
 };

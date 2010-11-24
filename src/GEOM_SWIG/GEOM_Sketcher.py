@@ -49,6 +49,19 @@ import geompy
 #"C radius length" : Create by direction, radius and length(in degree)
 #"AA x y": Create by point at X & Y
 #"A dx dy" : Create by point with DX & DY
+#"UU x y radius flag1": Create by point at X & Y with given radiUs 
+#"U dx dy radius flag1" : Create by point with DX & DY with given radiUs
+#"EE x y xc yc flag1 flag2": Create by point at X & Y with given cEnter 
+#"E dx dy dxc dyc radius flag1 flag2" : Create by point with DX & DY with given cEnter
+
+#Flag1 is 0 or 2 ... 
+# if 0 the drawn arc is the one of lower angle (< Pi)
+# if 2 the drawn arc ius the one of greater angle (> Pi)
+
+#Flag2 is 0 or 1 ...
+# if 0 the specified end point can be at a distance of the arc greater than the tolerance (10^-7)
+# if 1 the wire is built only if the end point is on the arc 
+#   with a tolerance of 10^-7 on the distance else the creation fails
 
 #To finish
 #"WW" : Close Wire

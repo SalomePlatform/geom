@@ -49,7 +49,7 @@ is predefined and is equal to 90 degrees);</li>
 <li>tangent to the previous segment;</li>
 <li>vector components DX, DY.</li>
 </ul>
-<li>Parameters of an element (for segment : length or target X or Y coordinate value, for arc : radius and angle).</li>
+<li>Parameters of an element (for segment : length or target X or Y coordinate value, for arc : radius, angle or center coordinates).</li>
 </ol>
 
 \b Buttons:
