@@ -53,10 +53,14 @@ nodist_libEntityGUI_la_SOURCES =	\
 
 UIC_FILES =				\
 	ui_EntityGUI_1Sel_QTD.h		\
+	ui_EntityGUI_2Sel1Check_QTD.h		
+	ui_EntityGUI_1Sel1Spin1Check_QTD.h	\
 	ui_EntityGUI_1Spin_QTD.h	\
 	ui_EntityGUI_2Spin_QTD.h	\
 	ui_EntityGUI_3Spin_QTD.h	\
 	ui_EntityGUI_4Spin_QTD.h	\
+	ui_EntityGUI_3Spin1Check_QTD.h	\
+	ui_EntityGUI_4Spin1Check_QTD.h	\
 	ui_EntityGUI_Dir1_QTD.h		\
 	ui_EntityGUI_Dir2_QTD.h		\
 	ui_EntityGUI_Point_QTD.h	\

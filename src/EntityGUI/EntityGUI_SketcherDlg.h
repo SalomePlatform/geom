@@ -32,16 +32,19 @@
 #include <QGroupBox>
 #include <QComboBox>
 #include <QDialog>
+#include <QLabel>
 
 #include <gp_Ax3.hxx>
 
 class QLineEdit;
 class SalomeApp_DoubleSpinBox;
 class EntityGUI_1Sel;
+class EntityGUI_2Sel1Check;
+class EntityGUI_1Sel1Spin1Check;
 class EntityGUI_1Spin;
 class EntityGUI_2Spin;
-class EntityGUI_3Spin;
-class EntityGUI_4Spin;
+class EntityGUI_3Spin1Check;
+class EntityGUI_4Spin1Check;
 class EntityGUI_Point;
 class EntityGUI_Dir1;
 class EntityGUI_Dir2;
@@ -107,6 +110,7 @@ private:
 private:
   int                                myConstructorId;
   int                                myConstructorDirId;
+  int                                myConstructorPntId;
   int                                mySketchType;
   int                                mySketchState;
 
@@ -122,11 +126,13 @@ private:
   QStringList                        myUndoParameters;
 
   Standard_Real                      myX, myY, myDX, myDY;
+  Standard_Real			     myXc, myYc, myDXc, myDYc;
   Standard_Real                      myLength, myAngle, myRadius;
   Standard_Real                      myLastX1, myLastY1;
   Standard_Real                      myLastX2, myLastY2;
 
   QString                            myXStr, myYStr, myDXStr, myDYStr;
+  QString			     myXcStr, myYcStr, myDXcStr, myDYcStr;
   QString                            myLengthStr, myAngleStr, myRadiusStr;
   QString                            myLastX1Str, myLastY1Str;
   QString                            myLastX2Str, myLastY2Str;                            
@@ -134,14 +140,19 @@ private:
   EntityGUI_Skeleton*                MainWidget;
 
   EntityGUI_Point*                   GroupPt;
+  EntityGUI_Point*                   GroupPt2;
   EntityGUI_Dir1*                    GroupD1;
   EntityGUI_Dir2*                    GroupD2;
 
   EntityGUI_1Sel*                    Group1Sel;
+  EntityGUI_2Sel1Check*              Group2Sel;
+  EntityGUI_1Sel1Spin1Check*         Group1Sel1Spin; 
   EntityGUI_1Spin*                   Group1Spin;
   EntityGUI_2Spin*                   Group2Spin;
-  EntityGUI_3Spin*                   Group3Spin;
-  EntityGUI_4Spin*                   Group4Spin;
+  EntityGUI_3Spin1Check*             Group3Spin;
+  EntityGUI_4Spin1Check*             Group4Spin;
+
+  QLabel*			     myErrLabel;
 
   QGroupBox*                         GroupBox1;
   QComboBox*                         ComboBox1;
@@ -155,10 +166,14 @@ private:
 
   QList<gp_Ax3>                      myLCSList;
 
+  int				     myCheckFlag;
+
 private:
   enum SketchState { FIRST_POINT, NEXT_POINT };
   
   enum SketchType { PT_ABS, PT_RELATIVE, PT_SEL,
+                    PT_ABS_RADIUS,PT_REL_RADIUS,PT_SEL_RADIUS,
+                    PT_ABS_CENTER,PT_REL_CENTER,PT_SEL_CENTER,
                     DIR_ANGLE_LENGTH, DIR_ANGLE_X, DIR_ANGLE_Y,
                     DIR_PER_LENGTH, DIR_PER_X, DIR_PER_Y,
                     DIR_TAN_LENGTH, DIR_TAN_X, DIR_TAN_Y,
@@ -179,8 +194,10 @@ private slots:
   void                               TypeClicked( int );
   void                               DestClicked( int );
   void                               PointClicked( int );
+  void                               Point2Clicked( int );
   void                               Dir1Clicked( int );
   void                               Dir2Clicked( int );
+  void                               CheckBoxClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               FindLocalCS();

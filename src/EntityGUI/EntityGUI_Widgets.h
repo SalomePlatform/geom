@@ -40,6 +40,39 @@ public:
 };
 
 //////////////////////////////////////////
+// EntityGUI_2Sel1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_2Sel1Check_QTD.h"
+
+class EntityGUI_2Sel1Check : public QWidget, 
+                       public Ui::EntityGUI_2Sel1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_2Sel1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_2Sel1Check();
+};
+
+
+//////////////////////////////////////////
+// EntityGUI_1Sel1Spin1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_1Sel1Spin1Check_QTD.h"
+
+class EntityGUI_1Sel1Spin1Check : public QWidget, 
+                            public Ui::EntityGUI_1Sel1Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_1Sel1Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_1Sel1Spin1Check();
+};
+
+//////////////////////////////////////////
 // EntityGUI_1Spin
 //////////////////////////////////////////
 
@@ -101,6 +134,38 @@ class EntityGUI_4Spin : public QWidget,
 public:
   EntityGUI_4Spin( QWidget* = 0, Qt::WindowFlags = 0 );
   ~EntityGUI_4Spin();
+};
+
+//////////////////////////////////////////
+// EntityGUI_3Spin1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_3Spin1Check_QTD.h"
+
+class EntityGUI_3Spin1Check : public QWidget, 
+                        public Ui::EntityGUI_3Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_3Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_3Spin1Check();
+};
+
+//////////////////////////////////////////
+// EntityGUI_4Spin1Check
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_4Spin1Check_QTD.h"
+
+class EntityGUI_4Spin1Check : public QWidget, 
+                        public Ui::EntityGUI_4Spin1Check_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_4Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_4Spin1Check();
 };
 
 //////////////////////////////////////////

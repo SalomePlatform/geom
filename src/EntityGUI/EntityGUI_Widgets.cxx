@@ -38,6 +38,35 @@ EntityGUI_1Sel::~EntityGUI_1Sel()
 }
 
 //////////////////////////////////////////
+// EntityGUI_2Sel1Check
+//////////////////////////////////////////
+
+EntityGUI_2Sel1Check::EntityGUI_2Sel1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+EntityGUI_2Sel1Check::~EntityGUI_2Sel1Check()
+{
+}
+
+
+//////////////////////////////////////////
+// EntityGUI_1Sel1Spin1Check
+//////////////////////////////////////////
+
+EntityGUI_1Sel1Spin1Check::EntityGUI_1Sel1Spin1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+EntityGUI_1Sel1Spin1Check::~EntityGUI_1Sel1Spin1Check()
+{
+}
+
+//////////////////////////////////////////
 // EntityGUI_1Spin
 //////////////////////////////////////////
 
@@ -79,6 +108,21 @@ EntityGUI_3Spin::~EntityGUI_3Spin()
 {
 }
 
+
+//////////////////////////////////////////
+// EntityGUI_3Spin1Check
+//////////////////////////////////////////
+
+EntityGUI_3Spin1Check::EntityGUI_3Spin1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+EntityGUI_3Spin1Check::~EntityGUI_3Spin1Check()
+{
+}
+
 //////////////////////////////////////////
 // EntityGUI_4Spin
 //////////////////////////////////////////
@@ -90,6 +134,21 @@ EntityGUI_4Spin::EntityGUI_4Spin( QWidget* parent, Qt::WindowFlags f )
 }
 
 EntityGUI_4Spin::~EntityGUI_4Spin()
+{
+}
+
+
+//////////////////////////////////////////
+// EntityGUI_4Spin1Check
+//////////////////////////////////////////
+
+EntityGUI_4Spin1Check::EntityGUI_4Spin1Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+EntityGUI_4Spin1Check::~EntityGUI_4Spin1Check()
 {
 }
 
