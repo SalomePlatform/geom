@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -864,7 +863,6 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
   return theObject;
 }
 
-
 //=============================================================================
 /*!
  *  ChangeOrientationCopy
@@ -917,6 +915,65 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.ChangeOrientationShellCopy("
                                << theObject << ")";
+
+  SetErrorCode(OK);
+  return aNewObject;
+}
+
+//=============================================================================
+/*!
+ *  LimitTolerance
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::LimitTolerance (Handle(GEOM_Object) theObject,
+                                                                 double theTolerance)
+{
+  // Set error code, check parameters
+  SetErrorCode(KO);
+
+  if (theObject.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction, aLastFunction = theObject->GetLastFunction();
+  if (aLastFunction.IsNull())
+    return NULL; // There is no function which creates an object to be processed
+
+  // Add a new object
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), theObject->GetType());
+
+  // Add the function
+  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), LIMIT_TOLERANCE);
+
+  if (aFunction.IsNull())
+    return NULL;
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  // Prepare "data container" class IHealing
+  GEOMImpl_IHealing HI (aFunction);
+  HI.SetOriginal(aLastFunction);
+  HI.SetTolerance(theTolerance);
+
+  // Compute
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction) << aNewObject << " = geompy.LimitTolerance("
+                               << theObject << ", " << theTolerance << ")";
 
   SetErrorCode(OK);
   return aNewObject;

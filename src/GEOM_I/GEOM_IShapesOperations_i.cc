@@ -87,6 +87,34 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
 
 //=============================================================================
 /*!
+ *  MakeEdgeWire
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeWire
+                      (GEOM::GEOM_Object_ptr theWire,
+		       const CORBA::Double theLinearTolerance,
+		       const CORBA::Double theAngularTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the source wire
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+
+  if (aWire.IsNull()) return aGEOMObject._retn();
+
+  //Create the Edge
+  Handle(GEOM_Object) anObject = GetOperations()->MakeEdgeWire(aWire, theLinearTolerance, theAngularTolerance);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeWire
  */
 //=============================================================================
@@ -229,8 +257,11 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeSolidShell
   Handle(GEOM_Object) aShell = GetObjectImpl(theShell);
   if (aShell.IsNull()) return aGEOMObject._retn();
 
+  std::list<Handle(GEOM_Object)> aShapes;
+  aShapes.push_back(aShell);
+
   //Create the Solid
-  Handle(GEOM_Object) anObject = GetOperations()->MakeSolidShell(aShell);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeSolidShells(aShapes);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -408,6 +439,32 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetExistingSubObjects
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
+                                                                 CORBA::Boolean        theGroupsOnly)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetExistingSubObjects(aShape, theGroupsOnly);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
 }
 
 //=============================================================================

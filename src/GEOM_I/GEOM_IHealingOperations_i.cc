@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -488,6 +487,33 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ChangeOrientationCopy (GEOM::GE
   // Perform
   Handle(GEOM_Object) aNewObject =
     GetOperations()->ChangeOrientationCopy( anObject );
+  if (!GetOperations()->IsDone() || aNewObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(aNewObject);
+}
+
+//=============================================================================
+/*!
+ *  LimitTolerance
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::LimitTolerance (GEOM::GEOM_Object_ptr theObject,
+                                                                 CORBA::Double theTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  // Set a not done flag
+  GetOperations()->SetNotDone();
+
+  // Get the object itself
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  // Perform
+  Handle(GEOM_Object) aNewObject =
+    GetOperations()->LimitTolerance(anObject, theTolerance);
   if (!GetOperations()->IsDone() || aNewObject.IsNull())
     return aGEOMObject._retn();
 

@@ -83,7 +83,7 @@ private:
   GEOM::GEOM_Object_var              myLine2;
 
   bool                               myBusy;
-  
+
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
   DlgRef_1Sel1Spin*                  GroupOnCurve;

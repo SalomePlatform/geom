@@ -31,7 +31,9 @@ of the vector.
 
 \image html transformation2.png
 
-\n Finally you can define an \b Object and the vector. The object will be translated by the length of the vector.  
+\n Finally you can define an \b Object and a vector. The object will be translated by the length of the vector. 
+If a curve has been selected instead of the vector, only its first and last vertices will be used to get the vector direction 
+and the dialog preview will display the vector along which the object will be translated. 
 \n <b>TUI Command:</b> <em>geompy.MakeTranslationVector(Object, Vector)</em>
 \n <b>Activate Distance</b> checkbox and <b>Distance</b> field allow defining the custom distance of translation.
 \n <b>TUI Command </b> for translation by vector and custom distance: <em>geompy.MakeTranslationVectorDistance(Object, Vector, Distance)</em> 

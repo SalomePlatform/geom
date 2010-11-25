@@ -120,6 +120,7 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
 
   initName( tr( "REMOVE_EXTRA_EDGES_NEW_OBJ_NAME" ) );
   resize(100,100);
+  SelectionIntoArgument();
 }
 
 
@@ -252,6 +253,7 @@ void RepairGUI_RemoveExtraEdgesDlg::enterEvent(QEvent* e)
 void RepairGUI_RemoveExtraEdgesDlg::activateSelection()
 {
   TColStd_MapOfInteger aTypes;
+  aTypes.Add( GEOM_SHELL );
   aTypes.Add( GEOM_SOLID );
   aTypes.Add( GEOM_COMPOUND );
   globalSelection( aTypes );

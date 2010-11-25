@@ -289,6 +289,20 @@ DlgRef_2Sel1List1Check::~DlgRef_2Sel1List1Check()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel1List2Check
+//////////////////////////////////////////
+
+DlgRef_2Sel1List2Check::DlgRef_2Sel1List2Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel1List2Check::~DlgRef_2Sel1List2Check()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 
@@ -781,13 +795,12 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
   if ( qAbs(theValue) < prec )
     return "0";
 
-  QString aRes;
-  aRes.setNum( theValue, 'g', thePrecision );
+  QString aRes = QLocale().toString( theValue, thePrecision >= 0 ? 'f' : 'g', qAbs( thePrecision ) );
 
   if ( prec > 0 ) {
     int p = 0;
     while ( p < thePrecision ) {
-      aRes.setNum( theValue, 'g', p++ );
+      QString aRes = QLocale().toString( theValue, thePrecision >= 0 ? 'f' : 'g', qAbs( p++ ) );
       double v = aRes.toDouble();
       double err = qAbs( theValue - v );
       if ( err > 0 && err <= prec )
@@ -796,21 +809,19 @@ QString DlgRef::PrintDoubleValue( double theValue, int thePrecision )
   }
 
   // remove trailing zeroes
-  QString delim( "." );
 
-  int idx = aRes.lastIndexOf( delim );
-  if ( idx == -1 )
-    return aRes;
+  QRegExp expre( QString( "(%1|%2)[+-]?[0-9]+$" ).arg( QLocale().exponential().toLower(), 
+						       QLocale().exponential().toUpper() ) );
 
-  QString iPart = aRes.left( idx );
-  QString fPart = aRes.mid( idx + 1 );
+  int idx = aRes.indexOf( expre );
+  QString aResExp = "";
+  if ( idx >= 0 ) {
+    aResExp = aRes.mid( idx );
+    aRes = aRes.left( idx );
+  }
 
-  while ( !fPart.isEmpty() && fPart.at( fPart.length() - 1 ) == '0' )
-    fPart.remove( fPart.length() - 1, 1 );
+  if ( aRes.contains( QLocale().decimalPoint() ) )
+    aRes.remove( QRegExp( QString( "(\\%1|0)0*$" ).arg( QLocale().decimalPoint() ) ) );
 
-  aRes = iPart;
-  if ( !fPart.isEmpty() )
-    aRes += delim + fPart;
-
-  return aRes;
+  return aRes == "-0" ? QString( "0" ) : aRes + aResExp;
 }

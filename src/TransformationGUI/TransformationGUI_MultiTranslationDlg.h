@@ -51,10 +51,12 @@ protected:
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
   virtual void                       addSubshapesToStudy();
+  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
 
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
+  void                               createPathPreview( GEOM::GEOM_Object_var );
   
 private:
   GEOM::GEOM_Object_var              myBase, myVectorU, myVectorV;

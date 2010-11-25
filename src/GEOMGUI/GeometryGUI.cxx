@@ -19,9 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : GeometryGUI.cxx
-// Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GeometryGUI.cxx
+//  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
 #include <Standard_math.hxx>  // E.A. must be included before Python.h to fix compilation on windows
 #include "Python.h"
@@ -149,6 +149,17 @@ SALOMEDS::Study_var GeometryGUI::ClientStudyToStudy (_PTR(Study) theStudy)
   int aStudyID = theStudy->StudyId();
   SALOMEDS::Study_var aDSStudy = aStudyManager->GetStudyByID(aStudyID);
   return aDSStudy._retn();
+}
+
+void GeometryGUI::Modified( bool theIsUpdateActions )
+{
+  if( SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( SUIT_Session::session()->activeApplication() ) ) {
+    if( SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) ) {
+      appStudy->Modified();
+      if( theIsUpdateActions )
+        app->updateActions();
+    }
+  }
 }
 
 //=======================================================================
@@ -359,6 +370,9 @@ void GeometryGUI::OnGUIEvent( int id )
   QString libName;
   // find corresponding GUI library
   switch ( id ) {
+  case GEOMOp::OpOriginAndVectors: // MENU BASIC - ORIGIN AND BASE VECTORS
+    createOriginAndBaseVectors(); // internal operation
+    return;
   case GEOMOp::OpImport:           // MENU FILE - IMPORT
   case GEOMOp::OpExport:           // MENU FILE - EXPORT
   case GEOMOp::OpSelectVertex:     // POPUP MENU - SELECT ONLY - VERTEX
@@ -374,7 +388,11 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpDeflection:       // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:            // POPUP MENU - COLOR
   case GEOMOp::OpTransparency:     // POPUP MENU - TRANSPARENCY
+  case GEOMOp::OpIncrTransparency: // SHORTCUT   - INCREASE TRANSPARENCY
+  case GEOMOp::OpDecrTransparency: // SHORTCUT   - DECREASE TRANSPARENCY
   case GEOMOp::OpIsos:             // POPUP MENU - ISOS
+  case GEOMOp::OpIncrNbIsos:       // SHORTCUT   - INCREASE NB ISOS
+  case GEOMOp::OpDecrNbIsos:       // SHORTCUT   - DECREASE NB ISOS
   case GEOMOp::OpAutoColor:        // POPUP MENU - AUTO COLOR
   case GEOMOp::OpNoAutoColor:      // POPUP MENU - DISABLE AUTO COLOR
   case GEOMOp::OpShowChildren:     // POPUP MENU - SHOW CHILDREN
@@ -403,7 +421,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpVector:           // MENU BASIC - VECTOR
   case GEOMOp::OpPlane:            // MENU BASIC - PLANE
   case GEOMOp::OpCurve:            // MENU BASIC - CURVE
-  case GEOMOp::OpLCS:              // MENU BASIC - REPAIR
+  case GEOMOp::OpLCS:              // MENU BASIC - LOCAL COORDINATE SYSTEM
     libName = "BasicGUI";
     break;
   case GEOMOp::OpBox:              // MENU PRIMITIVE - BOX
@@ -473,6 +491,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpFreeFaces:        // MENU MEASURE - FREE FACES
   case GEOMOp::OpOrientation:      // MENU REPAIR - CHANGE ORIENTATION
   case GEOMOp::OpGlueFaces:        // MENU REPAIR - GLUE FACES
+  case GEOMOp::OpLimitTolerance:   // MENU REPAIR - LIMIT TOLERANCE
   case GEOMOp::OpRemoveExtraEdges: // MENU REPAIR - REMOVE EXTRA EDGES
     libName = "RepairGUI";
     break;
@@ -569,23 +588,54 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* w, QMouseEvent* e )
 // function : createGeomAction
 // purpose  :
 //=======================================================================
-void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel, const int accel, const bool toggle  )
+void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel, 
+				    const int accel, const bool toggle, const QString& shortcutAction )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap icon = icolabel.isEmpty() ? resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+label).toLatin1().constData() ), false )
                                     : resMgr->loadPixmap( "GEOM", tr( icolabel.toLatin1().constData() ) );
   createAction( id,
-                tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
-                icon,
-                tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ),
-                tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
-                accel,
-                application()->desktop(),
-                toggle,
-                this, SLOT( OnGUIEvent() )  );
+		tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
+		icon,
+		tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ),
+		tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
+		accel,
+		application()->desktop(),
+		toggle,
+		this, SLOT( OnGUIEvent() ),
+		shortcutAction );
 }
 
+//=======================================================================
+// function : createOriginAndBaseVectors
+// purpose  :
+//=======================================================================
+void GeometryGUI::createOriginAndBaseVectors()
+{
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+  if( appStudy ) {
+    _PTR(Study) studyDS = appStudy->studyDS();
+    if( studyDS && !CORBA::is_nil( GetGeomGen() ) ) {
+      GEOM::GEOM_IBasicOperations_var aBasicOperations = GetGeomGen()->GetIBasicOperations( studyDS->StudyId() );
+      if( !aBasicOperations->_is_nil() ) {
+        SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+        double aLength = aResourceMgr->doubleValue( "Geometry", "base_vectors_length", 1.0 );
+        GEOM::GEOM_Object_var anOrigin = aBasicOperations->MakePointXYZ( 0.0, 0.0, 0.0 );
+        GEOM::GEOM_Object_var anOX = aBasicOperations->MakeVectorDXDYDZ( aLength, 0.0, 0.0 );
+        GEOM::GEOM_Object_var anOY = aBasicOperations->MakeVectorDXDYDZ( 0.0, aLength, 0.0 );
+        GEOM::GEOM_Object_var anOZ = aBasicOperations->MakeVectorDXDYDZ( 0.0, 0.0, aLength );
 
+        SALOMEDS::Study_var aDSStudy = ClientStudyToStudy( studyDS );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOrigin, "O" );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOX, "OX" );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOY, "OY" );
+        GetGeomGen()->PublishInStudy( aDSStudy, SALOMEDS::SObject::_nil(), anOZ, "OZ" );
+
+        getApp()->updateObjectBrowser( false );
+      }
+    }
+  }
+}
 
 //=======================================================================
 // function : GeometryGUI::initialize()
@@ -611,6 +661,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpVector,     "VECTOR" );
   createGeomAction( GEOMOp::OpPlane,      "PLANE" );
   createGeomAction( GEOMOp::OpLCS,        "LOCAL_CS" );
+  createGeomAction( GEOMOp::OpOriginAndVectors, "ORIGIN_AND_VECTORS" );
 
   createGeomAction( GEOMOp::OpBox,        "BOX" );
   createGeomAction( GEOMOp::OpCylinder,   "CYLINDER" );
@@ -674,6 +725,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpSewing,           "SEWING" );
   createGeomAction( GEOMOp::OpGlueFaces,        "GLUE_FACES" );
+  createGeomAction( GEOMOp::OpLimitTolerance,   "LIMIT_TOLERANCE" );
   createGeomAction( GEOMOp::OpSuppressFaces,    "SUPPRESS_FACES" );
   createGeomAction( GEOMOp::OpSuppressHoles,    "SUPPERSS_HOLES" );
   createGeomAction( GEOMOp::OpShapeProcess,     "SHAPE_PROCESS" );
@@ -735,6 +787,19 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
+  
+  // Create actions for increase/decrease transparency shortcuts
+  createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false, 
+		    "Geometry:Increase transparency");
+  createGeomAction( GEOMOp::OpDecrTransparency, "", "", 0, false, 
+		    "Geometry:Decrease transparency");
+
+  // Create actions for increase/decrease number of isolines
+  createGeomAction( GEOMOp::OpIncrNbIsos, "", "", 0, false, 
+		    "Geometry:Increase number of isolines");
+  createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false, 
+		    "Geometry:Decrease number of isolines");
+
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
@@ -762,6 +827,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpVector,  basicId, -1 );
   createMenu( GEOMOp::OpPlane,   basicId, -1 );
   createMenu( GEOMOp::OpLCS,     basicId, -1 );
+  createMenu( GEOMOp::OpOriginAndVectors, basicId, -1 );
 
   int primId = createMenu( tr( "MEN_PRIMITIVES" ), newEntId, -1 );
   createMenu( GEOMOp::OpBox,       primId, -1 );
@@ -859,6 +925,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpSuppressHoles,   repairId, -1 );
   createMenu( GEOMOp::OpSewing,          repairId, -1 );
   createMenu( GEOMOp::OpGlueFaces,       repairId, -1 );
+  createMenu( GEOMOp::OpLimitTolerance,  repairId, -1 );
   createMenu( GEOMOp::OpAddPointOnEdge,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeBoundaries,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeFaces,       repairId, -1 );
@@ -930,6 +997,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpVector,  basicTbId );
   createTool( GEOMOp::OpPlane,   basicTbId );
   createTool( GEOMOp::OpLCS,     basicTbId );
+  createTool( GEOMOp::OpOriginAndVectors, basicTbId );
 
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
   createTool( GEOMOp::OpBox,       primTbId );
@@ -1056,7 +1124,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpDeflection ), -1, -1 ); // deflection
   mgr->setRule( action( GEOMOp::OpDeflection ), "selcount>0 and isVisible and client='OCCViewer'", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
-  mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg( GEOM_POINT ), QtxPopupMgr::VisibleRule );
+  //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
@@ -1137,7 +1206,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
     PyErr_Print();
   else
     {
-      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom","New Entity","Other");
+      PyObject* result=PyObject_CallMethod( pluginsmanager, (char*)"initialize", (char*)"isss",1,"geom",tr("MEN_NEW_ENTITY").toStdString().c_str(),tr("GEOM_PLUGINS_OTHER").toStdString().c_str());
       if(result==NULL)
         PyErr_Print();
       Py_XDECREF(result);
@@ -1197,6 +1266,20 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   QMenu* viewMenu = menuMgr()->findMenu( STD_Application::MenuViewId );
   if ( viewMenu )
     connect( viewMenu, SIGNAL( aboutToShow() ), this, SLOT( onViewAboutToShow() ) );
+
+  // 0020836 (Basic vectors and origin)
+  SUIT_ResourceMgr* aResourceMgr = SUIT_Session::session()->resourceMgr();
+  if( aResourceMgr->booleanValue( "Geometry", "auto_create_base_objects", false ) ) {
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( application()->activeStudy() );
+    if( appStudy ) {
+      _PTR(Study) studyDS = appStudy->studyDS();
+      if( studyDS ) {
+        _PTR(SComponent) aSComponent = studyDS->FindComponent("GEOM");
+        if( !aSComponent ) // create objects automatically only if there is no GEOM component
+          createOriginAndBaseVectors();
+      }
+    }
+  }
 
   return true;
 }
@@ -1460,21 +1543,21 @@ void GeometryGUI::createPreferences()
   const int nbQuantities = 8;
   int prec[nbQuantities], ii = 0;
   prec[ii++] = addPreference( tr( "GEOM_PREF_length_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "length_precision" );
+			      LightApp_Preferences::IntSpin, "Geometry", "length_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_angle_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_len_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "len_tol_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "len_tol_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_ang_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "ang_tol_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_weight_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "weight_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "weight_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_density_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "density_precision" );
+			      LightApp_Preferences::IntSpin, "Geometry", "density_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_parametric_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
   prec[ii  ] = addPreference( tr( "GEOM_PREF_param_tol_precision" ), precGroup,
-                            LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );
+			      LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );
 
   // Set property for precision value for spinboxes
   for ( ii = 0; ii < nbQuantities; ii++ ){
@@ -1541,6 +1624,18 @@ void GeometryGUI::createPreferences()
 
   setPreferenceProperty( markerScale, "strings", aMarkerScaleValuesList );
   setPreferenceProperty( markerScale, "indexes", aMarkerScaleIndicesList );
+
+  int originGroup = addPreference( tr( "PREF_GROUP_ORIGIN_AND_BASE_VECTORS" ), tabId );
+  setPreferenceProperty( originGroup, "columns", 2 );
+
+  int baseVectorsLength = addPreference( tr( "PREF_BASE_VECTORS_LENGTH" ), originGroup,
+                                         LightApp_Preferences::DblSpin, "Geometry", "base_vectors_length" );
+  setPreferenceProperty( baseVectorsLength, "min", 0.01 );
+  setPreferenceProperty( baseVectorsLength, "max", 1000 );
+
+  addPreference( tr( "PREF_AUTO_CREATE" ), originGroup,
+                 LightApp_Preferences::Bool, "Geometry", "auto_create_base_objects" );
+
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )

@@ -16,14 +16,14 @@
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
+#
 #  GEOM GEOMAlgo : tools for Glue Faces algorithm
 #  File   : Makefile.in
 #  Author : Julia DOROVSKIKH
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
 #  $Header$
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
@@ -51,20 +51,27 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_BuilderTools.cxx		\
 	GEOMAlgo_ClsfBox.cxx			\
 	GEOMAlgo_Clsf.cxx			\
+	GEOMAlgo_ClsfSolid.cxx			\
 	GEOMAlgo_ClsfSurf.cxx			\
 	GEOMAlgo_CoupleOfShapes.cxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape_0.cxx	\
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_0.cxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape_0.cxx	\
 	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape_0.cxx	\
 	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal_0.cxx		\
 	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet_0.cxx		\
+	GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_0.cxx		\
+	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_0.cxx			\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet_0.cxx		\
-	GEOMAlgo_DataMapOfPassKeyInteger_0.cxx	\
-	GEOMAlgo_DataMapOfRealListOfShape_0.cxx	\
-	GEOMAlgo_DataMapOfShapeReal_0.cxx	\
-	GEOMAlgo_DataMapOfShapeShapeSet_0.cxx	\
+	GEOMAlgo_DataMapOfOrientedShapeShape_0.cxx	\
+	GEOMAlgo_DataMapOfPassKeyInteger_0.cxx		\
+	GEOMAlgo_DataMapOfPassKeyShapeShape_0.cxx	\
+	GEOMAlgo_DataMapOfRealListOfShape_0.cxx		\
+	GEOMAlgo_DataMapOfShapeReal_0.cxx		\
+	GEOMAlgo_DataMapOfShapeShapeSet_0.cxx		\
 	GEOMAlgo_FinderShapeOn1.cxx		\
 	GEOMAlgo_FinderShapeOn2.cxx		\
 	GEOMAlgo_FinderShapeOn.cxx		\
@@ -76,13 +83,15 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx			\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx		\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape_0.cxx	\
-	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_0.cxx	\
-	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState_0.cxx	\
-	GEOMAlgo_IndexedDataMapOfIntegerShape_0.cxx			\
-	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_0.cxx		\
-	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_0.cxx		\
-	GEOMAlgo_IndexedDataMapOfShapeBox_0.cxx				\
-	GEOMAlgo_IndexedDataMapOfShapeState_0.cxx			\
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox_0.cxx		\
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo_0.cxx	\
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState_0.cxx		\
+	GEOMAlgo_IndexedDataMapOfIntegerShape_0.cxx				\
+	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape_0.cxx			\
+	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape_0.cxx			\
+	GEOMAlgo_IndexedDataMapOfShapeBox_0.cxx					\
+	GEOMAlgo_IndexedDataMapOfShapeShapeInfo_0.cxx				\
+	GEOMAlgo_IndexedDataMapOfShapeState_0.cxx				\
 	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes_0.cxx		\
 	GEOMAlgo_ListIteratorOfListOfPnt_0.cxx				\
 	GEOMAlgo_ListNodeOfListOfCoupleOfShapes_0.cxx			\
@@ -94,6 +103,9 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_PassKeyShape.cxx		\
 	GEOMAlgo_PassKeyShapeMapHasher.cxx	\
 	GEOMAlgo_ShapeAlgo.cxx			\
+	GEOMAlgo_ShapeInfo.cxx			\
+	GEOMAlgo_ShapeInfoFiller.cxx		\
+	GEOMAlgo_ShapeInfoFiller_1.cxx		\
 	GEOMAlgo_ShapeSet.cxx			\
 	GEOMAlgo_ShapeSolid.cxx			\
 	GEOMAlgo_ShellSolid.cxx			\
@@ -106,18 +118,10 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_Tools_1.cxx			\
 	GEOMAlgo_VertexSolid.cxx		\
 	GEOMAlgo_WESCorrector.cxx		\
+	GEOMAlgo_WESScaler.cxx			\
 	GEOMAlgo_WireEdgeSet.cxx		\
 	GEOMAlgo_WireSolid.cxx			\
-	GEOMAlgo_WireSplitter.cxx		\
-	GEOMAlgo_ClsfSolid.cxx			\
-	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_0.cxx			\
-	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape_0.cxx		\
-	GEOMAlgo_DataMapOfPassKeyShapeShape_0.cxx				\
-	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo_0.cxx	\
-	GEOMAlgo_ShapeInfoFiller_1.cxx						\
-	GEOMAlgo_IndexedDataMapOfShapeShapeInfo_0.cxx				\
-	GEOMAlgo_ShapeInfo.cxx							\
-	GEOMAlgo_ShapeInfoFiller.cxx
+	GEOMAlgo_WireSplitter.cxx
 
 # header files
 salomeinclude_HEADERS =					\
@@ -173,24 +177,33 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_Clsf.hxx				\
 	GEOMAlgo_Clsf.ixx				\
 	GEOMAlgo_Clsf.jxx				\
+	GEOMAlgo_ClsfSolid.hxx				\
+	GEOMAlgo_ClsfSolid.ixx				\
+	GEOMAlgo_ClsfSolid.jxx				\
 	GEOMAlgo_ClsfSurf.hxx				\
 	GEOMAlgo_ClsfSurf.ixx				\
 	GEOMAlgo_ClsfSurf.jxx				\
 	GEOMAlgo_CoupleOfShapes.hxx			\
 	GEOMAlgo_CoupleOfShapes.ixx			\
 	GEOMAlgo_CoupleOfShapes.jxx			\
-	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx	\
-	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape.hxx	\
-	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal.hxx	\
-	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet.hxx	\
+	GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape.hxx	\
+	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape.hxx	\
+	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape.hxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal.hxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet.hxx		\
+	GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape.hxx	\
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx	\
+	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx	\
 	GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx	\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx	\
-	GEOMAlgo_DataMapOfPassKeyInteger.hxx	\
-	GEOMAlgo_DataMapOfRealListOfShape.hxx	\
-	GEOMAlgo_DataMapOfShapeReal.hxx		\
-	GEOMAlgo_DataMapOfShapeShapeSet.hxx	\
+	GEOMAlgo_DataMapOfOrientedShapeShape.hxx	\
+	GEOMAlgo_DataMapOfPassKeyInteger.hxx		\
+	GEOMAlgo_DataMapOfPassKeyShapeShape.hxx		\
+	GEOMAlgo_DataMapOfRealListOfShape.hxx		\
+	GEOMAlgo_DataMapOfShapeReal.hxx			\
+	GEOMAlgo_DataMapOfShapeShapeSet.hxx		\
 	GEOMAlgo_FinderShapeOn1.ixx		\
 	GEOMAlgo_FinderShapeOn1.hxx		\
 	GEOMAlgo_FinderShapeOn1.jxx		\
@@ -217,18 +230,24 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx		\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx	\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx			\
+	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx			\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx			\
 	GEOMAlgo_IndexedDataMapOfIntegerShape.hxx					\
 	GEOMAlgo_IndexedDataMapOfPassKeyListOfShape.hxx					\
 	GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx				\
 	GEOMAlgo_IndexedDataMapOfShapeBox.hxx						\
+	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx					\
 	GEOMAlgo_IndexedDataMapOfShapeState.hxx						\
-	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx					\
-	GEOMAlgo_ListIteratorOfListOfPnt.hxx						\
-	GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx					\
-	GEOMAlgo_ListNodeOfListOfPnt.hxx	\
-	GEOMAlgo_ListOfCoupleOfShapes.hxx	\
-	GEOMAlgo_ListOfPnt.hxx			\
+	GEOMAlgo_KindOfBounds.hxx		\
+	GEOMAlgo_KindOfClosed.hxx		\
+	GEOMAlgo_KindOfName.hxx			\
+	GEOMAlgo_KindOfShape.hxx		\
+	GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx	\
+	GEOMAlgo_ListIteratorOfListOfPnt.hxx		\
+	GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx	\
+	GEOMAlgo_ListNodeOfListOfPnt.hxx		\
+	GEOMAlgo_ListOfCoupleOfShapes.hxx		\
+	GEOMAlgo_ListOfPnt.hxx				\
 	GEOMAlgo_PassKey.hxx			\
 	GEOMAlgo_PassKey.ixx			\
 	GEOMAlgo_PassKey.jxx			\
@@ -245,6 +264,12 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_ShapeAlgo.hxx			\
 	GEOMAlgo_ShapeAlgo.ixx			\
 	GEOMAlgo_ShapeAlgo.jxx			\
+	GEOMAlgo_ShapeInfo.hxx			\
+	GEOMAlgo_ShapeInfo.ixx			\
+	GEOMAlgo_ShapeInfo.jxx			\
+	GEOMAlgo_ShapeInfoFiller.hxx		\
+	GEOMAlgo_ShapeInfoFiller.ixx		\
+	GEOMAlgo_ShapeInfoFiller.jxx		\
 	GEOMAlgo_ShapeSet.hxx			\
 	GEOMAlgo_ShapeSet.ixx			\
 	GEOMAlgo_ShapeSet.jxx			\
@@ -279,6 +304,9 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_WESCorrector.hxx		\
 	GEOMAlgo_WESCorrector.ixx		\
 	GEOMAlgo_WESCorrector.jxx		\
+	GEOMAlgo_WESScaler.hxx			\
+	GEOMAlgo_WESScaler.ixx			\
+	GEOMAlgo_WESScaler.jxx			\
 	GEOMAlgo_WireEdgeSet.hxx		\
 	GEOMAlgo_WireEdgeSet.ixx		\
 	GEOMAlgo_WireEdgeSet.jxx		\
@@ -290,8 +318,11 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_WireSplitter.jxx		\
 	Handle_GEOMAlgo_ClsfBox.hxx		\
 	Handle_GEOMAlgo_Clsf.hxx		\
+	Handle_GEOMAlgo_ClsfSolid.hxx		\
 	Handle_GEOMAlgo_ClsfSurf.hxx		\
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape.hxx			\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx			\
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx			\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx			\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx				\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx				\
@@ -300,30 +331,10 @@ salomeinclude_HEADERS =					\
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx	\
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyShapeListOfShape.hxx	\
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx		\
+	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx		\
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeState.hxx		\
 	Handle_GEOMAlgo_ListNodeOfListOfCoupleOfShapes.hxx				\
-	Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx						\
-	GEOMAlgo_ClsfSolid.hxx								\
-	GEOMAlgo_ClsfSolid.ixx								\
-	GEOMAlgo_ClsfSolid.jxx								\
-	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape.hxx			\
-	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx				\
-	GEOMAlgo_DataMapOfPassKeyShapeShape.hxx						\
-	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx			\
-	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx					\
-	GEOMAlgo_KindOfBounds.hxx		\
-	GEOMAlgo_KindOfClosed.hxx		\
-	GEOMAlgo_KindOfName.hxx			\
-	GEOMAlgo_KindOfShape.hxx		\
-	GEOMAlgo_ShapeInfo.hxx			\
-	GEOMAlgo_ShapeInfo.ixx			\
-	GEOMAlgo_ShapeInfo.jxx			\
-	GEOMAlgo_ShapeInfoFiller.hxx		\
-	GEOMAlgo_ShapeInfoFiller.ixx		\
-	GEOMAlgo_ShapeInfoFiller.jxx		\
-	Handle_GEOMAlgo_ClsfSolid.hxx		\
-	Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx			\
-	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx
+	Handle_GEOMAlgo_ListNodeOfListOfPnt.hxx
 
 libGEOMAlgo_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
@@ -384,6 +395,7 @@ CDL_FILES =					\
 	GEOMAlgo_Tools3D.cdl			\
 	GEOMAlgo_VertexSolid.cdl		\
 	GEOMAlgo_WESCorrector.cdl		\
+	GEOMAlgo_WESScaler.cdl			\
 	GEOMAlgo_WireEdgeSet.cdl		\
 	GEOMAlgo_WireSolid.cdl			\
 	GEOMAlgo_WireSplitter.cdl

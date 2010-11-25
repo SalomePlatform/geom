@@ -2,21 +2,46 @@
 
 \page create_edge_page Edge
 
-\n To create an \b Edge in the <b>Main Menu</b> select <b>New Entity- > Build - > Edge</b> 
+To create an \b Edge, in the <b>Main Menu</b> select <b>New Entity >
+Build > Edge</b>  
 
-\n You can create an \b Edge from two points (\b Point1 and \b Point2), being the first and the last vertices of the edge.
+There are two ways to create an edge. In both cases the \b Result
+will be a \b GEOM_Object (EDGE). 
 
-The \b Result  will be a \b GEOM_Object (EDGE).
+Firstly, you can create an \b Edge by specifying two points (\b Point1 and
+\b Point2), which are the first and the last vertices of the edge.
 
-<b>TUI Command:</b> <em>geompy.MakeEdge(Vertex1, Vertex2),</em> where
-Vertex1 and Vertex2 are correspondingly the first and the last vertex
-of the edge.
+<b>TUI Command:</b> <em>geompy.MakeEdge(Vertex1, Vertex2)</em><br>
+<b>Arguments:</b> Name + 2 vertices (Vertex1 and Vertex2 are
+correspondingly the first and the last vertex of the edge).
 
-<b>Arguments:</b> Name + 2 vertices.
+\image html edge1.png "Create edge by two points"
 
-\image html neo-obj2.png
+Secondly, you can create an \b Edge by specifying a single wire.
 
-\n <b>Example:</b>
+In this mode the following use cases are possible:
+- All edges that form the wire lie on the same geometrical curve
+(i.e. curve(edge1) == curve(edge2)).
+- The edges that form the wire lie on analytical curves of the same
+type, for example, segments of line, arcs, etc. In this case, the
+algorithm checks geometrical coincidence of these curves using
+a certain tolerance. If the curves are coinciding in terms of the given
+tolerance, the resulting edge is built as if on a single curve.
+- The edges that form the wire have the same tangency in the connection
+points. In this case the curves are interpolated by the single
+b-spline curve with sufficient precision. The resulting edge will
+be built on this curve. 
+
+The case when the edges that form the wire have different tangency in
+the connection points (sharp bend) is not processed.
+
+<b>TUI Command:</b> <em>geompy.MakeEdgeWire(Wire, LinearTolerance, AngularTolerance)</em><br>
+<b>Arguments:</b> Name + 1 wire + Linear Tolerance + Angular Tolerance
+(tolerance values are used to check coincidence of the underlying curves).
+
+\image html edge2.png "Create edge from wire"
+
+<b>Example:</b>
 
 \image html edgesn.png "Edge"
 

@@ -28,8 +28,7 @@
 
 #include "utilities.h"
 #include <fstream>
-#include <strstream>
-//#include <sstream>
+#include <sstream>
 
 #include <OpUtil.hxx>
 #include <Utils_ExceptHandlers.hxx>
@@ -40,6 +39,7 @@
 #include <BRepTools_ShapeSet.hxx>
 #include <BRepTools.hxx>
 #include <TopAbs.hxx>
+#include <TopoDS_Iterator.hxx>
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -115,6 +115,61 @@ GEOM::shape_type GEOM_Object_i::GetShapeType()
   TopoDS_Shape _geom = _impl->GetValue();
   if(_geom.IsNull()) return GEOM::SHAPE;
   return (GEOM::shape_type)_geom.ShapeType();
+}
+
+//=============================================================================
+/*!
+ *  GetTopologyType
+ */
+//=============================================================================
+GEOM::shape_type GEOM_Object_i::GetTopologyType()
+{
+  TopoDS_Shape shape = _impl->GetValue();
+  if(shape.IsNull()) return GEOM::SHAPE;
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND || shape.ShapeType() == TopAbs_COMPSOLID ) {
+    TopoDS_Shape shape_i;
+    TopoDS_Iterator It (shape, Standard_True, Standard_False);
+    for (; It.More(); It.Next()) {
+      if ( !shape_i.IsNull() ) return (GEOM::shape_type)shape.ShapeType();
+      shape_i = It.Value();
+    }
+    if ( !shape_i.IsNull() )
+      return (GEOM::shape_type) shape_i.ShapeType();
+  }
+
+  return (GEOM::shape_type)shape.ShapeType();
+}
+
+static GEOM::shape_type getMinShapeType( const TopoDS_Shape& shape )
+{
+  if ( shape.IsNull() )
+    return GEOM::SHAPE;
+
+  GEOM::shape_type ret = (GEOM::shape_type)shape.ShapeType();
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND || shape.ShapeType() == TopAbs_COMPSOLID ) {
+    TopoDS_Iterator it(shape, Standard_True, Standard_False);
+    for (; it.More(); it.Next()) {
+      TopoDS_Shape sub_shape = it.Value();
+      if ( sub_shape.IsNull() ) continue;
+      GEOM::shape_type stype = (GEOM::shape_type)sub_shape.ShapeType();
+      if ( stype != GEOM::SHAPE && stype > ret )
+	ret = stype;
+    }
+  }
+
+  return ret;
+}
+
+//=============================================================================
+/*!
+ *  GetMinShapeType
+ */
+//=============================================================================
+GEOM::shape_type GEOM_Object_i::GetMinShapeType()
+{
+  return getMinShapeType( _impl->GetValue() );
 }
 
 //=============================================================================
@@ -343,23 +398,18 @@ SALOMEDS::TMPFile* GEOM_Object_i::GetShapeStream()
 
   if(aShape.IsNull()) return NULL;
 
-  std::ostrstream streamShape;
+  std::ostringstream streamShape;
   //Write TopoDS_Shape in ASCII format to the stream
   BRepTools::Write(aShape, streamShape);
   //Returns the number of bytes that have been stored in the stream's buffer.
-  int size = streamShape.pcount();
-  char* buf = new char [size];
-  //Get pointer on internal character array in ostrstream
-  char* valueOfStream = streamShape.str();
-  //Create copy of ostrstream content
-  memcpy(buf, valueOfStream, size);
-  //Allow automatic deletion of ostrstream content
-  streamShape.rdbuf()->freeze(0);
-
-  CORBA::Octet* OctetBuf =  (CORBA::Octet*)buf;
+  int size = streamShape.str().size();
+  //Allocate octect buffer of required size
+  CORBA::Octet* OctetBuf = SALOMEDS::TMPFile::allocbuf(size);
+  //Copy ostrstream content to the octect buffer
+  memcpy(OctetBuf, streamShape.str().c_str(), size);
+  //Create and return TMPFile
   SALOMEDS::TMPFile_var SeqFile = new SALOMEDS::TMPFile(size,size,OctetBuf,1);
   return SeqFile._retn();
-
 }
 
 

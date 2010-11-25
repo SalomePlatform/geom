@@ -141,9 +141,9 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   myRestrictGroupBox->setEnabled(!CORBA::is_nil(myMainObj));
   allSubs->setChecked(true);
 
-  myShowOnlyBtn = new QPushButton(tr("Show only selected"), GroupMedium);
-  myHideSelBtn  = new QPushButton(tr("Hide selected"), GroupMedium);
-  myShowAllBtn  = new QPushButton(tr("Show all sub-shapes"), GroupMedium);
+  myShowOnlyBtn = new QPushButton(tr("SHOW_ONLY_SELECTED"), GroupMedium);
+  myHideSelBtn  = new QPushButton(tr("HIDE_SELECTED"), GroupMedium);
+  myShowAllBtn  = new QPushButton(tr("SHOW_ALL_SUB_SHAPES"), GroupMedium);
 
   mySelAllBtn   = new QPushButton(tr("SELECT_ALL"), GroupMedium);
   myAddBtn      = new QPushButton(tr("ADD"), GroupMedium);
@@ -473,7 +473,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     }
   }
   else { // an attempt to synchronize list box selection with 3d viewer
-    if (myBusy) {
+    if ( myBusy || myMainObj->_is_nil() ) {
       return;
     }
 
@@ -617,7 +617,8 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
   theMapIndex.Clear();
 
   SalomeApp_Application* app = myGeomGUI->getApp();
-  if (!app) return 0;
+  if ( !app || myMainObj->_is_nil() )
+    return 0;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   SALOME_ListIO aSelList;
@@ -786,6 +787,7 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+    int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
     SUIT_ViewWindow* aViewWindow = 0;
     SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
@@ -828,6 +830,7 @@ void GroupGUI_GroupDlg::activateSelection()
       }
     }
     aDisplayer->UpdateViewer();
+    aDisplayer->SetDisplayMode(prevDisplayMode);
   }
 
   globalSelection(GEOM_ALLSHAPES);
@@ -1056,11 +1059,9 @@ bool GroupGUI_GroupDlg::execute(ObjectList& objects)
 
   SalomeApp_Study* study = getStudy();
   if (study) {
-    char* objIOR = GEOMBase::GetIORFromObject(aGroup);
-    std::string IOR(objIOR);
-    free(objIOR);
-    if (IOR != "") {
-      _PTR(SObject) SO (study->studyDS()->FindObjectIOR(IOR));
+    QString objIOR = GEOMBase::GetIORFromObject(aGroup);
+    if (objIOR != "") {
+      _PTR(SObject) SO (study->studyDS()->FindObjectIOR(objIOR.toLatin1().constData()));
       if (SO) {
         _PTR(StudyBuilder) aBuilder (study->studyDS()->NewBuilder());
         aBuilder->SetName(SO, getNewObjectName().toLatin1().constData());

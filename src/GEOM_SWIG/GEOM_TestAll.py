@@ -437,6 +437,14 @@ def TestAll (geompy, math):
   nameS      = geompy.SubShapeName(SubFaceS, Box)
   id_SubFace = geompy.addToStudyInFather(Box, SubFaceS, nameS)
 
+  # GetExistingSubObjects
+  SubObjsAll = geompy.GetExistingSubObjects(Box, True)
+  print "For now, Box has the following created sub-objects:", SubObjsAll
+
+  # GetGroups
+  SubGrpsAll = geompy.GetGroups(Box)
+  print "For now, Box has the following created groups:", SubGrpsAll
+
   # SubShapeAll
   SubEdgeList = geompy.SubShapeAll(SubFace, geompy.ShapeType["EDGE"])
   i=0

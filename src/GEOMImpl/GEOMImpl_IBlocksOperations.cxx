@@ -571,6 +571,81 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetPoint
 
 //=============================================================================
 /*!
+ *  GetVertexNearPoint
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetVertexNearPoint
+                                               (Handle(GEOM_Object) theShape,
+                                                Handle(GEOM_Object) thePoint)
+{
+  SetErrorCode(KO);
+
+  // New Point object
+  Handle(GEOM_Object) aResult;
+
+  // Arguments
+  if (theShape.IsNull() || thePoint.IsNull()) return NULL;
+
+  TopoDS_Shape aBlockOrComp = theShape->GetValue();
+  TopoDS_Shape aPoint       = thePoint->GetValue();
+  if (aBlockOrComp.IsNull() || aPoint.IsNull()) {
+    SetErrorCode("Given shape is null");
+    return NULL;
+  }
+
+  if (aPoint.ShapeType() != TopAbs_VERTEX) {
+    SetErrorCode("Element for vertex identification is not a vertex");
+    return NULL;
+  }
+
+  TopoDS_Vertex aVert = TopoDS::Vertex(aPoint);
+  gp_Pnt aP = BRep_Tool::Pnt(aVert);
+
+  // Compute the Vertex value
+  TopoDS_Shape V;
+  bool isFound = false;
+  Standard_Real aDist = RealLast();
+  TopTools_MapOfShape mapShape;
+
+  TopExp_Explorer exp (aBlockOrComp, TopAbs_VERTEX);
+  for (; exp.More(); exp.Next()) {
+    if (mapShape.Add(exp.Current())) {
+      TopoDS_Vertex aVi = TopoDS::Vertex(exp.Current());
+      gp_Pnt aPi = BRep_Tool::Pnt(aVi);
+      Standard_Real aDisti = aPi.Distance(aP);
+      if (aDisti < aDist) {
+        V = aVi;
+        aDist = aDisti;
+        isFound = true;
+      }
+    }
+  }
+
+  if (!isFound) {
+    SetErrorCode("Vertex has not been found");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aBlockOrComp, anIndices);
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
+  anArray->SetValue(1, anIndices.FindIndex(V));
+  aResult = GetEngine()->AddSubShape(theShape, anArray);
+
+  // The GetPoint() doesn't change object so no new function is required.
+  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction, /*append=*/true)
+    << aResult << " = geompy.GetVertexNearPoint("
+    << theShape << ", " << thePoint << ")";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
  *  GetEdge
  */
 //=============================================================================
@@ -1453,6 +1528,136 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetFaceByNormale
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetFaceByNormale("
     << theShape << ", " << theVector << ")";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  GetShapesNearPoint
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
+                                         (Handle(GEOM_Object)    theShape,
+                                          Handle(GEOM_Object)    thePoint,
+                                          const Standard_Integer theShapeType,
+                                          const Standard_Real    theTolerance)
+{
+  SetErrorCode(KO);
+
+  // New object
+  Handle(GEOM_Object) aResult;
+
+  // Arguments
+  if (theShape.IsNull() || thePoint.IsNull()) return NULL;
+
+  TopoDS_Shape aBlockOrComp = theShape->GetValue();
+  if (aBlockOrComp.IsNull()) {
+    SetErrorCode("Block or compound is null");
+    return NULL;
+  }
+
+  TopoDS_Shape anArg = thePoint->GetValue();
+  if (anArg.IsNull()) {
+    SetErrorCode("Null shape is given as argument");
+    return NULL;
+  }
+  if (anArg.ShapeType() != TopAbs_VERTEX) {
+    SetErrorCode("Element for face identification is not a vertex");
+    return NULL;
+  }
+
+  if (theShapeType < TopAbs_SOLID || TopAbs_VERTEX < theShapeType) {
+    SetErrorCode("Invalid type of result is requested");
+    return NULL;
+  }
+
+  if (theTolerance < Precision::Confusion()) {
+    theTolerance == Precision::Confusion();
+  }
+
+  // Compute the result
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    TopoDS_Vertex aVert = TopoDS::Vertex(anArg);
+
+    TopTools_MapOfShape mapShape;
+    Standard_Integer nbEdges = 0;
+    TopExp_Explorer exp (aBlockOrComp, TopAbs_ShapeEnum(theShapeType));
+    for (; exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        nbEdges++;
+      }
+    }
+
+    if (nbEdges == 0) {
+      SetErrorCode("Given shape contains no subshapes of requested type");
+      return NULL;
+    }
+
+    // Calculate distances and find min
+    mapShape.Clear();
+    Standard_Integer ind = 1;
+    Standard_Real aMinDist = RealLast();
+    TopTools_Array1OfShape anEdges (1, nbEdges);
+    TColStd_Array1OfReal aDistances (1, nbEdges);
+    for (exp.Init(aBlockOrComp, TopAbs_ShapeEnum(theShapeType)); exp.More(); exp.Next()) {
+      if (mapShape.Add(exp.Current())) {
+        TopoDS_Shape anEdge = exp.Current();
+        anEdges(ind) = anEdge;
+
+        BRepExtrema_DistShapeShape aDistTool (aVert, anEdges(ind));
+        if (!aDistTool.IsDone()) {
+          SetErrorCode("Can not find a distance from the given point to one of subshapes");
+          return NULL;
+        }
+        aDistances(ind) = aDistTool.Value();
+        if (aDistances(ind) < aMinDist) {
+          aMinDist = aDistances(ind);
+        }
+        ind++;
+      }
+    }
+
+    if (aMinDist < RealLast()) {
+      // Collect subshapes with distance < (aMinDist + theTolerance)
+      int nbSubShapes = 0;
+      TopTools_Array1OfShape aNearShapes (1, nbEdges);
+      for (ind = 1; ind <= nbEdges; ind++) {
+        if (aDistances(ind) < aMinDist + theTolerance) {
+          nbSubShapes++;
+          aNearShapes(nbSubShapes) = anEdges(ind);
+        }
+      }
+
+      // Add subshape
+      TopTools_IndexedMapOfShape anIndices;
+      TopExp::MapShapes(aBlockOrComp, anIndices);
+      Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, nbSubShapes);
+      for (ind = 1; ind <= nbSubShapes; ind++) {
+        anArray->SetValue(ind, anIndices.FindIndex(aNearShapes(ind)));
+      }
+      aResult = GetEngine()->AddSubShape(theShape, anArray);
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  if (aResult.IsNull())
+    return NULL;
+
+  Handle(GEOM_Function) aFunction = aResult->GetLastFunction();
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << aResult << " = geompy.GetShapesNearPoint(" << theShape << ", " << thePoint
+    << ", " << TopAbs_ShapeEnum(theShapeType) << ", " << theTolerance << ")";
 
   SetErrorCode(OK);
   return aResult;

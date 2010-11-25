@@ -34,6 +34,8 @@
 #include "GEOM_AssemblyBuilder.h"
 #include "GEOM_Actor.h"
 
+#include <OCC2VTK_Tools.h>
+
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 
@@ -43,29 +45,15 @@
 
 // Open CASCADE Includes
 #include <TopExp_Explorer.hxx>
-#include <Bnd_Box.hxx>
-#include <BRepMesh_IncrementalMesh.hxx>
-#include <Poly_Triangulation.hxx>
-#include <BRepBndLib.hxx>
 #include <BRep_Tool.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopExp.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
 
 // Qt includes
 #include <QColor>
 
 #include "utilities.h"
-
-// SALOME
-
-#define MAX2(X, Y)      (  Abs(X) > Abs(Y)? Abs(X) : Abs(Y) )
-#define MAX3(X, Y, Z)   ( MAX2 ( MAX2(X,Y) , Z) )
-
-
-
-
 
 void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
                                           vtkProperty* FaceProp,
@@ -159,37 +147,6 @@ void GEOM_AssemblyBuilder::InitProperties(vtkProperty* IsoProp,
 }
 
 
-void GEOM_AssemblyBuilder::MeshShape(const TopoDS_Shape myShape,
-                                         Standard_Real deflection,
-                                         Standard_Boolean forced)
-{
-  // Mesh the shape if necessary
-  Standard_Boolean alreadymesh = Standard_True;
-  TopExp_Explorer ex;
-  TopLoc_Location aLoc;
-
-  for (ex.Init(myShape, TopAbs_FACE); ex.More(); ex.Next()) {
-    const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
-    Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
-    if(aPoly.IsNull()) { alreadymesh = Standard_False; break; }
-  }
-
-  if(!alreadymesh || forced) {
-    if(deflection<=0) {
-      // Compute default deflection
-      Bnd_Box B;
-      BRepBndLib::Add(myShape, B);
-      if ( B.IsVoid() ) return; // NPAL15983 (Bug when displaying empty groups) 
-      Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-      B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-      deflection = MAX3( aXmax-aXmin , aYmax-aYmin , aZmax-aZmin) * 0.001 *4;
-    }
-    BRepMesh_IncrementalMesh MESH(myShape,deflection);
-  }
-}
-
-
-
 vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShape,
                                                       Standard_Real    deflection,
                                                       Standard_Integer mode,
@@ -210,7 +167,7 @@ vtkActorCollection* GEOM_AssemblyBuilder::BuildActors(const TopoDS_Shape& myShap
   */
 
   vtkActorCollection* AISActors = vtkActorCollection::New();
-  MeshShape(myShape,deflection,forced);
+  GEOM::MeshShape(myShape,deflection,forced);
   GEOM_Actor* aGeomActor = GEOM_Actor::New();
   aGeomActor->SetShape(myShape,(float)deflection,false,isVector);
   AISActors->AddItem(aGeomActor);

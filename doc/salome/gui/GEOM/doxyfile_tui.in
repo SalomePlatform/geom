@@ -53,7 +53,7 @@ HTML_FOOTER       = @srcdir@/static/footer.html
 HTML_STYLESHEET   = @srcdir@/static/doxygen.css
 TOC_EXPAND        = YES
 DISABLE_INDEX     = NO
-GENERATE_TREEVIEW = YES
+GENERATE_TREEVIEW = NO
 TREEVIEW_WIDTH    = 300
 
 #---------------------------------------------------------------------------
@@ -70,3 +70,4 @@ GENERATE_RTF      = NO
 #External reference options
 #---------------------------------------------------------------------------
 GENERATE_TAGFILE  = tui_examples.tag
+SEARCHENGINE      = YES

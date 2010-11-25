@@ -298,7 +298,6 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
   qApp->processEvents();
   updateGeometry();
   resize(minimumSizeHint());
-  SelectionIntoArgument();
 }
 
 //=================================================================================
@@ -398,7 +397,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     }
   }
 
-  // clear selection
+  // clear selection of the faces or edges
   if (!(myEditCurrentArgument == Group2->LineEdit2 ||
         myEditCurrentArgument == Group3->LineEdit2)) {
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -422,6 +421,19 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
     break;
   default:
     break;
+  }
+
+  //rnv: To fix the bug IPAL22041 TC5.1.5: "Fillet Construcion" dialog loses current selection.
+  // Restore selection of the main shape, if need,
+  // because it was canceled.
+  aSelMgr->selectedObjects(aSelList);
+  if (aSelList.Extent() == 0 && !myShape->_is_nil()) {
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    ObjectList list;
+	list.push_back(myShape);
+    selectObjects(list);
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+            this, SLOT(SelectionIntoArgument()));
   }
 }
 

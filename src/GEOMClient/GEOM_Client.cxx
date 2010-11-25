@@ -30,7 +30,7 @@
 
 #include <Standard_Stream.hxx>
 
-#include <strstream>
+#include <sstream>
 
 #include "GEOM_Client.hxx"
 #include <SALOMEconfig.h>
@@ -81,7 +81,7 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
     int sizebuf = SeqFile->length();
     char* buf;
     buf = (char*) &SeqFile[0];
-    std::istrstream streamBrep(buf,sizebuf);
+    std::istringstream streamBrep(buf);
     BRep_Builder aBuilder;
     BRepTools::Read(S, streamBrep, aBuilder);
     return(S);

@@ -236,6 +236,12 @@ bool TransformationGUI_RotationDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myObjects.length(0);
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;
@@ -311,7 +317,7 @@ void TransformationGUI_RotationDlg::SelectionIntoArgument()
         //Find SubShape Object in Father
         GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
 
-        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+        if (aFindedObject->_is_nil()) { // Object not found in study
           GEOM::GEOM_IShapesOperations_var aShapesOp =
             getGeomEngine()->GetIShapesOperations(getStudyId());
           aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);

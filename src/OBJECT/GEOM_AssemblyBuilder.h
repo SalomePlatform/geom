@@ -50,11 +50,6 @@ class GEOM_OBJECT_EXPORT GEOM_AssemblyBuilder {
                              vtkProperty* EdgePVProp,
                              vtkProperty* VertePVProp);
 
-  static void MeshShape(const TopoDS_Shape myShape,
-                        Standard_Real deflection,
-                        Standard_Boolean forced);
-
-
  public:
 
 

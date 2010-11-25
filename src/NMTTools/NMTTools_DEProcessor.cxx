@@ -454,16 +454,54 @@
   const BOPTools_SplitShapesPool& aSplitShapesPool=myFiller->SplitShapesPool();
   const BOPTools_ListOfPaveBlock& aSplitEdges=aSplitShapesPool(myDS->RefEdge(nED));
 
-  Standard_Integer nV1, nV2, aNewShapeIndex;
-  Standard_Real    t1, t2;
+  Standard_Integer nV1, nV2, aNbPB, aNewShapeIndex;
+  Standard_Real t1, t2;
   TopoDS_Edge aE, aESplit;
   TopoDS_Vertex aV1, aV2;
-
+  BOPTools_ListIteratorOfListOfPaveBlock aPBIt;
+  //
   const TopoDS_Edge aDE=TopoDS::Edge(myDS->Shape(nED));
   const TopoDS_Face aDF=TopoDS::Face(myDS->Shape(nFD));
-
-  BOPTools_ListIteratorOfListOfPaveBlock aPBIt(aSplitEdges);
-
+  //
+  //modified by NIZNHY-PKV Wed Oct 20 13:20:37 2010f
+  aNbPB=aSplitEdges.Extent();
+  if (aNbPB==1) {
+    Standard_Real aT1, aT2, dT1, dT2, aDT;
+    Handle(Geom2d_Curve) aC2D;
+    //
+    BOPTools_PaveBlock& aPB=aSplitEdges.First();
+    //
+    const BOPTools_Pave& aPave1=aPB.Pave1();
+    t1=aPave1.Param();
+    const BOPTools_Pave& aPave2=aPB.Pave2();
+    t2=aPave2.Param();
+    ////
+    nV1=aPave1.Index();
+    aV1=*((TopoDS_Vertex*)&myDS->GetShape(nV1));
+    //
+    aV2=TopExp::FirstVertex(aDE);
+    if (aV2.IsSame(aV1)) {
+      aC2D=BRep_Tool::CurveOnSurface(aDE, aDF, aT1, aT2);
+      dT1=aT1-t1;
+      if (dT1<0.) {
+	dT1=-dT1;
+      }
+      //
+      dT2=aT2-t2;
+      if (dT2<0.) {
+	dT2=-dT2;
+      }
+      aDT=Precision::PConfusion();
+      if(dT1<aDT && dT2<aDT) {
+	BOPTools_ListOfPaveBlock* pLPB=(BOPTools_ListOfPaveBlock*)&aSplitEdges;
+	pLPB->Clear();
+	return;
+      }
+    }
+  }
+  //modified by NIZNHY-PKV Wed Oct 20 13:20:39 2010t
+  //
+  aPBIt.Initialize(aSplitEdges);
   for (; aPBIt.More(); aPBIt.Next()) {
     BOPTools_PaveBlock& aPB=aPBIt.Value();
     

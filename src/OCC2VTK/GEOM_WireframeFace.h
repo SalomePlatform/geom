@@ -20,15 +20,15 @@
 #ifndef GEOM_WIREFRAME_FACE_H 
 #define GEOM_WIREFRAME_FACE_H 
  
+#include "OCC2VTK.h" 
 #include "GEOM_FaceSource.h" 
 
 #include <GeomAbs_IsoType.hxx>
 #include <BRepAdaptor_Surface.hxx>
  
 #include <vtkPolyDataSource.h> 
- 
- 
-class VTK_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
+
+class OCC2VTK_EXPORT GEOM_WireframeFace: public GEOM_FaceSource 
 { 
 public: 
   vtkTypeMacro(GEOM_WireframeFace,GEOM_FaceSource); 

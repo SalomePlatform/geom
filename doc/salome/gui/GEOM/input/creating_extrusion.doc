@@ -18,8 +18,8 @@ shell, solid or compsolid).
 \n <b> Both Directions </b> checkbox allows extruiding the source
 object both forward and backward. 
 \n <b>TUI Command:</b> <em>geompy.MakePrismVecH(Base, Vector, Height)</em>
-\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
-shell) serving as base object + 1 vector (for direction of the
+\n <b>Arguments:</b> Name + one or several shapes (vertex, edge, planar wire, face or
+shell) serving as base objects + 1 vector (for direction of the
 extrusion) + 1 value (dimension).
 
 \image html extrusion1.png
@@ -30,8 +30,8 @@ you don't need to create it in advance).
 \n <b> Both Directions </b> checkbox allows extruiding the source
 object both forward and backward. 
 \n <b>TUI Command:</b> <em>geompy.MakePrism(Base, Point1, Point2)</em>
-\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
-shell) serving as base object + 2 vertices.
+\n <b>Arguments:</b> Name + one or several shapes (vertex, edge, planar wire, face or
+shell) serving as base objects + 2 vertices.
 
 \image html extrusion2.png
 
@@ -40,8 +40,8 @@ and the <b>DX, DY, DZ</b> Vector\n
 <b>Both Directions</b> checkbox allows extruding the
 source objects both forward and backward.
 \n <b>TUI Command:</b> <em>geompy.MakePrismDXDYDZ(Base, dx, dy, dz)</em>
-\n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
-shell) serving as base object + 3 axis directions.
+\n <b>Arguments:</b> Name + one or several shapes (vertex, edge, planar wire, face or
+shell) serving as base objects + 3 axis directions.
 
 \image html extrusion3.png
 

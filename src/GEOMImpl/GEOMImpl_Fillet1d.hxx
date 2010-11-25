@@ -69,6 +69,7 @@ private:
   TColStd_ListOfReal myResultParams;
   TColStd_SequenceOfInteger myResultOrientation;
   Standard_Boolean myStartSide, myEdgesExchnged;
+  Standard_Integer myDegreeOfRecursion;
 };
 
 

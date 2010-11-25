@@ -1,8 +1,25 @@
+//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
+//
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 // File:	GEOMAlgo_Tools_1.cxx
 // Created:	Thu May  6 10:46:21 2010
 // Author:	Peter KURNEV
 //		<pkv@irinox>
-
 
 #include <GEOMAlgo_Tools.ixx>
 //
@@ -38,6 +55,7 @@
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <BRepTools.hxx>
 
 static 
   inline Standard_Boolean IsEqual(const TopoDS_Shape& aS1, 
@@ -72,7 +90,7 @@ static
       const Handle(Geom_Surface)& aS=BRep_Tool::Surface(aF, aLoc);
       aGAS.Load(aS);
       aTS=aGAS.GetType();
-      if (aTS==GeomAbs_Cylinder) {
+      if (aTS==GeomAbs_Cylinder || aTS==GeomAbs_Plane) {
 	aItF.Initialize(aF);
 	for (; aItF.More(); aItF.Next()) {
 	  const TopoDS_Wire& aW=*((TopoDS_Wire*)&aItF.Value());

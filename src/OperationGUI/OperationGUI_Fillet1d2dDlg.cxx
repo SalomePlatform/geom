@@ -205,7 +205,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
             //Find SubShape Object in Father
             GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( anObj, aName );
             
-            if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+            if ( aFindedObject->_is_nil()) { // Object not found in study
               GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
               anObj = aShapesOp->GetSubShape( anObj, anIndex );
             }
@@ -370,9 +370,12 @@ GEOM::GEOM_IOperations_ptr OperationGUI_Fillet1d2dDlg::createOperation()
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_Fillet1d2dDlg::isValid (QString&)
+bool OperationGUI_Fillet1d2dDlg::isValid (QString& msg)
 {
-  return !myShape->_is_nil() && (myIs1D || myVertexes.Extent() > 0);
+  bool ok = !myShape->_is_nil();
+  ok = GroupVertexes->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+  ok = (myIs1D || myVertexes.Extent() > 0) && ok;
+  return ok;
 }
 
 //=================================================================================

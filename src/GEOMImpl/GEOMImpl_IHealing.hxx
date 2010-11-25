@@ -19,9 +19,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  NOTE: This is an intreface to a function for the Healing creation.
 
-//NOTE: This is an intreface to a function for the Healing creation.
-//
 #include "GEOM_Function.hxx"
 
 #include <TColStd_HArray1OfInteger.hxx>
@@ -76,7 +75,7 @@ public:
 
   void SetIndex( Standard_Integer val ) { _func->SetInteger(ARG_SUBSHAPE_INDEX, val); }
   Standard_Integer GetIndex() { return _func->GetInteger(ARG_SUBSHAPE_INDEX); }
-            
+
 private:
-  Handle(GEOM_Function) _func;  
+  Handle(GEOM_Function) _func;
 };

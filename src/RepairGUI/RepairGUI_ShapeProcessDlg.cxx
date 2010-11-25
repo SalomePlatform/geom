@@ -224,7 +224,7 @@ void RepairGUI_ShapeProcessDlg::init()
       myBSpline2DCurveChk = new QCheckBox( tr("GEOM_2D_CURVE_MODE"), w );
 
       myBSplineTol3D = new SalomeApp_DoubleSpinBox( w );
-      initSpinBox( mySplitContTol3D, 0., 100., 1e-7, "len_tol_precision" );
+      initSpinBox( myBSplineTol3D, 0., 100., 1e-7, "len_tol_precision" );
       
       myBSplineTol2D = new SalomeApp_DoubleSpinBox( w );
       initSpinBox( myBSplineTol2D, 0., 100., 1e-7, "param_tol_precision" );      
@@ -322,6 +322,7 @@ void RepairGUI_ShapeProcessDlg::init()
   reset();
 
   initName( tr( "PROCESS_SHAPE_NEW_OBJ_NAME" ) );
+  selectionChanged();
 }
 
 //=================================================================================

@@ -28,6 +28,7 @@
 #include "MeasureGUI_Widgets.h"
 
 #include <GEOMBase.h>
+#include <DlgRef.h>
 
 #include <gp_XYZ.hxx>
 
@@ -142,21 +143,21 @@ void MeasureGUI_InertiaDlg::processObject()
     myGrp->LineEdit43->setText( "" );
   }
   else {
-    myGrp->LineEdit11->setText( QString( "%1" ).arg( aMat( 1, 1 ), 12, 'e', 4 ) );
-    myGrp->LineEdit12->setText( QString( "%1" ).arg( aMat( 1, 2 ), 12, 'e', 4 ) );
-    myGrp->LineEdit13->setText( QString( "%1" ).arg( aMat( 1, 3 ), 12, 'e', 4 ) );
+    myGrp->LineEdit11->setText( DlgRef::PrintDoubleValue( aMat( 1, 1 ), -6 ) );
+    myGrp->LineEdit12->setText( DlgRef::PrintDoubleValue( aMat( 1, 2 ), -6 ) );
+    myGrp->LineEdit13->setText( DlgRef::PrintDoubleValue( aMat( 1, 3 ), -6 ) );
     
-    myGrp->LineEdit21->setText( QString( "%1" ).arg( aMat( 2, 1 ), 12, 'e', 4 ) );
-    myGrp->LineEdit22->setText( QString( "%1" ).arg( aMat( 2, 2 ), 12, 'e', 4 ) );
-    myGrp->LineEdit23->setText( QString( "%1" ).arg( aMat( 2, 3 ), 12, 'e', 4 ) );
+    myGrp->LineEdit21->setText( DlgRef::PrintDoubleValue( aMat( 2, 1 ), -6 ) );
+    myGrp->LineEdit22->setText( DlgRef::PrintDoubleValue( aMat( 2, 2 ), -6 ) );
+    myGrp->LineEdit23->setText( DlgRef::PrintDoubleValue( aMat( 2, 3 ), -6 ) );
     
-    myGrp->LineEdit31->setText( QString( "%1" ).arg( aMat( 3, 1 ), 12, 'e', 4 ) );
-    myGrp->LineEdit32->setText( QString( "%1" ).arg( aMat( 3, 2 ), 12, 'e', 4 ) );
-    myGrp->LineEdit33->setText( QString( "%1" ).arg( aMat( 3, 3 ), 12, 'e', 4 ) );
+    myGrp->LineEdit31->setText( DlgRef::PrintDoubleValue( aMat( 3, 1 ), -6 ) );
+    myGrp->LineEdit32->setText( DlgRef::PrintDoubleValue( aMat( 3, 2 ), -6 ) );
+    myGrp->LineEdit33->setText( DlgRef::PrintDoubleValue( aMat( 3, 3 ), -6 ) );
     
-    myGrp->LineEdit41->setText( QString( "%1" ).arg( anIXYZ.X(), 12, 'e', 4 ) );
-    myGrp->LineEdit42->setText( QString( "%1" ).arg( anIXYZ.Y(), 12, 'e', 4 ) );
-    myGrp->LineEdit43->setText( QString( "%1" ).arg( anIXYZ.Z(), 12, 'e', 4 ) );
+    myGrp->LineEdit41->setText( DlgRef::PrintDoubleValue( anIXYZ.X(), -6 ) );
+    myGrp->LineEdit42->setText( DlgRef::PrintDoubleValue( anIXYZ.Y(), -6 ) );
+    myGrp->LineEdit43->setText( DlgRef::PrintDoubleValue( anIXYZ.Z(), -6 ) );
   }
 }
 

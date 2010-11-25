@@ -189,10 +189,12 @@ GEOM_Engine::GEOM_Engine()
 GEOM_Engine::~GEOM_Engine()
 {
   GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient It(_objects);
+  std::list< Handle(GEOM_Object) > objs;
   for(; It.More(); It.Next())
-    {
-      RemoveObject(Handle(GEOM_Object)::DownCast(It.Value()));
-    }
+    objs.push_back( Handle(GEOM_Object)::DownCast(It.Value()) );
+  std::list< Handle(GEOM_Object) >::iterator objit;
+  for(objit = objs.begin(); objit != objs.end(); ++objit)
+    RemoveObject(*objit);
 
   //Close all documents not closed
   for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
@@ -310,7 +312,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
                                              Handle(TColStd_HArray1OfInteger) theIndices,
                                              bool isStandaloneOperation)
 {
-  if(theMainShape.IsNull() || theIndices.IsNull()) return NULL;
+  if (theMainShape.IsNull() || theIndices.IsNull()) return NULL;
 
   Handle(TDocStd_Document) aDoc = GetDocument(theMainShape->GetDocID());
   Handle(TDataStd_TreeNode) aRoot = TDataStd_TreeNode::Set(aDoc->Main());
@@ -319,21 +321,6 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   //            if this label has been freed (object deleted)
   bool useExisting = false;
   TDF_Label aChild;
-  /*
-  if (!_lastCleared.IsNull()) {
-    if (_lastCleared.Root() == aDoc->Main().Root()) {
-      useExisting = true;
-      aChild = _lastCleared;
-      // 0020229: if next label exists and is empty, try to reuse it
-      Standard_Integer aNextTag = aChild.Tag() + 1;
-      TDF_Label aNextL = aDoc->Main().FindChild(aNextTag, Standard_False);
-      if (!aNextL.IsNull() && !aNextL.HasAttribute())
-        _lastCleared = aNextL;
-      else
-        _lastCleared.Nullify();
-    }
-  }
-  */
   int aDocID = theMainShape->GetDocID();
   if (_freeLabels.find(aDocID) != _freeLabels.end()) {
     std::list<TDF_Label>& aFreeLabels = _freeLabels[aDocID];
@@ -349,10 +336,10 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   }
 
   Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
-  Handle(GEOM_Object) anObject = new GEOM_Object(aChild, 28); //28 is SUBSHAPE type
+  Handle(GEOM_Object) anObject = new GEOM_Object (aChild, 28); //28 is SUBSHAPE type
   Handle(GEOM_Function) aFunction = anObject->AddFunction(GEOM_Object::GetSubShapeID(), 1);
 
-  GEOM_ISubShape aSSI(aFunction);
+  GEOM_ISubShape aSSI (aFunction);
   aSSI.SetMainShape(aMainShape);
   aSSI.SetIndices(theIndices);
 
@@ -372,10 +359,13 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
     return NULL;
   }
 
-  //Put an object in the map of created objects
+  // Put an object in the map of created objects
   TCollection_AsciiString anID = BuildIDFromObject(anObject);
-  if(_objects.IsBound(anID)) _objects.UnBind(anID);
+  if (_objects.IsBound(anID)) _objects.UnBind(anID);
   _objects.Bind(anID, anObject);
+
+  // Put this subshape in the list of subshapes of theMainShape
+  aMainShape->AddSubShapeReference(aFunction);
 
   GEOM::TPythonDump pd (aFunction);
 
@@ -410,9 +400,19 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
 
+  // If subshape, remove it from the list of subshapes of its main shape
+  if (!theObject->IsMainShape()) {
+    Handle(GEOM_Function) aFunction = theObject->GetFunction(1);
+    GEOM_ISubShape aSSI (aFunction);
+    Handle(GEOM_Function) aMainShape = aSSI.GetMainShape();
+    //If main shape is not null, then remove
+    if(!aMainShape.IsNull())
+      aMainShape->RemoveSubShapeReference(aFunction);
+  }
+
   int nb = theObject->GetNbFunctions();
   Handle(TDataStd_TreeNode) aNode;
-  for (int i = 1; i<=nb; i++) {
+  for (int i = 1; i <= nb; i++) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(i);
     if (aFunction->GetEntry().FindAttribute(GEOM_Function::GetFunctionTreeID(), aNode))
       aNode->Remove();
@@ -627,9 +627,11 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
           aFuncScript += (char*)anEntryToCommand->second.c_str();
 
-        // PTv, 0020001 add result objects from RestoreSubShapes into ignore list,
+        // PTv, 0020001 add result objects from RestoreGivenSubShapes into ignore list,
         //  because they will be published during command execution
-        int indx = anAfterScript.Search( "RestoreSubShapes" );
+        int indx = anAfterScript.Search( "RestoreGivenSubShapes" );
+        if ( indx == -1 )
+          indx = anAfterScript.Search( "RestoreSubShapes" );
         if ( indx != -1 ) {
           TCollection_AsciiString aSubStr = anAfterScript.SubString(1, indx);
           Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(aSubStr);
@@ -922,9 +924,11 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
   // 0020001 PTv, check for critical functions, which requier dump of objects
   if (theIsPublished)
   {
-    // currently, there is only one function "RestoreSubShapes",
+    // currently, there is only one function "RestoreGivenSubShapes",
     // later this check could be replaced by iterations on list of such functions
-    if (aDescr.Search( "RestoreSubShapes" ) != -1)
+    if (aDescr.Search( "RestoreGivenSubShapes" ) != -1)
+      theIsDumpCollected = true;
+    else if (aDescr.Search( "RestoreSubShapes" ) != -1)
       theIsDumpCollected = true;
   }
 
@@ -935,7 +939,9 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
     bool isBefore = true;
     TCollection_AsciiString aSubStr = aDescr.Token("\n\t", i++);
     while (!aSubStr.IsEmpty()) {
-      if (isBefore && aSubStr.Search( "RestoreSubShapes" ) == -1)
+      if (isBefore &&
+          aSubStr.Search( "RestoreGivenSubShapes" ) == -1 &&
+          aSubStr.Search( "RestoreSubShapes" ) == -1)
         theScript += TCollection_AsciiString("\n\t") + aSubStr;
       else
         theAfterScript += TCollection_AsciiString("\n\t") + aSubStr;

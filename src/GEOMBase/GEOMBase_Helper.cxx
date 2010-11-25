@@ -95,7 +95,8 @@ GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
 //================================================================
 GEOMBase_Helper::~GEOMBase_Helper()
 {
-  if ( !SUIT_Session::session()->activeApplication()->desktop() )
+  //rnv: Fix for the "IPAL21922 : WinTC5.1.4: incorrect quit salome"
+  if ( !SUIT_Session::session()->activeApplication() || !SUIT_Session::session()->activeApplication()->desktop() )
     return;
 
   if ( myPreview.size() )
@@ -169,9 +170,10 @@ void GEOMBase_Helper::erase( const ObjectList& objList, const bool updateView )
 void GEOMBase_Helper::erase( GEOM::GEOM_Object_ptr object, const bool updateView )
 {
   if ( !object->_is_nil() ) {
-    std::string entry = getEntry( object );
+    QString entry = getEntry( object );
     getDisplayer()->Erase( new SALOME_InteractiveObject(
-      entry.c_str(), "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
+      entry.toLatin1().constData(), 
+      "GEOM", strdup( GEOMBase::GetName( object ).toLatin1().constData() ) ), true, updateView );
   }
 }
 
@@ -208,9 +210,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
     // Enable activisation of selection
     getDisplayer()->SetToActivate( true );
 
-    std::string entry = getEntry( object );
+    QString entry = getEntry( object );
     getDisplayer()->Redisplay(new SALOME_InteractiveObject
-                              (entry.c_str(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
+                              (entry.toLatin1().constData(), "GEOM", strdup(GEOMBase::GetName(object).toLatin1().constData())), false);
   }
 
   if ( withChildren ) {
@@ -226,9 +228,9 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
             (GeometryGUI::ClientSObjectToObject(anIt->Value()));
           if ( !CORBA::is_nil( aChild ) ) {
             if ( !aChild->_is_nil() ) {
-              std::string entry = getEntry( aChild );
+              QString entry = getEntry( aChild );
               getDisplayer()->Redisplay( new SALOME_InteractiveObject(
-                entry.c_str(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
+                entry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( aChild ).toLatin1().constData() ) ), false );
             }
           }
         }
@@ -448,10 +450,10 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
     GEOM::GEOM_Object_ptr anObj = *anIter;
     if ( anObj->_is_nil() )
       continue;
-    std::string aEntry = getEntry( anObj );
-    if ( aEntry != "" )
+    QString anEntry = getEntry( anObj );
+    if ( anEntry != "" )
       aListOfIO.Append( new SALOME_InteractiveObject(
-        aEntry.c_str(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
+        anEntry.toLatin1().constData(), "GEOM", strdup( GEOMBase::GetName( anObj ).toLatin1().constData() ) ) );
   }
 
   getDisplayer()->LocalSelection( aListOfIO, theMode );
@@ -618,21 +620,18 @@ SalomeApp_Study* GEOMBase_Helper::getStudy() const
 // Function : getEntry
 // Purpose  :
 //================================================================
-char* GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
+QString GEOMBase_Helper::getEntry( GEOM::GEOM_Object_ptr object ) const
 {
   SalomeApp_Study* study = getStudy();
   if ( study )  {
-    char * objIOR = GEOMBase::GetIORFromObject( object );
-    std::string IOR( objIOR );
-    free( objIOR );
-    if ( IOR != "" ) {
-      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( IOR ) );
-      if ( SO ) {
-              return (char*) TCollection_AsciiString((char*)SO->GetID().c_str()).ToCString();
-      }
+    QString objIOR = GEOMBase::GetIORFromObject( object );
+    if ( objIOR != "" ) {
+      _PTR(SObject) SO ( study->studyDS()->FindObjectIOR( objIOR.toLatin1().constData() ) );
+      if ( SO )
+        return QString::fromStdString(SO->GetID());
     }
   }
-  return (char*)"";
+  return "";
 }
 
 //================================================================
@@ -1024,9 +1023,8 @@ bool GEOMBase_Helper::selectObjects( ObjectList& objects )
   ObjectList::iterator anIter;
   for ( anIter = objects.begin(); anIter != objects.end(); ++anIter )
   {
-    std::string entry = getEntry( *anIter );
-    QString aEntry( entry.c_str() );
-    LightApp_DataOwner* anOwher = new LightApp_DataOwner( aEntry );
+    QString anEntry = getEntry( *anIter );
+    LightApp_DataOwner* anOwher = new LightApp_DataOwner( anEntry );
     aList.append( anOwher );
   }
 
@@ -1056,8 +1054,8 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   _PTR(Study) aDStudy = appStudy->studyDS();
-  std::string IOR = GEOMBase::GetIORFromObject( theFather );
-  _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR ) );
+  QString IOR = GEOMBase::GetIORFromObject( theFather );
+  _PTR(SObject) SObj ( aDStudy->FindObjectIOR( IOR.toLatin1().constData() ) );
 
   bool inStudy = false;
   GEOM::GEOM_Object_var aReturnObject;
@@ -1072,7 +1070,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
   }
   if (inStudy)
     return aReturnObject._retn();
-
+  
   return GEOM::GEOM_Object::_nil();
 }
 
@@ -1103,11 +1101,11 @@ void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>
     if ( !anOp->_is_nil() ) {
       GEOM::GEOM_Object_var aFatherObj = anOp->GetMainShape( it.value() );
       if ( !aFatherObj->_is_nil() ) {
-        std::string aFatherEntry = getEntry( aFatherObj );
+        QString aFatherEntry = getEntry( aFatherObj );
         if ( aFatherEntry != "") { // additional checking that object is valid 0020598 EDF 1191
           GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
           //Add Object to study if its not exist
-          if ( aFindedObject == GEOM::GEOM_Object::_nil() )
+	  if ( aFindedObject->_is_nil() )
             GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
                                                   it.value(), it.key().toLatin1().data(), aFatherObj );
         }

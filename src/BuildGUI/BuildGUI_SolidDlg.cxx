@@ -117,6 +117,7 @@ void BuildGUI_SolidDlg::Init()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   initName( tr( "GEOM_SOLID" ) );
+  SelectionIntoArgument();
 }
 
 

@@ -232,6 +232,9 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   QString aKindStr("");
   theParameters = "";
 
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aLenPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+
   if ( myObj->_is_nil() )
     return aKindStr;
 
@@ -253,7 +256,7 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   if ( !anOper->IsDone() )
     return aKindStr;
 
-#define PRINT_DOUBLE(val) QString(" %1").arg( DlgRef::PrintDoubleValue( val ) )
+#define PRINT_DOUBLE(val, tol) DlgRef::PrintDoubleValue( val, tol )
   switch ( aKind )
   {
   case GEOM::GEOM_IKindOfShape::COMPOUND:
@@ -284,84 +287,84 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   case GEOM::GEOM_IKindOfShape::SPHERE:
     aKindStr = tr( "GEOM_SPHERE" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[3] );
+      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[3], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::CYLINDER:
     aKindStr = tr( "GEOM_CYLINDER" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_AXIS" )         +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_HEIGHT" )       + PRINT_DOUBLE( aDbls[7] );
+      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_HEIGHT" )       + PRINT_DOUBLE( aDbls[7], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::BOX:
     aKindStr = tr( "GEOM_BOX" );
     theParameters = tr( "GEOM_CENTER") +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        "Ax :"                    + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        "Ay :"                    + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        "Az :"                    + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        "Ax :"                    + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        "Ay :"                    + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        "Az :"                    + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::ROTATED_BOX:
     aKindStr = tr( "GEOM_BOX" );
     theParameters = tr( "GEOM_CENTER" )         +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\nZ Axis:"                               +
-      "\n" +        "Zx :"                      + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        "Zy :"                      + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        "Zz :"                      + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        "Zx :"                      + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        "Zy :"                      + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        "Zz :"                      + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\nX Axis:"                               +
-      "\n" +        tr( "GEOM_X_I" ).arg( "x" ) + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( "y" ) + PRINT_DOUBLE( aDbls[7] ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( "z" ) + PRINT_DOUBLE( aDbls[8] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( "x" ) + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( "y" ) + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( "z" ) + PRINT_DOUBLE( aDbls[8], aLenPrecision ) +
       "\nDimensions along local axes:"          +
-      "\n" +        "Ax :"                      + PRINT_DOUBLE( aDbls[9] ) +
-      "\n" +        "Ay :"                      + PRINT_DOUBLE( aDbls[10] ) +
-      "\n" +        "Az :"                      + PRINT_DOUBLE( aDbls[11] );
+      "\n" +        "Ax :"                      + PRINT_DOUBLE( aDbls[9],  aLenPrecision ) +
+      "\n" +        "Ay :"                      + PRINT_DOUBLE( aDbls[10], aLenPrecision ) +
+      "\n" +        "Az :"                      + PRINT_DOUBLE( aDbls[11], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::TORUS:
     aKindStr = tr( "GEOM_TORUS" );
     theParameters = tr( "GEOM_CENTER" )            +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_AXIS" )              +
-      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )        +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7] );
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::CONE:
     aKindStr = tr( "GEOM_CONE" );
     theParameters = tr( "GEOM_CENTER" )            +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_AXIS" )              +
-      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )        +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7] ) +
-      "\n" +        tr( "GEOM_HEIGHT" )            + PRINT_DOUBLE( aDbls[8] );
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "\n" +        tr( "GEOM_HEIGHT" )            + PRINT_DOUBLE( aDbls[8], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::POLYHEDRON:
     aKindStr = tr( "GEOM_POLYHEDRON" );
@@ -373,114 +376,114 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   case GEOM::GEOM_IKindOfShape::SPHERE2D:
     aKindStr = tr( "GEOM_SURFSPHERE" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[3] );
+      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[3], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::CYLINDER2D:
     aKindStr = tr( "GEOM_SURFCYLINDER" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_AXIS" )         +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_HEIGHT" )       + PRINT_DOUBLE( aDbls[7] );
+      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_HEIGHT" )       + PRINT_DOUBLE( aDbls[7], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::TORUS2D:
     aKindStr = tr( "GEOM_SURFTORUS" );
     theParameters = tr( "GEOM_CENTER" )            +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_AXIS" )              +
-      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )        +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7] );
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::CONE2D:
     aKindStr = tr( "GEOM_SURFCONE" );
     theParameters = tr( "GEOM_CENTER" )            +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )      + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_AXIS" )              +
-      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )                + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )                + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )                + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )        +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7] ) +
-      "\n" +        tr( "GEOM_HEIGHT" )            + PRINT_DOUBLE( aDbls[8] );
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 1 ) + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_I" ).arg( 2 ) + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "\n" +        tr( "GEOM_HEIGHT" )            + PRINT_DOUBLE( aDbls[8], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::DISK_CIRCLE:
     aKindStr = tr( "GEOM_DISK_CIRCLE" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )       +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        tr( "GEOM_RADIUS" )      + PRINT_DOUBLE( aDbls[6] );
+      "\n" +        tr( "GEOM_RADIUS" )      + PRINT_DOUBLE( aDbls[6], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::DISK_ELLIPSE:
     aKindStr = tr( "GEOM_DISK_ELLIPSE" );
     theParameters = tr( "GEOM_CENTER" )         +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )         +
-      "\n" +        tr( "GEOM_DX" )             + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )             + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )             + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )             + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )             + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )             + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )     +
-      "\n" +        tr( "GEOM_RADIUS_MAJOR" )   + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_MINOR" )   + PRINT_DOUBLE( aDbls[7] );
+      "\n" +        tr( "GEOM_RADIUS_MAJOR" )   + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_MINOR" )   + PRINT_DOUBLE( aDbls[7], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::POLYGON:
     aKindStr = tr( "GEOM_POLYGON" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )       +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::PLANE:
     aKindStr = tr( "GEOM_PLANE" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )       +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::PLANAR:
     aKindStr = tr( "GEOM_PLANAR_FACE" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )       +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::FACE:
     aKindStr = tr( "GEOM_FACE" );
@@ -489,94 +492,94 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   case GEOM::GEOM_IKindOfShape::CIRCLE:
     aKindStr = tr( "GEOM_CIRCLE" );
     theParameters = tr( "GEOM_CENTER" )       +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )       +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )   +
-      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[6] );
+      "\n" +        tr( "GEOM_RADIUS" )       + PRINT_DOUBLE( aDbls[6], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::ARC_CIRCLE:
     aKindStr = tr( "GEOM_ARC" );
     theParameters = tr( "GEOM_CENTER" )           +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )           +
-      "\n" +        tr( "GEOM_DX" )               + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )               + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )               + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )               + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )               + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )               + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )       +
-      "\n" +        tr( "GEOM_RADIUS" )           + PRINT_DOUBLE( aDbls[6] ) +
+      "\n" +        tr( "GEOM_RADIUS" )           + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
       "\n" +        tr( "GEOM_POINT_I" ).arg( 1 ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[7] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[8] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[9] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[8], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[9], aLenPrecision ) +
       "\n" +        tr( "GEOM_POINT_I" ).arg( 2 ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[10] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[11] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[12] );
+      "\n" +        tr( "GEOM_X_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[10], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[11], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[12], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::ELLIPSE:
     aKindStr = tr( "GEOM_ELLIPSE" );
     theParameters = tr( "GEOM_CENTER" )         +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )   + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )         +
-      "\n" +        tr( "GEOM_DX" )             + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )             + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )             + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )             + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )             + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )             + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )     +
-      "\n" +        tr( "GEOM_RADIUS_MAJOR" )   + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_MINOR" )   + PRINT_DOUBLE( aDbls[7] );
+      "\n" +        tr( "GEOM_RADIUS_MAJOR" )   + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_MINOR" )   + PRINT_DOUBLE( aDbls[7], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::ARC_ELLIPSE:
     aKindStr = tr( "GEOM_ARC_ELLIPSE" );
     theParameters = tr( "GEOM_CENTER" )           +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 )     + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_NORMAL" )           +
-      "\n" +        tr( "GEOM_DX" )               + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )               + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )               + PRINT_DOUBLE( aDbls[5] ) +
+      "\n" +        tr( "GEOM_DX" )               + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )               + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )               + PRINT_DOUBLE( aDbls[5], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIMENSIONS" )       +
-      "\n" +        tr( "GEOM_RADIUS_MAJOR" )     + PRINT_DOUBLE( aDbls[6] ) +
-      "\n" +        tr( "GEOM_RADIUS_MINOR" )     + PRINT_DOUBLE( aDbls[7] ) +
+      "\n" +        tr( "GEOM_RADIUS_MAJOR" )     + PRINT_DOUBLE( aDbls[6], aLenPrecision ) +
+      "\n" +        tr( "GEOM_RADIUS_MINOR" )     + PRINT_DOUBLE( aDbls[7], aLenPrecision ) +
       "\n" +        tr( "GEOM_POINT_I" ).arg( 1 ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[8] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[9] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[10] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[8], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[9], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[10], aLenPrecision ) +
       "\n" +        tr( "GEOM_POINT_I" ).arg( 2 ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[11] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[12] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[13] );
+      "\n" +        tr( "GEOM_X_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[11], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[12], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[13], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::LINE:
     aKindStr = tr( "GEOM_LINE" );
     theParameters = tr( "GEOM_POSITION" )     +
-      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 0 ) + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_DIRECTION" )    +
-      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        tr( "GEOM_DX" )           + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DY" )           + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_DZ" )           + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::SEGMENT:
     aKindStr = tr( "GEOM_SEGMENT" );
     theParameters = tr( "GEOM_POINT_I" ).arg( 1 ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[2] ) +
+      "\n" +        tr( "GEOM_X_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 1 )     + PRINT_DOUBLE( aDbls[2], aLenPrecision ) +
       "\n" +        tr( "GEOM_POINT_I" ).arg( 2 ) +
-      "\n" +        tr( "GEOM_X_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[3] ) +
-      "\n" +        tr( "GEOM_Y_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[4] ) +
-      "\n" +        tr( "GEOM_Z_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[5] );
+      "\n" +        tr( "GEOM_X_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[3], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[4], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z_I" ).arg( 2 )     + PRINT_DOUBLE( aDbls[5], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::EDGE:
     aKindStr = tr( "GEOM_EDGE" );
@@ -584,9 +587,9 @@ QString MeasureGUI_WhatisDlg::getKindOfShape( QString& theParameters )
   case GEOM::GEOM_IKindOfShape::VERTEX:
     aKindStr = tr( "GEOM_VERTEX" );
     theParameters = tr( "GEOM_COORDINATES" ) +
-      "\n" +        tr( "GEOM_X" )           + PRINT_DOUBLE( aDbls[0] ) +
-      "\n" +        tr( "GEOM_Y" )           + PRINT_DOUBLE( aDbls[1] ) +
-      "\n" +        tr( "GEOM_Z" )           + PRINT_DOUBLE( aDbls[2] );
+      "\n" +        tr( "GEOM_X" )           + PRINT_DOUBLE( aDbls[0], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Y" )           + PRINT_DOUBLE( aDbls[1], aLenPrecision ) +
+      "\n" +        tr( "GEOM_Z" )           + PRINT_DOUBLE( aDbls[2], aLenPrecision );
     break;
   case GEOM::GEOM_IKindOfShape::ADVANCED:
     {

@@ -40,10 +40,14 @@ namespace GEOMOp {
     OpDeflection        = 1200,   // POPUP MENU - DEFLECTION COEFFICIENT
     OpColor             = 1201,   // POPUP MENU - COLOR
     OpTransparency      = 1202,   // POPUP MENU - TRANSPARENCY
-    OpIsos              = 1203,   // POPUP MENU - ISOS
-    OpAutoColor         = 1204,   // POPUP MENU - AUTO COLOR
-    OpNoAutoColor       = 1205,   // POPUP MENU - DISABLE AUTO COLOR
-    OpPointMarker       = 1206,   // POPUP MENU - POINT MARKER
+    OpIncrTransparency  = 1203,   // SHORTCUT   - INCREASE TRANSPARENCY
+    OpDecrTransparency  = 1204,   // SHORTCUT   - DECREASE TRANSPARENCY
+    OpIsos              = 1205,   // POPUP MENU - ISOS
+    OpIncrNbIsos        = 1206,   // SHORTCUT   - INCREASE NB ISOS
+    OpDecrNbIsos        = 1207,   // SHORTCUT   - DECREASE NB ISOS
+    OpAutoColor         = 1208,   // POPUP MENU - AUTO COLOR
+    OpNoAutoColor       = 1209,   // POPUP MENU - DISABLE AUTO COLOR
+    OpPointMarker       = 1210,   // POPUP MENU - POINT MARKER
     OpShowChildren      = 1250,   // POPUP MENU - SHOW CHILDREN
     OpHideChildren      = 1251,   // POPUP MENU - HIDE CHILDREN
     OpRename            = 1252,   // POPUP MENU - RENAME
@@ -68,6 +72,7 @@ namespace GEOMOp {
     OpPlane             = 3006,   // MENU NEW ENTITY - BASIC - PLANE
     OpCurve             = 3007,   // MENU NEW ENTITY - BASIC - CURVE
     OpLCS               = 3008,   // MENU NEW ENTITY - BASIC - LOCAL COORDINATE SYSTEM
+    OpOriginAndVectors  = 3009,   // MENU NEW ENTITY - BASIC - ORIGIN AND BASE VECTORS
     // PrimitiveGUI --------------//--------------------------------
     OpBox               = 3100,   // MENU NEW ENTITY - PRIMITIVES - BOX
     OpCylinder          = 3101,   // MENU NEW ENTITY - PRIMITIVES - CYLINDER
@@ -130,6 +135,7 @@ namespace GEOMOp {
     OpOrientation       = 4009,   // MENU REPAIR - CHANGE ORIENTATION
     OpGlueFaces         = 4010,   // MENU REPAIR - GLUE FACES
     OpRemoveExtraEdges  = 4011,   // MENU REPAIR - REMOVE EXTRA EDGES
+    OpLimitTolerance    = 4012,   // MENU REPAIR - LIMIT TOLERANCE
     // MeasureGUI ----------------//--------------------------------
     OpProperties        = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass        = 5001,   // MENU MEASURES - CENTRE OF MASS
@@ -159,6 +165,6 @@ namespace GEOMOp {
 //     OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
-} 
+}
 
 #endif // GEOMETRYGUI_OPERATIONS_H

@@ -12,7 +12,9 @@ two directions.
 \n To produce a <b>Simple Multi Translation</b> (in one direction) you
 need to indicate an \b Object to be translated, a \b Vector of
 translation, a \b Step of translation and a <b>Number of Times</b> the
-Object should be duplicated.
+Object should be duplicated. If a curve has been selected instead of
+the Vector, only its first and last vertices will be used to get the vector direction
+and the dialog preview will display the vector along which the object will be translated.
 \n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation1D(Shape, Dir,
 Step, NbTimes)</em>
 \n <b>Arguments:</b> Name + 1 shape + 1 vector (for direction) + 1
@@ -27,6 +29,8 @@ step value + 1 value (repetition).
 \n To produce a <b>Double Multi Translation</b> (in two directions) you need to
 indicate an \b Object to be translated, and, for both axes, a \b
 Vector of translation, a \b Step of translation and a <b>Number of Times</b> the shape must be duplicated.
+If a curve has been selected instead of the Vector, only its first and last vertices will be used to get the vector direction
+and the dialog preview will display the vector along which the object will be translated.
 
 \n <b>TUI Command:</b> <em>geompy.MakeMultiTranslation2D(Shape, Dir1,
 Step1, NbTimes1, Dir2, Step2, NbTimes2),</em> where \em Shape is a shape

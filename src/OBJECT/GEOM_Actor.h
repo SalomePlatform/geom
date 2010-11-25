@@ -51,7 +51,6 @@ typedef GEOM_SmartPtr<GEOM_WireframeFace> PWFaceSource;
 class GEOM_ShadingFace;
 typedef GEOM_SmartPtr<GEOM_ShadingFace> PSFaceSource;
 
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 class vtkRenderer;
 
 class vtkAppendPolyData;
@@ -174,10 +173,6 @@ public:
   GetVectorMode();
 
 protected:
-  void SetShape(const TopoDS_Shape& theShape,
-                const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
-                bool theIsVector = false);
-
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);

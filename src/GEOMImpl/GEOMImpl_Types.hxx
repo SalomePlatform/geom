@@ -257,6 +257,7 @@
 #define SUBSHAPE_NOT_SORTED 8
 #define FACE_WIRES          9
 #define REVERSE_ORIENTATION 10
+#define EDGE_WIRE           11
 
 #define ARCHIMEDE_TYPE 1
 
@@ -269,6 +270,7 @@
 #define SEWING             6
 #define DIVIDE_EDGE        7
 #define CHANGE_ORIENTATION 8
+#define LIMIT_TOLERANCE    9
 
 #define BASIC_FILLING 1
 

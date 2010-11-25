@@ -17,6 +17,8 @@ holes with free boundaries on a selected face.</li>
 <li>\subpage sewing_operation_page "Sewing" - sews faces or shells.</li>
 <li>\subpage glue_faces_operation_page "Glue faces" - unites
 coincident faces within the given tolerance.</li>
+<li>\subpage limit_tolerance_operation_page "Limit Tolerance" - tries
+to set new tolerance value for the given shape.</li>
 <li>\subpage add_point_on_edge_operation_page "Add point on edge" -
 splits an edge in two.</li>
 <li>\subpage change_orientation_operation_page "Change orientation" -

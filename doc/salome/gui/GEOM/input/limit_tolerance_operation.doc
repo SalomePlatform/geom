@@ -1,0 +1,37 @@
+/*!
+
+\page limit_tolerance_operation_page Limit Tolerance
+
+\n To produce a <b>Limit Tolerance</b> operation in the <b>Main
+   Menu</b> select <b>Repair - > Limit Tolerance</b>.
+
+\image html limit_tolerance_dlg.png
+
+\n <b>Arguments:</b> Name + 1 shape + 1 value (new tolerance).
+
+\n It is possible on all kind of shapes.
+
+\n The \b Result will be a \b GEOM_Object.
+
+\n This functionality tries to set a new value of tolerance for the
+   given shape. However, the final tolerance value also depends on the
+   initial shape topology (takes into consideration the existing gaps) to obtain
+   a valid resulting shape.
+
+\n Example of usage:
+<ol>
+<li>Partition objects obj1 and obj2.</li>
+<li>Partition fails.</li>
+<li>Perform Limit Tolerance on objects obj1 and obj2.</li>
+<li>Try to partition them again.</li>
+</ol>
+See also \ref tui_limit_tolerance "TUI example".
+
+\n <b>TUI Command:</b> <em>geompy.LimitTolerance(Shape, Tolerance),</em>
+ where \em Shape is a shape with presumably incorrect tolerance, \em
+ Tolerance is the required tolerance value.
+
+Our <b>TUI Scripts</b> provide you with useful examples of
+\ref tui_limit_tolerance "Repairing Operations".
+
+*/

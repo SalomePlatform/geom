@@ -172,9 +172,11 @@ void MeasureGUI_PointDlg::SelectionIntoArgument()
     if ( !aPoint.IsNull() ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( aPoint );
       myGrp->LineEdit1->setText( aName );
-      myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aPnt.X() ) );
-      myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( aPnt.Y() ) );
-      myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aPnt.Z() ) );
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+      myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( aPnt.X(), aPrecision ) );
+      myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( aPnt.Y(), aPrecision ) );
+      myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( aPnt.Z(), aPrecision ) );
     }
   }
   catch( ... )

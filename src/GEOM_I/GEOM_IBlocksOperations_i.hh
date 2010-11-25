@@ -75,6 +75,9 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
 				  CORBA::Double   theZ,
 				  CORBA::Double   theEpsilon);
 
+  GEOM::GEOM_Object_ptr GetVertexNearPoint (GEOM::GEOM_Object_ptr theShape,
+                                            GEOM::GEOM_Object_ptr thePoint);
+
   GEOM::GEOM_Object_ptr GetEdge (GEOM::GEOM_Object_ptr theShape,
 				 GEOM::GEOM_Object_ptr thePoint1,
 				 GEOM::GEOM_Object_ptr thePoint2);
@@ -101,10 +104,15 @@ class GEOM_I_EXPORT GEOM_IBlocksOperations_i :
   GEOM::GEOM_Object_ptr GetFaceByNormale (GEOM::GEOM_Object_ptr theBlock,
 					  GEOM::GEOM_Object_ptr theVector);
 
+  GEOM::GEOM_Object_ptr GetShapesNearPoint (GEOM::GEOM_Object_ptr theShape,
+                                            GEOM::GEOM_Object_ptr thePoint,
+                                            CORBA::Long           theShapeType,
+                                            CORBA::Double         theTolerance);
+
   // Check blocks compound
   CORBA::Boolean IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-				     CORBA::Long     theMinNbFaces,
-				     CORBA::Long     theMaxNbFaces,
+				     CORBA::Long           theMinNbFaces,
+				     CORBA::Long           theMaxNbFaces,
 				     CORBA::Long&          theNbBlocks);
 
   CORBA::Boolean CheckCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,

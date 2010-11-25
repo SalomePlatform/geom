@@ -180,12 +180,15 @@ void MeasureGUI_DistanceDlg::processObject()
   gp_Pnt aPnt1, aPnt2;
   double aDist = 0.;
   if (getParameters(aDist, aPnt1, aPnt2)) {
-    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(aDist));
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+
+    myGrp->LineEdit3->setText(DlgRef::PrintDoubleValue(aDist, aPrecision));
 
     gp_XYZ aVec = aPnt2.XYZ() - aPnt1.XYZ();
-    myGrp->LineEdit4->setText(DlgRef::PrintDoubleValue(aVec.X()));
-    myGrp->LineEdit5->setText(DlgRef::PrintDoubleValue(aVec.Y()));
-    myGrp->LineEdit6->setText(DlgRef::PrintDoubleValue(aVec.Z()));
+    myGrp->LineEdit4->setText(DlgRef::PrintDoubleValue(aVec.X(), aPrecision));
+    myGrp->LineEdit5->setText(DlgRef::PrintDoubleValue(aVec.Y(), aPrecision));
+    myGrp->LineEdit6->setText(DlgRef::PrintDoubleValue(aVec.Z(), aPrecision));
 
     redisplayPreview();
   }

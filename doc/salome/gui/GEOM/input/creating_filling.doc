@@ -4,39 +4,38 @@
 
 To generate a \b Filling in the <b>Main Menu</b> select <b>New Entity - > Generation  - > Filling</b>
 
-To create a curving face using several edges you need to define the
+To create a curvilinear face from several edges you need to define the
 following parameters:
 \n <b>Input Compound</b> - the list of edges/wires used for creation
-of the surface. Before perform filling algorithm each wire from
-compound is converted to one edge created on BSpline curve built using
-curves from all edges from wire.
+of the surface. To prepare for the filling each wire of the compound
+is converted to an edge created on a BSpline curve built using curves
+from all edges of the wire.
 \n \b Minimum and <b>Maximum Degree</b> of equation of the resulting
 BSpline or Besier curves describing the surface; 
 \n \b Tolerance for \b 2D and for \b 3D - minimum distance between the
 created surface and the reference edge; 
-\n <b>Number of
-Iterations</b> - defines the maximum number of iterations. The
+\n <b>Number of Iterations</b> - defines the maximum number of iterations. The
 iterations are repeated until the required tolerance is reached. So, a
 greater number of iterations allows producing a better surface. 
 \n <b>Method</b> - Kind of method to perform filling operation
-1. Default - standard behaviour
-2. Use edges orientation - orientation of edges are used: if edge is
-reversed curve from this edge is reversed before using in filling
+1. Default - the standard behaviour.
+2. Use edges orientation - the edges orientation is used: if an edge is
+reversed, the curve from this edge is reversed before being used by the filling
 algorithm.
-3. Auto-correct edges orientation - change orientation of curves using
-minimization of sum of distances between ends points of edges.
+3. Auto-correct edges orientation - curves orientation is changed to 
+minimize the sum of distances between ends points of edges.
 \n <b>Approximation</b> - if checked, BSpline curves are generated in
 the process of surface construction (using
 GeomAPI_PointsToBSplineSurface functionality). By default the surface
 is created using Besier curves. The usage of <b>Approximation</b>
-makes the algorithm work slower, but allows building the surface for
-rather complex cases. 
+slows the algorithm, but allows building the surface for complex cases. 
 
 \n The \b Result of the operation will be a GEOM_Object (face).
 
 \n <b>TUI Command:</b> <em>geompy.MakeFilling(Edges, MinDegree, MaxDegree, Tol2D, Tol3D, NbIter)</em>
 \n <b>Arguments:</b> Name + 1 List of edges + 7 Parameters
-(Min. degree, Max. degree, 2D tolerance, 3D tolerance, Number of iterations, Method, Approximation).
+(Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
+tolerance, Number of iterations, Method, Approximation).
 
 \image html filling.png
 

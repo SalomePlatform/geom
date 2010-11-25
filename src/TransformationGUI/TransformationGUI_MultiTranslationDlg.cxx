@@ -32,8 +32,14 @@
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include <GEOM_AISVector.hxx>
+#include <SOCC_Prs.h>
+#include <SOCC_ViewModel.h>
 
 // OCCT Includes
 #include <TopoDS_Shape.hxx>
@@ -42,6 +48,10 @@
 #include <TopExp.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRep_Builder.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -159,6 +169,8 @@ void TransformationGUI_MultiTranslationDlg::Init()
   GroupDimensions->LineEdit3->setText("");
 
   myBase = myVectorU = myVectorV = GEOM::GEOM_Object::_nil();
+
+  mainFrame()->GroupBoxPublish->show();
 
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -353,7 +365,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
         //Find SubShape Object in Father
         GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
 
-        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+        if (aFindedObject->_is_nil()) { // Object not found in study
           GEOM::GEOM_IShapesOperations_var aShapesOp =
             getGeomEngine()->GetIShapesOperations(getStudyId());
           if (myEditCurrentArgument == GroupDimensions->LineEdit3)
@@ -678,6 +690,7 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
   switch (getConstructorId()) {
   case 0:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVectorU)) {
+      createPathPreview ( myVectorU );
       anObj = anOper->MultiTranslate1D(myBase, myVectorU, myStepU, myNbTimesU);
       if(!IsPreview()) {
         aParameters<<GroupPoints->SpinBox_DX->text();
@@ -689,6 +702,8 @@ bool TransformationGUI_MultiTranslationDlg::execute (ObjectList& objects)
   case 1:
     if (!CORBA::is_nil(myBase) && !CORBA::is_nil(myVectorU) &&
         !CORBA::is_nil(myVectorV)) {
+      createPathPreview ( myVectorU );
+      createPathPreview ( myVectorV );
       anObj = anOper->MultiTranslate2D(myBase,
                                        myVectorU, myStepU, myNbTimesU,
                                        myVectorV, myStepV, myNbTimesV);
@@ -730,4 +745,51 @@ void TransformationGUI_MultiTranslationDlg::addSubshapesToStudy()
     break;
   }
   addSubshapesToFather(objMap);
+}
+
+//=================================================================================
+// function : restoreSubShapes
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStudy,
+                                                              SALOMEDS::SObject_ptr theSObject)
+{
+  if (mainFrame()->CheckBoxRestoreSS->isChecked()) {
+    // we pass here the first operation argument (object) through the list of arguments
+    // because the rotation operation place its arguments in the data structure in another order,
+    // and we need to point the first argument directly
+    GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
+    anArgs->length(1);
+    anArgs[0] = myBase;
+    getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
+                                        /*theFindMethod=*/GEOM::FSM_Transformed,
+                                        /*theInheritFirstArg=*/true,
+                                        mainFrame()->CheckBoxAddPrefix->isChecked());
+  }
+}
+
+//=================================================================================
+// function : createPathPreview
+// purpose  :
+//=================================================================================
+void TransformationGUI_MultiTranslationDlg::createPathPreview ( GEOM::GEOM_Object_var thePath )
+{
+  if ( IsPreview() ) {
+    TopoDS_Shape aShape;
+    GEOMBase::GetShape( thePath, aShape, TopAbs_SHAPE );
+    TopoDS_Edge anEdge = TopoDS::Edge( aShape );
+    ShapeAnalysis_Edge aShapeAnal;
+    TopoDS_Vertex aFirst = aShapeAnal.FirstVertex( anEdge );
+    TopoDS_Vertex aLast = aShapeAnal.LastVertex( anEdge );
+    TopoDS_Shape aVector = BRepBuilderAPI_MakeEdge(BRep_Tool::Pnt(aFirst), BRep_Tool::Pnt(aLast)).Shape();
+    const char* aName = "tmpVector";
+    Handle(GEOM_AISVector) anIO = new GEOM_AISVector( aVector, aName );
+    
+    // add Prs to preview
+    SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+    if (aPrs)
+      aPrs->AddObject(anIO);
+    GEOMBase_Helper::displayPreview( aPrs, false, true );
+  }
 }

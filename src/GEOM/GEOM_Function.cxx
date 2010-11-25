@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -43,6 +42,7 @@
 #include <TDataStd_UAttribute.hxx>
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TDataStd_ExtStringArray.hxx>
+#include <TDataStd_ExtStringList.hxx>
 #include <TDocStd_Owner.hxx>
 #include <TDocStd_Document.hxx>
 #include <TFunction_Function.hxx>
@@ -64,6 +64,8 @@
 #define RESULT_LABEL 2
 #define DESCRIPTION_LABEL 3
 #define HISTORY_LABEL 4
+#define SUBSHAPES_LABEL 5 // 0020756: GetGroups
+#define NAMING_LABEL 6 // 002020750: Naming during STEP import
 
 #define ARGUMENTS _label.FindChild((ARGUMENT_LABEL))
 #define ARGUMENT(thePosition) _label.FindChild((ARGUMENT_LABEL)).FindChild((thePosition))
@@ -471,8 +473,8 @@ TCollection_AsciiString GEOM_Function::GetString(int thePosition)
 void GEOM_Function::SetReference(int thePosition, Handle(GEOM_Function) theReference)
 {
   _isDone = false;
-  if(thePosition <= 0) return;
-  if(theReference.IsNull()) return;
+  if (thePosition <= 0) return;
+  if (theReference.IsNull()) return;
   TDF_Label anArgLabel = ARGUMENT(thePosition);
   TDF_Reference::Set(anArgLabel, theReference->GetEntry());
   TDataStd_UAttribute::Set(anArgLabel, GetDependencyID());
@@ -672,6 +674,85 @@ void GEOM_Function::GetDependency(TDF_LabelSequence& theSeq)
 
 //=============================================================================
 /*!
+ *  AddSubShapeReference
+ */
+//=============================================================================
+void GEOM_Function::AddSubShapeReference(Handle(GEOM_Function) theSubShape)
+{
+  _isDone = false;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+
+  Handle(TDataStd_ExtStringList) aList;
+  if (!aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
+    aList = new TDataStd_ExtStringList;
+    aSubShapesLabel.AddAttribute(aList);
+  }
+
+  TCollection_AsciiString anEntry;
+  TDF_Tool::Entry(theSubShape->GetOwnerEntry(), anEntry);
+  aList->Append(anEntry);
+
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  RemoveSubShapeReference
+ */
+//=============================================================================
+void GEOM_Function::RemoveSubShapeReference(Handle(GEOM_Function) theSubShape)
+{
+  _isDone = false;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+
+  Handle(TDataStd_ExtStringList) aList;
+  if (aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
+    TCollection_AsciiString anEntry;
+    TDF_Tool::Entry(theSubShape->GetOwnerEntry(), anEntry);
+    aList->Remove(anEntry);
+  }
+
+  _isDone = true;
+}
+
+//=============================================================================
+/*!
+ *  HasSubShapeReferences
+ */
+//=============================================================================
+bool GEOM_Function::HasSubShapeReferences()
+{
+  _isDone = true;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+  return aSubShapesLabel.IsAttribute(TDataStd_ExtStringList::GetID());
+}
+
+//=============================================================================
+/*!
+ *  GetSubShapeReferences
+ */
+//=============================================================================
+const TDataStd_ListOfExtendedString& GEOM_Function::GetSubShapeReferences()
+{
+  _isDone = false;
+
+  TDF_Label aSubShapesLabel = _label.FindChild(SUBSHAPES_LABEL);
+
+  Handle(TDataStd_ExtStringList) aList;
+  if (!aSubShapesLabel.FindAttribute(TDataStd_ExtStringList::GetID(), aList)) {
+    aList = new TDataStd_ExtStringList;
+    aSubShapesLabel.AddAttribute(aList);
+  }
+
+  _isDone = true;
+  return aList->List();
+}
+
+//=============================================================================
+/*!
  *  GetHistoryEntry
  */
 //=============================================================================
@@ -713,6 +794,16 @@ TDF_Label GEOM_Function::GetArgumentHistoryEntry (const TDF_Label&       theArgu
   return aHistoryCurLabel;
 }
 
+//=============================================================================
+/*!
+ *  GetNamingEntry
+ */
+//=============================================================================
+TDF_Label GEOM_Function::GetNamingEntry (const Standard_Boolean create)
+{
+  return _label.FindChild(NAMING_LABEL, create);
+}
+
 //=======================================================================
 //function :  GEOM_Function_Type_
 //purpose  :
@@ -721,10 +812,9 @@ Standard_EXPORT Handle_Standard_Type& GEOM_Function_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
+  if (aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(Standard_Transient);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
-
+  if (aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOM_Function",
@@ -751,5 +841,5 @@ const Handle(GEOM_Function) Handle(GEOM_Function)::DownCast(const Handle(Standar
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

@@ -20,21 +20,18 @@
 #ifndef GEOM_FACESOURCE_H 
 #define GEOM_FACESOURCE_H 
  
-#include "GEOM_DeviceActor.h" 
- 
+#include "OCC2VTK.h" 
+
 #include <gp_Pnt.hxx>
 #include <TopoDS_Face.hxx> 
 #include <NCollection_Set.hxx> 
  
 typedef NCollection_Set<TopoDS_Face> TFaceSet; 
  
+#include <vtkPoints.h> 
 #include <vtkPolyDataSource.h> 
- 
-class GEOM_FaceSource; 
-typedef GEOM_SmartPtr<GEOM_FaceSource> PFaceSource; 
- 
- 
-class VTK_EXPORT GEOM_FaceSource: public vtkPolyDataSource 
+
+class OCC2VTK_EXPORT GEOM_FaceSource: public vtkPolyDataSource 
 { 
 public: 
   vtkTypeMacro(GEOM_FaceSource,vtkPolyDataSource); 

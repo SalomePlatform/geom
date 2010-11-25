@@ -17,58 +17,46 @@
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef GEOM_EDGESOURCE_H 
-#define GEOM_EDGESOURCE_H 
+#ifndef GEOM_VERTEXSOURCE_H 
+#define GEOM_VERTEXSOURCE_H 
  
-#include "GEOM_DeviceActor.h" 
+#include "OCC2VTK.h" 
  
-#include <TopoDS_Edge.hxx> 
+#include <TopoDS_Vertex.hxx> 
 #include <NCollection_Set.hxx> 
  
-typedef NCollection_Set<TopoDS_Edge> TEdgeSet; 
+typedef NCollection_Set<TopoDS_Vertex> TVertexSet; 
  
+#include <vtkPoints.h> 
 #include <vtkPolyDataSource.h> 
- 
- 
-class VTK_EXPORT GEOM_EdgeSource: public vtkPolyDataSource 
+
+class OCC2VTK_EXPORT GEOM_VertexSource: public vtkPolyDataSource 
 { 
 public: 
-  vtkTypeMacro(GEOM_EdgeSource,vtkPolyDataSource); 
-  static GEOM_EdgeSource* New(); 
+  vtkTypeMacro(GEOM_VertexSource,vtkPolyDataSource); 
+  static GEOM_VertexSource* New(); 
  
-  void AddEdge (const TopoDS_Edge& theEdge,
-                bool theIsVector = false);
-  void Clear(){ myEdgeSet.Clear();}
-  
-  void SetVectorMode(bool);
-
-  bool GetVectorMode();
+  void AddVertex(const TopoDS_Vertex& theVertex); 
+  void Clear(){ myVertexSet.Clear();} 
  
   static  
-  void OCC2VTK(const TopoDS_Edge& theEdge,  
+  void OCC2VTK(const TopoDS_Vertex& theVertex,  
                vtkPolyData* thePolyData, 
-               vtkPoints* thePts,
-               bool theIsVector = false); 
-
-  bool IsEmpty(){return myEdgeSet.IsEmpty();}
-
+               vtkPoints* thePts); 
  
 protected: 
-  TEdgeSet myEdgeSet;
-  // The <myIsVector> flag is common for all edges, because the shape,
-  // representing a vector, can have only one edge.
-  bool myIsVector;
+  TVertexSet myVertexSet; 
  
   void Execute(); 
  
-  GEOM_EdgeSource(); 
-  ~GEOM_EdgeSource(); 
+  GEOM_VertexSource(); 
+  ~GEOM_VertexSource(); 
  
 private: 
   // Not implememnted 
-  GEOM_EdgeSource(const GEOM_EdgeSource&); 
-  void operator=(const GEOM_EdgeSource&); 
+  GEOM_VertexSource(const GEOM_VertexSource&); 
+  void operator=(const GEOM_VertexSource&); 
 }; 
  
  
-#endif //GEOM_EDGESOURCE_H 
+#endif //GEOM_VERTEXSOURCE_H 

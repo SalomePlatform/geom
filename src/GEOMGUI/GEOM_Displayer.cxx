@@ -81,6 +81,9 @@
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 
 // VTK Includes
 #include <vtkActorCollection.h>
@@ -124,6 +127,36 @@ static inline int getTopAbsMode( const int implType )
     case GEOM_POINT     : return TopAbs_VERTEX;
     default             : return -1;
   }
+}
+
+static bool isCompoundOfVertices( const TopoDS_Shape& theShape )
+{
+  bool ret = false;
+  if ( !theShape.IsNull() ) {
+    int iType, nbTypes [TopAbs_SHAPE];
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypes[iType] = 0;
+    nbTypes[theShape.ShapeType()]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add(theShape);
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append(theShape);
+
+    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+    for (; itL.More(); itL.Next()) {
+      TopoDS_Iterator it (itL.Value());
+      for (; it.More(); it.Next()) {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add(s)) {
+          aListOfShape.Append(s);
+          nbTypes[s.ShapeType()]++;
+        }
+      }
+    }
+    ret = nbTypes[TopAbs_VERTEX] > 0 && nbTypes[TopAbs_COMPOUND] == 1;
+  }
+  return ret;
 }
 
 //================================================================
@@ -579,7 +612,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->SetColor( (Quantity_NameOfColor)GetColor() );
           Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
           anAspect->SetColor( (Quantity_NameOfColor)GetColor() );
-          if ( myShape.ShapeType() == TopAbs_VERTEX )
+          if ( myShape.ShapeType() == TopAbs_VERTEX || isCompoundOfVertices( myShape ) )
           {
             anAspect->SetScale( myScaleOfMarker );
             anAspect->SetTypeOfMarker( myTypeOfMarker );
@@ -588,7 +621,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         }
         else
         {
-          if ( myShape.ShapeType() == TopAbs_VERTEX )
+          if ( myShape.ShapeType() == TopAbs_VERTEX || isCompoundOfVertices( myShape ) )
           {
             col = aResMgr->colorValue( "Geometry", "point_color", QColor( 255, 255, 0 ) );
             aColor = SalomeApp_Tools::color( col );
@@ -727,7 +760,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                       Quantity_Color aQuanColor( aSColor.R, aSColor.G, aSColor.B, Quantity_TOC_RGB );
                       AISShape->SetColor( aQuanColor );
                       AISShape->SetShadingColor( aQuanColor );
-                      if ( myShape.ShapeType() == TopAbs_VERTEX ) {
+                      if ( myShape.ShapeType() == TopAbs_VERTEX || isCompoundOfVertices( myShape ) ) {
                         Handle(Prs3d_PointAspect) anAspect = AISShape->Attributes()->PointAspect();
                         anAspect->SetColor( aQuanColor );
                         anAspect->SetScale( myScaleOfMarker );

@@ -3,7 +3,7 @@
 \page chamfer_operation_page Chamfer
 
 \n To produce a \b Chamfer in the <b>Main Menu</b> select 
-<b>Operations - > Transformation - > Chamfer</b>
+<b>Operations - > Chamfer</b>
 
 \n This operation allows you to make chamfer of the edges of a Shape.
 \n The \b Result will be a \b GEOM_Object.

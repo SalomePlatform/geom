@@ -159,3 +159,4 @@ DOT_CLEANUP            = YES
 #---------------------------------------------------------------------------
 GENERATE_TAGFILE  = geompy_doc.tag
 TAGFILES          = tui_examples.tag=..
+SEARCHENGINE      = YES

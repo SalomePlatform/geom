@@ -54,7 +54,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT ~GEOMImpl_IShapesOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
-                                                Handle(GEOM_Object) thePoint2);
+						Handle(GEOM_Object) thePoint2);
+  Standard_EXPORT Handle(GEOM_Object) MakeEdgeWire (Handle(GEOM_Object) theWire,
+						    const Standard_Real theLinearTolerance,
+						    const Standard_Real theAngularTolerance);
 
   Standard_EXPORT Handle(GEOM_Object) MakeWire (std::list<Handle(GEOM_Object)> theEdgesAndWires,
                                                 const Standard_Real            theTolerance);
@@ -65,8 +68,6 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                      const bool isPlanarWanted);
 
   Standard_EXPORT Handle(GEOM_Object) MakeShell (std::list<Handle(GEOM_Object)> theShapes);
-
-  Standard_EXPORT Handle(GEOM_Object) MakeSolidShell (Handle(GEOM_Object) theShell);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSolidShells (std::list<Handle(GEOM_Object)> theShells);
 
@@ -84,6 +85,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                            std::list<Handle(GEOM_Object)> theFaces,
                                                            const Standard_Boolean doKeepNonSolids);
 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects
+    (Handle(GEOM_Object)    theShape,
+     const Standard_Boolean theGroupsOnly);
+  
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode
     (Handle(GEOM_Object)    theShape,
      const Standard_Integer theShapeType,

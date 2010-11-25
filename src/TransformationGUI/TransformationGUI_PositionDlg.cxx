@@ -91,7 +91,6 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
 
   // Activate Create a Copy mode
   Group1->CheckButton1->setChecked(true);
-  Group1->CheckButton1->setChecked(false);
   CreateCopyModeChanged(true);
 
   Init();
@@ -300,6 +299,12 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myObjects.length(0);
+  myEditCurrentArgument = Group1->LineEdit1;
+  myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;
@@ -340,8 +345,8 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     else
       myEditCurrentArgument->setText(aName);
 
-    if (getConstructorId() == 2)
-      Group1->PushButton5->click();
+    /*    if (getConstructorId() == 2)
+          Group1->PushButton5->click();*/
   }
   else if (myEditCurrentArgument == Group1->LineEdit2) {
     if (aSelList.Extent() != 1)
@@ -401,7 +406,7 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       //Find SubShape Object in Father
       GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
       
-      if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+      if (aFindedObject->_is_nil()) { // Object not found in study
         GEOM::GEOM_IShapesOperations_var aShapesOp =
           getGeomEngine()->GetIShapesOperations(getStudyId());
         aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
@@ -628,7 +633,6 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   case 1:
     {
       for (int i = 0; i < myObjects.length(); i++) {
-        if (toCreateCopy)
           anObj = toCreateCopy ? 
             anOper->PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS) :
             anOper->PositionShape(myObjects[i], myStartLCS, myEndLCS);

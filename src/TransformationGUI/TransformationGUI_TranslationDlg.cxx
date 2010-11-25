@@ -32,16 +32,27 @@
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include <GEOM_AISVector.hxx>
+#include <SOCC_Prs.h>
+#include <SOCC_ViewModel.h>
 
 // OCCT Includes
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Vertex.hxx>
 #include <TopoDS.hxx>
 #include <TopExp.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <ShapeAnalysis_Edge.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRep_Builder.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -272,6 +283,12 @@ bool TransformationGUI_TranslationDlg::ClickOnApply()
     return false;
 
   initName();
+
+  myObjects.length(0);
+  myEditCurrentArgument = GroupPoints->LineEdit1;
+  myEditCurrentArgument->setText("");
+  myGeomGUI->getApp()->selectionMgr()->clearSelected();
+
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
   return true;
@@ -359,7 +376,7 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
         //Find SubShape Object in Father
         GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
 
-        if (aFindedObject == GEOM::GEOM_Object::_nil()) { // Object not found in study
+        if (aFindedObject->_is_nil()) { // Object not found in study
           GEOM::GEOM_IShapesOperations_var aShapesOp =
             getGeomEngine()->GetIShapesOperations(getStudyId());
           aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
@@ -623,6 +640,8 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       QStringList aParameters;
       aParameters<<GroupPoints->SpinBox3->text();
       bool byDistance = GroupPoints->CheckBox1->isChecked();
+      createPathPreview( myVector );
+
       if (byDistance) {
         double aDistance = GroupPoints->SpinBox3->value();
         for (int i = 0; i < myObjects.length(); i++) {
@@ -725,5 +744,31 @@ void TransformationGUI_TranslationDlg::addSubshapesToStudy()
       break;
     }
     addSubshapesToFather(objMap);
+  }
+}
+
+//=================================================================================
+// function : createPathPreview
+// purpose  :
+//=================================================================================
+void TransformationGUI_TranslationDlg::createPathPreview ( GEOM::GEOM_Object_var thePath )
+{
+  if ( IsPreview() ) {
+    TopoDS_Shape aShape;
+    GEOMBase::GetShape( thePath, aShape, TopAbs_SHAPE );
+    TopoDS_Edge anEdge = TopoDS::Edge( aShape );
+    ShapeAnalysis_Edge aShapeAnal;
+    TopoDS_Vertex aFirst = aShapeAnal.FirstVertex( anEdge );
+    TopoDS_Vertex aLast = aShapeAnal.LastVertex( anEdge );
+    TopoDS_Shape aVector = BRepBuilderAPI_MakeEdge(BRep_Tool::Pnt(aFirst), BRep_Tool::Pnt(aLast)).Shape();
+    const char* aName = "tmpVector";
+    Handle(GEOM_AISVector) anIO = new GEOM_AISVector( aVector, aName );
+    
+    // add Prs to preview
+    SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+    if (aPrs)
+      aPrs->AddObject(anIO);
+    GEOMBase_Helper::displayPreview( aPrs, false, true );
   }
 }

@@ -244,9 +244,12 @@ void MeasureGUI_CenterMassDlg::processObject()
     getParameters( x, y, z );
     
     myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
-    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( x ) );
-    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( y ) );
-    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( z ) );
+
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+    int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+    myGrp->LineEdit2->setText( DlgRef::PrintDoubleValue( x, aPrecision ) );
+    myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( y, aPrecision ) );
+    myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( z, aPrecision ) );
 
     displayPreview();
   }

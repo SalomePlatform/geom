@@ -19,7 +19,6 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:        NMTAlgo_WESCorrector.cxx
 // Created:     
 // Author:      Peter KURNEV
@@ -27,7 +26,11 @@
 //
 #include <GEOMAlgo_WESCorrector.ixx>
 
+#include <Geom_Surface.hxx>
+
+#include <TopLoc_Location.hxx>
 #include <TopoDS.hxx>
+
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
 #include <TopoDS_Face.hxx>
@@ -35,6 +38,7 @@
 
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Surface.hxx>
 
 #include <TopTools_IndexedMapOfOrientedShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
@@ -53,11 +57,16 @@
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <GEOMAlgo_WireSplitter.hxx>
-
+#include <GEOMAlgo_WESScaler.hxx>
 
 static
   void MakeWire(const TopTools_ListOfShape& aLE, 
                 TopoDS_Wire& newWire);
+
+
+static
+  Standard_Boolean IsToScale(const TopoDS_Face& aF, 
+			     Standard_Real& aScale);
 
 //=======================================================================
 // function: 
@@ -215,19 +224,21 @@ static
         aER.Orientation(TopAbs_REVERSED);
         aLEC.Append(aER);
         //
-        //modified by NIZNHY-PKV Tue Nov 28 12:02:29 2006f
-        //bClosed=BRep_Tool::IsClosed(TopoDS::Edge(aER), myWES->Face());
-        //if (!bClosed) {
-          bRegular=Standard_False;
-        //}
-        //modified by NIZNHY-PKV Tue Nov 28 12:02:33 2006t
+	bRegular=Standard_False;
       }
       else {
         aLEC.Append(aER);
       }
       //
       if (bRegular) {
-        TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+	//modified by NIZNHY-PKV Wed Oct 20 14:45:52 2010f
+	const  TopoDS_Edge& aEx=*((TopoDS_Edge*)&aER);
+	if (!BRep_Tool::Degenerated(aEx)) {
+	  TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+	}
+	//
+        //TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+	//modified by NIZNHY-PKV Wed Oct 20 14:46:48 2010t
       }
     }//for (j=1; j<=aNbC; ++j) {
     //
@@ -266,21 +277,24 @@ static
 //=======================================================================
   void GEOMAlgo_WESCorrector::DoCorrections()
 {
-  Standard_Boolean bIsRegular, bIsNothingToDo;
+  Standard_Boolean bIsRegular, bIsNothingToDo, bToScale;
   Standard_Integer iErr;
+  Standard_Real aScale;
   TopoDS_Wire aW;
   BOP_ListIteratorOfListOfConnexityBlock aCBIt;
+  GEOMAlgo_WESScaler aWSC;
   //
   const TopoDS_Face& aF=myWES->Face();
+  //
+  bToScale=IsToScale(aF, aScale);
   //
   myNewWES.SetFace(aF);
   aCBIt.Initialize(myConnexityBlocks);
   for (; aCBIt.More(); aCBIt.Next()) {
     const BOP_ConnexityBlock& aCB=aCBIt.Value();
     const TopTools_ListOfShape& aLE=aCB.Shapes();
-
+    //
     bIsRegular=aCB.IsRegular();
-
     if (bIsRegular) {
       MakeWire(aLE, aW);
       myNewWES.AddShape (aW);
@@ -289,30 +303,84 @@ static
     //
     GEOMAlgo_WireSplitter aWS;
     //
-    aWS.SetFace(aF);
-    aWS.SetEdges(aLE);
-    //
-    aWS.Perform();
-    iErr=aWS.ErrorStatus();
-    if (iErr) {
-      continue;
-    }
-    bIsNothingToDo=aWS.IsNothingToDo();
-    if (bIsNothingToDo) {
-      MakeWire(aLE, aW);
-      myNewWES.AddShape (aW);
-      continue;
-    }
-    //
-    const BOPTColStd_ListOfListOfShape& aSSS=aWS.Shapes();
-    
-    BOPTColStd_ListIteratorOfListOfListOfShape aWireIt(aSSS);
-    for (; aWireIt.More(); aWireIt.Next()) {
-      const TopTools_ListOfShape& aLEx=aWireIt.Value();
+    if(bToScale) {
+      TopoDS_Shape aE;
+      TopTools_ListIteratorOfListOfShape aIt;
+      BOPTColStd_ListIteratorOfListOfListOfShape aItLLSS;
       //
-      MakeWire(aLEx, aW);
-      myNewWES.AddShape (aW);
-    }
+      aWSC.SetScale(aScale);
+      aWSC.SetFace(aF);
+      aWSC.SetEdges(aLE);
+      //
+      aWSC.Perform();
+      iErr=aWSC.ErrorStatus();
+      if (iErr) {
+	return;
+      }
+      //
+      const TopoDS_Face& aFS=aWSC.FaceScaled();
+      const TopTools_ListOfShape& aLES=aWSC.EdgesScaled();
+      //
+      aWS.SetFace(aFS);
+      aWS.SetEdges(aLES);
+      //
+      aWS.Perform();
+      iErr=aWS.ErrorStatus();
+      if (iErr) {
+	continue;
+      }
+      //
+      bIsNothingToDo=aWS.IsNothingToDo();
+      if (bIsNothingToDo) {
+	MakeWire(aLE, aW);
+	myNewWES.AddShape (aW);
+	continue;
+      }
+      //
+      const BOPTColStd_ListOfListOfShape& aLLSS=aWS.Shapes();
+      aItLLSS.Initialize(aLLSS);
+      for (; aItLLSS.More(); aItLLSS.Next()) {
+	TopTools_ListOfShape aLS;
+	//
+	const TopTools_ListOfShape& aLSS=aItLLSS.Value();
+	aIt.Initialize(aLSS);
+	for (; aIt.More(); aIt.Next()) {
+	  const TopoDS_Shape& aES=aIt.Value();
+	  aE=aWSC.Origin(aES);
+	  aLS.Append(aE);
+	}
+	//
+	MakeWire(aLS, aW);
+	myNewWES.AddShape (aW);
+      }
+    }//if(bToScale)
+    //
+    else {
+      aWS.SetFace(aF);
+      aWS.SetEdges(aLE);
+      //
+      aWS.Perform();
+      iErr=aWS.ErrorStatus();
+      if (iErr) {
+	continue;
+      }
+      bIsNothingToDo=aWS.IsNothingToDo();
+      if (bIsNothingToDo) {
+	MakeWire(aLE, aW);
+	myNewWES.AddShape (aW);
+	continue;
+      }
+      //
+      const BOPTColStd_ListOfListOfShape& aSSS=aWS.Shapes();
+    
+      BOPTColStd_ListIteratorOfListOfListOfShape aWireIt(aSSS);
+      for (; aWireIt.More(); aWireIt.Next()) {
+	const TopTools_ListOfShape& aLEx=aWireIt.Value();
+	//
+	MakeWire(aLEx, aW);
+	myNewWES.AddShape (aW);
+      }
+    }// else
   }
 }
 //=======================================================================
@@ -331,3 +399,36 @@ static
     aBB.Add(newWire, aE);
   }
 }
+//
+
+ 
+//=======================================================================
+//function : IsToScale
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsToScale(const TopoDS_Face& aF, 
+			   Standard_Real& aScale)
+{
+  Standard_Boolean bRet;
+  Standard_Real aV1, aV2, dV, aTr;
+  GeomAbs_SurfaceType aType;
+  BRepAdaptor_Surface aBAS;
+  //
+  bRet=Standard_False;
+  aScale=1.;
+  //
+  aBAS.Initialize(aF);
+  aType=aBAS.GetType();
+  if (aType==GeomAbs_Cylinder) {
+    aTr=1.e5;
+    aV1=aBAS.FirstVParameter();
+    aV2=aBAS.LastVParameter();
+    dV=aV2-aV1;
+    if (dV>aTr) {
+      bRet=!bRet;
+      aScale=1./aTr;
+    }
+  }
+  return bRet;
+}
+

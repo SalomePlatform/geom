@@ -87,6 +87,8 @@ public:
   static CORBA::Object_var    ClientSObjectToObject (_PTR(SObject) theSObject);
   static SALOMEDS::Study_var  ClientStudyToStudy (_PTR(Study) theStudy);
 
+  static void                 Modified( bool = true );
+
   GEOM_Client&                GetShapeReader()    { return myShapeReader; }
 
   // Get active dialog box
@@ -147,11 +149,14 @@ private:
   GEOMGUI*                    getLibrary( const QString& libraryName );
   void                        createGeomAction( const int id, const QString& po_id,
                                                 const QString& icon_id = QString(""),
-                                                const int key = 0, const bool toggle = false );
+                                                const int key = 0, const bool toggle = false,
+						const QString& shortcutAction = QString() );
   void                        createPopupItem( const int, const QString& clients, const QString& types,
                                                const bool isSingle = false, const int isVisible = -1,
                                                const bool isExpandAll = false, const bool isOCC = false,
                                                const int parentId = -1 );
+
+  void                        createOriginAndBaseVectors();
 
 public:
   static GEOM::GEOM_Gen_var   myComponentGeom;   // GEOM engine!!!

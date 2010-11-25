@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -44,6 +43,12 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
+#include <TNaming_CopyShape.hxx>
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
+#include <BRepCheck_Analyzer.hxx>
 
 #include <Precision.hxx>
 
@@ -125,6 +130,9 @@ Standard_Integer GEOMImpl_HealingDriver::Execute(TFunction_Logbook& log) const
     break;
   case CHANGE_ORIENTATION:
     ChangeOrientation(&HI, anOriginalShape, aShape);
+    break;
+  case LIMIT_TOLERANCE:
+    LimitTolerance(&HI, anOriginalShape, aShape);
     break;
   default:
     return 0;
@@ -465,6 +473,36 @@ Standard_Boolean GEOMImpl_HealingDriver::ChangeOrientation (GEOMImpl_IHealing* t
   return aResult;
 }
 
+//=======================================================================
+//function : LimitTolerance
+//purpose  :
+//=======================================================================
+void GEOMImpl_HealingDriver::LimitTolerance (GEOMImpl_IHealing* theHI,
+                                             const TopoDS_Shape& theOriginalShape,
+                                             TopoDS_Shape& theOutShape) const
+{
+  Standard_Real aTol = theHI->GetTolerance();
+  if (aTol < Precision::Confusion())
+    aTol = Precision::Confusion();
+
+  // 1. Make a copy to prevent the original shape changes.
+  TopoDS_Shape aShapeCopy;
+  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+  TNaming_CopyShape::CopyTool(theOriginalShape, aMapTShapes, aShapeCopy);
+
+  // 2. Limit tolerance.
+  ShapeFix_ShapeTolerance aSFT;
+  aSFT.LimitTolerance(aShapeCopy, aTol, aTol, TopAbs_SHAPE);
+
+  // 3. Fix obtained shape.
+  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
+  aSfs->Perform();
+  theOutShape = aSfs->Shape();
+
+  BRepCheck_Analyzer ana (theOutShape, Standard_True);
+  if (!ana.IsValid())
+    StdFail_NotDone::Raise("Non valid shape result");
+}
 
 //=======================================================================
 //function :  GEOMImpl_HealingDriver_Type_

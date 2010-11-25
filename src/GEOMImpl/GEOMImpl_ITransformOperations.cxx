@@ -1252,7 +1252,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::PositionShape
   aTI.SetShape(anOriginal);
   aTI.SetEndLCS(theEndLCS->GetLastFunction());
   if (!theStartLCS.IsNull())
-    aTI.SetStartLCS(theStartLCS->GetLastFunction());
+    aTI.SetStartLCS(theObject == theStartLCS ? anOriginal : theStartLCS->GetLastFunction());
 
   //Compute the Position
   try {

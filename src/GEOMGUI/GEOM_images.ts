@@ -110,6 +110,10 @@
             <translation>build_edge.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_BUILD_EDGE_WIRE</source>
+            <translation>build_edge_wire.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
         </message>
@@ -268,6 +272,10 @@
         <message>
             <source>ICON_DLG_GLUE_FACES2</source>
             <translation>glue2.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_LIMIT_TOLERANCE</source>
+            <translation>limit_tolerance.png</translation>
         </message>
         <message>
             <source>ICON_DLG_INERTIA</source>
@@ -850,6 +858,10 @@
             <translation>glue.png</translation>
         </message>
         <message>
+            <source>ICO_LIMIT_TOLERANCE</source>
+            <translation>limit_tolerance.png</translation>
+        </message>
+        <message>
             <source>ICO_GROUP_CREATE</source>
             <translation>group_new.png</translation>
         </message>
@@ -904,6 +916,10 @@
         <message>
             <source>ICO_OFFSET</source>
             <translation>offset.png</translation>
+        </message>
+        <message>
+            <source>ICO_ORIGIN_AND_VECTORS</source>
+            <translation>origin_and_vectors.png</translation>
         </message>
         <message>
             <source>ICO_PARTITION</source>

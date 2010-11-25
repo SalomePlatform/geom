@@ -24,7 +24,7 @@
 # Modified by : Alexander BORODIN (OCN) - autotools usage
 # Created from configure.in.base
 #
-AC_INIT([Salome2 Project GEOM module], [6.1.0], [webmaster.salome@opencascade.com], [SalomeGEOM])
+AC_INIT([Salome2 Project GEOM module], [6.2.0], [webmaster.salome@opencascade.com], [SalomeGEOM])
 AC_CONFIG_AUX_DIR(adm_local/unix/config_files)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -282,15 +282,15 @@ if test "${gui_ok}" = "yes"; then
     echo
 
     CHECK_QT
-
-    echo
-    echo ---------------------------------------------
-    echo testing VTK
-    echo ---------------------------------------------
-    echo
-
-    CHECK_VTK
 fi
+
+echo
+echo ---------------------------------------------
+echo testing VTK
+echo ---------------------------------------------
+echo
+
+CHECK_VTK
 
 echo
 echo ---------------------------------------------
@@ -326,6 +326,13 @@ CHECK_HTML_GENERATORS
 
 echo
 echo ---------------------------------------------
+echo testing sphinx
+echo ---------------------------------------------
+echo
+CHECK_SPHINX
+
+echo
+echo ---------------------------------------------
 echo Testing Kernel
 echo ---------------------------------------------
 echo
@@ -341,11 +348,11 @@ echo
 echo Configure
 
 if test "${gui_ok}" = "yes"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok Kernel_ok gui_ok"
 elif test "${SalomeGUI_need}" != "no"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
 else
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
 fi
 
 for var in $variables
@@ -376,6 +383,19 @@ echo
 #  chmod +x ./bin/*; \
 #])
 
+AC_CONFIG_COMMANDS([hack_libtool],[
+sed -i "s%^CC=\"\(.*\)\"%hack_libtool (){ \n\
+  if test \"\$(echo \$[@] | grep -E '\\\-L/usr/lib(/../lib)?(64)? ')\" == \"\" \n\
+  then\n\
+    cmd=\"\1 \$[@]\"\n\
+  else\n\
+    cmd=\"\1 \"\`echo \$[@] | sed -r -e 's|(.*)-L/usr/lib(/../lib)?(64)? (.*)|\\\1\\\4 -L/usr/lib\\\3|g'\`\n\
+  fi\n\
+  \$cmd\n\
+}\n\
+CC=\"hack_libtool\"%g" libtool
+],[])
+
 # This list is initiated using autoscan and must be updated manually
 # when adding a new file <filename>.in to manage. When you execute
 # autoscan, the Makefile list is generated in the output file configure.scan.
@@ -389,6 +409,7 @@ AC_OUTPUT([ \
   bin/Makefile \
   GEOM_version.h \
   doc/Makefile \
+  doc/docutils/Makefile \
   doc/salome/Makefile \
   doc/salome/gui/Makefile \
   doc/salome/gui/GEOM/Makefile \
@@ -423,6 +444,8 @@ AC_OUTPUT([ \
   src/GEOM_I_Superv/Makefile \
   src/GEOM_SWIG/Makefile \
   src/GEOM_SWIG_WITHIHM/Makefile \
+  src/GEOM_PY/Makefile \
+  src/GEOM_PY/structelem/Makefile \
   src/GenerationGUI/Makefile \
   src/GroupGUI/Makefile \
   src/IGESExport/Makefile \
@@ -431,6 +454,7 @@ AC_OUTPUT([ \
   src/NMTDS/Makefile \
   src/NMTTools/Makefile \
   src/OBJECT/Makefile \
+  src/OCC2VTK/Makefile \
   src/OperationGUI/Makefile \
   src/PrimitiveGUI/Makefile \
   src/RepairGUI/Makefile \
@@ -440,6 +464,7 @@ AC_OUTPUT([ \
   src/STLExport/Makefile \
   src/ShHealOper/Makefile \
   src/TransformationGUI/Makefile \
+  src/VTKExport/Makefile \
   resources/Makefile \
   resources/GEOMCatalog.xml \
   idl/Makefile \

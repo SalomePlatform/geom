@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_Function_HeaderFile
 #define _GEOM_Function_HeaderFile
@@ -34,10 +33,10 @@
 #endif
 #ifndef _Handle_MMgt_TShared_HeaderFile
 #include <Handle_MMgt_TShared.hxx>
-#endif  
+#endif
 #ifndef _MMgt_TShared_HeaderFile
 #include <MMgt_TShared.hxx>
-#endif  
+#endif
 #ifndef _Standard_GUID_HeaderFile
 #include <Standard_GUID.hxx>
 #endif
@@ -65,31 +64,31 @@ class Handle(MMgt_TShared);
 class GEOM_Function;
 
 #include <TCollection_AsciiString.hxx>
-
+#include <TDataStd_ListOfExtendedString.hxx>
 
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOM_Function);
 
 class Handle(GEOM_Function) : public Handle(MMgt_TShared) {
   public:
-    inline void* operator new(size_t,void* anAddress) 
+    inline void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    inline void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    inline void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
 
-    Handle(GEOM_Function)():Handle(MMgt_TShared)() {} 
-    Handle(GEOM_Function)(const Handle(GEOM_Function)& aHandle) : Handle(MMgt_TShared)(aHandle) 
+    Handle(GEOM_Function)():Handle(MMgt_TShared)() {}
+    Handle(GEOM_Function)(const Handle(GEOM_Function)& aHandle) : Handle(MMgt_TShared)(aHandle)
      {
      }
 
-    Handle(GEOM_Function)(const GEOM_Function* anItem) : Handle(MMgt_TShared)((MMgt_TShared *)anItem) 
+    Handle(GEOM_Function)(const GEOM_Function* anItem) : Handle(MMgt_TShared)((MMgt_TShared *)anItem)
      {
      }
 
@@ -105,18 +104,18 @@ class Handle(GEOM_Function) : public Handle(MMgt_TShared) {
       return *this;
      }
 
-    GEOM_Function* operator->() 
+    GEOM_Function* operator->()
      {
       return (GEOM_Function *)ControlAccess();
      }
 
-    GEOM_Function* operator->() const 
+    GEOM_Function* operator->() const
      {
       return (GEOM_Function *)ControlAccess();
      }
 
    Standard_EXPORT ~Handle(GEOM_Function)() {};
- 
+
    Standard_EXPORT static const Handle(GEOM_Function) DownCast(const Handle(Standard_Transient)& AnObject);
 };
 
@@ -125,24 +124,26 @@ class GEOM_Function : public MMgt_TShared
 
 public:
 
-    inline void* operator new(size_t,void* anAddress) 
+    inline void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    inline void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    inline void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
 
     // Type management
     //
     Standard_EXPORT friend Handle_Standard_Type& GEOM_Function_Type_();
-    Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOM_Function) ; }
-    Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOM_Function) == AType || MMgt_TShared::IsKind(AType)); } 
+    Standard_EXPORT const Handle(Standard_Type)& DynamicType() const
+      { return STANDARD_TYPE(GEOM_Function) ; }
+    Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
+      { return (STANDARD_TYPE(GEOM_Function) == AType || MMgt_TShared::IsKind(AType)); }
 
 
 private:
@@ -150,22 +151,22 @@ private:
 
 public:
 
-  //Returns a GUID for a function tree  
+  //Returns a GUID for a function tree
   Standard_EXPORT static const Standard_GUID& GetFunctionTreeID();
 
-  //Returns the ID which is associated with a reference to another function  
+  //Returns the ID which is associated with a reference to another function
   Standard_EXPORT static const Standard_GUID& GetDependencyID();
 
   //Finds and returns a function located on a label theEntry
   Standard_EXPORT static Handle(GEOM_Function) GetFunction(const TDF_Label& theEntry);
 
 
-  Standard_EXPORT GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& theGUID, int theType); 
+  Standard_EXPORT GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& theGUID, int theType);
   Standard_EXPORT ~GEOM_Function() {;}
 
   Standard_EXPORT TDF_Label GetOwnerEntry();
 
-  //Access to properties 
+  //Access to properties
 
   //Returns a result of the function built by the function Driver
   Standard_EXPORT TopoDS_Shape GetValue();
@@ -177,7 +178,7 @@ public:
   Standard_EXPORT TDF_Label& GetEntry() { return _label; }
 
   //Returns the type of the function
-  Standard_EXPORT int GetType();    
+  Standard_EXPORT int GetType();
 
   //Returns a function Driver GUID
   Standard_EXPORT Standard_GUID GetDriverGUID();
@@ -185,8 +186,8 @@ public:
   //Returns aPython description of the function
   Standard_EXPORT TCollection_AsciiString GetDescription();
 
-  //Sets aPython description of the function  
-  Standard_EXPORT void SetDescription(const TCollection_AsciiString& theDescription);  
+  //Sets aPython description of the function
+  Standard_EXPORT void SetDescription(const TCollection_AsciiString& theDescription);
 
   //Access to arguments
 
@@ -206,8 +207,8 @@ public:
   Standard_EXPORT void SetInteger(int thePosition, int theValue);
 
   //Returns an integer argument at position thePosition
-  Standard_EXPORT int GetInteger(int thePosition);  
-  
+  Standard_EXPORT int GetInteger(int thePosition);
+
   //Sets an integer array argument at position thePosition
   Standard_EXPORT void SetIntegerArray(int thePosition, const Handle(TColStd_HArray1OfInteger)& theArray);
 
@@ -221,18 +222,18 @@ public:
   Standard_EXPORT void SetString(int thePosition, const TCollection_AsciiString& theValue);
 
   //Returns a string argument at position thePosition
-  Standard_EXPORT TCollection_AsciiString GetString(int thePosition);  
-  
+  Standard_EXPORT TCollection_AsciiString GetString(int thePosition);
+
   //Returns a reference to other function argument at position thePosition
-  Standard_EXPORT Handle(GEOM_Function) GetReference(int thePosition); 
+  Standard_EXPORT Handle(GEOM_Function) GetReference(int thePosition);
 
   //Set an array of ExtendedString
   Standard_EXPORT void SetStringArray(int thePosition, const Handle(TColStd_HArray1OfExtendedString)& theArray);
-    
+
   //Returns the array of ExtendedString
   Standard_EXPORT Handle(TColStd_HArray1OfExtendedString) GetStringArray(int thePosition);
 
-  //Returns a GUID for a references tree  
+  //Returns a GUID for a references tree
   Standard_EXPORT static const Standard_GUID& GetReferencesTreeID();
 
   //Sets a list of references to other function arguments at position thePosition
@@ -240,19 +241,25 @@ public:
                          const Handle(TColStd_HSequenceOfTransient)& theRefList);
 
   //Returns a list of references to other function arguments at position thePosition
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetReferenceList (int thePosition); 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetReferenceList (int thePosition);
 
   //Sets a TopoDS_Shape argument at position thePosition
   //void SetShape(int thePosition, const TopoDS_Shape& theShape);
-    
+
   //Returns a TopoDS_Shape argument at position thePosition
-  //TopoDS_Shape GetShape(int thePosition);  
-  
-  //Returns true if the last method succided 
+  //TopoDS_Shape GetShape(int thePosition);
+
+  //Returns true if the last method succided
   Standard_EXPORT bool IsDone() { return _isDone; }
 
   //Returns a sequence of the external dependencies of this function
   Standard_EXPORT void GetDependency(TDF_LabelSequence& theSeq);
+
+  // Add/Remove/Check/Get subshape references
+  Standard_EXPORT void AddSubShapeReference   (Handle(GEOM_Function) theSubShape);
+  Standard_EXPORT void RemoveSubShapeReference(Handle(GEOM_Function) theSubShape);
+  Standard_EXPORT bool HasSubShapeReferences();
+  Standard_EXPORT const TDataStd_ListOfExtendedString& GetSubShapeReferences();
 
   //Returns top label of this function's history tree
   Standard_EXPORT TDF_Label GetHistoryEntry (const Standard_Boolean create = Standard_True);
@@ -260,13 +267,15 @@ public:
   //Returns history label, corresponding to the label,
   //on which a reference on argument is stored
   Standard_EXPORT TDF_Label GetArgumentHistoryEntry (const TDF_Label&       theArgumentRefEntry,
-                                     const Standard_Boolean create = Standard_True);
+                                                     const Standard_Boolean create = Standard_True);
+
+  //Returns top label of this function's naming tree
+  Standard_EXPORT TDF_Label GetNamingEntry (const Standard_Boolean create = Standard_True);
 
 private:
 
-  
-  TDF_Label    _label;
-  bool _isDone;
+  TDF_Label _label;
+  bool      _isDone;
 };
 
 #endif

@@ -16,10 +16,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GEOMImpl_IAdvancedOperations.hxx
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #ifndef _GEOMImpl_IAdvancedOperations_HXX_
 #define _GEOMImpl_IAdvancedOperations_HXX_
 
@@ -35,31 +34,32 @@ class GEOMImpl_ITransformOperations;
 class GEOMImpl_IBlocksOperations;
 class GEOMImpl_I3DPrimOperations;
 class GEOMImpl_ILocalOperations;
+class GEOMImpl_IHealingOperations;
 
 class GEOMImpl_IAdvancedOperations: public GEOM_IOperations {
 private:
   bool MakePipeTShapePartition(Handle(GEOM_Object) theShape,
-			       double theR1, double theW1, double theL1,
-			       double theR2, double theW2, double theL2,
-			       double theH = 0, double theW = 0,
-			       double theRF = 0, bool isNormal = true);
+                               double theR1, double theW1, double theL1,
+                               double theR2, double theW2, double theL2,
+                               double theH = 0, double theW = 0,
+                               double theRF = 0, bool isNormal = true);
   bool MakePipeTShapeMirrorAndGlue(Handle(GEOM_Object) theShape,
-				   double theR1, double theW1, double theL1,
-				   double theR2, double theW2, double theL2);
+                                   double theR1, double theW1, double theL1,
+                                   double theR2, double theW2, double theL2);
   bool MakeGroups(Handle(GEOM_Object) theShape, int shapType,
-		  double theR1, double theW1, double theL1,
-		  double theR2, double theW2, double theL2,
-		  Handle(TColStd_HSequenceOfTransient) theSeq,
-		  gp_Trsf aTrsf);
+                  double theR1, double theW1, double theL1,
+                  double theR2, double theW2, double theL2,
+                  Handle(TColStd_HSequenceOfTransient) theSeq,
+                  gp_Trsf aTrsf);
   gp_Trsf GetPositionTrsf(double theL1, double theL2,
-			  Handle(GEOM_Object) P1 = 0,
-			  Handle(GEOM_Object) P2 = 0,
-			  Handle(GEOM_Object) P3 = 0);
+                          Handle(GEOM_Object) P1 = 0,
+                          Handle(GEOM_Object) P2 = 0,
+                          Handle(GEOM_Object) P3 = 0);
   bool CheckCompatiblePosition(double& theL1, double& theL2, 
-			       Handle(GEOM_Object) theP1, 
-			       Handle(GEOM_Object) theP2,
-			       Handle(GEOM_Object) theP3,
-			       double theTolerance);
+                               Handle(GEOM_Object) theP1, 
+                               Handle(GEOM_Object) theP2,
+                               Handle(GEOM_Object) theP3,
+                               double theTolerance);
 private:
   GEOMImpl_IBasicOperations*     myBasicOperations;
   GEOMImpl_IBooleanOperations*   myBooleanOperations;
@@ -68,6 +68,7 @@ private:
   GEOMImpl_IBlocksOperations*    myBlocksOperations;
   GEOMImpl_I3DPrimOperations*    my3DPrimOperations;
   GEOMImpl_ILocalOperations*     myLocalOperations;
+  GEOMImpl_IHealingOperations*   myHealingOperations;
 
 public:
   Standard_EXPORT GEOMImpl_IAdvancedOperations(GEOM_Engine* theEngine, int theDocID);
@@ -75,39 +76,39 @@ public:
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) 
                   MakePipeTShape(double theR1, double theW1, double theL1,
-				 double theR2, double theW2, double theL2,
-				 bool theHexMesh = true);
+                                 double theR2, double theW2, double theL2,
+                                 bool theHexMesh = true);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeWithPosition(double theR1, double theW1, double theL1,
-					     double theR2, double theW2, double theL2,
-					     bool theHexMesh = true,
-					     Handle(GEOM_Object) P1 = 0,
-					     Handle(GEOM_Object) P2 = 0,
-					     Handle(GEOM_Object) P3 = 0);
+                                             double theR2, double theW2, double theL2,
+                                             bool theHexMesh = true,
+                                             Handle(GEOM_Object) P1 = 0,
+                                             Handle(GEOM_Object) P2 = 0,
+                                             Handle(GEOM_Object) P3 = 0);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeChamfer(double theR1, double theW1, double theL1,
-					double theR2, double theW2, double theL2,
-					double theH,  double theW, 
-					bool theHexMesh = true);
+                                        double theR2, double theW2, double theL2,
+                                        double theH,  double theW, 
+                                        bool theHexMesh = true);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeChamferWithPosition(double theR1, double theW1, double theL1,
-						    double theR2, double theW2, double theL2,
-						    double theH, double theW,
-						    bool theHexMesh = true,
-						    Handle(GEOM_Object) P1 = 0,
-						    Handle(GEOM_Object) P2 = 0,
-						    Handle(GEOM_Object) P3 = 0);
+                                                    double theR2, double theW2, double theL2,
+                                                    double theH, double theW,
+                                                    bool theHexMesh = true,
+                                                    Handle(GEOM_Object) P1 = 0,
+                                                    Handle(GEOM_Object) P2 = 0,
+                                                    Handle(GEOM_Object) P3 = 0);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeFillet(double theR1, double theW1, double theL1,
-				       double theR2, double theW2, double theL2,
-				       double theRF, bool theHexMesh = true);
+                                       double theR2, double theW2, double theL2,
+                                       double theRF, bool theHexMesh = true);
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient)
                   MakePipeTShapeFilletWithPosition(double theR1, double theW1, double theL1,
-						   double theR2, double theW2, double theL2,
-						   double theRF, bool theHexMesh = true,
-						   Handle(GEOM_Object) P1 = 0,
-						   Handle(GEOM_Object) P2 = 0,
-						   Handle(GEOM_Object) P3 = 0);
+                                                   double theR2, double theW2, double theL2,
+                                                   double theRF, bool theHexMesh = true,
+                                                   Handle(GEOM_Object) P1 = 0,
+                                                   Handle(GEOM_Object) P2 = 0,
+                                                   Handle(GEOM_Object) P3 = 0);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

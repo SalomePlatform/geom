@@ -340,6 +340,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_2Sel1List2Check
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel1List2Check_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel1List2Check : public QWidget, 
+                                             public Ui::DlgRef_2Sel1List2Check_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel1List2Check( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel1List2Check();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel1List
 //////////////////////////////////////////
 

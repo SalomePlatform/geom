@@ -510,8 +510,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
 
           //Find SubShape Object in Father
           GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-          if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
+          if ( aFindedObject->_is_nil() ) { // Object not found in study
             GEOM::GEOM_IShapesOperations_var aShapesOp =
               getGeomEngine()->GetIShapesOperations(getStudyId());
             aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
@@ -907,9 +906,11 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
     if ( GEOMBase::GetShape( anObj, aShape ) && !aShape.IsNull() &&
          aShape.ShapeType() == TopAbs_VERTEX ) {
       gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-      myX->setText( QString( "%1" ).arg( aPnt.X() ) );
-      myY->setText( QString( "%1" ).arg( aPnt.Y() ) );
-      myZ->setText( QString( "%1" ).arg( aPnt.Z() ) );
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+      myX->setText( DlgRef::PrintDoubleValue( aPnt.X(), aPrecision ) );
+      myY->setText( DlgRef::PrintDoubleValue( aPnt.Y(), aPrecision ) );
+      myZ->setText( DlgRef::PrintDoubleValue( aPnt.Z(), aPrecision ) );
     }
     else {
       myX->setText( "" );

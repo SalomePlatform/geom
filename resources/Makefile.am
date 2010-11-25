@@ -47,6 +47,7 @@ box2points.png			\
 boxdxyz.png			\
 build_compound.png		\
 build_edge.png			\
+build_edge_wire.png			\
 build_face.png			\
 build_shell.png			\
 build_solid.png			\
@@ -93,6 +94,7 @@ filletface.png			\
 filling.png			\
 fuse.png			\
 geometry.png			\
+limit_tolerance.png		\
 line.png			\
 line2points.png			\
 line2faces.png			\
@@ -109,6 +111,7 @@ multitranslationdouble.png	\
 multitranslationsimple.png	\
 normale.png			\
 offset.png			\
+origin_and_vectors.png		\
 partition.png			\
 partitionkeep.png		\
 partitionplane.png		\
