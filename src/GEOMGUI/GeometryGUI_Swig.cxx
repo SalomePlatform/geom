@@ -68,7 +68,7 @@
 
 #include <vtkRenderer.h>
 
-static GEOM_Client ShapeReader;
+static SHAPE_READER(ShapeReader);
 
 inline OCCViewer_Viewer* GetOCCViewer(SUIT_Application* theApp){
   SUIT_ViewWindow* window = theApp->desktop()->activeWindow();

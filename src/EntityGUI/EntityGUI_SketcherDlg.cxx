@@ -2309,7 +2309,7 @@ void EntityGUI_SketcherDlg::FindLocalCS()
       continue;
     if (geomObj->GetType() == GEOM_MARKER) {
       ComboBox1->addItem(geomObj->GetName());
-      TopoDS_Shape aShape = GEOM_Client().GetShape(GeometryGUI::GetGeomGen(), geomObj);
+      TopoDS_Shape aShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), geomObj);
       
       gp_Ax3 aLCS;
       aLCS.Transform(aShape.Location().Transformation());

@@ -656,7 +656,7 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
 
   CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( theObj );
   TCollection_AsciiString asciiIOR( (char *)IOR.in() );
-  GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
+  GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
 
   if ( !getStudy() || !getStudy()->studyDS() )
     return;
@@ -672,7 +672,7 @@ void GEOMBase_Helper::clearShapeBuffer( GEOM::GEOM_Object_ptr theObj )
     if ( anIt->Value()->FindAttribute(anAttr, "AttributeIOR") ) {
       _PTR(AttributeIOR) anIOR ( anAttr );
       TCollection_AsciiString asciiIOR( (char*)anIOR->Value().c_str() );
-      GEOM_Client().RemoveShapeFromBuffer( asciiIOR );
+      GEOM_Client::get_client().RemoveShapeFromBuffer( asciiIOR );
     }
   }
 }

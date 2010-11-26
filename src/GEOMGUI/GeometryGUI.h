@@ -89,7 +89,7 @@ public:
 
   static void                 Modified( bool = true );
 
-  GEOM_Client&                GetShapeReader()    { return myShapeReader; }
+  GEOM_Client&                GetShapeReader()    { static SHAPE_READER(myShapeReader);return myShapeReader; }
 
   // Get active dialog box
   QDialog*                    GetActiveDialogBox(){ return myActiveDialogBox; }
@@ -169,7 +169,6 @@ private:
 
   GUIMap                      myGUIMap;          // GUI libraries map
   QDialog*                    myActiveDialogBox; // active dialog box
-  GEOM_Client                 myShapeReader;     // geom shape reader
   gp_Ax3                      myWorkingPlane;
   QMap<int,QString>           myRules;           // popup rules
   static StudyTextureMap      myTextureMap;      // texture map

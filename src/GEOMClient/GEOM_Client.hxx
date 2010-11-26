@@ -73,6 +73,18 @@ class TopoDS_Shape;
  #define GEOMCLIENT_EXPORT
 #endif
 
+#include <TCollection_AsciiString.hxx>
+#include <TopoDS_Shape.hxx>
+#include <map>
+#include <vector>
+
+/*
+ * if define SINGLE_CLIENT is not commented, the method get_client always returns the same GEOM_Client object (singleton object)
+ * and the SHAPE_READER macro can be used to define an object that is always this singleton object
+ * if define SINGLE_CLIENT is commented, we get the old way to define the GEOM_Client objects : get_client returns a new object
+ * and the SHAPE_READER macro defines also a new object
+ */
+#define SINGLE_CLIENT
 //=====================================================================
 // GEOM_Client : class definition
 //=====================================================================
@@ -113,14 +125,26 @@ public:
   //Standard_EXPORT   
   unsigned int BufferLength() ;
   TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
+#ifdef SINGLE_CLIENT
+  static GEOM_Client& get_client() { static GEOM_Client a;return a; }
+#else
+  static GEOM_Client get_client() { return GEOM_Client(); }
+#endif
 
 private: 
   // Fields PRIVATE
   //
   TColStd_SequenceOfAsciiString myIORs ;
   TopTools_SequenceOfShape myShapes ;
+  std::map< TCollection_AsciiString , int > _myIndexes;
+  std::map< TCollection_AsciiString , std::vector<TopoDS_Shape> > _mySubShapes;
   long  pid_client;
 };
 
+#ifdef SINGLE_CLIENT
+#define SHAPE_READER(obj) GEOM_Client& obj=GEOM_Client::get_client()
+#else
+#define SHAPE_READER(obj) GEOM_Client obj
+#endif
 
 #endif

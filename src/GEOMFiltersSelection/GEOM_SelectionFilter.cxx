@@ -139,7 +139,7 @@ bool GEOM_SelectionFilter::getShape (const GEOM::GEOM_Object_ptr& theObject,
       }
       if ( !CORBA::is_nil( geomGen ) )
       {
-        TopoDS_Shape aTopoDSShape = GEOM_Client().GetShape( geomGen, theObject );
+        TopoDS_Shape aTopoDSShape = GEOM_Client::get_client().GetShape( geomGen, theObject );
 
         if ( !aTopoDSShape.IsNull() )
         {

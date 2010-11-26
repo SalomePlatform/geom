@@ -968,7 +968,7 @@ SALOME_Prs* GEOM_Displayer::BuildPrs( GEOM::GEOM_Object_ptr theObj )
     return 0;
 
   internalReset();
-  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
+  setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), theObj ) );
   myType = theObj->GetType();
 
   // Update presentation
@@ -1049,7 +1049,7 @@ SALOME_Prs* GEOM_Displayer::buildPresentation( const QString& entry,
                 if ( !GeomObject->_is_nil() )
                 {
                   // finally set shape
-                  setShape( GEOM_Client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
+                  setShape( GEOM_Client::get_client().GetShape( GeometryGUI::GetGeomGen(), GeomObject ) );
                   myType = GeomObject->GetType();
                 }
               }
