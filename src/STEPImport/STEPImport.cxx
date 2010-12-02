@@ -100,6 +100,8 @@ extern "C"
     STEPControl_Reader aReader;
     //VSR: 16/09/09: Convert to METERS
     Interface_Static::SetCVal("xstep.cascade.unit","M");
+    Interface_Static::SetIVal("read.step.ideas", 1);
+    Interface_Static::SetIVal("read.step.nonmanifold", 1);
     //VRV: OCC 4.0 migration
     TopoDS_Compound compound;
     BRep_Builder B;

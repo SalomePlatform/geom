@@ -78,6 +78,7 @@ STEPEXPORT_EXPORT
       STEPControl_Writer aWriter;
       //VSR: 16/09/09: Convert to METERS
       Interface_Static::SetCVal("xstep.cascade.unit","M");
+      Interface_Static::SetIVal("write.step.nonmanifold", 1);
 //JFA: PAL6162      status = aWriter.Transfer( theShape, STEPControl_ManifoldSolidBrep );
       status = aWriter.Transfer( theShape, STEPControl_AsIs );
       //VRV: OCC 4.0 migration
