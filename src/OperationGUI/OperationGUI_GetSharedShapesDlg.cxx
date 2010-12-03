@@ -301,8 +301,7 @@ GEOM::GEOM_IOperations_ptr OperationGUI_GetSharedShapesDlg::createOperation()
 bool OperationGUI_GetSharedShapesDlg::isValid (QString& msg)
 {
   if (myListShapes.length() < 2) {
-    //msg = "Too few shapes selected";
-    msg = "MSG_SHARED_SHAPES_TOO_FEW_SHAPES";
+    msg = tr("MSG_SHARED_SHAPES_TOO_FEW_SHAPES");
     return false;
   }
   return true;
