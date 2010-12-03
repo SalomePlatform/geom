@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_IBoolean.hxx>
@@ -26,12 +25,17 @@
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOM_Function.hxx>
 
+#include <ShapeFix_ShapeTolerance.hxx>
+#include <ShapeFix_Shape.hxx>
+
 #include <BRep_Builder.hxx>
 #include <BRepAlgo.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepAlgoAPI_Fuse.hxx>
 #include <BRepAlgoAPI_Section.hxx>
+#include <BRepCheck_Analyzer.hxx>
+
 #include <TopExp_Explorer.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Compound.hxx>
@@ -39,10 +43,8 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+
 #include <Precision.hxx>
-#include <BRepCheck_Analyzer.hxx>
-#include <ShapeFix_ShapeTolerance.hxx>
-#include <ShapeFix_Shape.hxx>
 
 #include <Standard_ConstructionError.hxx>
 #include <StdFail_NotDone.hxx>
@@ -93,7 +95,7 @@ void AddSimpleShapes(TopoDS_Shape theShape, TopTools_ListOfShape& theList)
 //function : Execute
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
+Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 {
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
@@ -108,6 +110,14 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape1 = aRefShape1->GetValue();
   TopoDS_Shape aShape2 = aRefShape2->GetValue();
   if (!aShape1.IsNull() && !aShape2.IsNull()) {
+
+    // check arguments for Mantis issue 0021019
+    BRepCheck_Analyzer ana (aShape1, Standard_True);
+    if (!ana.IsValid())
+      StdFail_NotDone::Raise("Common operation will not be performed, because argument shape is not valid");
+    ana.Init(aShape2);
+    if (!ana.IsValid())
+      StdFail_NotDone::Raise("Common operation will not be performed, because argument shape is not valid");
 
     // perform COMMON operation
     if (aType == BOOLEAN_COMMON) {
