@@ -111,6 +111,8 @@ public:
   //Standard_EXPORT   
   GEOM_Client(Engines::Container_ptr client);
   //Standard_EXPORT   
+  GEOM_Client(const GEOM_Client& client);
+  //Standard_EXPORT   
   Standard_Integer Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
   //Standard_EXPORT   
   Standard_Integer Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
