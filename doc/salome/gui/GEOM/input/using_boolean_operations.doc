@@ -2,7 +2,13 @@
 
 \page using_boolean_operations_page Using Boolean Operations
 
-\n You can use the following boolean operations for construction of more
+For detail description of the Boolean operations please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlighs
+major limitations of these operations.
+
+You can use the following boolean operations for construction of more
 complex geometrical objects (2D & 3D elements):
 
 <ul>
@@ -38,7 +44,7 @@ Shape2 is the second argument of Cut operation;
 <em>geompy.MakeSection(Shape1, Shape2)</em>, where \em Shape1 and \em
 Shape2 is the second argument of Section operation;
 
-\n Our <b>TUI Scripts</b> provide you with useful examples of the use of 
+Our <b>TUI Scripts</b> provide you with useful examples of the use of 
 \ref tui_boolean_operations_page "Boolean Operations".
 
 */
