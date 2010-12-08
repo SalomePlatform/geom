@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  File    : GEOMAlgo_Builder_3.cxx
+//  Created :
+//  Author  : Peter KURNEV
 
-// File:        GEOMAlgo_Builder_3.cxx
-// Created:     
-// Author:      Peter KURNEV
-//
 #include <GEOMAlgo_Builder.hxx>
 
 #include <TopAbs_State.hxx>
@@ -75,7 +74,7 @@ static
 
 //=======================================================================
 //function : FillImagesSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesSolids()
 {
@@ -87,9 +86,9 @@ static
 }
 //=======================================================================
 //function : BuildDraftSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_Builder::BuildDraftSolid(const TopoDS_Shape& theSolid,
+void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
                                         TopoDS_Shape& theDraftSolid,
                                         TopTools_ListOfShape& theLIF)
 {
@@ -103,7 +102,7 @@ static
   Standard_Integer  iFlag;
   TopAbs_Orientation aOrF, aOrSh, aOrSd;
   TopoDS_Iterator aIt1, aIt2;
-  TopTools_ListIteratorOfListOfShape aItS;      
+  TopTools_ListIteratorOfListOfShape aItS;
   BRep_Builder aBB;
   TopoDS_Shell aShD;
   TopoDS_Shape aFSDx, aFx;
@@ -142,7 +141,7 @@ static
               theLIF.Append(aFSDx);
             }
             else {
-              bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFSDx, aF, aCtx); 
+              bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aFSDx, aF, aCtx);
               if (bToReverse) {
                 aFSDx.Reverse();
               }
@@ -182,7 +181,7 @@ static
 }
 //=======================================================================
 //function : FillIn3DParts
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillIn3DParts()
 {
@@ -193,16 +192,16 @@ static
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
   Standard_Boolean bIsIN, bHasImage;
-  Standard_Integer aNbS, aNbSolids, i, j, aNbFaces, aNbFP, aNbFPx, aNbFIN, aNbLIF;// k,
-  TopAbs_ShapeEnum aType;  
+  Standard_Integer aNbS, aNbSolids, i, j, aNbFaces, aNbFP, aNbFPx, aNbFIN, aNbLIF;
+  TopAbs_ShapeEnum aType;
   TopAbs_State aState;
   TopTools_IndexedMapOfShape aMSolids, aMS, aMFaces, aMFIN;
   TopTools_MapOfShape aMFDone;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
-  TopTools_ListIteratorOfListOfShape aItS;      
+  TopTools_ListIteratorOfListOfShape aItS;
   TopoDS_Iterator aIt, aItF;
   BRep_Builder aBB;
-  TopoDS_Solid aSolidSp; 
+  TopoDS_Solid aSolidSp;
   TopoDS_Face aFP;
   //
   myDraftSolids.Clear();
@@ -212,7 +211,7 @@ static
     const TopoDS_Shape& aS=aDS.Shape(i);
     //
     aType=aS.ShapeType();
-    if (aType==TopAbs_SOLID) { 
+    if (aType==TopAbs_SOLID) {
       // all solids from DS
       aMSolids.Add(aS);
     }
@@ -284,6 +283,9 @@ static
       else {
         //aMS.Add(aShell);
         TopExp::MapShapes(aShell, TopAbs_FACE, aMS);
+        //modified by NIZNHY-PKV Fri Dec 03 11:18:45 2010f
+        TopExp::MapShapes(aShell, TopAbs_EDGE, aMS);
+        //modified by NIZNHY-PKV Fri Dec 03 11:18:51 2010t
         TopExp::MapShapesAndAncestors(aShell, TopAbs_EDGE, TopAbs_FACE, aMEF);
       }
     }
@@ -304,9 +306,9 @@ static
     }
     //
     // among all faces from aMEFP select these that have same edges
-    // with the solid (i.e aMEF). These faces will be treated first 
+    // with the solid (i.e aMEF). These faces will be treated first
     // to prevent the usage of 3D classifier.
-    // The full list of faces to process is aLFP1. 
+    // The full list of faces to process is aLFP1.
     aNbEFP=aMEFP.Extent();
     for (j=1; j<=aNbEFP; ++j) {
       const TopoDS_Shape& aE=aMEFP.FindKey(j);
@@ -349,7 +351,7 @@ static
       if (!aMFDone.Add(aSP)) {
         continue;
       }
-      
+
       //
       // first face to process
       aFP=TopoDS::Face(aSP);
@@ -367,12 +369,12 @@ static
         }
       }
       //
-      // Connexity Block that spreads from aFP the Bound 
+      // Connexity Block that spreads from aFP the Bound
       // or till the end of the block itself
       aLCBF.Clear();
       GEOMAlgo_Tools3D::MakeConnexityBlock(aLFP, aMS, aLCBF);
       //
-      // fill states for the Connexity Block 
+      // fill states for the Connexity Block
       aItS.Initialize(aLCBF);
       for (; aItS.More(); aItS.Next()) {
         const TopoDS_Shape& aSx=aItS.Value();
@@ -412,12 +414,12 @@ static
 }
 //=======================================================================
 //function : BuildSplitSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::BuildSplitSolids()
 {
   myErrorStatus=0;
-  // 
+  //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
@@ -431,8 +433,6 @@ static
   GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet aItSS;
   GEOMAlgo_DataMapOfShapeShapeSet aMSS;
   GEOMAlgo_ShapeSet aSSi;
-  //
-  //modified by NIZNHY-PKV Wed Dec  6 17:08:03 2006f
   //
   // 0. Find same domain solids for non-interferred solids
   aNbS=aDS.NumberOfShapesOfTheObject();
@@ -452,12 +452,9 @@ static
     aSSi.Add(aS, TopAbs_FACE);
     //
     aMSS.Bind(aS, aSSi);
-  } //for (i=1; i<=aNbS; ++i) 
-  //
-  //modified by NIZNHY-PKV Wed Dec  6 17:08:09 2006t
+  } //for (i=1; i<=aNbS; ++i)
   //
   // 1. Build solids for interferred source solids
-  //
   aSB.SetContext(aCtx);
   aNbS=myDraftSolids.Extent();
   for (i=1; i<=aNbS; ++i) {
@@ -468,7 +465,7 @@ static
     //
     // 1.1 Fill Shell Faces Set
     aSFS.Clear();
-    
+
     aExp.Init(aSD, TopAbs_FACE);
     for (; aExp.More(); aExp.Next()) {
       const TopoDS_Shape& aF=aExp.Current();
@@ -489,15 +486,15 @@ static
     aNbSFS=aSFS.Extent();
     //
     // 1.2
-    // Check whether aSFS contains a subsets of faces 
-    // of solids that have been already built. 
+    // Check whether aSFS contains a subsets of faces
+    // of solids that have been already built.
     // If yes, shrink aSFS by these subsets.
     aSSi.Clear();
     aSSi.Add(aSFS);
     //
     aItSS.Initialize(aMSS);
     for (; aItSS.More(); aItSS.Next()) {
-      const TopoDS_Shape& aSR=aItSS.Key(); 
+      const TopoDS_Shape& aSR=aItSS.Key();
       const GEOMAlgo_ShapeSet& aSSR=aItSS.Value();
       if (aSSi.Contains(aSSR)) {
         // the aSR is SD solid for aS
@@ -516,6 +513,11 @@ static
     }
     const TopTools_ListOfShape& aSFS1=aSSi.GetSet();
     aNbSFS=aSFS1.Extent();
+    //modified by NIZNHY-PKV Wed Oct 27 09:53:15 2010f
+    if (!aNbSFS) {
+      continue;
+    }
+    //modified by NIZNHY-PKV Wed Oct 27 09:53:18 2010t
     //
     // 1.3 Build new solids
     aSB.SetShapes(aSFS1);
@@ -528,7 +530,7 @@ static
     //
     const TopTools_ListOfShape& aLSR=aSB.Areas();
     //
-    // 1.4 Collect resulting solids and theirs set of faces 
+      // 1.4 Collect resulting solids and theirs set of faces
     aIt.Initialize(aLSR);
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aSR=aIt.Value();
@@ -550,42 +552,10 @@ static
       myImages.Bind(aS, aLSR);
     }
   } // for (i=1; i<=aNbS; ++i) {
-  //modified by NIZNHY-PKV Wed Dec  6 17:07:47 2006f
-  /*
-  //
-  // 2. Find same domain solids for non-interferred solids
-  aNbS=aDS.NumberOfShapesOfTheObject();
-  for (i=1; i<=aNbS; ++i) {
-    const TopoDS_Shape& aS=aDS.Shape(i);
-    if (aS.ShapeType()!=TopAbs_SOLID) {
-      continue;
-    }
-    if (!aMFence.Add(aS)) {
-      continue;
-    }
-    if(myImages.HasImage(aS)) {
-      continue;
-    }
-    //
-    aSSi.Clear();
-    aSSi.Add(aS, TopAbs_FACE);
-    //
-    aItSS.Initialize(aMSS);
-    for (; aItSS.More(); aItSS.Next()) {
-      const TopoDS_Shape& aSR=aItSS.Key(); 
-      const GEOMAlgo_ShapeSet& aSSR=aItSS.Value();
-      if (aSSi.Contains(aSSR)) {
-        myImages.Bind(aS, aSR);
-        break;
-      }
-    }
-  } //for (i=1; i<=aNbS; ++i) 
-  */
-  //modified by NIZNHY-PKV Wed Dec  6 17:07:55 2006t
 }
 //=======================================================================
-//function :FillInternalShapes 
-//purpose  : 
+//function :FillInternalShapes
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillInternalShapes()
 {
@@ -610,7 +580,7 @@ static
   //
   // 1. Shapes to process
   //
-  // 1.1 Shapes from pure arguments aMSI 
+  // 1.1 Shapes from pure arguments aMSI
   // 1.1.1 vertex, edge
   for (i=0; i<2; ++i) {
     jT=(Standard_Integer)aT[i];
@@ -624,7 +594,7 @@ static
     }
   }
   // 1.1.2 wire
-  {  
+  {
     jT=(Standard_Integer)TopAbs_WIRE;
     const TopTools_ListOfShape &aLW=myShapes1[jT];
     aIt.Initialize(aLW);
@@ -639,7 +609,7 @@ static
       }
     }
   }
-  // 1.1.3 theirs images/sources 
+  // 1.1.3 theirs images/sources
   aIt1.Initialize(aLSI);
   for (; aIt1.More(); aIt1.Next()) {
     const TopoDS_Shape& aS=aIt1.Value();
@@ -693,7 +663,7 @@ static
         aIt.Initialize(aLSp);
         for (; aIt.More(); aIt.Next()) {
           const TopoDS_Shape& aSp=aIt.Value();
-          if (aMFence.Add(aSp)) { 
+          if (aMFence.Add(aSp)) {
             TopExp::MapShapesAndAncestors(aSp, TopAbs_VERTEX, TopAbs_EDGE, aMSx);
             TopExp::MapShapesAndAncestors(aSp, TopAbs_VERTEX, TopAbs_FACE, aMSx);
             TopExp::MapShapesAndAncestors(aSp, TopAbs_EDGE  , TopAbs_FACE, aMSx);
@@ -707,7 +677,7 @@ static
           TopExp::MapShapesAndAncestors(aS, TopAbs_VERTEX, TopAbs_FACE, aMSx);
           TopExp::MapShapesAndAncestors(aS, TopAbs_EDGE  , TopAbs_FACE, aMSx);
           aLSd.Append(aS);
-          aMSOr.Add(aS); 
+          aMSOr.Add(aS);
         }
       }
     }//if (aType==TopAbs_SOLID)
@@ -715,9 +685,9 @@ static
   //
   aNbSd=aLSd.Extent();
   //
-  // 3. Some shapes of aMSI can be already tied with faces of 
+  // 3. Some shapes of aMSI can be already tied with faces of
   //    split solids
-  aItM.Initialize(aMSI); 
+  aItM.Initialize(aMSI);
   for (; aItM.More(); aItM.Next()) {
     const TopoDS_Shape& aSI=aItM.Key();
     if (aMSx.Contains(aSI)) {
@@ -741,7 +711,7 @@ static
   for (; aIt.More(); aIt.Next()) {
     TopoDS_Solid aSd=TopoDS::Solid(aIt.Value());
     //
-    aItM.Initialize(aMSI); 
+    aItM.Initialize(aMSI);
     for (; aItM.More(); aItM.Next()) {
       TopoDS_Shape aSI=aItM.Key();
       aSI.Orientation(TopAbs_INTERNAL);
@@ -777,7 +747,7 @@ static
 }
 //=======================================================================
 //function : OwnInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void OwnInternalShapes(const TopoDS_Shape& theS,
                          TopTools_IndexedMapOfShape& theMx)
@@ -795,4 +765,3 @@ static
 //
 // ErrorStatus
 // 30 - SolidBuilder failed
-
