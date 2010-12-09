@@ -472,24 +472,28 @@ void GEOM_Swig::setColor(const char* theEntry, int red, int green, int blue, boo
           aView->Repaint();
       } else if (OCCViewer_Viewer* occViewer = GetOCCViewer(anApp)) {
         Handle(AIS_InteractiveContext) ic = occViewer->getAISContext();
-        AIS_ListOfInteractive List;
-        ic->DisplayedObjects(List);
-        AIS_ListIteratorOfListOfInteractive ite (List);
-        for (; ite.More(); ite.Next()) {
-          Handle(SALOME_InteractiveObject) anObj =
-            Handle(SALOME_InteractiveObject)::DownCast(ite.Value()->GetOwner());
-          if (!anObj.IsNull() && anObj->hasEntry() && anObj->isSame(anIO)) {
-            Quantity_Color CSFColor =
-              Quantity_Color(myRed/255., myGreen/255., myBlue/255., Quantity_TOC_RGB);
-            ite.Value()->SetColor(CSFColor);
-            if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape)))
-              Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
-            ic->Redisplay(ite.Value(), true, true);
-            if (myUpdateViewer)
-              occViewer->update();
-            break;
+        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
+        if (soccViewer)
+          {
+            SALOME_Prs*   prs=      soccViewer->CreatePrs( myEntry.c_str() );
+            const SOCC_Prs* anOCCPrs = dynamic_cast<const SOCC_Prs*>( prs );
+            if ( !anOCCPrs || anOCCPrs->IsNull() )
+              return;
+
+            // get objects to be displayed
+            AIS_ListOfInteractive anAISObjects;
+            anOCCPrs->GetObjects( anAISObjects );
+            AIS_ListIteratorOfListOfInteractive ite( anAISObjects );
+            Quantity_Color CSFColor = Quantity_Color(myRed/255., myGreen/255., myBlue/255., Quantity_TOC_RGB);
+            for ( ; ite.More(); ite.Next() )
+              {
+                if(!ic->IsDisplayed(ite.Value()))continue;  //only displayed ais 
+                ite.Value()->SetColor(CSFColor);
+                if (ite.Value()->IsKind(STANDARD_TYPE(GEOM_AISShape))) Handle(GEOM_AISShape)::DownCast(ite.Value())->SetShadingColor(CSFColor);
+                ite.Value()->Redisplay(Standard_True); // as in OnColor
+              }
+            if (myUpdateViewer) occViewer->update();
           }
-        }
       }
     }
   };
