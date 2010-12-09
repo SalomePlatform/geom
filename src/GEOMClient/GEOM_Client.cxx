@@ -19,13 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  GEOM GEOMClient : tool to transfer BREP files from GEOM server to GEOM client
 //  File   : GEOM_Client.cxx
 //  Author : Yves FRICAUD/Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
-//
+
 #include <Standard_Stream.hxx>
 
 #include <Standard_Stream.hxx>
@@ -100,6 +98,7 @@ GEOM_Client::GEOM_Client()
 #else
     (long)getpid();
 #endif
+  cout << "$$$ GEOM_Client::GEOM_Client() pid_client = " << pid_client << endl;
 }
 
 //=======================================================================
@@ -107,7 +106,7 @@ GEOM_Client::GEOM_Client()
 // purpose  : Copy constructor
 //=======================================================================
 GEOM_Client::GEOM_Client(const GEOM_Client& client)
-{ 
+{
   myIORs = client.myIORs;
   myShapes = client.myShapes;
   _myIndexes = client._myIndexes;
@@ -122,7 +121,25 @@ GEOM_Client::GEOM_Client(const GEOM_Client& client)
 GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 {
   pid_client = client->getPID();
+  cout << "$$$ GEOM_Client::GEOM_Client(client) pid_client = " << pid_client << endl;
 }
+
+//=======================================================================
+// function : get_client()
+// purpose  : Static method to have the only one instance of GEOM_Client
+//=======================================================================
+#ifdef SINGLE_CLIENT
+GEOM_Client& GEOM_Client::get_client()
+{
+  static GEOM_Client a;
+  return a;
+}
+#else
+GEOM_Client GEOM_Client::get_client()
+{
+  return GEOM_Client();
+}
+#endif
 
 //=======================================================================
 // function : Find()
@@ -130,12 +147,15 @@ GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
 {
-  if(_myIndexes.count(IOR) != 0)
-    {
-      Standard_Integer i =_myIndexes[IOR];
-      S = myShapes.Value(i);
-      return i;
-    }
+  cout << "$$$ GEOM_Client::Find BEGIN this = " << this << ", _myIndexes.size() = " << _myIndexes.size() << endl;
+  if (_myIndexes.count(IOR) != 0)
+  {
+    Standard_Integer i = _myIndexes[IOR];
+    S = myShapes.Value(i);
+    cout << "$$$ GEOM_Client::Find i = " << i << endl;
+    return i;
+  }
+  cout << "$$$ GEOM_Client::Find END" << endl;
   return 0;
 }
 
@@ -162,7 +182,9 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 {
   myIORs.Append(IOR);
   myShapes.Append(S);
-  _myIndexes[IOR]=myIORs.Length();
+  _myIndexes[IOR] = myIORs.Length();
+  cout << "$$$ !!! GEOM_Client::Bind this = " << this << ", _myIndexes.size() = " << _myIndexes.size() << endl;
+  cout << "$$$ !!! GEOM_Client::Bind len = " << myIORs.Length() << ", IOR = " << IOR.ToCString() << endl;
 }
 
 //=======================================================================
@@ -171,18 +193,22 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 //=======================================================================
 void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 {
+  cout << "$$$ GEOM_Client::RemoveShapeFromBuffer BEGIN" << endl;
+  cout << "$$$ GEOM_Client::RemoveShapeFromBuffer myIORs.Length() = " << myIORs.Length() << ", _myIndexes.size() = " << _myIndexes.size() << endl;
   if( myIORs.IsEmpty() )
     return;
 
+  cout << "$$$ GEOM_Client::RemoveShapeFromBuffer 1" << endl;
   TopoDS_Shape S;
   Standard_Integer anIndex = Find( IOR, S );
   if( anIndex != 0 ) {
+    cout << "$$$ GEOM_Client::RemoveShapeFromBuffer anIndex = " << anIndex << endl;
     myIORs.Remove(anIndex);
     myShapes.Remove(anIndex);
     _myIndexes.erase(IOR);
     _mySubShapes.erase(IOR);
   }
-  return;
+  cout << "$$$ GEOM_Client::RemoveShapeFromBuffer END" << endl;
 }
 
 //=======================================================================
@@ -243,7 +269,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(aMainShape, anIndices);
     Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
-    for (; ii <= nbSubSh; ii++) 
+    for (; ii <= nbSubSh; ii++)
     {
       _mySubShapes[mainIOR].push_back(anIndices.FindKey(ii));
     }
