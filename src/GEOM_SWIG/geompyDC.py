@@ -2552,8 +2552,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             if Limit == ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SOLID
-                for s in ListShapes: lim = max( lim, s.GetMinShapeType() )
+                lim = GEOM.SHAPE
+                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
                 Limit = lim._v
                 pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
@@ -2582,8 +2582,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                  ListMaterials=[], KeepNonlimitShapes=0):
             if Limit == ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SOLID
-                for s in ListShapes: lim = max( lim, s.GetMinShapeType() )
+                lim = GEOM.SHAPE
+                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
                 Limit = lim._v
                 pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,

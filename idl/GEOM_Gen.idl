@@ -180,10 +180,19 @@ module GEOM
      *  This function is useful for the compounds only; for simple shapes it
      *  exactly the same value as GetShapeType().
      *  Note, that compounds are procesed recursively.
-     *  \sa GetShapeType(), GetTopologyType()
+     *  \sa GetShapeType(), GetTopologyType(), GetMaxShapeType()
      */
     shape_type GetMinShapeType();
 
+    /*!
+     *  Get a maximal type of the top-level shapes contained in the object.
+     *  This function is useful for the compounds only; for simple shapes it
+     *  exactly the same value as GetShapeType().
+     *  Note, that compounds are procesed recursively.
+     *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
+     */
+    shape_type GetMaxShapeType();
+    
     /*!
      *  Set name of the object.
      *  \param theName is a name which will be associated with this object.

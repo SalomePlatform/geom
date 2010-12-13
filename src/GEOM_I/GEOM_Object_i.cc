@@ -141,7 +141,7 @@ GEOM::shape_type GEOM_Object_i::GetTopologyType()
   return (GEOM::shape_type)shape.ShapeType();
 }
 
-static GEOM::shape_type getMinShapeType( const TopoDS_Shape& shape )
+static GEOM::shape_type getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
 {
   if ( shape.IsNull() )
     return GEOM::SHAPE;
@@ -153,8 +153,11 @@ static GEOM::shape_type getMinShapeType( const TopoDS_Shape& shape )
     for (; it.More(); it.Next()) {
       TopoDS_Shape sub_shape = it.Value();
       if ( sub_shape.IsNull() ) continue;
-      GEOM::shape_type stype = (GEOM::shape_type)sub_shape.ShapeType();
-      if ( stype != GEOM::SHAPE && stype > ret )
+      GEOM::shape_type stype = (GEOM::shape_type)getMinMaxShapeType( sub_shape, ismin );
+      if ( stype == GEOM::SHAPE ) continue;
+      if ( ismin && stype > ret )
+	ret = stype;
+      else if ( !ismin && ( ret < GEOM::SOLID || stype < ret ) )
 	ret = stype;
     }
   }
@@ -169,7 +172,17 @@ static GEOM::shape_type getMinShapeType( const TopoDS_Shape& shape )
 //=============================================================================
 GEOM::shape_type GEOM_Object_i::GetMinShapeType()
 {
-  return getMinShapeType( _impl->GetValue() );
+  return getMinMaxShapeType( _impl->GetValue(), true );
+}
+
+//=============================================================================
+/*!
+ *  GetMaxShapeType
+ */
+//=============================================================================
+GEOM::shape_type GEOM_Object_i::GetMaxShapeType()
+{
+  return getMinMaxShapeType( _impl->GetValue(), false );
 }
 
 //=============================================================================
