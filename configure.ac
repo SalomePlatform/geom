@@ -408,6 +408,7 @@ AC_OUTPUT([ \
   GEOM_version.h \
   doc/Makefile \
   doc/docutils/Makefile \
+  doc/docutils/conf.py \
   doc/salome/Makefile \
   doc/salome/gui/Makefile \
   doc/salome/gui/GEOM/Makefile \
