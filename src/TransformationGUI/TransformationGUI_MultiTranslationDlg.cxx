@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : TransformationGUI_MultiTranslationDlg.cxx
+//  Author : Damien COQUERET, Open CASCADE S.A.S.
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : TransformationGUI_MultiTranslationDlg.cxx
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
 #include "TransformationGUI_MultiTranslationDlg.h"
 
 #include <DlgRef.h>
@@ -197,13 +196,13 @@ void TransformationGUI_MultiTranslationDlg::Init()
   connect(GroupDimensions->SpinBox_DX2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
   connect(GroupDimensions->SpinBox_DY2, SIGNAL(valueChanged(int)),    this, SLOT(ValueChangedInSpinBox(int)));
 
-  connect(GroupPoints->SpinBox_DX,      SIGNAL(textChanged(const QString& )), 
+  connect(GroupPoints->SpinBox_DX,      SIGNAL(textChanged(const QString& )),
           this, SLOT(TextValueChangedInSpinBox(const QString& )));
-  connect(GroupDimensions->SpinBox_DX1, SIGNAL(textChanged(const QString& )), 
+  connect(GroupDimensions->SpinBox_DX1, SIGNAL(textChanged(const QString& )),
           this, SLOT(TextValueChangedInSpinBox(const QString& )));
-  connect(GroupDimensions->SpinBox_DX2, SIGNAL(textChanged(const QString& )), 
+  connect(GroupDimensions->SpinBox_DX2, SIGNAL(textChanged(const QString& )),
           this, SLOT(TextValueChangedInSpinBox(const QString& )));
-  
+
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   connect(GroupPoints->CheckButton1,     SIGNAL(toggled(bool)), this, SLOT(ReverseStepU()));
@@ -222,9 +221,9 @@ void TransformationGUI_MultiTranslationDlg::Init()
 void TransformationGUI_MultiTranslationDlg::SetDoubleSpinBoxStep (double step)
 {
   GroupPoints->SpinBox_DX->setSingleStep(step);
-  GroupDimensions->SpinBox_DX1->setSingleStep(step);  
+  GroupDimensions->SpinBox_DX1->setSingleStep(step);
   GroupDimensions->SpinBox_DX2->setSingleStep(step);
-  
+
   // san : Commented so as not to override specific step settings
   //GroupPoints->SpinBox_DY->setSingleStep((int)step);
   //GroupDimensions->SpinBox_DY1->setSingleStep((int)step);
@@ -536,25 +535,25 @@ void TransformationGUI_MultiTranslationDlg::TextValueChangedInSpinBox( const QSt
 {
   QObject* send = (QObject*)sender();
   bool isDigit = true;
-  
+
   switch (getConstructorId()) {
-  case 0: 
+  case 0:
     GroupPoints->SpinBox_DX->text().toDouble(&isDigit);
     if(!isDigit){
       GroupPoints->CheckButton1->setChecked(false);
     }
     GroupPoints->CheckButton1->setEnabled(isDigit);
     break;
-  case 1: 
+  case 1:
     if (send == GroupDimensions->SpinBox_DX1) {
       GroupDimensions->SpinBox_DX1->text().toDouble(&isDigit);
-      if(!isDigit) 
+      if(!isDigit)
         GroupDimensions->CheckButton1->setChecked(false);
       GroupDimensions->CheckButton1->setEnabled(isDigit);
     }
     else if(send == GroupDimensions->SpinBox_DX2){
       GroupDimensions->SpinBox_DX2->text().toDouble(&isDigit);
-      if(!isDigit) 
+      if(!isDigit)
         GroupDimensions->CheckButton2->setChecked(false);
       GroupDimensions->CheckButton2->setEnabled(isDigit);
     }
@@ -655,7 +654,7 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_MultiTranslationDlg::createOperatio
 bool TransformationGUI_MultiTranslationDlg::isValid (QString& msg)
 {
   int aConstructorId = getConstructorId();
-  
+
   if (aConstructorId == 0) {
     bool ok = true;
     ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
@@ -762,8 +761,8 @@ void TransformationGUI_MultiTranslationDlg::restoreSubShapes (SALOMEDS::Study_pt
     anArgs->length(1);
     anArgs[0] = myBase;
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
-                                        /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true,
+                                        /*theFindMethod=*/GEOM::FSM_GetInPlace,
+                                        /*theInheritFirstArg=*/false,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }
@@ -784,7 +783,7 @@ void TransformationGUI_MultiTranslationDlg::createPathPreview ( GEOM::GEOM_Objec
     TopoDS_Shape aVector = BRepBuilderAPI_MakeEdge(BRep_Tool::Pnt(aFirst), BRep_Tool::Pnt(aLast)).Shape();
     const char* aName = "tmpVector";
     Handle(GEOM_AISVector) anIO = new GEOM_AISVector( aVector, aName );
-    
+
     // add Prs to preview
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));

@@ -33,6 +33,7 @@
 
 #include "GEOM_AISShape.ixx"
 #include "SALOME_InteractiveObject.hxx"
+#include "GEOM_AISVector.hxx"
 
 // Open CASCADE Includes
 #include <AIS_Drawer.hxx>
@@ -210,10 +211,14 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
 
   if (isShowVectors())
   {
+    const bool isVector = IsKind(STANDARD_TYPE(GEOM_AISVector));
     TopExp_Explorer Exp ( myshape, TopAbs_EDGE );
     for ( ; Exp.More(); Exp.Next() ) {
       TopoDS_Vertex aV1, aV2;
       TopoDS_Edge anEdgeE = TopoDS::Edge(Exp.Current());
+      if ( !isVector )
+        // draw curve direction (issue 0021087)
+        anEdgeE.Orientation( TopAbs_FORWARD );
 
       if ( anEdgeE.IsNull() ) continue;
 

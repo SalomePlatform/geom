@@ -116,7 +116,7 @@ static
   IntTools_Context& aCtx=pPF->ChangeContext();
   //
   Standard_Boolean bToReverse;
-  Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB;
+  Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB, aNbLB;
   TColStd_ListIteratorOfListOfInteger aItLB;
   TColStd_ListOfInteger aLB;
   TopoDS_Edge aEE, aESpR;
@@ -150,16 +150,17 @@ static
       nSp=aPB.Edge();
       const TopoDS_Shape& aSp=aDS.Shape(nSp);
       //
-      //modified by NIZNHY-PKV Fri Nov 30 10:40:36 2007 f
-      //const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
       const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
-      //modified by NIZNHY-PKV Fri Nov 30 10:40:48 2007t
+      //modified by NIZNHY-PKV Wed Oct 27 11:19:30 2010f
+      aNbLB=aLB.Extent();
+      if (aIsCB && aNbLB<2) {
+	aIsCB=0;
+      }
+      //modified by NIZNHY-PKV Wed Oct 27 11:19:34 2010t
+      //
       nSpR=aPBR.Edge();
       const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
-      //modified by NIZNHY-PKV Fri Nov 30 10:41:39 2007f
-      //if (aSpR.IsSame(aSp) && aSpR.IsSame(aE)) {
       if (aSpR.IsSame(aSp) && aSpR.IsSame(aE) && !aIsCB) {
-        //modified by NIZNHY-PKV Fri Nov 30 10:41:46 2007t
         continue;
       }
       //
@@ -183,10 +184,7 @@ static
       aIt.Initialize(aLPB);
       for (; aIt.More(); aIt.Next()) {
         const BOPTools_PaveBlock& aPB=aIt.Value();
-        //modified by NIZNHY-PKV Fri Nov 30 10:42:15 2007f
-        //const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB);
         const BOPTools_PaveBlock& aPBR=pPF->RealPaveBlock(aPB, aLB, aIsCB);
-        //modified by NIZNHY-PKV Fri Nov 30 10:42:20 2007t
         nSpR=aPBR.Edge();
         const TopoDS_Shape& aSpR=aDS.Shape(nSpR);
         //
@@ -203,7 +201,6 @@ static
           const TopoDS_Shape& aSpx=aDS.Shape(nSpx);
           mySameDomainShapes.Add(aSpx ,aSpR);
         }
-        //
       }
     }
     //

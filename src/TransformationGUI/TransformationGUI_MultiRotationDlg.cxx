@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : TransformationGUI_MultiRotationDlg.cxx
+//  Author : Damien COQUERET, Open CASCADE S.A.S.
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : TransformationGUI_MultiRotationDlg.cxx
-// Author : Damien COQUERET, Open CASCADE S.A.S.
-//
 #include "TransformationGUI_MultiRotationDlg.h"
 
 #include <DlgRef.h>
@@ -196,7 +195,7 @@ void TransformationGUI_MultiRotationDlg::Init()
 void TransformationGUI_MultiRotationDlg::SetDoubleSpinBoxStep (double step)
 {
   GroupDimensions->SpinBox_DX2->setSingleStep(step);
-  
+
   // san: Commented so as not to override specific step settings
   //GroupPoints->SpinBox_DX->setSingleStep((int)step);
   //GroupDimensions->SpinBox_DX1->setSingleStep(step);
@@ -549,11 +548,11 @@ bool TransformationGUI_MultiRotationDlg::isValid (QString& msg)
   case 0:
     ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
     break;
-  case 1:                                           
+  case 1:
     ok = GroupDimensions->SpinBox_DX1->isValid( msg, !IsPreview() ) && ok;
     ok = GroupDimensions->SpinBox_DY1->isValid( msg, !IsPreview() ) && ok;
     ok = GroupDimensions->SpinBox_DX2->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) && ok;        
+    ok = GroupDimensions->SpinBox_DY2->isValid( msg, !IsPreview() ) && ok;
     break;
   }
   return !(myBase->_is_nil() || myVector->_is_nil()) && ok;
@@ -638,8 +637,8 @@ void TransformationGUI_MultiRotationDlg::restoreSubShapes (SALOMEDS::Study_ptr  
     anArgs->length(1);
     anArgs[0] = myBase;
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
-                                        /*theFindMethod=*/GEOM::FSM_Transformed,
-                                        /*theInheritFirstArg=*/true,
+                                        /*theFindMethod=*/GEOM::FSM_GetInPlace,
+                                        /*theInheritFirstArg=*/false,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }

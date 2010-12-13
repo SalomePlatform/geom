@@ -73,7 +73,14 @@ is
     	---Purpose: Returns the Set  
     	returns ListOfShape from TopTools; 
     ---C++: return const &     	 
-
+    --modified by NIZNHY-PKV Wed Oct 28 13:51:45 2010f 
+    IsEqual(me; 
+	    theOther: ShapeSet from GEOMAlgo) 
+    	---Purpose: Returns True if the Set==theSet 
+    	returns Boolean from Standard;  
+    ---C++: alias operator == 
+    --modified by NIZNHY-PKV Wed Oct 28 13:51:50 2010t 
+     
 fields 
     myMap  : MapOfOrientedShape from TopTools is protected;   
     myList : ListOfShape        from TopTools is protected;

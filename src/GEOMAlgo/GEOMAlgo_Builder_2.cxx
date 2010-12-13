@@ -70,6 +70,8 @@
 #include <BOPTools_CArray1OfESInterference.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTDS_InterfPool.hxx>
+
 #include <NMTTools_PaveFiller.hxx>
 #include <NMTTools_ListOfCoupleOfShape.hxx>
 #include <NMTTools_Tools.hxx>
@@ -84,7 +86,8 @@
 #include <GEOMAlgo_Tools3D.hxx>
 #include <GEOMAlgo_WireEdgeSet.hxx>
 #include <GEOMAlgo_BuilderFace.hxx>
-#include <NMTDS_InterfPool.hxx>
+
+#include <GEOMAlgo_ShapeSet.hxx>
 
 static
   void UpdateCandidates(const Standard_Integer ,
@@ -254,6 +257,9 @@ static
         aNbSE=aLSE.Extent();
         if (aNbSE) {
           aMFP.Add(i);
+	  //modified by NIZNHY-PKV Wed Oct 27 11:40:57 2010f
+	  break;
+	  //modified by NIZNHY-PKV Wed Oct 27 11:41:07 2010t
         }
       }
     }
@@ -358,46 +364,35 @@ static
     }
     //
     // 2.2. Build images Faces
-    GEOMAlgo_BuilderFace aBF;
-    //
-    aBF.SetFace(aFF);
-    aBF.SetContext(aCtx);
-    const TopTools_ListOfShape& aSE=aWES.StartElements();
-    //
-    //DEB f
-    /*
-    {
-      TopoDS_Compound aCx;
-      BRep_Builder aBBx;
-      TopTools_ListIteratorOfListOfShape aItx;
-      //
-      aBBx.MakeCompound(aCx);
-      aBBx.Add(aCx, aFF);
-      aItx.Initialize(aSE);
-      for (; aItx.More(); aItx.Next()) {
-        TopoDS_Shape& aEx=aItx.Value();
-        aBBx.Add(aCx, aEx);
-      }
-      int a=0;
-    }
-    */
-    //DEB t
-    //
-    aBF.SetShapes(aSE);
-    //
-    aBF.Perform();
-    //
-    const TopTools_ListOfShape& aLF=aBF.Areas();
-    //
     TopTools_ListOfShape aLFR;
+    GEOMAlgo_ShapeSet aS1, aS2;
     //
-    aIt.Initialize(aLF);
-    for (; aIt.More(); aIt.Next()) {
-      TopoDS_Shape& aFR=aIt.Value();
-      if (anOriF==TopAbs_REVERSED) {
-        aFR.Orientation(TopAbs_REVERSED);
+    const TopTools_ListOfShape& aSE=aWES.StartElements();
+    //modified by NIZNHY-PKV Thu Oct 28 08:30:41 2010f
+    aS1.Add(aSE);
+    aS2.Add(aFF, TopAbs_EDGE);
+    if (aS1.IsEqual(aS2)) {
+      aLFR.Append(aF);
+    }
+    //modified by NIZNHY-PKV Thu Oct 28 08:30:42 2010t
+    else {
+      GEOMAlgo_BuilderFace aBF;
+      //
+      aBF.SetFace(aFF);
+      aBF.SetContext(aCtx);
+      aBF.SetShapes(aSE);
+      // <-DEB
+      aBF.Perform();
+      //
+      const TopTools_ListOfShape& aLF=aBF.Areas();
+      aIt.Initialize(aLF);
+      for (; aIt.More(); aIt.Next()) {
+	TopoDS_Shape& aFR=aIt.Value();
+	if (anOriF==TopAbs_REVERSED) {
+	  aFR.Orientation(TopAbs_REVERSED);
+	}
+	aLFR.Append(aFR);
       }
-      aLFR.Append(aFR);
     }
     //
     // 2.3. Collect draft images Faces
@@ -530,7 +525,7 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesFaces1()
 {
-  Standard_Integer i, aNb, iSense;
+  Standard_Integer i, aNb, iSense, aNbLFx;
   TopoDS_Face aF, aFSp, aFSD;
   TopTools_ListOfShape aLFx;
   TopTools_ListIteratorOfListOfShape aIt;
@@ -568,7 +563,16 @@ static
         aLFx.Append(aFSD);
       }
     }
-    if (!myImages.HasImage(aF)) {//XX
+    if (!myImages.HasImage(aF)) {
+      //modified by NIZNHY-PKV Wed Oct 27 14:41:34 2010f
+      aNbLFx=aLFx.Extent();
+      if (aNbLFx==1) {
+	const TopoDS_Shape& aFx=aLFx.First();
+	if (aF.IsSame(aFx)) {
+	  continue;
+	}
+      }
+      //modified by NIZNHY-PKV Wed Oct 27 14:41:36 2010t
       myImages.Bind(aF, aLFx);
     }
   }
@@ -803,3 +807,20 @@ void UpdateCandidates(const Standard_Integer theNF,
     theMFMV.Add(theNF, aMV);
   }
 }
+
+/*
+    {
+      TopoDS_Compound aCx;
+      BRep_Builder aBBx;
+      TopTools_ListIteratorOfListOfShape aItx;
+      //
+      aBBx.MakeCompound(aCx);
+      aBBx.Add(aCx, aFF);
+      aItx.Initialize(aSE);
+      for (; aItx.More(); aItx.Next()) {
+        TopoDS_Shape& aEx=aItx.Value();
+        aBBx.Add(aCx, aEx);
+      }
+      int a=0;
+    }
+    */
