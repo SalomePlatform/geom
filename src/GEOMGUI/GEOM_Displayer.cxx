@@ -129,34 +129,33 @@ static inline int getTopAbsMode( const int implType )
   }
 }
 
+static int getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
+{
+  if ( shape.IsNull() )
+    return TopAbs_SHAPE;
+
+  int ret = shape.ShapeType();
+
+  if ( shape.ShapeType() == TopAbs_COMPOUND || shape.ShapeType() == TopAbs_COMPSOLID ) {
+    TopoDS_Iterator it(shape, Standard_True, Standard_False);
+    for (; it.More(); it.Next()) {
+      TopoDS_Shape sub_shape = it.Value();
+      if ( sub_shape.IsNull() ) continue;
+      int stype = getMinMaxShapeType( sub_shape, ismin );
+      if ( stype == TopAbs_SHAPE ) continue;
+      if ( ismin && stype > ret )
+	ret = stype;
+      else if ( !ismin && ( ret < TopAbs_SOLID || stype < ret ) )
+	ret = stype;
+    }
+  }
+
+  return ret;
+}
+
 static bool isCompoundOfVertices( const TopoDS_Shape& theShape )
 {
-  bool ret = false;
-  if ( !theShape.IsNull() ) {
-    int iType, nbTypes [TopAbs_SHAPE];
-    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
-      nbTypes[iType] = 0;
-    nbTypes[theShape.ShapeType()]++;
-
-    TopTools_MapOfShape aMapOfShape;
-    aMapOfShape.Add(theShape);
-    TopTools_ListOfShape aListOfShape;
-    aListOfShape.Append(theShape);
-
-    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
-    for (; itL.More(); itL.Next()) {
-      TopoDS_Iterator it (itL.Value());
-      for (; it.More(); it.Next()) {
-        TopoDS_Shape s = it.Value();
-        if (aMapOfShape.Add(s)) {
-          aListOfShape.Append(s);
-          nbTypes[s.ShapeType()]++;
-        }
-      }
-    }
-    ret = nbTypes[TopAbs_VERTEX] > 0 && nbTypes[TopAbs_COMPOUND] == 1;
-  }
-  return ret;
+  return theShape.ShapeType() == TopAbs_COMPOUND && getMinMaxShapeType( theShape, false ) == TopAbs_VERTEX;
 }
 
 //================================================================
