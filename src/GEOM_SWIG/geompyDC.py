@@ -3623,7 +3623,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             #RaiseIfFailed("Import", self.InsertOp)
             # recieve name using returned vertex
             UnitName = "M"
-            vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
+            if anObj.GetShapeType() == GEOM.VERTEX:
+                vertices = [anObj]
+            else:
+                vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
             if len(vertices)>0:
                 p = self.PointCoordinates(vertices[0])
                 if abs(p[0]-0.01) < 1.e-6:
