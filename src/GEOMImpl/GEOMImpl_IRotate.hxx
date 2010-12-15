@@ -18,21 +18,25 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//NOTE: This is an intreface to a function for the Rotate operation.
-//
+//  NOTE: This is an interface to a function for the Rotate operation.
+
 #include "GEOM_Function.hxx"
+
+#include <gp_XYZ.hxx>
 
 #define ROTATE_ANGLE    1  
 #define ROTATE_AXIS     2
 #define ROTATE_ORGN     3
 #define ROTATE_STEP1      4
-#define ROTATE_NBITER1   5
-#define ROTATE_NBITER2   6
+#define ROTATE_NBITER1    5
+#define ROTATE_NBITER2    6
 #define ROTATE_CENTRAL_POINT    7  
 #define ROTATE_POINT1           8
 #define ROTATE_POINT2           9
+#define ROTATE_DIR2_X     10
+#define ROTATE_DIR2_Y     11
+#define ROTATE_DIR2_Z     12
 
 class GEOMImpl_IRotate
 {
@@ -64,7 +68,7 @@ class GEOMImpl_IRotate
 
   Handle(GEOM_Function) GetOriginal() { return _func->GetReference(ROTATE_ORGN); }
 
-  void SetStep(double theStep) { return _func->SetReal(ROTATE_STEP1, theStep); }
+  void SetStep(double theStep) { _func->SetReal(ROTATE_STEP1, theStep); }
 
   double GetStep() { return _func->GetReal(ROTATE_STEP1); }
 
@@ -76,6 +80,21 @@ class GEOMImpl_IRotate
 
   int GetNbIter2() { return _func->GetInteger(ROTATE_NBITER2); } 
 
+  void SetDir2 (gp_XYZ theDir2)
+  {
+    _func->SetReal(ROTATE_DIR2_X, theDir2.X());
+    _func->SetReal(ROTATE_DIR2_Y, theDir2.Y());
+    _func->SetReal(ROTATE_DIR2_Z, theDir2.Z());
+  }
+
+  gp_XYZ GetDir2()
+  {
+    gp_XYZ aRes (0., 0., 0.);
+    aRes.SetX(_func->GetReal(ROTATE_DIR2_X));
+    aRes.SetY(_func->GetReal(ROTATE_DIR2_Y));
+    aRes.SetZ(_func->GetReal(ROTATE_DIR2_Z));
+    return aRes;
+  }
   
  private:
   

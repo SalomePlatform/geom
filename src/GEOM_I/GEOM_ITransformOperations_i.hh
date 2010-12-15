@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_ITransformOperations_i_HeaderFile
 #define _GEOM_ITransformOperations_i_HeaderFile
@@ -51,10 +50,12 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 						GEOM::GEOM_Object_ptr thePoint1,
 						GEOM::GEOM_Object_ptr thePoint2);
 
-  GEOM::GEOM_Object_ptr TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject, CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
+  GEOM::GEOM_Object_ptr TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject,
+                                         CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
 
 
-  GEOM::GEOM_Object_ptr TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr theObject,  CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
+  GEOM::GEOM_Object_ptr TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr theObject,
+                                             CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ);
 
   GEOM::GEOM_Object_ptr TranslateVector (GEOM::GEOM_Object_ptr theObject,
 					 GEOM::GEOM_Object_ptr theVector);
@@ -67,10 +68,15 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 						 CORBA::Double theDistance,
 						 CORBA::Boolean theCopy);
 
-  GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector, CORBA::Double theStep, CORBA::Long theNbTimes);
+  GEOM::GEOM_Object_ptr MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
+                                          GEOM::GEOM_Object_ptr theVector,
+                                          CORBA::Double theStep, CORBA::Long theNbTimes);
 
-  GEOM::GEOM_Object_ptr MultiTranslate2D (GEOM::GEOM_Object_ptr theObject, GEOM::GEOM_Object_ptr theVector1, CORBA::Double theStep1, CORBA::Long theNbTimes1,
-				                       GEOM::GEOM_Object_ptr theVector2, CORBA::Double theStep2, CORBA::Long theNbTimes2);
+  GEOM::GEOM_Object_ptr MultiTranslate2D (GEOM::GEOM_Object_ptr theObject,
+                                          GEOM::GEOM_Object_ptr theVector1,
+                                          CORBA::Double theStep1, CORBA::Long theNbTimes1,
+                                          GEOM::GEOM_Object_ptr theVector2,
+                                          CORBA::Double theStep2, CORBA::Long theNbTimes2);
 
   GEOM::GEOM_Object_ptr Rotate (GEOM::GEOM_Object_ptr theObject,
                                 GEOM::GEOM_Object_ptr theAxis,
@@ -158,6 +164,9 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
 					       GEOM::GEOM_Object_ptr theCentPoint,
 					       GEOM::GEOM_Object_ptr thePoint1,
 					       GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr TransformLikeOtherCopy (GEOM::GEOM_Object_ptr theObject,
+                                                GEOM::GEOM_Object_ptr theSample);
 
   GEOM::GEOM_Object_ptr RecomputeObject (GEOM::GEOM_Object_ptr theObject);
 

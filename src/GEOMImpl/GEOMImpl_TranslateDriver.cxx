@@ -18,12 +18,12 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_ITranslate.hxx>
+#include <GEOMImpl_ITransformOperations.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
@@ -79,7 +79,7 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
 
   if (aFunction.IsNull()) return 0;
 
-  GEOMImpl_ITranslate TI(aFunction);
+  GEOMImpl_ITranslate TI (aFunction);
   gp_Trsf aTrsf;
   gp_Pnt aP1, aP2;
   Standard_Integer aType = aFunction->GetType();
@@ -197,6 +197,7 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
       B.Add(aCompound, anOriginal.Located(aLocRes));
     }
     aShape = aCompound;
+    //aShape = GEOMImpl_ITransformOperations::TranslateShape1D(anOriginal, &TI);
   }
   else if (aType == TRANSLATE_2D) {
     Standard_Integer nbtimes1 = TI.GetNbIter1(), nbtimes2 = TI.GetNbIter2();
@@ -242,7 +243,8 @@ Standard_Integer GEOMImpl_TranslateDriver::Execute(TFunction_Logbook& log) const
         B.Add(aCompound, anOriginal.Located(aLocRes));
       }
     }
-   aShape = aCompound;
+    aShape = aCompound;
+    //aShape = GEOMImpl_ITransformOperations::TranslateShape2D(anOriginal, &TI);
   }
   else return 0;
 

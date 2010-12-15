@@ -205,35 +205,45 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
 
     gp_Ax1 AX1(aP1, D);
 
-
     gp_Trsf aTrsf1;
     gp_Trsf aTrsf2;
-    gp_Pnt P1;
-    GProp_GProps System;
 
-    if (anOriginal.ShapeType() == TopAbs_VERTEX) {
-      P1 = BRep_Tool::Pnt(TopoDS::Vertex( anOriginal ));
-    }
-    else if ( anOriginal.ShapeType() == TopAbs_EDGE || anOriginal.ShapeType() == TopAbs_WIRE ) {
-      BRepGProp::LinearProperties(anOriginal, System);
-      P1 = System.CentreOfMass();
-    }
-    else if ( anOriginal.ShapeType() == TopAbs_FACE || anOriginal.ShapeType() == TopAbs_SHELL ) {
-      BRepGProp::SurfaceProperties(anOriginal, System);
-      P1 = System.CentreOfMass();
-    }
-    else {
-      BRepGProp::VolumeProperties(anOriginal, System);
-      P1 = System.CentreOfMass();
+    gp_XYZ aDir2 = RI.GetDir2(); // can be set by previous execution
+    if (aDir2.Modulus() < gp::Resolution()) {
+      // Calculate direction as vector from the axis to the shape's center
+      gp_Pnt P1;
+      GProp_GProps System;
+
+      if (anOriginal.ShapeType() == TopAbs_VERTEX) {
+        P1 = BRep_Tool::Pnt(TopoDS::Vertex( anOriginal ));
+      }
+      else if ( anOriginal.ShapeType() == TopAbs_EDGE || anOriginal.ShapeType() == TopAbs_WIRE ) {
+        BRepGProp::LinearProperties(anOriginal, System);
+        P1 = System.CentreOfMass();
+      }
+      else if ( anOriginal.ShapeType() == TopAbs_FACE || anOriginal.ShapeType() == TopAbs_SHELL ) {
+        BRepGProp::SurfaceProperties(anOriginal, System);
+        P1 = System.CentreOfMass();
+      }
+      else {
+        BRepGProp::VolumeProperties(anOriginal, System);
+        P1 = System.CentreOfMass();
+      }
+
+      Handle(Geom_Line) Line = new Geom_Line(AX1);
+      GeomAPI_ProjectPointOnCurve aPrjTool( P1, Line );
+      gp_Pnt P2 = aPrjTool.NearestPoint();
+
+      if ( P1.IsEqual(P2, Precision::Confusion() ) ) return 0;
+
+      aDir2 = gp_XYZ(P1.X()-P2.X(), P1.Y()-P2.Y(), P1.Z()-P2.Z());
+
+      // Attention: this abnormal action is done for good working of
+      // TransformLikeOther(), used by RestoreSubShapes functionality
+      RI.SetDir2(aDir2);
     }
 
-    Handle(Geom_Line) Line = new Geom_Line(AX1);
-    GeomAPI_ProjectPointOnCurve aPrjTool( P1, Line );
-    gp_Pnt P2 = aPrjTool.NearestPoint();
-
-    if ( P1.IsEqual(P2, Precision::Confusion() ) ) return 0;
-
-    gp_Vec Vec (P1.X()-P2.X(), P1.Y()-P2.Y(), P1.Z()-P2.Z());
+    gp_Vec Vec (aDir2);
     Vec.Normalize();
 
     Standard_Integer nbtimes2 = RI.GetNbIter2();

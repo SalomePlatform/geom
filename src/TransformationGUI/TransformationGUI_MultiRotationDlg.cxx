@@ -637,8 +637,8 @@ void TransformationGUI_MultiRotationDlg::restoreSubShapes (SALOMEDS::Study_ptr  
     anArgs->length(1);
     anArgs[0] = myBase;
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
-                                        /*theFindMethod=*/GEOM::FSM_GetInPlace,
-                                        /*theInheritFirstArg=*/false,
+                                        /*theFindMethod=*/GEOM::FSM_MultiTransformed,
+                                        /*theInheritFirstArg=*/true,
                                         mainFrame()->CheckBoxAddPrefix->isChecked());
   }
 }

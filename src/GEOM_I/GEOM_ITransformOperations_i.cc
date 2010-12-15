@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -1128,6 +1127,37 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePointsCopy
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  TransformLikeOtherCopy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TransformLikeOtherCopy
+                                             (GEOM::GEOM_Object_ptr theObject,
+                                              GEOM::GEOM_Object_ptr theSample)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the object itself
+  Handle(GEOM_Object) anObject = GetObjectImpl(theObject);
+  if (anObject.IsNull()) return aGEOMObject._retn();
+
+  //Get the sample object
+  Handle(GEOM_Object) aSample = GetObjectImpl(theSample);
+  if (aSample.IsNull()) return aGEOMObject._retn();
+
+  //Perform the transformation
+  Handle(GEOM_Object) aResObject =
+    GetOperations()->TransformLikeOtherCopy(anObject, aSample);
+  if (!GetOperations()->IsDone() || aResObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(aResObject);
 }
 
 //=============================================================================
