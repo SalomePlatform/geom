@@ -3411,6 +3411,42 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("WhatIs", self.MeasuOp)
             return aDescr
 
+        ## Obtain quantity of shapes of the given type in \a theShape.
+        #  If \a theShape is of type \a theType, it is also counted.
+        #  @param theShape Shape to be described.
+        #  @return Quantity of shapes of type \a theType in \a theShape.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def NbShapes (self, theShape, theType):
+            # Example: see GEOM_TestMeasures.py
+            listSh = self.SubShapeAllIDs(theShape, theType)
+            Nb = len(listSh)
+            if theShape.GetShapeType()._v == theType:
+                Nb = Nb + 1
+                pass
+            return Nb
+
+        ## Obtain quantity of shapes of each type in \a theShape.
+        #  The \a theShape is also counted.
+        #  @param theShape Shape to be described.
+        #  @return Dictionary of shape types with bound quantities of shapes.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def ShapeInfo (self, theShape):
+            # Example: see GEOM_TestMeasures.py
+            aDict = {}
+            for typeSh in ShapeType:
+                if typeSh != "AUTO" and typeSh != "SHAPE":
+                    listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
+                    Nb = len(listSh)
+                    if theShape.GetShapeType()._v == ShapeType[typeSh]:
+                        Nb = Nb + 1
+                        pass
+                    aDict[typeSh] = Nb
+                    pass
+                pass
+            return aDict
+
         ## Get a point, situated at the centre of mass of theShape.
         #  @param theShape Shape to define centre of mass of.
         #  @return New GEOM_Object, containing the created point.
