@@ -2237,6 +2237,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
 
+        ## Extract shapes (main shape or sub-shape) of given type
+        # @param aShape shape
+        # @param aType  shape type
+        def ExtractShapes(self, aShape, aType, sorted = False):
+            ret = []
+            t = aShape.GetShapeType()._v
+            if hasattr(aType, "_v"): aType = aType._v
+            if t == aType:
+                ret.append(aShape )
+            elif sorted:
+                ret = self.SubShapeAllSortedCentres(aShape, aType)
+            else:
+                ret = self.SubShapeAll(aShape, aType)
+            return ret
+        
         # end of l4_decompose_d
         ## @}
 
