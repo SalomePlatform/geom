@@ -1567,7 +1567,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_END_POINT2</source>
-	<translation>End Point :</translation>
+        <translation>End Point :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RADIUS2</source>
@@ -4038,16 +4038,24 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>INOUT</translation>
     </message>
     <message>
-        <source>TOP_GET_SHAPES_ON_SHAPES</source>
+        <source>TOP_GET_SHAPES_ON_SHAPE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
     </message>
     <message>
-        <source>MEN_GET_SHAPES_ON_SHAPES</source>
+        <source>MEN_GET_SHAPES_ON_SHAPE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
     </message>
     <message>
-        <source>STB_GET_SHAPES_ON_SHAPES</source>
+        <source>STB_GET_SHAPES_ON_SHAPE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
+    </message>
+    <message>
+        <source>MEN_GET_SHARED_SHAPES</source>
+        <translation>Trouver les éléments partagés</translation>
+    </message>
+    <message>
+        <source>STB_GET_SHARED_SHAPES</source>
+        <translation>Trouve les éléments partagés</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
