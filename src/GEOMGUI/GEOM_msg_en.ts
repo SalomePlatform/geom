@@ -4140,8 +4140,7 @@ Otherwise the dimensions will be kept without modifications.</translation>
     </message>
     <message>
         <source>GEOM_PRECISION_HINT</source>
-        <translation>
-Input value precision can be adjusted using
+        <translation>Input value precision can be adjusted using
 &apos;%1&apos; parameter in Geometry module preferences.</translation>
     </message>
     <message>
