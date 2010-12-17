@@ -157,6 +157,32 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
 
 //=============================================================================
 /*!
+ *  MakePointOnCurveByLength
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByLength
+                  (GEOM::GEOM_Object_ptr theCurve,  CORBA::Double theLength)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference curve
+  Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
+  if (aReference.IsNull()) return aGEOMObject._retn();
+
+  //Create the point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePointOnCurveByLength(aReference, theLength);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePointOnCurveByCoord
  */
 //=============================================================================

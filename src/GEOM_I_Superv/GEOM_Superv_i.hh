@@ -150,6 +150,8 @@ public:
 						CORBA::Double theZ);
   GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
 					  CORBA::Double theParameter);
+  GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
+					          CORBA::Double theLength);
   GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theRefCurve,
                                                  CORBA::Double theXParameter,
                                                  CORBA::Double theYParameter,

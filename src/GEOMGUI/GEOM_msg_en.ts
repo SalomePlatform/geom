@@ -1103,6 +1103,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>By coordinate</translation>
     </message>
     <message>
+        <source>GEOM_LENGTH_VALUE</source>
+        <translation>By length</translation>
+    </message>
+    <message>
         <source>GEOM_PARTITION</source>
         <translation>Partition</translation>
     </message>

@@ -55,6 +55,9 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
    GEOM::GEOM_Object_ptr MakePointOnCurve (GEOM::GEOM_Object_ptr theCurve,
 					   CORBA::Double theParameter);
 
+   GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theCurve,
+                                                  CORBA::Double theLength);
+
    GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theCurve,
                                                   CORBA::Double theXParameter,
                                                   CORBA::Double theYParameter,

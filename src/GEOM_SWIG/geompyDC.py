@@ -503,6 +503,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeVertexOnCurveByCoord", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
+	
+	## Create a point, corresponding to the given length on the given curve.
+        #  @param theRefCurve The referenced curve.
+        #  @param theLength length on the referenced curve.
+        #  @return New GEOM_Object, containing the created point.
+        #
+        #  @ref tui_creation_point "Example"
+        def MakeVertexOnCurveByLength(self,theRefCurve, theLength):
+            # Example: see GEOM_TestAll.py
+            theLength, Parameters = ParseParameters(theLength)
+            anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength)
+            RaiseIfFailed("MakePointOnCurveByLength", self.BasicOp)
+            anObj.SetParameters(Parameters)
+            return anObj
 
         ## Create a point, corresponding to the given parameters on the
         #    given surface.

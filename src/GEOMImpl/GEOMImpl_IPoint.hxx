@@ -38,6 +38,8 @@
 #define ARG_SURFACE 9
 #define ARG_PARAM2 10
 
+#define ARG_LENGTH 11
+
 class GEOMImpl_IPoint
 {
  public:
@@ -71,6 +73,10 @@ class GEOMImpl_IPoint
 
   double GetParameter() { return _func->GetReal(ARG_PARAM); }
   double GetParameter2() { return _func->GetReal(ARG_PARAM2); }
+
+  void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
+ 
+  double GetLength() { return _func->GetReal(ARG_LENGTH); }
 
  private:
 

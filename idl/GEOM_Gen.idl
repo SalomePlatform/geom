@@ -405,6 +405,16 @@ module GEOM
                                   in double theParameter);
 
     /*!
+     *  Create a point, corresponding to the given length on the given curve.
+     *  \param theRefCurve The referenced curve.
+     *  \param theLength Length on the referenced curve.
+     *  \return New GEOM_Object, containing the created point.
+     */
+    GEOM_Object MakePointOnCurveByLength (in GEOM_Object theRefCurve,
+                                          in double theLength);
+
+
+    /*!
      *  Create a point on the given curve, projecting given point
      *  \param theRefCurve The referenced curve.
      *  \param theXParameter X co-ordinate of point to project on curve

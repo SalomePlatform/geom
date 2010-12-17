@@ -1101,6 +1101,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <source>GEOM_COORD_VALUE</source>
         <translation>Par coordonnée</translation>
     </message>
+     <message>
+        <source>GEOM_LENGTH_VALUE</source>
+        <translation>Par longueur</translation>
+    </message>
     <message>
         <source>GEOM_PARTITION</source>
         <translation>Partition</translation>

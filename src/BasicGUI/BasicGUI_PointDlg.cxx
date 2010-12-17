@@ -57,6 +57,7 @@
 
 #define PARAM_VALUE 0
 #define COORD_VALUE 1
+#define LENGTH_VALUE 2
 
 #define GEOM_POINT_XYZ    0
 #define GEOM_POINT_REF    1
@@ -106,6 +107,9 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   boxLayout->setMargin( MARGIN ); boxLayout->setSpacing( SPACING );
   QRadioButton* btn = new QRadioButton( tr( "GEOM_PARAM_VALUE" ), myParamGroup );
   myParamCoord->addButton( btn, PARAM_VALUE );
+  boxLayout->addWidget( btn );
+  btn = new QRadioButton( tr( "GEOM_LENGTH_VALUE" ), myParamGroup ); 
+  myParamCoord->addButton( btn, LENGTH_VALUE );
   boxLayout->addWidget( btn );
   btn = new QRadioButton( tr( "GEOM_COORD_VALUE" ), myParamGroup );
   myParamCoord->addButton( btn, COORD_VALUE );
@@ -367,6 +371,8 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       GroupLineIntersection->hide();
       GroupOnSurface->hide();
       myParamGroup->show();
+      myParamCoord->button( LENGTH_VALUE )->show();
+      myParamCoord->button( PARAM_VALUE )->setChecked( true );
       GroupOnCurve->show();
       myCoordGrp->show();
       updateParamCoord( false );
@@ -409,6 +415,8 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
       GroupOnCurve->hide();
       GroupLineIntersection->hide();
       myParamGroup->show();
+      myParamCoord->button( LENGTH_VALUE )->hide();
+      myParamCoord->button( PARAM_VALUE )->setChecked(true);
       GroupOnSurface->show();
       myCoordGrp->show();
       updateParamCoord( false );
@@ -772,7 +780,7 @@ bool BasicGUI_PointDlg::isValid( QString& msg )
   }
   else if ( id == GEOM_POINT_EDGE ) {
     bool ok = true;
-    if ( myParamCoord->checkedId() == PARAM_VALUE )
+    if ( myParamCoord->checkedId() == PARAM_VALUE || myParamCoord->checkedId() == LENGTH_VALUE )
       ok = GroupOnCurve->SpinBox_DX->isValid( msg, !IsPreview() );
     else {
       ok = GroupXYZ->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
@@ -846,7 +854,12 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
       if ( myParamCoord->checkedId() == PARAM_VALUE ) {
         anObj = anOper->MakePointOnCurve( myEdge, getParameter() );
         aParameters<<GroupOnCurve->SpinBox_DX->text();
-      } else {
+      } 
+      else if ( myParamCoord->checkedId() == LENGTH_VALUE ) {
+	anObj = anOper->MakePointOnCurveByLength( myEdge, getParameter() ); 
+	aParameters<<GroupOnCurve->SpinBox_DX->text();
+      }
+      else if ( myParamCoord->checkedId() == COORD_VALUE ) {
         double x = GroupXYZ->SpinBox_DX->value();
         double y = GroupXYZ->SpinBox_DY->value();
         double z = GroupXYZ->SpinBox_DZ->value();
@@ -971,20 +984,34 @@ void BasicGUI_PointDlg::ClickParamCoord( int id )
 void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
 {
   bool isParam = myParamCoord->checkedId() == PARAM_VALUE;
+  bool isLength = myParamCoord->checkedId() == LENGTH_VALUE;
+
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  double step = resMgr->doubleValue( "Geometry", "SettingsGeomStep", 100 );
 
   const int id = getConstructorId();
   if ( id == GEOM_POINT_EDGE ) {
-    GroupOnCurve->TextLabel2->setShown( isParam );
-    GroupOnCurve->SpinBox_DX->setShown( isParam );
-  }
+    GroupOnCurve->TextLabel2->setShown( isParam || isLength ); 
+    GroupOnCurve->SpinBox_DX->setShown( isParam || isLength );
+    if ( isParam ){
+      initSpinBox( GroupOnCurve->SpinBox_DX, 0., 1., 0.1, "parametric_precision" );
+      GroupOnCurve->SpinBox_DX->setValue( 0.5 );
+      GroupOnCurve->TextLabel2->setText(tr( "GEOM_PARAMETER" ));
+    }
+    else if ( isLength ){
+      initSpinBox( GroupOnCurve->SpinBox_DX, 0.0, COORD_MAX, 0.1 * step, "length_precision" );
+      GroupOnCurve->SpinBox_DX->setValue( 0.0 );
+      GroupOnCurve->TextLabel2->setText(tr( "GEOM_LENGTH" ));
+    }
+  }  
   else if ( id == GEOM_POINT_SURF ) {
     GroupOnSurface->TextLabel2->setShown( isParam );
     GroupOnSurface->TextLabel3->setShown( isParam );
     GroupOnSurface->SpinBox_DX->setShown( isParam );
     GroupOnSurface->SpinBox_DY->setShown( isParam );
   }
-
-  GroupXYZ->setShown( !isParam );
+    
+  GroupXYZ->setShown( !isParam && !isLength );
 
   if ( theIsUpdate )
     QTimer::singleShot(50, this, SLOT(updateSize()));

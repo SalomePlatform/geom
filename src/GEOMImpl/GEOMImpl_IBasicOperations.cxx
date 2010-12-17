@@ -205,6 +205,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
   switch( theLocation )
     {
     case PointOn_CurveByParam:   fType = POINT_CURVE_PAR; break;
+    case PointOn_CurveByLength:  fType = POINT_CURVE_LENGTH; break; 				 
     case PointOn_CurveByCoord:   fType = POINT_CURVE_COORD; break;
     case PointOn_SurfaceByParam: fType = POINT_SURFACE_PAR; break;
     case PointOn_SurfaceByCoord: fType = POINT_SURFACE_COORD; break;
@@ -225,6 +226,10 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
     case PointOn_CurveByParam:
       aPI.SetCurve(aRefFunction);
       aPI.SetParameter(theParam1);
+      break;
+    case PointOn_CurveByLength:
+      aPI.SetCurve(aRefFunction);
+      aPI.SetLength(theParam1); 
       break;
     case PointOn_CurveByCoord:
       aPI.SetCurve(aRefFunction);
@@ -266,6 +271,10 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
     {
     case PointOn_CurveByParam:
       GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurve("
+                                   << theGeomObj << ", " << theParam1 << ")";
+      break;
+    case PointOn_CurveByLength:
+      GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByLength("
                                    << theGeomObj << ", " << theParam1 << ")";
       break;
     case PointOn_CurveByCoord:
@@ -312,6 +321,17 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByCoord
                      double theZParam)
 {
   return makePointOnGeom(theCurve, theXParam, theYParam, theZParam, PointOn_CurveByCoord);
+}
+
+//=============================================================================
+/*!
+ *  MakePointOnCurveByLength 
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByLength
+                    (Handle(GEOM_Object) theCurve, double theLength)
+{
+  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength);
 }
 
 //=============================================================================
