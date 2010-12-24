@@ -3271,7 +3271,7 @@ namespace {
    */
   //================================================================================
 
-  gp_Vec GetNormal(const TopoDS_Face& face, const BRepExtrema_DistShapeShape& extrema)
+  gp_Vec GetNormal (const TopoDS_Face& face, const BRepExtrema_DistShapeShape& extrema)
   {
     gp_Vec defaultNorm(1,0,0); // to have same normals on different faces
     try {
@@ -3304,12 +3304,35 @@ namespace {
     }
     return defaultNorm;
   }
+
+  //================================================================================
+  /*!
+   * \brief Return type of shape for explode. In case of compound it will be a type of sub shape.
+   */
+  //================================================================================
+
+  TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape)
+  {
+    TopAbs_ShapeEnum aType = theShape.ShapeType();
+    if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
+    else if (aType == TopAbs_EDGE  || aType == TopAbs_WIRE)      return TopAbs_EDGE;
+    else if (aType == TopAbs_FACE  || aType == TopAbs_SHELL)     return TopAbs_FACE;
+    else if (aType == TopAbs_SOLID || aType == TopAbs_COMPSOLID) return TopAbs_SOLID;
+    else if (aType == TopAbs_COMPOUND) {
+      // Only the iType of the first shape in the compound is taken into account
+      TopoDS_Iterator It (theShape, Standard_False, Standard_False);
+      if (It.More()) {
+        return GetTypeOfSimplePart(It.Value());
+      }
+    }
+    return TopAbs_SHAPE;
+  }
 }
 
 //=============================================================================
 /*!
-    case GetInPlace:
-    default:
+ *  case GetInPlace:
+ *  default:
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) theShapeWhere,
@@ -3344,8 +3367,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Handle(GEOM_Object) aResult;
 
   bool isFound = false;
-  Standard_Integer iType = TopAbs_SOLID;
-  Standard_Integer compType = TopAbs_SOLID;
+  TopAbs_ShapeEnum iType = TopAbs_SOLID;
   //Standard_Real    aWhat_Mass = 0., aWhere_Mass = 0.;
   Standard_Real    tab_aWhat[4],    tab_aWhere[4];
   Standard_Real    dl_l = 1e-3;
@@ -3356,6 +3378,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   GProp_GProps     aProps;
 
   // Find the iType of the aWhat shape
+  /*
   if      ( aWhat.ShapeType() == TopAbs_VERTEX )                                         iType = TopAbs_VERTEX;
   else if ( aWhat.ShapeType() == TopAbs_EDGE  || aWhat.ShapeType() == TopAbs_WIRE )      iType = TopAbs_EDGE;
   else if ( aWhat.ShapeType() == TopAbs_FACE  || aWhat.ShapeType() == TopAbs_SHELL )     iType = TopAbs_FACE;
@@ -3367,7 +3390,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       SetErrorCode("Error: theShapeWhat is an empty COMPOUND.");
       return NULL;
     }
-    compType = It.Value().ShapeType();
+    TopAbs_ShapeEnum compType = It.Value().ShapeType();
     if      ( compType == TopAbs_VERTEX )                               iType = TopAbs_VERTEX;
     else if ( compType == TopAbs_EDGE  || compType == TopAbs_WIRE )     iType = TopAbs_EDGE;
     else if ( compType == TopAbs_FACE  || compType == TopAbs_SHELL)     iType = TopAbs_FACE;
@@ -3377,10 +3400,16 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     SetErrorCode("Error: An attempt to extract a shape of not supported type.");
     return NULL;
   }
+  */
+  iType = GetTypeOfSimplePart(aWhat);
+  if (iType == TopAbs_SHAPE) {
+    SetErrorCode("Error: An attempt to extract a shape of not supported type.");
+    return NULL;
+  }
 
-  TopExp_Explorer Exp_aWhat( aWhat,   TopAbs_ShapeEnum( iType ) );
-  TopExp_Explorer Exp_aWhere( aWhere, TopAbs_ShapeEnum( iType ) );
-  TopExp_Explorer Exp_Edge( aWhere,   TopAbs_EDGE );
+  TopExp_Explorer Exp_aWhat  ( aWhat,  iType );
+  TopExp_Explorer Exp_aWhere ( aWhere, iType );
+  TopExp_Explorer Exp_Edge   ( aWhere, TopAbs_EDGE );
 
   // Find the shortest edge in theShapeWhere shape
   BRepBndLib::Add(aWhere, BoundingBox);

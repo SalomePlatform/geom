@@ -129,7 +129,8 @@ void OperationGUI_GetSharedShapesDlg::Init()
   connect(myGeomGUI->getApp()->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
-  initName(getNewObjectName());
+  //initName(getNewObjectName());
+  initName(getPrefixByType());
 
   ConstructorsClicked(0);
   GroupPoints->PushButton1->click();
@@ -181,7 +182,8 @@ bool OperationGUI_GetSharedShapesDlg::ClickOnApply()
   if (!onAccept())
     return false;
 
-  initName(getNewObjectName());
+  //initName(getNewObjectName());
+  initName(getPrefixByType());
 
   return true;
 }
@@ -261,7 +263,8 @@ void OperationGUI_GetSharedShapesDlg::enterEvent(QEvent*)
 //=======================================================================
 void OperationGUI_GetSharedShapesDlg::ComboTextChanged()
 {
-  initName(getNewObjectName());
+  //initName(getNewObjectName());
+  initName(getPrefixByType());
 }
 
 //=================================================================================
@@ -319,6 +322,9 @@ bool OperationGUI_GetSharedShapesDlg::execute (ObjectList& objects)
   if (!aList->length())
     return false;
 
+  if (aList->length() > 1)
+    myMainFrame->ResultName->setText(getPrefixByType());
+
   for (int i = 0, n = aList->length(); i < n; i++)
     objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
 
@@ -339,24 +345,24 @@ GEOM::GEOM_Object_ptr OperationGUI_GetSharedShapesDlg::getFather (GEOM::GEOM_Obj
 }
 
 //================================================================
-// Function : getNewObjectName
+// Function : getPrefixByType
 // Purpose  :
 //================================================================
-QString OperationGUI_GetSharedShapesDlg::getNewObjectName() const
+QString OperationGUI_GetSharedShapesDlg::getPrefixByType () const
 {
+  QString aPref;
+
   int aLimit = GroupPoints->ComboBox1->currentIndex();
-  //QString aName = tr("GEOM_SHARED_SHAPE");
-  QString aName;
 
   switch (aLimit) {
-  case 0:  aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SOLID")) ; break;
-  case 1:  aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHELL")) ; break;
-  case 2:  aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_FACE"))  ; break;
-  case 3:  aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_WIRE"))  ; break;
-  case 4:  aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_EDGE"))  ; break;
-  case 5:  aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_VERTEX")); break;
-  default: aName = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHAPE")) ;
+  case 0:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SOLID")) ; break;
+  case 1:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHELL")) ; break;
+  case 2:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_FACE"))  ; break;
+  case 3:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_WIRE"))  ; break;
+  case 4:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_EDGE"))  ; break;
+  case 5:  aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_VERTEX")); break;
+  default: aPref = tr("GEOM_SHARED_SHAPE").arg(tr("GEOM_SHAPE")) ;
   }
 
-  return aName;
+  return aPref;
 }

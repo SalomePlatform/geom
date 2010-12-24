@@ -23,6 +23,13 @@
 #ifndef _GEOMAlgo_ShapeSet_HeaderFile
 #define _GEOMAlgo_ShapeSet_HeaderFile
 
+#ifndef _Standard_HeaderFile
+#include <Standard.hxx>
+#endif
+#ifndef _Standard_Macro_HeaderFile
+#include <Standard_Macro.hxx>
+#endif
+
 #ifndef _TopTools_MapOfOrientedShape_HeaderFile
 #include <TopTools_MapOfOrientedShape.hxx>
 #endif
@@ -39,59 +46,48 @@ class TopTools_ListOfShape;
 class TopoDS_Shape;
 
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
 //! Implementation some formal <br>
 //!          opereations with Set of shapes <br>
 class GEOMAlgo_ShapeSet  {
-
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size) 
+  {
+    return Standard::Allocate(size); 
+  }
+  void  operator delete(void *anAddress) 
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
-//! Empty constructor <br>
-Standard_EXPORT GEOMAlgo_ShapeSet();
-
-//! Adds shapes from the list theLS to the Set <br>
-Standard_EXPORT   void Add(const TopTools_ListOfShape& theLS) ;
-
-//! Adds shape theShape to the Set <br>
-Standard_EXPORT   void Add(const TopoDS_Shape& theShape) ;
-
-//! Adds sub-shapes of shape theShape, <br>
+  //! Empty constructor <br>
+  Standard_EXPORT   GEOMAlgo_ShapeSet();
+  //! Adds shapes from the list theLS to the Set <br>
+  Standard_EXPORT     void Add(const TopTools_ListOfShape& theLS) ;
+  //! Adds shape theShape to the Set <br>
+  Standard_EXPORT     void Add(const TopoDS_Shape& theShape) ;
+  //! Adds sub-shapes of shape theShape, <br>
 //!          that have type theType to the Set <br>
-Standard_EXPORT   void Add(const TopoDS_Shape& theShape,const TopAbs_ShapeEnum theType) ;
-
-//! Removes shapes of theSet from the Set <br>
-Standard_EXPORT   void Subtract(const GEOMAlgo_ShapeSet& theSet) ;
-
-//! Clears internal fields <br>
-Standard_EXPORT   void Clear() ;
-
-//! Returns True if the Set contains <br>
+  Standard_EXPORT     void Add(const TopoDS_Shape& theShape,const TopAbs_ShapeEnum theType) ;
+  //! Removes shapes of theSet from the Set <br>
+  Standard_EXPORT     void Subtract(const GEOMAlgo_ShapeSet& theSet) ;
+  //! Clears internal fields <br>
+  Standard_EXPORT     void Clear() ;
+  //! Returns True if the Set contains <br>
 //!          all shapes of theSet <br>
-Standard_EXPORT   Standard_Boolean Contains(const GEOMAlgo_ShapeSet& theSet) const;
-
-//! Returns the Set <br>
-Standard_EXPORT  const TopTools_ListOfShape& GetSet() const;
+  Standard_EXPORT     Standard_Boolean Contains(const GEOMAlgo_ShapeSet& theSet) const;
+  //! Returns the Set <br>
+  Standard_EXPORT    const TopTools_ListOfShape& GetSet() const;
+  //! Returns True if the Set==theSet <br>
+  Standard_EXPORT     Standard_Boolean IsEqual(const GEOMAlgo_ShapeSet& theOther) const;
+    Standard_Boolean operator ==(const GEOMAlgo_ShapeSet& theOther) const
+{
+  return IsEqual(theOther);
+}
 
 
 
@@ -99,24 +95,16 @@ Standard_EXPORT  const TopTools_ListOfShape& GetSet() const;
 
 protected:
 
- // Methods PROTECTED
- // 
 
 
- // Fields PROTECTED
- //
 TopTools_MapOfOrientedShape myMap;
 TopTools_ListOfShape myList;
 
 
-private: 
-
- // Methods PRIVATE
- // 
+private:
 
 
- // Fields PRIVATE
- //
+
 
 
 };
@@ -126,7 +114,6 @@ private:
 
 
 // other Inline functions and methods (like "C++: function call" methods)
-//
 
 
 #endif

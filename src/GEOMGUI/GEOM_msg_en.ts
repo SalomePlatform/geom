@@ -285,7 +285,6 @@ Please, select face, shell or solid and try again</translation>
         <source>GEOM_CENTER_POINT</source>
         <translation>Center Point</translation>
     </message>
-
     <message>
         <source>GEOM_CENTRAL_POINT</source>
         <translation>Central Point</translation>
@@ -1508,15 +1507,15 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ADD_PARAMS</source>
-	<translation>Additionnal Parameters</translation>
+        <translation>Additionnal Parameters</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ANGLE</source>
-	<translation>Angle</translation>
+        <translation>Angle</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ANGLE2</source>
-	<translation>Angle :</translation>
+        <translation>Angle :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_APPLY</source>
@@ -1528,12 +1527,12 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER</source>
-	<translation>Center</translation>
+        <translation>Center</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER2</source>
         <translation>Center :</translation>
-    </message>  
+    </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
         <translation>Center X coord. :</translation>
@@ -1604,7 +1603,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_END_POINT2</source>
-	<translation>End Point :</translation>
+        <translation>End Point :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RADIUS</source>
@@ -1958,7 +1957,6 @@ Please, select face, shell or solid and try again</translation>
         <source>GEOM_AXIS_DEFAULT</source>
         <translation>(Z axis by default)</translation>
     </message>
-
     <message>
         <source>GEOM_VECTOR_LENGTH</source>
         <translation>Vector Length :</translation>
@@ -4146,8 +4144,7 @@ Otherwise the dimensions will be kept without modifications.</translation>
     </message>
     <message>
         <source>GEOM_PRECISION_HINT</source>
-        <translation>
-Input value precision can be adjusted using
+        <translation>Input value precision can be adjusted using
 &apos;%1&apos; parameter in Geometry module preferences.</translation>
     </message>
     <message>
@@ -4213,7 +4210,7 @@ Input value precision can be adjusted using
     <message>
         <source>GEOM_PLUGINS_OTHER</source>
         <translation>Other</translation>
-    </message>  
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -4467,7 +4464,7 @@ Number of sketch points too small</translation>
     <message>
         <source>SHOW_ALL_SUB_SHAPES</source>
         <translation>Show all sub-shapes</translation>
-    </message> 
+    </message>
     <message>
         <source>SELECT_ALL</source>
         <translation>Select All</translation>

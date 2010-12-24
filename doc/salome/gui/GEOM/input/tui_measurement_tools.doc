@@ -357,6 +357,20 @@ print "\nBox 100x30x100 description:"
 print Descr
 \endcode
 
+<br><h2>NbShapes and ShapeInfo</h2>
+
+\code
+import geompy
+
+# create a box
+box = geompy.MakeBoxDXDYDZ(100,30,100)
+nbSolids = geompy.NbShapes(box, geompy.ShapeType["SOLID"])
+print "\nBox 100x30x100 quantity of solids:", nbSolids
+boxInfo = geompy.ShapeInfo(box)
+print "\nBox 100x30x100 shapes:"
+print boxInfo
+\endcode
+
 <br><h2>Check Shape</h2>
 
 \code

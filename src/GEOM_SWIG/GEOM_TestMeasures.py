@@ -53,6 +53,17 @@ def TestMeasureOperations (geompy, math):
   print "\nBox 10x30x70 description:"
   print Descr
 
+  ####### NbShapes #######
+
+  NbSolids = geompy.NbShapes(box, geompy.ShapeType["SOLID"])
+  print "\nBox 10x30x70 quantity of solids:", NbSolids
+
+  ####### ShapeInfo #######
+
+  BoxInfo = geompy.ShapeInfo(box)
+  print "\nBox 10x30x70 shapes:"
+  print BoxInfo
+
   ####### BasicProperties #######
 
   Props = geompy.BasicProperties(box)

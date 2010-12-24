@@ -2251,6 +2251,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
 
+        ## Extract shapes (main shape or sub-shape) of given type
+        # @param aShape shape
+        # @param aType  shape type
+        def ExtractShapes(self, aShape, aType, sorted = False):
+            ret = []
+            t = aShape.GetShapeType()._v
+            if hasattr(aType, "_v"): aType = aType._v
+            if t == aType:
+                ret.append(aShape )
+            elif sorted:
+                ret = self.SubShapeAllSortedCentres(aShape, aType)
+            else:
+                ret = self.SubShapeAll(aShape, aType)
+            return ret
+        
         # end of l4_decompose_d
         ## @}
 
@@ -2566,8 +2581,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             if Limit == ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SOLID
-                for s in ListShapes: lim = max( lim, s.GetMinShapeType() )
+                lim = GEOM.SHAPE
+                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
                 Limit = lim._v
                 pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
@@ -2596,8 +2611,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                                  ListMaterials=[], KeepNonlimitShapes=0):
             if Limit == ShapeType["AUTO"]:
                 # automatic detection of the most appropriate shape limit type
-                lim = GEOM.SOLID
-                for s in ListShapes: lim = max( lim, s.GetMinShapeType() )
+                lim = GEOM.SHAPE
+                for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
                 Limit = lim._v
                 pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
@@ -3425,6 +3440,42 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("WhatIs", self.MeasuOp)
             return aDescr
 
+        ## Obtain quantity of shapes of the given type in \a theShape.
+        #  If \a theShape is of type \a theType, it is also counted.
+        #  @param theShape Shape to be described.
+        #  @return Quantity of shapes of type \a theType in \a theShape.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def NbShapes (self, theShape, theType):
+            # Example: see GEOM_TestMeasures.py
+            listSh = self.SubShapeAllIDs(theShape, theType)
+            Nb = len(listSh)
+            if theShape.GetShapeType()._v == theType:
+                Nb = Nb + 1
+                pass
+            return Nb
+
+        ## Obtain quantity of shapes of each type in \a theShape.
+        #  The \a theShape is also counted.
+        #  @param theShape Shape to be described.
+        #  @return Dictionary of shape types with bound quantities of shapes.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def ShapeInfo (self, theShape):
+            # Example: see GEOM_TestMeasures.py
+            aDict = {}
+            for typeSh in ShapeType:
+                if typeSh != "AUTO" and typeSh != "SHAPE":
+                    listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
+                    Nb = len(listSh)
+                    if theShape.GetShapeType()._v == ShapeType[typeSh]:
+                        Nb = Nb + 1
+                        pass
+                    aDict[typeSh] = Nb
+                    pass
+                pass
+            return aDict
+
         ## Get a point, situated at the centre of mass of theShape.
         #  @param theShape Shape to define centre of mass of.
         #  @return New GEOM_Object, containing the created point.
@@ -3637,7 +3688,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             #RaiseIfFailed("Import", self.InsertOp)
             # recieve name using returned vertex
             UnitName = "M"
-            vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
+            if anObj.GetShapeType() == GEOM.VERTEX:
+                vertices = [anObj]
+            else:
+                vertices = self.SubShapeAll(anObj,ShapeType["VERTEX"])
             if len(vertices)>0:
                 p = self.PointCoordinates(vertices[0])
                 if abs(p[0]-0.01) < 1.e-6:

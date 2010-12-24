@@ -654,10 +654,10 @@ def TestOtherOperations (geompy, math):
   pcyl = geompy.MakeVertex(50, 50, -50)
   cyli = geompy.MakeCylinder(pcyl, vz, 40, 100)
   fuse = geompy.MakeFuse(sph1, cyli)
-  fuse = geompy.MakeFuse(fuse, sph2)
+  sh_1 = geompy.MakeFuse(fuse, sph2)
   # As after Fuse we have a compound, we need to obtain a solid from it
-  shsh = geompy.SubShapeAll(fuse, geompy.ShapeType["SOLID"])
-  sh_1 = shsh[0]
+  #shsh = geompy.SubShapeAll(fuse, geompy.ShapeType["SOLID"])
+  #sh_1 = shsh[0]
   geompy.addToStudy(sh_1, "sh_1")
 
   # GetShapesOnShape

@@ -293,9 +293,9 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListShapes, true);
     //myListMaterials.length( 0 ); // obsolete
     
-    GEOM::shape_type type = GEOM::SOLID;
+    GEOM::shape_type type = GEOM::SHAPE;
     for (int i = 0; i < myListShapes.length(); i++)
-      type = qMax( type, myListShapes[i]->GetMinShapeType() );
+      type = qMin( type, myListShapes[i]->GetMaxShapeType() );
     int idx = qMax( 0, GroupPoints->ComboBox1->findData( type ) );
     GroupPoints->ComboBox1->setCurrentIndex( idx );
 

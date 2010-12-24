@@ -2,6 +2,12 @@
 
 \page partition_page Partition
 
+For detail description of the Partition operation please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlighs
+major limitations of these operations.
+
 To produce a \b Partition in the <b>Main Menu</b> select <b>Operations - > Partition</b>
 
 This operation builds a compound by intersection of several shapes

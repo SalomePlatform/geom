@@ -111,7 +111,12 @@ module GEOM
     FSM_GetShapesOnShape,
 
     /*! Use GetInPlaceByHistory method (can work only after Partition) */
-    FSM_GetInPlaceByHistory
+    FSM_GetInPlaceByHistory,
+
+    /*! To be used only for multi-transformation result.
+     *  Only this method can be used after multi-transformation.
+     */
+    FSM_MultiTransformed
   };
 
   /*!
@@ -180,10 +185,19 @@ module GEOM
      *  This function is useful for the compounds only; for simple shapes it
      *  exactly the same value as GetShapeType().
      *  Note, that compounds are procesed recursively.
-     *  \sa GetShapeType(), GetTopologyType()
+     *  \sa GetShapeType(), GetTopologyType(), GetMaxShapeType()
      */
     shape_type GetMinShapeType();
 
+    /*!
+     *  Get a maximal type of the top-level shapes contained in the object.
+     *  This function is useful for the compounds only; for simple shapes it
+     *  exactly the same value as GetShapeType().
+     *  Note, that compounds are procesed recursively.
+     *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
+     */
+    shape_type GetMaxShapeType();
+    
     /*!
      *  Set name of the object.
      *  \param theName is a name which will be associated with this object.
@@ -968,12 +982,22 @@ module GEOM
      *        \param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
      *  \return New GEOM_Object, containing the displaced shape.
      */
-
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
                                    in GEOM_Object thePath,
                                    in double theDistance,
                                    in boolean theCopy,
                                    in boolean theReverse);
+
+    /*!
+     *  Transform the shape in the same way what was used for the sample shape creation.
+     *  \param theObject The object to be transformed.
+     *  \param theSample The object containing information about required transformation.
+     *  \note Implementation of this method is limited by multi-transformations now.
+     *  \note Internal method.
+     *  \return New GEOM_Object, containing the transformed shape.
+     */
+    GEOM_Object TransformLikeOtherCopy (in GEOM_Object theObject,
+                                        in GEOM_Object theSample);
 
     /*!
      *  Recompute the shape from its arguments.

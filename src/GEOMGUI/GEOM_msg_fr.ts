@@ -1506,6 +1506,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Absolu</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_ADD_PARAMS</source>
+        <translation>TODO</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_ANGLE</source>
         <translation>Angle</translation>
     </message>
@@ -1520,6 +1524,30 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SKETCHER_ARC</source>
         <translation>Arc</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_CENTER</source>
+        <translation>Center</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_CENTER2</source>
+        <translation>Centre :</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_CENTER_X</source>
+        <translation>Centre coord. X :</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_CENTER_Y</source>
+        <translation>Centre coord. Y :</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_CENTER_DX</source>
+        <translation>Centre coord. DX :</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_CENTER_DY</source>
+        <translation>Centre coord. DY :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_DEST</source>
@@ -1558,6 +1586,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Longueur :</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_NONE</source>
+        <translation>Aucun (Tangentiel)</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_PER</source>
         <translation>Perpendiculaire</translation>
     </message>
@@ -1571,7 +1603,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_END_POINT2</source>
-	<translation>End Point :</translation>
+        <translation>End Point :</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_RADIUS</source>
+        <translation>Rayon</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RADIUS2</source>
@@ -4042,16 +4078,28 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>INOUT</translation>
     </message>
     <message>
-        <source>TOP_GET_SHAPES_ON_SHAPES</source>
+        <source>TOP_GET_SHAPES_ON_SHAPE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
     </message>
     <message>
-        <source>MEN_GET_SHAPES_ON_SHAPES</source>
+        <source>MEN_GET_SHAPES_ON_SHAPE</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
     </message>
     <message>
-        <source>STB_GET_SHAPES_ON_SHAPES</source>
+        <source>STB_GET_SHAPES_ON_SHAPE</source>
+        <translation>Trouve les éléments d&apos;un objet</translation>
+    </message>
+    <message>
+        <source>TOP_GET_SHARED_SHAPES</source>
         <translation>Trouver les éléments d&apos;un objet</translation>
+    </message>
+    <message>
+        <source>MEN_GET_SHARED_SHAPES</source>
+        <translation>Trouver les éléments partagés</translation>
+    </message>
+    <message>
+        <source>STB_GET_SHARED_SHAPES</source>
+        <translation>Trouve les éléments partagés</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_RESULT_GRP</source>
@@ -4636,6 +4684,29 @@ Voulez-vous continuer?</translation>
     <message>
         <source>LOAD_TEXTURE_TLT</source>
         <translation>Ouvrir une Texture</translation>
+    </message>
+</context>
+<context>
+    <name>OperationGUI_GetSharedShapesDlg</name>
+    <message>
+        <source>GEOM_SHARED_SHAPES_TITLE</source>
+        <translation>Trouver les éléments partagés</translation>
+    </message>
+    <message>
+        <source>GEOM_GET_SHARED_SHAPES</source>
+        <translation>Eléments partagés</translation>
+    </message>
+    <message>
+        <source>GEOM_SHARED_SHAPES_INPUT</source>
+        <translation>Paramètres d&apos;entrée</translation>
+    </message>
+    <message>
+        <source>MSG_SHARED_SHAPES_TOO_FEW_SHAPES</source>
+        <translation>Pas assez d'éléments sélectionnés</translation>
+    </message>
+    <message>
+        <source>GEOM_SHARED_SHAPE</source>
+        <translation>Partagé_%1</translation>
     </message>
 </context>
 <context>

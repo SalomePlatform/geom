@@ -19,13 +19,11 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  GEOM GEOMClient : tool to transfer BREP files from GEOM server to GEOM client
 //  File   : GEOM_Client.cxx
 //  Author : Yves FRICAUD/Lucien PIGNOLONI
 //  Module : GEOM
-//  $Header$
-//
+
 #include <Standard_Stream.hxx>
 
 #include <Standard_Stream.hxx>
@@ -78,7 +76,7 @@ TopoDS_Shape GEOM_Client::Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr a
     /* get sequence of bytes of resulting brep shape from GEOM server */
     TopoDS_Shape S;
     SALOMEDS::TMPFile_var SeqFile = aShape->GetShapeStream();
-    int sizebuf = SeqFile->length();
+    /*int sizebuf = */SeqFile->length();
     char* buf;
     buf = (char*) &SeqFile[0];
     std::istringstream streamBrep(buf);
@@ -104,6 +102,19 @@ GEOM_Client::GEOM_Client()
 
 //=======================================================================
 // function : Create()
+// purpose  : Copy constructor
+//=======================================================================
+GEOM_Client::GEOM_Client(const GEOM_Client& client)
+{
+  myIORs = client.myIORs;
+  myShapes = client.myShapes;
+  _myIndexes = client._myIndexes;
+  _mySubShapes = client._mySubShapes;
+  pid_client = client.pid_client;
+}
+
+//=======================================================================
+// function : Create()
 // purpose  :
 //=======================================================================
 GEOM_Client::GEOM_Client(Engines::Container_ptr client)
@@ -112,17 +123,34 @@ GEOM_Client::GEOM_Client(Engines::Container_ptr client)
 }
 
 //=======================================================================
+// function : get_client()
+// purpose  : Static method to have the only one instance of GEOM_Client
+//=======================================================================
+#ifdef SINGLE_CLIENT
+GEOM_Client& GEOM_Client::get_client()
+{
+  static GEOM_Client a;
+  return a;
+}
+#else
+GEOM_Client GEOM_Client::get_client()
+{
+  return GEOM_Client();
+}
+#endif
+
+//=======================================================================
 // function : Find()
 // purpose  :
 //=======================================================================
 Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
 {
-  if(_myIndexes.count(IOR) != 0)
-    {
-      Standard_Integer i =_myIndexes[IOR];
-      S = myShapes.Value(i);
-      return i;
-    }
+  if (_myIndexes.count(IOR) != 0)
+  {
+    Standard_Integer i = _myIndexes[IOR];
+    S = myShapes.Value(i);
+    return i;
+  }
   return 0;
 }
 
@@ -149,7 +177,7 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 {
   myIORs.Append(IOR);
   myShapes.Append(S);
-  _myIndexes[IOR]=myIORs.Length();
+  _myIndexes[IOR] = myIORs.Length();
 }
 
 //=======================================================================
@@ -169,7 +197,6 @@ void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
     _myIndexes.erase(IOR);
     _mySubShapes.erase(IOR);
   }
-  return;
 }
 
 //=======================================================================
@@ -221,20 +248,20 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TopoDS_Shape aMainShape = GetShape (geom, aShape->GetMainShape());
   GEOM::ListOfLong_var list = aShape->GetSubShapeIndices();
 
-  TopTools_IndexedMapOfShape anIndices;
   CORBA::String_var aMainIOR = geom->GetStringFromIOR(aShape->GetMainShape());
   TCollection_AsciiString mainIOR = (char*)aMainIOR.in();
 
   //find subshapes only one time
   if(_mySubShapes.count(mainIOR)==0)
+  {
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(aMainShape, anIndices);
+    Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
+    for (; ii <= nbSubSh; ii++)
     {
-      TopExp::MapShapes(aMainShape, anIndices);
-      Standard_Integer ii = 1, nbSubSh = anIndices.Extent();
-      for (; ii <= nbSubSh; ii++) 
-        {
-          _mySubShapes[mainIOR].push_back(anIndices.FindKey(ii));
-        }
+      _mySubShapes[mainIOR].push_back(anIndices.FindKey(ii));
     }
+  }
 
   /* Case of only one subshape */
   if (list->length() == 1 && list[0] > 0) {
@@ -245,7 +272,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
     TopoDS_Compound aCompound;
     B.MakeCompound(aCompound);
     for (int i = 0; i < list->length(); i++) {
-      if (0 < list[i] && list[i] <= anIndices.Extent()) {
+      if (0 < list[i] && list[i] <= _mySubShapes[mainIOR].size()) {
         TopoDS_Shape aSubShape = _mySubShapes[mainIOR][list[i]-1];
         B.Add(aCompound, aSubShape);
       }

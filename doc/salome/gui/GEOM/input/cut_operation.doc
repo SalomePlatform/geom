@@ -2,19 +2,25 @@
 
 \page cut_operation_page Cut
 
-\n To produce a \b Cut operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Cut</b>
+For detail description of the Boolean operations please refer to
+<a href="SALOME_BOA_PA.pdf">this document</a>. 
+It provides a general review of the Partition and Boolean
+operations algorithms, describes the usage methodology and highlighs
+major limitations of these operations.
 
-\n This operation cuts a shape with another one.
-\n The \b Result will be any \b GEOM_Object.
-\n <b>Arguments:</b> Name + 2 shapes.
-\n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+To produce a \b Cut operation in the <b>Main Menu</b> select <b>Operations - > Boolean - > Cut</b>
 
-\n <b>Dialog Box:</b>
+This operation cuts a shape with another one.
+The \b Result will be any \b GEOM_Object.
+<b>Arguments:</b> Name + 2 shapes.
+<b>Advanced option:</b>
+\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+
+<b>Dialog Box:</b>
 
 \image html bool3.png
 
-\n <b>Example:</b>
+<b>Example:</b>
 
 \image html fusesn1.png "The initial shapes"
 

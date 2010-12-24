@@ -19,19 +19,17 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  GEOM GEOMClient : tool to transfer BREP files from GEOM server to GEOM client
 //  File   : GEOM_Client.hxx
 //  Author : Yves FRICAUD
 //  Module : GEOM
-//  $Header$
-//
+
 #ifndef _GEOM_Client_HeaderFile
 #define _GEOM_Client_HeaderFile
 
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Gen)
-#
+
 #ifdef HAVE_FINITE
 #undef HAVE_FINITE // E.A. fix a warning about redefinition of HAVE_FINITE in re-inclusion of Standard_values.h
 #endif
@@ -44,9 +42,9 @@
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
 #endif
+
 class TCollection_AsciiString;
 class TopoDS_Shape;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -85,53 +83,56 @@ class TopoDS_Shape;
  * and the SHAPE_READER macro defines also a new object
  */
 #define SINGLE_CLIENT
+
 //=====================================================================
 // GEOM_Client : class definition
 //=====================================================================
 class GEOMCLIENT_EXPORT GEOM_Client  {
 
-public:
-  
-  inline void* operator new(size_t,void* anAddress) 
+ public:
+
+  inline void* operator new(size_t,void* anAddress)
   {
     return anAddress;
   }
-  inline void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
+  inline void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
   }
-  inline void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  inline void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
   }
   // Methods PUBLIC
-  // 
-   //Standard_EXPORT   
+  //
+  //Standard_EXPORT
   GEOM_Client();
-  //Standard_EXPORT   
+  //Standard_EXPORT
   GEOM_Client(Engines::Container_ptr client);
-  //Standard_EXPORT   
+  //Standard_EXPORT
+  GEOM_Client(const GEOM_Client& client);
+  //Standard_EXPORT
   Standard_Integer Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
-  //Standard_EXPORT   
+  //Standard_EXPORT
   Standard_Integer Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
-  //Standard_EXPORT   
+  //Standard_EXPORT
   void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S ) ;
-  //Standard_EXPORT   
+  //Standard_EXPORT
   TopoDS_Shape GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape );
-  //Standard_EXPORT   
+  //Standard_EXPORT
   void RemoveShapeFromBuffer( const TCollection_AsciiString& IOR ) ;
-  //Standard_EXPORT   
+  //Standard_EXPORT
   void ClearClientBuffer() ;
-  //Standard_EXPORT   
+  //Standard_EXPORT
   unsigned int BufferLength() ;
   TopoDS_Shape Load( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_ptr aShape);
 #ifdef SINGLE_CLIENT
-  static GEOM_Client& get_client() { static GEOM_Client a;return a; }
+  static GEOM_Client& get_client();
 #else
-  static GEOM_Client get_client() { return GEOM_Client(); }
+  static GEOM_Client get_client();
 #endif
 
-private: 
+ private:
   // Fields PRIVATE
   //
   TColStd_SequenceOfAsciiString myIORs ;

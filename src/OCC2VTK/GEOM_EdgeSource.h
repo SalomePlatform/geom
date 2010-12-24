@@ -57,7 +57,7 @@ protected:
   TEdgeSet myEdgeSet;
   // The <myIsVector> flag is common for all edges, because the shape,
   // representing a vector, can have only one edge.
-  bool myIsVector;
+  bool myIsVector, myIsVectorMode;
  
   void Execute(); 
  

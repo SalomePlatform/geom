@@ -65,8 +65,11 @@ Execute()
 
   TEdgeSet::Iterator anIter (myEdgeSet);
   for (; anIter.More(); anIter.Next()) {
-    const TopoDS_Edge& anEdge = anIter.Value();
-    OCC2VTK(anEdge,aPolyData,aPts,myIsVector);
+    TopoDS_Edge anEdge = anIter.Value();
+    if ( !myIsVector )
+      // draw curve direction (issue 0021087)
+      anEdge.Orientation( TopAbs_FORWARD );
+    OCC2VTK(anEdge,aPolyData,aPts,myIsVector||myIsVectorMode);
   }
 }
 
@@ -263,10 +266,10 @@ void GEOM_EdgeSource::OCC2VTK (const TopoDS_Edge& theEdge,
 
 void GEOM_EdgeSource::SetVectorMode (bool theMode)
 {
-  myIsVector = theMode;
+  myIsVectorMode = theMode;
 }
 
 bool GEOM_EdgeSource::GetVectorMode ()
 {
-  return myIsVector;
+  return !myIsVector && myIsVectorMode;
 }
