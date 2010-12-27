@@ -259,6 +259,14 @@ def ReadTexture(fname):
         pass
     return 0, 0, ""
 
+## Returns a long value from enumeration type
+#  Can be used for CORBA enumerator types like GEOM.shape_type
+#  @ingroup l1_geompy_auxiliary
+def EnumToLong(theItem):
+    ret = theItem
+    if hasattr(theItem, "_v"): ret = theItem._v
+    return ret
+
 ## Kinds of shape enumeration
 #  @ingroup l1_geompy_auxiliary
 kind = GEOM.GEOM_IKindOfShape
@@ -2256,8 +2264,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         # @param aType  shape type
         def ExtractShapes(self, aShape, aType, sorted = False):
             ret = []
-            t = aShape.GetShapeType()._v
-            if hasattr(aType, "_v"): aType = aType._v
+            t = EnumToLong(aShape.GetShapeType())
+            aType = EnumToLong(aType)
             if t == aType:
                 ret.append(aShape )
             elif sorted:
@@ -2583,7 +2591,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
                 for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
-                Limit = lim._v
+                Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartition(ListShapes, ListTools,
                                               ListKeepInside, ListRemoveInside,
@@ -2613,7 +2621,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 # automatic detection of the most appropriate shape limit type
                 lim = GEOM.SHAPE
                 for s in ListShapes: lim = min( lim, s.GetMaxShapeType() )
-                Limit = lim._v
+                Limit = EnumToLong(lim)
                 pass
             anObj = self.BoolOp.MakePartitionNonSelfIntersectedShape(ListShapes, ListTools,
                                                                      ListKeepInside, ListRemoveInside,
@@ -3450,7 +3458,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             listSh = self.SubShapeAllIDs(theShape, theType)
             Nb = len(listSh)
-            if theShape.GetShapeType()._v == theType:
+            t       = EnumToLong(theShape.GetShapeType())
+            theType = EnumToLong(theType)
+            if t == theType:
                 Nb = Nb + 1
                 pass
             return Nb
@@ -3465,14 +3475,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestMeasures.py
             aDict = {}
             for typeSh in ShapeType:
-                if typeSh != "AUTO" and typeSh != "SHAPE":
-                    listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
-                    Nb = len(listSh)
-                    if theShape.GetShapeType()._v == ShapeType[typeSh]:
-                        Nb = Nb + 1
-                        pass
-                    aDict[typeSh] = Nb
+                if typeSh in ( "AUTO", "SHAPE" ): continue
+                listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
+                Nb = len(listSh)
+                if EnumToLon(theShape.GetShapeType()) == ShapeType[typeSh]:
+                    Nb = Nb + 1
                     pass
+                aDict[typeSh] = Nb
                 pass
             return aDict
 
