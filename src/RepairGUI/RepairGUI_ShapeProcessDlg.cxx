@@ -366,13 +366,12 @@ void RepairGUI_ShapeProcessDlg::selectionChanged()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  Standard_Boolean aRes = Standard_False;
   int i = 0;
   myObjects->length(aSelList.Extent());
   for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes )
-        myObjects[i++] = aSelectedObject;
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
+    if ( !CORBA::is_nil( aSelectedObject ) )
+      myObjects[i++] = aSelectedObject;
   }
   myObjects->length( i );
   if ( i == 1 )

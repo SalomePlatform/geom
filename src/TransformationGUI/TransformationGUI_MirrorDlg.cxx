@@ -244,49 +244,46 @@ void TransformationGUI_MirrorDlg::SelectionIntoArgument()
       return;
 
     // nbSel == 1
-    Standard_Boolean testResult = Standard_False;
-    myArgument = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || CORBA::is_nil(myArgument))
+    myArgument = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( CORBA::is_nil(myArgument) )
       return;
 
     aName = GEOMBase::GetName(myArgument);
 
-    if (testResult && !myArgument->_is_nil()) {
-      TopoDS_Shape aShape;
-      if (GEOMBase::GetShape(myArgument, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-        TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-        if (getConstructorId() == 1)
-          aNeedType = TopAbs_EDGE;
-        else if (getConstructorId() == 2)
-          aNeedType = TopAbs_FACE;
-
-        TColStd_IndexedMapOfInteger aMap;
-        aSelMgr->GetIndexes(aSelList.First(), aMap);
-        if (aMap.Extent() == 1) {
-          int anIndex = aMap(1);
-          if (aNeedType == TopAbs_VERTEX)
-            aName += QString(":vertex_%1").arg(anIndex);
-          else
-            aName += QString(":edge_%1").arg(anIndex);
-
-          //Find SubShape Object in Father
-          GEOM::GEOM_Object_var aFindedObject = findObjectInFather(myArgument, aName);
-
-          if (aFindedObject->_is_nil()) { // Object not found in study
-            GEOM::GEOM_IShapesOperations_var aShapesOp =
-              getGeomEngine()->GetIShapesOperations(getStudyId());
-            myArgument = aShapesOp->GetSubShape(myArgument, anIndex);
-          }
-          else {
-            myArgument = aFindedObject; // get Object from study
-          }
-        }
-        else {
-          if (aShape.ShapeType() != aNeedType) {
-            myArgument = GEOM::GEOM_Object::_nil();
-            aName = "";
-          }
-        }
+    TopoDS_Shape aShape;
+    if (GEOMBase::GetShape(myArgument, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
+      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+      if (getConstructorId() == 1)
+	aNeedType = TopAbs_EDGE;
+      else if (getConstructorId() == 2)
+	aNeedType = TopAbs_FACE;
+      
+      TColStd_IndexedMapOfInteger aMap;
+      aSelMgr->GetIndexes(aSelList.First(), aMap);
+      if (aMap.Extent() == 1) {
+	int anIndex = aMap(1);
+	if (aNeedType == TopAbs_VERTEX)
+	  aName += QString(":vertex_%1").arg(anIndex);
+	else
+	  aName += QString(":edge_%1").arg(anIndex);
+	
+	//Find SubShape Object in Father
+	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(myArgument, aName);
+	
+	if (aFindedObject->_is_nil()) { // Object not found in study
+	  GEOM::GEOM_IShapesOperations_var aShapesOp =
+	    getGeomEngine()->GetIShapesOperations(getStudyId());
+	  myArgument = aShapesOp->GetSubShape(myArgument, anIndex);
+	}
+	else {
+	  myArgument = aFindedObject; // get Object from study
+	}
+      }
+      else {
+	if (aShape.ShapeType() != aNeedType) {
+	  myArgument = GEOM::GEOM_Object::_nil();
+	  aName = "";
+	}
       }
     }
     myEditCurrentArgument->setText(aName);

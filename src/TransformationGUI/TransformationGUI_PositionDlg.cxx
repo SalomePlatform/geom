@@ -353,9 +353,8 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
       return;
 
     // nbSel == 1
-    Standard_Boolean testResult = Standard_False;
-    myStartLCS = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || CORBA::is_nil(myStartLCS))
+    myStartLCS = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( CORBA::is_nil(myStartLCS) )
       return;
 
     aName = GEOMBase::GetName(myStartLCS);
@@ -369,9 +368,8 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     if (aSelList.Extent() != 1)
       return;
 
-    Standard_Boolean testResult = Standard_False;
-    myEndLCS = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || CORBA::is_nil(myEndLCS))
+    myEndLCS = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( CORBA::is_nil(myEndLCS) )
       return;
 
     aName = GEOMBase::GetName(myEndLCS);
@@ -385,9 +383,8 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     if (aSelList.Extent() != 1)
       return;
 
-    Standard_Boolean testResult = Standard_False;
-    GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || aSelectedObject->_is_nil())
+    GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( aSelectedObject->_is_nil() )
       return;
 
     aName = GEOMBase::GetName(myPath);

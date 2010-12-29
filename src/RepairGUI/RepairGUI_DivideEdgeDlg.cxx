@@ -243,9 +243,8 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
 
   if ( aSelList.Extent() == 1 ) {
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    Standard_Boolean aRes;
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( !CORBA::is_nil( aSelectedObj ) && aRes )
+    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO );
+    if ( !CORBA::is_nil( aSelectedObj ) )
     {
       TopoDS_Shape aShape;
       QString aName = GEOMBase::GetName( aSelectedObj );

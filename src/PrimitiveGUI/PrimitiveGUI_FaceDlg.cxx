@@ -329,10 +329,9 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
   }
 
   // nbSel == 1 
-  Standard_Boolean aRes = Standard_False;
   TopAbs_ShapeEnum aNeedType = TopAbs_EDGE;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First(), aRes );
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+  if ( !CORBA::is_nil( aSelectedObject ) ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
     
     TopoDS_Shape aShape;

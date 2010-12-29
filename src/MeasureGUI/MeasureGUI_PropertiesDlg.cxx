@@ -177,16 +177,13 @@ bool MeasureGUI_PropertiesDlg::getParameters( double& theLength,
 //=================================================================================
 SALOME_Prs* MeasureGUI_PropertiesDlg::buildPrs()
 {
-  TopoDS_Shape aShape, aResult;
+  SALOME_Prs* prs = 0;
+  TopoDS_Shape shape;
   
-  if ( myObj->_is_nil() ||
-       !GEOMBase::GetShape( myObj, aShape ) ||
-       aShape.IsNull() ||
-       aShape.ShapeType() != TopAbs_EDGE ||
-       !GEOMBase::CreateArrowForLinearEdge( aShape, aResult ) ||
-       aResult.IsNull() )
-    return 0;
-
-  return getDisplayer()->BuildPrs( aResult );
-  
+  if ( GEOMBase::GetShape( myObj, shape, TopAbs_EDGE ) ) {
+    shape = GEOMBase::CreateArrowForLinearEdge( shape );
+    if ( !shape.IsNull() )
+      prs = getDisplayer()->BuildPrs( shape );
+  }
+  return prs;
 }

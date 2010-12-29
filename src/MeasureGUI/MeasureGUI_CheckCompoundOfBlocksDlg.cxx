@@ -176,11 +176,10 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
     return;
   }
 
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !testResult || aSelectedObject->_is_nil() ) {
+  if ( aSelectedObject->_is_nil() ) {
     myGrp->LineEdit1->setText( "" );
     processObject();
     return;
@@ -362,21 +361,16 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onErrorsListSelectionChanged()
 
   GEOM::GEOM_IBlocksOperations::BCError aErr = aErrs[aCurItem];
   GEOM::ListOfLong aObjLst = aErr.incriminated;
-  TopoDS_Shape aSelShape;
-  TopoDS_Shape aSubShape;
-  TopTools_IndexedMapOfShape anIndices;
   QStringList aSubShapeList;
-  QString aSubShapeName( "" );
-  Standard_CString aTypeString;
+  TopoDS_Shape aSelShape;
   if ( !myObj->_is_nil() && GEOMBase::GetShape( myObj, aSelShape ) ) {
-    TopExp::MapShapes( aSelShape, anIndices);
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes( aSelShape, anIndices );
     for ( int i = 0, n = aObjLst.length(); i < n; i++ ) {
-      aSubShapeName = "";
-      aSubShape = anIndices.FindKey(aObjLst[i]);
-      if ( GEOMBase::GetShapeTypeString( aSubShape, aTypeString ) )
-        aSubShapeName = QString( aTypeString ) + QString( "_" ) + QString::number( aObjLst[i] );
-      if ( !aSubShapeName.isEmpty() )
-      aSubShapeList.append( aSubShapeName );
+      TopoDS_Shape aSubShape = anIndices.FindKey( aObjLst[i] );
+      QString aType = GEOMBase::GetShapeTypeString( aSubShape );
+      if ( !aType.isEmpty() )
+	aSubShapeList.append( QString( "%1_%2" ).arg( aType ).arg( aObjLst[i] ) );
     }
   }
   myGrp->ListBox2->clear();

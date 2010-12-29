@@ -122,9 +122,8 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
       SALOME_ListIteratorOfListIO aSelIt (aSelList);
       for (; aSelIt.More(); aSelIt.Next()) {
         Handle(SALOME_InteractiveObject) io = aSelIt.Value();
-        Standard_Boolean testResult = Standard_False;
-        GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject(io, testResult);
-        if (testResult) {
+        GEOM::GEOM_Object_var aGeomObj = GEOMBase::ConvertIOinGEOMObject( io );
+        if ( !CORBA::is_nil( aGeomObj ) ) {
           anOp->RecomputeObject(aGeomObj);
 
           SUIT_ViewWindow* wnd;

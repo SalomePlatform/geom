@@ -170,11 +170,10 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
     return;
   }
 
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_var aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if (!testResult || aSelectedObject->_is_nil()) {
+  if ( aSelectedObject->_is_nil() ) {
     processObject();
     return;
   }

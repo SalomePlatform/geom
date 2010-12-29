@@ -177,9 +177,8 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
     if (aSelList.Extent() == 1) {
       Handle(SALOME_InteractiveObject) anIO = aSelList.First();
 
-      Standard_Boolean aRes;
-      myObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
-      if (aRes && GEOMBase::IsShape(myObject)) {
+      myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+      if ( GEOMBase::IsShape(myObject) ) {
         myEditCurrentArgument->setText(GEOMBase::GetName(myObject));
         TopoDS_Shape aShape;
         if (GEOMBase::GetShape(myObject, aShape, TopAbs_FACE))
@@ -245,10 +244,9 @@ void RepairGUI_SuppressFacesDlg::SelectionIntoArgument()
 
         aSelMgr->clearSelected();
 
-        Standard_Boolean isOk;
         QString objIOR = GEOMBase::GetIORFromObject(myObject);
-        Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape(objIOR.toLatin1().constData(), isOk, true);
-        if (!isOk || aSh.IsNull())
+        Handle(GEOM_AISShape) aSh = GEOMBase::ConvertIORinGEOMAISShape( objIOR, true );
+        if ( aSh.IsNull() )
           return;
 
         aSelMgr->AddOrRemoveIndex(aSh->getIO(), anIds, false);

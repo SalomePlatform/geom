@@ -415,11 +415,10 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   {
     myShape = GEOM::GEOM_Object::_nil();
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         myShape = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         displayPreview();
@@ -433,11 +432,10 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   {
     myFace[ aCurrFocus ] = -1;
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
          TColStd_IndexedMapOfInteger anIndexes;
          aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 
@@ -456,11 +454,10 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
     if (aCurrFocus == Faces) myFaces.Clear();
     else myEdges.Clear();
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         TColStd_IndexedMapOfInteger anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 

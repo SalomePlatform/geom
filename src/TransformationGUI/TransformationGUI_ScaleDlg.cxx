@@ -309,9 +309,8 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
     GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
     if (aSelList.Extent() == 1)
     {
-      Standard_Boolean testResult = Standard_False;
-      aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-      if (testResult)
+      aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+      if ( !CORBA::is_nil( aSelectedObject ) )
       {
         aName = GEOMBase::GetName(aSelectedObject);
 

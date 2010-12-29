@@ -188,10 +188,9 @@ void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
   if (aSelList.Extent() != 1)
     return;
 
-  Standard_Boolean testResult = Standard_False;
-  myShape = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  myShape = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if (!testResult || myShape->_is_nil() || !GEOMBase::IsShape(myShape)) {
+  if ( !GEOMBase::IsShape(myShape) ) {
     myShape = GEOM::GEOM_Object::_nil();
     return;
   }

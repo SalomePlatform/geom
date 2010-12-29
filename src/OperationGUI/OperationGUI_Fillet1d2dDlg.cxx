@@ -188,11 +188,10 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
   if (myEditCurrentArgument == GroupVertexes->LineEdit1) {
     myShape = GEOM::GEOM_Object::_nil();
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
       
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         QString aName = GEOMBase::GetName( anObj );
         TopoDS_Shape aShape;
         if ( GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
@@ -229,11 +228,10 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
     myVertexes.Clear();
     bool isPreview = myIs1D;
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         TColStd_IndexedMapOfInteger anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);
 

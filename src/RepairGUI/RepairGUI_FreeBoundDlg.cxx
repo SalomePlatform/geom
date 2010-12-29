@@ -204,11 +204,10 @@ void RepairGUI_FreeBoundDlg::onSelectionDone()
   if ( aSelList.Extent() != 1 )
     return;
 
-  Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) )
+  if ( !GEOMBase::IsShape( anObj ) )
     return;
   else {
     myObj = anObj;

@@ -338,10 +338,9 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
     return;
 
   // nbSel == 1
-  Standard_Boolean testResult = Standard_False;;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if (!testResult || CORBA::is_nil(aSelectedObject) || !GEOMBase::IsShape(aSelectedObject))
+  if ( !GEOMBase::IsShape(aSelectedObject) )
     return;
 
   QString aName = GEOMBase::GetName(aSelectedObject);

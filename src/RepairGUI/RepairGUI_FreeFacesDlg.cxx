@@ -239,11 +239,10 @@ void RepairGUI_FreeFacesDlg::onSelectionDone()
     return;
   }
 
-  Standard_Boolean isOk = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), isOk );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !isOk || anObj->_is_nil() || !GEOMBase::IsShape( anObj ) ) {
+  if ( !GEOMBase::IsShape( anObj ) ) {
     myEdit->setText( "" );
     return;
   }

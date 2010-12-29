@@ -309,10 +309,9 @@ void PrimitiveGUI_DiskDlg::SelectionIntoArgument()
 
   // nbSel == 1
   Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIO, testResult);
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO );
 
-  if (!testResult || CORBA::is_nil(aSelectedObject))
+  if ( CORBA::is_nil(aSelectedObject) )
     return;
 
   QString aName = GEOMBase::GetName(aSelectedObject);

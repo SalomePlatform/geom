@@ -97,11 +97,10 @@ bool GroupGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
         aSelMgr->selectedObjects( aList );
 
       if ( aList.Extent() == 1 ) {
-        Standard_Boolean aResult = Standard_False;
         GEOM::GEOM_Object_var anObj =
-          GEOMBase::ConvertIOinGEOMObject( aList.First(), aResult );
+          GEOMBase::ConvertIOinGEOMObject( aList.First() );
 
-        if ( aResult && !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
+        if ( !CORBA::is_nil( anObj ) && anObj->GetType() == GEOM_GROUP ) {
           aDlg = new GroupGUI_GroupDlg( GroupGUI_GroupDlg::EditGroup, getGeometryGUI(), parent ); 
           break;
         }

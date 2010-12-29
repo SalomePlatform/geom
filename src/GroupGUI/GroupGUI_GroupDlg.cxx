@@ -213,11 +213,10 @@ void GroupGUI_GroupDlg::Init()
     aSelMgr->selectedObjects(aSelList);
 
     if (aSelList.Extent()) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !CORBA::is_nil(anObj) && anObj->GetType() == GEOM_GROUP) {
+      if ( !CORBA::is_nil(anObj) && anObj->GetType() == GEOM_GROUP ) {
         myGroup = anObj;
 
         mainFrame()->ResultName->setText(GEOMBase::GetName(myGroup));
@@ -376,10 +375,9 @@ void GroupGUI_GroupDlg::onGetInPlace()
   if (aSelList.Extent() != 1)
     return;
 
-  Standard_Boolean aResult = Standard_False;
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
-  if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+  if ( GEOMBase::IsShape(anObj) ) {
     if (!anObj->_is_equivalent(myMainObj) && !anObj->_is_equivalent(myGroup)) {
       SUIT_OverrideCursor wc;
       myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
@@ -455,11 +453,10 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     int nbSel = aSelList.Extent();
 
     if (nbSel == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+      if ( GEOMBase::IsShape(anObj) ) {
         myMainObj = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         // activate subshapes selection by default

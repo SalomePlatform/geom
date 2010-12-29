@@ -186,9 +186,8 @@ void RepairGUI_RemoveHolesDlg::SelectionIntoArgument()
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
 
     if (myEditCurrentArgument == GroupPoints->LineEdit1) { // face selection
-      Standard_Boolean aRes;
-      myObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
-      if (aRes && GEOMBase::IsShape(myObject)) {
+      myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+      if ( GEOMBase::IsShape(myObject) ) {
         myEditCurrentArgument->setText(GEOMBase::GetName(myObject));
 
         // clear selection

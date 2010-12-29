@@ -142,10 +142,7 @@ void MeasureGUI_DistanceDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
 
   if (aSelList.Extent() > 0) {
-    Standard_Boolean testResult = Standard_False;
-    aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult)
-      aSelectedObject = GEOM::GEOM_Object::_nil();
+    aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   }
 
   // clear selection

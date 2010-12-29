@@ -179,11 +179,10 @@ void RepairGUI_RemoveExtraEdgesDlg::SelectionIntoArgument()
   }
   
   // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
   GEOM::GEOM_Object_ptr aSelectedObject =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First(), testResult );
+    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( !testResult )
+  if ( CORBA::is_nil( aSelectedObject ) )
     return;
   
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
