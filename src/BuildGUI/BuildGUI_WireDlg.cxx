@@ -216,11 +216,10 @@ void BuildGUI_WireDlg::SelectionIntoArgument()
 
   std::list<GEOM::GEOM_Object_var> aList; // subshapes list
   TopoDS_Shape aShape;
-  Standard_Boolean aRes = Standard_False;
   for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
     TColStd_IndexedMapOfInteger aMap;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value(), aRes );
-    if ( !CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
+    if ( !CORBA::is_nil(aSelectedObject) && GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
       aSelMgr->GetIndexes( anIt.Value(), aMap );
 
       if ( aMap.Extent() > 0 ) { // local selection

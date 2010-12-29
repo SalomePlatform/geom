@@ -299,9 +299,8 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
 
   int nbSel = aSelList.Extent();
   if ( nbSel == 1 ) {
-    Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( !CORBA::is_nil(aSelectedObject) ) {
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE)) { // Explore the shape if its a local selection
         TColStd_IndexedMapOfInteger aMap;

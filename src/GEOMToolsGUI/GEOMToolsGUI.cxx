@@ -779,10 +779,9 @@ bool GEOMToolsGUI::Export()
   SALOME_ListIteratorOfListIO It( selectedObjects );
   for(;It.More();It.Next()) {
     Handle(SALOME_InteractiveObject) IObject = It.Value();
-    Standard_Boolean found;
-    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(IObject, found);
+    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( IObject );
 
-    if ( !found || anObj->_is_nil() )
+    if ( anObj->_is_nil() )
       continue;
 
     QString fileType;

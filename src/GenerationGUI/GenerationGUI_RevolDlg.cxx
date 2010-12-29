@@ -224,11 +224,10 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
   if (aSelList.Extent() < 1)
     return;
 
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
   QString aName = GEOMBase::GetName(aSelectedObject);
 
-  if (!testResult || aSelectedObject->_is_nil())
+  if ( aSelectedObject->_is_nil() )
     return;
 
   TopoDS_Shape S;

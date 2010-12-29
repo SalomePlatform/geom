@@ -349,10 +349,9 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       return;
     }
 
-    Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-    if (!testResult || CORBA::is_nil(aSelectedObject))
+      GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( CORBA::is_nil(aSelectedObject) )
       return;
 
     QString aName = GEOMBase::GetName(aSelectedObject);
@@ -408,11 +407,10 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
       return;
     }
 
-    Standard_Boolean testResult = Standard_False;
     GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+      GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-    if (!testResult || CORBA::is_nil(aSelectedObject))
+    if ( CORBA::is_nil(aSelectedObject) )
       return;
 
     QString aName = GEOMBase::GetName(aSelectedObject);

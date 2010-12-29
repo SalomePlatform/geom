@@ -333,11 +333,10 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() == 1) {
-    Standard_Boolean aRes = Standard_False;
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
+    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO );
     
-    if ( aRes && !aSelectedObj->_is_nil() ) {
+    if ( !aSelectedObj->_is_nil() ) {
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
         // Existing LCS selected
@@ -409,11 +408,10 @@ void BasicGUI_MarkerDlg::onSelectionDone()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() == 1) {
-    Standard_Boolean aRes = Standard_False;
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
+    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO );
 
-    if ( !CORBA::is_nil( aSelectedObj ) && aRes ) {
+    if ( !CORBA::is_nil( aSelectedObj ) ) {
       QString aName = GEOMBase::GetName( aSelectedObj );
       
       if ( getConstructorId() == 1 ) { // by shape position

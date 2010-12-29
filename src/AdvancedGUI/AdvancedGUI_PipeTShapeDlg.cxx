@@ -410,10 +410,9 @@ void AdvancedGUI_PipeTShapeDlg::SelectionIntoArgument() {
 
 	// nbSel == 1
 	if (aSelList.Extent() == 1) {
-		Standard_Boolean aRes = Standard_False;
 		Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-		GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
-		if (!CORBA::is_nil(aSelectedObject) && aRes) {
+		GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIO);
+		if (!CORBA::is_nil(aSelectedObject)) {
 			QString aName = GEOMBase::GetName(aSelectedObject);
 			TopoDS_Shape aShape;
 			if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
@@ -471,9 +470,8 @@ void AdvancedGUI_PipeTShapeDlg::SelectionIntoArgument() {
 		DisplayPreview();
     }
 
-//	Standard_Boolean testResult = Standard_False;
-//	GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-//	if (!testResult || aSelectedObject->_is_nil())
+//	GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First());
+//	if (aSelectedObject->_is_nil())
 //		return;
 //
 //	myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));

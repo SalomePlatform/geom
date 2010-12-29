@@ -246,10 +246,9 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
   }
 
   // nbSel == 1
-  Standard_Boolean testResult = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-  if ( testResult && !aSelectedObject->_is_nil() ) {
+  if ( !aSelectedObject->_is_nil() ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
     TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupWire->LineEdit1 ? TopAbs_WIRE : TopAbs_VERTEX;
 

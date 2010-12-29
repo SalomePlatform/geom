@@ -489,10 +489,9 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() == 1) {
-    Standard_Boolean aRes = Standard_False;
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+    if ( !CORBA::is_nil( aSelectedObject ) ) {
       QString aName = GEOMBase::GetName(aSelectedObject);
       TopoDS_Shape aShape;
       if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
@@ -531,7 +530,7 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
         else { // Global Selection
           if ( aShape.ShapeType() != myNeedType ) {
             aSelectedObject = GEOM::GEOM_Object::_nil();
-            aName = "";
+	    aName = "";
             if ( id == GEOM_POINT_XYZ ) return;
           }
         }

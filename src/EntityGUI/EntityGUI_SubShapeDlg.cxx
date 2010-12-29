@@ -213,7 +213,6 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
   if (nbSel != 1)
     return;
 
-  TopoDS_Shape S;
   Handle(SALOME_InteractiveObject) IO = aSelList.First();
   if ( !IO->hasEntry() ) {
     SUIT_Session::session()->activeApplication()->putInfo( tr( "GEOM_PRP_SHAPE_IN_STUDY" ) );
@@ -221,17 +220,15 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
     return;
   }
 
-  if (!GEOMBase::GetTopoFromSelection(aSelList, S) ||
-      S.IsNull() ||
-      S.ShapeType() == TopAbs_VERTEX) {
+  TopoDS_Shape S = GEOMBase::GetTopoFromSelection( aSelList );
+  if ( S.IsNull() || S.ShapeType() == TopAbs_VERTEX ) {
     myObject = GEOM::GEOM_Object::_nil();
     updateButtonState();
     return;
   }
 
-  Standard_Boolean testResult;
-  myObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
-  if (!testResult || myObject->_is_nil()) {
+  myObject = GEOMBase::ConvertIOinGEOMObject( IO );
+  if ( myObject->_is_nil() ) {
     updateButtonState();
     return;
   }
@@ -537,9 +534,8 @@ bool EntityGUI_SubShapeDlg::isValid (QString& msg)
     aSelMgr->selectedObjects(aSelList);
 
     if (aSelList.Extent() == 1) {
-      Standard_Boolean testResult;  
-      GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), testResult);
-      if (testResult && !anObj->_is_nil()) {
+      GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+      if ( !anObj->_is_nil() ) {
         TColStd_IndexedMapOfInteger aMapIndex;
         aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
         isOk = aMapIndex.Extent() > 0;
@@ -572,11 +568,10 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
     aSelMgr->selectedObjects(aSelList);
 
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil()) {
+      if ( !anObj->_is_nil() ) {
         TColStd_IndexedMapOfInteger aMapIndex;
         aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
 

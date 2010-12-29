@@ -54,70 +54,75 @@ class GEOMBASE_EXPORT GEOMBase
 {
 public :
   /* Selection and objects management */
-  static int GetIndex(const TopoDS_Shape& subshape, const TopoDS_Shape& shape, int ShapeType);
-  static TopoDS_Shape GetShapeFromIOR(QString IOR);
-  static bool GetShape(const GEOM::GEOM_Object_ptr&, TopoDS_Shape&,
-                       const TopAbs_ShapeEnum = TopAbs_SHAPE);
-  static bool GetTopoFromSelection(const SALOME_ListIO& aList, TopoDS_Shape& tds);
-  static int GetNameOfSelectedIObjects(const SALOME_ListIO& aList, QString& aName,
-                                       const bool theShapesOnly = false);
-  static bool GetShapeTypeString(const TopoDS_Shape& aShape, Standard_CString& aTypeString);
+  static int          GetIndex( const TopoDS_Shape& subshape, const TopoDS_Shape& shape );
+  static TopoDS_Shape GetShapeFromIOR( const QString& IOR );
+  static bool         GetShape( GEOM::GEOM_Object_ptr object,
+				TopoDS_Shape& shape,
+				const TopAbs_ShapeEnum type = TopAbs_SHAPE );
+  static TopoDS_Shape GetTopoFromSelection( const SALOME_ListIO& IObjects );
+  static int          GetNameOfSelectedIObjects( const SALOME_ListIO& IObjects,
+						 QString& name,
+						 const bool shapesOnly = false );
+  static QString      GetShapeTypeString( const TopoDS_Shape& shape );
 
   /* Convertions */
-  static GEOM::GEOM_Object_ptr ConvertIOinGEOMShape(const Handle(SALOME_InteractiveObject)& IO, 
-                                                    Standard_Boolean& testResult);
-  static Handle(GEOM_AISShape) ConvertIOinGEOMAISShape(const Handle(SALOME_InteractiveObject)& IO,
-                                                       Standard_Boolean& testResult,
-                                                       bool onlyInActiveView = false);
+  static Handle(GEOM_AISShape)
+                      ConvertIOinGEOMAISShape( const Handle(SALOME_InteractiveObject)& IO,
+					       bool onlyInActiveView = false );
 
-  static Handle(AIS_InteractiveObject) GetAIS(const Handle(SALOME_InteractiveObject)& theIO,
-                                              const bool isOnlyInActiveView = false); 
-  static void ConvertListOfIOInListOfIOR(const SALOME_ListIO& aList,
-                                         GEOM::string_array& listIOR); 
+  static Handle(AIS_InteractiveObject)
+                      GetAIS( const Handle(SALOME_InteractiveObject)& IO,
+			      bool onlyInActiveView = false,
+			      bool onlyGeom = false ); 
+  static QStringList  ConvertListOfIOInListOfIOR( const SALOME_ListIO& IObjects ); 
 
-  static Handle(GEOM_AISShape) ConvertIORinGEOMAISShape(const char * IOR,
-                                                        Standard_Boolean& testResult,
-                                                        bool onlyInActiveView = false);
-  static GEOM_Actor* ConvertIORinGEOMActor(const char * IOR, Standard_Boolean& testResult,
-                                           bool onlyInActiveView = false);
+  static Handle(GEOM_AISShape) 
+                      ConvertIORinGEOMAISShape( const QString& IOR,
+						bool onlyInActiveView = false );
+  static GEOM_Actor*  ConvertIORinGEOMActor( const QString& IOR,
+					     bool onlyInActiveView = false );
 
-  static GEOM::GEOM_Object_ptr ConvertIOinGEOMObject(const Handle(SALOME_InteractiveObject)& IO, 
-                                                     Standard_Boolean& testResult);
+  static GEOM::GEOM_Object_ptr
+                      ConvertIOinGEOMObject( const Handle(SALOME_InteractiveObject)& IO );
 
-  static void ConvertListOfIOInListOfGO(const SALOME_ListIO& aList,
-                                        GEOM::ListOfGO& listGO,
-                                        const bool theShapesOnly = false); 
+  static void         ConvertListOfIOInListOfGO( const SALOME_ListIO& IObjects,
+						 GEOM::ListOfGO& geomObjects,
+						 bool shapesOnly = false ); 
 
-  static GEOM::GEOM_Object_ptr GetObjectFromIOR(const char* theIOR);
+  static GEOM::GEOM_Object_ptr
+                      GetObjectFromIOR( const QString& IOR );
 
-  static QString GetIORFromObject(const GEOM::GEOM_Object_ptr& theObject);
+  static QString      GetIORFromObject( GEOM::GEOM_Object_ptr object );
 
   /* Geometry */
-  static bool VertexToPoint(const TopoDS_Shape& S, gp_Pnt& P);
+  static bool         VertexToPoint( const TopoDS_Shape& shape, gp_Pnt& point );
 
   /* Used just by Plane and Prism */
-  static bool LinearEdgeExtremities(const TopoDS_Shape& S, gp_Pnt& P1, gp_Pnt& P2);
-  static void GetBipointDxDyDz(gp_Pnt P1, gp_Pnt P2, double& dx, double& dy, double& dz);
+  static bool         LinearEdgeExtremities( const TopoDS_Shape& shape,
+					     gp_Pnt& point1, gp_Pnt& point2 );
+  static void         GetBipointDxDyDz( const gp_Pnt& point1, const gp_Pnt& point2,
+					double& dx, double& dy, double& dz );
 
   /* Simulation management */
-  static bool CreateArrowForLinearEdge(const TopoDS_Shape& tds, TopoDS_Shape& ArrowCone);
+  static TopoDS_Shape CreateArrowForLinearEdge( const TopoDS_Shape& tds );
 
   /*  Generates default names */
-  static bool SelectionByNameInDialogs(QWidget* aWidget, const QString& userObjectName,
-                                       const SALOME_ListIO& aList);
+  static bool         SelectionByNameInDialogs( QWidget* widget,
+						const QString& userObjectName,
+						const SALOME_ListIO& IObjects );
   /* Shows message box with error code */
-  static bool DefineDlgPosition(QWidget* aDlg, int& x, int& y);
+  static void         DefineDlgPosition( QWidget* dlg, int& x, int& y );
 
   /* This method generates default names for results of geometrical operations */
-  static QString GetDefaultName(const QString& theOperation, const bool extractPrefix = false);
+  static QString      GetDefaultName( const QString& operation, bool extractPrefix = false );
 
   /* Shows message box with error code and comment */
-  static void ShowErrorMessage(const char* theErrorCode, const char* theComment = 0);
+  static void         ShowErrorMessage( const QString& errorCode, const QString& comment = QString() );
 
   /* Gets name of object */
-  static QString GetName(GEOM::GEOM_Object_ptr);
+  static QString      GetName( GEOM::GEOM_Object_ptr object );
 
-  static bool IsShape(GEOM::GEOM_Object_ptr theObj);
+  static bool         IsShape( GEOM::GEOM_Object_ptr object );
 };
 
 #endif // GEOMBASE_H

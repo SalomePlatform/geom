@@ -286,9 +286,8 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
   }
 
   // nbSel == 1
-  Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-  if (!CORBA::is_nil(aSelectedObject) && aRes) {
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+  if (!CORBA::is_nil(aSelectedObject) ) {
     QString aName = GEOMBase::GetName(aSelectedObject);
 
     TopoDS_Shape aShape;

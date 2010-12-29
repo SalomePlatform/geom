@@ -1144,9 +1144,8 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 
   int nbSel = aSelList.Extent();
   if (nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1) {
-    Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( !CORBA::is_nil(aSelectedObject) ) {
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
         gp_Trsf aTrans;
@@ -1188,9 +1187,8 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   }
 
   if (nbSel == 1 && myEditCurrentArgument == Group1Sel1Spin->LineEdit1) {
-    Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( !CORBA::is_nil(aSelectedObject) ) {
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
         gp_Trsf aTrans;
@@ -1232,9 +1230,8 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   }
 
   if (nbSel == 1 && myEditCurrentArgument == Group2Sel->LineEdit1) {
-    Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( !CORBA::is_nil(aSelectedObject) ) {
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
         gp_Trsf aTrans;
@@ -1280,9 +1277,8 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       myX=tmpX;                                      // If yes keep the old values of X and Y  
       myY=tmpY;
     }
-    Standard_Boolean aRes = Standard_False;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+    if ( !CORBA::is_nil(aSelectedObject) ) {
       TopoDS_Shape aShape;
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
         gp_Trsf aTrans;

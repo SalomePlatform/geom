@@ -286,8 +286,6 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  Standard_Boolean aRes = Standard_False;
-
   SalomeApp_Application* app = myGeomGUI->getApp();
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
   _PTR(Study) aDStudy = appStudy->studyDS();
@@ -308,8 +306,8 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
                            // that will actually be put into myPoints
 
   for (SALOME_ListIteratorOfListIO anIt (selected); anIt.More(); anIt.Next()) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIt.Value(), aRes);
-    if (!CORBA::is_nil(aSelectedObject) && aRes) {
+    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
+    if (!CORBA::is_nil(aSelectedObject) ) {
       if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
         aSelMgr->GetIndexes(anIt.Value(), aMapIndexes);
 

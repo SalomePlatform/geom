@@ -239,9 +239,8 @@ void BlocksGUI_QuadFaceDlg::SelectionIntoArgument()
   GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_nil();
 
   if (aSelList.Extent() == 1) {
-    Standard_Boolean aResult = Standard_False;
-    anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
-    if (aResult && !anObj->_is_nil()) {
+    anObj = GEOMBase::ConvertIOinGEOMObject(aSelList. First() );
+    if ( !anObj->_is_nil() ) {
       aName = GEOMBase::GetName(anObj);
 
       // Get Selected object if selected subshape

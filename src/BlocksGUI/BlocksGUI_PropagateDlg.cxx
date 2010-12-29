@@ -156,9 +156,8 @@ void BlocksGUI_PropagateDlg::SelectionIntoArgument()
 
   if (aSelList.Extent() == 1) {
     Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    Standard_Boolean aRes;
-    myObject = GEOMBase::ConvertIOinGEOMObject( anIO, aRes );
-    if ( aRes )
+    myObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+    if ( !CORBA::is_nil( myObject ) )
       myGrp->LineEdit1->setText( GEOMBase::GetName( myObject ) );
   }
 }

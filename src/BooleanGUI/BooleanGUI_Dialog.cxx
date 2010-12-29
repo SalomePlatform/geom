@@ -209,9 +209,8 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
   }
 
   // nbSel == 1
-  Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aRes);
-  if (!CORBA::is_nil(aSelectedObject) && aRes && GEOMBase::IsShape(aSelectedObject))
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+  if ( GEOMBase::IsShape(aSelectedObject) )
   {
     myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
 
@@ -314,9 +313,8 @@ GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 bool BooleanGUI_Dialog::isValid (QString&)
 {
   //Handle(SALOME_InteractiveObject) IO = firstIObject();
-  //Standard_Boolean testResult;
-  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject(IO, testResult);
-  //if (!testResult || anObject->_is_nil())
+  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO );
+  //if ( anObject->_is_nil() )
   //  return false;
 
   return !CORBA::is_nil(myObject1) && !CORBA::is_nil(myObject2);

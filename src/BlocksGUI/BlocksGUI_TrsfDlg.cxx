@@ -240,10 +240,9 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
   {
     // If selection of main object is activated
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
-      anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+      anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+      if ( GEOMBase::IsShape(anObj) ) {
         aName = GEOMBase::GetName(anObj);
       }
     }
@@ -257,9 +256,8 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     // If face selection is activated
     int anIndex = -1;
     if (aSelList.Extent() == 1) {
-      Standard_Boolean aResult = Standard_False;
-      anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
-      if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+      anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+      if ( GEOMBase::IsShape(anObj) ) {
         aName = GEOMBase::GetName(anObj);
         TColStd_IndexedMapOfInteger anIndexes;
         aSelMgr->GetIndexes(aSelList.First(), anIndexes);

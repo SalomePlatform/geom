@@ -213,10 +213,9 @@ void BlocksGUI_ExplodeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() == 1) {
-    Standard_Boolean aResult = Standard_False;
-    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject(aSelList.First(), aResult);
+    GEOM::GEOM_Object_var anObj = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-    if (aResult && !anObj->_is_nil() && GEOMBase::IsShape(anObj)) {
+    if ( GEOMBase::IsShape(anObj) ) {
       myObject = anObj;
       myGrp1->LineEdit1->setText(GEOMBase::GetName(anObj));
     }

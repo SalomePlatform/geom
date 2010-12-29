@@ -334,9 +334,8 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
   // nbSel == 1
   Handle(SALOME_InteractiveObject) anIO = aList.First();
 
-  Standard_Boolean aRes = Standard_False;
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(anIO, aRes);
-  if ( !CORBA::is_nil( aSelectedObject ) && aRes ) {
+  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIO );
+  if ( !CORBA::is_nil( aSelectedObject ) ) {
     QString aName = GEOMBase::GetName( aSelectedObject );
 
     TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
