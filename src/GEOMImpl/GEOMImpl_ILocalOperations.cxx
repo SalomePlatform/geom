@@ -543,9 +543,10 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet1D
     << ", " << theR << ", [";
 
   it = theVertexes.begin();
-  pd << (*it++);
-  while (it != theVertexes.end()) {
-    pd << ", " << (*it++);
+  if (it != theVertexes.end()) {
+    pd << (*it++);
+    while (it != theVertexes.end())
+      pd << ", " << (*it++);
   }
   pd << "])";
 
