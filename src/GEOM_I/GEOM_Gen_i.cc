@@ -202,7 +202,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
 
   TCollection_AsciiString aShapeName("Shape_");
 
-  if ( aShape->GetType() == GEOM_GROUP ) {
+  CORBA::Long mytype=aShape->GetType();
+  if ( mytype == GEOM_GROUP ) {
     GEOM::GEOM_IGroupOperations_var anOp = GetIGroupOperations( theStudy->StudyId() );
     switch ( (TopAbs_ShapeEnum)anOp->GetType( aShape ) ) {
     case TopAbs_VERTEX:
@@ -222,39 +223,42 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
       aShapeName = "Group_Of_Solids_";
       break;
     }
-  } else if ( aShape->GetType() == GEOM_MARKER ) {
+  } else if ( mytype == GEOM_MARKER ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
     aShapeName = "LocalCS_";
-  } else if ( aShape->GetType() > ADVANCED_BASE ) {
+  } else if ( mytype > ADVANCED_BASE ) {
     char buf[20];
     sprintf( buf, "%d", aShape->GetType() );
     std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
     aResultSO->SetAttrString("AttributePixMap",advId.c_str());
     aShapeName = "Advanced_";
-  } else if ( aShape->GetShapeType() == GEOM::COMPOUND ) {
+  } else {
+    GEOM::shape_type myshapetype=aShape->GetShapeType();
+    if ( myshapetype == GEOM::COMPOUND ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
     aShapeName = "Compound_";
-  } else if ( aShape->GetShapeType() == GEOM::COMPSOLID ) {
+  } else if ( myshapetype == GEOM::COMPSOLID ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
     aShapeName = "Compsolid_";
-  } else if ( aShape->GetShapeType() == GEOM::SOLID ) {
+  } else if ( myshapetype == GEOM::SOLID ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
     aShapeName = "Solid_";
-  } else if ( aShape->GetShapeType() == GEOM::SHELL ) {
+  } else if ( myshapetype == GEOM::SHELL ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
     aShapeName = "Shell_";
-  } else if ( aShape->GetShapeType() == GEOM::FACE ) {
+  } else if ( myshapetype == GEOM::FACE ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
     aShapeName = "Face_";
-  } else if ( aShape->GetShapeType() == GEOM::WIRE ) {
+  } else if ( myshapetype == GEOM::WIRE ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
     aShapeName = "Wire_";
-  } else if ( aShape->GetShapeType() == GEOM::EDGE ) {
+  } else if ( myshapetype == GEOM::EDGE ) {
     aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
     aShapeName = "Edge_";
-  } else if ( aShape->GetShapeType() == GEOM::VERTEX ) {
+  } else if ( myshapetype == GEOM::VERTEX ) {
     aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
     aShapeName = "Vertex_";
+  }
   }
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
