@@ -197,71 +197,65 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
       aResultSO = SALOMEDS::SObject::_duplicate(theSObject); //SRN: Added Aug 24,2004 : for  the method AddInStudy with theFather argumenet != NULL
       //THROW_SALOME_CORBA_EXCEPTION("Publish in study supervision graph error",SALOME::BAD_PARAM);
   }
-  anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeIOR");
-  SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
   CORBA::String_var aGeomObjIOR = _orb->object_to_string(theObject);
-  anIOR->SetValue(aGeomObjIOR);
-  anIOR->Destroy();
+  aResultSO->SetAttrString("AttributeIOR",aGeomObjIOR);
 
-  anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributePixMap");
-  SALOMEDS::AttributePixMap_var aPixmap = SALOMEDS::AttributePixMap::_narrow(anAttr);
   TCollection_AsciiString aShapeName("Shape_");
 
   if ( aShape->GetType() == GEOM_GROUP ) {
     GEOM::GEOM_IGroupOperations_var anOp = GetIGroupOperations( theStudy->StudyId() );
     switch ( (TopAbs_ShapeEnum)anOp->GetType( aShape ) ) {
     case TopAbs_VERTEX:
-      aPixmap->SetPixMap( "ICON_OBJBROWSER_GROUP_PNT" );
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_PNT" );
       aShapeName = "Group_Of_Vertices_";
       break;
     case TopAbs_EDGE:
-      aPixmap->SetPixMap( "ICON_OBJBROWSER_GROUP_EDGE" );
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_EDGE");
       aShapeName = "Group_Of_Edges_";
       break;
     case TopAbs_FACE:
-      aPixmap->SetPixMap( "ICON_OBJBROWSER_GROUP_FACE" );
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_FACE");
       aShapeName = "Group_Of_Faces_";
       break;
     case TopAbs_SOLID:
-      aPixmap->SetPixMap( "ICON_OBJBROWSER_GROUP_SOLID" );
+      aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_GROUP_SOLID");
       aShapeName = "Group_Of_Solids_";
       break;
     }
   } else if ( aShape->GetType() == GEOM_MARKER ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_LCS" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_LCS");
     aShapeName = "LocalCS_";
   } else if ( aShape->GetType() > ADVANCED_BASE ) {
     char buf[20];
     sprintf( buf, "%d", aShape->GetType() );
     std::string advId = "ICON_OBJBROWSER_ADVANCED_"; advId += buf;
-    aPixmap->SetPixMap( advId.c_str() );
+    aResultSO->SetAttrString("AttributePixMap",advId.c_str());
     aShapeName = "Advanced_";
   } else if ( aShape->GetShapeType() == GEOM::COMPOUND ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_COMPOUND" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPOUND" );
     aShapeName = "Compound_";
   } else if ( aShape->GetShapeType() == GEOM::COMPSOLID ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_COMPSOLID" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_COMPSOLID");
     aShapeName = "Compsolid_";
   } else if ( aShape->GetShapeType() == GEOM::SOLID ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_SOLID" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SOLID");
     aShapeName = "Solid_";
   } else if ( aShape->GetShapeType() == GEOM::SHELL ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_SHELL" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_SHELL");
     aShapeName = "Shell_";
   } else if ( aShape->GetShapeType() == GEOM::FACE ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_FACE" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_FACE");
     aShapeName = "Face_";
   } else if ( aShape->GetShapeType() == GEOM::WIRE ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_WIRE" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_WIRE");
     aShapeName = "Wire_";
   } else if ( aShape->GetShapeType() == GEOM::EDGE ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_EDGE" );
+    aResultSO->SetAttrString("AttributePixMap", "ICON_OBJBROWSER_EDGE");
     aShapeName = "Edge_";
   } else if ( aShape->GetShapeType() == GEOM::VERTEX ) {
-    aPixmap->SetPixMap( "ICON_OBJBROWSER_VERTEX" );
+    aResultSO->SetAttrString("AttributePixMap","ICON_OBJBROWSER_VERTEX" );
     aShapeName = "Vertex_";
   }
-  aPixmap->Destroy();
   //if (strlen(theName) == 0) aShapeName += TCollection_AsciiString(aResultSO->Tag());
   //else aShapeName = TCollection_AsciiString(CORBA::string_dup(theName));
 
@@ -324,10 +318,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aShape->SetStudyEntry(anID.in());
 
   //Set a name of the added shape
-  anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeName");
-  SALOMEDS::AttributeName_var aNameAttrib = SALOMEDS::AttributeName::_narrow(anAttr);
-  aNameAttrib->SetValue(aShapeName.ToCString());
-  aNameAttrib->Destroy();
+  aResultSO->SetAttrString("AttributeName",aShapeName.ToCString());
 
   //Set NoteBook variables used in the object creation
   TCollection_AsciiString aVars;
@@ -344,10 +335,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     if(i != n-1)
       aVars += "|";
   }
-  anAttr = aStudyBuilder->FindOrCreateAttribute(aResultSO, "AttributeString");
-  SALOMEDS::AttributeString_var aStringAttrib = SALOMEDS::AttributeString::_narrow(anAttr);
-  aStringAttrib->SetValue(aVars.ToCString());
-  aStringAttrib->Destroy();
+  aResultSO->SetAttrString("AttributeString",aVars.ToCString());
 
   aFather->Destroy();
 
