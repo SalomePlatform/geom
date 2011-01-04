@@ -6,9 +6,14 @@ Sketcher allows to create curves of 2 types: line segment and arc.
 By default the start point of the curve is located at the point of
 origin of the reference coordinate system and the curve lies in the
 plane XOY.  The end of the curve is defined by
-means of "destination", which can be a destination point (for segment
-only) or destination direction coupled with length of a segment or
-angle and radius of an arc.
+means of "destination", which can be a destination point (coupled with a radius
+or a center for an arc) or a destination direction coupled with length 
+of a segment or angle and radius of an arc.
+
+\n <b>Warning:</b> When constructing an arc by its center and destination point, 
+the constraint on the center is first taken into account. Therefore
+if the constraints are incompatible the destination point <b> won't lie 
+on the constructed arc</b> (a warning message will be displayed).
 
 \n Sketcher is able to create planar curves only. Therefore, it is
 necessary to select coordinate system (Global or Local) before starting 
