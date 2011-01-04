@@ -207,7 +207,13 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   Group4Spin->buttonUndo->setIcon( image1 );
   Group4Spin->buttonRedo->setIcon( image2 );
 
-  //myErrLabel = new QLabel( MainWidget->DestCnt );
+  // Defines a palette for the error message on Group4Spin and Group2Sel 
+  QPalette palette;
+  QColor color("red");
+  palette.setColor(Group4Spin->label->foregroundRole(), color);
+  Group4Spin->label->setPalette(palette);
+  palette.setColor(Group2Sel->label->foregroundRole(), color);
+  Group2Sel->label->setPalette(palette);
 
   QGridLayout* DestCntLayout = new QGridLayout( MainWidget->DestCnt );
   DestCntLayout->setMargin( 0 ); DestCntLayout->setSpacing( 6 );
