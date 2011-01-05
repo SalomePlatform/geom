@@ -44,7 +44,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                                         double theParameter);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByLength (Handle(GEOM_Object) theCurve,
-								double theLength);
+								double theLength,
+								int theDirection);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByCoord (Handle(GEOM_Object) theCurve,
                                                                double theXParam,
@@ -134,6 +135,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                        double theParam1,
                                        double theParam2,
                                        double theParam3,
+				       int theFlag1,
                                        const PointLocation theLocation);
 };
 

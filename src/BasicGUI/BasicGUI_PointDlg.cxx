@@ -123,11 +123,13 @@ BasicGUI_PointDlg::BasicGUI_PointDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupXYZ->TextLabel2->setText( tr( "GEOM_Y" ) );
   GroupXYZ->TextLabel3->setText( tr( "GEOM_Z" ) );
 
-  GroupOnCurve = new DlgRef_1Sel1Spin( centralWidget() );
+  GroupOnCurve = new DlgRef_1Sel1Spin1Check( centralWidget() );
   GroupOnCurve->GroupBox1->setTitle( tr( "GEOM_POINT_ON_EDGE" ) );
   GroupOnCurve->TextLabel1->setText( tr( "GEOM_EDGE" ) );
   GroupOnCurve->TextLabel2->setText( tr( "GEOM_PARAMETER" ) );
+  GroupOnCurve->CheckButton1->setText( tr( "GEOM_REVERSE" ) );
   GroupOnCurve->PushButton1->setIcon( image2 );
+  
 
   GroupOnSurface = new DlgRef_1Sel2Spin( centralWidget() );
   GroupOnSurface->GroupBox1->setTitle( tr( "GEOM_POINT_ON_FACE" ) );
@@ -231,6 +233,7 @@ void BasicGUI_PointDlg::Init()
   myNeedType = TopAbs_VERTEX;
 
   myEditCurrentArgument = 0;
+  myCheckFlag = 0;
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -292,6 +295,8 @@ void BasicGUI_PointDlg::Init()
   connect( GroupRefPoint->SpinBox_DX,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupRefPoint->SpinBox_DY,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupRefPoint->SpinBox_DZ,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+
+  connect( GroupOnCurve->CheckButton1, SIGNAL( stateChanged( int ) ), this, SLOT( CheckBoxClicked( int ) ) );
 
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this,  SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -702,6 +707,17 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 }
 
 //=================================================================================
+// function : CheckBoxClicked()
+// purpose  : Check Boxes Management
+//=================================================================================
+void BasicGUI_PointDlg::CheckBoxClicked( int  State ) 
+{
+  myCheckFlag = State;
+  displayPreview();
+}
+
+
+//=================================================================================
 // funcion  : getParameter()
 // purpose  :
 //=================================================================================
@@ -855,8 +871,13 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
         aParameters<<GroupOnCurve->SpinBox_DX->text();
       } 
       else if ( myParamCoord->checkedId() == LENGTH_VALUE ) {
-	anObj = anOper->MakePointOnCurveByLength( myEdge, getParameter() ); 
+	anObj = anOper->MakePointOnCurveByLength( myEdge, getParameter(), myCheckFlag );
+	
+	std::stringstream out;
+	out<<myCheckFlag;
+	std::string flag = out.str();
 	aParameters<<GroupOnCurve->SpinBox_DX->text();
+	aParameters<<flag.c_str();
       }
       else if ( myParamCoord->checkedId() == COORD_VALUE ) {
         double x = GroupXYZ->SpinBox_DX->value();
@@ -990,17 +1011,19 @@ void BasicGUI_PointDlg::updateParamCoord(bool theIsUpdate)
 
   const int id = getConstructorId();
   if ( id == GEOM_POINT_EDGE ) {
-    GroupOnCurve->TextLabel2->setShown( isParam || isLength ); 
-    GroupOnCurve->SpinBox_DX->setShown( isParam || isLength );
+    GroupOnCurve->TextLabel2->setVisible( isParam || isLength ); 
+    GroupOnCurve->SpinBox_DX->setVisible( isParam || isLength );
     if ( isParam ){
       initSpinBox( GroupOnCurve->SpinBox_DX, 0., 1., 0.1, "parametric_precision" );
       GroupOnCurve->SpinBox_DX->setValue( 0.5 );
       GroupOnCurve->TextLabel2->setText(tr( "GEOM_PARAMETER" ));
+      GroupOnCurve->CheckButton1->setVisible(false);
     }
     else if ( isLength ){
-      initSpinBox( GroupOnCurve->SpinBox_DX, 0.0, COORD_MAX, 0.1 * step, "length_precision" );
+      initSpinBox( GroupOnCurve->SpinBox_DX, 0.0, COORD_MAX, step, "length_precision" );
       GroupOnCurve->SpinBox_DX->setValue( 0.0 );
       GroupOnCurve->TextLabel2->setText(tr( "GEOM_LENGTH" ));
+      GroupOnCurve->CheckButton1->setVisible(true);
     }
   }  
   else if ( id == GEOM_POINT_SURF ) {

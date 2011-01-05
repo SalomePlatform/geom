@@ -33,11 +33,13 @@
 #include <BRep_Builder.hxx>
 #include <Precision.hxx>
 #include <TopAbs.hxx>
+//#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
+//#include <TopExp_Explorer.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -47,6 +49,8 @@
 
 #include <GCPnts_AbscissaPoint.hxx>
 #include <BRepAdaptor_Curve.hxx>
+
+#include <BRep_Tool.hxx>
 
 //=======================================================================
 //function : GetID
@@ -155,23 +159,28 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   else if (aType == POINT_CURVE_LENGTH) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     Standard_Real theLength = aPI.GetLength();
+    Standard_Integer theDirection = aPI.GetFlag(); 
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
     }    
-    BRepAdaptor_Curve AdapCurve = BRepAdaptor_Curve(TopoDS::Edge(aRefShape));
+    Standard_Real UFirst = 0;
+    Standard_Real ULast = 0;
+    Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), UFirst, ULast);
+    Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
+    if ( theDirection == 2 )
+      ReOrientedCurve = EdgeCurve->Reversed();
+    else if ( theDirection == 0 )
+      ReOrientedCurve = EdgeCurve;
+    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
     Standard_Real theCurveLength =  GCPnts_AbscissaPoint::Length(AdapCurve);
-    //std::cout<<"theCurveLength = "<<theCurveLength<<std::endl;
     if (theLength > theCurveLength) {
        Standard_ConstructionError::Raise
         ("Point On Curve creation aborted : given length is greater than edges length");
     }
-
-    GCPnts_AbscissaPoint anAbsPnt(AdapCurve, aPI.GetLength(), 0); 
+    GCPnts_AbscissaPoint anAbsPnt(AdapCurve, theLength, UFirst); 
     Standard_Real aParam = anAbsPnt.Parameter();
-    Standard_Real result_length = GCPnts_AbscissaPoint::Length(AdapCurve, 0, aParam); 
-    std::cout<<"calculated Length of the result = "<<result_length<<std::endl;  
     aPnt = AdapCurve.Value(aParam);
   }
   else if (aType == POINT_SURFACE_PAR) {

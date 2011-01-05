@@ -191,6 +191,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
                      double theParam1,
                      double theParam2,
                      double theParam3,
+		     int theFlag1,
                      const PointLocation theLocation)
 {
   SetErrorCode(KO);
@@ -229,7 +230,8 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       break;
     case PointOn_CurveByLength:
       aPI.SetCurve(aRefFunction);
-      aPI.SetLength(theParam1); 
+      aPI.SetLength(theParam1);
+      aPI.SetFlag(theFlag1);
       break;
     case PointOn_CurveByCoord:
       aPI.SetCurve(aRefFunction);
@@ -275,7 +277,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       break;
     case PointOn_CurveByLength:
       GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByLength("
-                                   << theGeomObj << ", " << theParam1 << ")";
+                                   << theGeomObj << ", " << theParam1 << ", " << theFlag1 <<  ")";
       break;
     case PointOn_CurveByCoord:
   GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByCoord("
@@ -306,7 +308,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurve
                             (Handle(GEOM_Object) theCurve, double theParameter)
 {
-  return makePointOnGeom(theCurve, theParameter, 0.0, 0.0, PointOn_CurveByParam);
+  return makePointOnGeom(theCurve, theParameter, 0.0, 0.0, 1, PointOn_CurveByParam);
 }
 
 //=============================================================================
@@ -320,7 +322,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByCoord
                      double theYParam,
                      double theZParam)
 {
-  return makePointOnGeom(theCurve, theXParam, theYParam, theZParam, PointOn_CurveByCoord);
+  return makePointOnGeom(theCurve, theXParam, theYParam, theZParam, 1, PointOn_CurveByCoord);
 }
 
 //=============================================================================
@@ -329,9 +331,11 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByCoord
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByLength
-                    (Handle(GEOM_Object) theCurve, double theLength)
+                    (Handle(GEOM_Object) theCurve, 
+		     double theLength, 
+		     int theDirection)
 {
-  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength);
+  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, theDirection, PointOn_CurveByLength);
 }
 
 //=============================================================================
@@ -344,7 +348,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurface
                      double theUParameter,
                      double theVParameter)
 {
-  return makePointOnGeom(theSurface, theUParameter, theVParameter, 0., PointOn_SurfaceByParam);
+  return makePointOnGeom(theSurface, theUParameter, theVParameter, 0., 1, PointOn_SurfaceByParam);
 }
 
 //=============================================================================
@@ -358,7 +362,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnSurfaceByCoord
                      double theYParam,
                      double theZParam)
 {
-  return makePointOnGeom(theSurface, theXParam, theYParam, theZParam, PointOn_SurfaceByCoord);
+  return makePointOnGeom(theSurface, theXParam, theYParam, theZParam, 1, PointOn_SurfaceByCoord);
 }
 
 

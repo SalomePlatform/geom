@@ -40,6 +40,8 @@
 
 #define ARG_LENGTH 11
 
+#define ARG_FLAG 12
+
 class GEOMImpl_IPoint
 {
  public:
@@ -70,13 +72,13 @@ class GEOMImpl_IPoint
 
   void SetParameter(double theParam) { _func->SetReal(ARG_PARAM, theParam); }
   void SetParameter2(double theParam) { _func->SetReal(ARG_PARAM2, theParam); }
+  void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
+  void SetFlag(int theFlag)  { _func->SetInteger(ARG_FLAG, theFlag); }
 
   double GetParameter() { return _func->GetReal(ARG_PARAM); }
   double GetParameter2() { return _func->GetReal(ARG_PARAM2); }
-
-  void SetLength(double theLength) { _func->SetReal(ARG_LENGTH, theLength); }
- 
   double GetLength() { return _func->GetReal(ARG_LENGTH); }
+  int GetFlag() { return _func->GetInteger(ARG_FLAG); }
 
  private:
 

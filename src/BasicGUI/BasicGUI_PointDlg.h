@@ -30,7 +30,7 @@
 #include <GEOMBase_Skeleton.h>
 #include <QMap>
 
-class DlgRef_1Sel1Spin;
+class DlgRef_1Sel1Spin1Check;
 class DlgRef_3Spin;
 class DlgRef_2Sel;
 class DlgRef_1Sel3Spin;
@@ -84,9 +84,11 @@ private:
 
   bool                               myBusy;
 
+  int				     myCheckFlag;
+
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
-  DlgRef_1Sel1Spin*                  GroupOnCurve;
+  DlgRef_1Sel1Spin1Check*            GroupOnCurve;
   DlgRef_2Sel*                       GroupLineIntersection;
   DlgRef_1Sel2Spin*                  GroupOnSurface;
   
@@ -115,6 +117,7 @@ private slots:
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
   void                               ClickParamCoord( int );
+  void                               CheckBoxClicked( int );
   void                               onBtnPopup( QAction* );
   void                               updateSize();
 };
