@@ -340,29 +340,35 @@ void GEOMToolsGUI::OnColor()
             if ( c.isValid() ) {
               SUIT_OverrideCursor();
               aColor = Quantity_Color( c.red() / 255., c.green() / 255., c.blue() / 255., Quantity_TOC_RGB );
+              OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
+              Handle (AIS_InteractiveContext) ic = vm->getAISContext();
               for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
                 io = GEOMBase::GetAIS( It.Value(), true );
                 if ( !io.IsNull() ) {
-                  // Set color for a point
-                  OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>
-                    ( window->getViewManager()->getViewModel() );
-                  Handle (AIS_InteractiveContext) ic = vm->getAISContext();
-                  Handle(AIS_Drawer) aCurDrawer = io->Attributes();
-                  Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
-                  Quantity_Color aCurColor;
-                  Standard_Real aCurScale;
-                  Aspect_TypeOfMarker aCurTypeOfMarker;
-                  aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
-                  if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
-                    aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aCurTypeOfMarker, aColor, aCurScale));
+                  
+                  if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
+                    TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
+                    if (theShape.ShapeType() == TopAbs_VERTEX) {
+                      // Set color for a point
+
+                      Handle(AIS_Drawer) aCurDrawer = io->Attributes();
+                      Handle(Prs3d_PointAspect) aCurPointAspect =  aCurDrawer->PointAspect();
+                      Quantity_Color aCurColor;
+                      Standard_Real aCurScale;
+                      Aspect_TypeOfMarker aCurTypeOfMarker;
+                      aCurPointAspect->Aspect()->Values( aCurColor, aCurTypeOfMarker, aCurScale );
+                      if ( aCurTypeOfMarker != Aspect_TOM_USERDEFINED ) {
+                        aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aCurTypeOfMarker, aColor, aCurScale));
+                      }
+                      else {
+                        Standard_Integer aWidth, aHeight;
+                        aCurPointAspect->GetTextureSize( aWidth, aHeight );
+                        Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+                        aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aColor, 1, aWidth, aHeight, aTexture));
+                      }
+                      ic->SetLocalAttributes(io, aCurDrawer, Standard_False);
+                    }
                   }
-                  else {
-                    Standard_Integer aWidth, aHeight;
-                    aCurPointAspect->GetTextureSize( aWidth, aHeight );
-                    Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
-                    aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aColor, 1, aWidth, aHeight, aTexture));
-                  }
-                  ic->SetLocalAttributes(io, aCurDrawer);
 
                   io->SetColor( aColor );
                   if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
@@ -384,6 +390,7 @@ void GEOMToolsGUI::OnColor()
                   anObject->SetAutoColor( false );
                 }
               } // for
+              ic->UpdateCurrentViewer();
               GeometryGUI::Modified();
             } // if c.isValid()
           } // first IO is not null
