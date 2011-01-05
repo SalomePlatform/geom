@@ -325,7 +325,7 @@ void GEOMToolsGUI::OnColor()
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
               aView->SetColor( It.Value(), c );
             }
-	    GeometryGUI::Modified();
+            GeometryGUI::Modified();
           }
         } // if ( isVTK )
         else if ( isOCC ) {
@@ -383,8 +383,8 @@ void GEOMToolsGUI::OnColor()
                   anObject->SetColor( aSColor );
                   anObject->SetAutoColor( false );
                 }
-		GeometryGUI::Modified();
-              }
+              } // for
+              GeometryGUI::Modified();
             } // if c.isValid()
           } // first IO is not null
         } // if ( isOCC )
@@ -506,40 +506,40 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
       int newNbVIso = -1;
 
       if ( actionType == SHOWDLG ) {
-	GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
-	  new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+        GEOMToolsGUI_NbIsosDlg * NbIsosDlg =
+          new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
 
-	NbIsosDlg->setU( UIso );
-	NbIsosDlg->setV( VIso );
+        NbIsosDlg->setU( UIso );
+        NbIsosDlg->setV( VIso );
 
-	if ( NbIsosDlg->exec() ) {
-	  SUIT_OverrideCursor();
-	  
-	  newNbUIso = NbIsosDlg->getU();
+        if ( NbIsosDlg->exec() ) {
+          SUIT_OverrideCursor();
+          
+          newNbUIso = NbIsosDlg->getU();
           newNbVIso = NbIsosDlg->getV();
-	}
+        }
       }
       else if ( actionType == INCR || actionType == DECR ) {
-	int delta = 1;
-	if (actionType == DECR)
-	  delta = -1;
-	
-	newNbUIso = UIso + delta;
-	newNbVIso = VIso + delta;
+        int delta = 1;
+        if (actionType == DECR)
+          delta = -1;
+        
+        newNbUIso = UIso + delta;
+        newNbVIso = VIso + delta;
 
-	if ( newNbUIso < 0 || newNbVIso < 0 || newNbUIso > 99 || newNbVIso > 99 )
-	  return;
+        if ( newNbUIso < 0 || newNbVIso < 0 || newNbUIso > 99 || newNbVIso > 99 )
+          return;
       }
 
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
-	CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
-	
-	CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbUIso) );
-	CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbVIso) );
-	
-	ic->SetLocalAttributes(CurObject, CurDrawer);
-	ic->Redisplay(CurObject);
+        CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+        Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
+        
+        CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbUIso) );
+        CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbVIso) );
+        
+        ic->SetLocalAttributes(CurObject, CurDrawer);
+        ic->Redisplay(CurObject);
       }
     }
     GeometryGUI::Modified();
@@ -599,35 +599,35 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 
     if ( actionType == SHOWDLG ) {
       GEOMToolsGUI_NbIsosDlg* NbIsosDlg =
-	new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
+        new GEOMToolsGUI_NbIsosDlg( SUIT_Session::session()->activeApplication()->desktop() );
 
       NbIsosDlg->setU( UIso );
       NbIsosDlg->setV( VIso );
 
       if ( NbIsosDlg->exec() ) {
-	SUIT_OverrideCursor();
+        SUIT_OverrideCursor();
 
-	newNbUIso = NbIsosDlg->getU();
-	newNbVIso = NbIsosDlg->getV();
+        newNbUIso = NbIsosDlg->getU();
+        newNbVIso = NbIsosDlg->getV();
       }
     }
     else if ( actionType == INCR || actionType == DECR ) {
       int delta = 1;
       if (actionType == DECR)
-	delta = -1;
+        delta = -1;
       
       newNbUIso = UIso + delta;
       newNbVIso = VIso + delta;
       
       if ( newNbUIso < 0 || newNbVIso < 0 || newNbUIso > 99 || newNbVIso > 99 )
-	return;
+        return;
     } 
     
     while( anAct!=NULL ) {
       if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)){
-	// There are no casting to needed actor.
-	int aIsos[2]={newNbUIso,newNbVIso};
-	anActor->SetNbIsos(aIsos);
+        // There are no casting to needed actor.
+        int aIsos[2]={newNbUIso,newNbVIso};
+        anActor->SetNbIsos(aIsos);
       }
       anAct = aCollection->GetNextActor();
     }

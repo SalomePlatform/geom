@@ -388,23 +388,26 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
     
     foreach ( SUIT_ViewWindow* view, views ) {
       if ( view && view->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-	Handle(AIS_InteractiveContext) anIC = ((OCCViewer_Viewer*)view->getViewManager()->getViewModel())->getAISContext();
+        Handle(AIS_InteractiveContext) anIC = ((OCCViewer_Viewer*)view->getViewManager()->getViewModel())->getAISContext();
 
-	AIS_ListOfInteractive displayed;
-	anIC->DisplayedObjects( displayed );
-	anIC->ObjectsInCollector( displayed );
+        AIS_ListOfInteractive displayed;
+        anIC->DisplayedObjects( displayed );
+        anIC->ObjectsInCollector( displayed );
 
-	AIS_ListIteratorOfListOfInteractive it( displayed );
-	while ( it.More() && aisObject.IsNull() ) {
-	  if ( onlyGeom && !it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) )
-	    continue;
+        AIS_ListIteratorOfListOfInteractive it( displayed );
+        for ( ; it.More(); it.Next() ){
+          if ( onlyGeom && !it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) )
+            continue;
 
-	  Handle(SALOME_InteractiveObject) obj =
-	    Handle(SALOME_InteractiveObject)::DownCast( it.Value()->GetOwner() );
+          Handle(SALOME_InteractiveObject) obj =
+            Handle(SALOME_InteractiveObject)::DownCast( it.Value()->GetOwner() );
 
-	  if ( !obj.IsNull() && obj->isSame( IO ) )
-	    aisObject = it.Value();
-	}
+          if ( !obj.IsNull() && obj->isSame( IO ) )
+            {
+              aisObject = it.Value();
+              break;
+            }
+        }
       }
       if ( !aisObject.IsNull() ) break;
     }
@@ -438,7 +441,7 @@ QStringList GEOMBase::ConvertListOfIOInListOfIOR( const SALOME_ListIO& IObjects 
     for ( ; it.More(); it.Next() ) {
       GEOM::GEOM_Object_var geomObj = ConvertIOinGEOMObject( it.Value() );
       if ( !CORBA::is_nil( geomObj ) )
-	iors.append( GetIORFromObject( geomObj ) );
+        iors.append( GetIORFromObject( geomObj ) );
     }
   }
   return iors;
@@ -460,8 +463,8 @@ GEOM::GEOM_Object_ptr GEOMBase::ConvertIOinGEOMObject( const Handle(SALOME_Inter
       _PTR(SObject) obj( studyDS->FindObjectID( IO->getEntry() ) );
       if ( obj ) {
         CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( obj );
-	if ( !CORBA::is_nil( corbaObj ) )
-	  object = GEOM::GEOM_Object::_narrow( corbaObj );
+        if ( !CORBA::is_nil( corbaObj ) )
+          object = GEOM::GEOM_Object::_narrow( corbaObj );
       }
     }
   }
@@ -517,20 +520,20 @@ TopoDS_Shape GEOMBase::CreateArrowForLinearEdge( const TopoDS_Shape& shape )
       Standard_Real first, last;
       Handle(Geom_Curve) curv = BRep_Tool::Curve( TopoDS::Edge( shape ), first, last );
       if ( curv->IsCN(1) ) {
-	const Standard_Real param = ( first+last ) / 2.0;
-	gp_Pnt middleParamPoint;
-	gp_Vec V1;
-	curv->D1( param, middleParamPoint, V1 );
-	if ( V1.Magnitude() > Precision::Confusion() ) {
-	  /* Topology orientation not geom orientation */
-	  if ( shape.Orientation() == TopAbs_REVERSED )
-	    V1 *= -1.0;
+        const Standard_Real param = ( first+last ) / 2.0;
+        gp_Pnt middleParamPoint;
+        gp_Vec V1;
+        curv->D1( param, middleParamPoint, V1 );
+        if ( V1.Magnitude() > Precision::Confusion() ) {
+          /* Topology orientation not geom orientation */
+          if ( shape.Orientation() == TopAbs_REVERSED )
+            V1 *= -1.0;
 
-	  gp_Ax2 anAxis( middleParamPoint, gp_Dir( V1 ) );
-	  const Standard_Real radius1 = aHeight / 5.0;
-	  if ( radius1 > 10.0 * Precision::Confusion() && aHeight > 10.0 * Precision::Confusion() )
-	    ArrowCone = BRepPrimAPI_MakeCone( anAxis, radius1, 0.0, aHeight ).Shape();
-	}
+          gp_Ax2 anAxis( middleParamPoint, gp_Dir( V1 ) );
+          const Standard_Real radius1 = aHeight / 5.0;
+          if ( radius1 > 10.0 * Precision::Confusion() && aHeight > 10.0 * Precision::Confusion() )
+            ArrowCone = BRepPrimAPI_MakeCone( anAxis, radius1, 0.0, aHeight ).Shape();
+        }
       }
     }
     catch ( Standard_Failure ) {
