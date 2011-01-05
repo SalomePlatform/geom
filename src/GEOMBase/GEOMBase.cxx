@@ -36,6 +36,8 @@
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewWindow.h>
+#include <SOCC_ViewModel.h>
+#include <SOCC_Prs.h>
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -388,29 +390,20 @@ Handle(AIS_InteractiveObject) GEOMBase::GetAIS( const Handle(SALOME_InteractiveO
     
     foreach ( SUIT_ViewWindow* view, views ) {
       if ( view && view->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-        Handle(AIS_InteractiveContext) anIC = ((OCCViewer_Viewer*)view->getViewManager()->getViewModel())->getAISContext();
-
-        AIS_ListOfInteractive displayed;
-        anIC->DisplayedObjects( displayed );
-        anIC->ObjectsInCollector( displayed );
-
-        AIS_ListIteratorOfListOfInteractive it( displayed );
-        for ( ; it.More(); it.Next() ){
-          if ( onlyGeom && !it.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) )
-            continue;
-
-          Handle(SALOME_InteractiveObject) obj =
-            Handle(SALOME_InteractiveObject)::DownCast( it.Value()->GetOwner() );
-
-          if ( !obj.IsNull() && obj->isSame( IO ) )
-            {
-              aisObject = it.Value();
-              break;
-            }
+        OCCViewer_Viewer* occViewer=(OCCViewer_Viewer*)view->getViewManager()->getViewModel();
+        SOCC_Viewer* soccViewer = dynamic_cast<SOCC_Viewer*>(occViewer);
+        if (soccViewer) {
+          SOCC_Prs* occPrs = dynamic_cast<SOCC_Prs*>( soccViewer->CreatePrs( IO->getEntry() ) );
+          if ( occPrs && !occPrs->IsNull() ) {
+            AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
+            if( !shapes.Extent() ) continue;
+            aisObject=shapes.First();
+            delete occPrs;
+          }
         }
       }
       if ( !aisObject.IsNull() ) break;
-    }
+    } // foreach
   }
 
   return aisObject;
