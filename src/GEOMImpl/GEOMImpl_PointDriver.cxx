@@ -31,15 +31,14 @@
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRep_Builder.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <Precision.hxx>
 #include <TopAbs.hxx>
-//#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
-//#include <TopExp_Explorer.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
@@ -48,9 +47,7 @@
 #include <ShapeAnalysis.hxx>
 
 #include <GCPnts_AbscissaPoint.hxx>
-#include <BRepAdaptor_Curve.hxx>
-
-#include <BRep_Tool.hxx>
+#include <IntTools.hxx>
 
 //=======================================================================
 //function : GetID
@@ -161,24 +158,28 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     Standard_Real theLength = aPI.GetLength();
     Standard_Integer theDirection = aPI.GetFlag(); 
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
+    Standard_Real UFirst = 0;
+    Standard_Real ULast = 0;
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
     }    
-    Standard_Real UFirst = 0;
-    Standard_Real ULast = 0;
+    Standard_Real theCurveLength = IntTools::Length(TopoDS::Edge(aRefShape));
+    if (theLength > theCurveLength) {
+      Standard_ConstructionError::Raise
+	("Point On Curve creation aborted : given length is greater than edges length");
+    }
     Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), UFirst, ULast);
     Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
-    if ( theDirection == 2 )
-      ReOrientedCurve = EdgeCurve->Reversed();
-    else if ( theDirection == 0 )
-      ReOrientedCurve = EdgeCurve;
-    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
-    Standard_Real theCurveLength =  GCPnts_AbscissaPoint::Length(AdapCurve);
-    if (theLength > theCurveLength) {
-       Standard_ConstructionError::Raise
-        ("Point On Curve creation aborted : given length is greater than edges length");
+    if ( theDirection == 2 ) {
+      ReOrientedCurve = EdgeCurve -> Reversed();
+      UFirst=ULast;
     }
+    else if ( theDirection != 0 ){
+      Standard_TypeMismatch::Raise
+	("Point On Curve creation aborted : direction parameter must be 0 or 2");
+    }
+    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
     GCPnts_AbscissaPoint anAbsPnt(AdapCurve, theLength, UFirst); 
     Standard_Real aParam = anAbsPnt.Parameter();
     aPnt = AdapCurve.Value(aParam);
