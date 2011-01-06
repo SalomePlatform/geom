@@ -18,14 +18,16 @@ py = geompy.MakeVertex(0., 100., 0.)
 pz = geompy.MakeVertex(0., 0., 100.)
 p1 = geompy.MakeVertex(50., 50., 30.)
 
-# create a curve and a vertices on it
+# create a curve and vertices on it
 Arc = geompy.MakeArc(py, pz, px)
-# create vertex by parameter
+# create a vertex by parameter
 p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
-#create vertex by point projection
-p_on_arc2 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10)
+# create a vertex by length
+p_on_arc2 = geompy.MakeVertexOnCurveByLength(Arc, 50., 0)
+#create a vertex by point projection
+p_on_arc3 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10)
 
-# create 2 lines and make point on its intersection
+# create 2 lines and make a point on its intersection
 line_1 = geompy.MakeLineTwoPnt(p0, p100)
 line_2 = geompy.MakeLineTwoPnt(p1, pz)
 p_inter = geompy.MakeVertexOnLinesIntersection(line_1, line_2)
@@ -47,7 +49,8 @@ id_Arc      = geompy.addToStudy(Arc,  "Arc")
 id_line_1   = geompy.addToStudy(line_1,  "Line 1")
 id_line_2   = geompy.addToStudy(line_2,  "Line 2")
 id_p_on_arc = geompy.addToStudy(p_on_arc, "Vertex on Arc by parameter")
-id_p_on_arc2  = geompy.addToStudy(p_on_arc, "Vertex on Arc by point projection")
+id_p_on_arc2  = geompy.addToStudy(p_on_arc, "Vertex on Arc by length")
+id_p_on_arc3  = geompy.addToStudy(p_on_arc, "Vertex on Arc by point projection")
 id_p_inter    = geompy.addToStudy(p_inter,   "Vertex on Lines Intersection")
 id_p_on_face1 = geompy.addToStudy(p_on_face1, "Vertex on face by parameter")
 id_p_on_face2 = geompy.addToStudy(p_on_face2, "Vertex on face by point projection")
@@ -58,6 +61,8 @@ gg.createAndDisplayGO(id_p100)
 gg.createAndDisplayGO(id_Arc)
 gg.createAndDisplayGO(id_p_inter)
 gg.createAndDisplayGO(id_p_on_arc)
+gg.createAndDisplayGO(id_p_on_arc2)
+gg.createAndDisplayGO(id_p_on_arc3)
 \endcode
 
 \anchor tui_creation_line
