@@ -33,7 +33,14 @@ point is located in the middle of the edge.
 position of the point on the given edge.
 \image html point3.png
 
-Alternatively, it is possible to define 3D coordinates of the point
+Alternatively, it is possible to define the point by \b Edge and \b Length,
+the given length must not exceed the length of the edge. The orientation of the edge can be reversed.
+\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByLength(Edge,Length,Direction).</em>
+\n <b>Arguments:</b> Name + 1 edge  + 1 Length defining the
+position of the point on the given edge + 1 Direction for the calculation of the length (0 = forward, 2 = reversed).
+\image html point3_3.png
+
+It is also possible to define 3D coordinates of the point
 projected on the given edge to produce the resulting point.
 \n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByCoord(Edge,X,Y,Z).</em>
 \n <b>Arguments:</b> Name + 1 edge  + 3 coordinate values of the
