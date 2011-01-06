@@ -511,11 +511,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeVertexOnCurveByCoord", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
-	
-	## Create a point, corresponding to the given length on the given curve.
+
+        ## Create a point, corresponding to the given length on the given curve.
         #  @param theRefCurve The referenced curve.
-        #  @param theLength length on the referenced curve.
-        #  @param theFirstParameter flag allowing to choose the direction for the calculation of the length (0 = forward or 2 = reversed).
+        #  @param theLength Length on the referenced curve.
+        #  @param theDirection Flag allowing to choose the direction for the calculation of the length (0 = forward or 2 = reversed).
         #  @return New GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
