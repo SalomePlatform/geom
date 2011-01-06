@@ -114,6 +114,7 @@ def TestAll (geompy, math):
   #Test point on curve creation
   p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
   p_on_arc2 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10 ) #(GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  p_on_arc3 = geompy.MakeVertexOnCurveByLength(Arc, 50, 2) #(GEOM_Object_ptr, Double, Double)->GEOM_Object_ptr
 
   #Test point on lines intersection
   p_on_l1l2 = geompy.MakeVertexOnLinesIntersection(Line1, Line2) #(2 GEOM_Object_ptr)->GEOM_Object_ptr
