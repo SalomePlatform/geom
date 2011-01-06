@@ -84,8 +84,6 @@ private:
 
   bool                               myBusy;
 
-  int				     myCheckFlag;
-
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
   DlgRef_1Sel1Spin1Check*            GroupOnCurve;

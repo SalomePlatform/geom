@@ -45,7 +45,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByLength (Handle(GEOM_Object) theCurve,
 								double theLength,
-								int theDirection);
+								bool theReverse);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByCoord (Handle(GEOM_Object) theCurve,
                                                                double theXParam,
@@ -135,8 +135,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                        double theParam1,
                                        double theParam2,
                                        double theParam3,
-				       int theFlag1,
-                                       const PointLocation theLocation);
+                                       const PointLocation theLocation,
+				       bool   theReverse = false);
 };
 
 #endif

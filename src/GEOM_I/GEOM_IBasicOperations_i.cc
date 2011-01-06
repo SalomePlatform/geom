@@ -163,7 +163,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
 GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByLength
                   (GEOM::GEOM_Object_ptr theCurve,  
 		   CORBA::Double theLength,
-		   CORBA::Double theDirection)
+		   CORBA::Boolean theReverse)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -177,7 +177,7 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByLength
   //Create the point
   Handle(GEOM_Object) anObject =
     GetOperations()->MakePointOnCurveByLength(aReference, theLength,
-					      theDirection);
+					      theReverse);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

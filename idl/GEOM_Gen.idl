@@ -422,12 +422,12 @@ module GEOM
      *  Create a point, corresponding to the given length on the given curve.
      *  \param theRefCurve The referenced curve.
      *  \param theLength Length on the referenced curve.
-     *  \param theDirection Direction for the calculation of the length (0 = forward or 2 = reversed).
+     *  \param theReverse Direction for the calculation of the length (false = forward or true = reversed).
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointOnCurveByLength (in GEOM_Object theRefCurve,
                                           in double theLength,
-                                          in double theDirection);
+                                          in boolean theReverse);
 
     /*!
      *  Create a point on the given curve, projecting given point

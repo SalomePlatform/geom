@@ -156,7 +156,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
   else if (aType == POINT_CURVE_LENGTH) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     Standard_Real theLength = aPI.GetLength();
-    Standard_Integer theDirection = aPI.GetFlag(); 
+    Standard_Integer theReversed = aPI.GetReversed(); 
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
     Standard_Real UFirst = 0;
     Standard_Real ULast = 0;
@@ -171,13 +171,9 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     }
     Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), UFirst, ULast);
     Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
-    if ( theDirection == 2 ) {
+    if ( theReversed ) {
       ReOrientedCurve = EdgeCurve -> Reversed();
       UFirst=ULast;
-    }
-    else if ( theDirection != 0 ){
-      Standard_TypeMismatch::Raise
-	("Point On Curve creation aborted : direction parameter must be 0 or 2");
     }
     GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
     GCPnts_AbscissaPoint anAbsPnt(AdapCurve, theLength, UFirst); 

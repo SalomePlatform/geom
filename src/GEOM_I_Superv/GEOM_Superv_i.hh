@@ -152,7 +152,7 @@ public:
 					  CORBA::Double theParameter);
   GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
 					          CORBA::Double theLength,
-					          CORBA::Double theDirection);
+					          CORBA::Boolean theReverse);
   GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theRefCurve,
                                                  CORBA::Double theXParameter,
                                                  CORBA::Double theYParameter,

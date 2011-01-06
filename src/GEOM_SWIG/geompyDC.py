@@ -515,14 +515,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a point, corresponding to the given length on the given curve.
         #  @param theRefCurve The referenced curve.
         #  @param theLength Length on the referenced curve.
-        #  @param theDirection Flag allowing to choose the direction for the calculation of the length (0 = forward or 2 = reversed).
+        #  @param theReverse Flag allowing to choose the direction for the calculation of the length (False = forward or True = reversed).
         #  @return New GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertexOnCurveByLength(self,theRefCurve, theLength, theDirection):
+        def MakeVertexOnCurveByLength(self,theRefCurve, theLength, theReverse = False):
             # Example: see GEOM_TestAll.py
             theLength, Parameters = ParseParameters(theLength)
-            anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength, theDirection)
+            anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength, theReverse)
             RaiseIfFailed("MakePointOnCurveByLength", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj

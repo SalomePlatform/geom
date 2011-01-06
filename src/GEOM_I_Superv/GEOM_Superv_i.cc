@@ -592,12 +592,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
 							       CORBA::Double theLength,
-							       CORBA::Double theDirection)
+							       CORBA::Boolean theReverse)
 {
   beginService( " GEOM_Superv_i::MakePointOnCurveByLength" );
   MESSAGE("GEOM_Superv_i::MakePointOnCurveByLength");
   getBasicOp();
-  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnCurveByLength(theRefCurve, theLength, theDirection);
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnCurveByLength(theRefCurve, theLength, theReverse);
   endService( " GEOM_Superv_i::MakePointOnCurveByLength" );
   return anObj;
 }

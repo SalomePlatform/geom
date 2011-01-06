@@ -233,7 +233,6 @@ void BasicGUI_PointDlg::Init()
   myNeedType = TopAbs_VERTEX;
 
   myEditCurrentArgument = 0;
-  myCheckFlag = 0;
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -712,7 +711,6 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void BasicGUI_PointDlg::CheckBoxClicked( int  State ) 
 {
-  myCheckFlag = State;
   displayPreview();
 }
 
@@ -871,13 +869,11 @@ bool BasicGUI_PointDlg::execute( ObjectList& objects )
         aParameters<<GroupOnCurve->SpinBox_DX->text();
       } 
       else if ( myParamCoord->checkedId() == LENGTH_VALUE ) {
-	anObj = anOper->MakePointOnCurveByLength( myEdge, getParameter(), myCheckFlag );
+	bool reversed = GroupOnCurve->CheckButton1->isChecked();
+	anObj = anOper->MakePointOnCurveByLength( myEdge, getParameter(), reversed );
 	
-	std::stringstream out;
-	out<<myCheckFlag;
-	std::string flag = out.str();
 	aParameters<<GroupOnCurve->SpinBox_DX->text();
-	aParameters<<flag.c_str();
+	aParameters<<QString::number( reversed );
       }
       else if ( myParamCoord->checkedId() == COORD_VALUE ) {
         double x = GroupXYZ->SpinBox_DX->value();
