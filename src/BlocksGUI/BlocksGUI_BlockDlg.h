@@ -27,7 +27,8 @@
 #ifndef BLOCKSGUI_BLOCKDLG_H
 #define BLOCKSGUI_BLOCKDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel;
 class DlgRef_6Sel;
@@ -58,8 +59,8 @@ private:
 private:
   int                                myConstructorId;
 
-  GEOM::GEOM_Object_var              myFace1, myFace2;
-  GEOM::GEOM_Object_var              myFace3, myFace4, myFace5, myFace6;
+  GEOM::GeomObjPtr                   myFace1, myFace2;
+  GEOM::GeomObjPtr                   myFace3, myFace4, myFace5, myFace6;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;

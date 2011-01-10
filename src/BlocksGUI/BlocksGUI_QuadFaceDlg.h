@@ -27,7 +27,8 @@
 #ifndef BLOCKSGUI_QUADFACEDLG_H
 #define BLOCKSGUI_QUADFACEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <QMap>
 
@@ -69,10 +70,10 @@ private:
 private:
   int                                myConstructorId;
 
-  GEOM::GEOM_Object_var              myShape1;
-  GEOM::GEOM_Object_var              myShape2;
-  GEOM::GEOM_Object_var              myShape3;
-  GEOM::GEOM_Object_var              myShape4;
+  GEOM::GeomObjPtr                   myShape1;
+  GEOM::GeomObjPtr                   myShape2;
+  GEOM::GeomObjPtr                   myShape3;
+  GEOM::GeomObjPtr                   myShape4;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;

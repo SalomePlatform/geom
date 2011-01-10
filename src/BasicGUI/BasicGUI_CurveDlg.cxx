@@ -112,8 +112,7 @@ void BasicGUI_CurveDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myPoints = new GEOM::ListOfGO();
-  myPoints->length( 0 );
+  myPoints.clear();
 
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
@@ -128,7 +127,6 @@ void BasicGUI_CurveDlg::Init()
   connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPoints->CheckButton1,SIGNAL( toggled(bool) ),   this, SLOT( CheckButtonToggled() ) );
 
@@ -154,8 +152,7 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
   else
     GroupPoints->CheckButton1->hide();
 
-  myPoints = new GEOM::ListOfGO();
-  myPoints->length( 0 );
+  myPoints.clear();
 
   myEditCurrentArgument->setText( "" );
   qApp->processEvents();
@@ -175,20 +172,6 @@ void BasicGUI_CurveDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BasicGUI_CurveDlg::LineEditReturnPressed()
-{
-  if ( sender() == GroupPoints->LineEdit1 )
-  {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 //=================================================================================
@@ -225,56 +208,29 @@ bool BasicGUI_CurveDlg::ClickOnApply()
   return true;
 }
 
-//=================================================================================
-/*! function : isPointInList()
- *  purpose  : Check is point (theObject) in the list \a thePoints.
- * \author enk
- * \retval -1, if point not in list, else 1 in list
- */
-//=================================================================================
-static int isPointInList( std::list<GEOM::GEOM_Object_var>& thePoints,
-                          GEOM::GEOM_Object_var& theObject )
+static void synchronize( QList<GEOM::GeomObjPtr>& left, QList<GEOM::GeomObjPtr>& right )
 {
-  int len = thePoints.size();
-
-  if ( len < 1 ) {
-    return -1;
-  }
-
-  for ( std::list<GEOM::GEOM_Object_var>::iterator i = thePoints.begin(); i != thePoints.end(); i++ ) {
-    if ( std::string( (*i)->GetEntry() ) == std::string( theObject->GetEntry() ) ) {
-      return 1;
-    }
-  }
-
-  return -1;
-}
-//=================================================================================
-/*! function : removeUnnecessaryPnt()
- *  purpose  : Remove unnecessary points from list \a theOldPoints
- * \author enk
- * \li \a theOldPoints - ordered sequence with unnecessary point
- * \li \a theNewPoints - not ordered sequence with necessary points
- */
-//=================================================================================
-static void removeUnnecessaryPnt( std::list<GEOM::GEOM_Object_var>& theOldPoints,
-                                  GEOM::ListOfGO_var& theNewPoints )
-{
-  std::list<GEOM::GEOM_Object_var> objs_to_remove;
-  for ( std::list<GEOM::GEOM_Object_var>::iterator i = theOldPoints.begin(); i != theOldPoints.end(); i++ ) {
+  // 1. remove items from the "left" list that are not in the "right" list
+  QMutableListIterator<GEOM::GeomObjPtr> it1( left );
+  while ( it1.hasNext() ) {
+    GEOM::GeomObjPtr o1 = it1.next();
     bool found = false;
-    for ( int j = 0; j < theNewPoints->length() && !found ; j++ ) {
-      if ( std::string( (*i)->GetEntry() ) == std::string( theNewPoints[j]->GetEntry() ) ) {
-        found = true;
-      }
-    }
-    if ( !found ) {
-      objs_to_remove.push_back( *i );
-      //cout << "removed: " << (*i)->GetEntry() << endl;
-    }
+    QMutableListIterator<GEOM::GeomObjPtr> it2( right );
+    while ( it2.hasNext() && !found )
+      found = o1 == it2.next();
+    if ( !found )
+      it1.remove();
   }
-  for ( std::list<GEOM::GEOM_Object_var>::iterator i = objs_to_remove.begin(); i != objs_to_remove.end(); i++ ) {
-    theOldPoints.remove( *i );
+  // 2. add items from the "right" list that are not in the "left" list (to keep selection order)
+  it1 = right;
+  while ( it1.hasNext() ) {
+    GEOM::GeomObjPtr o1 = it1.next();
+    bool found = false;
+    QMutableListIterator<GEOM::GeomObjPtr> it2( left );
+    while ( it2.hasNext() && !found )
+      found = o1 == it2.next();
+    if ( !found )
+      left << o1;
   }
 }
 
@@ -284,98 +240,12 @@ static void removeUnnecessaryPnt( std::list<GEOM::GEOM_Object_var>& theOldPoints
 //=================================================================================
 void BasicGUI_CurveDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
-
-  SalomeApp_Application* app = myGeomGUI->getApp();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  _PTR(Study) aDStudy = appStudy->studyDS();
-  GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-
-  int anIndex;
-  TopoDS_Shape aShape;
-  TColStd_IndexedMapOfInteger aMapIndexes;
-  GEOM::GEOM_Object_var anObject;
-  std::list<GEOM::GEOM_Object_var> aList;
-  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  SALOME_ListIO selected;
-  aSelMgr->selectedObjects(selected, QString::null, false);
-
-  int IOC = selected.Extent();
-  // bool is_append = myPoints->length() < IOC; // if true - add point, else remove
-  // myPoints->length( IOC ); // this length may be greater than number of objects,
-                           // that will actually be put into myPoints
-
-  for (SALOME_ListIteratorOfListIO anIt (selected); anIt.More(); anIt.Next()) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
-    if (!CORBA::is_nil(aSelectedObject) ) {
-      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-        aSelMgr->GetIndexes(anIt.Value(), aMapIndexes);
-
-        if (aMapIndexes.Extent() > 0) {
-          for (int ii = 1; ii <= aMapIndexes.Extent(); ii++) {
-            anIndex = aMapIndexes(ii);
-            QString aName = GEOMBase::GetName( aSelectedObject );
-            aName = aName + ":vertex_" + QString::number( anIndex );
-            anObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-            //Find Object in study
-            _PTR(SObject) obj ( aDStudy->FindObjectID( anIt.Value()->getEntry() ) );
-            bool inStudy = false;
-            _PTR(ChildIterator) iit( aDStudy->NewChildIterator( obj ) );
-            for (; iit->More() && !inStudy; iit->Next()) {
-              _PTR(SObject) child( iit->Value() );
-              QString aChildName = child->GetName().c_str();
-              if ( aChildName == aName ) {
-                inStudy = true;
-                CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( iit->Value() );
-                anObject = GEOM::GEOM_Object::_narrow( corbaObj );
-              }
-            }
-
-            if ( !inStudy )
-              GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( aDStudy ),
-                                                     anObject, aName.toLatin1().data(), aSelectedObject );
-
-            int pos = isPointInList( myOrderedSel, anObject );
-            if ( pos == -1 ) {
-              myOrderedSel.push_back( anObject );
-            }
-            //              if (!inStudy)
-            aList.push_back(anObject);
-          }
-        }
-        else { // aMap.Extent() == 0
-          if ( aShape.ShapeType() == TopAbs_VERTEX ) {
-            int pos = isPointInList( myOrderedSel, aSelectedObject );
-            if ( pos == -1 )
-              myOrderedSel.push_back( aSelectedObject );
-            aList.push_back( aSelectedObject );
-          }
-        }
-      }
-    }
-  }
-
-  myPoints->length( aList.size()  );
-
-  int k = 0;
-  for ( std::list<GEOM::GEOM_Object_var>::iterator j = aList.begin(); j != aList.end(); j++ )
-    myPoints[k++] = *j;
-
-  if ( IOC == 0 )
-    myOrderedSel.clear();
+  QList<GEOM::GeomObjPtr> points = getSelected( TopAbs_VERTEX, -1 );
+  synchronize( myPoints, points );
+  if ( !myPoints.isEmpty()  )
+    GroupPoints->LineEdit1->setText( QString::number( myPoints.count() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   else
-    removeUnnecessaryPnt( myOrderedSel, myPoints );
-
-  // if ( myOrderedSel.size() == myPoints->length() ) {
-  myPoints->length( myOrderedSel.size()  );
-  k = 0;
-  for ( std::list<GEOM::GEOM_Object_var>::iterator j = myOrderedSel.begin(); j != myOrderedSel.end(); j++ )
-    myPoints[k++] = *j;
-  //  }
-
-  if ( myPoints->length() > 0  )
-    GroupPoints->LineEdit1->setText( QString::number( myPoints->length() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
-
+    GroupPoints->LineEdit1->setText( "" );
   displayPreview();
 }
 
@@ -431,7 +301,7 @@ GEOM::GEOM_IOperations_ptr BasicGUI_CurveDlg::createOperation()
 //=================================================================================
 bool BasicGUI_CurveDlg::isValid( QString& msg )
 {
-  return myPoints->length() > 1;
+  return myPoints.count() > 1;
 }
 
 //=================================================================================
@@ -446,17 +316,22 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
 
+  GEOM::ListOfGO_var points = new GEOM::ListOfGO();
+  points->length( myPoints.count() );
+  for ( int i = 0; i < myPoints.count(); i++ )
+    points[i] = myPoints[i].copy();
+
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = anOper->MakePolyline( myPoints );
+    anObj = anOper->MakePolyline( points.in() );
     res = true;
     break;
   case 1 :
-    anObj = anOper->MakeSplineBezier( myPoints );
+    anObj = anOper->MakeSplineBezier( points.in() );
     res = true;
     break;
   case 2 :
-    anObj = anOper->MakeSplineInterpolation( myPoints, GroupPoints->CheckButton1->isChecked() );
+    anObj = anOper->MakeSplineInterpolation( points.in(), GroupPoints->CheckButton1->isChecked() );
     res = true;
     break;
   }
@@ -465,4 +340,14 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
     objects.push_back( anObj._retn() );
 
   return res;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_CurveDlg::addSubshapesToStudy()
+{
+  for ( int i = 0; i < myPoints.count(); i++ )
+    GEOMBase::PublishSubObject( myPoints[i].get() );
 }

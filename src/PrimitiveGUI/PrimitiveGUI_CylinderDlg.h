@@ -27,7 +27,8 @@
 #ifndef PRIMITIVEGUI_CYLINDERDLG_H
 #define PRIMITIVEGUI_CYLINDERDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel2Spin;
 class DlgRef_2Spin;
@@ -58,7 +59,7 @@ private:
   double                             getHeight() const;
   
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir;
+  GEOM::GeomObjPtr                   myPoint, myDir;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
@@ -70,7 +71,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

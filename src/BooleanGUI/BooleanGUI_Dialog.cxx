@@ -135,14 +135,12 @@ void BooleanGUI_Dialog::Init()
 
   myGroup->LineEdit1->setText("");
   myGroup->LineEdit2->setText("");
-  myObject1 = myObject2 = GEOM::GEOM_Object::_nil();
+  myObject1.nullify();
+  myObject2.nullify();
  
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
-
-  connect(myGroup->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(myGroup->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(myGroup->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(myGroup->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -198,21 +196,11 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText("");
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2 = GEOM::GEOM_Object::_nil();
-    return;
-  }
-
-  // nbSel == 1
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if ( GEOMBase::IsShape(aSelectedObject) )
-  {
-    myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_SHAPE );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
 
     // clear selection
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
@@ -222,14 +210,18 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
 
     if (myEditCurrentArgument == myGroup->LineEdit1) {
       myObject1 = aSelectedObject;
-      if (myObject2->_is_nil())
+      if (!myObject2)
         myGroup->PushButton2->click();
     }
     else if (myEditCurrentArgument == myGroup->LineEdit2) {
       myObject2 = aSelectedObject;
-      if (myObject1->_is_nil())
+      if (!myObject1)
         myGroup->PushButton1->click();
     }
+  }
+  else {
+    if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1.nullify();
+    else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2.nullify();
   }
 }
 
@@ -259,19 +251,6 @@ void BooleanGUI_Dialog::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   // after setFocus(), because it will be setDown(false) when loses focus
   send->setDown(true);
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BooleanGUI_Dialog::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == myGroup->LineEdit1 || send == myGroup->LineEdit2) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 //=================================================================================
@@ -312,12 +291,7 @@ GEOM::GEOM_IOperations_ptr BooleanGUI_Dialog::createOperation()
 //=================================================================================
 bool BooleanGUI_Dialog::isValid (QString&)
 {
-  //Handle(SALOME_InteractiveObject) IO = firstIObject();
-  //GEOM::GEOM_Object_var anObject = GEOMBase::ConvertIOinGEOMObject( IO );
-  //if ( anObject->_is_nil() )
-  //  return false;
-
-  return !CORBA::is_nil(myObject1) && !CORBA::is_nil(myObject2);
+  return myObject1 && myObject2;
 }
 
 //=================================================================================
@@ -329,7 +303,7 @@ bool BooleanGUI_Dialog::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
-  anObj = anOper->MakeBoolean(myObject1, myObject2, myOperation);
+  anObj = anOper->MakeBoolean(myObject1.get(), myObject2.get(), myOperation);
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 

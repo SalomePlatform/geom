@@ -33,13 +33,15 @@ salomeinclude_HEADERS =		\
 	GEOMBase_Skeleton.h	\
 	GEOMBase_Helper.h	\
 	GEOM_Operation.h	\
-	GEOM_GEOMBase.hxx
+	GEOM_GEOMBase.hxx	\
+	GEOM_GenericObjPtr.h
 
 dist_libGEOMBase_la_SOURCES =		\
 	GEOMBase.cxx			\
 	GEOMBase_Skeleton.cxx		\
 	GEOMBase_Helper.cxx		\
-	GEOM_Operation.cxx
+	GEOM_Operation.cxx		\
+	GEOM_GenericObjPtr.cxx
 
 MOC_FILES =				\
 	GEOMBase_Skeleton_moc.cxx

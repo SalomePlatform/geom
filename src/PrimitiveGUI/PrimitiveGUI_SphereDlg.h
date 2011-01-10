@@ -27,7 +27,8 @@
 #ifndef PRIMITIVEGUI_SPHEREDLG_H
 #define PRIMITIVEGUI_SPHEREDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Spin;
 class DlgRef_1Spin;
@@ -57,7 +58,7 @@ private:
   double                             getRadius() const;
   
 private:
-  GEOM::GEOM_Object_var              myPoint; /* Center point */
+  GEOM::GeomObjPtr                   myPoint; /* Center point */
   
   DlgRef_1Sel1Spin*                  GroupPoints;
   DlgRef_1Spin*                      GroupDimensions;
@@ -67,7 +68,6 @@ private slots:
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

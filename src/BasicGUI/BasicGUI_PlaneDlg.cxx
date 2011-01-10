@@ -137,6 +137,7 @@ BasicGUI_PlaneDlg::BasicGUI_PlaneDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupLCS->RadioButton1->setText( tr( "GEOM_WPLANE_OXY" ) );
   GroupLCS->RadioButton2->setText( tr( "GEOM_WPLANE_OYZ" ) );
   GroupLCS->RadioButton3->setText( tr( "GEOM_WPLANE_OZX" ) );
+  GroupLCS->LineEdit1->setReadOnly( true );
   GroupLCS->PushButton1->setIcon( image3 );
   GroupLCS->PushButton1->setDown( true );
 
@@ -173,8 +174,16 @@ void BasicGUI_PlaneDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPntDir->LineEdit1;
 
-  myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
-
+  myPoint.nullify();
+  myDir.nullify();
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myPoint3.nullify();
+  myFace.nullify();
+  myLCS.nullify();
+  myVec1.nullify();
+  myVec2.nullify();
+ 
   // myGeomGUI->SetState( 0 );
   myOriginType = 1;
 
@@ -218,15 +227,6 @@ void BasicGUI_PlaneDlg::Init()
   connect( GroupLCS->RadioButton2,   SIGNAL( clicked() ), this, SLOT( GroupClicked() ) );
   connect( GroupLCS->RadioButton3,   SIGNAL( clicked() ), this, SLOT( GroupClicked() ) );
 
-  connect( GroupPntDir->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupPntDir->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts->LineEdit1,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts->LineEdit2,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts->LineEdit3,  SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupFace->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2Vec->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2Vec->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-
   connect( GroupPntDir->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3Pnts->SpinBox_DX,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupFace->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
@@ -262,7 +262,15 @@ void BasicGUI_PlaneDlg::SetDoubleSpinBoxStep( double step )
 void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
 {
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
-  myPoint = myDir = myPoint1 = myPoint2 = myPoint3 = myFace = GEOM::GEOM_Object::_nil();
+  myPoint.nullify();
+  myDir.nullify();
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myPoint3.nullify();
+  myFace.nullify();
+  myLCS.nullify();
+  myVec1.nullify();
+  myVec2.nullify();
 
   switch ( constructorId ) {
   case 0: /* plane from a point and a direction (vector, edge...) */
@@ -428,115 +436,70 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint  = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir    = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3 = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )   myFace   = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group2Vec->LineEdit1 )   myVec1   = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == Group2Vec->LineEdit2 )   myVec2   = GEOM::GEOM_Object::_nil();
-    else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )    myLCS   = GEOM::GEOM_Object::_nil();
+    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) myPoint.nullify();
+    else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) myDir.nullify();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 )  myPoint1.nullify();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )  myPoint2.nullify();
+    else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )  myPoint3.nullify();
+    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )   myFace.nullify();
+    else if ( myEditCurrentArgument == Group2Vec->LineEdit1 )   myVec1.nullify();
+    else if ( myEditCurrentArgument == Group2Vec->LineEdit2 )   myVec2.nullify();
+    else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )    myLCS.nullify();
     displayPreview();
     return;
   }
 
-  // nbSel == 1
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if ( !CORBA::is_nil( aSelectedObject ) ) {
-    QString aName = GEOMBase::GetName( aSelectedObject );
-    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if ( myEditCurrentArgument == GroupPntDir->LineEdit2 || myEditCurrentArgument == Group2Vec->LineEdit1 || myEditCurrentArgument == Group2Vec->LineEdit2)
-      aNeedType = TopAbs_EDGE;
-    else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
-      aNeedType = TopAbs_FACE;
-    else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )
-      aNeedType = TopAbs_FACE;
-
-    TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if ( aMap.Extent() == 1 ) { // Local Selection
-        int anIndex = aMap( 1 );
-        if ( aNeedType == TopAbs_EDGE )
-          aName += QString( ":edge_%1" ).arg( anIndex );
-        else if (aNeedType == TopAbs_FACE)
-          aName += QString( ":face_%1" ).arg( anIndex );
-        else
-          aName += QString( ":vertex_%1" ).arg( anIndex );
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
-
-        if ( aFindedObject->_is_nil() ) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-          aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-        } 
-        else {
-          aSelectedObject = aFindedObject; // get Object from study
-        }
-      }
-      else { // Global Selection
-        if ( aShape.ShapeType() != aNeedType ) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
-      }
-    }
-
+  TopAbs_ShapeEnum aNeedType;
+  if ( myEditCurrentArgument == GroupPntDir->LineEdit2 || myEditCurrentArgument == Group2Vec->LineEdit1 || myEditCurrentArgument == Group2Vec->LineEdit2)
+    aNeedType = TopAbs_EDGE;
+  else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
+    aNeedType = TopAbs_FACE;
+  else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )
+    aNeedType = TopAbs_FACE;
+  else
+    aNeedType = TopAbs_VERTEX;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
-
-    /*    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
-      globalSelection();
-      if ( myEditCurrentArgument == GroupFace->LineEdit1 ) {
-        TColStd_MapOfInteger aMap;
-        aMap.Add( GEOM_PLANE );
-        aMap.Add( GEOM_MARKER );
-        globalSelection( aMap );
-      }
-      else
-        localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
-        }*/
-
-    if      ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) {
-      myPoint  = aSelectedObject;
-      if ( !myPoint->_is_nil() && myDir->_is_nil() )
+    if ( myEditCurrentArgument == GroupPntDir->LineEdit1 ) {
+      myPoint = aSelectedObject;
+      if ( myPoint && !myDir )
         GroupPntDir->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPntDir->LineEdit2 ) {
-      myDir    = aSelectedObject;
-      if ( !myDir->_is_nil() && myPoint->_is_nil() )
+      myDir = aSelectedObject;
+      if ( myDir && !myPoint )
         GroupPntDir->PushButton1->click();
     }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
       myPoint1 = aSelectedObject;
-      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+      if ( myPoint1 && !myPoint2 )
         Group3Pnts->PushButton2->click();
     }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
       myPoint2 = aSelectedObject;
-      if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+      if ( myPoint2 && !myPoint3 )
         Group3Pnts->PushButton3->click();
     }
     else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
       myPoint3 = aSelectedObject;
-      if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+      if ( myPoint3 && !myPoint1 )
         Group3Pnts->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupFace->LineEdit1 )
       myFace   = aSelectedObject;
     else if ( myEditCurrentArgument == Group2Vec->LineEdit1 ) {
       myVec1 = aSelectedObject;
-      if ( !myVec1->_is_nil() && myVec2->_is_nil() )
+      if ( myVec1 && !myVec2 )
         Group2Vec->PushButton2->click();
     } else if ( myEditCurrentArgument == Group2Vec->LineEdit2 ) {
       myVec2 = aSelectedObject;
-      if ( !myVec2->_is_nil() && myVec1->_is_nil() )
+      if ( myVec2 && !myVec1 )
         Group2Vec->PushButton1->click();
     } else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )
       myLCS = aSelectedObject;
-
   }
 
   displayPreview();
@@ -632,28 +595,6 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
 
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BasicGUI_PlaneDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPntDir->LineEdit1 ||
-       send == GroupPntDir->LineEdit2 ||
-       send == Group3Pnts->LineEdit1 ||
-       send == Group3Pnts->LineEdit2 ||
-       send == Group3Pnts->LineEdit3 ||
-       send == GroupFace->LineEdit1  ||
-       send == Group2Vec->LineEdit1  ||
-       send == Group2Vec->LineEdit2  ||
-       send == GroupLCS->LineEdit1  ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -737,46 +678,40 @@ GEOM::GEOM_IOperations_ptr BasicGUI_PlaneDlg::createOperation()
 }
 
 //=================================================================================
-// function : isEqual
-// purpose  : it may also be needed to check for min distance between gp_Pnt-s...
-//=================================================================================
-static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
-{
-        return thePnt1->_is_equivalent( thePnt2 );
-}
-
-//=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
 bool BasicGUI_PlaneDlg::isValid( QString& msg )
 {
-  const int id = getConstructorId();
+  bool ok = false;
   if ( getSize() <= 0 ) {
     msg = QString( "Please, enter size greater than 0." );
-    return false;
   }
-
-  if ( id == 0 ) { 
-    bool ok = GroupPntDir->SpinBox_DX->isValid( msg, !IsPreview() );
-    return !CORBA::is_nil( myPoint ) && !CORBA::is_nil( myDir ) && ok;
+  else {
+    switch ( getConstructorId() ) {
+    case 0:
+      ok = GroupPntDir->SpinBox_DX->isValid( msg, !IsPreview() ) && myPoint && myDir;
+      break;
+    case 1:
+      ok = Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+	   myPoint1 && myPoint2 && myPoint3 &&
+	   myPoint1 != myPoint2 && myPoint1 != myPoint3 && myPoint2 != myPoint3;
+      break;
+    case 2:
+      ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() ) && myFace;
+      break;
+    case 3:
+      ok = Group2Vec->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+	   myVec1 && myVec2 && myVec1 != myVec2;
+      break;
+    case 4:
+      ok = GroupLCS->SpinBox_DX->isValid( msg, !IsPreview() );
+      break;
+    default:
+      break;
+    }
   }
-  else if ( id == 1 ) {
-    bool ok = Group3Pnts->SpinBox_DX->isValid( msg, !IsPreview() );
-    return !CORBA::is_nil( myPoint1  ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) &&
-      !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 ) && ok;
-  }
-  else if ( id == 2 ) {
-    bool ok = GroupFace->SpinBox_DX->isValid( msg, !IsPreview() );
-    return !CORBA::is_nil( myFace ) && ok;
-  }   else if ( id == 3 ) {
-    bool ok = Group2Vec->SpinBox_DX->isValid( msg, !IsPreview() );
-    return !CORBA::is_nil( myVec1  ) && !CORBA::is_nil( myVec2 ) && !isEqual( myVec1, myVec2 ) && ok;
-  } else if ( id == 4 ) {
-    bool ok = GroupLCS->SpinBox_DX->isValid( msg, !IsPreview() );
-    return ok;
-  }
-  return false;
+  return ok;
 }
 
 //=================================================================================
@@ -793,23 +728,23 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
 
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = anOper->MakePlanePntVec( myPoint, myDir, getSize() );
+    anObj = anOper->MakePlanePntVec( myPoint.get(), myDir.get(), getSize() );
     res = true;
     break;
   case 1 :
-    anObj = anOper->MakePlaneThreePnt( myPoint1, myPoint2, myPoint3, getSize() );
+    anObj = anOper->MakePlaneThreePnt( myPoint1.get(), myPoint2.get(), myPoint3.get(), getSize() );
     res = true;
     break;
   case 2 :
-    anObj = anOper->MakePlaneFace( myFace, getSize() );
+    anObj = anOper->MakePlaneFace( myFace.get(), getSize() );
     res = true;
     break;
   case 3 :
-    anObj = anOper->MakePlane2Vec( myVec1, myVec2, getSize() );
+    anObj = anOper->MakePlane2Vec( myVec1.get(), myVec2.get(), getSize() );
     res = true;
     break;
   case 4 :
-    anObj = anOper->MakePlaneLCS( myLCS, getSize(), myOriginType );
+    anObj = anOper->MakePlaneLCS( myLCS.get(), getSize(), myOriginType );
     res = true;
     break;
   }
@@ -827,25 +762,27 @@ bool BasicGUI_PlaneDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_PlaneDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
   switch ( getConstructorId() ) {
   case 0:
-    objMap[GroupPntDir->LineEdit1->text()] = myPoint;
-    objMap[GroupPntDir->LineEdit2->text()] = myDir;
+    GEOMBase::PublishSubObject( myPoint.get() );
+    GEOMBase::PublishSubObject( myDir.get() );
     break;
   case 1:
-    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
-    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
-    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
+    GEOMBase::PublishSubObject( myPoint1.get() );
+    GEOMBase::PublishSubObject( myPoint2.get() );
+    GEOMBase::PublishSubObject( myPoint3.get() );
     break;
   case 2:
-    objMap[GroupFace->LineEdit1->text()] = myFace;
+    GEOMBase::PublishSubObject( myFace.get() );
     break;
   case 3:
-    objMap[Group2Vec->LineEdit1->text()] = myVec1;
-    objMap[Group2Vec->LineEdit2->text()] = myVec2;
+    GEOMBase::PublishSubObject( myVec1.get() );
+    GEOMBase::PublishSubObject( myVec2.get() );
     break;
+  case 4:
+    GEOMBase::PublishSubObject( myLCS.get() );
+    break;
+ default:
+   break;
   }
-  addSubshapesToFather( objMap );
 }

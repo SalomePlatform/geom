@@ -109,7 +109,7 @@ void PrimitiveGUI_SphereDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
   
-  myPoint = GEOM::GEOM_Object::_nil();
+  myPoint.nullify();
   
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -128,7 +128,6 @@ void PrimitiveGUI_SphereDlg::Init()
   connect( this,          SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupDimensions->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
   connect( GroupPoints->SpinBox_DX,     SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
@@ -173,7 +172,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
       
       myEditCurrentArgument = GroupPoints->LineEdit1;
       GroupPoints->LineEdit1->setText( "" );
-      myPoint = GEOM::GEOM_Object::_nil();
+      myPoint.nullify();
       
       connect( myGeomGUI->getApp()->selectionMgr(), 
                SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -241,64 +240,20 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    myPoint = GEOM::GEOM_Object::_nil();
+    myPoint.nullify();
     return;
   }
 
-  /* nbSel == 1 ! */
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-  if ( CORBA::is_nil( aSelectedObject ) )
-    return;
- 
-  QString aName = GEOMBase::GetName( aSelectedObject );
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_VERTEX );
   TopoDS_Shape aShape;
-  if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull() ) {
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    if ( aMap.Extent() == 1 ) { // Local Selection
-      int anIndex = aMap( 1 );
-      aName.append( ":vertex_" + QString::number( anIndex ) );
-
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName );
-
-      if ( aFindedObject->_is_nil() ) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp =
-          getGeomEngine()->GetIShapesOperations( getStudyId() );
-        aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-      }
-      else {
-        aSelectedObject = aFindedObject; // get Object from study
-      }
-    }
-    else { // Global Selection
-      if (aShape.ShapeType() != TopAbs_VERTEX) {
-        aSelectedObject = GEOM::GEOM_Object::_nil();
-        aName = "";
-      }
-    }
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
+    myPoint = aSelectedObject;
   }
-
-  myEditCurrentArgument->setText( aName );
-  myPoint = aSelectedObject;
 
   displayPreview();
 }
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void PrimitiveGUI_SphereDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -379,12 +334,12 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_SphereDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_SphereDlg::isValid( QString& msg  )
 {
-  bool ok = true;
+  bool ok = false;
   if( getConstructorId() == 0 )
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && myPoint;
   else if( getConstructorId() == 1 )
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-  return getConstructorId() == 0 ? !myPoint->_is_nil() && ok : ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() );
+  return ok;
 }
 
 //=================================================================================
@@ -402,8 +357,8 @@ bool PrimitiveGUI_SphereDlg::execute( ObjectList& objects )
   switch ( getConstructorId() ) {
   case 0 :
     {
-      if ( !CORBA::is_nil( myPoint ) ) {
-        anObj = anOper->MakeSpherePntR( myPoint, getRadius() );
+      if ( myPoint ) {
+        anObj = anOper->MakeSpherePntR( myPoint.get(), getRadius() );
         if (!anObj->_is_nil() && !IsPreview())
         {
           QStringList aParameters;
@@ -455,14 +410,7 @@ double PrimitiveGUI_SphereDlg::getRadius() const
 //=================================================================================
 void PrimitiveGUI_SphereDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  switch ( getConstructorId() ) {
-  case 0:
-    objMap[GroupPoints->LineEdit1->text()] = myPoint;
-    break;
-  case 1:
-    return;
+  if ( getConstructorId() == 0 ) {
+    GEOMBase::PublishSubObject( myPoint.get() );
   }
-  addSubshapesToFather( objMap );
 }

@@ -27,7 +27,8 @@
 #ifndef PRIMITIVEGUI_TORUSDLG_H
 #define PRIMITIVEGUI_TORUSDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel2Spin;
 class DlgRef_2Spin;
@@ -58,7 +59,7 @@ private:
   double                             getRadius2() const;
   
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir;
+  GEOM::GeomObjPtr                   myPoint, myDir;
 
   DlgRef_2Sel2Spin*                  GroupPoints;
   DlgRef_2Spin*                      GroupDimensions;
@@ -67,7 +68,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

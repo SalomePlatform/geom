@@ -27,7 +27,8 @@
 #ifndef GENERATIONGUI_PRISMDLG_H
 #define GENERATIONGUI_PRISMDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel1Spin2Check;
 class DlgRef_3Sel1Check;
@@ -59,20 +60,9 @@ private:
   double                             getHeight() const;
  
 private:
-  GEOM::ListOfGO                     myBaseObjects;  /* Base shapes */
-  GEOM::GEOM_Object_var              myVec;  /* Vector, defining the direction */
-  GEOM::GEOM_Object_var              myPoint1, myPoint2;   /* Points for extrusion */ 
-  
-  bool                               myOkBase;
-  bool                               myOkVec;
-  bool                               myOkPnt1;
-  bool                               myOkPnt2;
-  bool                               myBothway;
-  bool                               myBothway2;
-  bool                               myBothway3;
-  
-  // to initialize the first selection field with a selected object on the dialog creation
-  bool                               myInitial;
+  QList<GEOM::GeomObjPtr>            myBaseObjects;  /* Base shapes */
+  GEOM::GeomObjPtr                   myVec;  /* Vector, defining the direction */
+  GEOM::GeomObjPtr                   myPoint1, myPoint2;   /* Points for extrusion */ 
   
   DlgRef_2Sel1Spin2Check*            GroupPoints;
   DlgRef_3Sel1Check*                 GroupPoints2; // for second layout for extrusion using 2 points
@@ -82,7 +72,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

@@ -27,7 +27,8 @@
 #ifndef BUILDGUI_SOLIDDLG_H
 #define BUILDGUI_SOLIDDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Check;
 
@@ -51,15 +52,13 @@ protected:
 
 private:
   void                               Init();
-  bool                               isClosed(int i);
+  bool                               isClosed( GEOM::GEOM_Object_ptr shell );
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::ListOfGO                     myShells;
-  bool                               myOkShells; /* to check when arguments is defined and
-                                                    all shells are closed */
+  QList<GEOM::GeomObjPtr>            myShells;
 
-  DlgRef_1Sel1Check*                GroupSolid;
+  DlgRef_1Sel1Check*                 GroupSolid;
 
 private slots:
   void                               ClickOnOk();

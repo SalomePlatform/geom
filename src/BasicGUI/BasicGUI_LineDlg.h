@@ -27,7 +27,8 @@
 #ifndef BASICGUI_LINEDLG_H
 #define BASICGUI_LINEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel;
 
@@ -55,10 +56,10 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::GEOM_Object_var              myPoint1;   
-  GEOM::GEOM_Object_var              myPoint2;
-  GEOM::GEOM_Object_var              myFace1;
-  GEOM::GEOM_Object_var              myFace2;
+  GEOM::GeomObjPtr                   myPoint1;   
+  GEOM::GeomObjPtr                   myPoint2;
+  GEOM::GeomObjPtr                   myFace1;
+  GEOM::GeomObjPtr                   myFace2;
   
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_2Sel*                       GroupFaces;
@@ -71,7 +72,6 @@ private slots:
   void                               DeactivateActiveDialog();
   void                               ConstructorsClicked( int );    
     
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
 };

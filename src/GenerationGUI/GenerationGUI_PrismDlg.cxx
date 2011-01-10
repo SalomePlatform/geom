@@ -54,8 +54,7 @@
 //=================================================================================
 GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWidget* parent,
                                                 bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
-    myInitial(true)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
 {
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_PRISM")));
@@ -72,7 +71,6 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   mainFrame()->RadioButton3->setIcon(image3);
 
   mainFrame()->RadioButton1->setChecked(true);
-  myBothway = myBothway2 = myBothway3 = false;
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(centralWidget());
   GroupPoints->GroupBox1->setTitle(tr("GEOM_EXTRUSION_BSV"));
@@ -84,7 +82,6 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   GroupPoints->LineEdit1->setReadOnly(true);
   GroupPoints->LineEdit2->setReadOnly(true);
   GroupPoints->CheckButton1->setText(tr("GEOM_BOTHWAY"));
-  GroupPoints->CheckButton1->setChecked(myBothway);
   GroupPoints->CheckButton2->setText(tr("GEOM_REVERSE"));
 
   GroupPoints2 = new DlgRef_3Sel1Check(centralWidget());
@@ -96,7 +93,6 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   GroupPoints2->PushButton2->setIcon(image1);
   GroupPoints2->PushButton3->setIcon(image1);
   GroupPoints2->CheckButton1->setText(tr("GEOM_BOTHWAY"));
-  GroupPoints2->CheckButton1->setChecked(myBothway2);
 
   GroupPoints3 = new DlgRef_1Sel3Spin1Check(centralWidget());
   GroupPoints3->GroupBox1->setTitle(tr("GEOM_EXTRUSION_DXDYDZ"));
@@ -106,7 +102,6 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   GroupPoints3->TextLabel3->setText(tr("GEOM_DY"));
   GroupPoints3->TextLabel4->setText(tr("GEOM_DZ"));
   GroupPoints3->CheckButton1->setText(tr("GEOM_BOTHWAY"));
-  GroupPoints3->CheckButton1->setChecked(myBothway3);
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -170,8 +165,10 @@ void GenerationGUI_PrismDlg::Init()
 
   GroupPoints3->LineEdit1->setText("");
 
-  myPoint1 = myPoint2 = myVec = GEOM::GEOM_Object::_nil();
-  myOkBase = myOkVec = myOkPnt1 = myOkPnt2 = false;
+  myBaseObjects.clear();
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myVec.nullify();
 
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -182,10 +179,7 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged(double)),    this, SLOT(ValueChangedInSpinBox()));
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
   connect(GroupPoints->CheckButton1,  SIGNAL(toggled(bool)), this, SLOT(onBothway()));
@@ -194,18 +188,13 @@ void GenerationGUI_PrismDlg::Init()
   connect(GroupPoints2->PushButton1,  SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints2->PushButton2,  SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints2->PushButton3,  SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints2->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(onBothway()));
+  connect(GroupPoints2->CheckButton1, SIGNAL(toggled(bool)),   this, SLOT(onBothway()));
 
-  connect(GroupPoints2->LineEdit1,    SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints2->LineEdit2,    SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints2->LineEdit3,    SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(GroupPoints3->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints3->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints3->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupPoints3->SpinBox_DY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupPoints3->SpinBox_DZ, SIGNAL(valueChanged (double)), this, SLOT(ValueChangedInSpinBox()));
-  connect(GroupPoints3->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(onBothway()));
+  connect(GroupPoints3->PushButton1,  SIGNAL(clicked()),            this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints3->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints3->SpinBox_DY,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints3->SpinBox_DZ,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  connect(GroupPoints3->CheckButton1, SIGNAL(toggled(bool)),        this, SLOT(onBothway()));
 
   initName(tr("GEOM_EXTRUSION"));
 
@@ -230,49 +219,38 @@ void GenerationGUI_PrismDlg::SetDoubleSpinBoxStep (double step)
 //=================================================================================
 void GenerationGUI_PrismDlg::ConstructorsClicked (int constructorId)
 {
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-
   switch (constructorId) {
   case 0:
-    {
-      GroupPoints2->hide();
-      GroupPoints3->hide();
-      GroupPoints->show();
-
-      GroupPoints->LineEdit1->setText(GroupPoints2->LineEdit1->text()); // keep base
-      GroupPoints->LineEdit2->setText("");
-      myVec = GEOM::GEOM_Object::_nil();
-      myOkVec = false;
-
-      GroupPoints->PushButton1->click();
-      break;
-    }
+    GroupPoints2->hide();
+    GroupPoints3->hide();
+    GroupPoints->show();
+    
+    GroupPoints->LineEdit2->setText("");
+    myVec.nullify();
+    
+    GroupPoints->PushButton1->click();
+    break;
   case 1:
-    {
-      GroupPoints->hide();
-      GroupPoints2->show();
-      GroupPoints3->hide();
-
-      GroupPoints2->LineEdit1->setText(GroupPoints->LineEdit1->text()); // keep base
-      GroupPoints2->LineEdit2->setText("");
-      GroupPoints2->LineEdit3->setText("");
-      myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
-      myOkPnt1 = myOkPnt2 = false;
-
-      GroupPoints2->PushButton1->click();
-      break;
-    }
+    GroupPoints->hide();
+    GroupPoints2->show();
+    GroupPoints3->hide();
+    
+    GroupPoints2->LineEdit2->setText("");
+    GroupPoints2->LineEdit3->setText("");
+    myPoint1.nullify();
+    myPoint2.nullify();
+    
+    GroupPoints2->PushButton1->click();
+    break;
   case 2:
-    {
-      GroupPoints->hide();
-      GroupPoints2->hide();
-      GroupPoints3->show();
-
-      GroupPoints3->LineEdit1->setText(GroupPoints->LineEdit1->text()); // keep base
-
-      GroupPoints3->PushButton1->click();
-      break;
-    }
+    GroupPoints->hide();
+    GroupPoints2->hide();
+    GroupPoints3->show();
+    
+    GroupPoints3->PushButton1->click();
+    break;
+  default:
+    break;
   }
 
   qApp->processEvents();
@@ -317,146 +295,58 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  QString aBaseName = ""; /* name of base object selection */
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aBaseName, true);
-
-  if (nbSel > 1)
-    aBaseName = QString( "%1_objects").arg( nbSel );
-
-  // Base Object(s) selected
-  if (myEditCurrentArgument == GroupPoints->LineEdit1 ||
-      myEditCurrentArgument == GroupPoints2->LineEdit1 ||
-      getConstructorId() == 2 ) {
-    myOkBase = false;
-    if ( nbSel > 0 ) {
-      GEOMBase::ConvertListOfIOInListOfGO(aSelList, myBaseObjects, true);
-      myEditCurrentArgument->setText( aBaseName );
-      myOkBase = true;
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1  ||
+       myEditCurrentArgument == GroupPoints2->LineEdit1 ||
+       myEditCurrentArgument == GroupPoints3->LineEdit1 ) {
+    myBaseObjects.clear();
+    QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_SHAPE, -1 );
+    for ( int i = 0; i < objects.count(); i++ ) {
+      GEOM::shape_type stype = objects[i]->GetMaxShapeType();
+      if ( stype < GEOM::SHELL || stype > GEOM::VERTEX )
+	continue;
+      myBaseObjects << objects[i];
     }
-    displayPreview();
-    return;
-  }
-
-  if (getConstructorId() == 0)
-  {
-    if (aSelList.Extent() < 1) {
-      if (myEditCurrentArgument == GroupPoints->LineEdit2)
-        myOkVec = false;
-      return;
+    if ( !myBaseObjects.isEmpty() ) {
+      QString aName = myBaseObjects.count() > 1 ? QString( "%1_objects").arg( myBaseObjects.count() ) : GEOMBase::GetName( myBaseObjects[0].get() );
+      GroupPoints->LineEdit1->setText( aName );
+      GroupPoints2->LineEdit1->setText( aName );
+      GroupPoints3->LineEdit1->setText( aName );
     }
-
-    GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( CORBA::is_nil(aSelectedObject) )
-      return;
-
-    QString aName = GEOMBase::GetName(aSelectedObject);
-
-    // Get Selected object if selected subshape
-    bool myOk = true;
-    TopoDS_Shape aShape;
-    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-    {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if (aMap.Extent() == 1) {
-        int anIndex = aMap(1);
-        aName.append(":edge_" + QString::number(anIndex));
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-        if (aFindedObject->_is_nil()) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp =
-            getGeomEngine()->GetIShapesOperations(getStudyId());
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        }
-        else {
-          aSelectedObject = aFindedObject; // get Object from study
-        }
-      }
-      else { // Global Selection
-        if (aShape.ShapeType() != TopAbs_EDGE && myEditCurrentArgument == GroupPoints->LineEdit2) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-          myOk = false;
-        }
-      }
-    }
-
-    if (myEditCurrentArgument == GroupPoints->LineEdit2 && myOk) {
-      myEditCurrentArgument->setText(aName);
-      myOkVec = true;
-      myVec = aSelectedObject;
+    else {
+      GroupPoints->LineEdit1->setText( "" );
+      GroupPoints2->LineEdit1->setText( "" );
+      GroupPoints3->LineEdit1->setText( "" );
     }
   }
-  else if (getConstructorId() == 1) { // getConstructorId()==1 - extrusion using 2 points
-    if (aSelList.Extent() != 1) {
-      if (myEditCurrentArgument == GroupPoints2->LineEdit2) {
-        myPoint1 = GEOM::GEOM_Object::_nil();
-        myOkPnt1 = false;
-      }
-      else if (myEditCurrentArgument == GroupPoints2->LineEdit3) {
-        myPoint2 = GEOM::GEOM_Object::_nil();
-        myOkPnt2 = false;
-      }
-      return;
+  else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+    myVec = getSelected( TopAbs_EDGE );
+    if ( myVec ) {
+      QString aName = GEOMBase::GetName( myVec.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( myBaseObjects.isEmpty() )
+	GroupPoints->PushButton1->click();
     }
-
-    GEOM::GEOM_Object_var aSelectedObject =
-      GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-    if ( CORBA::is_nil(aSelectedObject) )
-      return;
-
-    QString aName = GEOMBase::GetName(aSelectedObject);
-    TopoDS_Shape aShape;
-    bool myOk = true;
-    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if (aMap.Extent() == 1) {
-        int anIndex = aMap(1);
-        aName.append(":vertex_" + QString::number(anIndex));
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
-
-        if (aFindedObject->_is_nil()) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        }
-        else {
-          aSelectedObject = aFindedObject;
-        }
-      }
-      else {
-        if ((aShape.ShapeType() != TopAbs_VERTEX && myEditCurrentArgument == GroupPoints2->LineEdit2) ||
-             (aShape.ShapeType() != TopAbs_VERTEX && myEditCurrentArgument == GroupPoints2->LineEdit3)) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-          myOk = false;
-        }
-      }
+  }
+  if ( myEditCurrentArgument == GroupPoints2->LineEdit2 ) {
+    myPoint1 = getSelected( TopAbs_VERTEX );
+    if ( myPoint1 ) {
+      QString aName = GEOMBase::GetName( myPoint1.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( !myPoint2 )
+	GroupPoints2->PushButton3->click();
+      else if ( myBaseObjects.isEmpty() )
+	GroupPoints2->PushButton1->click();
     }
-
-    myEditCurrentArgument->setText(aName);
-
-    if (myEditCurrentArgument == GroupPoints2->LineEdit2 && myOk) {
-      myOkPnt1 = true;
-      myPoint1 = aSelectedObject;
-      if (!myOkPnt2)
-        GroupPoints2->PushButton3->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints2->LineEdit3 && myOk) {
-      myOkPnt2 = true;
-      myPoint2 = aSelectedObject;
-      if (!myOkBase)
-        GroupPoints2->PushButton1->click();
+  }
+  if ( myEditCurrentArgument == GroupPoints2->LineEdit3 ) {
+    myPoint2 = getSelected( TopAbs_VERTEX );
+    if ( myPoint2 ) {
+      QString aName = GEOMBase::GetName( myPoint2.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( myBaseObjects.isEmpty() )
+	GroupPoints2->PushButton1->click();
+      else if ( !myPoint1 )
+	GroupPoints2->PushButton2->click();
     }
   }
 
@@ -524,24 +414,6 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
 }
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void GenerationGUI_PrismDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == GroupPoints->LineEdit1 ||
-      send == GroupPoints->LineEdit2 ||
-      send == GroupPoints2->LineEdit1 ||
-      send == GroupPoints2->LineEdit2 ||
-      send == GroupPoints2->LineEdit3 ||
-      send == GroupPoints3->LineEdit1) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -598,24 +470,26 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_PrismDlg::createOperation()
 //=================================================================================
 bool GenerationGUI_PrismDlg::isValid (QString& msg)
 {
-  bool ok = true;
-  if( getConstructorId() == 0 )
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-  else if( getConstructorId() == 2 )
-  {
-    ok = GroupPoints3->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints3->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints3->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
+  bool ok = false;
+  switch ( getConstructorId() ) {
+  case 0:
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         !myBaseObjects.isEmpty() && myVec;
+    break;
+  case 1:
+    ok = !myBaseObjects.isEmpty() && myPoint1 && myPoint2;
+    break;
+  case 2:
+    ok = GroupPoints3->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupPoints3->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         GroupPoints3->SpinBox_DZ->isValid( msg, !IsPreview() ) &&
+         !myBaseObjects.isEmpty();
+    break;
+  default:
+    break;
   }
 
-  if (getConstructorId() == 0)
-    return (myOkBase && myOkVec) && ok;     // by vector and height
-  else if (getConstructorId() == 1)
-    return (myOkBase && myOkPnt1 && myOkPnt2);   // by two points
-  else if (getConstructorId() == 2)
-    return myOkBase && ok;
-
-  return false;
+  return ok;
 }
 
 //=================================================================================
@@ -625,19 +499,17 @@ bool GenerationGUI_PrismDlg::isValid (QString& msg)
 bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
 {
   QStringList aParameters;
-  GEOM::GEOM_Object_var anObj, aBaseObj;
+  GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  for (int i=0; i < myBaseObjects.length(); i++) {
-    aBaseObj = myBaseObjects[i];
-    
+  for (int i = 0; i < myBaseObjects.count(); i++) {
     switch (getConstructorId()) {
     case 0:
-      if (!myBothway)
-        anObj = anOper->MakePrismVecH(aBaseObj, myVec, getHeight());
+      if (!GroupPoints->CheckButton1->isChecked())
+        anObj = anOper->MakePrismVecH(myBaseObjects[i].get(), myVec.get(), getHeight());
       else
-        anObj = anOper->MakePrismVecH2Ways(aBaseObj, myVec, getHeight());
+        anObj = anOper->MakePrismVecH2Ways(myBaseObjects[i].get(), myVec.get(), getHeight());
       
       if (!anObj->_is_nil() && !IsPreview()) {
         aParameters << GroupPoints->SpinBox_DX->text();
@@ -645,20 +517,20 @@ bool GenerationGUI_PrismDlg::execute (ObjectList& objects)
       }
       break;
     case 1:
-      if (!myBothway2)
-        anObj = anOper->MakePrismTwoPnt(aBaseObj, myPoint1, myPoint2);
+      if (!GroupPoints2->CheckButton1->isChecked())
+        anObj = anOper->MakePrismTwoPnt(myBaseObjects[i].get(), myPoint1.get(), myPoint2.get());
       else
-        anObj = anOper->MakePrismTwoPnt2Ways(aBaseObj, myPoint1, myPoint2);
+        anObj = anOper->MakePrismTwoPnt2Ways(myBaseObjects[i].get(), myPoint1.get(), myPoint2.get());
       break;
     case 2:
       double dx = GroupPoints3->SpinBox_DX->value();
       double dy = GroupPoints3->SpinBox_DY->value();
       double dz = GroupPoints3->SpinBox_DZ->value();
       
-      if (!myBothway3)
-        anObj = anOper->MakePrismDXDYDZ(aBaseObj, dx, dy, dz);
+      if (!GroupPoints3->CheckButton1->isChecked())
+        anObj = anOper->MakePrismDXDYDZ(myBaseObjects[i].get(), dx, dy, dz);
       else
-        anObj = anOper->MakePrismDXDYDZ2Ways(aBaseObj, dx, dy, dz);
+        anObj = anOper->MakePrismDXDYDZ2Ways(myBaseObjects[i].get(), dx, dy, dz);
       
       if (!anObj->_is_nil() && !IsPreview()) {
         aParameters << GroupPoints3->SpinBox_DX->text();
@@ -692,25 +564,8 @@ void GenerationGUI_PrismDlg::onReverse()
 //=================================================================================
 void GenerationGUI_PrismDlg::onBothway()
 {
-  bool anOldValue;
-  switch (getConstructorId()) {
-  case 0:
-    anOldValue = myBothway;
-    myBothway = !anOldValue;
-    GroupPoints->CheckButton2->setEnabled(!myBothway);
-    displayPreview();
-    break;
-  case 1:
-    anOldValue = myBothway2;
-    myBothway2 = !anOldValue;
-    displayPreview();
-    break;
-  case 2:
-    anOldValue = myBothway3;
-    myBothway3 = !anOldValue;
-    displayPreview();
-    break;
-  }
+  GroupPoints->CheckButton2->setEnabled(!GroupPoints->CheckButton1->isChecked());
+  displayPreview();
 }
 
 //=================================================================================
@@ -719,18 +574,17 @@ void GenerationGUI_PrismDlg::onBothway()
 //=================================================================================
 void GenerationGUI_PrismDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
   switch (getConstructorId()) {
   case 0:
-    objMap[GroupPoints->LineEdit2->text()] = myVec;
+    GEOMBase::PublishSubObject( myVec.get() );
     break;
   case 1:
-    objMap[GroupPoints2->LineEdit2->text()] = myPoint1;
-    objMap[GroupPoints2->LineEdit3->text()] = myPoint2;
+    GEOMBase::PublishSubObject( myPoint1.get() );
+    GEOMBase::PublishSubObject( myPoint2.get() );
+    break;
+  default:
     break;
   }
-  addSubshapesToFather(objMap);
 }
 
 //=================================================================================
@@ -739,5 +593,5 @@ void GenerationGUI_PrismDlg::addSubshapesToStudy()
 //=================================================================================
 bool GenerationGUI_PrismDlg::extractPrefix() const
 {
-  return myBaseObjects.length() > 1;
+  return myBaseObjects.count() > 1;
 }

@@ -105,15 +105,6 @@ void GenerationGUI_FillingDlg::Init()
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
 
-  myMinDeg = 2;
-  myMaxDeg = 5;
-  myTol3D = 0.0001;
-  myTol2D = 0.0001;
-  myNbIter = 0;
-  myMethod = 0;
-  myIsApprox = false;
-  myOkCompound = false;
-
   globalSelection( GEOM_COMPOUND );
 
   int SpecificStep1 = 1;
@@ -125,11 +116,11 @@ void GenerationGUI_FillingDlg::Init()
   initSpinBox( GroupPoints->SpinBox4, 1, MAX_NUMBER,  SpecificStep1 );
   initSpinBox( GroupPoints->SpinBox5, 0.00001, 10000.0, SpecificStep2, "len_tol_precision" );
 
-  GroupPoints->SpinBox1->setValue( myMinDeg );
-  GroupPoints->SpinBox2->setValue( myTol2D );
-  GroupPoints->SpinBox3->setValue( myNbIter );
-  GroupPoints->SpinBox4->setValue( myMaxDeg );
-  GroupPoints->SpinBox5->setValue( myTol3D );
+  GroupPoints->SpinBox1->setValue( 2 );
+  GroupPoints->SpinBox2->setValue( 0.0001 );
+  GroupPoints->SpinBox3->setValue( 0 );
+  GroupPoints->SpinBox4->setValue( 5 );
+  GroupPoints->SpinBox5->setValue( 0.0001 );
 
   GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_DEFAULT"));
   GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_USEORI"));
@@ -140,7 +131,6 @@ void GenerationGUI_FillingDlg::Init()
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupPoints->ComboBox1, SIGNAL(activated(int)), this, SLOT(MethodChanged()));
 
@@ -208,37 +198,19 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() != 1) {
-    if (myEditCurrentArgument == GroupPoints->LineEdit1)
-      myOkCompound = false;
-    return;
-  }
-
-  // nbSel == 1
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if ( CORBA::is_nil( aSelectedObject ) )
-    return;
-
   if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    TopoDS_Shape S;
-    myOkCompound = false;
-
-    if (GEOMBase::GetShape(aSelectedObject, S) && S.ShapeType() == TopAbs_COMPOUND) {
-      // myCompound should be a compound of edges
-      for (TopoDS_Iterator it (S); it.More(); it.Next())
-        if ( it.Value().ShapeType() != TopAbs_EDGE && 
-             it.Value().ShapeType() != TopAbs_WIRE )
-          return;
-      myCompound = aSelectedObject;
-      myOkCompound = true;
+    myCompound = getSelected( TopAbs_COMPOUND );
+    if ( myCompound ) {
+      if ( myCompound->GetMaxShapeType() < GEOM::WIRE || myCompound->GetMinShapeType() > GEOM::EDGE ) {
+	myCompound.nullify();
+      }
+      else {
+	QString aName = GEOMBase::GetName( myCompound.get() );
+	myEditCurrentArgument->setText( aName );
+      }
     }
   }
 
-  myEditCurrentArgument->setText(GEOMBase::GetName(aSelectedObject));
   displayPreview();
 }
 
@@ -256,20 +228,6 @@ void GenerationGUI_FillingDlg::SetEditCurrentArgument()
     myEditCurrentArgument = GroupPoints->LineEdit1;
     globalSelection( GEOM_COMPOUND );
     this->SelectionIntoArgument();
-  }
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void GenerationGUI_FillingDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
   }
 }
 
@@ -305,19 +263,6 @@ void GenerationGUI_FillingDlg::enterEvent( QEvent* )
 //=================================================================================
 void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 {
-  QObject* send = (QObject*)sender();
-
-  if ( send == GroupPoints->SpinBox1 )
-    myMinDeg = int( newValue );
-  else if ( send == GroupPoints->SpinBox2 )
-    myTol2D = newValue;
-  else if ( send == GroupPoints->SpinBox3 )
-    myNbIter = int(newValue);
-  else if ( send == GroupPoints->SpinBox4 )
-    myMaxDeg = int(newValue);
-  else if ( send == GroupPoints->SpinBox5 )
-    myTol3D = newValue;
-
   displayPreview();
 }
 
@@ -327,7 +272,6 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 //=================================================================================
 void GenerationGUI_FillingDlg::MethodChanged()
 {
-  myMethod = GroupPoints->ComboBox1->currentIndex();
   displayPreview();
 }
 
@@ -337,7 +281,6 @@ void GenerationGUI_FillingDlg::MethodChanged()
 //=================================================================================
 void GenerationGUI_FillingDlg::ApproxChanged()
 {
-  myIsApprox = GroupPoints->CheckBox1->isChecked();
   displayPreview();
 }
 
@@ -357,14 +300,13 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_FillingDlg::createOperation()
 //=================================================================================
 bool GenerationGUI_FillingDlg::isValid( QString& msg )
 {
-  bool ok = true;
-  ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox4->isValid( msg, !IsPreview() ) && ok;
-  ok = GroupPoints->SpinBox5->isValid( msg, !IsPreview() ) && ok;
-
-  return myOkCompound > 0 && ok;
+  bool ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) &&
+            GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) &&
+            GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) &&
+            GroupPoints->SpinBox4->isValid( msg, !IsPreview() ) &&
+            GroupPoints->SpinBox5->isValid( msg, !IsPreview() ) &&
+            myCompound;
+  return ok;
 }
 
 //=================================================================================
@@ -386,8 +328,14 @@ bool GenerationGUI_FillingDlg::execute( ObjectList& objects )
   }
 
   GEOM::GEOM_Object_var anObj =
-    anOper->MakeFilling( myCompound, myMinDeg, myMaxDeg, myTol2D, myTol3D,
-                         myNbIter, aMethod, myIsApprox );
+    anOper->MakeFilling( myCompound.get(), 
+			 GroupPoints->SpinBox1->value(), 
+			 GroupPoints->SpinBox4->value(), 
+			 GroupPoints->SpinBox2->value(),
+			 GroupPoints->SpinBox5->value(),
+                         GroupPoints->SpinBox3->value(), 
+			 aMethod,
+			 GroupPoints->CheckBox1->isChecked() );
   if ( !anObj->_is_nil() )
   {
     if ( !IsPreview() )

@@ -159,7 +159,9 @@ void BasicGUI_ArcDlg::Init()
   /* init variables */
   myEditCurrentArgument = Group3Pnts->LineEdit1;
 
-  myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myPoint3.nullify();
   Group3Pnts2->CheckButton1->setChecked( false );
   Group3Pnts->PushButton1->setDown(true);
 
@@ -176,27 +178,15 @@ void BasicGUI_ArcDlg::Init()
   connect( Group3Pnts->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( Group3Pnts->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( Group3Pnts->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  
   connect( Group3Pnts2->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( Group3Pnts2->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( Group3Pnts2->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-
-  connect( Group3Pnts2->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts2->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts2->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( Group3Pnts2->CheckButton1, SIGNAL( toggled( bool ) ), this, SLOT( ReverseSense() ) );
 
   connect( Group3Pnts3->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( Group3Pnts3->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( Group3Pnts3->PushButton3, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-
-  connect( Group3Pnts3->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts3->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group3Pnts3->LineEdit3, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
@@ -249,116 +239,80 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
   if (aSelList.Extent() != 1) {
     switch (getConstructorId()) {
     case 0:
-      if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
-      return;
+      if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 )   myPoint1.nullify();
+      else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 )   myPoint2.nullify();
+      else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 )   myPoint3.nullify();
       break;
     case 1:
-      if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
-      return;
+      if      ( myEditCurrentArgument == Group3Pnts2->LineEdit1 )   myPoint1.nullify();
+      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 )   myPoint2.nullify();
+      else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 )   myPoint3.nullify();
       break;
     case 2:
-      if      ( myEditCurrentArgument == Group3Pnts3->LineEdit1 )   myPoint1 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit2 )   myPoint2 = GEOM::GEOM_Object::_nil();
-      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit3 )   myPoint3 = GEOM::GEOM_Object::_nil();
-      return;
+      if      ( myEditCurrentArgument == Group3Pnts3->LineEdit1 )   myPoint1.nullify();
+      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit2 )   myPoint2.nullify();
+      else if ( myEditCurrentArgument == Group3Pnts3->LineEdit3 )   myPoint3.nullify();
+      break;
+    default:
       break;
     }
+    return;
   }   
-  // nbSel == 1
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if ( !CORBA::is_nil( aSelectedObject ) ) {
-    QString aName = GEOMBase::GetName(aSelectedObject);
 
-    // Get Selected object if selected subshape
-    TopoDS_Shape aShape;
-    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-    {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if (aMap.Extent() == 1) // Local Selection
-      {
-        int anIndex = aMap(1);
-        aName += QString(":vertex_%1").arg(anIndex);
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-		if ( aFindedObject->_is_nil() ) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        }
-        else
-          aSelectedObject = aFindedObject; // get Object from study
-      }
-      else // Global Selection
-      {
-        if (aShape.ShapeType() != TopAbs_VERTEX) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
-      }
-    }
-
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_VERTEX );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText(aName);
-
-    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
-      globalSelection();
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );      
-    }
-
     switch ( getConstructorId() ) {
     case 0:
-      if      ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
+      if ( myEditCurrentArgument == Group3Pnts->LineEdit1 ) {
         myPoint1 = aSelectedObject;
-        if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+        if ( myPoint1 && !myPoint2 )
           Group3Pnts->PushButton2->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit2 ) {
         myPoint2 = aSelectedObject;
-        if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+        if ( myPoint2 && !myPoint3 )
           Group3Pnts->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts->LineEdit3 ) {
         myPoint3 = aSelectedObject;
-        if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+        if ( myPoint3 && !myPoint1 )
           Group3Pnts->PushButton1->click();
       }
       break;
     case 1:
       if ( myEditCurrentArgument == Group3Pnts2->LineEdit1 ) {
         myPoint1 = aSelectedObject;
-        if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+        if ( myPoint1 && !myPoint2 )
           Group3Pnts2->PushButton2->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit2 ) {
         myPoint2 = aSelectedObject;
-        if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+        if ( myPoint2 && !myPoint3 )
           Group3Pnts2->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts2->LineEdit3 ) {
         myPoint3 = aSelectedObject;
-        if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+        if ( myPoint3 && !myPoint1 )
           Group3Pnts2->PushButton1->click();
       }
       break;
     case 2:
       if ( myEditCurrentArgument == Group3Pnts3->LineEdit1 ) {
         myPoint1 = aSelectedObject;
-        if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+        if ( myPoint1 && !myPoint2 )
           Group3Pnts3->PushButton2->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts3->LineEdit2 ) {
         myPoint2 = aSelectedObject;
-        if ( !myPoint2->_is_nil() && myPoint3->_is_nil() )
+        if ( myPoint2 && !myPoint3 )
           Group3Pnts3->PushButton3->click();
       }
       else if ( myEditCurrentArgument == Group3Pnts3->LineEdit3 ) {
         myPoint3 = aSelectedObject;
-        if ( !myPoint3->_is_nil() && myPoint1->_is_nil() )
+        if ( myPoint3 && !myPoint1 )
           Group3Pnts3->PushButton1->click();
       }
       break;
@@ -467,22 +421,6 @@ void BasicGUI_ArcDlg::SetEditCurrentArgument()
 
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BasicGUI_ArcDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == Group3Pnts->LineEdit1 || send == Group3Pnts->LineEdit2 || send == Group3Pnts->LineEdit3 ||
-       send == Group3Pnts2->LineEdit1 || send == Group3Pnts2->LineEdit2 || send == Group3Pnts2->LineEdit3 ||
-       send == Group3Pnts3->LineEdit1 || send == Group3Pnts3->LineEdit2 || send == Group3Pnts3->LineEdit3 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -518,48 +456,14 @@ GEOM::GEOM_IOperations_ptr BasicGUI_ArcDlg::createOperation()
 }
 
 //=================================================================================
-// function : isEqual
-// purpose  : it may also be needed to check for min distance between gp_Pnt-s...
-//=================================================================================
-static bool isEqual( const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2 )
-{
-  return thePnt1->_is_equivalent( thePnt2 );
-}
-
-//=================================================================================
 // function : isValid
 // purpose  :
 //=================================================================================
 bool BasicGUI_ArcDlg::isValid( QString& msg )
 {
-  switch (getConstructorId()) {
-  case 0:
-    {
-      if (Group3Pnts->LineEdit1->text().trimmed().isEmpty() ||
-          Group3Pnts->LineEdit2->text().trimmed().isEmpty() ||
-          Group3Pnts->LineEdit3->text().trimmed().isEmpty())
-        return false;
-      break;
-    }
-  case 1:
-    {
-      if (Group3Pnts2->LineEdit1->text().trimmed().isEmpty() ||
-          Group3Pnts2->LineEdit2->text().trimmed().isEmpty() ||
-          Group3Pnts2->LineEdit3->text().trimmed().isEmpty())
-        return false;
-      break;
-    }
-  case 2:
-    {
-      if (Group3Pnts3->LineEdit1->text().trimmed().isEmpty() ||
-          Group3Pnts3->LineEdit2->text().trimmed().isEmpty() ||
-          Group3Pnts3->LineEdit3->text().trimmed().isEmpty())
-        return false;
-      break;
-    }
-  }
-  return !myPoint1->_is_nil() && !myPoint2->_is_nil() && !myPoint3->_is_nil() &&
-    !isEqual( myPoint1, myPoint2 ) && !isEqual( myPoint1, myPoint3 ) && !isEqual( myPoint2, myPoint3 );
+  bool ok = myPoint1 && myPoint2 && myPoint3 &&
+    myPoint1 != myPoint2 && myPoint1 != myPoint3 && myPoint2 != myPoint3;
+  return ok;
 }
 
 //=================================================================================
@@ -576,8 +480,8 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   switch ( getConstructorId() ) {
   case 0:
     {
-      if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-        anObj = anOper->MakeArc( myPoint1, myPoint2, myPoint3 );
+      if ( myPoint1 && myPoint2 && myPoint3 ) {
+        anObj = anOper->MakeArc( myPoint1.get(), myPoint2.get(), myPoint3.get() );
         res = true;
       }
       break;
@@ -585,16 +489,16 @@ bool BasicGUI_ArcDlg::execute( ObjectList& objects )
   case 1:
     {
       bool Sense = Group3Pnts2->CheckButton1->isChecked();
-      if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-        anObj = anOper->MakeArcCenter( myPoint1, myPoint2, myPoint3, Sense );
+      if ( myPoint1 && myPoint2 && myPoint3 ) {
+        anObj = anOper->MakeArcCenter( myPoint1.get(), myPoint2.get(), myPoint3.get(), Sense );
         res = true;
       }
       break;
     }
   case 2:
     {
-      if ( !CORBA::is_nil( myPoint1 ) && !CORBA::is_nil( myPoint2 ) && !CORBA::is_nil( myPoint3 ) ) {
-        anObj = anOper->MakeArcOfEllipse( myPoint1, myPoint2, myPoint3 );
+      if ( myPoint1 && myPoint2 && myPoint3 ) {
+        anObj = anOper->MakeArcOfEllipse( myPoint1.get(), myPoint2.get(), myPoint3.get() );
         res = true;
       }
       break;
@@ -614,12 +518,13 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 {
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
 
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myPoint3.nullify();
+  
   switch ( constructorId ) {
   case 0:
     {
-      globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
-
       Group3Pnts->show();
       Group3Pnts2->hide();
       Group3Pnts3->hide();
@@ -632,16 +537,12 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
       Group3Pnts->LineEdit1->setEnabled(true);
       Group3Pnts->LineEdit2->setEnabled(false);
       Group3Pnts->LineEdit3->setEnabled(false);
-      myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
       myEditCurrentArgument = Group3Pnts->LineEdit1;
       break;
     }
   case 1:
     {
-      globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
-
       Group3Pnts->hide();
       Group3Pnts2->show();
       Group3Pnts3->hide();
@@ -654,16 +555,12 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
       Group3Pnts2->LineEdit1->setEnabled(true);
       Group3Pnts2->LineEdit2->setEnabled(false);
       Group3Pnts2->LineEdit3->setEnabled(false);
-      myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
       
       myEditCurrentArgument = Group3Pnts2->LineEdit1;
       break;
     }
   case 2:
     {
-      globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
-
       Group3Pnts->hide();
       Group3Pnts2->hide();
       Group3Pnts3->show();
@@ -676,13 +573,15 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
       Group3Pnts3->LineEdit1->setEnabled(true);
       Group3Pnts3->LineEdit2->setEnabled(false);
       Group3Pnts3->LineEdit3->setEnabled(false);
-      myPoint1 = myPoint2 = myPoint3 = GEOM::GEOM_Object::_nil();
 
       myEditCurrentArgument = Group3Pnts3->LineEdit1;
       break;
     }
   }
 
+  globalSelection(); // close local contexts, if any
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX ); //Select Vertex on All Shapes
+  
   qApp->processEvents();
   updateGeometry();
   resize( minimumSizeHint() );
@@ -691,8 +590,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
-  if ( CORBA::is_nil( myPoint1 ) )
-    SelectionIntoArgument();
+  SelectionIntoArgument();
 
   displayPreview();
 }
@@ -712,24 +610,15 @@ void BasicGUI_ArcDlg::ReverseSense()
 //=================================================================================
 void BasicGUI_ArcDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
   switch ( getConstructorId() ) {
   case 0:
-    objMap[Group3Pnts->LineEdit1->text()] = myPoint1;
-    objMap[Group3Pnts->LineEdit2->text()] = myPoint2;
-    objMap[Group3Pnts->LineEdit3->text()] = myPoint3;
-    break;
   case 1:
-    objMap[Group3Pnts2->LineEdit1->text()] = myPoint1;
-    objMap[Group3Pnts2->LineEdit2->text()] = myPoint2;
-    objMap[Group3Pnts2->LineEdit3->text()] = myPoint3;
-    break;
   case 2:
-    objMap[Group3Pnts3->LineEdit1->text()] = myPoint1;
-    objMap[Group3Pnts3->LineEdit2->text()] = myPoint2;
-    objMap[Group3Pnts3->LineEdit3->text()] = myPoint3;
+    GEOMBase::PublishSubObject( myPoint1.get() );
+    GEOMBase::PublishSubObject( myPoint2.get() );
+    GEOMBase::PublishSubObject( myPoint3.get() );
+    break;
+  default:
     break;
   }
-  addSubshapesToFather( objMap );
 }

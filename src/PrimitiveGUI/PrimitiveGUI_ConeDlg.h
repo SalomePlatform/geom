@@ -27,7 +27,8 @@
 #ifndef PRIMITIVEGUI_CONEDLG_H
 #define PRIMITIVEGUI_CONEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel3Spin;
 class DlgRef_3Spin;
@@ -59,7 +60,7 @@ private:
   double                             getHeight() const;
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir;
+  GEOM::GeomObjPtr                   myPoint, myDir;
 
   DlgRef_2Sel3Spin*                  GroupPoints;
   DlgRef_3Spin*                      GroupDimensions;
@@ -68,7 +69,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

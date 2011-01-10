@@ -27,7 +27,8 @@
 #ifndef BASICGUI_ELLIPSEDLG_H
 #define BASICGUI_ELLIPSEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_3Sel2Spin;
 
@@ -55,7 +56,7 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir, myMajor;
+  GEOM::GeomObjPtr                   myPoint, myDir, myMajor;
   
   DlgRef_3Sel2Spin*                  GroupPoints;
   
@@ -66,7 +67,6 @@ private slots:
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
   
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );

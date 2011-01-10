@@ -27,7 +27,8 @@
 #ifndef BUILDGUI_SHELLDLG_H
 #define BUILDGUI_SHELLDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel;
 
@@ -54,8 +55,7 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::ListOfGO                     myFacesAndShells;
-  bool                               myOkFacesAndShells;/* to check when arguments is defined */
+  QList<GEOM::GeomObjPtr>            myFacesAndShells;
   
   DlgRef_1Sel*                       GroupShell;
 

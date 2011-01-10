@@ -24,7 +24,8 @@
 #ifndef BASICGUI_FACEDLG_H
 #define BASICGUI_FACEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Spin;
 class DlgRef_1Sel2Spin;
@@ -54,8 +55,8 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::GEOM_Object_var              myEdge;
-  GEOM::GEOM_Object_var              myFace;
+  GEOM::GeomObjPtr                   myEdge;
+  GEOM::GeomObjPtr                   myFace;
 
   int                                myOrientationType;
   
@@ -72,7 +73,6 @@ private slots:
   void                               DeactivateActiveDialog();
   void                               ConstructorsClicked( int );    
     
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );

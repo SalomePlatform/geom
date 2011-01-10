@@ -27,7 +27,8 @@
 #ifndef BASICGUI_MARKERDLG_H
 #define BASICGUI_MARKERDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <QMap>
 
@@ -57,15 +58,16 @@ protected:
                                                  const bool   = true,
                                                  const bool   = true,
                                                  const double = -1 );
+  virtual void                  addSubshapesToStudy();
 
 private:
   void                          enterEvent( QEvent* );
   void                          onSelectionDone0();
 
-  GEOM::GEOM_Object_var         myShape;
-  GEOM::GEOM_Object_var         myPoint;
-  GEOM::GEOM_Object_var         myVectorX;
-  GEOM::GEOM_Object_var         myVectorY;
+  GEOM::GeomObjPtr              myShape;
+  GEOM::GeomObjPtr              myPoint;
+  GEOM::GeomObjPtr              myVectorX;
+  GEOM::GeomObjPtr              myVectorY;
 
 private slots:
   void                          onOk();
@@ -75,7 +77,6 @@ private slots:
   void                          onSelectionDone();
   void                          onValueChanged( double );
   void                          ConstructorsClicked( int );
-  void                          LineEditReturnPressed();
   void                          SetEditCurrentArgument();
 
 private:

@@ -168,7 +168,10 @@ BasicGUI_MarkerDlg::~BasicGUI_MarkerDlg()
 //=================================================================================
 void BasicGUI_MarkerDlg::Init()
 {
-  myShape = myPoint = myVectorX = myVectorY = GEOM::GEOM_Object::_nil();
+  myShape.nullify();
+  myPoint.nullify();
+  myVectorX.nullify();
+  myVectorY.nullify();
   myBlockPreview = false;
   myConstructorId = -1;
   myEditCurrentArgument = Group1->LineEdit1;
@@ -186,11 +189,6 @@ void BasicGUI_MarkerDlg::Init()
   connect( Group2->PushButton1, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   connect( Group2->PushButton2, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
   connect( Group2->PushButton3, SIGNAL( clicked() ),      this, SLOT( SetEditCurrentArgument() ) );
-
-  connect( Group1->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2->LineEdit3,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI,           SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( onDeactivate() ) );
   connect( myGeomGUI,           SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
@@ -259,7 +257,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       globalSelection( GEOM_ALLGEOM );
       myEditCurrentArgument = Group1->LineEdit1;
       Group1->LineEdit1->setText( "" );
-      myShape = GEOM::GEOM_Object::_nil();
+      myShape.nullify();
       break;
     }
   case 2:
@@ -279,9 +277,9 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
       Group2->LineEdit1->setEnabled( true );
       Group2->LineEdit2->setEnabled( false );
       Group2->LineEdit3->setEnabled( false );
-      myPoint = GEOM::GEOM_Object::_nil();
-      myVectorX = GEOM::GEOM_Object::_nil();
-      myVectorY = GEOM::GEOM_Object::_nil();
+      myPoint.nullify();
+      myVectorX.nullify();
+      myVectorY.nullify();
       break;
     }
   }
@@ -328,65 +326,43 @@ bool BasicGUI_MarkerDlg::onApply()
 //=================================================================================
 void BasicGUI_MarkerDlg::onSelectionDone0()
 {
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() == 1) {
-    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO );
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_FACE );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && aSelectedObject->GetType() == GEOM_MARKER && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    // Existing LCS selected
+    TopoDS_Face aFace = TopoDS::Face( aShape );
+    Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
     
-    if ( !aSelectedObj->_is_nil() ) {
-      TopoDS_Shape aShape;
-      if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-        // Existing LCS selected
-        if ( aSelectedObj->GetType() == GEOM_MARKER && aShape.ShapeType() == TopAbs_FACE ) {
-          TopoDS_Face aFace = TopoDS::Face( aShape );
-          Handle(Geom_Plane) aPlane = Handle(Geom_Plane)::DownCast( BRep_Tool::Surface( aFace ) );
-          
-          if ( !aPlane.IsNull() ) {
-            gp_Ax3 anAx3 = aPlane->Pln().Position();
-            gp_Pnt aLoc = anAx3.Location();
-            gp_Dir aXDir = anAx3.XDirection();
-            gp_Dir aYDir = anAx3.YDirection();
-            
-            myData[ X ]->setValue( aLoc.X() );
-            myData[ Y ]->setValue( aLoc.Y() );
-            myData[ Z ]->setValue( aLoc.Z() );
-            
-            myData[ DX1 ]->setValue( aXDir.X() );
-            myData[ DY1 ]->setValue( aXDir.Y() );
-            myData[ DZ1 ]->setValue( aXDir.Z() );
-            
-            myData[ DX2 ]->setValue( aYDir.X() );
-            myData[ DY2 ]->setValue( aYDir.Y() );
-            myData[ DZ2 ]->setValue( aYDir.Z() );
-            aSelMgr->clearSelected();
-          }
-        }
-        else {
-          TColStd_IndexedMapOfInteger aMap;
-          aSelMgr->GetIndexes( anIO, aMap );
-          if ( aMap.Extent() == 1 ) { // Local Selection
-            int anIndex = aMap( 1 );
-            TopTools_IndexedMapOfShape aShapes;
-            TopExp::MapShapes( aShape, aShapes );
-            aShape = aShapes.FindKey( anIndex );
-            aSelMgr->clearSelected(); // ???
-          }
-
-          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX ) {
-            gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
-            myData[ X ]->setValue( aPnt.X() );
-            myData[ Y ]->setValue( aPnt.Y() );
-            myData[ Z ]->setValue( aPnt.Z() );
-          }
-        }
-      }
+    if ( !aPlane.IsNull() ) {
+      gp_Ax3 anAx3 = aPlane->Pln().Position();
+      gp_Pnt aLoc = anAx3.Location();
+      gp_Dir aXDir = anAx3.XDirection();
+      gp_Dir aYDir = anAx3.YDirection();
+      
+      myData[ X ]->setValue( aLoc.X() );
+      myData[ Y ]->setValue( aLoc.Y() );
+      myData[ Z ]->setValue( aLoc.Z() );
+      
+      myData[ DX1 ]->setValue( aXDir.X() );
+      myData[ DY1 ]->setValue( aXDir.Y() );
+      myData[ DZ1 ]->setValue( aXDir.Z() );
+      
+      myData[ DX2 ]->setValue( aYDir.X() );
+      myData[ DY2 ]->setValue( aYDir.Y() );
+      myData[ DZ2 ]->setValue( aYDir.Z() );
     }
+    displayPreview();
+    return;
   }
-  
-  displayPreview();
+  aSelectedObject = getSelected( TopAbs_VERTEX );
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
+    myData[ X ]->setValue( aPnt.X() );
+    myData[ Y ]->setValue( aPnt.Y() );
+    myData[ Z ]->setValue( aPnt.Z() );
+    displayPreview();
+    return;
+  }
 }
 
 
@@ -401,91 +377,49 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     return;
   }
 
-  myEditCurrentArgument->setText( "" );
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() == 1) {
-    Handle(SALOME_InteractiveObject) anIO = aSelList.First();
-    GEOM::GEOM_Object_var aSelectedObj = GEOMBase::ConvertIOinGEOMObject( anIO );
-
-    if ( !CORBA::is_nil( aSelectedObj ) ) {
-      QString aName = GEOMBase::GetName( aSelectedObj );
-      
-      if ( getConstructorId() == 1 ) { // by shape position
-        TopoDS_Shape aShape;
-        if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) )
-          myShape = aSelectedObj;
-        myEditCurrentArgument->setText( aName );
+  TopAbs_ShapeEnum aNeedType;
+  if ( getConstructorId() == 1 ) // by shape position
+    aNeedType = TopAbs_SHAPE;
+  else if ( getConstructorId() == 2 ) // by point and two vectors
+    aNeedType = myEditCurrentArgument == Group2->LineEdit1 ? TopAbs_VERTEX : TopAbs_EDGE;
+  
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+    myEditCurrentArgument->setText( aName );
+    if ( getConstructorId() == 1 ) { // by shape position
+      myShape = aSelectedObject;
+    }
+    else if ( getConstructorId() == 2 ) { // by point and two vectors
+      if ( myEditCurrentArgument == Group2->LineEdit1 ) {
+	myPoint = aSelectedObject;
+	if (myPoint && !myVectorX)
+	  Group2->PushButton2->click();
       }
-      else if ( getConstructorId() == 2 ) { // by point and two vectors
-        TopoDS_Shape aShape;
-        if ( GEOMBase::GetShape( aSelectedObj, aShape, TopAbs_SHAPE ) ) {
-          TopAbs_ShapeEnum aNeedType = TopAbs_EDGE;
-          if ( myEditCurrentArgument == Group2->LineEdit1 )
-            aNeedType = TopAbs_VERTEX;
-          
-          TColStd_IndexedMapOfInteger aMap;
-          aSelMgr->GetIndexes( anIO, aMap );
-
-          if ( aMap.Extent() == 1 ) { // Local Selection
-            int anIndex = aMap( 1 );
-            if ( aNeedType == TopAbs_EDGE )
-              aName += QString( ":edge_%1" ).arg( anIndex );
-            else
-              aName += QString( ":vertex_%1" ).arg( anIndex );
-            
-            //Find SubShape Object in Father
-            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObj, aName );
-            if ( aFindedObject->_is_nil() ) { // Object not found in study
-              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-              aSelectedObj = aShapesOp->GetSubShape( aSelectedObj, anIndex );
-            } 
-            else {
-              aSelectedObj = aFindedObject; // get Object from study
-            }
-          }
-          else { // Global Selection
-            if ( aShape.ShapeType() != aNeedType ) {
-              aSelectedObj = GEOM::GEOM_Object::_nil();
-              aName = "";
-            }
-          }
-          
-          if ( myEditCurrentArgument == Group2->LineEdit1 ) {
-            myPoint = aSelectedObj;
-            myEditCurrentArgument->setText( aName );
-            if (!myPoint->_is_nil() && Group2->LineEdit2->text() == "")
-                Group2->PushButton2->click();
-          }
-          else if (myEditCurrentArgument == Group2->LineEdit2) {
-            myVectorX = aSelectedObj;
-            myEditCurrentArgument->setText( aName );
-            if (!myVectorX->_is_nil() && Group2->LineEdit3->text() == "")
-              Group2->PushButton3->click();
-          }
-          else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
-            myVectorY = aSelectedObj;
-            myEditCurrentArgument->setText( aName );
-            if (!myVectorX->_is_nil() && Group2->LineEdit1->text() == "")
-                Group2->PushButton1->click();
-          }
-        }
+      else if (myEditCurrentArgument == Group2->LineEdit2) {
+	myVectorX = aSelectedObject;
+	if (myVectorX && !myVectorY)
+	  Group2->PushButton3->click();
+      }
+      else if ( myEditCurrentArgument == Group2->LineEdit3 ) {
+	myVectorY = aSelectedObject;
+	if (myVectorY && !myPoint)
+	  Group2->PushButton1->click();
       }
     }
   }
   else {
     if ( getConstructorId() == 1 ) {
-      myShape = GEOM::GEOM_Object::_nil();
-    } else if ( getConstructorId() == 2 ) {
+      myShape.nullify();
+    }
+    else if ( getConstructorId() == 2 ) {
       if ( myEditCurrentArgument == Group2->LineEdit1 )
-        myPoint = GEOM::GEOM_Object::_nil();
+        myPoint.nullify();
       else if ( myEditCurrentArgument == Group2->LineEdit2 )
-        myVectorX = GEOM::GEOM_Object::_nil();
+        myVectorX.nullify();
       else if ( myEditCurrentArgument == Group2->LineEdit3 )
-        myVectorY = GEOM::GEOM_Object::_nil();
+        myVectorY.nullify();
     }
   }
 
@@ -539,18 +473,6 @@ void BasicGUI_MarkerDlg::SetEditCurrentArgument()
 }
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BasicGUI_MarkerDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-
-  myEditCurrentArgument = send;
-  GEOMBase_Skeleton::LineEditReturnPressed();
-}
-
-//=================================================================================
 // function : onActivate()
 // purpose  :
 //=================================================================================
@@ -597,31 +519,33 @@ GEOM::GEOM_IOperations_ptr BasicGUI_MarkerDlg::createOperation()
 //=================================================================================
 bool BasicGUI_MarkerDlg::isValid( QString& msg )
 {
-  const int id = getConstructorId();
-  switch ( id ) {
-    case 0: {
-      gp_Vec v1( myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value() ),
-        v2( myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
+  bool ok = false;
+  switch ( getConstructorId() ) {
+  case 0: {
+    gp_Vec v1( myData[ DX1 ]->value(), myData[ DY1 ]->value(), myData[ DZ1 ]->value() ),
+      v2( myData[ DX2 ]->value(), myData[ DY2 ]->value(), myData[ DZ2 ]->value() );
       
-      bool isOk = false;
-      // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
-      // Vectors shouldn't be checked for being orthogonal here!
-      if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() ) {
-        isOk = !v1.IsParallel( v2, Precision::Angular() );
-        if ( !isOk )
-          msg += tr( "VEC_PARALLEL" );
-      }
-      bool ok = true;
-      for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end(); ++anIter )
-        ok = anIter.value()->isValid( msg, !IsPreview()) && ok;
-      return isOk && ok;
+    // we will got exception if the magnitude of any of the 2 vectors <= gp::Resolution()
+    // Vectors shouldn't be checked for being orthogonal here!
+    if ( v1.Magnitude() > gp::Resolution() && v2.Magnitude() > gp::Resolution() ) {
+      ok = !v1.IsParallel( v2, Precision::Angular() );
+      if ( !ok )
+	msg += tr( "VEC_PARALLEL" );
     }
-    case 1:
-      return !myShape->_is_nil();
-    case 2:
-      return !myPoint->_is_nil() && !myVectorX->_is_nil() && !myVectorY->_is_nil();
+    for ( DataMap::iterator anIter = myData.begin(); anIter != myData.end() && ok; ++anIter )
+      ok = anIter.value()->isValid( msg, !IsPreview()) && ok;
+    break;
   }
-  return false;
+  case 1:
+    ok = myShape;
+    break;
+  case 2:
+    ok = myPoint && myVectorX && myVectorY;
+    break;
+  default:
+    break;
+  }
+  return ok;
 }
 
 //=================================================================================
@@ -650,9 +574,9 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
     aParameters<<myData[ DY2 ]->text();
     aParameters<<myData[ DZ2 ]->text();
   } else if (id == 1) {
-    anObj = anOper->MakeMarkerFromShape( myShape ); 
+    anObj = anOper->MakeMarkerFromShape( myShape.get() ); 
   } else if (id == 2) {
-    anObj = anOper->MakeMarkerPntTwoVec( myPoint, myVectorX, myVectorY ); 
+    anObj = anOper->MakeMarkerPntTwoVec( myPoint.get(), myVectorX.get(), myVectorY.get() ); 
   }
   
   if ( !anObj->_is_nil() ) {
@@ -662,6 +586,29 @@ bool BasicGUI_MarkerDlg::execute( ObjectList& objects )
   }
 
   return true;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void BasicGUI_MarkerDlg::addSubshapesToStudy()
+{
+  switch ( getConstructorId() ) {
+  case 0 :
+    break;
+  case 1 :
+    GEOMBase::PublishSubObject( myShape.get() );
+    break;
+  case 2:
+    GEOMBase::PublishSubObject( myPoint.get() );
+    GEOMBase::PublishSubObject( myVectorX.get() );
+    GEOMBase::PublishSubObject( myVectorY.get() );
+    break;
+  default:
+    break;
+  }
+
 }
 
 //=================================================================================

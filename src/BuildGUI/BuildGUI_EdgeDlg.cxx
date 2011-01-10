@@ -119,7 +119,9 @@ BuildGUI_EdgeDlg::~BuildGUI_EdgeDlg()
 void BuildGUI_EdgeDlg::Init()
 {
   // init variables
-  myPoint1 = myPoint2 = myWire = GEOM::GEOM_Object::_nil();
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myWire.nullify();
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->PushButton1->setDown(true);
   globalSelection(); // close local contexts, if any
@@ -137,10 +139,6 @@ void BuildGUI_EdgeDlg::Init()
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupWire->PushButton1,   SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupWire->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
@@ -192,8 +190,8 @@ void BuildGUI_EdgeDlg::ConstructorsClicked( int constructorId )
       myEditCurrentArgument = GroupPoints->LineEdit1;
       GroupPoints->LineEdit1->setText( "" );
       GroupPoints->LineEdit2->setText( "" );
-      myPoint1 = GEOM::GEOM_Object::_nil();
-      myPoint2 = GEOM::GEOM_Object::_nil();
+      myPoint1.nullify();
+      myPoint2.nullify();
       GroupPoints->PushButton1->setDown(true);
       GroupPoints->PushButton2->setDown(false);
       GroupPoints->LineEdit1->setEnabled(true);
@@ -209,7 +207,7 @@ void BuildGUI_EdgeDlg::ConstructorsClicked( int constructorId )
 
       myEditCurrentArgument = GroupWire->LineEdit1;
       GroupWire->LineEdit1->setText("");
-      myWire = GEOM::GEOM_Object::_nil();
+      myWire.nullify();
       GroupWire->PushButton1->setDown(true);
       GroupWire->LineEdit1->setEnabled(true);
       GroupPoints->hide();
@@ -238,61 +236,31 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupWire->LineEdit1)   myWire = GEOM::GEOM_Object::_nil();
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1.nullify();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2.nullify();
+    else if (myEditCurrentArgument == GroupWire->LineEdit1)   myWire.nullify();
     displayPreview();
     return;
   }
 
-  // nbSel == 1
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-  if ( !aSelectedObject->_is_nil() ) {
-    QString aName = GEOMBase::GetName( aSelectedObject );
-    TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupWire->LineEdit1 ? TopAbs_WIRE : TopAbs_VERTEX;
-
-    TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes( aSelList.First(), aMap );
-      if ( aMap.Extent() == 1 ) { // Local Selection
-        int anIndex = aMap( 1 );
-	aName += ( aNeedType == TopAbs_WIRE ? QString( ":wire_%1" ).arg( anIndex ) : QString( ":vertex_%1" ).arg( anIndex ) );
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
-        if ( CORBA::is_nil( aFindedObject ) ) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-          aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-        }
-        else {
-          aSelectedObject = aFindedObject; // get Object from study
-        }
-      }
-      else { // Global Selection
-        if ( aShape.ShapeType() != aNeedType ) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
-      }
-    }
-
+  TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupWire->LineEdit1 ? TopAbs_WIRE : TopAbs_VERTEX;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
 
-    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
-      globalSelection();
-      localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
-    }
+    globalSelection();
+    localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
 
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
       myPoint1 = aSelectedObject;
-      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+      if ( myPoint1 && !myPoint2 )
         GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myPoint2 = aSelectedObject;
-      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() )
+      if ( myPoint2 && !myPoint1 )
         GroupPoints->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupWire->LineEdit1 ) {
@@ -330,19 +298,6 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   send->setDown(true);
   displayPreview();
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BuildGUI_EdgeDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == GroupPoints->LineEdit1 || send == GroupPoints->LineEdit2 || send == GroupWire->LineEdit1 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 //=================================================================================
@@ -385,13 +340,17 @@ GEOM::GEOM_IOperations_ptr BuildGUI_EdgeDlg::createOperation()
 bool BuildGUI_EdgeDlg::isValid (QString& msg)
 {
   bool ok = false;
-  if ( getConstructorId() == 0 ) {
-    ok = !myPoint1->_is_nil() && !myPoint2->_is_nil();
-  }
-  else {
-    ok = !myWire->_is_nil();
-    ok = ok && GroupWire->SpinBox_DX->isValid( msg, !IsPreview() );
-    ok = ok && GroupWire->SpinBox_DY->isValid( msg, !IsPreview() );
+  switch ( getConstructorId() ) {
+  case 0:
+    ok = myPoint1 && myPoint2;
+    break;
+  case 1:
+    ok = GroupWire->SpinBox_DX->isValid( msg, !IsPreview() ) && 
+         GroupWire->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         myWire;
+    break;
+  default:
+    break;
   }
   return ok;
 }
@@ -410,7 +369,7 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
   switch ( getConstructorId() ) {
   case 0 :
     {
-      anObj = anOper->MakeEdge( myPoint1, myPoint2 );
+      anObj = anOper->MakeEdge( myPoint1.get(), myPoint2.get() );
       res = true;
       break;
     }
@@ -423,7 +382,7 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
       aParameters << GroupWire->SpinBox_DX->text();
       aParameters << GroupWire->SpinBox_DY->text();
       
-      anObj = anOper->MakeEdgeWire( myWire, aLinearTolerance, anAngularTolerance );
+      anObj = anOper->MakeEdgeWire( myWire.get(), aLinearTolerance, anAngularTolerance );
       
       if ( !anObj->_is_nil() && !IsPreview() )
 	anObj->SetParameters( aParameters.join(":").toLatin1().constData() );
@@ -444,15 +403,15 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
 //=================================================================================
 void BuildGUI_EdgeDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
   switch ( getConstructorId() ) {
   case 0 :
-    objMap[GroupPoints->LineEdit1->text()] = myPoint1;
-    objMap[GroupPoints->LineEdit2->text()] = myPoint2;
+    GEOMBase::PublishSubObject( myPoint1.get() );
+    GEOMBase::PublishSubObject( myPoint2.get() );
     break;
   case 1 :
-    objMap[GroupWire->LineEdit1->text()] = myWire;
+    GEOMBase::PublishSubObject( myWire.get() );
+    break;
+  default:
     break;
   }
-  addSubshapesToFather( objMap );
 }

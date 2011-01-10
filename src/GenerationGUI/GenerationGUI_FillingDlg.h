@@ -27,7 +27,8 @@
 #ifndef GENERATIONGUI_FILLINGDLG_H
 #define GENERATIONGUI_FILLINGDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel5Spin1Check;
 
@@ -54,23 +55,13 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myCompound; /* compound of curves */
-  Standard_Integer                   myMinDeg;
-  Standard_Integer                   myMaxDeg;
-  Standard_Real                      myTol3D;
-  Standard_Real                      myTol2D;
-  Standard_Integer                   myNbIter;
-  bool                               myIsApprox;
-  int                                myMethod;
-  bool                               myOkCompound; /* to check when curv. compound is defined */
-
+  GEOM::GeomObjPtr                   myCompound; /* compound of curves */
   DlgRef_1Sel5Spin1Check*            GroupPoints;
     
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox( double );

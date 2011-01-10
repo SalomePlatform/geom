@@ -27,7 +27,8 @@
 #ifndef BASICGUI_POINTDLG_H
 #define BASICGUI_POINTDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 #include <QMap>
 
 class DlgRef_1Sel1Spin1Check;
@@ -76,11 +77,11 @@ private:
   void                               updateParamCoord(bool theIsUpdate);
 
 private:
-  GEOM::GEOM_Object_var              myEdge;
-  GEOM::GEOM_Object_var              myFace;
-  GEOM::GEOM_Object_var              myRefPoint; 
-  GEOM::GEOM_Object_var              myLine1; 
-  GEOM::GEOM_Object_var              myLine2;
+  GEOM::GeomObjPtr                   myEdge;
+  GEOM::GeomObjPtr                   myFace;
+  GEOM::GeomObjPtr                   myRefPoint; 
+  GEOM::GeomObjPtr                   myLine1; 
+  GEOM::GeomObjPtr                   myLine2;
 
   bool                               myBusy;
 
@@ -108,7 +109,6 @@ private slots:
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

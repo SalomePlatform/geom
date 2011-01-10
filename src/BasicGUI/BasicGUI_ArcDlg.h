@@ -27,7 +27,8 @@
 #ifndef BASICGUI_ARCDLG_H
 #define BASICGUI_ARCDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_3Sel;
 class DlgRef_3Sel1Check;
@@ -56,7 +57,7 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myPoint1, myPoint2, myPoint3;
+  GEOM::GeomObjPtr                   myPoint1, myPoint2, myPoint3;
 
   DlgRef_3Sel*                       Group3Pnts;
   DlgRef_3Sel1Check*                 Group3Pnts2;
@@ -68,7 +69,6 @@ private slots:
   
   void                               ActivateThisDialog();
   void                               ConstructorsClicked( int );
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ReverseSense();

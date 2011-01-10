@@ -102,8 +102,8 @@ void BuildGUI_SolidDlg::Init()
   GroupSolid->LineEdit1->setReadOnly( true );
   GroupSolid->CheckButton1->setChecked( true );
 
-  myOkShells = false;
-
+  myShells.clear();
+  
   globalSelection( GEOM_SHELL );
 
   /* signals and slots connections */
@@ -137,17 +137,6 @@ void BuildGUI_SolidDlg::ClickOnOk()
 //=================================================================================
 bool BuildGUI_SolidDlg::ClickOnApply()
 {
-  for ( int i = 0, n = myShells.length(); i< n; i++ ) {
-    if ( !isClosed(i)) {
-      QString aName = GEOMBase::GetName( myShells[i] );
-      SUIT_MessageBox::warning( (QWidget*)SUIT_Session::session()->activeApplication()->desktop(),
-                                 QObject::tr("WRN_WARNING"),
-                                 QObject::tr("WRN_SHAPE_UNCLOSED").arg(aName) ,
-                                 QObject::tr("BUT_OK") );
-       return false;
-    }
-  }
-
   if ( !onAccept() )
     return false;
 
@@ -163,25 +152,13 @@ bool BuildGUI_SolidDlg::ClickOnApply()
 void BuildGUI_SolidDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aString = "";
-  
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
 
-  myOkShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString);
-  if ( nbSel == 0 )
-    return;
-  if ( nbSel != 1 )
-    aString = tr( "%1_objects" ).arg( nbSel );
-  
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myShells);
-  if ( !myShells.length() )
-    return;
-  
-  myEditCurrentArgument->setText( aString );
-  myOkShells = true;
+  myShells = getSelected( TopAbs_SHELL, -1 );
+
+  if ( !myShells.isEmpty() ) {
+    QString aName = myShells.count() > 1 ? QString( "%1_objects").arg( myShells.count() ) : GEOMBase::GetName( myShells[0].get() );
+    myEditCurrentArgument->setText( aName );
+  }
 }
 
 //=================================================================================
@@ -248,43 +225,51 @@ GEOM::GEOM_IOperations_ptr BuildGUI_SolidDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BuildGUI_SolidDlg::isValid( QString& )
+bool BuildGUI_SolidDlg::isValid( QString& msg )
 {
-  return myOkShells;
+  bool ok = !myShells.isEmpty();
+  for ( int i = 0, n = myShells.count(); i < n && ok; i++ ) {
+    ok = isClosed( myShells[i].get() );
+    if ( !ok )
+      msg = QObject::tr("WRN_SHAPE_UNCLOSED").arg( GEOMBase::GetName( myShells[i].get() ) );
+  }
+  return ok;
 }
 
 //=================================================================================
 // function : isClosed
 // purpose  : Check the object 'i' in myShells list is closed or unclosed
 //=================================================================================
-bool BuildGUI_SolidDlg::isClosed(int i)
+bool BuildGUI_SolidDlg::isClosed( GEOM::GEOM_Object_ptr shell )
 {
-  GEOM::GEOM_Object_var aShape = myShells[i];
+  bool ok = false;
+
   GEOM::GEOM_IKindOfShape::shape_kind aKind;
   GEOM::ListOfLong_var anInts;
   GEOM::ListOfDouble_var aDbls;
 
-  if (aShape->_is_nil()) {
+  if ( !CORBA::is_nil( shell ) ) {
+    GEOM::MeasureOpPtr anOp;
+    anOp.take( myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() ) );
+    
+    // Detect kind of shape and parameters
+    aKind = anOp->KindOfShape(shell, anInts, aDbls);
+    
+    if ( anOp->IsDone() ) {
+      if ( anInts[0] == 1 )
+	ok = true;
+      else if ( anInts[0] == 2 )
+	ok = false;
+    }
+    else {
+      MESSAGE ("KindOfShape Operation is NOT DONE!!!");
+    }
+  }
+  else {
     MESSAGE ("Shape is NULL!!!");
-    return false;
   }
 
-  GEOM::GEOM_IMeasureOperations_var anOp = myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
-
-  // Detect kind of shape and parameters
-  aKind = anOp->KindOfShape(aShape, anInts, aDbls);
-
-  if ( !anOp->IsDone() ) {
-    MESSAGE ("KindOfShape Operation is NOT DONE!!!");
-    return false;
-  }
-  
-  if ( anInts[0] == 1 )
-    return true;
-  else if ( anInts[0] == 2 )
-    return false;
- 
-  return false;
+  return ok;
 }
 
 //=================================================================================
@@ -293,19 +278,22 @@ bool BuildGUI_SolidDlg::isClosed(int i)
 //=================================================================================
 bool BuildGUI_SolidDlg::execute( ObjectList& objects )
 {
-  bool toCreateSingleSolid = GroupSolid->CheckButton1->isChecked();
-  
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
     
-  if ( toCreateSingleSolid ) {
-    GEOM::GEOM_Object_var anObj = anOper->MakeSolidShells( myShells );
+  if ( GroupSolid->CheckButton1->isChecked() ) {
+    GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+    objlist->length( myShells.count() );
+    for ( int i = 0; i < myShells.count(); i++ )
+      objlist[i] = myShells[i].copy();
+
+    GEOM::GEOM_Object_var anObj = anOper->MakeSolidShells( objlist.in() );
 
     if ( !anObj->_is_nil() )
       objects.push_back( anObj._retn() );
   }
   else {
-    for ( int i = 0, n = myShells.length(); i< n; i++ ) {
-      GEOM::GEOM_Object_var anObj = anOper->MakeSolidShell( myShells[ i ] );
+    for ( int i = 0, n = myShells.count(); i< n; i++ ) {
+      GEOM::GEOM_Object_var anObj = anOper->MakeSolidShell( myShells[ i ].get() );
 
      if ( !anObj->_is_nil() )
        objects.push_back( anObj._retn() );

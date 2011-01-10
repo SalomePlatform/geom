@@ -27,7 +27,8 @@
 #ifndef PRIMITIVEGUI_BOXDLG_H
 #define PRIMITIVEGUI_BOXDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel;
 class DlgRef_3Spin;
@@ -56,7 +57,7 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::GEOM_Object_var              myPoint1, myPoint2; /* Points containing the vector */
+  GEOM::GeomObjPtr                   myPoint1, myPoint2; /* Points containing the vector */
 
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_3Spin*                      GroupDimensions;
@@ -65,7 +66,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

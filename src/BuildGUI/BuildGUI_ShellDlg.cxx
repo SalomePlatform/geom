@@ -101,7 +101,7 @@ void BuildGUI_ShellDlg::Init()
   myEditCurrentArgument = GroupShell->LineEdit1;
   GroupShell->LineEdit1->setReadOnly( true );
   
-  myOkFacesAndShells = false;
+  myFacesAndShells.clear();
   
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_SHELL );
@@ -158,25 +158,15 @@ bool BuildGUI_ShellDlg::ClickOnApply()
 void BuildGUI_ShellDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aString;
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_FACE << TopAbs_SHELL << TopAbs_COMPOUND;
+  myFacesAndShells = getSelected( types, -1 );
 
-  myOkFacesAndShells = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-  if ( nbSel == 0 )
-    return;
-  if ( nbSel != 1 )
-    aString = QString( "%1_objects ").arg( nbSel );
-
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myFacesAndShells, true);
-  if ( !myFacesAndShells.length() )
-    return;
-
-  myEditCurrentArgument->setText( aString );
-  myOkFacesAndShells = true;
+  if ( !myFacesAndShells.isEmpty() ) {
+    QString aName = myFacesAndShells.count() > 1 ? QString( "%1_objects").arg( myFacesAndShells.count() ) : GEOMBase::GetName( myFacesAndShells[0].get() );
+    myEditCurrentArgument->setText( aName );
+  }
 }
 
 
@@ -251,7 +241,7 @@ GEOM::GEOM_IOperations_ptr BuildGUI_ShellDlg::createOperation()
 //=================================================================================
 bool BuildGUI_ShellDlg::isValid( QString& )
 {
-  return myOkFacesAndShells;
+  return !myFacesAndShells.isEmpty();
 }
 
 //=================================================================================
@@ -261,7 +251,13 @@ bool BuildGUI_ShellDlg::isValid( QString& )
 bool BuildGUI_ShellDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->MakeShell( myFacesAndShells );
+
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myFacesAndShells.count() );
+  for ( int i = 0; i < myFacesAndShells.count(); i++ )
+    objlist[i] = myFacesAndShells[i].copy();
+
+  GEOM::GEOM_Object_var anObj = anOper->MakeShell( objlist.in() );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

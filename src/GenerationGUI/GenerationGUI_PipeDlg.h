@@ -27,7 +27,8 @@
 #ifndef GENERATIONGUI_PIPEDLG_H
 #define GENERATIONGUI_PIPEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_3Sel1Check;
 
@@ -56,20 +57,16 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::ListOfGO                     myBaseObjects;  /* Base shapes */
-  GEOM::GEOM_Object_var              myPath; /* Shape, defining the path */
-  GEOM::GEOM_Object_var              myVec;  /* Vector, defining the constant binormal direction */
-  bool                               myOkBase;
-  bool                               myOkPath;
-  bool                               myOkVec; /* to check when arguments are defined */
+  QList<GEOM::GeomObjPtr>            myBaseObjects;  /* Base shapes */
+  GEOM::GeomObjPtr                   myPath; /* Shape, defining the path */
+  GEOM::GeomObjPtr                   myVec;  /* Vector, defining the constant binormal direction */
   
-  DlgRef_3Sel1Check*                       GroupPoints;
+  DlgRef_3Sel1Check*                 GroupPoints;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

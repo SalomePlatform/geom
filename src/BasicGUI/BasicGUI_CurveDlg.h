@@ -27,7 +27,8 @@
 #ifndef BASICGUI_CURVEDLG_H
 #define BASICGUI_CURVEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 #include <list>
 
@@ -50,6 +51,7 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
+  virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
@@ -57,8 +59,7 @@ private:
 
 private:
   DlgRef_1Sel1Check*                 GroupPoints;
-  GEOM::ListOfGO_var                 myPoints;
-  std::list<GEOM::GEOM_Object_var>   myOrderedSel; //!< This list used for managing orderes selection
+  QList<GEOM::GeomObjPtr>            myPoints;
 
 private slots:
   void                               ClickOnOk();
@@ -68,7 +69,6 @@ private slots:
   void                               DeactivateActiveDialog();
 
   void                               ConstructorsClicked( int );
-  void                               LineEditReturnPressed();
   void                               CheckButtonToggled();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();

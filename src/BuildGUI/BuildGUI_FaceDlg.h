@@ -27,7 +27,8 @@
 #ifndef BUILDGUI_FACEDLG_H
 #define BUILDGUI_FACEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Check;
 
@@ -54,7 +55,7 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::ListOfGO                     myWires;
+  QList<GEOM::GeomObjPtr>            myWires;
   
   DlgRef_1Sel1Check*                 GroupWire;
 

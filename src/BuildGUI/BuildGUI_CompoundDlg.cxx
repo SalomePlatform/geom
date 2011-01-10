@@ -99,7 +99,7 @@ void BuildGUI_CompoundDlg::Init()
   myEditCurrentArgument = GroupShapes->LineEdit1;
   GroupShapes->LineEdit1->setReadOnly( true );
   
-  myOkShapes = false;
+  myShapes.clear();
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -149,22 +149,13 @@ bool BuildGUI_CompoundDlg::ClickOnApply()
 void BuildGUI_CompoundDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aString = ""; /* name of selection */
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  myShapes = getSelected( TopAbs_SHAPE, -1 );
 
-  myOkShapes = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-  if ( nbSel == 0 ) 
-    return;
-  if ( nbSel != 1 )
-    aString = QString( "%1_objects").arg( nbSel );
-  
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myShapes, true);
-  myEditCurrentArgument->setText( aString );
-  myOkShapes = true;
+  if ( !myShapes.isEmpty() ) {
+    QString aName = myShapes.count() > 1 ? QString( "%1_objects").arg( myShapes.count() ) : GEOMBase::GetName( myShapes[0].get() );
+    myEditCurrentArgument->setText( aName );
+  }
 }
 
 
@@ -223,7 +214,7 @@ GEOM::GEOM_IOperations_ptr BuildGUI_CompoundDlg::createOperation()
 //=================================================================================
 bool BuildGUI_CompoundDlg::isValid( QString& )
 {
-  return myOkShapes;
+  return !myShapes.isEmpty();
 }
 
 //=================================================================================
@@ -233,7 +224,13 @@ bool BuildGUI_CompoundDlg::isValid( QString& )
 bool BuildGUI_CompoundDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->MakeCompound( myShapes );
+
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myShapes.count() );
+  for ( int i = 0; i < myShapes.count(); i++ )
+    objlist[i] = myShapes[i].copy();
+
+  GEOM::GEOM_Object_var anObj = anOper->MakeCompound( objlist );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

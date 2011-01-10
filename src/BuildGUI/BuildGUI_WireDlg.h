@@ -27,7 +27,8 @@
 #ifndef BUILDGUI_WIREDLG_H
 #define BUILDGUI_WIREDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Spin;
 class DlgRef_3Radio;
@@ -56,13 +57,10 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::ListOfGO                     myEdgesAndWires;
-  bool                               myOkEdgesAndWires;   /* to check when arguments is defined */
+  QList<GEOM::GeomObjPtr>            myEdgesAndWires;
   
   DlgRef_1Sel1Spin*                  GroupArgs;
   DlgRef_3Radio*                     GroupType;
-
-  QMap<QString, GEOM::GEOM_Object_var> myMapToStudy;
 
 private slots:
   void                               ClickOnOk();

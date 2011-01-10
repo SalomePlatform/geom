@@ -27,7 +27,8 @@
 #ifndef BOOLEANGUI_DIALOG_H
 #define BOOLEANGUI_DIALOG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel;
 
@@ -58,8 +59,8 @@ private:
 private:
   int                                myOperation;
   
-  GEOM::GEOM_Object_var              myObject1;
-  GEOM::GEOM_Object_var              myObject2;
+  GEOM::GeomObjPtr                   myObject1;
+  GEOM::GeomObjPtr                   myObject2;
   
   DlgRef_2Sel*                       myGroup;
 
@@ -68,7 +69,6 @@ private slots:
   bool                               ClickOnApply();
   void                               SetEditCurrentArgument();
   void                               SelectionIntoArgument();
-  void                               LineEditReturnPressed();
   void                               ActivateThisDialog();
 };
 

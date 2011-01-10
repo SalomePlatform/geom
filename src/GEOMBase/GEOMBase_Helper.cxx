@@ -44,6 +44,7 @@
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_DataOwner.h>
 #include <SalomeApp_Tools.h>
+#include <SALOME_ListIteratorOfListIO.hxx>
 
 #include <SALOME_Prs.h>
 
@@ -52,6 +53,7 @@
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TCollection_AsciiString.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 //To disable automatic genericobj management, the following line should be commented.
 //Otherwise, it should be uncommented. Refer to KERNEL_SRC/src/SALOMEDSImpl/SALOMEDSImpl_AttributeIOR.cxx
@@ -982,11 +984,6 @@ QString GEOMBase_Helper::getPrefix( GEOM::GEOM_Object_ptr theObj ) const
   if ( !myPrefix.isEmpty() || theObj->_is_nil() )
     return myPrefix;
 
-  //TopoDS_Shape aShape;
-  //if ( !GEOMBase::GetShape( theObj, aShape ) )
-  //  return "";
-  //
-  //long aType = aShape.ShapeType();
   GEOM::shape_type aType = theObj->GetShapeType();
 
   switch ( aType )
@@ -1075,6 +1072,43 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather (GEOM::GEOM_Object_ptr
 }
 
 //================================================================
+// Function : findObjectInFather
+// Purpose  : It should return an object if its founded in study or
+//            return Null object if the object is not founded
+//================================================================
+GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr theFather,
+                                                           int theIndex )
+{
+  GEOM::GEOM_Object_var object;
+  bool found = false;
+  
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( study ) {
+    _PTR(Study) studyDS = study->studyDS();
+    QString IOR = GEOMBase::GetIORFromObject( theFather );
+    _PTR(SObject) sobject( studyDS->FindObjectIOR( IOR.toLatin1().constData() ) );
+    if ( sobject ) {
+      _PTR(ChildIterator) it( studyDS->NewChildIterator( sobject ) );
+      for ( ; it->More() && !found; it->Next() ) {
+	GEOM::GEOM_Object_var cobject = GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( it->Value() ) );
+	if ( !CORBA::is_nil( cobject ) ) {
+	  GEOM::ListOfLong_var indices = cobject->GetSubShapeIndices();
+	  int length = indices->length();
+	  for ( int i = 0; i < length && !found; i++ ) {
+	    if ( indices[i] == theIndex ) {
+	      object = cobject;
+	      found = true;
+	    }
+	  }
+	}
+      }
+    }
+  }
+  
+  return object._retn();
+}
+
+//================================================================
 // Function : addSubshapesToStudy
 // Purpose  : Virtual method to add subshapes if needs
 //================================================================
@@ -1084,28 +1118,172 @@ void GEOMBase_Helper::addSubshapesToStudy()
 }
 
 //================================================================
-// Function : addSubshapesToFather
-// Purpose  : Method to add Father Subshapes to Study if it`s not exist
+// Function : getSelected
+// Purpose  : Get selected object by specified type
+//
+// Returns valid object if only one object of the specified type is selected
+// (no matter global or local selection is activated). If \a type is TopAbs_SHAPE,
+// geometrical object of any valid type is expected.
+// 
+// \param type type of the object to be obtained from selection
+// \return selected geometrical object or nil object if selection is not satisfactory
 //================================================================
-void GEOMBase_Helper::addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap )
+GEOM::GeomObjPtr GEOMBase_Helper::getSelected( TopAbs_ShapeEnum type )
 {
-  //GetStudyDS
-  SalomeApp_Application* app =
-    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  _PTR(Study) aDStudy = appStudy->studyDS();
+  QList<TopAbs_ShapeEnum> types;
+  types << type;
+  return getSelected( types );
+}
 
-  for( QMap<QString, GEOM::GEOM_Object_var>::Iterator it = theMap.begin(); it != theMap.end(); it++ ) {
-    GEOM::GEOM_Object_var aFatherObj = it.value()->GetMainShape();
-    if ( !aFatherObj->_is_nil() ) {
-      QString aFatherEntry = getEntry( aFatherObj );
-      if ( aFatherEntry != "") { // additional checking that object is valid 0020598 EDF 1191
-	GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aFatherObj, it.key().toLatin1().data() );
-	//Add Object to study if its not exist
-	if ( aFindedObject->_is_nil() )
-	  GeometryGUI::GetGeomGen()->AddInStudy(GeometryGUI::ClientStudyToStudy(aDStudy),
-						it.value(), it.key().toLatin1().data(), aFatherObj );
+//================================================================
+// Function : getSelected
+// Purpose  : Get selected object by specified types
+//
+// Returns valid object if only one object of the specified type is selected
+// (no matter global or local selection is activated). The list of allowed
+// shape types is passed via \a types. If \a types includes TopAbs_SHAPE,
+// geometrical object of any valid type is expected.
+// 
+// \param types list of allowed shape types for the objects to be obtained from selection
+// \return selected geometrical object or nil object if selection is not satisfactory
+//================================================================
+GEOM::GeomObjPtr GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& types )
+{
+  QList<GEOM::GeomObjPtr> selected = getSelected( types, 1 );
+  return selected.count() > 0 ? selected[0] : GEOM::GeomObjPtr();
+}
+
+//================================================================
+// Function : getSelected
+// Purpose  : Get selected object(s) by specified type
+//
+// Returns list of selected objects if selection satisfies specifies selection options.
+// (no matter global or local selection is activated). If \a type is TopAbs_SHAPE,
+// geometrical objects of any valid type are expected.
+//
+// The \a type parameter specifies allowed type of the object(s) being selected.
+// The \a count parameter specifies exact number of the objects to be retrieved from selection.
+// The \a strict parameter specifies policy being applied to the selection. 
+// If \a count < 0, then any number of the selected objects is valid (including 0).
+// In this case, if \a strict is \c true (default), all selected objects should satisfy
+// the specified \a type.
+// If \a count > 0, only specified number of the objects is retrieved from the selection.
+// In this case, if \a strict is \c true (default), function returns empty list if total number of selected
+// objects does not correspond to the \a count parameter. Otherwise (if \a strict is \c false),
+// function returns valid list of objects if at least \a count objects satisfy specified \a type.
+// 
+// \param type type of the object(s) to be obtained from selection
+// \param count number of items to be retrieved from selection
+// \param strict selection policy
+// \return list of selected geometrical objects or empty list if selection is not satisfactory
+//================================================================
+QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( TopAbs_ShapeEnum type, int count, bool strict )
+{
+  QList<TopAbs_ShapeEnum> types;
+  types << type;
+  return getSelected( types, count, strict );
+}
+
+static bool typeInList( TopAbs_ShapeEnum type, const QList<TopAbs_ShapeEnum>& types )
+{
+  bool ok = false;
+  for ( int i = 0; i < types.count() && !ok; i++ )
+    ok = types[i] == TopAbs_SHAPE || types[i] == type;
+  return ok;
+}
+
+//================================================================
+// Function : getSelected
+// Purpose  : Get selected objects by specified types
+//
+// Returns list of selected objects if selection satisfies specifies selection options.
+// (no matter global or local selection is activated). If \a types includes TopAbs_SHAPE,
+// geometrical objects of any valid type are expected.
+//
+// The \a types parameter specifies allowed types of the object(s) being selected.
+// The \a count parameter specifies exact number of the objects to be retrieved from selection.
+// The \a strict parameter specifies policy being applied to the selection. 
+// If \a count < 0, then any number of the selected objects is valid (including 0).
+// In this case, if \a strict is \c true (default), all selected objects should satisfy
+// the specified \a type.
+// If \a count > 0, only specified number of the objects is retrieved from the selection.
+// In this case, if \a strict is \c true (default), function returns empty list if total number of selected
+// objects does not correspond to the \a count parameter. Otherwise (if \a strict is \c false),
+// function returns valid list of objects if at least \a count objects satisfy specified \a type.
+// 
+// \param types list of allowed shape types for the objects to be obtained from selection
+// \param count number of items to be retrieved from selection
+// \param strict selection policy
+// \return list of selected geometrical objects or empty list if selection is not satisfactory
+//================================================================
+QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEnum>& types, int count, bool strict )
+{
+  SUIT_Session* session = SUIT_Session::session();
+  QList<GEOM::GeomObjPtr> result;
+
+  SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>( session->activeApplication() );
+  if ( app ) {
+    LightApp_SelectionMgr* selMgr = app->selectionMgr();
+    if ( selMgr ) {
+      SALOME_ListIO selected;
+      selMgr->selectedObjects( selected );
+      SALOME_ListIteratorOfListIO it( selected );
+      bool stopped = false;
+      for ( ; it.More() && !stopped; it.Next() ) {
+	Handle(SALOME_InteractiveObject) IO = it.Value();
+	GEOM::GeomObjPtr object = GEOMBase::ConvertIOinGEOMObject( IO );
+	if ( object ) {
+	  TColStd_IndexedMapOfInteger subShapes;
+	  selMgr->GetIndexes( IO, subShapes );
+	  int nbSubShapes = subShapes.Extent();
+	  if ( nbSubShapes == 0 ) {
+	    // global selection
+	    if ( typeInList( (TopAbs_ShapeEnum)(object->GetShapeType()), types ) ) {
+	      result << object;
+	      if ( count > 0 ) {
+		if ( strict && result.count() > count ) {
+		  result.clear();
+		  stopped = true;
+		}
+		else if ( !strict && result.count() == count )
+		  stopped = true;
+	      }
+	    }
+	    else if ( strict ) {
+	      result.clear();
+	      stopped = true;
+	    }
+	  }
+	  else {
+	    // local selection
+	    for ( int i = 1; i <= nbSubShapes && !stopped; i++ ) {
+	      int idx = subShapes( i );
+	      GEOM::GeomObjPtr subShape = findObjectInFather( object.get(), idx );
+	      if ( !subShape ) {
+		// sub-shape is not yet published in the study
+		GEOM::ShapesOpPtr shapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
+		subShape.take( shapesOp->GetSubShape( object.get(), idx ) ); // take ownership!
+	      }
+	      if ( typeInList( (TopAbs_ShapeEnum)(subShape->GetShapeType()), types ) ) {
+		result << subShape;
+		if ( count > 0 ) {
+		  if ( strict && result.count() > count ) {
+		    result.clear();
+		    stopped = true;
+		  }
+		  else if ( !strict && result.count() == count )
+		    stopped = true;
+		}
+	      }
+	      else if ( strict ) {
+		result.clear();
+		stopped = true;
+	      }
+	    }
+	  }
+	}
       }
     }
   }
+  return result;
 }

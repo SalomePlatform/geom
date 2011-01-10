@@ -24,7 +24,8 @@
 #ifndef BASICGUI_DISKDLG_H
 #define BASICGUI_DISKDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_3Sel;
 class DlgRef_2Sel1Spin;
@@ -58,7 +59,7 @@ private:
   int                                myOrientationType;
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3;
+  GEOM::GeomObjPtr                   myPoint, myDir, myPoint1, myPoint2, myPoint3;
 
   DlgRef_2Sel1Spin*                  GroupPntVecR;
   DlgRef_3Sel*                       Group3Pnts;
@@ -74,7 +75,6 @@ private slots:
   void                               SelectionIntoArgument();
 
   void                               ConstructorsClicked( int );
-  void                               LineEditReturnPressed();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
   void                               SetDoubleSpinBoxStep( double );

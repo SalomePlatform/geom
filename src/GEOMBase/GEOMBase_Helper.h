@@ -28,6 +28,7 @@
 #define GEOMBASE_HELPER_H
 
 #include "GEOM_GEOMBase.hxx"
+#include "GEOM_GenericObjPtr.h"
 
 #include <GEOM_Displayer.h>
 #include <SALOME_ListIO.hxx>
@@ -166,9 +167,13 @@ protected:
   virtual void addSubshapesToStudy();
 
   GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, const QString& theName );
-  //This Metod to find SubObject in theFather Object by Name (theName)
+  GEOM::GEOM_Object_ptr findObjectInFather( GEOM::GEOM_Object_ptr theFather, int theIndex );
+  // These methods are used to find published sub-object (sub-shape) in the parent object (main shape)
 
-  void addSubshapesToFather( QMap<QString, GEOM::GEOM_Object_var>& theMap );
+  GEOM::GeomObjPtr        getSelected( TopAbs_ShapeEnum type );
+  GEOM::GeomObjPtr        getSelected( const QList<TopAbs_ShapeEnum>& types );
+  QList<GEOM::GeomObjPtr> getSelected( TopAbs_ShapeEnum type, int count, bool strict = true );
+  QList<GEOM::GeomObjPtr> getSelected( const QList<TopAbs_ShapeEnum>& types, int count, bool strict = true );
 
   void SetIsPreview(const bool thePreview) {isPreview = thePreview;}
   bool IsPreview() {return isPreview;}

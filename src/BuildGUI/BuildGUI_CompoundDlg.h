@@ -27,7 +27,8 @@
 #ifndef BUILDGUI_COMPOUNDDLG_H
 #define BUILDGUI_COMPOUNDDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel;
 
@@ -55,8 +56,7 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::ListOfGO                     myShapes;
-  bool                               myOkShapes;
+  QList<GEOM::GeomObjPtr>            myShapes;
   
   DlgRef_1Sel*                       GroupShapes;
     

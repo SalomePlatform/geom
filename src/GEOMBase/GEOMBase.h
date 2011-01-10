@@ -122,7 +122,17 @@ public :
   /* Gets name of object */
   static QString      GetName( GEOM::GEOM_Object_ptr object );
 
+  /* Check if object has shape */
   static bool         IsShape( GEOM::GEOM_Object_ptr object );
+
+  /* Get string representation of shape type */
+  static QString      TypeName( TopAbs_ShapeEnum type );
+  
+  /* Get study entry for the given object  */
+  static QString      GetEntry( GEOM::GEOM_Object_ptr object );
+
+  /* Publish sub-shape under the main object */
+  static void         PublishSubObject( GEOM::GEOM_Object_ptr object );
 };
 
 #endif // GEOMBASE_H

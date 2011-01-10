@@ -119,8 +119,8 @@ void BasicGUI_VectorDlg::Init()
     /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
 
-  myPoint1 = GEOM::GEOM_Object::_nil();
-  myPoint2 = GEOM::GEOM_Object::_nil();
+  myPoint1.nullify();
+  myPoint2.nullify();
 
   /* Get setting of step value from file configuration */
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
@@ -149,9 +149,6 @@ void BasicGUI_VectorDlg::Init()
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-
-  connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( GroupDimensions->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( GroupDimensions->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
@@ -189,8 +186,8 @@ void BasicGUI_VectorDlg::SetDoubleSpinBoxStep( double step )
 void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 {
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
-  myPoint1 = GEOM::GEOM_Object::_nil();
-  myPoint2 = GEOM::GEOM_Object::_nil();
+  myPoint1.nullify();
+  myPoint2.nullify();
 
   switch ( constructorId ) {
   case 0:
@@ -272,66 +269,32 @@ bool BasicGUI_VectorDlg::ClickOnApply()
 void BasicGUI_VectorDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-
+  
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
     if (myEditCurrentArgument == GroupPoints->LineEdit1)
-      myPoint1 = GEOM::GEOM_Object::_nil();
+      myPoint1.nullify();
     else if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      myPoint2 = GEOM::GEOM_Object::_nil();
+      myPoint2.nullify();
     return;
   }
 
-  // nbSel == 1
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if (!CORBA::is_nil(aSelectedObject) ) {
-    QString aName = GEOMBase::GetName(aSelectedObject);
-
-    TopoDS_Shape aShape;
-    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if (aMap.Extent() == 1) { // Local Selection
-        int anIndex = aMap(1);
-        aName += QString(":vertex_%1").arg(anIndex);
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-        
-        if (aFindedObject->_is_nil()) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        }
-        else {
-          aSelectedObject = aFindedObject; // get Object from study
-        }
-      }
-      else { // Global Selection
-        if (aShape.ShapeType() != TopAbs_VERTEX) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
-      }
-    }
-
+  GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_VERTEX );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText(aName);
-
-    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
-      globalSelection();
-      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
-    }
-
-    if      (myEditCurrentArgument == GroupPoints->LineEdit1) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myPoint1 = aSelectedObject;
-      if (!myPoint1->_is_nil() && myPoint2->_is_nil())
+      if (myPoint1 && !myPoint2)
         GroupPoints->PushButton2->click();
     }
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
       myPoint2 = aSelectedObject;
-      if (!myPoint2->_is_nil() && myPoint1->_is_nil())
+      if (myPoint2 && !myPoint1)
         GroupPoints->PushButton1->click();
     }
   }
@@ -364,20 +327,6 @@ void BasicGUI_VectorDlg::SetEditCurrentArgument()
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   send->setDown(true);
   displayPreview();
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BasicGUI_VectorDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if      ( send == GroupPoints->LineEdit1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == GroupPoints->LineEdit2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
-  else return;
-  GEOMBase_Skeleton::LineEditReturnPressed();
 }
 
 
@@ -454,17 +403,16 @@ GEOM::GEOM_IOperations_ptr BasicGUI_VectorDlg::createOperation()
 //=================================================================================
 bool BasicGUI_VectorDlg::isValid( QString& msg )
 {
+  bool ok = false;
   if(getConstructorId() == 0) 
-    return !myPoint1->_is_nil() && !myPoint2->_is_nil();
+    ok = myPoint1 && myPoint2;
   else if(getConstructorId() == 1)
   {
-    bool ok = true;
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() ) && ok;
-    return ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         GroupDimensions->SpinBox_DZ->isValid( msg, !IsPreview() );
   }
-  return false;
+  return ok;
 }
 
 //=================================================================================
@@ -482,7 +430,7 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
   switch ( getConstructorId() ) {
   case 0 :
     {
-      anObj = anOper->MakeVectorTwoPnt( myPoint1, myPoint2 );
+      anObj = anOper->MakeVectorTwoPnt( myPoint1.get(), myPoint2.get() );
       res = true;
       break;
     }
@@ -518,15 +466,8 @@ bool BasicGUI_VectorDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_VectorDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  switch ( getConstructorId() ) {
-  case 0:
-    objMap[GroupPoints->LineEdit1->text()] = myPoint1;
-    objMap[GroupPoints->LineEdit2->text()] = myPoint2;
-    break;
-  case 1:
-    return;
+  if ( getConstructorId() == 0 ) {
+    GEOMBase::PublishSubObject( myPoint1.get() );
+    GEOMBase::PublishSubObject( myPoint2.get() );
   }
-  addSubshapesToFather( objMap );
 }

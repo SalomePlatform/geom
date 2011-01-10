@@ -126,7 +126,8 @@ void PrimitiveGUI_TorusDlg::Init()
 
   GroupPoints->LineEdit1->setText("");
   GroupPoints->LineEdit2->setText("");
-  myPoint = myDir = GEOM::GEOM_Object::_nil();
+  myPoint.nullify();
+  myDir.nullify();
 
   GroupPoints->SpinBox_DX->setValue(300.0);
   GroupPoints->SpinBox_DY->setValue(100.0);
@@ -141,9 +142,6 @@ void PrimitiveGUI_TorusDlg::Init()
 
   connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox_DY,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
@@ -242,78 +240,40 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir   = GEOM::GEOM_Object::_nil();
-
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
-  if (aSelList.Extent() != 1)
+  if (aSelList.Extent() != 1) {
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint.nullify();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myDir.nullify();
     return;
+  }
 
-  // nbSel == 1
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-  if ( CORBA::is_nil(aSelectedObject) )
-    return;
-
-  QString aName = GEOMBase::GetName(aSelectedObject);
-
-  // Get Selected object if selected subshape
+  TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupPoints->LineEdit2 ? TopAbs_EDGE : TopAbs_VERTEX;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
   TopoDS_Shape aShape;
-  if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-  {
-    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if (myEditCurrentArgument == GroupPoints->LineEdit2)
-      aNeedType = TopAbs_EDGE;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
 
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    if (aMap.Extent() == 1) { // Local Selection
-      int anIndex = aMap(1);
-      if (aNeedType == TopAbs_EDGE)
-        aName.append(":edge_" + QString::number(anIndex));
-      else
-        aName.append(":vertex_" + QString::number(anIndex));
-
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-      if (aFindedObject->_is_nil()) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp =
-          getGeomEngine()->GetIShapesOperations(getStudyId());
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-      }
-      else {
-        aSelectedObject = aFindedObject; // get Object from study
-      }
+    myEditCurrentArgument->setText(aName);
+    
+    // clear selection
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+	    this, SLOT(SelectionIntoArgument()));
+    
+    if (myEditCurrentArgument == GroupPoints->LineEdit1) {
+      myPoint = aSelectedObject;
+      if (myPoint && !myDir)
+	GroupPoints->PushButton2->click();
     }
-    else { // Global Selection
-      if (aShape.ShapeType() != aNeedType) {
-        aSelectedObject = GEOM::GEOM_Object::_nil();
-        aName = "";
-      }
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
+      myDir = aSelectedObject;
+      if (myDir && !myPoint)
+	GroupPoints->PushButton1->click();
     }
-  }
-
-  myEditCurrentArgument->setText(aName);
-
-  // clear selection
-  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-          this, SLOT(SelectionIntoArgument()));
-
-  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myPoint = aSelectedObject;
-    if (!myPoint->_is_nil() && myDir->_is_nil())
-      GroupPoints->PushButton2->click();
-  }
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-    myDir = aSelectedObject;
-    if (!myDir->_is_nil() && myPoint->_is_nil())
-      GroupPoints->PushButton1->click();
   }
 
   displayPreview();
@@ -357,20 +317,6 @@ void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
   displayPreview();
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void PrimitiveGUI_TorusDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == GroupPoints->LineEdit1 ||
-      send == GroupPoints->LineEdit2) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 //=================================================================================
@@ -421,18 +367,19 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_TorusDlg::createOperation()
 //=================================================================================
 bool PrimitiveGUI_TorusDlg::isValid (QString& msg)
 {
-  bool ok = true;
+  bool ok = false;
   if( getConstructorId() == 0 )
   {
-    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupPoints->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+         myPoint && myDir;
   }
   else if( getConstructorId() == 1 )
   {
-    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-    ok = GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() ) && ok;
+    ok = GroupDimensions->SpinBox_DX->isValid( msg, !IsPreview() ) &&
+         GroupDimensions->SpinBox_DY->isValid( msg, !IsPreview() );
   }
-  return getConstructorId() == 0 ? !(myPoint->_is_nil() || myDir->_is_nil()) && ok : ok;
+  return ok;
 }
 
 //=================================================================================
@@ -449,8 +396,8 @@ bool PrimitiveGUI_TorusDlg::execute (ObjectList& objects)
 
   switch (getConstructorId()) {
   case 0:
-    if (!CORBA::is_nil(myPoint) && !CORBA::is_nil(myDir)) {
-      anObj = anOper->MakeTorusPntVecRR(myPoint, myDir, getRadius1(), getRadius2());
+    if ( myPoint && myDir ) {
+      anObj = anOper->MakeTorusPntVecRR(myPoint.get(), myDir.get(), getRadius1(), getRadius2());
       if (!anObj->_is_nil() && !IsPreview())
       {
         QStringList aParameters;
@@ -514,15 +461,8 @@ double PrimitiveGUI_TorusDlg::getRadius2() const
 //=================================================================================
 void PrimitiveGUI_TorusDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  switch (getConstructorId()) {
-  case 0:
-    objMap[GroupPoints->LineEdit1->text()] = myPoint;
-    objMap[GroupPoints->LineEdit2->text()] = myDir;
-    break;
-  case 1:
-    return;
+  if ( getConstructorId() == 0 ) {
+    GEOMBase::PublishSubObject( myPoint.get() );
+    GEOMBase::PublishSubObject( myDir.get() );
   }
-  addSubshapesToFather(objMap);
 }

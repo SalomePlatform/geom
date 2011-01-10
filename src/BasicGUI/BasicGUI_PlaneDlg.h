@@ -27,7 +27,8 @@
 #ifndef BASICGUI_PLANEDLG_H
 #define BASICGUI_PLANEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Spin;
 class DlgRef_2Sel1Spin;
@@ -61,7 +62,7 @@ private:
   int                                myOriginType;
 
 private:
-  GEOM::GEOM_Object_var              myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace, myVec1, myVec2, myLCS;
+  GEOM::GeomObjPtr                   myPoint, myDir, myPoint1, myPoint2, myPoint3, myFace, myVec1, myVec2, myLCS;
 
   DlgRef_2Sel1Spin*                  GroupPntDir;
   DlgRef_3Sel1Spin*                  Group3Pnts;
@@ -77,7 +78,6 @@ private slots:
   void                               DeactivateActiveDialog();
   
   void                               SelectionIntoArgument();
-  void                               LineEditReturnPressed();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox( double );

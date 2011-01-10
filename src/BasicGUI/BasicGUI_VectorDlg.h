@@ -27,7 +27,8 @@
 #ifndef BASICGUI_VECTORDLG_H
 #define BASICGUI_VECTORDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel;
 class DlgRef_3Spin1Check;
@@ -55,8 +56,8 @@ private:
   void                               Init();
   void                               enterEvent( QEvent* );
 
-  GEOM::GEOM_Object_var              myPoint1;   
-  GEOM::GEOM_Object_var              myPoint2;
+  GEOM::GeomObjPtr                   myPoint1;   
+  GEOM::GeomObjPtr                   myPoint2;
 
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_3Spin1Check*                GroupDimensions;
@@ -68,7 +69,6 @@ private slots:
   void                               ActivateThisDialog();
   void                               DeactivateActiveDialog();
     
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );

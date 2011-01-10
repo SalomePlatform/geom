@@ -27,7 +27,8 @@
 #ifndef GENERATIONGUI_REVOLUTIONDLG_H
 #define GENERATIONGUI_REVOLUTIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel1Spin2Check;
 
@@ -57,11 +58,8 @@ private:
   double                             getAngle() const;
   
 private:
-  GEOM::ListOfGO                     myBaseObjects;  /* Base shapes */
-  GEOM::GEOM_Object_var              myAxis; /* Axis of the revolution */
-  bool                               myOkBase; 
-  bool                               myOkAxis;
-  bool                               myBothway;
+  QList<GEOM::GeomObjPtr>            myBaseObjects;  /* Base shapes */
+  GEOM::GeomObjPtr                   myAxis; /* Axis of the revolution */
   
   DlgRef_2Sel1Spin2Check*            GroupPoints;
     
@@ -69,7 +67,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();

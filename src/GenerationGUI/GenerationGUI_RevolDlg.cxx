@@ -68,7 +68,6 @@ GenerationGUI_RevolDlg::GenerationGUI_RevolDlg (GeometryGUI* theGeometryGUI, QWi
   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
-  myBothway = false;
 
   GroupPoints = new DlgRef_2Sel1Spin2Check(centralWidget());
   GroupPoints->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
@@ -119,8 +118,9 @@ void GenerationGUI_RevolDlg::Init()
 
   GroupPoints->LineEdit1->setText("");
   GroupPoints->LineEdit2->setText("");
-  myAxis = GEOM::GEOM_Object::_nil();
-  myOkBase = myOkAxis = false;
+
+  myBaseObjects.clear();
+  myAxis.nullify();
 
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -128,9 +128,6 @@ void GenerationGUI_RevolDlg::Init()
 
   connect(GroupPoints->PushButton1,  SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton2,  SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-
-  connect(GroupPoints->LineEdit1,    SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(GroupPoints->LineEdit2,    SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
   connect(GroupPoints->SpinBox_DX,   SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->CheckButton1, SIGNAL(toggled(bool)),        this, SLOT(onBothway()));
@@ -180,32 +177,6 @@ bool GenerationGUI_RevolDlg::ClickOnApply()
   return true;
 }
 
-//=======================================================================
-//function : isAcceptableBase
-//purpose  : return true if theBase can be used as algo argument
-//=======================================================================
-static bool isAcceptableBase (const TopoDS_Shape& theBase)
-{
-  switch (theBase.ShapeType()) {
-  case TopAbs_VERTEX:
-  case TopAbs_EDGE:
-  case TopAbs_WIRE:
-  case TopAbs_FACE:
-  case TopAbs_SHELL:
-    return true;
-  case TopAbs_SOLID:
-  case TopAbs_COMPSOLID:
-    return false;
-  case TopAbs_COMPOUND: {
-    TopExp_Explorer exp(theBase, TopAbs_SOLID);
-    return !exp.More();
-  }
-  default:
-    return false;
-  }
-  return false;
-}
-
 //=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection is changed or on dialog initialization or activation
@@ -214,76 +185,30 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 {
   erasePreview();
   myEditCurrentArgument->setText("");
-  if      (myEditCurrentArgument == GroupPoints->LineEdit1) myOkBase = false;
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2) myOkAxis = false;
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  if (aSelList.Extent() < 1)
-    return;
-
-  GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  QString aName = GEOMBase::GetName(aSelectedObject);
-
-  if ( aSelectedObject->_is_nil() )
-    return;
-
-  TopoDS_Shape S;
-  if (!GEOMBase::GetShape(aSelectedObject, S) || S.IsNull())
-    return;
-
-  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    myOkBase = false;
-    if (aSelList.Extent() > 1)
-      aName = QString( "%1_objects").arg( aSelList.Extent() );
-
-    if ( aSelList.Extent() > 0 ) {
-      GEOMBase::ConvertListOfIOInListOfGO(aSelList, myBaseObjects, true);
-      // check base shapes
-      for (int i=0; i < myBaseObjects.length(); i++) {
-        GEOMBase::GetShape(myBaseObjects[i], S);
-        if (!isAcceptableBase(S))
-          return;
-      }
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+    myBaseObjects.clear();
+    QList<GEOM::GeomObjPtr> objects = getSelected( TopAbs_SHAPE, -1 );
+    for ( int i = 0; i < objects.count(); i++ ) {
+      GEOM::shape_type stype = objects[i]->GetMaxShapeType();
+      if ( stype < GEOM::SHELL || stype > GEOM::VERTEX )
+	continue;
+      myBaseObjects << objects[i];
+    }
+    if ( !myBaseObjects.isEmpty() ) {
+      QString aName = myBaseObjects.count() > 1 ? QString( "%1_objects").arg( myBaseObjects.count() ) : GEOMBase::GetName( myBaseObjects[0].get() );
       myEditCurrentArgument->setText( aName );
-      myOkBase = true;
     }
   }
   else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    if (aMap.Extent() == 1) {
-      int anIndex = aMap(1);
-      aName.append(":edge_" + QString::number(anIndex));
-
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-
-      if (aFindedObject->_is_nil()) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp =
-          getGeomEngine()->GetIShapesOperations(getStudyId());
-        myAxis = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        myOkAxis = true;
-      } else {
-        myAxis = aFindedObject;
-        myOkAxis = true;
-      }
-    } else {
-      myOkAxis = true;
-      if (S.ShapeType() != TopAbs_EDGE) {
-        aSelectedObject = GEOM::GEOM_Object::_nil();
-        aName = "";
-        myOkAxis = false;
-      }
-      myAxis = aSelectedObject;
+    myAxis = getSelected( TopAbs_EDGE );
+    if ( myAxis ) {
+      QString aName = GEOMBase::GetName( myAxis.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( myBaseObjects.isEmpty() )
+	GroupPoints->PushButton1->click();
     }
-    myEditCurrentArgument->setText(aName);
-    if (myOkAxis && !myOkBase)
-      GroupPoints->PushButton1->click();
   }
-
   displayPreview();
 }
 
@@ -319,20 +244,6 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
   displayPreview();
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void GenerationGUI_RevolDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == GroupPoints->LineEdit1 ||
-      send == GroupPoints->LineEdit2) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 //=================================================================================
@@ -391,8 +302,7 @@ GEOM::GEOM_IOperations_ptr GenerationGUI_RevolDlg::createOperation()
 //=================================================================================
 bool GenerationGUI_RevolDlg::isValid (QString& msg)
 {
-  bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
-  return myOkBase && myOkAxis && ok;
+  return GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && !myBaseObjects.isEmpty() && myAxis;
 }
 
 //=================================================================================
@@ -401,16 +311,14 @@ bool GenerationGUI_RevolDlg::isValid (QString& msg)
 //=================================================================================
 bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
 {
-  GEOM::GEOM_Object_var anObj, aBase;
+  GEOM::GEOM_Object_var anObj;
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
 
-  for (int i=0; i < myBaseObjects.length(); i++) {
-    aBase = myBaseObjects[i];
-
-    if (!myBothway)
-      anObj = anOper->MakeRevolutionAxisAngle(aBase, myAxis, getAngle() * PI180);
+  for (int i = 0; i < myBaseObjects.count(); i++) {
+    if (!GroupPoints->CheckButton1->isChecked())
+      anObj = anOper->MakeRevolutionAxisAngle(myBaseObjects[i].get(), myAxis.get(), getAngle() * PI180);
     else
-      anObj = anOper->MakeRevolutionAxisAngle2Ways(aBase, myAxis, getAngle() * PI180);
+      anObj = anOper->MakeRevolutionAxisAngle2Ways(myBaseObjects[i].get(), myAxis.get(), getAngle() * PI180);
     
     if (!anObj->_is_nil()) {
       if (!IsPreview()) {
@@ -441,9 +349,7 @@ void GenerationGUI_RevolDlg::onReverse()
 //=================================================================================
 void GenerationGUI_RevolDlg::onBothway()
 {
-  bool anOldValue = myBothway;
-  myBothway = !anOldValue;
-  GroupPoints->CheckButton2->setEnabled(!myBothway);
+  GroupPoints->CheckButton2->setEnabled(!GroupPoints->CheckButton1->isChecked());
   displayPreview();
 }
 
@@ -453,11 +359,7 @@ void GenerationGUI_RevolDlg::onBothway()
 //=================================================================================
 void GenerationGUI_RevolDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  objMap[GroupPoints->LineEdit2->text()] = myAxis;
-
-  addSubshapesToFather(objMap);
+  GEOMBase::PublishSubObject( myAxis.get() );
 }
 
 //=================================================================================
@@ -466,5 +368,5 @@ void GenerationGUI_RevolDlg::addSubshapesToStudy()
 //=================================================================================
 bool GenerationGUI_RevolDlg::extractPrefix() const
 {
-  return myBaseObjects.length() > 1;
+  return myBaseObjects.count() > 1;
 }

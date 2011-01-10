@@ -101,6 +101,7 @@ void BuildGUI_FaceDlg::Init()
   GroupWire->LineEdit1->setReadOnly( true );
 
   GroupWire->CheckButton1->setChecked( true );
+  myWires.clear();
 
   TColStd_MapOfInteger aMap;
   aMap.Add( GEOM_EDGE );
@@ -152,26 +153,15 @@ bool BuildGUI_FaceDlg::ClickOnApply()
 void BuildGUI_FaceDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aName;
-  
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
 
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-  
-  if ( aNbSel < 1) {
-    myWires.length(0);
-    return;
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_EDGE << TopAbs_WIRE;
+  myWires = getSelected( types, -1 );
+
+  if ( !myWires.isEmpty() ) {
+    QString aName = myWires.count() > 1 ? QString( "%1_objects").arg( myWires.count() ) : GEOMBase::GetName( myWires[0].get() );
+    myEditCurrentArgument->setText( aName );
   }
-  
-  GEOMBase::ConvertListOfIOInListOfGO(aSelList, myWires);
-  if ( !myWires.length() )
-    return;
-  if ( aNbSel != 1 )
-    aName = tr( "%1_objects" ).arg( aNbSel );
-  
-  myEditCurrentArgument->setText( aName );
 }
 
 
@@ -238,7 +228,7 @@ GEOM::GEOM_IOperations_ptr BuildGUI_FaceDlg::createOperation()
 //=================================================================================
 bool BuildGUI_FaceDlg::isValid( QString& )
 {
-  return ( myWires.length() != 0 );
+  return !myWires.isEmpty();
 }
 
 //=================================================================================
@@ -248,7 +238,13 @@ bool BuildGUI_FaceDlg::isValid( QString& )
 bool BuildGUI_FaceDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->MakeFaceWires( myWires, GroupWire->CheckButton1->isChecked() );
+
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myWires.count() );
+  for ( int i = 0; i < myWires.count(); i++ )
+    objlist[i] = myWires[i].copy();
+
+  GEOM::GEOM_Object_var anObj = anOper->MakeFaceWires( objlist.in(), GroupWire->CheckButton1->isChecked() );
 
   if ( !anObj->_is_nil() )
     objects.push_back( anObj._retn() );

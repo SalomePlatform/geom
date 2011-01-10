@@ -120,11 +120,12 @@ void BasicGUI_LineDlg::Init()
 {
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
-  globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  myPoint1.nullify();
+  myPoint2.nullify();
+  myFace1.nullify();
+  myFace2.nullify();
+
   GroupPoints->PushButton1->setDown(true);
-  
         
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
@@ -139,11 +140,6 @@ void BasicGUI_LineDlg::Init()
   connect( GroupPoints->PushButton2, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupFaces->PushButton1,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupFaces->PushButton2,  SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-
-  connect( GroupPoints->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupPoints->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupFaces->LineEdit1,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( GroupFaces->LineEdit2,    SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
@@ -190,14 +186,11 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
   switch ( constructorId ) {
   case 0:
     {
-      globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-      
       myEditCurrentArgument = GroupPoints->LineEdit1;
       myEditCurrentArgument->setText( "" );
       GroupPoints->LineEdit2->setText( "" );
-      myPoint1 = GEOM::GEOM_Object::_nil();
-      myPoint2 = GEOM::GEOM_Object::_nil();
+      myPoint1.nullify();
+      myPoint2.nullify();
       GroupPoints->PushButton1->setDown(true);
       GroupPoints->PushButton2->setDown(false);
       GroupPoints->LineEdit1->setEnabled(true);
@@ -208,13 +201,10 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
     }
   case 1:
     {
-      globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
-
       myEditCurrentArgument = GroupFaces->LineEdit1;
       myEditCurrentArgument->setText("");
-      myFace1 = GEOM::GEOM_Object::_nil();
-      myFace2 = GEOM::GEOM_Object::_nil();
+      myFace1.nullify();
+      myFace2.nullify();
       GroupFaces->PushButton1->setDown(true);
       GroupFaces->PushButton2->setDown(false);
       GroupFaces->LineEdit1->setEnabled(true);
@@ -224,6 +214,12 @@ void BasicGUI_LineDlg::ConstructorsClicked( int constructorId )
       break;
     }
   }
+
+  TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
+				 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
+    TopAbs_FACE : TopAbs_VERTEX;
+  globalSelection(); // close local selection to clear it
+  localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
 
   qApp->processEvents();
   updateGeometry();
@@ -244,84 +240,46 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2 = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupFaces->LineEdit1)  myFace1  = GEOM::GEOM_Object::_nil();
-    else if (myEditCurrentArgument == GroupFaces->LineEdit2)  myFace2  = GEOM::GEOM_Object::_nil();
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1.nullify();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2.nullify();
+    else if (myEditCurrentArgument == GroupFaces->LineEdit1)  myFace1.nullify();
+    else if (myEditCurrentArgument == GroupFaces->LineEdit2)  myFace2.nullify();
     displayPreview();
     return;
   }
 
-  GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if ( !CORBA::is_nil( aSelectedObject ) ) {
-    QString aName = GEOMBase::GetName( aSelectedObject );
-    TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-    if ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
-         myEditCurrentArgument == GroupFaces->LineEdit2 )
-      aNeedType = TopAbs_FACE;
-    
-    TopoDS_Shape aShape;
-    if ( GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if ( aMap.Extent() == 1 ) { // Local Selection
-        int anIndex = aMap( 1 );
-        if ( aNeedType == TopAbs_FACE )
-          aName += QString( ":face_%1" ).arg( anIndex );
-        else
-          aName += QString( ":vertex_%1" ).arg( anIndex );
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aName );
-
-        if ( aFindedObject->_is_nil() ) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-          aSelectedObject = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-        }
-        else {
-          aSelectedObject = aFindedObject; // get Object from study
-        }
-      }
-      else { // Global Selection
-        if ( aShape.ShapeType() != aNeedType ) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
-      }
-    }
-
+  TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
+				 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
+    TopAbs_FACE : TopAbs_VERTEX;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
-
-    if (!aSelectedObject->_is_nil()) { // clear selection if something selected
-      globalSelection();
-      localSelection( GEOM::GEOM_Object::_nil(), aNeedType );      
-    }
-
     if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
       myPoint1 = aSelectedObject;
-      if ( !myPoint1->_is_nil() && myPoint2->_is_nil() )
+      if ( myPoint1 && !myPoint2 )
         GroupPoints->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
       myPoint2 = aSelectedObject;
-      if ( !myPoint2->_is_nil() && myPoint1->_is_nil() )
+      if ( myPoint2 && !myPoint1 )
         GroupPoints->PushButton1->click();
     }
     else if ( myEditCurrentArgument == GroupFaces->LineEdit1 ) {
       myFace1 = aSelectedObject;
-      if ( !myFace1->_is_nil() && myFace2->_is_nil() )
+      if ( myFace1 && !myFace2 )
         GroupFaces->PushButton2->click();
     }
     else if ( myEditCurrentArgument == GroupFaces->LineEdit2 ) {
       myFace2 = aSelectedObject;
-      if ( !myFace2->_is_nil() && myFace1->_is_nil() )
+      if ( myFace2 && !myFace1 )
         GroupFaces->PushButton1->click();      
     }
   }
   
   displayPreview();
 }
-
 
 //=================================================================================
 // function : SetEditCurrentArgument()
@@ -355,10 +313,10 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
     GroupFaces->LineEdit2->setEnabled(true);
   }
 
+  TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupFaces->LineEdit1 ||
+				 myEditCurrentArgument == GroupFaces->LineEdit2 ) ?
+    TopAbs_FACE : TopAbs_VERTEX;
   globalSelection(); // close local selection to clear it
-  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-  if ( myEditCurrentArgument == GroupFaces->LineEdit1 || myEditCurrentArgument == GroupFaces->LineEdit2 )
-    aNeedType = TopAbs_FACE;
   localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
 
   myEditCurrentArgument->setFocus();
@@ -366,23 +324,6 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
   send->setDown(true);
   displayPreview();
 }
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void BasicGUI_LineDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if      ( send == GroupPoints->LineEdit1 ) myEditCurrentArgument = GroupPoints->LineEdit1;
-  else if ( send == GroupPoints->LineEdit2 ) myEditCurrentArgument = GroupPoints->LineEdit2;
-  else if ( send == GroupFaces->LineEdit1 )  myEditCurrentArgument = GroupFaces->LineEdit1;
-  else if ( send == GroupFaces->LineEdit2 )  myEditCurrentArgument = GroupFaces->LineEdit2;
-  else return;
-  GEOMBase_Skeleton::LineEditReturnPressed();
-}
-
 
 //=================================================================================
 // function : ActivateThisDialog()
@@ -431,12 +372,18 @@ GEOM::GEOM_IOperations_ptr BasicGUI_LineDlg::createOperation()
 //=================================================================================
 bool BasicGUI_LineDlg::isValid( QString& msg )
 {
-  const int id = getConstructorId();
-  if ( id == 0 )
-    return !myPoint1->_is_nil() && !myPoint2->_is_nil();
-  else if ( id == 1 )
-    return !myFace1->_is_nil() && !myFace2->_is_nil();
-  return false;
+  bool ok = false;
+  switch ( getConstructorId() ) {
+  case 0 :
+    ok = myPoint1 && myPoint2;
+    break;
+  case 1:
+    ok = myFace1 && myFace2;
+    break;
+  default:
+    break;
+  }
+  return ok;
 }
 
 //=================================================================================
@@ -450,11 +397,11 @@ bool BasicGUI_LineDlg::execute( ObjectList& objects )
   GEOM::GEOM_IBasicOperations_var anOper = GEOM::GEOM_IBasicOperations::_narrow( getOperation() );
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = anOper->MakeLineTwoPnt( myPoint1, myPoint2 );
+    anObj = anOper->MakeLineTwoPnt( myPoint1.get(), myPoint2.get() );
     res = true;
     break;
   case 1 :
-    anObj = anOper->MakeLineTwoFaces( myFace1, myFace2 );
+    anObj = anOper->MakeLineTwoFaces( myFace1.get(), myFace2.get() );
     res = true;
     break;
   }
@@ -471,16 +418,16 @@ bool BasicGUI_LineDlg::execute( ObjectList& objects )
 //=================================================================================
 void BasicGUI_LineDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
   switch ( getConstructorId() ) {
   case 0 :
-    objMap[GroupPoints->LineEdit1->text()] = myPoint1;
-    objMap[GroupPoints->LineEdit2->text()] = myPoint2;
+    GEOMBase::PublishSubObject( myPoint1.get() );
+    GEOMBase::PublishSubObject( myPoint2.get() );
     break;
   case 1 :
-    objMap[GroupFaces->LineEdit1->text()] = myFace1;
-    objMap[GroupFaces->LineEdit2->text()] = myFace2;
+    GEOMBase::PublishSubObject( myFace1.get() );
+    GEOMBase::PublishSubObject( myFace2.get() );
+    break;
+  default:
     break;
   }
-  addSubshapesToFather( objMap );
 }

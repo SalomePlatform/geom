@@ -774,13 +774,35 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr object )
 {
   QString name;
   SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-  CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( object );
-  if ( study && strcmp( IOR.in(), "" ) != 0 ) {
-    _PTR(SObject) aSObj( study->studyDS()->FindObjectIOR( std::string( IOR.in() ) ) );
-    _PTR(GenericAttribute) anAttr;
-    if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") ) {
-      _PTR(AttributeName) aNameAttr( anAttr );
-      name = aNameAttr->Value().c_str();
+  
+  if ( !CORBA::is_nil( object ) ) {
+    // 1. search if object is already published in the study
+    CORBA::String_var IOR = SalomeApp_Application::orb()->object_to_string( object );
+    if ( study && strcmp( IOR.in(), "" ) != 0 ) {
+      _PTR(SObject) aSObj( study->studyDS()->FindObjectIOR( std::string( IOR.in() ) ) );
+      _PTR(GenericAttribute) anAttr;
+      if ( aSObj && aSObj->FindAttribute( anAttr, "AttributeName") ) {
+	_PTR(AttributeName) aNameAttr( anAttr );
+	name = aNameAttr->Value().c_str();
+      }
+    }
+    
+    // 2. if object is not found in the study, try default name
+    if ( name.isEmpty() ) {
+      if ( object->IsMainShape() ) {
+	name = GetDefaultName( "geomObj" );
+      }
+      else {
+	GEOM::GEOM_Object_var mainShape = object->GetMainShape();
+	if ( !CORBA::is_nil( mainShape  ) ) { 
+	  GEOM::ListOfLong_var indices = object->GetSubShapeIndices();
+	  if ( indices->length() > 0 ) {
+	    TopAbs_ShapeEnum type = (TopAbs_ShapeEnum)( object->GetShapeType() );
+	    name = QString( "%1:%2_%3" ).arg( GetName( mainShape.in() ) )
+	      .arg( TypeName( type ) ).arg( indices[0] );
+	  }
+	}
+      }
     }
   }
 
@@ -794,4 +816,73 @@ QString GEOMBase::GetName( GEOM::GEOM_Object_ptr object )
 bool GEOMBase::IsShape( GEOM::GEOM_Object_ptr object )
 {
   return !object->_is_nil() && object->IsShape();
+}
+
+//=======================================================================
+// function : TypeName()
+// purpose  : Get string representation for the shape type
+//=======================================================================
+QString GEOMBase::TypeName( TopAbs_ShapeEnum type )
+{
+  QString name = "shape";
+  switch( type ) {
+  case TopAbs_COMPSOLID:
+    name = "compsolid"; break;
+  case TopAbs_COMPOUND:
+    name = "compound";  break;
+  case TopAbs_SOLID:
+    name = "solid";     break;
+  case TopAbs_SHELL:
+    name = "shell";     break;
+  case TopAbs_FACE:
+    name = "face";      break;
+  case TopAbs_WIRE:
+    name = "wire";      break;
+  case TopAbs_EDGE:
+    name = "edge";      break;
+  case TopAbs_VERTEX:
+    name = "vertex";    break;
+  default:
+    break;
+  }
+  return name;
+}
+
+//================================================================
+// Function : GetEntry
+// Purpose  : Get study entry for the given object (if it is published)
+//================================================================
+QString GEOMBase::GetEntry( GEOM::GEOM_Object_ptr object )
+{
+  QString entry;
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( study && !CORBA::is_nil( object ) ) {
+    QString objIOR = GetIORFromObject( object );
+    if ( !objIOR.isEmpty() ) {
+      _PTR(SObject) SO( study->studyDS()->FindObjectIOR( objIOR.toLatin1().constData() ) );
+      if ( SO )
+        entry = SO->GetID().c_str();
+    }
+  }
+  return entry;
+}
+
+//================================================================
+// Function : PublishSubObject
+// Purpose  : Publish sub-shape under the main object
+//================================================================
+void GEOMBase::PublishSubObject( GEOM::GEOM_Object_ptr object )
+{
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+  if ( study && !CORBA::is_nil( object ) ) {
+    _PTR(Study) studyDS = study->studyDS();
+    QString entry = GetEntry( object );
+    GEOM::GEOM_Object_var father = object->GetMainShape();
+    QString fatherEntry = GetEntry( father );
+    if ( entry.isEmpty() && !CORBA::is_nil( father ) && !fatherEntry.isEmpty() ) {
+      QString name = GetName( object );
+      GeometryGUI::GetGeomGen()->AddInStudy( GeometryGUI::ClientStudyToStudy( studyDS ),
+					     object, name.toLatin1().data(), father.in() );
+    }
+  }
 }

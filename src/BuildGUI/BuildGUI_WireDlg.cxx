@@ -119,8 +119,8 @@ void BuildGUI_WireDlg::Init()
   GroupArgs->LineEdit1->setReadOnly( true );
   GroupType->RadioButton1->setChecked(true);
   
-  myOkEdgesAndWires = false;
-  
+  myEdgesAndWires.clear();
+
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
 
   /* signals and slots connections */
@@ -158,14 +158,12 @@ void BuildGUI_WireDlg::ClickOnOk()
 //=================================================================================
 bool BuildGUI_WireDlg::ClickOnApply()
 {
-  if ( !onAccept() || !myOkEdgesAndWires )
+  if ( !onAccept() )
     return false;
 
   initName();
   TypeButtonClicked();
-  myMapToStudy.clear();
-  myEdgesAndWires.length(0);
-  myOkEdgesAndWires = false;
+  myEdgesAndWires.clear();
   myEditCurrentArgument->setText( "" );
   return true;
 }
@@ -196,82 +194,15 @@ void BuildGUI_WireDlg::TypeButtonClicked()
 void BuildGUI_WireDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
-  QString aString = ""; /* name of selection */
 
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_EDGE << TopAbs_WIRE;
+  myEdgesAndWires = getSelected( types, -1 );
 
-  myOkEdgesAndWires = false;
-  int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString);
-
-  if ( nbSel == 0 ) {
-    myMapToStudy.clear();
-    return;
+  if ( !myEdgesAndWires.isEmpty() ) {
+    QString aName = myEdgesAndWires.count() > 1 ? QString( "%1_objects").arg( myEdgesAndWires.count() ) : GEOMBase::GetName( myEdgesAndWires[0].get() );
+    myEditCurrentArgument->setText( aName );
   }
-
-  TopAbs_ShapeEnum aNeedType = TopAbs_EDGE;
-  if (GroupType->RadioButton2->isChecked())
-    aNeedType = TopAbs_WIRE;
-
-  std::list<GEOM::GEOM_Object_var> aList; // subshapes list
-  TopoDS_Shape aShape;
-  for (SALOME_ListIteratorOfListIO anIt (aSelList); anIt.More(); anIt.Next()) {
-    TColStd_IndexedMapOfInteger aMap;
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( anIt.Value() );
-    if ( !CORBA::is_nil(aSelectedObject) && GEOMBase::GetShape( aSelectedObject, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
-      aSelMgr->GetIndexes( anIt.Value(), aMap );
-
-      if ( aMap.Extent() > 0 ) { // local selection
-        for (int ind = 1; ind <= aMap.Extent(); ind++) {
-          aString = aSelectedObject->GetName();
-          int anIndex = aMap(ind);
-          if ( aNeedType == TopAbs_EDGE )
-            aString += QString( ":edge_%1" ).arg( anIndex );
-          else
-            aString += QString( ":wire_%1" ).arg( anIndex );
-          
-          //Find SubShape Object in Father
-          GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( aSelectedObject, aString );
-          
-          if ( aFindedObject == GEOM::GEOM_Object::_nil() ) { // Object not found in study
-            GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-            aList.push_back( aShapesOp->GetSubShape( aSelectedObject, anIndex ) );
-            myMapToStudy[aString] = aShapesOp->GetSubShape( aSelectedObject, anIndex );
-          }
-          else {
-            aList.push_back( aFindedObject ); // get Object from study
-          }
-        }
-      } else { // global selection
-        if ( aShape.ShapeType() == aNeedType ) {
-          GEOMBase::ConvertListOfIOInListOfGO(aSelList,  myEdgesAndWires);
-        } else {
-          aList.clear();
-          myEdgesAndWires.length(0);
-        }
-      }
-    }
-  }
-
-  // convert aList in listofgo
-  if ( aList.size() ) {
-    myEdgesAndWires.length( aList.size()  );
-    int k = 0;
-    for ( std::list<GEOM::GEOM_Object_var>::iterator j = aList.begin(); j != aList.end(); j++ )
-      myEdgesAndWires[k++] = *j;
-  }
-    
-  if ( myEdgesAndWires.length() > 1 )
-    aString = tr( "%1_objects" ).arg( myEdgesAndWires.length() );
-
-  if ( !myEdgesAndWires.length() ) {
-    aString = "";
-    myMapToStudy.clear();
-  }
-
-  myEditCurrentArgument->setText( aString );
-  myOkEdgesAndWires = true;
 }
 
 
@@ -340,8 +271,7 @@ GEOM::GEOM_IOperations_ptr BuildGUI_WireDlg::createOperation()
 //=================================================================================
 bool BuildGUI_WireDlg::isValid (QString& msg)
 {
-  bool ok = GroupArgs->SpinBox_DX->isValid(msg, !IsPreview());
-  return myOkEdgesAndWires && ok;
+  return GroupArgs->SpinBox_DX->isValid(msg, !IsPreview()) && !myEdgesAndWires.isEmpty();
 }
 
 //=================================================================================
@@ -351,7 +281,13 @@ bool BuildGUI_WireDlg::isValid (QString& msg)
 bool BuildGUI_WireDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-  GEOM::GEOM_Object_var anObj = anOper->MakeWire(myEdgesAndWires, GroupArgs->SpinBox_DX->value());
+
+  GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
+  objlist->length( myEdgesAndWires.count() );
+  for ( int i = 0; i < myEdgesAndWires.count(); i++ )
+    objlist[i] = myEdgesAndWires[i].copy();
+
+  GEOM::GEOM_Object_var anObj = anOper->MakeWire(objlist.in(), GroupArgs->SpinBox_DX->value());
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
@@ -365,5 +301,6 @@ bool BuildGUI_WireDlg::execute (ObjectList& objects)
 //=================================================================================
 void BuildGUI_WireDlg::addSubshapesToStudy()
 {
-  addSubshapesToFather( myMapToStudy );
+  for ( int i = 0; i < myEdgesAndWires.count(); i++ )
+    GEOMBase::PublishSubObject( myEdgesAndWires[i].get() );
 }

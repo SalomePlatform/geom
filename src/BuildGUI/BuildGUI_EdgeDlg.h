@@ -27,7 +27,8 @@
 #ifndef BUILDGUI_EDGEDLG_H
 #define BUILDGUI_EDGEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel2Spin;
 class DlgRef_2Sel;
@@ -56,8 +57,8 @@ private:
   void                               enterEvent( QEvent* );
   
 private:
-  GEOM::GEOM_Object_var              myPoint1, myPoint2;   /* Points containing the edge */
-  GEOM::GEOM_Object_var              myWire;               /* Wire */
+  GEOM::GeomObjPtr                   myPoint1, myPoint2;   /* Points containing the edge */
+  GEOM::GeomObjPtr                   myWire;               /* Wire */
   
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_1Sel2Spin*                  GroupWire;
@@ -67,7 +68,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
 };
