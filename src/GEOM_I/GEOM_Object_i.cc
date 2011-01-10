@@ -491,6 +491,18 @@ bool GEOM_Object_i::IsShape()
   return !_impl->GetValue().IsNull() && _impl->GetType() != GEOM_MARKER;
 }
 
+bool GEOM_Object_i::IsSame(GEOM::GEOM_Object_ptr other)
+{
+  TopoDS_Shape thisShape  = _impl->GetValue();
+  TopoDS_Shape otherShape;
+  if ( !CORBA::is_nil( other ) ) {
+    Handle(GEOM_Object) otherObject = GEOM_Engine::GetEngine()->GetObject( other->GetStudyID(), other->GetEntry(), false );
+    if ( !otherObject.IsNull() )
+      otherShape = otherObject->GetValue();
+  }
+  return thisShape.IsSame( otherShape );
+}
+
 void GEOM_Object_i::SetParameters(const char* theParameters)
 {
   _impl->SetParameters((char*)theParameters);

@@ -325,6 +325,12 @@ module GEOM
      */
      boolean IsShape();
 
+    /*
+     *  Return true if passed object is identical to this object
+     *  \param other object being compared with this one
+     */
+    boolean IsSame(in GEOM_Object other);
+     
      /*!
      *  Set list of parameters
      *  \param theParameters is a string containing the notebook variables separated by ":" symbol,
