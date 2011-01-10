@@ -130,7 +130,7 @@ TransformationGUI_ScaleDlg::TransformationGUI_ScaleDlg (GeometryGUI* theGeometry
   CheckBoxCopy->hide();
 
   // Activate Create a Copy mode
-  CreateCopyModeChanged(true);
+  CreateCopyModeChanged();
 
   // Allowed inheritance of children and visual properties by the scaling result
   mainFrame()->GroupBoxPublish->show();
@@ -167,7 +167,8 @@ void TransformationGUI_ScaleDlg::Init()
   LineEdit1->setText("");
   LineEdit2->setText("");
 
-  myPoint = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
+  myPoint.nullify();
 
   // Signals and slots connections
   connect(buttonOk(),        SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -177,9 +178,6 @@ void TransformationGUI_ScaleDlg::Init()
   connect(PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
   connect(SpinBox_FX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(SpinBox_FY, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(SpinBox_FZ, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
@@ -187,7 +185,7 @@ void TransformationGUI_ScaleDlg::Init()
   // san : Commented so as not to override specific step settings
   //connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
-  connect(CheckBoxCopy, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
+  connect(CheckBoxCopy, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged()));
 
   initName(tr("GEOM_SCALE"));
 
@@ -202,7 +200,7 @@ void TransformationGUI_ScaleDlg::ConstructorsClicked (int constructorId)
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 
-  myPoint = GEOM::GEOM_Object::_nil();
+  myPoint.nullify();
   LineEdit2->clear();
   
   switch (constructorId) {
@@ -262,7 +260,7 @@ bool TransformationGUI_ScaleDlg::ClickOnApply()
 
   initName(tr("GEOM_SCALE"));
 
-  myObjects.length(0);
+  myObjects.clear();
   myEditCurrentArgument = LineEdit1;
   myEditCurrentArgument->setText("");
   myGeomGUI->getApp()->selectionMgr()->clearSelected();
@@ -279,86 +277,32 @@ bool TransformationGUI_ScaleDlg::ClickOnApply()
 void TransformationGUI_ScaleDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
 
-  if (myEditCurrentArgument == LineEdit1)
-    myObjects.length(0);
-  else if (myEditCurrentArgument == LineEdit2)
-    myPoint = GEOM::GEOM_Object::_nil();
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  QString aName;
-
-  if (myEditCurrentArgument == LineEdit1)
-  {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-    if (aNbSel < 1)
-      return;
-
-    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
-    if (!myObjects.length())
-      return;
-    else
-      myEditCurrentArgument->setText(aName);
-  }
-  else if (myEditCurrentArgument == LineEdit2)
-  {
-    GEOM::GEOM_Object_var aSelectedObject = GEOM::GEOM_Object::_nil();
-    if (aSelList.Extent() == 1)
-    {
-      aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-      if ( !CORBA::is_nil( aSelectedObject ) )
-      {
-        aName = GEOMBase::GetName(aSelectedObject);
-
-        TopoDS_Shape aShape;
-        if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-        {
-          TColStd_IndexedMapOfInteger aMap;
-          aSelMgr->GetIndexes(aSelList.First(), aMap);
-          if (aMap.Extent() == 1)
-          {
-            int anIndex = aMap(1);
-            aName += QString(":vertex_%1").arg(anIndex);
-
-            //Find SubShape Object in Father
-            GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
-
-            if (aFindedObject->_is_nil()) { // Object not found in study
-              GEOM::GEOM_IShapesOperations_var aShapesOp =
-                getGeomEngine()->GetIShapesOperations(getStudyId());
-              aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-            }
-            else
-              aSelectedObject = aFindedObject; // get Object from study
-          }
-          else // Global Selection
-          {
-            if (aShape.ShapeType() != TopAbs_VERTEX) {
-              aSelectedObject = GEOM::GEOM_Object::_nil();
-              aName = "";
-            }
-          }
-        }
-      }
+  if ( myEditCurrentArgument == LineEdit1 ) {
+    myObjects = getSelected( TopAbs_SHAPE, -1 );
+    if ( !myObjects.isEmpty() ) {
+      QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+      myEditCurrentArgument->setText( aName );
     }
-
-    myPoint = aSelectedObject;
-    myEditCurrentArgument->setText(aName);
-
-    if (!myPoint->_is_nil() && !myObjects.length())
-      PushButton1->click();
+    else {
+      myEditCurrentArgument->setText("");
+    }
   }
-
-  // clear selection
-  /*  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-  this, SLOT(SelectionIntoArgument()));*/
-  // here commented, because multiple objects can be selected IPAL 21437
+  else {
+    GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_VERTEX );
+    TopoDS_Shape aShape;
+    if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+      QString aName = GEOMBase::GetName( aSelectedObject.get() );
+      myEditCurrentArgument->setText( aName );
+      myPoint = aSelectedObject;
+      if ( myObjects.isEmpty() )
+	PushButton1->click();
+    }
+    else {
+      myPoint.nullify();
+      myEditCurrentArgument->setText("");
+    }
+  }
 
   displayPreview();
 }
@@ -399,20 +343,6 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
   displayPreview();
-}
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void TransformationGUI_ScaleDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == LineEdit1 || send == LineEdit2)
-  {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 //=================================================================================
@@ -473,20 +403,22 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_ScaleDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_ScaleDlg::isValid (QString& msg)
 {
-  // && !myPoint->_is_nil()
-  if (getConstructorId() == 0) {
-    bool ok = SpinBox_FX->isValid( msg, !IsPreview() );
-    return myObjects.length() > 0 && fabs(SpinBox_FX->value()) > 0.00001 && ok;
+  bool ok = false;
+  if ( getConstructorId() == 0 ) {
+    ok = SpinBox_FX->isValid( msg, !IsPreview() ) &&
+         !myObjects.isEmpty() &&
+         qAbs( SpinBox_FX->value() ) > 0.00001;
   }
-
-  bool ok = true;
-  ok = SpinBox_FX->isValid( msg, !IsPreview() ) && ok;
-  ok = SpinBox_FY->isValid( msg, !IsPreview() ) && ok;
-  ok = SpinBox_FZ->isValid( msg, !IsPreview() ) && ok;
-  return myObjects.length() > 0 &&
-    fabs(SpinBox_FX->value()) > 0.00001 &&
-    fabs(SpinBox_FY->value()) > 0.00001 &&
-    fabs(SpinBox_FZ->value()) > 0.00001 && ok;
+  else {
+    ok = SpinBox_FX->isValid( msg, !IsPreview() ) &&
+         SpinBox_FY->isValid( msg, !IsPreview() ) &&
+         SpinBox_FZ->isValid( msg, !IsPreview() ) &&
+         !myObjects.isEmpty() &&
+         qAbs( SpinBox_FX->value() ) > 0.00001 &&
+         qAbs( SpinBox_FY->value() ) > 0.00001 &&
+         qAbs( SpinBox_FZ->value() ) > 0.00001;
+  }
+  return ok;
 }
 
 //=================================================================================
@@ -507,9 +439,9 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
     {
       if (toCreateCopy)
       {
-        for (int i = 0; i < myObjects.length(); i++)
+        for (int i = 0; i < myObjects.count(); i++)
         {
-          anObj = anOper->ScaleShapeCopy(myObjects[i], myPoint, SpinBox_FX->value());
+          anObj = anOper->ScaleShapeCopy(myObjects[i].get(), myPoint.get(), SpinBox_FX->value());
           if (!anObj->_is_nil()) {
             if(!IsPreview()) 
               anObj->SetParameters(SpinBox_FX->text().toLatin1().constData());
@@ -519,9 +451,9 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
       }
       else
       {
-        for (int i = 0; i < myObjects.length(); i++)
+        for (int i = 0; i < myObjects.count(); i++)
         {
-          anObj = anOper->ScaleShape(myObjects[i], myPoint, SpinBox_FX->value());
+          anObj = anOper->ScaleShape(myObjects[i].get(), myPoint.get(), SpinBox_FX->value());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -532,9 +464,9 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
     {
       if (toCreateCopy)
       {
-        for (int i = 0; i < myObjects.length(); i++)
+        for (int i = 0; i < myObjects.count(); i++)
         {
-          anObj = anOper->ScaleShapeAlongAxesCopy(myObjects[i], myPoint, SpinBox_FX->value(),
+          anObj = anOper->ScaleShapeAlongAxesCopy(myObjects[i].get(), myPoint.get(), SpinBox_FX->value(),
                                                   SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             if(!IsPreview()) {
@@ -549,9 +481,9 @@ bool TransformationGUI_ScaleDlg::execute (ObjectList& objects)
       }
       else
       {
-        for (int i = 0; i < myObjects.length(); i++)
+        for (int i = 0; i < myObjects.count(); i++)
         {
-          anObj = anOper->ScaleShapeAlongAxes(myObjects[i], myPoint, SpinBox_FX->value(),
+          anObj = anOper->ScaleShapeAlongAxes(myObjects[i].get(), myPoint.get(), SpinBox_FX->value(),
                                               SpinBox_FY->value(), SpinBox_FZ->value());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
@@ -586,9 +518,9 @@ void TransformationGUI_ScaleDlg::restoreSubShapes (SALOMEDS::Study_ptr   theStud
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_ScaleDlg::CreateCopyModeChanged (bool isCreateCopy)
+void TransformationGUI_ScaleDlg::CreateCopyModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled(isCreateCopy);
+  mainFrame()->GroupBoxName->setEnabled(CheckBoxCopy->isChecked());
 }
 
 //=================================================================================
@@ -600,11 +532,6 @@ void TransformationGUI_ScaleDlg::addSubshapesToStudy()
   bool toCreateCopy = IsPreview() || CheckBoxCopy->isChecked();
   if (toCreateCopy)
   {
-    if (!myPoint->_is_nil())
-    {
-      QMap<QString, GEOM::GEOM_Object_var> objMap;
-      objMap[LineEdit2->text()] = myPoint;
-      addSubshapesToFather(objMap);
-    }
+    GEOMBase::PublishSubObject( myPoint.get() );
   }
 }

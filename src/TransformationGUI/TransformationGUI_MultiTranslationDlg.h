@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_MULTITRANSLATIONDLG_H
 #define TRANSFORMATIONGUI_MULTITRANSLATIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel2Spin1Check;
 class DlgRef_3Sel4Spin2Check;
@@ -56,10 +57,10 @@ protected:
 private:
   void                               Init();
   void                               enterEvent( QEvent* );
-  void                               createPathPreview( GEOM::GEOM_Object_var );
+  void                               createPathPreview( GEOM::GEOM_Object_ptr );
   
 private:
-  GEOM::GEOM_Object_var              myBase, myVectorU, myVectorV;
+  GEOM::GeomObjPtr                   myBase, myVectorU, myVectorV;
   int                                myNbTimesU;
   int                                myNbTimesV;
   Standard_Real                      myStepU;
@@ -75,7 +76,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ReverseStepU();

@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_MIRRORDLG_H
 #define TRANSFORMATIONGUI_MIRRORDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel1Spin2Check;  
 
@@ -57,8 +58,8 @@ private:
   void                               enterEvent( QEvent* );
     
 private:
-  GEOM::GEOM_Object_var              myArgument;
-  GEOM::ListOfGO                     myObjects;
+  GEOM::GeomObjPtr                   myArgument;
+  QList<GEOM::GeomObjPtr>            myObjects;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
@@ -69,11 +70,10 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
-  void                               CreateCopyModeChanged( bool );
+  void                               CreateCopyModeChanged();
 };
 
 #endif // TRANSFORMATIONGUI_MIRRORDLG_H

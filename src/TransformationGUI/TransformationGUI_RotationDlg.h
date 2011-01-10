@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_ROTATIONDLG_H
 #define TRANSFORMATIONGUI_ROTATIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_4Sel1Spin2Check;
   
@@ -58,9 +59,9 @@ private:
   double                             GetAngle() const;
   
 private:
-  GEOM::ListOfGO                     myObjects;
-  GEOM::GEOM_Object_var              myCurrObject;
-  GEOM::GEOM_Object_var              myAxis, myCentPoint, myPoint1, myPoint2;
+  QList<GEOM::GeomObjPtr>            myObjects;
+  GEOM::GeomObjPtr                   myCurrObject;
+  GEOM::GeomObjPtr                   myAxis, myCentPoint, myPoint1, myPoint2;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
@@ -71,12 +72,11 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
   void                               TextValueChangedInSpinBox( const QString& );
-  void                               CreateCopyModeChanged( bool );
+  void                               CreateCopyModeChanged();
   void                               ConstructorsClicked( int );
   void                               onReverse();
 };

@@ -91,7 +91,7 @@ TransformationGUI_PositionDlg::TransformationGUI_PositionDlg
 
   // Activate Create a Copy mode
   Group1->CheckButton1->setChecked(true);
-  CreateCopyModeChanged(true);
+  CreateCopyModeChanged();
 
   Init();
 }
@@ -127,7 +127,10 @@ void TransformationGUI_PositionDlg::Init()
 
   Group1->CheckButton2->setEnabled(false);
 
-  myStartLCS = myEndLCS = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
+  myStartLCS.nullify();
+  myEndLCS.nullify();
+  myPath.nullify();
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -142,12 +145,7 @@ void TransformationGUI_PositionDlg::Init()
   connect(Group1->PushButton4, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
   connect(Group1->PushButton5, SIGNAL(clicked()),       this, SLOT(SetEditCurrentArgument()));
 
-  connect(Group1->LineEdit1,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1->LineEdit2,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1->LineEdit4,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-  connect(Group1->LineEdit5,   SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
-
-  connect(Group1->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
+  connect(Group1->CheckButton1,   SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged()));
   connect(Group1->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(Group1->CheckButton2,   SIGNAL(toggled(bool)), this, SLOT(SelectionTypeButtonClicked()));
@@ -169,9 +167,9 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
   Group1->LineEdit2->clear();
   Group1->LineEdit4->clear();
   Group1->LineEdit5->clear();
-  myStartLCS = GEOM::GEOM_Object::_nil();
-  myEndLCS = GEOM::GEOM_Object::_nil();
-  myPath = GEOM::GEOM_Object::_nil();
+  myStartLCS.nullify();
+  myEndLCS.nullify();
+  myPath.nullify();
 
   switch (constructorId) {
   case 0:
@@ -300,7 +298,7 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
 
   initName();
 
-  myObjects.length(0);
+  myObjects.clear();
   myEditCurrentArgument = Group1->LineEdit1;
   myEditCurrentArgument->setText("");
   myGeomGUI->getApp()->selectionMgr()->clearSelected();
@@ -319,120 +317,57 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
   erasePreview();
   myEditCurrentArgument->setText("");
 
-  if (myEditCurrentArgument == Group1->LineEdit1)
-    myObjects.length(0);
-  else if (myEditCurrentArgument == Group1->LineEdit2)
-    myStartLCS = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == Group1->LineEdit4)
-    myEndLCS = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == Group1->LineEdit5)
-    myPath = GEOM::GEOM_Object::_nil();
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  QString aName;
-
-  if (myEditCurrentArgument == Group1->LineEdit1) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-    if (aNbSel < 1)
-      return;
-
-    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
-    if (!myObjects.length())
-      return;
-    else
-      myEditCurrentArgument->setText(aName);
-
-    /*    if (getConstructorId() == 2)
-          Group1->PushButton5->click();*/
+  if ( myEditCurrentArgument == Group1->LineEdit1 ) {
+    myObjects = getSelected( TopAbs_SHAPE, -1 );
+    if ( !myObjects.isEmpty() ) {
+      QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+      myEditCurrentArgument->setText( aName );
+    }
   }
-  else if (myEditCurrentArgument == Group1->LineEdit2) {
-    if (aSelList.Extent() != 1)
-      return;
-
-    // nbSel == 1
-    myStartLCS = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( CORBA::is_nil(myStartLCS) )
-      return;
-
-    aName = GEOMBase::GetName(myStartLCS);
-    myEditCurrentArgument->setText(aName);
-
-    if (!myStartLCS->_is_nil() && myEndLCS->_is_nil())
-      Group1->PushButton4->click();
+  else if ( myEditCurrentArgument == Group1->LineEdit5 ) {
+    QList<TopAbs_ShapeEnum> types;
+    types << TopAbs_EDGE << TopAbs_WIRE;
+    GEOM::GeomObjPtr aSelectedObject = getSelected( types );
+    TopoDS_Shape aShape;
+    if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+      QString aName = GEOMBase::GetName( aSelectedObject.get() );
+      myEditCurrentArgument->setText( aName );
+      myPath = aSelectedObject;
+      if ( myObjects.isEmpty() )
+	Group1->PushButton1->click();
+    }
+    else {
+      myPath.nullify();
+    }
   }
-  else if (myEditCurrentArgument == Group1->LineEdit4) {
-    myEndLCS = GEOM::GEOM_Object::_nil();
-    if (aSelList.Extent() != 1)
-      return;
-
-    myEndLCS = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( CORBA::is_nil(myEndLCS) )
-      return;
-
-    aName = GEOMBase::GetName(myEndLCS);
-    myEditCurrentArgument->setText(aName);
-
-    if (!myEndLCS->_is_nil() && !myObjects.length())
-      Group1->PushButton1->click();
-  }
-  else if (myEditCurrentArgument == Group1->LineEdit5) {
-    myPath = GEOM::GEOM_Object::_nil();
-    if (aSelList.Extent() != 1)
-      return;
-
-    GEOM::GEOM_Object_ptr aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( aSelectedObject->_is_nil() )
-      return;
-
-    aName = GEOMBase::GetName(myPath);
-    // Local Selection
-    TopoDS_Shape S;
-    if (!GEOMBase::GetShape(aSelectedObject, S))
-      return;
-    
-    TColStd_IndexedMapOfInteger aMap;
-    aSelMgr->GetIndexes(aSelList.First(), aMap);
-    aName = GEOMBase::GetName(aSelectedObject);
-    if (aMap.Extent() == 1) {
-      int anIndex = aMap(1);
-      aName.append(":edge_" + QString::number(anIndex));
-      
-      //Find SubShape Object in Father
-      GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(aSelectedObject, aName);
-      
-      if (aFindedObject->_is_nil()) { // Object not found in study
-        GEOM::GEOM_IShapesOperations_var aShapesOp =
-          getGeomEngine()->GetIShapesOperations(getStudyId());
-        aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
+  else {
+    GEOM::GeomObjPtr aSelectedObject = getSelected( TopAbs_SHAPE );
+    TopoDS_Shape aShape;
+    if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+      QString aName = GEOMBase::GetName( aSelectedObject.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( myEditCurrentArgument == Group1->LineEdit2 ) {
+	myStartLCS = aSelectedObject;
+	if ( !myEndLCS )
+	  Group1->PushButton4->click();
+	else if ( myObjects.isEmpty() )
+	  Group1->PushButton1->click();
       }
-      else { // get Object from study
-        aSelectedObject = aFindedObject;
+      else if ( myEditCurrentArgument == Group1->LineEdit4 ) {
+	myEndLCS = aSelectedObject;
+	if ( myObjects.isEmpty() )
+	  Group1->PushButton1->click();
+	else if ( getConstructorId() == 1 && !myStartLCS )
+	  Group1->PushButton2->click();
       }
     }
     else {
-      if (S.ShapeType() != TopAbs_EDGE && S.ShapeType() != TopAbs_WIRE) {
-        aSelectedObject = GEOM::GEOM_Object::_nil();
-        aName = "";
-        return;
-      }
+      if ( myEditCurrentArgument == Group1->LineEdit2 )
+	myStartLCS.nullify();
+      else if ( myEditCurrentArgument == Group1->LineEdit4 )
+	myEndLCS.nullify();
     }
-    
-    myEditCurrentArgument->setText(aName);
-    myPath = aSelectedObject;
-
-    if (!myPath->_is_nil() && !myObjects.length())
-      Group1->PushButton1->click();
   }
-
-  // clear selection
-  /*  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-  this, SLOT(SelectionIntoArgument()));*/
-  // here commented, because multiple objects can be selected IPAL 21437
 
   displayPreview();
 }
@@ -529,27 +464,6 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
 }
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void TransformationGUI_PositionDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == Group1->LineEdit1 ||
-      send == Group1->LineEdit2 ||
-      send == Group1->LineEdit4 ||
-      send == Group1->LineEdit5 ) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-
-  if (send == Group1->LineEdit5)
-    Group1->CheckButton2->setEnabled(true);
-  else
-    Group1->CheckButton2->setEnabled(false);
-}
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -590,15 +504,21 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_PositionDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_PositionDlg::isValid (QString& /*msg*/)
 {
-  bool res;
-  if (getConstructorId() == 0)
-    res = !(myObjects.length() == 0 || myEndLCS->_is_nil());
-  else if ( getConstructorId() == 1 )
-    res = !(myObjects.length() == 0 || myStartLCS->_is_nil() || myEndLCS->_is_nil());
-  else if ( getConstructorId() == 2 )
-    res = !(myObjects.length() == 0 || myPath->_is_nil());
-
-  return res;
+  bool ok = false;
+  switch (getConstructorId()) {
+  case 0:
+    ok = !myObjects.isEmpty() && myEndLCS;
+    break;
+  case 1:
+    ok = !myObjects.isEmpty() && myStartLCS && myEndLCS;
+    break;
+  case 2:
+    ok = !myObjects.isEmpty() && myPath;
+    break;
+  default:
+    break;
+  }
+  return ok;
 }
 
 //=================================================================================
@@ -616,10 +536,10 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
   switch (getConstructorId()) {
   case 0:
     {
-      for (int i = 0; i < myObjects.length(); i++) {
+      for (int i = 0; i < myObjects.count(); i++) {
         anObj = toCreateCopy ? 
-          anOper->PositionShapeCopy(myObjects[i], myObjects[i], myEndLCS) :
-          anOper->PositionShape(myObjects[i], myObjects[i], myEndLCS);
+          anOper->PositionShapeCopy(myObjects[i].get(), myObjects[i].get(), myEndLCS.get()) :
+          anOper->PositionShape(myObjects[i].get(), myObjects[i].get(), myEndLCS.get());
 
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
@@ -629,10 +549,10 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
     }
   case 1:
     {
-      for (int i = 0; i < myObjects.length(); i++) {
+      for (int i = 0; i < myObjects.count(); i++) {
           anObj = toCreateCopy ? 
-            anOper->PositionShapeCopy(myObjects[i], myStartLCS, myEndLCS) :
-            anOper->PositionShape(myObjects[i], myStartLCS, myEndLCS);
+            anOper->PositionShapeCopy(myObjects[i].get(), myStartLCS.get(), myEndLCS.get()) :
+            anOper->PositionShape(myObjects[i].get(), myStartLCS.get(), myEndLCS.get());
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
       }
@@ -643,8 +563,8 @@ bool TransformationGUI_PositionDlg::execute (ObjectList& objects)
     {
       double aDistance = Group1->SpinBox_DX->value();
       bool toReverse = Group1->CheckButton3->isChecked();
-      for (int i = 0; i < myObjects.length(); i++) {
-        anObj = anOper->PositionAlongPath(myObjects[i], myPath, aDistance, toCreateCopy, toReverse);
+      for (int i = 0; i < myObjects.count(); i++) {
+        anObj = anOper->PositionAlongPath(myObjects[i].get(), myPath.get(), aDistance, toCreateCopy, toReverse);
         if (!anObj->_is_nil())
           objects.push_back(anObj._retn());
       }
@@ -676,9 +596,9 @@ void TransformationGUI_PositionDlg::restoreSubShapes (SALOMEDS::Study_ptr   theS
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_PositionDlg::CreateCopyModeChanged (bool isCreateCopy)
+void TransformationGUI_PositionDlg::CreateCopyModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled(isCreateCopy);
+  mainFrame()->GroupBoxName->setEnabled(Group1->CheckButton1->isChecked());
 }
 
 //=================================================================================
@@ -687,9 +607,6 @@ void TransformationGUI_PositionDlg::CreateCopyModeChanged (bool isCreateCopy)
 //=================================================================================
 void TransformationGUI_PositionDlg::addSubshapesToStudy()
 {
-  QMap<QString, GEOM::GEOM_Object_var> objMap;
-
-  objMap[Group1->LineEdit5->text()] = myPath;
-
-  addSubshapesToFather(objMap);
+  if ( getConstructorId() == 2 )
+    GEOMBase::PublishSubObject( myPath.get() );
 }

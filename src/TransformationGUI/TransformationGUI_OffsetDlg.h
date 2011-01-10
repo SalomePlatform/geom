@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_OFFSETDLG_H
 #define TRANSFORMATIONGUI_OFFSETDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_1Sel1Spin1Check;  
   
@@ -57,7 +58,7 @@ private:
   double                             GetOffset() const;
     
 private:
-  GEOM::ListOfGO                     myObjects;
+  QList<GEOM::GeomObjPtr>            myObjects;
     
   DlgRef_1Sel1Spin1Check*            GroupPoints;
     
@@ -66,10 +67,9 @@ private slots:
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               SelectionIntoArgument();
-  void                               LineEditReturnPressed();
   void                               SetEditCurrentArgument();
   void                               ValueChangedInSpinBox();
-  void                               CreateCopyModeChanged( bool );
+  void                               CreateCopyModeChanged();
 };
 
 #endif // TRANSFORMATIONGUI_OFFSETDLG_H

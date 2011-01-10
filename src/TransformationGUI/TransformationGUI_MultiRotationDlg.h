@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_MULTIROTATIONDLG_H
 #define TRANSFORMATIONGUI_MULTIROTATIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_2Sel4Spin1Check;
 class DlgRef_2Sel1SpinInt;
@@ -58,7 +59,7 @@ private:
   void                               enterEvent( QEvent* );
  
 private:
-  GEOM::GEOM_Object_var              myBase, myVector;
+  GEOM::GeomObjPtr                   myBase, myVector;
   int                                myNbTimes1;
   int                                myNbTimes2;
   Standard_Real                      myAng;
@@ -74,7 +75,6 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ReverseAngle();

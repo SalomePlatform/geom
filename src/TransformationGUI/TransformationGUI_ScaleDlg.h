@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_SCALEDLG_H
 #define TRANSFORMATIONGUI_SCALEDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class QCheckBox;
 class QGroupBox;
@@ -62,8 +63,8 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  GEOM::ListOfGO                     myObjects;
-  GEOM::GEOM_Object_var              myPoint;   /* Central Point */
+  QList<GEOM::GeomObjPtr>            myObjects;
+  GEOM::GeomObjPtr                   myPoint;   /* Central Point */
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
@@ -87,12 +88,11 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
   void                               ValueChangedInSpinBox();
-  void                               CreateCopyModeChanged( bool );
+  void                               CreateCopyModeChanged();
   void                               SetDoubleSpinBoxStep( double );
 };
 

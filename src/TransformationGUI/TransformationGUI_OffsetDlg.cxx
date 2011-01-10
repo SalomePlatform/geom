@@ -101,6 +101,8 @@ void TransformationGUI_OffsetDlg::Init()
   /* init variables */
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->setReadOnly( true );
+
+  myObjects.clear();
   
   /* Get setting of step value from file configuration */
   double step = 1;
@@ -111,7 +113,7 @@ void TransformationGUI_OffsetDlg::Init()
   
   // Activate Create a Copy mode
   GroupPoints->CheckButton1->setChecked( true );
-  CreateCopyModeChanged( true );
+  CreateCopyModeChanged();
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -124,7 +126,7 @@ void TransformationGUI_OffsetDlg::Init()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   connect( GroupPoints->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox() ) );
-  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged( bool ) ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled( bool ) ),        this, SLOT( CreateCopyModeChanged() ) );
   
   initName( tr( "GEOM_OFFSET" ) );
 
@@ -165,41 +167,16 @@ bool TransformationGUI_OffsetDlg::ClickOnApply()
 //=================================================================================
 void TransformationGUI_OffsetDlg::SelectionIntoArgument()
 {
-  myEditCurrentArgument->setText( "" );
-  QString aName;
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-  if ( aNbSel < 1 ) {
-    myObjects.length( 0 );
-    return;
+  myObjects = getSelected( TopAbs_SHAPE, -1 );
+  if ( !myObjects.isEmpty() ) {
+    QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+    myEditCurrentArgument->setText( aName );
   }
-
-  // nbSel > 0
-  GEOMBase::ConvertListOfIOInListOfGO (aSelList, myObjects);
-  if (!myObjects.length())
-    return;
-
-  myEditCurrentArgument->setText(aName);
+  else {
+    myEditCurrentArgument->setText("");
+  }
 
   displayPreview();
-}
-
-
-//=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void TransformationGUI_OffsetDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if ( send == GroupPoints->LineEdit1 ) {
-    myEditCurrentArgument = GroupPoints->LineEdit1;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
 }
 
 
@@ -271,17 +248,14 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_OffsetDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_OffsetDlg::isValid( QString& msg )
 {
-  //return !(myObjects.length() == 0);
-  if ( myObjects.length() == 0 ) return false;
-
-  for ( int i = 0; i < myObjects.length(); i++ ) {
+  bool ok = GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() ) && !myObjects.isEmpty();
+  for ( int i = 0; i < myObjects.count() && ok; i++ ) {
     GEOM::shape_type aType = myObjects[i]->GetShapeType();
-    if ( aType != GEOM::FACE && aType != GEOM::SHELL && aType != GEOM::SOLID ) {
+    ok = aType == GEOM::FACE || aType == GEOM::SHELL || aType == GEOM::SOLID;
+    if ( !ok )
       msg = tr( "ERROR_SHAPE_TYPE" );
-      return false;
-    }
   }
-  return GroupPoints->SpinBox_DX->isValid( msg, !IsPreview() );
+  return ok;
 }
 
 //=================================================================================
@@ -297,9 +271,9 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
   GEOM::GEOM_ITransformOperations_var anOper = GEOM::GEOM_ITransformOperations::_narrow(getOperation());
 
   if ( GroupPoints->CheckButton1->isChecked() || IsPreview() ) {
-    for ( int i = 0; i < myObjects.length(); i++ ) {
+    for ( int i = 0; i < myObjects.count(); i++ ) {
       
-      anObj = anOper->OffsetShapeCopy( myObjects[i], GetOffset() );
+      anObj = anOper->OffsetShapeCopy( myObjects[i].get(), GetOffset() );
       if ( !anObj->_is_nil() ) {
         if(!IsPreview()) {
           anObj->SetParameters(GroupPoints->SpinBox_DX->text().toLatin1().constData());
@@ -309,8 +283,8 @@ bool TransformationGUI_OffsetDlg::execute( ObjectList& objects )
     }
   }
   else {
-    for ( int i = 0; i < myObjects.length(); i++ ) {
-      anObj = anOper->OffsetShape( myObjects[i], GetOffset() );
+    for ( int i = 0; i < myObjects.count(); i++ ) {
+      anObj = anOper->OffsetShape( myObjects[i].get(), GetOffset() );
       if ( !anObj->_is_nil() )
         objects.push_back( anObj._retn() );
     }
@@ -349,7 +323,7 @@ double TransformationGUI_OffsetDlg::GetOffset() const
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_OffsetDlg::CreateCopyModeChanged( bool isCreateCopy )
+void TransformationGUI_OffsetDlg::CreateCopyModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled( isCreateCopy );
+  mainFrame()->GroupBoxName->setEnabled( GroupPoints->CheckButton1->isChecked() );
 }

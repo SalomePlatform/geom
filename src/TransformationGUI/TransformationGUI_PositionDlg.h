@@ -27,7 +27,8 @@
 #ifndef TRANSFORMATIONGUI_POSITIONDLG_H
 #define TRANSFORMATIONGUI_POSITIONDLG_H
 
-#include <GEOMBase_Skeleton.h>
+#include "GEOMBase_Skeleton.h"
+#include "GEOM_GenericObjPtr.h"
 
 class DlgRef_4Sel1Spin3Check;
 
@@ -57,10 +58,10 @@ private:
   void                               enterEvent( QEvent* );
     
 private:
-  GEOM::GEOM_Object_var              myStartLCS;
-  GEOM::GEOM_Object_var              myEndLCS;
-  GEOM::ListOfGO                     myObjects;
-  GEOM::GEOM_Object_var              myPath;
+  GEOM::GeomObjPtr                   myStartLCS;
+  GEOM::GeomObjPtr                   myEndLCS;
+  QList<GEOM::GeomObjPtr>            myObjects;
+  GEOM::GeomObjPtr                   myPath;
 
   // to initialize the first selection field with a selected object on the dialog creation
   bool                               myInitial;
@@ -71,11 +72,10 @@ private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
-  void                               LineEditReturnPressed();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
   void                               ConstructorsClicked( int );
-  void                               CreateCopyModeChanged( bool );
+  void                               CreateCopyModeChanged();
   void                               ValueChangedInSpinBox();
   void                               SelectionTypeButtonClicked();
 };

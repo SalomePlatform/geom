@@ -105,7 +105,7 @@ TransformationGUI_TranslationDlg::TransformationGUI_TranslationDlg
 
   // Activate Create a Copy mode
   GroupPoints->CheckBox2->setChecked(true);
-  CreateCopyModeChanged(true);
+  CreateCopyModeChanged();
 
   Init();
 }
@@ -147,7 +147,10 @@ void TransformationGUI_TranslationDlg::Init()
   GroupPoints->LineEdit2->setText("");
   GroupPoints->LineEdit3->setText("");
 
-  myVector = myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+  myObjects.clear();
+  myVector.nullify();
+  myPoint1.nullify();
+  myPoint2.nullify();
 
   mainFrame()->GroupBoxPublish->show();
 
@@ -161,16 +164,14 @@ void TransformationGUI_TranslationDlg::Init()
   connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
   connect(GroupPoints->PushButton3, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect(GroupPoints->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed())); //@ Delete ?
-
   connect(GroupPoints->SpinBox1, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox2, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupPoints->SpinBox3, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   connect(myGeomGUI, SIGNAL(SignalDefaultStepValueChanged(double)), this, SLOT(SetDoubleSpinBoxStep(double)));
 
-  connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(ActivateDistanceChanged(bool)));
-  connect(GroupPoints->CheckBox2, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged(bool)));
+  connect(GroupPoints->CheckBox1, SIGNAL(toggled(bool)), this, SLOT(ActivateDistanceChanged()));
+  connect(GroupPoints->CheckBox2, SIGNAL(toggled(bool)), this, SLOT(CreateCopyModeChanged()));
 
   initName(tr("GEOM_TRANSLATION"));
 
@@ -223,7 +224,8 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
 
       GroupPoints->CheckBox1->hide();
 
-      myPoint1 = myPoint2 = GEOM::GEOM_Object::_nil();
+      myPoint1.nullify();
+      myPoint2.nullify();
 
       GroupPoints->PushButton1->click();
     }
@@ -242,8 +244,8 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
 
       GroupPoints->CheckBox1->show();
 
-      myVector = GEOM::GEOM_Object::_nil();
-      ActivateDistanceChanged(GroupPoints->CheckBox1->isChecked());
+      myVector.nullify();
+      ActivateDistanceChanged();
 
       GroupPoints->PushButton1->click();
     }
@@ -284,7 +286,7 @@ bool TransformationGUI_TranslationDlg::ClickOnApply()
 
   initName();
 
-  myObjects.length(0);
+  myObjects.clear();
   myEditCurrentArgument = GroupPoints->LineEdit1;
   myEditCurrentArgument->setText("");
   myGeomGUI->getApp()->selectionMgr()->clearSelected();
@@ -301,123 +303,58 @@ bool TransformationGUI_TranslationDlg::ClickOnApply()
 void TransformationGUI_TranslationDlg::SelectionIntoArgument()
 {
   erasePreview();
-  myEditCurrentArgument->setText("");
 
-  if (myEditCurrentArgument == GroupPoints->LineEdit1)
-    myObjects.length(0);
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1)
-    myPoint1 = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
-    myVector = GEOM::GEOM_Object::_nil();
-  else if (myEditCurrentArgument == GroupPoints->LineEdit3)
-    myPoint2 = GEOM::GEOM_Object::_nil();
-
-  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
-  SALOME_ListIO aSelList;
-  aSelMgr->selectedObjects(aSelList);
-
-  QString aName;
-
-  if (myEditCurrentArgument == GroupPoints->LineEdit1) {
-    int aNbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aName);
-    if (aNbSel < 1)
-      return;
-
-    GEOMBase::ConvertListOfIOInListOfGO(aSelList, myObjects);
-    if (!myObjects.length())
-      return;
+  if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+    myObjects = getSelected( TopAbs_SHAPE, -1 );
+    if ( !myObjects.isEmpty() ) {
+      QString aName = myObjects.count() > 1 ? QString( "%1_objects").arg( myObjects.count() ) : GEOMBase::GetName( myObjects[0].get() );
+      myEditCurrentArgument->setText( aName );
+    }
     else {
-      myEditCurrentArgument->setText(aName);
-
-      // here we do not switch to the next field, because multiple objects can be selected
-      /*
-      if (getConstructorId() == 1) {
-        if (myPoint1->_is_nil())
-          GroupPoints->PushButton2->click();
-      }
-      else if (getConstructorId() == 2) {
-        if (myVector->_is_nil())
-          GroupPoints->PushButton2->click();
-      }
-      */
+      myEditCurrentArgument->setText("");
     }
   }
   else {
-    if (aSelList.Extent() != 1)
-      return;
-
-    // nbSel == 1
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-
-    if ( CORBA::is_nil(aSelectedObject) )
-      return;
-
-    aName = GEOMBase::GetName(aSelectedObject);
-
-    // Get Selected object if selected subshape
+    TopAbs_ShapeEnum aNeedType = ( myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2 ) ?
+      TopAbs_EDGE : TopAbs_VERTEX;
+    GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
     TopoDS_Shape aShape;
-    if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_SHAPE) && !aShape.IsNull())
-    {
-      TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
-      if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2)
-        aNeedType = TopAbs_EDGE;
-
-      TColStd_IndexedMapOfInteger aMap;
-      aSelMgr->GetIndexes(aSelList.First(), aMap);
-      if (aMap.Extent() == 1)
-      {
-        int anIndex = aMap(1);
-        if (aNeedType == TopAbs_EDGE)
-          aName += QString(":edge_%1").arg(anIndex);
-        else
-          aName += QString(":vertex_%1").arg(anIndex);
-
-        //Find SubShape Object in Father
-        GEOM::GEOM_Object_var aFindedObject = findObjectInFather(aSelectedObject, aName);
-
-        if (aFindedObject->_is_nil()) { // Object not found in study
-          GEOM::GEOM_IShapesOperations_var aShapesOp =
-            getGeomEngine()->GetIShapesOperations(getStudyId());
-          aSelectedObject = aShapesOp->GetSubShape(aSelectedObject, anIndex);
-        }
-        else {
-          aSelectedObject = aFindedObject;
-        }
+    if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
+      QString aName = GEOMBase::GetName( aSelectedObject.get() );
+      myEditCurrentArgument->setText( aName );
+      if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+	if ( getConstructorId() == 1 ) {
+	  myPoint1 = aSelectedObject;
+	  if ( !myPoint2 )
+	    GroupPoints->PushButton3->click();
+	  else if ( myObjects.isEmpty() )
+	    GroupPoints->PushButton1->click();
+	}
+	else if ( getConstructorId() == 2 ) {
+	  myVector = aSelectedObject;
+	  if ( myObjects.isEmpty() )
+	    GroupPoints->PushButton1->click();
+	}
       }
-      else // Global Selection
-      {
-        if (aShape.ShapeType() != aNeedType) {
-          aSelectedObject = GEOM::GEOM_Object::_nil();
-          aName = "";
-        }
+      else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) {
+	myPoint2 = aSelectedObject;
+	if ( myObjects.isEmpty() )
+	  GroupPoints->PushButton1->click();
+	else if ( !myPoint1 )
+	  GroupPoints->PushButton2->click();
       }
     }
-
-    myEditCurrentArgument->setText(aName);
-
-    if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 1) {
-      myPoint1 = aSelectedObject;
-      if (!myPoint1->_is_nil() && myPoint2->_is_nil())
-        GroupPoints->PushButton3->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2 && getConstructorId() == 2) {
-      myVector = aSelectedObject;
-      if (!myVector->_is_nil() && !myObjects.length())
-        GroupPoints->PushButton1->click();
-    }
-    else if (myEditCurrentArgument == GroupPoints->LineEdit3) {
-      myPoint2 = aSelectedObject;
-      if (!myPoint2->_is_nil() && !myObjects.length())
-        GroupPoints->PushButton1->click();
+    else {
+      if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+	if ( getConstructorId() == 1 ) myPoint1.nullify();
+	else myVector.nullify();
+      }
+      else if ( myEditCurrentArgument == GroupPoints->LineEdit3 ) {
+	myPoint2.nullify();
+      }
+      myEditCurrentArgument->setText("");
     }
   }
-
-  // clear selection
-  /*  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-  this, SLOT(SelectionIntoArgument()));*/
-  // here commented, because multiple objects can be selected IPAL 21437
 
   displayPreview();
 }
@@ -478,19 +415,6 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
 }
 
 //=================================================================================
-// function : LineEditReturnPressed()
-// purpose  :
-//=================================================================================
-void TransformationGUI_TranslationDlg::LineEditReturnPressed()
-{
-  QLineEdit* send = (QLineEdit*)sender();
-  if (send == GroupPoints->LineEdit1) {
-    myEditCurrentArgument = send;
-    GEOMBase_Skeleton::LineEditReturnPressed();
-  }
-}
-
-//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
@@ -537,28 +461,25 @@ GEOM::GEOM_IOperations_ptr TransformationGUI_TranslationDlg::createOperation()
 //=================================================================================
 bool TransformationGUI_TranslationDlg::isValid (QString& msg)
 {
-  int aConstructorId = getConstructorId();
-
-  switch (aConstructorId) {
+  bool ok = false;
+  switch (getConstructorId()) {
   case 0: 
-    {
-      bool ok = true;
-      ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) && ok;
-      ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) && ok;
-      return myObjects.length() > 0 && ok;
-    }
+    ok = GroupPoints->SpinBox1->isValid( msg, !IsPreview() ) &&
+         GroupPoints->SpinBox2->isValid( msg, !IsPreview() ) &&
+         GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) &&
+         !myObjects.isEmpty();
+    break;
   case 1:
-    return myObjects.length() > 0 && !(myPoint1->_is_nil() || myPoint2->_is_nil());
+    ok = myPoint1 && myPoint2 && !myObjects.isEmpty();
+    break;
   case 2:
-    {
-      bool ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() );
-      return myObjects.length() > 0 && !(myVector->_is_nil()) && ok;
-    }
+      ok = GroupPoints->SpinBox3->isValid( msg, !IsPreview() ) &&
+	   myVector && !myObjects.isEmpty();
+    break;
   default:
     break;
   }
-  return false;
+  return ok;
 }
 
 //=================================================================================
@@ -587,9 +508,9 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       aParameters<<GroupPoints->SpinBox3->text();
 
       if (toCreateCopy) {
-        for (int i = 0; i < myObjects.length(); i++) {
+        for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->TranslateDXDYDZCopy(myObjects[i], dx, dy, dz);
+          anObj = anOper->TranslateDXDYDZCopy(myObjects[i].get(), dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview())
               anObj->SetParameters(aParameters.join(":").toLatin1().constData());
@@ -598,9 +519,9 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
         }
       }
       else {
-        for (int i = 0; i < myObjects.length(); i++) {
+        for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->TranslateDXDYDZ(myObjects[i], dx, dy, dz);
+          anObj = anOper->TranslateDXDYDZ(myObjects[i].get(), dx, dy, dz);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
               anObj->SetParameters(aParameters.join(":").toLatin1().constData());
@@ -616,17 +537,17 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
   case 1:
     {
       if (toCreateCopy) {
-        for (int i = 0; i < myObjects.length(); i++) {
+        for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->TranslateTwoPointsCopy(myObjects[i], myPoint1, myPoint2);
+          anObj = anOper->TranslateTwoPointsCopy(myObjects[i].get(), myPoint1.get(), myPoint2.get());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
       }
       else {
-        for (int i = 0; i < myObjects.length(); i++) {
+        for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->TranslateTwoPoints(myObjects[i], myPoint1, myPoint2);
+          anObj = anOper->TranslateTwoPoints(myObjects[i].get(), myPoint1.get(), myPoint2.get());
           if (!anObj->_is_nil())
             objects.push_back(anObj._retn());
         }
@@ -639,13 +560,13 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       QStringList aParameters;
       aParameters<<GroupPoints->SpinBox3->text();
       bool byDistance = GroupPoints->CheckBox1->isChecked();
-      createPathPreview( myVector );
+      createPathPreview( myVector.get() );
 
       if (byDistance) {
         double aDistance = GroupPoints->SpinBox3->value();
-        for (int i = 0; i < myObjects.length(); i++) {
+        for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->TranslateVectorDistance(myObjects[i], myVector, aDistance, toCreateCopy);
+          anObj = anOper->TranslateVectorDistance(myObjects[i].get(), myVector.get(), aDistance, toCreateCopy);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
               anObj->SetParameters(aParameters.join(":").toLatin1().constData());
@@ -658,17 +579,17 @@ bool TransformationGUI_TranslationDlg::execute (ObjectList& objects)
       }
       else {
         if (toCreateCopy) {
-          for (int i = 0; i < myObjects.length(); i++) {
+          for (int i = 0; i < myObjects.count(); i++) {
             myCurrObject = myObjects[i];
-            anObj = anOper->TranslateVectorCopy(myObjects[i], myVector);
+            anObj = anOper->TranslateVectorCopy(myObjects[i].get(), myVector.get());
             if (!anObj->_is_nil())
               objects.push_back(anObj._retn());
           }
         }
         else {
-          for (int i = 0; i < myObjects.length(); i++) {
+          for (int i = 0; i < myObjects.count(); i++) {
             myCurrObject = myObjects[i];
-            anObj = anOper->TranslateVector(myObjects[i], myVector);
+            anObj = anOper->TranslateVector(myObjects[i].get(), myVector.get());
             if (!anObj->_is_nil())
               objects.push_back(anObj._retn());
           }
@@ -694,7 +615,7 @@ void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   t
     // and we need to point the first argument directly
     GEOM::ListOfGO_var anArgs = new GEOM::ListOfGO;
     anArgs->length(1);
-    anArgs[0] = myCurrObject;
+    anArgs[0] = myCurrObject.copy();
     getGeomEngine()->RestoreSubShapesSO(theStudy, theSObject, anArgs,
                                         /*theFindMethod=*/GEOM::FSM_Transformed,
                                         /*theInheritFirstArg=*/true,
@@ -706,18 +627,18 @@ void TransformationGUI_TranslationDlg::restoreSubShapes (SALOMEDS::Study_ptr   t
 // function :  CreateCopyModeChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::CreateCopyModeChanged (bool isCreateCopy)
+void TransformationGUI_TranslationDlg::CreateCopyModeChanged()
 {
-  mainFrame()->GroupBoxName->setEnabled(isCreateCopy);
+  mainFrame()->GroupBoxName->setEnabled(GroupPoints->CheckBox2->isChecked());
 }
 
 //=================================================================================
 // function :  ActivateDistanceChanged()
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::ActivateDistanceChanged (bool theEnable)
+void TransformationGUI_TranslationDlg::ActivateDistanceChanged()
 {
-  GroupPoints->SpinBox3->setEnabled(theEnable);
+  GroupPoints->SpinBox3->setEnabled( GroupPoints->CheckBox1->isChecked() );
   displayPreview();
 }
 
@@ -729,20 +650,17 @@ void TransformationGUI_TranslationDlg::addSubshapesToStudy()
 {
   bool toCreateCopy = IsPreview() || GroupPoints->CheckBox2->isChecked();
   if (toCreateCopy) {
-    QMap<QString, GEOM::GEOM_Object_var> objMap;
-
     switch (getConstructorId()) {
-    case 0:
-      return;
     case 1:
-      objMap[GroupPoints->LineEdit2->text()] = myPoint1;
-      objMap[GroupPoints->LineEdit3->text()] = myPoint2;
+      GEOMBase::PublishSubObject( myPoint1.get() );
+      GEOMBase::PublishSubObject( myPoint2.get() );
       break;
     case 2:
-      objMap[GroupPoints->LineEdit2->text()] = myVector;
+      GEOMBase::PublishSubObject( myVector.get() );
+      break;
+    default:
       break;
     }
-    addSubshapesToFather(objMap);
   }
 }
 
@@ -750,7 +668,7 @@ void TransformationGUI_TranslationDlg::addSubshapesToStudy()
 // function : createPathPreview
 // purpose  :
 //=================================================================================
-void TransformationGUI_TranslationDlg::createPathPreview ( GEOM::GEOM_Object_var thePath )
+void TransformationGUI_TranslationDlg::createPathPreview ( GEOM::GEOM_Object_ptr thePath )
 {
   if ( IsPreview() ) {
     TopoDS_Shape aShape;
