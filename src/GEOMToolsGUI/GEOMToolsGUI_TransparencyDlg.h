@@ -61,6 +61,7 @@ private slots:
   void      ClickOnClose();
   void      ClickOnHelp();
   void      ValueHasChanged();
+  void      SliderHasMoved(int);
   void      SetTransparency();
 };
 

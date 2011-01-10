@@ -120,6 +120,7 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   mySlider->setSingleStep( 1 );
   mySlider->setPageStep( 10 );
   //mySlider->setValue( 5 );
+  mySlider->setTracking(false);
 
   mySlider->setTickPosition( QSlider::TicksLeft );
   GroupC1Layout->addWidget( mySlider, 1, 0, 1, 3 );
@@ -155,7 +156,7 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   connect(buttonOk,   SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonHelp, SIGNAL(clicked()), this, SLOT(ClickOnHelp()));
   connect(mySlider,   SIGNAL(valueChanged(int)), this, SLOT(SetTransparency()));
-  connect(mySlider,   SIGNAL(sliderMoved(int)),  this, SLOT(ValueHasChanged()));
+  connect(mySlider,   SIGNAL(sliderMoved(int)),  this, SLOT(SliderHasMoved(int)));
 }
 
 
@@ -222,6 +223,15 @@ void GEOMToolsGUI_TransparencyDlg::ClickOnHelp()
 void GEOMToolsGUI_TransparencyDlg::ValueHasChanged()
 {
   myValueLab->setText( QString("%1%").arg( mySlider->value() ) );
+}
+
+//=================================================================================
+// function : SliderHasMoved()
+// purpose  : Called when value of slider change
+//=================================================================================
+void GEOMToolsGUI_TransparencyDlg::SliderHasMoved(int value)
+{
+  myValueLab->setText( QString("%1%").arg( value ) );
 }
 
 //=================================================================================
