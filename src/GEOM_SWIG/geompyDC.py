@@ -3479,7 +3479,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 if typeSh in ( "AUTO", "SHAPE" ): continue
                 listSh = self.SubShapeAllIDs(theShape, ShapeType[typeSh])
                 Nb = len(listSh)
-                if EnumToLon(theShape.GetShapeType()) == ShapeType[typeSh]:
+                if EnumToLong(theShape.GetShapeType()) == ShapeType[typeSh]:
                     Nb = Nb + 1
                     pass
                 aDict[typeSh] = Nb
