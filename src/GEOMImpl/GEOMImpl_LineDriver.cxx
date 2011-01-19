@@ -29,6 +29,7 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepAlgoAPI_Section.hxx>
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -89,12 +90,14 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
-    gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
-    gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(aShape2));
+    TopoDS_Vertex V1 = TopoDS::Vertex(aShape1);
+    TopoDS_Vertex V2 = TopoDS::Vertex(aShape2);
+    gp_Pnt P1 = BRep_Tool::Pnt(V1);
+    gp_Pnt P2 = BRep_Tool::Pnt(V2);
     if (P1.Distance(P2) < Precision::Confusion()) {
       Standard_ConstructionError::Raise("The end points are too close");
     }
-    aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
+    aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
 
   } else if (aType == LINE_TWO_FACES) {
     Handle(GEOM_Function) aRefFace1 = aPI.GetFace1();
@@ -144,7 +147,8 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     if (aShape1.IsSame(aShape2)) {
       Standard_ConstructionError::Raise("The end points must be different");
     }
-    gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
+    TopoDS_Vertex Vstart = TopoDS::Vertex(aShape1);
+    gp_Pnt P1 = BRep_Tool::Pnt(Vstart);
 
     TopoDS_Edge anE = TopoDS::Edge(aShape2);
     TopoDS_Vertex V1, V2;
@@ -157,9 +161,14 @@ Standard_Integer GEOMImpl_LineDriver::Execute(TFunction_Logbook& log) const
     if (PV1.Distance(PV2) < Precision::Confusion()) {
       Standard_ConstructionError::Raise("Vector with null magnitude");
     }
-
-    gp_Pnt P2 (P1.XYZ() + PV2.XYZ() - PV1.XYZ());
-    aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
+    TopoDS_Vertex Vend;
+    if ( V1.IsSame( Vstart ) )
+      Vend = V2;
+    else if ( V2.IsSame( Vstart ) )
+      Vend = V1;
+    else
+      Vend = BRepBuilderAPI_MakeVertex( gp_Pnt(P1.XYZ() + PV2.XYZ() - PV1.XYZ()) );
+    aShape = BRepBuilderAPI_MakeEdge(Vstart, Vend).Shape();
   } else {
   }
 
