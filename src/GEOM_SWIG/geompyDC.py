@@ -2368,9 +2368,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Close an open wire.
         #  @param theObject Shape to be processed.
         #  @param theWires Indexes of edge(s) and wire(s) to be closed within <VAR>theObject</VAR>'s shape,
-        #                  if -1, then <VAR>theObject</VAR> itself is a wire.
-        #  @param isCommonVertex If TRUE : closure by creation of a common vertex,
-        #                        If FALS : closure by creation of an edge between ends.
+        #                  if [ ], then <VAR>theObject</VAR> itself is a wire.
+        #  @param isCommonVertex If True  : closure by creation of a common vertex,
+        #                        If False : closure by creation of an edge between ends.
         #  @return New GEOM_Object, containing processed shape.
         #
         #  @ref tui_close_contour "Example"
