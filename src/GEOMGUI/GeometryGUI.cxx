@@ -1776,7 +1776,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
       QVector<SUIT_ViewWindow*> views = vman->getViews();
       for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++)
       {
-        SOCC_ViewWindow* occView = dynamic_cast<SOCC_ViewWindow*>(views[i]);
+        OCCViewer_ViewWindow* occView = dynamic_cast<OCCViewer_ViewWindow*>(views[i]);
         if (occView)
         {
           //Handle(AIS_InteractiveContext) ic =
