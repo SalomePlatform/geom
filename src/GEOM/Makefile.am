@@ -54,7 +54,7 @@ salomeinclude_HEADERS =			\
 	GEOM_SubShapeDriver.hxx		\
 	GEOM_IOperations.hxx		\
 	GEOM_ISubShape.hxx		\
-	GEOM_Solver.hxx			\
+	GEOM_Solver.hxx			\ 
 	GEOM_PythonDump.hxx		\
 	GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx		\
 	GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx		\
@@ -64,15 +64,12 @@ salomeinclude_HEADERS =			\
 # additional information to compile and link file
 
 libGEOMbasic_la_CPPFLAGS =	\
-	$(CORBA_CXXFLAGS)	\
-        $(CORBA_INCLUDES)	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
 	$(BOOST_CPPFLAGS)	\
 	-I$(top_builddir)/idl
 
 libGEOMbasic_la_LDFLAGS  =			\
-	$(CORBA_LIBS)				\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
 	$(CAS_LDPATH) -lTKXSBase		\

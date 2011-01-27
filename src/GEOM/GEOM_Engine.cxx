@@ -1360,7 +1360,7 @@ void AddObjectColors (int                                             theDocID,
       theScript += aCommand.ToCString();
     }
 
-    SALOMEDS::Color aColor = obj->GetColor();
+    GEOM_Object::Color aColor = obj->GetColor();
     if ( aColor.R >= 0 && aColor.G >= 0 && aColor.B >= 0 )
     {
       TCollection_AsciiString aCommand( "\n\t" );

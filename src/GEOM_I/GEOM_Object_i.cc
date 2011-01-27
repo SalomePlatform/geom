@@ -216,7 +216,11 @@ char* GEOM_Object_i::GetName()
 //=============================================================================
 void GEOM_Object_i::SetColor(const SALOMEDS::Color& theColor)
 {
-  _impl->SetColor(theColor);
+  ::GEOM_Object::Color aColor;
+  aColor.R = theColor.R;
+  aColor.G = theColor.G;
+  aColor.B = theColor.B;
+  _impl->SetColor(aColor);
 }
 
 
@@ -227,7 +231,11 @@ void GEOM_Object_i::SetColor(const SALOMEDS::Color& theColor)
 //=============================================================================
 SALOMEDS::Color GEOM_Object_i::GetColor()
 {
-  return _impl->GetColor();
+  SALOMEDS::Color aColor;
+  aColor.R = _impl->GetColor().R;
+  aColor.G = _impl->GetColor().G;
+  aColor.B = _impl->GetColor().B;
+  return aColor;
 }
 
 

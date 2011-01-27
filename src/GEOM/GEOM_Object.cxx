@@ -328,7 +328,7 @@ char* GEOM_Object::GetName()
  *  SetColor
  */
 //=============================================================================
-void GEOM_Object::SetColor(const SALOMEDS::Color& theColor)
+void GEOM_Object::SetColor(const GEOM_Object::Color& theColor)
 {
   Handle(TDataStd_RealArray) anArray = new TDataStd_RealArray();
   anArray->Init( 1, 3 );
@@ -346,12 +346,12 @@ void GEOM_Object::SetColor(const SALOMEDS::Color& theColor)
  *  GetColor
  */
 //=============================================================================
-SALOMEDS::Color GEOM_Object::GetColor()
+GEOM_Object::Color GEOM_Object::GetColor()
 {
   Handle(TDataStd_RealArray) anArray;
   bool isFound = _label.FindChild(COLOR_LABEL).FindAttribute(TDataStd_RealArray::GetID(), anArray);
 
-  SALOMEDS::Color aColor;
+  GEOM_Object::Color aColor;
   aColor.R = isFound ? anArray->Value( 1 ) : -1;
   aColor.G = isFound ? anArray->Value( 2 ) : -1;
   aColor.B = isFound ? anArray->Value( 3 ) : -1;
@@ -364,7 +364,7 @@ SALOMEDS::Color GEOM_Object::GetColor()
  *  SetAutoColor
  */
 //=============================================================================
-void GEOM_Object::SetAutoColor(CORBA::Boolean theAutoColor)
+void GEOM_Object::SetAutoColor(bool theAutoColor)
 {
   TDataStd_Integer::Set(_label.FindChild(AUTO_COLOR_LABEL), (int)theAutoColor);
 }
@@ -374,12 +374,12 @@ void GEOM_Object::SetAutoColor(CORBA::Boolean theAutoColor)
  *  GetAutoColor
  */
 //=============================================================================
-CORBA::Boolean GEOM_Object::GetAutoColor()
+bool GEOM_Object::GetAutoColor()
 {
   Handle(TDataStd_Integer) anAutoColor;
   if(!_label.FindChild(AUTO_COLOR_LABEL).FindAttribute(TDataStd_Integer::GetID(), anAutoColor)) return false;
 
-  return anAutoColor->Get();
+  return bool(anAutoColor->Get());
 }
 
 //=============================================================================

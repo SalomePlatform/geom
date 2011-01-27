@@ -60,9 +60,6 @@
 #include <Aspect_TypeOfMarker.hxx>
 #endif
 
-#include "SALOMEconfig.h"
-#include CORBA_SERVER_HEADER(SALOMEDS)
-#include CORBA_SERVER_HEADER(SALOMEDS_Attributes)
 
 class Handle_TColStd_HSequenceOfTransient;
 class Standard_Transient;
@@ -133,6 +130,16 @@ class Handle(GEOM_Object) : public Handle(MMgt_TShared) {
 class GEOM_Object : public MMgt_TShared
 {
  friend class GEOM_Engine;
+ 
+ public:
+  struct Color {
+    //! Red component of the color
+    double R;
+    //! Green component of the color
+    double G;
+    //! Blue component  of the color
+    double B;
+  };
 
  public:
   inline void* operator new(size_t,void* anAddress)
@@ -208,16 +215,16 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT char* GetName();
 
   //Sets a color of this GEOM_Object
-  Standard_EXPORT void SetColor(const SALOMEDS::Color& theColor);
+  Standard_EXPORT void SetColor(const Color& theColor);
 
   //Returns a color of this GEOM_Object
-  Standard_EXPORT SALOMEDS::Color GetColor();
+  Standard_EXPORT Color GetColor();
 
   //Toggles an auto color mode on this GEOM_Object
-  Standard_EXPORT void SetAutoColor(CORBA::Boolean theAutoColor);
+  Standard_EXPORT void SetAutoColor(bool theAutoColor);
 
   //Returns a flag of auto color mode of this GEOM_Object
-  Standard_EXPORT CORBA::Boolean GetAutoColor();
+  Standard_EXPORT bool GetAutoColor();
 
   //Sets predefined point marker texture
   Standard_EXPORT void SetMarkerStd(const Aspect_TypeOfMarker theType, double theSize);
@@ -302,6 +309,8 @@ class GEOM_Object : public MMgt_TShared
   TCollection_AsciiString   _ior;
   TCollection_AsciiString   _parameters;
   int                       _docID;
+
+
 };
 
 #endif
