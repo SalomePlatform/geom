@@ -24,7 +24,7 @@
 #include "GEOMToolsGUI_DeleteDlg.h"
 
 #include <QLabel>
-#include <QPushButton>
+#include <QDialogButtonBox>
 #include <QTextBrowser>
 #include <QStringList>
 #include <QGridLayout>
@@ -108,21 +108,13 @@ GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent,
     lab->setText( tr( "GEOM_REALLY_DELETE_ALL" ) );
   }
 
-  QPushButton* buttonYes = new QPushButton( tr( "GEOM_BUT_YES" ), this );
-  QPushButton* buttonNo  = new QPushButton( tr( "GEOM_BUT_NO" ),  this );
-  QHBoxLayout* btnLayout = new QHBoxLayout;
-  btnLayout->setMargin( 0 );
-  btnLayout->setSpacing( 6 );
-  btnLayout->addWidget( buttonYes );
-  btnLayout->addSpacing( 10 );
-  btnLayout->addStretch();
-  btnLayout->addWidget( buttonNo );
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
+                                 | QDialogButtonBox::Cancel);
   int rc = topLayout->rowCount();
-  topLayout->addLayout( btnLayout, rc, 0, 1, 2 );
+  topLayout->addWidget( buttonBox, rc, 1, 1, 1 );
 
-  /* signals and slots connections */
-  connect( buttonYes, SIGNAL( clicked() ), this, SLOT( accept() ) );
-  connect( buttonNo,  SIGNAL( clicked() ), this, SLOT( reject() ) );
+  connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+  connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
 GEOMToolsGUI_DeleteDlg::~GEOMToolsGUI_DeleteDlg()
