@@ -28,6 +28,9 @@
 #include <QtxComboBox.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_Desktop.h>
+#include <SUIT_ViewManager.h>
 #include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
@@ -204,25 +207,38 @@ void GEOMToolsGUI_MarkerDlg::accept()
 {
   if ( getStudy() ) {
     LightApp_SelectionMgr* selMgr = qobject_cast<SalomeApp_Application*>( getStudy()->application() )->selectionMgr();
-    if ( selMgr ) {
-      SALOME_ListIO selected;
-      selMgr->selectedObjects( selected );
-      if ( !selected.IsEmpty() ) {
-        _PTR(Study) study = getStudy()->studyDS();
-        for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
-          _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
-          GEOM::GEOM_Object_var anObject =
-            GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-          if ( !anObject->_is_nil() ) {
-            if ( myWGStack->currentIndex() == 0 )
-              anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
-            else if ( getCustomMarkerID() > 0 )
-              anObject->SetMarkerTexture( getCustomMarkerID() );
-          }
-        }
-        GEOM_Displayer displayer( getStudy() );
-        displayer.Redisplay( selected, true );
-        selMgr->setSelectedObjects( selected );
+    
+    SUIT_ViewWindow* window =  getStudy()->application()->desktop()->activeWindow();
+    if (window && window->getViewManager()) {
+      int mgrId = window->getViewManager()->getGlobalId();
+      if ( selMgr ) {
+	SALOME_ListIO selected;
+	selMgr->selectedObjects( selected );
+	if ( !selected.IsEmpty() ) {
+	  _PTR(Study) study = getStudy()->studyDS();
+	  for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
+	    _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
+	    GEOM::GEOM_Object_var anObject =
+	      GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
+	    if ( !anObject->_is_nil() ) {
+	      if ( myWGStack->currentIndex() == 0 ) {
+		anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
+		QString aMarker = "%1%2%3";
+		aMarker = aMarker.arg(getMarkerType());
+		aMarker = aMarker.arg(DIGIT_SEPARATOR);
+		aMarker = aMarker.arg(getStandardMarkerScale());
+		getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, aMarker);
+	      }
+	      else if ( getCustomMarkerID() > 0 ) {
+		anObject->SetMarkerTexture( getCustomMarkerID() );
+		getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, QString::number(getCustomMarkerID()));
+	      }
+	    }
+	  }
+	  GEOM_Displayer displayer( getStudy() );
+	  displayer.Redisplay( selected, true );
+	  selMgr->setSelectedObjects( selected );
+	}
       }
     }
   }

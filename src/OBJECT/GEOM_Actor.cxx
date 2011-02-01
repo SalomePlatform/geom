@@ -174,6 +174,7 @@ GEOM_Actor::GEOM_Actor():
 
   // Toggle display mode 
   setDisplayMode(0); // WIRE FRAME
+  SetVectorMode(0);  //
 
 } 
  

@@ -410,6 +410,7 @@ void GEOMToolsGUI::OnEditDelete()
   QMap<QString,QString> toBeDeleted;
   QMap<QString,QString> allDeleted;
   bool isComponentSelected = false;
+  
   for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
     Handle(SALOME_InteractiveObject) anIObject = It.Value();
     if ( !anIObject->hasEntry() )
@@ -513,9 +514,11 @@ void GEOMToolsGUI::OnEditDelete()
       // remove object from GEOM engine
       removeObjectWithChildren( obj, aStudy, views, disp );
       // remove objects from study
-      aStudyBuilder->RemoveObjectWithChildren( obj );
+      aStudyBuilder->RemoveObjectWithChildren( obj );      
     }
   }
+
+  
   
   selected.Clear();
   aSelMgr->setSelectedObjects( selected );
@@ -849,6 +852,8 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
   _PTR(GenericAttribute) anAttr;
   if (obj->FindAttribute(anAttr, "AttributeIOR")) {
     _PTR(AttributeIOR) anIOR (anAttr);
+    
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
 
     // Delete shape in Client
     const TCollection_AsciiString ASCIor ((char*)anIOR->Value().c_str());
@@ -857,6 +862,10 @@ void GEOMToolsGUI::removeObjectWithChildren(_PTR(SObject) obj,
     CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject(obj);
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
     if (!CORBA::is_nil(geomObj)) {
+      
+      //Remove visual properties of the object
+      appStudy->removeObjectFromAll(obj->GetID().c_str());
+      
       // Erase graphical object
       QListIterator<SALOME_View*> it( views );
       while ( it.hasNext() )

@@ -41,6 +41,7 @@ class SALOME_OCCViewType;
 #include <TopoDS_Shape.hxx>
 #include <Quantity_Color.hxx>
 #include <LightApp_Displayer.h>
+#include <LightApp_Study.h>
 #include <Aspect_TypeOfMarker.hxx>
 
 #include <QList>
@@ -155,6 +156,13 @@ public:
   SalomeApp_Study* getStudy() const;
 
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
+
+  static PropMap getDefaultPropepryMap(const QString& viewer_type);
+  
+  static bool MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault);
+  
+  /*Get color of the geom object*/
+  static SALOMEDS::Color getColor(GEOM::GEOM_Object_var aGeomObject, bool& hasColor);
 
   /* Builds presentation of not published object */
   virtual SALOME_Prs* buildSubshapePresentation(const TopoDS_Shape& aShape,

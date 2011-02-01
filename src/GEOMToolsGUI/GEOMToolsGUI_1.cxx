@@ -313,6 +313,7 @@ void GEOMToolsGUI::OnColor()
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
         bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+	int mgrId = window->getViewManager()->getGlobalId();
         if ( isVTK ) {
           SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
           if ( !vtkVW )
@@ -324,7 +325,8 @@ void GEOMToolsGUI::OnColor()
             SUIT_OverrideCursor();
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
               aView->SetColor( It.Value(), c );
-            }
+	      appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+	    }
             GeometryGUI::Modified();
           }
         } // if ( isVTK )
@@ -374,6 +376,8 @@ void GEOMToolsGUI::OnColor()
                   if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
                     Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
 
+		  appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
+
                   io->Redisplay( Standard_True );
 
                   // store color to GEOM_Object
@@ -381,6 +385,7 @@ void GEOMToolsGUI::OnColor()
                   _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
                   GEOM::GEOM_Object_var anObject =
                     GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+
 
                   SALOMEDS::Color aSColor;
                   aSColor.R = (double)c.red() / 255.0;
@@ -491,7 +496,10 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
 
 void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 {
-  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
 
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
@@ -524,7 +532,8 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
           
           newNbUIso = NbIsosDlg->getU();
           newNbVIso = NbIsosDlg->getV();
-        }
+        } else //Cancel case
+	  return;
       }
       else if ( actionType == INCR || actionType == DECR ) {
         int delta = 1;
@@ -540,6 +549,9 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+	
+	
+	  
         Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
         
         CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbUIso) );
@@ -547,6 +559,10 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         
         ic->SetLocalAttributes(CurObject, CurDrawer);
         ic->Redisplay(CurObject);
+
+	QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
+	int aMgrId = window->getViewManager()->getGlobalId();
+	aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), "Isos", anIsos);
       }
     }
     GeometryGUI::Modified();
@@ -616,7 +632,8 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 
         newNbUIso = NbIsosDlg->getU();
         newNbVIso = NbIsosDlg->getV();
-      }
+      } else 
+	return; //Cancel case 
     }
     else if ( actionType == INCR || actionType == DECR ) {
       int delta = 1;
@@ -635,6 +652,10 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         // There are no casting to needed actor.
         int aIsos[2]={newNbUIso,newNbVIso};
         anActor->SetNbIsos(aIsos);
+
+	QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
+	int aMgrId = window->getViewManager()->getGlobalId();
+	aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_PROP, anIsos);
       }
       anAct = aCollection->GetNextActor();
     }
@@ -646,9 +667,12 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 void GEOMToolsGUI::OnDeflection()
 {
   SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+
 
   bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
   bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
+  int mgrId = window->getViewManager()->getGlobalId();
 
   if (isOCC) { // if is OCCViewer
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
@@ -678,6 +702,7 @@ void GEOMToolsGUI::OnDeflection()
               CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
               ic->SetDeviationCoefficient(CurObject, aNewDC, Standard_True);
               ic->Redisplay(CurObject);
+	      appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aNewDC);
             }
           }
         }
@@ -747,6 +772,7 @@ void GEOMToolsGUI::OnDeflection()
           // There are no casting to needed actor.
           bool isRel = anActor->GetIsRelative();
           anActor->SetDeflection(aDC, isRel);
+	  appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aDC);
         }
         anAct = aCollection->GetNextActor();
       }

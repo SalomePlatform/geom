@@ -477,6 +477,11 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr ) return;
 
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  
+  if(!aStudy)
+    return;
+
   SUIT_OverrideCursor();
 
   SALOME_ListIO aList;
@@ -484,6 +489,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
     SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
     SVTK_View* aView = vw->getView();
+    int mgrId = viewWindow->getViewManager()->getGlobalId();
+    bool vectorMode = false;
 
     aSelMgr->selectedObjects( aList );
     SALOME_ListIteratorOfListIO It( aList );
@@ -502,9 +509,15 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
           anActors->InitTraversal();
           while (vtkActor* anAct = anActors->GetNextActor()) {
             GEOM_Actor* aGeomActor = GEOM_Actor::SafeDownCast(anAct);
-            aGeomActor->SetVectorMode(!aGeomActor->GetVectorMode());
+	    vectorMode = !aGeomActor->GetVectorMode();
+	    aGeomActor->SetVectorMode(vectorMode);
           }
         }
+	if(mode == 0 || mode == 1) {
+	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	} else if (mode == 3) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP , vectorMode);
+	}
       }
     }
     aView->Repaint();
@@ -516,6 +529,8 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
 
     aSelMgr->selectedObjects( aList );
     SALOME_ListIteratorOfListIO It( aList );
+    int mgrId = viewWindow->getViewManager()->getGlobalId();
+    bool vectorMode = 0;
 
     for( ;It.More(); It.Next() ) {
       SOCC_Viewer* soccViewer = (SOCC_Viewer*)(viewWindow->getViewManager()->getViewModel());
@@ -531,11 +546,17 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
           if (mode == 2 ) {
             Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
             if ( !aSh.IsNull() ) {
-              aSh->SetDisplayVectors(!aSh->isShowVectors());
+	      vectorMode = !aSh->isShowVectors();      
+              aSh->SetDisplayVectors(vectorMode);
               ic->RecomputePrsOnly(interIter.Value());
             }
           }
         }
+	if(mode == 0 || mode == 1) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	} else if (mode == 2) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
+	}
       }
     }
     ic->UpdateCurrentViewer();

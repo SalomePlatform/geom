@@ -1691,164 +1691,87 @@ void GeometryGUI::storeVisualParameters (int savePoint)
                                                              componentName.c_str(),
                                                              savePoint);
   _PTR(IParameters) ip = ClientFactory::getIParameters(ap);
-
-  // viewers counters are used for storing view_numbers in IParameters
-  int vtkViewers(0), occViewers(0);
-
+  
   QList<SUIT_ViewManager*> lst;
   QList<SUIT_ViewManager*>::Iterator it;
 
   // main cycle to store parameters of displayed objects
   lst.clear();
-  vtkViewers = occViewers = 0;
   getApp()->viewManagers(lst);
-  for (it = lst.begin(); it != lst.end(); it++)
-  {
+  for (it = lst.begin(); it != lst.end(); it++) {
     SUIT_ViewManager* vman = *it;
     QString vType = vman->getType();
-
+    int aMgrId = vman->getGlobalId();
     // saving VTK actors properties
-    if (vType == SVTK_Viewer::Type())
-    {
-      QVector<SUIT_ViewWindow*> views = vman->getViews();
-      for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++)
-      {
-        if (SVTK_ViewWindow* vtkView = dynamic_cast<SVTK_ViewWindow*>(views[i]))
-        {
-          vtkActorCollection* allActors = vtkView->getRenderer()->GetActors();
-          allActors->InitTraversal();
-          while (vtkActor* actor = allActors->GetNextActor())
-          {
-            if (actor->GetVisibility()) // store only visible actors
-            {
-              GEOM_Actor* aGeomActor = 0;
-              if (actor->IsA("GEOM_Actor"))
-                aGeomActor = GEOM_Actor::SafeDownCast(actor);
-              if (aGeomActor && aGeomActor->hasIO())
-              {
-                Handle(SALOME_InteractiveObject) io = aGeomActor->getIO();
-                if (io->hasEntry())
-                {
-                  // entry is "encoded" = it does NOT contain component adress, since it is a
-                  // subject to change on next component loading
-                  std::string entry = ip->encodeEntry(io->getEntry(), componentName);
+    QVector<SUIT_ViewWindow*> views = vman->getViews();
+    for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++) {
+      const ObjMap anObjects = appStudy->getObjectMap(aMgrId);
+      ObjMap::ConstIterator o_it = anObjects.begin();
+      for( ;o_it != anObjects.end(); o_it++ ) {
+	const PropMap aProps = o_it.value();	
 
-                  std::string param, occParam = vType.toLatin1().data();
-                  occParam += gSeparator;
-                  occParam += QString::number(vtkViewers).toLatin1().data();
-                  occParam += gSeparator;
+	//Check that object exists in the study
+	_PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
+	if ( !obj ) 
+	  continue;	
+	// entry is "encoded" = it does NOT contain component adress, since it is a
+	// subject to change on next component loading
 
-                  param = occParam + "Visibility";
-                  ip->setParameter(entry, param, "On");
+	std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
+	
+	_PTR(GenericAttribute) anAttr;
+	if( !obj->FindAttribute(anAttr, "AttributeIOR"))
+	  continue;
+	
+	std::string param, occParam = vType.toLatin1().data();
+	occParam += NAME_SEPARATOR;
+	occParam += QString::number(aMgrId).toLatin1().data();
+	occParam += NAME_SEPARATOR;
+	
+	param = occParam + VISIBILITY_PROP;
+	ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+	
+	param = occParam + DISPLAY_MODE_PROP;
+	
+	ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
+	
+	QColor c = aProps.value(COLOR_PROP).value<QColor>();
+	QString colorStr = QString::number(c.red()/255.);
+	colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
+	colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
+	param = occParam + COLOR_PROP;
+	ip->setParameter(entry, param, colorStr.toLatin1().data());
+	
+	if(vType == SVTK_Viewer::Type()) {
+	  param = occParam + OPACITY_PROP;
+	  ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	} else if (vType == SOCC_Viewer::Type()) {
+	  param = occParam + TRANSPARENCY_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	}
+	 
+	param = occParam + ISOS_PROP;
+	ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+	
+	param = occParam + VECTOR_MODE_PROP;
+	ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
 
-                  param = occParam + "DisplayMode";
-                  ip->setParameter(entry, param, QString::number
-                                   (aGeomActor->getDisplayMode()).toLatin1().data());
+	param = occParam + DEFLECTION_COEFF_PROP;
+	ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
 
-                  vtkFloatingPointType r, g, b;
-                  aGeomActor->GetColor(r, g, b);
-                  QString colorStr = QString::number(r);
-                  colorStr += gDigitsSep; colorStr += QString::number(g);
-                  colorStr += gDigitsSep; colorStr += QString::number(b);
-                  param = occParam + "Color";
-                  ip->setParameter(entry, param, colorStr.toLatin1().data());
+	param = occParam + DEFLECTION_COEFF_PROP;
+	ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
 
-                  param = occParam + "Opacity";
-                  ip->setParameter(entry, param, QString::number(aGeomActor->GetOpacity()).toLatin1().data());
+	//Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
+	if(aProps.contains(MARKER_TYPE_PROP)) {
+	  param = occParam + MARKER_TYPE_PROP;
+	  ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
+	}
 
-                  int nbUIso(0), nbVIso(0);
-                  aGeomActor->GetNbIsos(nbUIso,nbVIso);
-                  QString isosStr = QString::number(nbUIso);
-                  isosStr += gDigitsSep;
-                  isosStr += QString::number(nbVIso);
-                  param = occParam + "Isos";
-                  ip->setParameter(entry, param, isosStr.toLatin1().data());
-                } // if (io->hasEntry())
-              } // GEOM_Actor && hasIO
-            } // isVisible
-          } // while.. actors traversal
-        } // if (vtkView)
-      } // for (views)
-      vtkViewers++;
-    } // if (SVTK view model)
-    else if (vType == SOCC_Viewer::Type()) // processing OCC viewers
-    {
-      QVector<SUIT_ViewWindow*> views = vman->getViews();
-      for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++)
-      {
-        OCCViewer_ViewWindow* occView = dynamic_cast<OCCViewer_ViewWindow*>(views[i]);
-        if (occView)
-        {
-          //Handle(AIS_InteractiveContext) ic =
-          //  ((OCCViewer_Viewer*)(occView->getViewManager()->getViewModel()))->getAISContext();
-          OCCViewer_Viewer* viewModel = (OCCViewer_Viewer*)(vman->getViewModel());
-          //OCCViewer_Viewer* viewModel = ((OCCViewer_ViewManager*)vman)->getOCCViewer();
-          Handle(AIS_InteractiveContext) ic = viewModel->getAISContext();
-
-          AIS_ListOfInteractive aList;
-          ic->DisplayedObjects(aList);
-
-          AIS_ListIteratorOfListOfInteractive ite (aList);
-          for (; ite.More(); ite.Next())
-          {
-            if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape)))
-            {
-              Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-              if (aSh->hasIO())
-              {
-                Handle(SALOME_InteractiveObject) io =
-                  Handle(SALOME_InteractiveObject)::DownCast(aSh->getIO());
-                if (io->hasEntry())
-                {
-                  // entry is "encoded": it does NOT contain component adress,
-                  // since it is a subject to change on next component loading
-                  std::string entry = ip->encodeEntry(io->getEntry(), componentName);
-
-                  std::string param, occParam = vType.toLatin1().data();
-                  occParam += gSeparator;
-                  occParam += QString::number(occViewers).toLatin1().data();
-                  occParam += gSeparator;
-
-                  // Visibility
-                  param = occParam + "Visibility";
-                  ip->setParameter(entry, param, "On");
-
-                  // DisplayMode
-                  param = occParam + "DisplayMode";
-                  int dm = aSh->DisplayMode();
-                  ip->setParameter(entry, param, QString::number(dm).toLatin1().data());
-
-                  // Color
-                  // is a property of GEOM_Object, it is stored by GEOM engine
-
-                  // Transparency
-                  param = occParam + "Transparency";
-                  ip->setParameter(entry, param, QString::number(aSh->Transparency()).toLatin1().data());
-
-                  // Isos
-                  Handle(AIS_Drawer) aDrawer = aSh->Attributes();
-                  int nbUIso = aDrawer->UIsoAspect()->Number();
-                  int nbVIso = aDrawer->VIsoAspect()->Number();
-                  QString isosStr = QString::number(nbUIso);
-                  isosStr += gDigitsSep;
-                  isosStr += QString::number(nbVIso);
-                  param = occParam + "Isos";
-                  ip->setParameter(entry, param, isosStr.toLatin1().data());
-                } // if (io->hasEntry())
-              } // if (io)
-            } // if (GEOM_AISShape)
-          } // for (AIS_ListOfInteractive)
-        } // if ( occView )
-      } // for ( views )
-      occViewers++;
-    } // if (SOCC view model)
-    else
-    {
-      // unknown viewer type
-    }
+      } // object iterator
+    } // for (views)
   } // for (viewManagers)
 }
-
 /*!
  * \brief Restore visual parameters
  *
@@ -1896,191 +1819,82 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
     NCollection_DataMap<int, GEOM_Actor*          > vtkActors;
     NCollection_DataMap<int, Handle(GEOM_AISShape)> occActors;
 
+    QString viewerTypStr;
+    QString viewIndexStr;
+    int viewIndex;
+    QVector<PropMap> aListOfMap;
+    
     for (; namesIt != paramNames.end(); ++namesIt, ++valuesIt)
     {
       // visual parameters are stored in strings as follows: ViewerType_ViewIndex_ParamName.
       // '_' is used as separator and should not be used in viewer type or parameter names.
-      QStringList lst = QString((*namesIt).c_str()).split(gSeparator, QString::SkipEmptyParts);
+      QStringList lst = QString((*namesIt).c_str()).split(NAME_SEPARATOR, QString::SkipEmptyParts);
       if (lst.size() != 3)
         continue;
 
-      QString viewerTypStr = lst[0];
-      QString viewIndexStr = lst[1];
+      viewerTypStr = lst[0];
+      viewIndexStr = lst[1];
       QString paramNameStr = lst[2];
 
       bool ok;
-      int viewIndex = viewIndexStr.toUInt(&ok);
+      viewIndex = viewIndexStr.toUInt(&ok);
       if (!ok) // bad conversion of view index to integer
         continue;
-
-      // viewers
-      if (viewerTypStr == SVTK_Viewer::Type())
-      {
-        GEOM_Actor* vActor = 0;
-        if (vtkActors.IsBound(viewIndex))
-          vActor = vtkActors.Find(viewIndex);
-
-        if (paramNameStr == "Visibility")
-        {
-          if (!vActor && displayer())
-          {
-            QList<SUIT_ViewManager*> lst;
-            getApp()->viewManagers(viewerTypStr, lst);
-
-            // SVTK ViewManager always has 1 ViewWindow, so view index is index of view manager
-            if (viewIndex >= 0 && viewIndex < lst.count()) {
-              SUIT_ViewManager* vman = lst.at(viewIndex);
-              SUIT_ViewModel* vmodel = vman->getViewModel();
-              // SVTK view model can be casted to SALOME_View
-              displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
-
-              // store displayed actor in a temporary map for quicker
-              // access later when restoring other parameters
-              SVTK_ViewWindow* vtkView = (SVTK_ViewWindow*) vman->getActiveView();
-              vtkRenderer* Renderer = vtkView->getRenderer();
-              vtkActorCollection* theActors = Renderer->GetActors();
-              theActors->InitTraversal();
-              bool isFound = false;
-              vtkActor *ac = theActors->GetNextActor();
-              for (; ac != NULL && !isFound; ac = theActors->GetNextActor()) {
-                if (ac->IsA("GEOM_Actor")) {
-                  GEOM_Actor* aGeomAc = GEOM_Actor::SafeDownCast(ac);
-                  if (aGeomAc->hasIO()) {
-                    Handle(SALOME_InteractiveObject) io =
-                      Handle(SALOME_InteractiveObject)::DownCast(aGeomAc->getIO());
-                    if (io->hasEntry() && strcmp(io->getEntry(), entry.toLatin1().data()) == 0) {
-                      isFound = true;
-                      vtkActors.Bind(viewIndex, aGeomAc);
-                    }
-                  }
-                }
-              }
-            }
-          }
-        } // if (paramNameStr == "Visibility")
-        else
-        {
-          // the rest properties "work" with GEOM_Actor
-          if (vActor)
-          {
-            QString val ((*valuesIt).c_str());
-
-            if (paramNameStr == "DisplayMode") {
-              vActor->setDisplayMode(val.toInt());
-            }
-            else if (paramNameStr == "Color") {
-              QStringList colors = val.split(gDigitsSep, QString::SkipEmptyParts);
-              if (colors.count() == 3)
-                vActor->SetColor(colors[0].toFloat(), colors[1].toFloat(), colors[2].toFloat());
-            }
-            else if (paramNameStr == "Opacity") {
-              vActor->SetOpacity(val.toFloat());
-            }
-            else if (paramNameStr == "Isos") {
-              QStringList isos = val.split(gDigitsSep, QString::SkipEmptyParts);
-              if (isos.count() == 2) {
-                int aIsos[2] = {isos[0].toInt(), isos[1].toInt()};
-                vActor->SetNbIsos(aIsos);
-              }
-            }
-          }
-        } // other parameters than Visibility
+      
+      if((viewIndex + 1) > aListOfMap.count()) {
+	aListOfMap.resize(viewIndex + 1);
       }
-      else if (viewerTypStr == SOCC_Viewer::Type())
-      {
-        //Handle(AIS_InteractiveObject) occActor;
-        Handle(GEOM_AISShape) occActor;
-        if (occActors.IsBound(viewIndex))
-          occActor = occActors.Find(viewIndex);
 
-        // ViewModel and InteractiveContext
-        SOCC_Viewer* occVModel = 0;
-        Handle(AIS_InteractiveContext) ic;
+      QString val((*valuesIt).c_str());
+      if(paramNameStr == VISIBILITY_PROP){
+	aListOfMap[viewIndex].insert(VISIBILITY_PROP, val == "On" ? 1 : 0);
 
-        QList<SUIT_ViewManager*> lst;
-        getApp()->viewManagers(viewerTypStr, lst);
+      } else if(paramNameStr == OPACITY_PROP) {
+	aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, 1. - val.toDouble());
 
-        // SOCC ViewManager always has 1 ViewWindow, so view index is index of view manager
-        if (viewIndex >= 0 && viewIndex < lst.count()) {
-          SUIT_ViewManager* vman = lst.at(viewIndex);
-          SUIT_ViewModel* vmodel = vman->getViewModel();
-          occVModel = dynamic_cast<SOCC_Viewer*>(vmodel);
-          if (occVModel)
-            ic = occVModel->getAISContext();
-        }
+      }	else if(paramNameStr == TRANSPARENCY_PROP) { 
+	aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, val.toDouble());
 
-        if (ic.IsNull())
-          continue;
+      } else if(paramNameStr == DISPLAY_MODE_PROP) {
+	aListOfMap[viewIndex].insert( DISPLAY_MODE_PROP, val.toInt());
+	
+      } else if(paramNameStr == ISOS_PROP) {
+	aListOfMap[viewIndex].insert( ISOS_PROP, val);
 
-        if (paramNameStr == "Visibility")
-        {
-          if (occActor.IsNull() && displayer())
-          {
-            displayer()->Display(entry, true, occVModel);
+      } else if(paramNameStr == COLOR_PROP) {
+	QStringList rgb = val.split(DIGIT_SEPARATOR);
+	if(rgb.count() == 3) {
+	  QColor c(int(rgb[0].toDouble()*255), int(rgb[1].toDouble()*255), int(rgb[2].toDouble()*255));
+	  aListOfMap[viewIndex].insert( COLOR_PROP, c);	  
+	}
+      } else if(paramNameStr == VECTOR_MODE_PROP) {
+	aListOfMap[viewIndex].insert( VECTOR_MODE_PROP, val.toInt());
 
-            // store displayed actor in a temporary map for quicker
-            // access later when restoring other parameters
-            AIS_ListOfInteractive aList;
-            ic->DisplayedObjects(aList);
-            bool isFound = false;
-            AIS_ListIteratorOfListOfInteractive ite (aList);
-            for (; ite.More() && !isFound; ite.Next()) {
-              if (ite.Value()->IsInstance(STANDARD_TYPE(GEOM_AISShape))) {
-                Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(ite.Value());
-                if (aSh->hasIO()) {
-                  Handle(SALOME_InteractiveObject) io =
-                    Handle(SALOME_InteractiveObject)::DownCast(aSh->getIO());
-                  if (io->hasEntry() && strcmp(io->getEntry(), entry.toLatin1().data()) == 0) {
-                    isFound = true;
-                    occActors.Bind(viewIndex, aSh);
-                  }
-                }
-              }
-            }
-          }
-        } // if (paramNameStr == "Visibility")
-        else
-        {
-          // the rest properties "work" with GEOM_AISShape
-          if (!occActor.IsNull())
-          {
-            QString val ((*valuesIt).c_str());
+      }  else if(paramNameStr == DEFLECTION_COEFF_PROP) {
+	aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
+      }  else if(paramNameStr == MARKER_TYPE_PROP) {
+	aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
+      }     
 
-            if (paramNameStr == "DisplayMode") {
-              ic->SetDisplayMode(occActor, AIS_DisplayMode(val.toInt()), false);
-              //ic->Redisplay(occActor, Standard_False, Standard_True);
-            }
-            // Color is restored by the GEOM engine
-            else if (paramNameStr == "Transparency") {
-              ic->SetTransparency(occActor, val.toFloat(), false);
-              ic->Redisplay(occActor, Standard_False, Standard_True);
-            }
-            else if (paramNameStr == "Isos") {
-              QStringList isos = val.split(gDigitsSep, QString::SkipEmptyParts);
-              if (isos.count() == 2) {
-                Handle(AIS_Drawer) aDrawer = occActor->Attributes();
-                int nbUIso = isos[0].toInt();
-                int nbVIso = isos[1].toInt();
-                Handle(Prs3d_IsoAspect) uIsoAspect = aDrawer->UIsoAspect();
-                Handle(Prs3d_IsoAspect) vIsoAspect = aDrawer->VIsoAspect();
-                uIsoAspect->SetNumber(nbUIso);
-                vIsoAspect->SetNumber(nbVIso);
-                aDrawer->SetUIsoAspect(uIsoAspect);
-                aDrawer->SetVIsoAspect(vIsoAspect);
-                ic->SetLocalAttributes(occActor, aDrawer);
-                ic->Redisplay(occActor);
-              }
-            }
-          }
-        } // other parameters than Visibility
-      }
-      else
-      {
-        // unknown viewer type
-      }
     } // for names/parameters iterator
-  } // for entries iterator
 
+    QList<SUIT_ViewManager*> lst = getApp()->viewManagers();
+
+    for (int index = 0 ; index < aListOfMap.count(); index++) {
+
+      appStudy->setObjectPropMap(index, entry, aListOfMap[index]);
+
+      QColor c = aListOfMap[index].value(COLOR_PROP).value<QColor>();
+      //Get Visibility property of the current PropMap
+      if(aListOfMap[index].value(VISIBILITY_PROP) == 1) {
+	SUIT_ViewManager* vman = lst.at(index);
+	SUIT_ViewModel* vmodel = vman->getViewModel();
+	displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));    
+      }
+    }
+    
+  } // for entries iterator
+  
   // update all VTK and OCC views
   QList<SUIT_ViewManager*> lst;
   getApp()->viewManagers(lst);

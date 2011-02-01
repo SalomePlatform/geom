@@ -48,6 +48,7 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include <SalomeApp_Study.h>
 
 #include <QLabel>
 #include <QPushButton>
@@ -249,6 +250,12 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
   if ( !aSelMgr )
     return;
+  
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  
+  if(!aStudy)
+    return;
+  
   SALOME_ListIO selected;
   aSelMgr->selectedObjects( selected );
   if ( selected.IsEmpty() )
@@ -261,7 +268,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
   bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
-
+  int aMgrId = window->getViewManager()->getGlobalId();
   if ( isVTK ) {
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
@@ -278,6 +285,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     SUIT_OverrideCursor();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       aView->SetTransparency( It.Value(), newValue );
+      aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), TRANSPARENCY_PROP , newValue );
     }
     GeometryGUI::Modified();
     aView->Repaint();
@@ -308,6 +316,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       if ( found ) {
         ic->SetTransparency( aisShape, newValue, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );
+	aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), TRANSPARENCY_PROP , newValue );
       }
     } // for...
     ic->UpdateCurrentViewer();
