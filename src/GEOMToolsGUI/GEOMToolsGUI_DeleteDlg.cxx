@@ -108,8 +108,8 @@ GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent,
     lab->setText( tr( "GEOM_REALLY_DELETE_ALL" ) );
   }
 
-  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
-                                 | QDialogButtonBox::Cancel);
+  QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Yes
+                                 | QDialogButtonBox::No);
   int rc = topLayout->rowCount();
   topLayout->addWidget( buttonBox, rc, 1, 1, 1 );
 
