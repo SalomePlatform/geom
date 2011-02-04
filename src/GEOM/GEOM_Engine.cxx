@@ -64,9 +64,6 @@
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
 #include <set>
-#include <map>
-#include <string>
-#include <vector>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -83,6 +80,10 @@ static int MYDEBUG = 0;
 #else
 static int MYDEBUG = 0;
 #endif
+
+typedef std::map< TCollection_AsciiString, TCollection_AsciiString > TSting2StringMap;
+typedef std::map< TCollection_AsciiString, TObjectData >             TSting2ObjDataMap;
+typedef std::map< TCollection_AsciiString, TObjectData* >            TSting2ObjDataPtrMap;
 
 static GEOM_Engine* TheEngine = NULL;
 
@@ -109,14 +110,14 @@ static Standard_Integer ExtractDocID(TCollection_AsciiString& theID)
   return aDocID.IntegerValue();
 }
 
-bool ProcessFunction(Handle(GEOM_Function)&   theFunction,
-                     TCollection_AsciiString& theScript,
-                     TCollection_AsciiString& theAfterScript,
-                     const TVariablesList&    theVariables,
-                     const bool               theIsPublished,
-                     TDF_LabelMap&            theProcessed,
-                     std::set<std::string>&   theIgnoreObjs,
-                     bool&                    theIsDumpCollected);
+bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
+                     TCollection_AsciiString&           theScript,
+                     TCollection_AsciiString&           theAfterScript,
+                     const TVariablesList&              theVariables,
+                     const bool                         theIsPublished,
+                     TDF_LabelMap&                      theProcessed,
+                     std::set<TCollection_AsciiString>& theIgnoreObjs,
+                     bool&                              theIsDumpCollected);
 
 void ReplaceVariables(TCollection_AsciiString& theCommand,
                       const TVariablesList&    theVariables);
@@ -124,27 +125,59 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
 Handle(TColStd_HSequenceOfInteger) FindEntries(TCollection_AsciiString& theString);
 
 void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
-                            Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                            TSting2ObjDataMap&                        aEntry2ObjData,
                             const bool                                theIsPublished,
-                            Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
                             TColStd_SequenceOfAsciiString&            theObjListToPublish,
                             Standard_Integer&                         objectCounter,
                             Resource_DataMapOfAsciiStringAsciiString& aNameToEntry);
 
-void AddObjectColors (int                                             theDocID,
-                      TCollection_AsciiString&                        theScript,
-                      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames);
+void AddObjectColors (int                      theDocID,
+                      TCollection_AsciiString& theScript,
+                      const TSting2ObjDataMap& theEntry2ObjData);
 
 void AddTextures (int theDocID, TCollection_AsciiString& theScript);
 
-void PublishObject (const TCollection_AsciiString&                  theEntry,
-                    const TCollection_AsciiString&                  theName,
-                    const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-                    const Resource_DataMapOfAsciiStringAsciiString& theEntry2StEntry,
-                    const Resource_DataMapOfAsciiStringAsciiString& theStEntry2Entry,
-                    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
-                    std::map< int, std::string >&                   theEntryToCommandMap,
-                    std::set<std::string>&                          theMapOfPublished);
+void PublishObject (TObjectData&                              theObjectData,
+                    TSting2ObjDataMap&                        theEntry2ObjData,
+                    const TSting2ObjDataPtrMap&               theStEntry2ObjDataPtr,
+                    Resource_DataMapOfAsciiStringAsciiString& theNameToEntry,
+                    TSting2StringMap&                         theEntryToCmdMap,
+                    std::set<TCollection_AsciiString>&        theMapOfPublished);
+
+namespace
+{
+  //================================================================================
+  /*!
+   * \brief Fix up the name of python variable
+   */
+  //================================================================================
+
+  void healPyName( TCollection_AsciiString&                  pyName,
+                   const TCollection_AsciiString&            anEntry,
+                   Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
+  {
+    const TCollection_AsciiString allowedChars
+      ("qwertyuioplkjhgfdsazxcvbnmQWERTYUIOPLKJHGFDSAZXCVBNM0987654321_");
+
+    if ( pyName.IsIntegerValue() ) { // pyName must not start with a digit
+      pyName.Insert( 1, 'a' );
+    }
+    int p, p2=1; // replace not allowed chars
+    while ((p = pyName.FirstLocationNotInSet(allowedChars, p2, pyName.Length()))) {
+      pyName.SetValue(p, '_');
+      p2=p;
+    }
+    if ( aNameToEntry.IsBound( pyName ) && anEntry != aNameToEntry( pyName ))
+    {  // diff objects have same name - make a new name by appending a digit
+      TCollection_AsciiString aName2;
+      Standard_Integer i = 0;
+      do {
+        aName2 = pyName + "_" + ++i;
+      } while ( aNameToEntry.IsBound( aName2 ) && anEntry != aNameToEntry( aName2 ));
+      pyName = aName2;
+    }
+  }
+}
 
 //=======================================================================
 //function : GetTextureGUID
@@ -525,7 +558,7 @@ void GEOM_Engine::Close(int theDocID)
  */
 //=============================================================================
 TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
-                                                Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                                                std::vector<TObjectData>& theObjectData,
                                                 TVariablesList theVariables,
                                                 bool isPublished,
                                                 bool& aValidScript)
@@ -549,24 +582,30 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   Standard_Integer posToInsertGlobalVars = aScript.Length() + 1;
 
-  Resource_DataMapOfAsciiStringAsciiString aEntry2StEntry, aStEntry2Entry;
-  Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString anEntryToNameIt;
-  // build maps entry <-> studyEntry
-  for (anEntryToNameIt.Initialize( theObjectNames );
-       anEntryToNameIt.More();
-       anEntryToNameIt.Next())
+  // a map containing copies of TObjectData from theObjectData
+  TSting2ObjDataMap    aEntry2ObjData;
+  // contains pointers to TObjectData of either aEntry2ObjData or theObjectData; the latter
+  // occures when several StudyEntries correspond to one Entry
+  TSting2ObjDataPtrMap aStEntry2ObjDataPtr;
+
+  //Resource_DataMapOfAsciiStringAsciiString aEntry2StEntry, aStEntry2Entry, theObjectNames;
+  for (unsigned i = 0; i < theObjectData.size(); ++i )
   {
-    const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
+    TObjectData& data = theObjectData[i];
     // look for an object by entry
     TDF_Label L;
-    TDF_Tool::Label( aDoc->GetData(), aEntry, L );
+    TDF_Tool::Label( aDoc->GetData(), data._entry, L );
     if ( L.IsNull() ) continue;
     Handle(GEOM_Object) obj = GEOM_Object::GetObject( L );
     // fill maps
     if ( !obj.IsNull() ) {
-      TCollection_AsciiString aStudyEntry (obj->GetAuxData());
-      aEntry2StEntry.Bind( aEntry,  aStudyEntry);
-      aStEntry2Entry.Bind( aStudyEntry, aEntry );
+      TSting2ObjDataMap::iterator ent2Data =
+        aEntry2ObjData.insert( std::make_pair( data._entry, data )).first;
+
+      if ( ent2Data->second._studyEntry == data._studyEntry ) // Entry encounters 1st time
+        aStEntry2ObjDataPtr.insert( std::make_pair( data._studyEntry, & ent2Data->second ));
+      else
+        aStEntry2ObjDataPtr.insert( std::make_pair( data._studyEntry, & data ));
     }
   }
 
@@ -577,10 +616,9 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   Handle(TDataStd_TreeNode) aNode, aRoot;
   Handle(GEOM_Function) aFunction;
   TDF_LabelMap aCheckedFuncMap;
-  std::set<std::string> anIgnoreObjMap;
+  std::set< TCollection_AsciiString > anIgnoreObjMap;
 
   TCollection_AsciiString aFuncScript;
-  Resource_DataMapOfAsciiStringAsciiString anEntryToBadName;
 
   // Mantis issue 0020768
   Standard_Integer objectCounter = 0;
@@ -606,26 +644,22 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         aFuncScript += aCurScript;
       if (isDumpCollected ) {
         // Replace entries by the names
-        ReplaceEntriesByNames( aFuncScript, theObjectNames,
-                               isPublished, anEntryToBadName, aObjListToPublish,
-                               objectCounter, aNameToEntry );
+        ReplaceEntriesByNames( aFuncScript, aEntry2ObjData, isPublished,
+                               aObjListToPublish, objectCounter, aNameToEntry );
 
         // publish collected objects
-        std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
+        TSting2StringMap anEntryToCmdMap; // sort publishing commands by study entry
         int i = 1, n = aObjListToPublish.Length();
         for ( ; i <= n; i++ )
         {
           const TCollection_AsciiString& aEntry = aObjListToPublish.Value(i);
-          if (!theObjectNames.IsBound( aEntry ))
-            continue;
-          PublishObject( aEntry, theObjectNames.Find(aEntry),
-                        theObjectNames, aEntry2StEntry, aStEntry2Entry,
-                        anEntryToBadName, anEntryToCommandMap, anIgnoreObjMap );
+          PublishObject( aEntry2ObjData[aEntry], aEntry2ObjData, aStEntry2ObjDataPtr,
+                         aNameToEntry, anEntryToCmdMap, anIgnoreObjMap );
         }
         // add publishing commands to the script
-        std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
-        for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
-          aFuncScript += (char*)anEntryToCommand->second.c_str();
+        TSting2StringMap::iterator anEntryToCmd = anEntryToCmdMap.begin();
+        for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd )
+          aFuncScript += anEntryToCmd->second;
 
         // PTv, 0020001 add result objects from RestoreGivenSubShapes into ignore list,
         //  because they will be published during command execution
@@ -639,8 +673,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
           for ( ; i <= n; i+=2) {
             TCollection_AsciiString anEntry =
               aSubStr.SubString(aSeq->Value(i), aSeq->Value(i+1));
-            if (!anIgnoreObjMap.count(anEntry.ToCString()))
-              anIgnoreObjMap.insert(anEntry.ToCString());
+            anIgnoreObjMap.insert(anEntry.ToCString());
           }
         }
 
@@ -654,35 +687,34 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
 
   // Replace entries by the names
   aObjListToPublish.Clear();
-  ReplaceEntriesByNames( aFuncScript, theObjectNames,
-                         isPublished, anEntryToBadName, aObjListToPublish,
+  ReplaceEntriesByNames( aFuncScript, aEntry2ObjData, isPublished, aObjListToPublish,
                          objectCounter, aNameToEntry );
 
   aScript += aFuncScript;
 
   // ouv : NPAL12872
-  AddObjectColors( theDocID, aScript, theObjectNames );
+  AddObjectColors( theDocID, aScript, aEntry2ObjData );
 
   // Make script to publish in study
+  TSting2ObjDataPtrMap::iterator aStEntry2ObjDataPtrIt;
   if ( isPublished )
   {
-    std::map< int, std::string > anEntryToCommandMap; // sort publishing commands by object entry
-    for (anEntryToNameIt.Initialize( theObjectNames );
-         anEntryToNameIt.More();
-         anEntryToNameIt.Next())
+    TSting2StringMap anEntryToCmdMap; // sort publishing commands by object entry
+
+    for (aStEntry2ObjDataPtrIt  = aStEntry2ObjDataPtr.begin();
+         aStEntry2ObjDataPtrIt != aStEntry2ObjDataPtr.end();
+         ++aStEntry2ObjDataPtrIt)
     {
-      const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
-      if (anIgnoreObjMap.count(aEntry.ToCString()))
+      TObjectData* data = aStEntry2ObjDataPtrIt->second;
+      if ( anIgnoreObjMap.count( data->_entry ))
         continue; // should not be dumped
-      const TCollection_AsciiString& aName = anEntryToNameIt.Value();
-      PublishObject( aEntry, aName, theObjectNames,
-                    aEntry2StEntry, aStEntry2Entry,
-                    anEntryToBadName, anEntryToCommandMap, anIgnoreObjMap );
+      PublishObject( *data, aEntry2ObjData, aStEntry2ObjDataPtr,
+                     aNameToEntry, anEntryToCmdMap, anIgnoreObjMap );
     }
     // add publishing commands to the script
-    std::map< int, std::string >::iterator anEntryToCommand = anEntryToCommandMap.begin();
-    for ( ; anEntryToCommand != anEntryToCommandMap.end(); ++anEntryToCommand )
-      aScript += (char*)anEntryToCommand->second.c_str();
+    TSting2StringMap::iterator anEntryToCmd = anEntryToCmdMap.begin();
+    for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd )
+      aScript += anEntryToCmd->second;
   }
 
   //aScript += "\n\tpass\n";
@@ -692,16 +724,16 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   // fill _studyEntry2NameMap and build globalVars
   TCollection_AsciiString globalVars;
   _studyEntry2NameMap.Clear();
-  Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString aStEntryToEntryIt;
-  for (aStEntryToEntryIt.Initialize( aStEntry2Entry );
-       aStEntryToEntryIt.More();
-       aStEntryToEntryIt.Next() )
+  for (aStEntry2ObjDataPtrIt  = aStEntry2ObjDataPtr.begin();
+       aStEntry2ObjDataPtrIt != aStEntry2ObjDataPtr.end();
+       ++aStEntry2ObjDataPtrIt)
   {
-    const TCollection_AsciiString & name = theObjectNames( aStEntryToEntryIt.Value() );
-    _studyEntry2NameMap.Bind (aStEntryToEntryIt.Key(), name );
+    const TCollection_AsciiString& studyEntry = aStEntry2ObjDataPtrIt->first;
+    const TObjectData*                   data = aStEntry2ObjDataPtrIt->second;
+    _studyEntry2NameMap.Bind ( studyEntry, data->_pyName );
     if ( !globalVars.IsEmpty() )
       globalVars += ", ";
-    globalVars += name;
+    globalVars += data->_pyName;
   }
   if ( !globalVars.IsEmpty() ) {
     globalVars.Insert( 1, "\n\tglobal " );
@@ -862,14 +894,14 @@ std::list<int> GEOM_Engine::getAllTextures(int theDocID)
  *  ProcessFunction: Dump fucntion description into script
  */
 //=============================================================================
-bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
-                     TCollection_AsciiString&   theScript,
-                     TCollection_AsciiString&   theAfterScript,
-                     const TVariablesList&      theVariables,
-                     const bool                 theIsPublished,
-                     TDF_LabelMap&              theProcessed,
-                     std::set<std::string>&     theIgnoreObjs,
-                     bool&                      theIsDumpCollected)
+bool ProcessFunction(Handle(GEOM_Function)&             theFunction,
+                     TCollection_AsciiString&           theScript,
+                     TCollection_AsciiString&           theAfterScript,
+                     const TVariablesList&              theVariables,
+                     const bool                         theIsPublished,
+                     TDF_LabelMap&                      theProcessed,
+                     std::set<TCollection_AsciiString>& theIgnoreObjs,
+                     bool&                              theIsDumpCollected)
 {
   theIsDumpCollected = false;
   if (theFunction.IsNull()) return false;
@@ -910,7 +942,7 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
   if (doNotProcess) {
     TCollection_AsciiString anObjEntry;
     TDF_Tool::Entry(theFunction->GetOwnerEntry(), anObjEntry);
-    theIgnoreObjs.insert(anObjEntry.ToCString());
+    theIgnoreObjs.insert(anObjEntry);
     return false;
   }
   theProcessed.Add(theFunction->GetEntry());
@@ -921,7 +953,7 @@ bool ProcessFunction(Handle(GEOM_Function)&     theFunction,
   //Check if its internal function which doesn't requires dumping
   if(aDescr == "None") return false;
 
-  // 0020001 PTv, check for critical functions, which requier dump of objects
+  // 0020001 PTv, check for critical functions, which require dump of objects
   if (theIsPublished)
   {
     // currently, there is only one function "RestoreGivenSubShapes",
@@ -1253,17 +1285,14 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
  */
 //=============================================================================
 void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
-                            Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
+                            TSting2ObjDataMap&                        aEntry2ObjData,
                             const bool                                theIsPublished,
-                            Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
                             TColStd_SequenceOfAsciiString&            theObjListToPublish,
                             Standard_Integer&                         objectCounter,
                             Resource_DataMapOfAsciiStringAsciiString& aNameToEntry)
 {
   Handle(TColStd_HSequenceOfInteger) aSeq = FindEntries(theScript);
-  //Standard_Integer objectCounter = 0;
   Standard_Integer aLen = aSeq->Length(), aStart = 1, aScriptLength = theScript.Length();
-  //Resource_DataMapOfAsciiStringAsciiString aNameToEntry;
 
   //Replace entries by the names
   TCollection_AsciiString anUpdatedScript, anEntry, aName, aBaseName("geomObj_"),
@@ -1274,45 +1303,22 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
     anUpdatedScript += theScript.SubString(aStart, aSeq->Value(i)-1);
     anEntry = theScript.SubString(aSeq->Value(i), aSeq->Value(i+1));
     theObjListToPublish.Append( anEntry );
-    if (theObjectNames.IsBound(anEntry)) {
-      aName = theObjectNames.Find(anEntry);
-      // check validity of aName
-      bool isValidName = true;
-      if ( aName.IsIntegerValue() ) { // aName must not start with a digit
-        aName.Insert( 1, 'a' );
-        isValidName = false;
-      }
-      int p, p2=1; // replace not allowed chars
-      while ((p = aName.FirstLocationNotInSet(allowedChars, p2, aName.Length()))) {
-        aName.SetValue(p, '_');
-        p2=p;
-        isValidName = false;
-      }
-      if ( aNameToEntry.IsBound( aName ) && anEntry != aNameToEntry( aName ))
-      {  // diff objects have same name - make a new name by appending a digit
-        TCollection_AsciiString aName2;
-        Standard_Integer i = 0;
-        do {
-          aName2 = aName + "_" + ++i;
-        } while ( aNameToEntry.IsBound( aName2 ) && anEntry != aNameToEntry( aName2 ));
-        aName = aName2;
-        isValidName = false;
-      }
-      if ( !isValidName ) {
-        if ( theIsPublished )
-          theEntryToBadName.Bind( anEntry, theObjectNames.Find(anEntry) );
-        theObjectNames( anEntry ) = aName;
+    
+    TObjectData& data = aEntry2ObjData[ anEntry ];
+    if ( !data._name.IsEmpty() ) { // published object
+      if ( data._pyName.IsEmpty() ) { // encounted for the 1st time
+        data._pyName = data._name;
+        healPyName( data._pyName, anEntry, aNameToEntry);
       }
     }
     else {
       do {
-        aName = aBaseName + TCollection_AsciiString(++objectCounter);
-      } while(aNameToEntry.IsBound(aName));
-      theObjectNames.Bind(anEntry, aName);
+        data._pyName = aBaseName + TCollection_AsciiString(++objectCounter);
+      } while(aNameToEntry.IsBound(data._pyName));
     }
-    aNameToEntry.Bind(aName, anEntry); // to detect same name of diff objects
+    aNameToEntry.Bind(data._pyName, anEntry); // to detect same name of diff objects
 
-    anUpdatedScript += aName;
+    anUpdatedScript += data._pyName;
     aStart = aSeq->Value(i+1) + 1;
   }
 
@@ -1328,20 +1334,20 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
  *  AddObjectColors: Add color to objects
  */
 //=============================================================================
-void AddObjectColors (int                                             theDocID,
-                      TCollection_AsciiString&                        theScript,
-                      const Resource_DataMapOfAsciiStringAsciiString& theObjectNames)
+void AddObjectColors (int                      theDocID,
+                      TCollection_AsciiString& theScript,
+                      const TSting2ObjDataMap& theEntry2ObjData)
 {
   GEOM_Engine* engine = GEOM_Engine::GetEngine();
   Handle(TDocStd_Document) aDoc = engine->GetDocument(theDocID);
 
-  Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString anEntryToNameIt;
-  for (anEntryToNameIt.Initialize( theObjectNames );
-       anEntryToNameIt.More();
-       anEntryToNameIt.Next())
+  TSting2ObjDataMap::const_iterator anEntryToNameIt;
+  for (anEntryToNameIt = theEntry2ObjData.begin();
+       anEntryToNameIt!= theEntry2ObjData.end();
+       ++anEntryToNameIt)
   {
-    const TCollection_AsciiString& aEntry = anEntryToNameIt.Key();
-    const TCollection_AsciiString& aName = anEntryToNameIt.Value();
+    const TCollection_AsciiString& aEntry = anEntryToNameIt->first;
+    const TCollection_AsciiString& aName = anEntryToNameIt->second._pyName;
 
     TDF_Label L;
     TDF_Tool::Label( aDoc->GetData(), aEntry, L );
@@ -1477,46 +1483,61 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
  *  PublishObject: publish object in study script
  */
 //=============================================================================
-void PublishObject (const TCollection_AsciiString&                  theEntry,
-                    const TCollection_AsciiString&                  theName,
-                    const Resource_DataMapOfAsciiStringAsciiString& theObjectNames,
-                    const Resource_DataMapOfAsciiStringAsciiString& theEntry2StEntry,
-                    const Resource_DataMapOfAsciiStringAsciiString& theStEntry2Entry,
-                    const Resource_DataMapOfAsciiStringAsciiString& theEntryToBadName,
-                    std::map< int, std::string >&                   theEntryToCommandMap,
-                    std::set<std::string>&                          theMapOfPublished)
+void PublishObject (TObjectData&                              theObjectData,
+                    TSting2ObjDataMap&                        theEntry2ObjData,
+                    const TSting2ObjDataPtrMap&               theStEntry2ObjDataPtr,
+                    Resource_DataMapOfAsciiStringAsciiString& theNameToEntry,
+                    TSting2StringMap&                         theEntryToCmdMap,
+                    std::set< TCollection_AsciiString>&       theIgnoreMap)
 {
-  if ( !theEntry2StEntry.IsBound( theEntry ))
+  if ( theObjectData._studyEntry.IsEmpty() )
     return; // was not published
-  if ( theMapOfPublished.count(theEntry.ToCString()) )
-    return; // aready published
-  theMapOfPublished.insert( theEntry.ToCString() );
+  if ( theIgnoreMap.count( theObjectData._entry ) )
+    return; // not to publish
 
-  TCollection_AsciiString aCommand("\n\tgeompy."), aFatherEntry;
+  TCollection_AsciiString aCommand("\n\tgeompy.");
 
   // find a father entry
-  const TCollection_AsciiString& aStudyEntry = theEntry2StEntry( theEntry );
+  TObjectData* aFatherData = 0;
   TCollection_AsciiString aFatherStudyEntry =
-    aStudyEntry.SubString( 1, aStudyEntry.SearchFromEnd(":") - 1 );
-  if ( theStEntry2Entry.IsBound( aFatherStudyEntry ))
-    aFatherEntry = theStEntry2Entry( aFatherStudyEntry );
+    theObjectData._studyEntry.SubString( 1, theObjectData._studyEntry.SearchFromEnd(":") - 1 );
+  TSting2ObjDataPtrMap::const_iterator stEntry2DataPtr =
+    theStEntry2ObjDataPtr.find( aFatherStudyEntry );
+  if ( stEntry2DataPtr != theStEntry2ObjDataPtr.end() )
+    aFatherData = stEntry2DataPtr->second;
+
+  // treat multiply published object
+  if ( theObjectData._pyName.IsEmpty() )
+  {
+    TObjectData& data0 = theEntry2ObjData[ theObjectData._entry ];
+    if ( data0._pyName.IsEmpty() ) return; // something wrong
+
+    theObjectData._pyName = theObjectData._name;
+    healPyName( theObjectData._pyName, theObjectData._entry, theNameToEntry);
+
+    TCollection_AsciiString aCreationCommand("\n\t");
+    aCreationCommand += theObjectData._pyName + " = " + data0._pyName;
+
+    // store aCreationCommand before publishing commands
+    TCollection_AsciiString mapKey(" ");
+    mapKey += theObjectData._studyEntry;
+    theEntryToCmdMap.insert( std::make_pair( mapKey, aCreationCommand ));
+  }
 
   // make a command
-  if ( !aFatherEntry.IsEmpty() && theObjectNames.IsBound( aFatherEntry )) {
-        aCommand += "addToStudyInFather( ";
-        aCommand += theObjectNames( aFatherEntry ) + ", ";
+  if ( aFatherData && !aFatherData->_pyName.IsEmpty() ) {
+    aCommand += "addToStudyInFather( ";
+    aCommand += aFatherData->_pyName + ", ";
   }
-  else
+  else {
     aCommand += "addToStudy( ";
-  if ( theEntryToBadName.IsBound( theEntry ))
-    aCommand += theName + ", \"" + theEntryToBadName( theEntry ) + "\" )";
-  else
-    aCommand += theName + ", \"" + theName + "\" )";
+  }
+  aCommand += theObjectData._pyName + ", '" + theObjectData._name + "' )";
 
-  // bind a command to the last digit of the entry
-  int tag =
-    theEntry.SubString( theEntry.SearchFromEnd(":")+1, theEntry.Length() ).IntegerValue();
-  theEntryToCommandMap.insert( std::make_pair( tag, aCommand.ToCString() ));
+  // bind a command to the study entry
+  theEntryToCmdMap.insert( std::make_pair( theObjectData._studyEntry, aCommand ));
+
+  theObjectData._studyEntry.Clear(); // not to publish any more
 }
 
 //================================================================================

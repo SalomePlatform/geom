@@ -53,7 +53,8 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   if(CORBA::is_nil(aSO))
     return new Engines::TMPFile(0);  
 
-  Resource_DataMapOfAsciiStringAsciiString aMap;
+  TObjectData objData;
+  std::vector<TObjectData> objectDataVec;
 
   TVariablesList aVariableMap;
 
@@ -65,9 +66,13 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
       CORBA::Object_var obj = _orb->string_to_object(IOR);
       GEOM::GEOM_Object_var GO = GEOM::GEOM_Object::_narrow(obj);
       if(!CORBA::is_nil(GO)) {
-        CORBA::String_var aName = aValue->GetName();
-        CORBA::String_var anEntry = GO->GetEntry();
-	aMap.Bind( (char*)anEntry.in(), (char*)aName.in() );
+        CORBA::String_var aName       = aValue->GetName();
+        CORBA::String_var anEntry     = GO->GetEntry();
+        CORBA::String_var aStudyEntry = aValue->GetID();
+        objData._name       = aName.in();
+        objData._entry      = anEntry.in();
+        objData._studyEntry = aStudyEntry.in();
+	objectDataVec.push_back( objData );
 
 	//Find attribute with list of used notebook variables
 	SALOMEDS::GenericAttribute_var anAttr;
@@ -86,14 +91,14 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 	    }
 	    aStates->AddState(aState);
 	  }
-	  aVariableMap.insert(std::pair<TCollection_AsciiString,ObjectStates*>(TCollection_AsciiString(anEntry),aStates));
+	  aVariableMap.insert(std::make_pair(TCollection_AsciiString(anEntry),aStates));
 	}
       }
     }
   }
   
   TCollection_AsciiString aScript;
-  aScript += _impl->DumpPython(aStudy->StudyId(), aMap, aVariableMap, isPublished, isValidScript);
+  aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isValidScript);
 
   if (isPublished)
   {
