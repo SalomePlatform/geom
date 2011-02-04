@@ -90,6 +90,10 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                     CORBA::Long           theShapeType,
                                     CORBA::Boolean        isSorted);
 
+  GEOM::ListOfGO* ExtractSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                    CORBA::Long           theShapeType,
+                                    CORBA::Boolean        isSorted);
+
   // Deprecated, use GetAllSubShapesIDs() instead
   GEOM::ListOfLong* SubShapeAllIDs (GEOM::GEOM_Object_ptr theShape,
                                     CORBA::Long           theShapeType,

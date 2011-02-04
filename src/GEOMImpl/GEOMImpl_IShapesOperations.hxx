@@ -24,7 +24,6 @@
 // Created   :
 // Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
 // Project   : SALOME
-// $Header$
 //=============================================================================
 
 #ifndef _GEOMImpl_IShapesOperations_HXX_
@@ -54,10 +53,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT ~GEOMImpl_IShapesOperations();
 
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
-						Handle(GEOM_Object) thePoint2);
+                                                Handle(GEOM_Object) thePoint2);
   Standard_EXPORT Handle(GEOM_Object) MakeEdgeWire (Handle(GEOM_Object) theWire,
-						    const Standard_Real theLinearTolerance,
-						    const Standard_Real theAngularTolerance);
+                                                    const Standard_Real theLinearTolerance,
+                                                    const Standard_Real theAngularTolerance);
 
   Standard_EXPORT Handle(GEOM_Object) MakeWire (std::list<Handle(GEOM_Object)> theEdgesAndWires,
                                                 const Standard_Real            theTolerance);
@@ -88,18 +87,24 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects
     (Handle(GEOM_Object)    theShape,
      const Standard_Boolean theGroupsOnly);
-  
+
+  enum ExplodeType {
+    EXPLODE_OLD_INCLUDE_MAIN,
+    EXPLODE_NEW_INCLUDE_MAIN,
+    EXPLODE_NEW_EXCLUDE_MAIN
+  };
+
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeExplode
     (Handle(GEOM_Object)    theShape,
      const Standard_Integer theShapeType,
      const Standard_Boolean isSorted,
-     const Standard_Boolean isOldSorting = Standard_False);
+     const ExplodeType      theExplodeType = EXPLODE_NEW_INCLUDE_MAIN);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfInteger) SubShapeAllIDs
     (Handle(GEOM_Object)    theShape,
      const Standard_Integer theShapeType,
      const Standard_Boolean isSorted,
-     const Standard_Boolean isOldSorting = Standard_False);
+     const ExplodeType      theExplodeType = EXPLODE_NEW_INCLUDE_MAIN);
 
   Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
                                                    const Standard_Integer theID);

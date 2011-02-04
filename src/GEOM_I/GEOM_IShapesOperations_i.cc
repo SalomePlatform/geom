@@ -469,7 +469,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetExistingSubObjects (GEOM::GEOM_Obje
 
 //=============================================================================
 /*!
- *  MakeExplode
+ *  MakeExplode (including theShape itself, bad sorting)
  */
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
@@ -482,7 +482,8 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr the
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->MakeExplode(aShape, theShapeType, isSorted, Standard_True);
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted,
+                                 GEOMImpl_IShapesOperations::EXPLODE_OLD_INCLUDE_MAIN);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
@@ -496,7 +497,7 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeExplode (GEOM::GEOM_Object_ptr the
 
 //=============================================================================
 /*!
- *  MakeAllSubShapes
+ *  MakeAllSubShapes (including theShape itself, good sorting)
  */
 //=============================================================================
 GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeAllSubShapes (GEOM::GEOM_Object_ptr theShape,
@@ -509,7 +510,37 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeAllSubShapes (GEOM::GEOM_Object_pt
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->MakeExplode(aShape, theShapeType, isSorted, Standard_False);
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted,
+                                 GEOMImpl_IShapesOperations::EXPLODE_NEW_INCLUDE_MAIN);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  ExtractSubShapes (excluding theShape itself, good sorting)
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::ExtractSubShapes (GEOM::GEOM_Object_ptr theShape,
+                                                            const CORBA::Long     theShapeType,
+                                                            const CORBA::Boolean  isSorted)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    // TODO: enum instead of bool for the last argument
+    GetOperations()->MakeExplode(aShape, theShapeType, isSorted,
+                                 GEOMImpl_IShapesOperations::EXPLODE_NEW_EXCLUDE_MAIN);
   if (!GetOperations()->IsDone() || aHSeq.IsNull())
     return aSeq._retn();
 
@@ -536,7 +567,8 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::SubShapeAllIDs (GEOM::GEOM_Object_pt
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfInteger) aHSeq =
-    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted, Standard_True);
+    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted,
+                                    GEOMImpl_IShapesOperations::EXPLODE_OLD_INCLUDE_MAIN);
   if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();
@@ -562,7 +594,8 @@ GEOM::ListOfLong* GEOM_IShapesOperations_i::GetAllSubShapesIDs (GEOM::GEOM_Objec
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfInteger) aHSeq =
-    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted, Standard_False);
+    GetOperations()->SubShapeAllIDs(aShape, theShapeType, isSorted,
+                                    GEOMImpl_IShapesOperations::EXPLODE_NEW_INCLUDE_MAIN);
   if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
 
   Standard_Integer aLength = aHSeq->Length();

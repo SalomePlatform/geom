@@ -1478,7 +1478,8 @@ module GEOM
 			  in boolean     isSorted);
 
     /*!
-     *  Explode a shape on subshapes of a given type.
+     *  Explode a shape on subshapes of a given type. If the
+     *  shape itself has the given type, it is also returned.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param isSorted If this parameter is TRUE, sub-shapes will be
@@ -1486,6 +1487,19 @@ module GEOM
      *  \return List of sub-shapes of type theShapeType, contained in theShape.
      */
     ListOfGO MakeAllSubShapes (in GEOM_Object theShape,
+                               in long        theShapeType,
+                               in boolean     isSorted);
+
+    /*!
+     *  Extract all subshapes of the given type from
+     *  the given shape, excluding the shape itself.
+     *  \param theShape Shape to be exploded.
+     *  \param theShapeType Type of sub-shapes to be retrieved.
+     *  \param isSorted If this parameter is TRUE, sub-shapes will be
+     *                  sorted by coordinates of their gravity centers.
+     *  \return List of sub-shapes of type theShapeType, contained in theShape.
+     */
+    ListOfGO ExtractSubShapes (in GEOM_Object theShape,
                                in long        theShapeType,
                                in boolean     isSorted);
 

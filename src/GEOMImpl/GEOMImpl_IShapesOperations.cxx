@@ -19,11 +19,10 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File      : GEOMImpl_IShapesOperations.cxx
-// Created   :
-// Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
-// Project   : SALOME
-// $Header$
+//  File      : GEOMImpl_IShapesOperations.cxx
+//  Created   :
+//  Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
+//  Project   : SALOME
 
 #include <Standard_Stream.hxx>
 
@@ -267,7 +266,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeWire
     if ( theLinearTolerance == DEF_LIN_TOL )
       GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
                                    << theWire << ")";
-    else 
+    else
       GEOM::TPythonDump(aFunction) << anEdge  << " = geompy.MakeEdgeWire("
                                    << theWire << ", " << theLinearTolerance << ")";
   }
@@ -893,7 +892,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
                                           (Handle(GEOM_Object)    theShape,
                                            const Standard_Integer theShapeType,
                                            const Standard_Boolean isSorted,
-                                           const Standard_Boolean isOldSorting)
+                                           const ExplodeType      theExplodeType)
 {
   SetErrorCode(KO);
 
@@ -911,7 +910,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   if (aShape.ShapeType() == TopAbs_COMPOUND &&
       (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
        TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPSOLID ||
-       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND)) {
+       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND))
+  {
     TopoDS_Iterator It (aShape, Standard_True, Standard_True);
     for (; It.More(); It.Next()) {
       if (mapShape.Add(It.Value())) {
@@ -922,7 +922,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
       }
     }
   }
-  else if ( aShape.ShapeType() != theShapeType ) // issue 0021079, prevent from returning aShape
+  else if (theExplodeType != EXPLODE_NEW_EXCLUDE_MAIN || aShape.ShapeType() != theShapeType) // issue 0021079
   {
     TopExp_Explorer exp (aShape, TopAbs_ShapeEnum(theShapeType));
     for (; exp.More(); exp.Next())
@@ -936,8 +936,12 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
     return aSeq;
   }
 
-  if (isSorted)
+  if (isSorted) {
+    bool isOldSorting = false;
+    if (theExplodeType == EXPLODE_OLD_INCLUDE_MAIN)
+      isOldSorting = true;
     SortShapes(listShape, isOldSorting);
+  }
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aShape, anIndices);
@@ -982,13 +986,22 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
   GEOM::TPythonDump pd (aMainShape, /*append=*/true);
-  pd << "[" << anAsciiList.ToCString();
-  if (isSorted)
-    pd << "] = geompy.SubShapeAllSorted" << (isOldSorting ? "(" : "Centres(");
-  else
-    pd << "] = geompy.SubShapeAll(";
-  pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
-
+  pd << "[" << anAsciiList.ToCString() << "] = geompy.";
+  switch (theExplodeType) {
+  case EXPLODE_NEW_EXCLUDE_MAIN:
+    pd << "ExtractShapes(" << theShape << ", "
+       << TopAbs_ShapeEnum(theShapeType) << ", " << (isSorted ? "TRUE" : "FALSE") << ")";
+    break;
+  case EXPLODE_NEW_INCLUDE_MAIN:
+    pd << "SubShapeAll" << (isSorted ? "SortedCentres(" : "(")
+       << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
+    break;
+  case EXPLODE_OLD_INCLUDE_MAIN:
+    pd << "SubShapeAll" << (isSorted ? "Sorted(" : "(")
+       << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
+    break;
+  default: ;
+  }
   SetErrorCode(OK);
 
   return aSeq;
@@ -1003,7 +1016,7 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
                                           (Handle(GEOM_Object)    theShape,
                                            const Standard_Integer theShapeType,
                                            const Standard_Boolean isSorted,
-                                           const Standard_Boolean isOldSorting)
+                                           const ExplodeType      theExplodeType)
 {
   SetErrorCode(KO);
 
@@ -1018,7 +1031,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   if (aShape.ShapeType() == TopAbs_COMPOUND &&
       (TopAbs_ShapeEnum(theShapeType) == TopAbs_SHAPE ||
        TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPSOLID ||
-       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND)) {
+       TopAbs_ShapeEnum(theShapeType) == TopAbs_COMPOUND))
+  {
     TopoDS_Iterator It (aShape, Standard_True, Standard_True);
     for (; It.More(); It.Next()) {
       if (mapShape.Add(It.Value())) {
@@ -1028,7 +1042,8 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
         }
       }
     }
-  } else  if ( aShape.ShapeType() != theShapeType ) // issue 0021079, prevent from returning aShape
+  }
+  else if (theExplodeType != EXPLODE_NEW_EXCLUDE_MAIN || aShape.ShapeType() != theShapeType) // issue 0021079
   {
     TopExp_Explorer exp (aShape, TopAbs_ShapeEnum(theShapeType));
     for (; exp.More(); exp.Next())
@@ -1042,8 +1057,12 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
     return aSeq;
   }
 
-  if (isSorted)
+  if (isSorted) {
+    bool isOldSorting = false;
+    if (theExplodeType == EXPLODE_OLD_INCLUDE_MAIN)
+      isOldSorting = true;
     SortShapes(listShape, isOldSorting);
+  }
 
   TopTools_IndexedMapOfShape anIndices;
   TopExp::MapShapes(aShape, anIndices);
@@ -1060,11 +1079,19 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::SubShapeAllIDs
   //Make a Python command
   GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "listSubShapeIDs = geompy.SubShapeAll";
-  if (isSorted)
-    pd << "Sorted" << (isOldSorting ? "IDs(" : "CentresIDs(");
-  else
-    pd << "IDs(";
-  pd << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
+  switch (theExplodeType) {
+  case EXPLODE_NEW_EXCLUDE_MAIN:
+    break;
+  case EXPLODE_NEW_INCLUDE_MAIN:
+    pd << (isSorted ? "SortedCentresIDs(" : "IDs(")
+       << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
+    break;
+  case EXPLODE_OLD_INCLUDE_MAIN:
+    pd << (isSorted ? "SortedIDs(" : "IDs(")
+       << theShape << ", " << TopAbs_ShapeEnum(theShapeType) << ")";
+    break;
+  default: ;
+  }
 
   SetErrorCode(OK);
   return aSeq;

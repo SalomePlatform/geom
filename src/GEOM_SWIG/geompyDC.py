@@ -2152,6 +2152,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return ListObj
 
         ## Explode a shape on subshapes of a given type.
+        #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
@@ -2190,6 +2191,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Explode a shape on subshapes of a given type.
         #  Sub-shapes will be sorted by coordinates of their gravity centers.
+        #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of sub-shapes of type theShapeType, contained in theShape.
@@ -2227,6 +2229,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
 
+        ## Extract shapes (excluding the main shape) of given type
+        #  @param aShape shape
+        #  @param aType  shape type
+        def ExtractShapes(self, aShape, aType, isSorted = False):
+            ListObj = self.ShapesOp.ExtractSubShapes(aShape, aType, isSorted)
+            RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
+            return ListObj
+
         # end of l4_decompose
         ## @}
 
@@ -2259,21 +2269,6 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
-
-        ## Extract shapes (main shape or sub-shape) of given type
-        # @param aShape shape
-        # @param aType  shape type
-        def ExtractShapes(self, aShape, aType, sorted = False):
-            ret = []
-            t = EnumToLong(aShape.GetShapeType())
-            aType = EnumToLong(aType)
-            if t == aType:
-                ret.append(aShape )
-            elif sorted:
-                ret = self.SubShapeAllSortedCentres(aShape, aType)
-            else:
-                ret = self.SubShapeAll(aShape, aType)
-            return ret
         
         # end of l4_decompose_d
         ## @}
