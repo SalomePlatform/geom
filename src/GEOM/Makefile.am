@@ -54,7 +54,7 @@ salomeinclude_HEADERS =			\
 	GEOM_SubShapeDriver.hxx		\
 	GEOM_IOperations.hxx		\
 	GEOM_ISubShape.hxx		\
-	GEOM_Solver.hxx			\ 
+	GEOM_Solver.hxx			\
 	GEOM_PythonDump.hxx		\
 	GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx		\
 	GEOM_DataMapNodeOfDataMapOfAsciiStringTransient.hxx		\
