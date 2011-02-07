@@ -1665,8 +1665,8 @@ PropMap GEOM_Displayer::getDefaultPropepryMap(const QString& viewer_type){
     anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
     aVIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
   } else if( viewer_type==SVTK_Viewer::Type()) {
-    anUIsoNumber = 1;
-    aVIsoNumber = 1;  
+    anUIsoNumber = aResMgr->integerValue("VTKViewer", "iso_number_u", 1);
+    aVIsoNumber = aResMgr->integerValue("VTKViewer", "iso_number_u", 1);
   }
   QString anIsos("%1%2%3");
   anIsos = anIsos.arg(anUIsoNumber);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(aVIsoNumber);
@@ -1686,7 +1686,13 @@ PropMap GEOM_Displayer::getDefaultPropepryMap(const QString& viewer_type){
   aDefaultMap.insert( COLOR_PROP , col);
     
   //7. Deflection Coeff
-  double aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
+  double aDC;
+  //rnv: Currently deflection coefficient is not supported by VTK viewer.
+  if(viewer_type == SOCC_Viewer::Type()) {
+    double aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
+  } else if( viewer_type==SVTK_Viewer::Type()) {
+    aDC = 0.0;
+  }
   aDefaultMap.insert( DEFLECTION_COEFF_PROP , aDC);
 
   return aDefaultMap;
