@@ -265,26 +265,26 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
     // and only one plane as a tool
     if ( nbSel != 1 ) {
       if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-	myListShapes.length( 0 );
-	// myListMaterials.length( 0 ); // obsolete
-	return;
+        myListShapes.length( 0 );
+        // myListMaterials.length( 0 ); // obsolete
+        return;
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-	myListTools.length( 0 );
-	return;
+        myListTools.length( 0 );
+        return;
       }
     }
   }
   else {
     if ( nbSel < 1 ) {
       if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
-	myListShapes.length( 0 );
-	//myListMaterials.length( 0 ); // obsolete
-	return;
+        myListShapes.length( 0 );
+        //myListMaterials.length( 0 ); // obsolete
+        return;
       }
       else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
-	myListTools.length( 0 );
-	return;
+        myListTools.length( 0 );
+        return;
       }
     }
   }
@@ -313,8 +313,8 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
       GEOM::GEOM_IKindOfShape::shape_kind kind = mOp->KindOfShape( myListTools[0].in(), intList.out(), dblList.out() );
       mOp->Destroy();
       if ( kind < GEOM::GEOM_IKindOfShape::DISK_CIRCLE || kind > GEOM::GEOM_IKindOfShape::PLANAR ) {
-	myListTools.length( 0 );
-	return;
+        myListTools.length( 0 );
+        return;
       }
     }
   }
@@ -412,8 +412,6 @@ GEOM::GEOM_IOperations_ptr OperationGUI_PartitionDlg::createOperation()
 //=================================================================================
 bool OperationGUI_PartitionDlg::isValid( QString& )
 {
-  printf("OperationGUI_PartitionDlg::isValid:myListShapes.length()=%d\n",myListShapes.length());
-  printf("OperationGUI_PartitionDlg::isValid:myListTools.length()=%d\n",myListTools.length());
   return ( myListShapes.length() || myListTools.length() ); // || myListKeepInside.length() || myListRemoveInside.length()  // obsolete
 }
 
@@ -437,11 +435,11 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
   case 0:
     anObj = aNoSelfIntersection ?
       anOper->MakePartitionNonSelfIntersectedShape( myListShapes, myListTools,
-						    myListKeepInside, myListRemoveInside,
-						    aLimit, false, myListMaterials, aKeepNonlimitShapes ) :
+                                                    myListKeepInside, myListRemoveInside,
+                                                    aLimit, false, myListMaterials, aKeepNonlimitShapes ) :
       anOper->MakePartition( myListShapes, myListTools,
-			     myListKeepInside, myListRemoveInside,
-			     aLimit, false, myListMaterials, aKeepNonlimitShapes );
+                             myListKeepInside, myListRemoveInside,
+                             aLimit, false, myListMaterials, aKeepNonlimitShapes );
     res = true;
     break;
   case 1:
@@ -462,8 +460,8 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
       objects.push_back( anObj._retn() );
     else
       SUIT_MessageBox::warning( this,
-				QObject::tr( "GEOM_ERROR" ),
-				QObject::tr( "GEOM_WRN_PARTITION_RESULT_EMPTY" ) );
+                                QObject::tr( "GEOM_ERROR" ),
+                                QObject::tr( "GEOM_WRN_PARTITION_RESULT_EMPTY" ) );
   }
   
   return res;
