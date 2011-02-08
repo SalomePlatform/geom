@@ -987,7 +987,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     
     if(useStudy){
       aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-      PropMap aDefPropMap = getDefaultPropepryMap(SOCC_Viewer::Type());
+      PropMap aDefPropMap = getDefaultPropepryMap(SVTK_Viewer::Type());
       bool isDiff = MergePropertyMaps(aPropMap, aDefPropMap);
       if(isDiff)
 	aStudy->setObjectPropMap(aMgrId,anEntry,aPropMap);
@@ -1045,7 +1045,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 	  aGeomGActor->SetOpacity(1.0 - aPropMap.value(TRANSPARENCY_PROP).toDouble());
 	  aGeomGActor->SetVectorMode(aPropMap.value(VECTOR_MODE_PROP).toInt());
 	  aGeomGActor->setDisplayMode(aPropMap.value(DISPLAY_MODE_PROP).toInt());
-	  aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble(), aGeomGActor->GetIsRelative());
+	  //VSR: do not set deflection until OCC2VTK algo is not improved (to keep performance)
+	  //aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble(), aGeomGActor->GetIsRelative());
 
 	  vtkFloatingPointType aColor[3] = {1.,0.,0.};
 	  if(aPropMap.contains(COLOR_PROP)) {
