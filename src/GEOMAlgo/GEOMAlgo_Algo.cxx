@@ -34,7 +34,8 @@
   GEOMAlgo_Algo::GEOMAlgo_Algo()
 :
   myErrorStatus(1),
-  myWarningStatus(0)
+  myWarningStatus(0),
+  myComputeInternalShapes(Standard_True)
 {}
 //=======================================================================
 // function: ~
@@ -78,3 +79,12 @@
 //  myErrorStatus
 //
 // 1 - object is just initialized
+
+//=======================================================================
+//function : ComputeInternalShapes
+//purpose  : 
+//=======================================================================
+  void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
+{
+  myComputeInternalShapes = theFlag;
+}

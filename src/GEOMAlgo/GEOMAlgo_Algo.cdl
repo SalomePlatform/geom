@@ -51,9 +51,14 @@ is
   
     WarningStatus (me) 
     	returns Integer from Standard;
- 
+
+    ComputeInternalShapes(me : in out; theFlag : Boolean from Standard)
+      ---Purpose: Allows to omit of creation of internal shapes (manifold topology).
+      --          Needed for the SALOME/TRIPOLI module.
+
 fields
     myErrorStatus   : Integer from Standard  is protected;	 
     myWarningStatus : Integer from Standard  is protected;	 
+    myComputeInternalShapes : Boolean from Standard is protected;
  
 end Algo;

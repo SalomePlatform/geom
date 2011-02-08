@@ -64,6 +64,7 @@ Standard_EXPORT   Standard_Integer ErrorStatus() const;
 
 Standard_EXPORT   Standard_Integer WarningStatus() const;
 
+Standard_EXPORT   void ComputeInternalShapes(const Standard_Boolean theFlag);
 
 
 
@@ -88,6 +89,7 @@ Standard_EXPORT virtual  void CheckResult() ;
  //
 Standard_Integer myErrorStatus;
 Standard_Integer myWarningStatus;
+Standard_Boolean myComputeInternalShapes;
 
 
 private: 
