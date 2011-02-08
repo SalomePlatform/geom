@@ -1689,7 +1689,7 @@ PropMap GEOM_Displayer::getDefaultPropepryMap(const QString& viewer_type){
   double aDC;
   //rnv: Currently deflection coefficient is not supported by VTK viewer.
   if(viewer_type == SOCC_Viewer::Type()) {
-    double aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
+    aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
   } else if( viewer_type==SVTK_Viewer::Type()) {
     aDC = 0.0;
   }
