@@ -990,7 +990,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
   switch (theExplodeType) {
   case EXPLODE_NEW_EXCLUDE_MAIN:
     pd << "ExtractShapes(" << theShape << ", "
-       << TopAbs_ShapeEnum(theShapeType) << ", " << (isSorted ? "TRUE" : "FALSE") << ")";
+       << TopAbs_ShapeEnum(theShapeType) << ", " << (isSorted ? "True" : "False") << ")";
     break;
   case EXPLODE_NEW_INCLUDE_MAIN:
     pd << "SubShapeAll" << (isSorted ? "SortedCentres(" : "(")

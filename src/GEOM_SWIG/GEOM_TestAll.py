@@ -25,11 +25,12 @@
 #  File   : GEOM_usinggeom.py
 #  Author : Damien COQUERET, Open CASCADE
 #  Module : GEOM
+
 # ! Please, if you edit this example file, update also
 # ! GEOM_SRC/doc/salome/gui/GEOM/input/tui_test_all.doc
 # ! as some sequences of symbols from this example are used during
 # ! documentation generation to identify certain places of this file
-#
+
 def TestAll (geompy, math):
   import GEOM
   
@@ -39,8 +40,6 @@ def TestAll (geompy, math):
   mindeg = 2
   maxdeg = 5
   nbiter = 5
-  ShapeTypeFace = geompy.ShapeType["FACE"]
-  ShapeTypeEdge = geompy.ShapeType["EDGE"]
   WantPlanarFace = 1 #True
 
   radius  = 10.  #Double
@@ -166,7 +165,7 @@ def TestAll (geompy, math):
   Shell    = geompy.MakeShell([Face, Face1])         #(List of GEOM_Object_ptr)->GEOM_Object_ptr
 
   Prism1   = geompy.MakePrism(Face2, p0, pxyz)       #(3 GEOM_Object_ptr)->GEOM_Object_ptr
-  prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, ShapeTypeFace)
+  prism1_faces = geompy.SubShapeAllSortedCentres(Prism1, geompy.ShapeType["FACE"])
   Shell1   = geompy.MakeShell([prism1_faces[0], prism1_faces[1],
                                prism1_faces[3], prism1_faces[4],
                                prism1_faces[5], prism1_faces[2]])
@@ -231,7 +230,7 @@ def TestAll (geompy, math):
   Orientation = geompy.ChangeOrientation(Box)
 
   #IDList for Fillet/Chamfer
-  prism_edges = geompy.SubShapeAllSortedCentres(Prism, ShapeTypeEdge)
+  prism_edges = geompy.ExtractShapes(Prism, geompy.ShapeType["EDGE"], True)
 
   for anEdge in prism_edges:
     eid = geompy.GetSubShapeID(Prism, anEdge)
@@ -246,7 +245,7 @@ def TestAll (geompy, math):
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[1]))
   IDlist_e.append(geompy.GetSubShapeID(Prism, prism_edges[2]))
 
-  prism_faces = geompy.SubShapeAllSortedCentres(Prism, ShapeTypeFace)
+  prism_faces = geompy.ExtractShapes(Prism, geompy.ShapeType["FACE"], True)
 
   f_ind_1 = geompy.GetSubShapeID(Prism, prism_faces[0])
   f_ind_2 = geompy.GetSubShapeID(Prism, prism_faces[1])
@@ -255,9 +254,9 @@ def TestAll (geompy, math):
   
   #Local operations
   Fillet2d = geompy.MakeFillet2D(Face3, radius, [4, 7, 9]) #(GEOM_Object_ptr, Double, ListOfLong)->GEOM_Object_ptr
-  Fillet   = geompy.MakeFillet (Prism, radius, ShapeTypeEdge,
+  Fillet   = geompy.MakeFillet (Prism, radius, geompy.ShapeType["EDGE"],
                                 IDlist_e) #(GEOM_Object_ptr, Double, Short, ListOfLong)->GEOM_Object_ptr
-  Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., ShapeTypeEdge,
+  Fillet2  = geompy.MakeFilletR1R2 (Prism, 7., 13., geompy.ShapeType["EDGE"],
                                     IDlist_e) #(GEOM_Object_ptr, Double, Double, Short, ListOfLong)->GEOM_Object_ptr
   Chamfer  = geompy.MakeChamferEdge(Prism, d1, d2,
                                     f_ind_1, f_ind_2) #(GEOM_Object_ptr, 2 Doubles, 2 Long)->GEOM_Object_ptr

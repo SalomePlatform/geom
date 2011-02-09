@@ -2229,10 +2229,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
 
-        ## Extract shapes (excluding the main shape) of given type
-        #  @param aShape shape
-        #  @param aType  shape type
+        ## Extract shapes (excluding the main shape) of given type.
+        #  @param aShape The shape.
+        #  @param aType  The shape type.
+        #  @param isSorted Boolean flag to switch sorting on/off.
+        #  @return List of sub-shapes of type aType, contained in aShape.
+        #
+        #  @ref swig_FilletChamfer "Example"
         def ExtractShapes(self, aShape, aType, isSorted = False):
+            # Example: see GEOM_TestAll.py
             ListObj = self.ShapesOp.ExtractSubShapes(aShape, aType, isSorted)
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj

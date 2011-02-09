@@ -15,6 +15,10 @@ obtain from it.
 \n Using <b>TUI Commands</b> you can perform this operation in a
 variety of ways:
 <ul>
+<li><em>geompy.ExtractShapes(Shape, Type, isSorted)</em> explodes a
+Shape on subshapes of a given Type and returns a List of sub-shapes.
+This method does not return the Shape itself if it matches the
+Type.</li>
 <li><em>geompy.SubShapeAll(Shape, Type)</em> explodes a Shape on
 subshapes of a given Type and returns a List of sub-shapes.</li>
 <li><em>geompy.SubShapeAllIDs(Shape, Type)</em> explodes a Shape on
