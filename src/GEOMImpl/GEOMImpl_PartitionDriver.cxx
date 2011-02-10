@@ -36,6 +36,7 @@
 //#include <BRepBuilderAPI_Copy.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
+#include <BRepTools.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -446,6 +447,15 @@ Standard_Integer GEOMImpl_PartitionDriver::Execute(TFunction_Logbook& log) const
       const TopTools_ListOfShape& aModified = aMR.FindFromKey(anEntity);
       Standard_Integer nbModified = aModified.Extent();
 
+      if (nbModified > 0) { // Mantis issue 0021182
+        int ih = 1;
+        TopTools_ListIteratorOfListOfShape itM (aModified);
+        for (; itM.More() && nbModified > 0; itM.Next(), ++ih) {
+          if (!aResIndices.Contains(itM.Value())) {
+            nbModified = 0;
+          }
+        }
+      }
       if (nbModified > 0) {
         TDF_Label aWhatHistoryLabel = anArgumentHistoryLabel.FindChild(ie, Standard_True);
         Handle(TDataStd_IntegerArray) anAttr =
