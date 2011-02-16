@@ -173,7 +173,7 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
     Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
     if ( theReversed ) {
       ReOrientedCurve = EdgeCurve -> Reversed();
-      UFirst=ULast;
+      UFirst = EdgeCurve -> ReversedParameter(ULast);
     }
     GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
     GCPnts_AbscissaPoint anAbsPnt(AdapCurve, theLength, UFirst); 
