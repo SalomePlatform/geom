@@ -353,7 +353,8 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
       int aMgrId = getViewManagerId(vf);
       SalomeApp_Study* aStudy = getStudy();
       aStudy->setObjectProperty(aMgrId, theIO->getEntry(), VISIBILITY_PROP, 1 );
-
+      
+      setVisibilityState(theIO->getEntry(), Qtx::ShownState);
 
       delete prs;  // delete presentation because displayer is its owner
     }
@@ -406,6 +407,8 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
       int aMgrId = getViewManagerId(vf);
       SalomeApp_Study* aStudy = getStudy();
       aStudy->setObjectProperty(aMgrId, theIO->getEntry(), VISIBILITY_PROP, 0 );
+
+      setVisibilityState(theIO->getEntry(), Qtx::HiddenState);
     }
   }
 }
@@ -1562,9 +1565,9 @@ void GEOM_Displayer::setShape( const TopoDS_Shape& theShape )
   myShape = theShape;
 }
 
-bool GEOM_Displayer::canBeDisplayed( const QString& /*entry*/, const QString& viewer_type ) const
+bool GEOM_Displayer::canBeDisplayed( const QString& entry, const QString& viewer_type ) const
 {
-  return viewer_type==SOCC_Viewer::Type() || viewer_type==SVTK_Viewer::Type();
+  return viewer_type == SOCC_Viewer::Type() || viewer_type == SVTK_Viewer::Type();
 }
 
 int GEOM_Displayer::SetDisplayMode( const int theMode )
