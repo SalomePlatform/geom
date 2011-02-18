@@ -752,9 +752,13 @@ static
   dA=A1-A2;
   if (dA <= 0.) {
     dA=aTwoPi+dA;
+    //modified by NIZNHY-PKV Thu Feb 17 08:26:39 2011f
+    if (dA <= 1.e-14) {
+      dA=aTwoPi;
+    }
+    //modified by NIZNHY-PKV Thu Feb 17 08:26:42 2011t
   }
   //xx
-  //else if (dA <= 1.e-15) {
   else if (dA <= 1.e-14) {
     dA=aTwoPi;
   }
@@ -803,10 +807,7 @@ static
   BOPTools_Tools2D::CurveOnSurface (anEdge, myFace, aC2D, 
                                     aFirst, aLast, aToler, Standard_True);
   //dt=1.e-7;
-  //modified by NIZNHY-PKV Wed Sep 10 14:06:04 2008f
-  //dt=Tolerance2D(aV, aGAS);
   dt=2.*Tolerance2D(aV, aGAS);
-  //modified by NIZNHY-PKV Wed Sep 10 14:06:07 2008t
   //
   aTX=0.25*(aLast - aFirst);
   if(dt > aTX) {
