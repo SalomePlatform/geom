@@ -388,6 +388,34 @@ char* GEOM_IMeasureOperations_i::WhatIs (GEOM::GEOM_Object_ptr theShape)
 
 //=============================================================================
 /*!
+ *  AreCoordsInside
+ */
+//=============================================================================
+GEOM::ListOfBool* GEOM_IMeasureOperations_i::AreCoordsInside (GEOM::GEOM_Object_ptr theShape,
+							      const GEOM::ListOfDouble& theCoords,
+							      CORBA::Double tolerance)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  
+  unsigned int nb_points = theCoords.length()/3;
+
+  GEOM::ListOfBool_var aResults = new GEOM::ListOfBool;
+  aResults->length(nb_points);
+  
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  
+  std::vector<double> tmp(3*nb_points);
+  for (int i = 0; i < 3*nb_points; i++)
+    tmp[i] = theCoords[i];
+  std::vector<bool> res = GetOperations()->AreCoordsInside(aShape, tmp, tolerance);
+  for (int i = 0; i < nb_points; i++)
+    aResults[i] = i < res.size() ? res[i] : false;
+  return aResults._retn();
+}
+
+//=============================================================================
+/*!
  *  GetMinDistance
  */
 //=============================================================================

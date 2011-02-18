@@ -3324,6 +3324,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetInertia", self.MeasuOp)
             return aTuple
 
+        ## Get if coords are included in the shape (ST_IN or ST_ON)
+        #  @param theShape Shape 
+        #  @param coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
+        #  @param tolerance to be used (default is 1.0e-7)
+        #  @return list_of_boolean = [res1, res2, ...]
+        def AreCoordsInside(self, theShape, coords, tolerance=1.e-7):
+            return self.MeasuOp.AreCoordsInside(theShape, coords, tolerance)
+
         ## Get minimal distance between the given shapes.
         #  @param theShape1,theShape2 Shapes to find minimal distance between.
         #  @return Value of the minimal distance between the given shapes.

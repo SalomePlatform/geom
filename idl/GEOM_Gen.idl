@@ -138,6 +138,7 @@ module GEOM
 
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
+  typedef sequence<boolean>     ListOfBool;
   typedef sequence<long>        ListOfLong;
   typedef sequence<double>      ListOfDouble;
 
@@ -3140,6 +3141,16 @@ module GEOM
      *  \return Description of the given shape.
      */
     string WhatIs (in GEOM_Object theShape);
+
+    /*!
+     *  Check if points defined by coords = [x1, y1, z1, x2, y2, z2, ...] are inside or on
+     *  the shape theShape.
+     *  \param theShape Shape to check.
+     *  \param coords list of coordinates.
+     *  \param tolerance tolerance.
+     *  \return list of boolean.
+     */
+    ListOfBool AreCoordsInside(in GEOM_Object theShape, in ListOfDouble coords, in double tolerance);
 
     /*!
      *  Get minimal distance between the given shapes.

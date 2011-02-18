@@ -34,6 +34,7 @@
 #include <TColStd_HSequenceOfReal.hxx>
 #include <gp_Ax3.hxx>
 #include <Geom_Surface.hxx>
+#include <Precision.hxx>
 
 class GEOM_Engine;
 class Handle(GEOM_Object);
@@ -127,6 +128,10 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                    TCollection_AsciiString& theDump);
 
   Standard_EXPORT TCollection_AsciiString WhatIs (Handle(GEOM_Object) theShape);
+
+  Standard_EXPORT std::vector<bool> AreCoordsInside (Handle(GEOM_Object) theShape,
+						     const std::vector<double>& coords,
+						     double tolerance = Precision::Confusion());
 
   Standard_EXPORT Standard_Real GetMinDistance (Handle(GEOM_Object) theShape1,
                                                 Handle(GEOM_Object) theShape2,

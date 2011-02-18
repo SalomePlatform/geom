@@ -1682,6 +1682,37 @@ static bool CheckSingularCase(const TopoDS_Shape& aSh1,
 
 //=============================================================================
 /*!
+ *  AreCoordsInside
+ */
+//=============================================================================
+std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
+							       const std::vector<double>& coords,
+							       double tolerance)
+{
+  std::vector<bool> res;
+  if (!theShape.IsNull()) {
+    Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+    if (!aRefShape.IsNull()) {
+      TopoDS_Shape aShape = aRefShape->GetValue();
+      if (!aShape.IsNull()) {
+	BRepClass3d_SolidClassifier SC(aShape);
+	unsigned int nb_points = coords.size()/3;
+	for (int i = 0; i < nb_points; i++) {
+	  double x = coords[3*i];
+	  double y = coords[3*i+1];
+	  double z = coords[3*i+2];
+	  gp_Pnt aPnt(x, y, z);
+	  SC.Perform(aPnt, tolerance);
+	  res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
+	}
+      }
+    }
+  }
+  return res;
+}
+
+//=============================================================================
+/*!
  *  GetMinDistance
  */
 //=============================================================================

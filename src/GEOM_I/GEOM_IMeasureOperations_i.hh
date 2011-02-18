@@ -88,6 +88,10 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
 
   char* WhatIs (GEOM::GEOM_Object_ptr theShape);
 
+  GEOM::ListOfBool* AreCoordsInside (GEOM::GEOM_Object_ptr theShape,
+				     const GEOM::ListOfDouble& theCoords,
+				     CORBA::Double theTolerance);
+
   CORBA::Double GetMinDistance (GEOM::GEOM_Object_ptr theShape1,
 				GEOM::GEOM_Object_ptr theShape2,
                                 CORBA::Double& X1, CORBA::Double& Y1, CORBA::Double& Z1,
