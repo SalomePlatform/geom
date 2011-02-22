@@ -123,7 +123,7 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   //mySlider->setValue( 5 );
   mySlider->setTracking(false);
 
-  mySlider->setTickPosition( QSlider::TicksLeft );
+  mySlider->setTickPosition( QSlider::TicksAbove );
   GroupC1Layout->addWidget( mySlider, 1, 0, 1, 3 );
 
   /*************************************************************************/
@@ -296,11 +296,13 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     Standard_Boolean found;
     Handle(GEOM_AISShape) aisShape;
     if ( myFirstInit ) {
+      mySlider->setValue(mySlider->maximum());
       myFirstInit = false;
       aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, found );
       if( !found )
         return;
       int transp = int( 100 - ( aisShape->Transparency() * 100.0 ) + 0.5);
+      std::cout << "transp: " << transp << std::endl;
       mySlider->setValue(transp);
       ValueHasChanged();
       return;
