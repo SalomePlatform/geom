@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "GEOM_SelectionFilter.h"
 
@@ -134,7 +133,7 @@ bool GEOM_SelectionFilter::getShape (const GEOM::GEOM_Object_ptr& theObject,
       SALOME_LifeCycleCORBA* ls = new SALOME_LifeCycleCORBA( app->namingService() );
       static GEOM::GEOM_Gen_var geomGen;
       if(CORBA::is_nil( geomGen )) {
-        Engines::Component_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
+        Engines::EngineComponent_var comp = ls->FindOrLoad_Component( "FactoryServer", "GEOM" );
         geomGen = GEOM::GEOM_Gen::_narrow( comp );
       }
       if ( !CORBA::is_nil( geomGen ) )

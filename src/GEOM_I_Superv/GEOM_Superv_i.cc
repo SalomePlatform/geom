@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
@@ -32,10 +31,10 @@
 //  constructor:
 //=============================================================================
 GEOM_Superv_i::GEOM_Superv_i(CORBA::ORB_ptr orb,
-			     PortableServer::POA_ptr poa,
-			     PortableServer::ObjectId * contId, 
-			     const char *instanceName, 
-			     const char *interfaceName) :
+                             PortableServer::POA_ptr poa,
+                             PortableServer::ObjectId * contId,
+                             const char *instanceName,
+                             const char *interfaceName) :
   Engines_Component_i(orb, poa, contId, instanceName, interfaceName)
 {
   MESSAGE("GEOM_Superv_i::GEOM_Superv_i");
@@ -81,13 +80,13 @@ GEOM_Superv_i::~GEOM_Superv_i()
 }
 
 //============================================================================
-// function : register() 
+// function : register()
 // purpose  : register 'name' in 'name_service'
 //============================================================================
 void GEOM_Superv_i::register_name(char * name)
 {
   GEOM::GEOM_Superv_var g = _this();
-  name_service->Register(g, name); 
+  name_service->Register(g, name);
 }
 
 //=============================================================================
@@ -95,7 +94,7 @@ void GEOM_Superv_i::register_name(char * name)
 //=============================================================================
 void GEOM_Superv_i::setGeomEngine()
 {
-  if ( !CORBA::is_nil(myGeomEngine) ) 
+  if ( !CORBA::is_nil(myGeomEngine) )
     return;
 
   // get GEOM_Gen engine
@@ -104,7 +103,7 @@ void GEOM_Superv_i::setGeomEngine()
   std::string shortName=container_name.in();
   shortName=shortName.substr(12); // substract "/Containers/"
   SALOME_LifeCycleCORBA* lcc = new SALOME_LifeCycleCORBA( name_service );
-  Engines::Component_var comp = lcc->FindOrLoad_Component( shortName.c_str(), "GEOM" );
+  Engines::EngineComponent_var comp = lcc->FindOrLoad_Component( shortName.c_str(), "GEOM" );
   delete lcc;
 
   myGeomEngine = GEOM::GEOM_Gen::_narrow(comp);
@@ -124,30 +123,30 @@ void GEOM_Superv_i::SetStudyID( CORBA::Long theId )
     if ( !CORBA::is_nil(aSession) ) {
       int aStudyID = aSession->GetActiveStudyId();
       if ( theId != aStudyID && aStudyID > 0) { // mkr : IPAL12128
-	MESSAGE("Warning : given study ID theId="<<theId<<" is wrong and will be replaced by the value "<<aStudyID);
-	myStudyID = aStudyID;
+        MESSAGE("Warning : given study ID theId="<<theId<<" is wrong and will be replaced by the value "<<aStudyID);
+        myStudyID = aStudyID;
       }
       else
-	myStudyID = theId; // mkr : IPAL12128
+        myStudyID = theId; // mkr : IPAL12128
     }
   }
-  
+
   if ( isNewStudy(myLastStudyID,myStudyID) ) {
     if (CORBA::is_nil(myGeomEngine)) setGeomEngine();
     std::string anEngine = _orb->object_to_string( myGeomEngine );
-    
+
     CORBA::Object_var anObj = name_service->Resolve("/myStudyManager");
     if ( !CORBA::is_nil(anObj) ) {
       SALOMEDS::StudyManager_var aStudyManager = SALOMEDS::StudyManager::_narrow(anObj);
       if ( !CORBA::is_nil(aStudyManager) ) {
-	_PTR(Study) aDSStudy = ClientFactory::Study(aStudyManager->GetStudyByID(myStudyID));
-	if ( aDSStudy ) {
-	  _PTR(SComponent) aSCO = aDSStudy->FindComponent(myGeomEngine->ComponentDataType());
-	  if ( aSCO ) {
-	    _PTR(StudyBuilder) aBuilder = aDSStudy->NewBuilder();
-	    if ( aBuilder ) aBuilder->LoadWith( aSCO, anEngine );
-	  }
-	}
+        _PTR(Study) aDSStudy = ClientFactory::Study(aStudyManager->GetStudyByID(myStudyID));
+        if ( aDSStudy ) {
+          _PTR(SComponent) aSCO = aDSStudy->FindComponent(myGeomEngine->ComponentDataType());
+          if ( aSCO ) {
+            _PTR(StudyBuilder) aBuilder = aDSStudy->NewBuilder();
+            if ( aBuilder ) aBuilder->LoadWith( aSCO, anEngine );
+          }
+        }
       }
     }
   }
@@ -167,12 +166,12 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfGO()
 //=============================================================================
 //  AddItemToListOfGO:
 //=============================================================================
-void GEOM_Superv_i::AddItemToListOfGO(GEOM::GEOM_List_ptr& theList, 
-				      GEOM::GEOM_Object_ptr theObject)
+void GEOM_Superv_i::AddItemToListOfGO(GEOM::GEOM_List_ptr& theList,
+                                      GEOM::GEOM_Object_ptr theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfGO(...)");
   GEOM::GEOM_Object_var anObj =  GEOM::GEOM_Object::_duplicate(theObject);
-  if (GEOM_List_i<GEOM::ListOfGO>* aList = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aList =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theList, myPOA).in())) {
     aList->AddObject(anObj);
     MESSAGE(" NewLength = "<<aList->GetList().length());
@@ -192,11 +191,11 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfLong()
 //=============================================================================
 //  AddItemToListOfLong:
 //=============================================================================
-void GEOM_Superv_i::AddItemToListOfLong(GEOM::GEOM_List_ptr& theList, 
-					CORBA::Long theObject)
+void GEOM_Superv_i::AddItemToListOfLong(GEOM::GEOM_List_ptr& theList,
+                                        CORBA::Long theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfLong(...)");
-  if (GEOM_List_i<GEOM::ListOfLong>* aList = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aList =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theList, myPOA).in())) {
     aList->AddObject(theObject);
     MESSAGE(" NewLength = "<<aList->GetList().length());
@@ -216,11 +215,11 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::CreateListOfDouble()
 //=============================================================================
 //  AddItemToListOfDouble:
 //=============================================================================
-void GEOM_Superv_i::AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList, 
-					  CORBA::Double theObject)
+void GEOM_Superv_i::AddItemToListOfDouble(GEOM::GEOM_List_ptr& theList,
+                                          CORBA::Double theObject)
 {
   MESSAGE("GEOM_Superv_i::AddItemToListOfDouble(...)");
-  if (GEOM_List_i<GEOM::ListOfDouble>* aList = 
+  if (GEOM_List_i<GEOM::ListOfDouble>* aList =
       dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theList, myPOA).in())) {
     aList->AddObject(theObject);
     MESSAGE(" NewLength = "<<aList->GetList().length());
@@ -346,7 +345,7 @@ void GEOM_Superv_i::getGroupOp()
   if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
     myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
 }
-    
+
 //=============================================================================
 //  getAdvancedOp:
 //=============================================================================
@@ -363,7 +362,7 @@ void GEOM_Superv_i::getAdvancedOp()
 //  GetServant:
 //=============================================================================
 PortableServer::ServantBase_var GEOM_Superv_i::GetServant(CORBA::Object_ptr       theObject,
-							  PortableServer::POA_ptr thePOA)
+                                                          PortableServer::POA_ptr thePOA)
 {
   if(CORBA::is_nil(theObject))  return NULL;
   PortableServer::Servant aServant = thePOA->reference_to_servant(theObject);
@@ -375,8 +374,8 @@ PortableServer::ServantBase_var GEOM_Superv_i::GetServant(CORBA::Object_ptr     
 // purpose  : save OCAF/Geom document
 //============================================================================
 SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr theComponent,
-				       const char* theURL,
-				       CORBA::Boolean isMultiFile)
+                                       const char* theURL,
+                                       CORBA::Boolean isMultiFile)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -385,10 +384,10 @@ SALOMEDS::TMPFile* GEOM_Superv_i::Save(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================
 // function : SaveASCII()
 // purpose  :
-//============================================================================ 
+//============================================================================
 SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr theComponent,
-					    const char* theURL,
-					    CORBA::Boolean isMultiFile)
+                                            const char* theURL,
+                                            CORBA::Boolean isMultiFile)
 {
   SALOMEDS::TMPFile_var aStreamFile;
   return aStreamFile._retn();
@@ -397,11 +396,11 @@ SALOMEDS::TMPFile* GEOM_Superv_i::SaveASCII(SALOMEDS::SComponent_ptr theComponen
 //============================================================================
 // function : Load()
 // purpose  :
-//============================================================================ 
+//============================================================================
 CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr theComponent,
-				   const SALOMEDS::TMPFile& theStream,
-				   const char* theURL,
-				   CORBA::Boolean isMultiFile)
+                                   const SALOMEDS::TMPFile& theStream,
+                                   const char* theURL,
+                                   CORBA::Boolean isMultiFile)
 {
   return false;
 }
@@ -409,11 +408,11 @@ CORBA::Boolean GEOM_Superv_i::Load(SALOMEDS::SComponent_ptr theComponent,
 //============================================================================
 // function : LoadASCII()
 // purpose  :
-//============================================================================ 
+//============================================================================
 CORBA::Boolean GEOM_Superv_i::LoadASCII(SALOMEDS::SComponent_ptr theComponent,
-					const SALOMEDS::TMPFile& theStream,
-					const char* theURL,
-					CORBA::Boolean isMultiFile)
+                                        const SALOMEDS::TMPFile& theStream,
+                                        const char* theURL,
+                                        CORBA::Boolean isMultiFile)
 {
   return false;
 }
@@ -440,9 +439,9 @@ char* GEOM_Superv_i::ComponentDataType()
 // purpose  :
 //============================================================================
 char* GEOM_Superv_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
-					    const char* IORString,
-					    CORBA::Boolean isMultiFile,
-					    CORBA::Boolean isASCII)
+                                            const char* IORString,
+                                            CORBA::Boolean isMultiFile,
+                                            CORBA::Boolean isASCII)
 {
   return 0;
 }
@@ -454,16 +453,16 @@ char* GEOM_Superv_i::IORToLocalPersistentID(SALOMEDS::SObject_ptr theSObject,
 //          : The IOR (IORName) of object created is returned
 //============================================================================
 char* GEOM_Superv_i::LocalPersistentIDToIOR(SALOMEDS::SObject_ptr theSObject,
-					    const char* aLocalPersistentID,
-					    CORBA::Boolean isMultiFile,
-					    CORBA::Boolean isASCII)
+                                            const char* aLocalPersistentID,
+                                            CORBA::Boolean isMultiFile,
+                                            CORBA::Boolean isASCII)
 {
   return 0;
 }
 
 //============================================================================
 // function : CanPublishInStudy
-// purpose  : 
+// purpose  :
 //============================================================================
 CORBA::Boolean GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 {
@@ -474,12 +473,12 @@ CORBA::Boolean GEOM_Superv_i::CanPublishInStudy(CORBA::Object_ptr theIOR)
 
 //============================================================================
 // function : PublishInStudy
-// purpose  : 
+// purpose  :
 //============================================================================
 SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
-						    SALOMEDS::SObject_ptr theSObject,
-						    CORBA::Object_ptr theObject,
-						    const char* theName) throw (SALOME::SALOME_Exception)
+                                                    SALOMEDS::SObject_ptr theSObject,
+                                                    CORBA::Object_ptr theObject,
+                                                    const char* theName) throw (SALOME::SALOME_Exception)
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
@@ -488,12 +487,12 @@ SALOMEDS::SObject_ptr GEOM_Superv_i::PublishInStudy(SALOMEDS::Study_ptr theStudy
 
 //============================================================================
 // function : PublishNamedShapesInStudy
-// purpose  : 
+// purpose  :
 //============================================================================
 GEOM::ListOfGO*
 GEOM_Superv_i::PublishNamedShapesInStudy(SALOMEDS::Study_ptr theStudy,
-					 //SALOMEDS::SObject_ptr theSObject,
-					 CORBA::Object_ptr theObject)
+                                         //SALOMEDS::SObject_ptr theSObject,
+                                         CORBA::Object_ptr theObject)
 {
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
@@ -533,8 +532,8 @@ CORBA::Boolean GEOM_Superv_i::CanPaste(const char* theComponentName, CORBA::Long
 // purpose  :
 //============================================================================
 SALOMEDS::SObject_ptr GEOM_Superv_i::PasteInto(const SALOMEDS::TMPFile& theStream,
-					       CORBA::Long theObjectID,
-					       SALOMEDS::SObject_ptr theObject)
+                                               CORBA::Long theObjectID,
+                                               SALOMEDS::SObject_ptr theObject)
 {
   SALOMEDS::SObject_var aNewSO;
   return aNewSO._retn();
@@ -545,8 +544,8 @@ SALOMEDS::SObject_ptr GEOM_Superv_i::PasteInto(const SALOMEDS::TMPFile& theStrea
 //  MakePointXYZ:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointXYZ(CORBA::Double theX,
-						  CORBA::Double theY,
-						  CORBA::Double theZ)
+                                                  CORBA::Double theY,
+                                                  CORBA::Double theZ)
 {
   beginService( " GEOM_Superv_i::MakePointXYZ" );
   MESSAGE("GEOM_Superv_i::MakePointXYZ");
@@ -561,9 +560,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointXYZ(CORBA::Double theX,
 //  MakePointWithReference:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointWithReference (GEOM::GEOM_Object_ptr theReference,
-							     CORBA::Double theX, 
-							     CORBA::Double theY, 
-							     CORBA::Double theZ)
+                                                             CORBA::Double theX,
+                                                             CORBA::Double theY,
+                                                             CORBA::Double theZ)
 {
   beginService( " GEOM_Superv_i::MakePointWithReference" );
   MESSAGE("GEOM_Superv_i::MakePointWithReference");
@@ -577,7 +576,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointWithReference (GEOM::GEOM_Object_p
 //  MakePointOnCurve:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
-						       CORBA::Double theParameter)
+                                                       CORBA::Double theParameter)
 {
   beginService( " GEOM_Superv_i::MakePointOnCurve" );
   MESSAGE("GEOM_Superv_i::MakePointOnCurve");
@@ -591,8 +590,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 //  MakePointOnCurveByLength:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
-							       CORBA::Double theLength,
-							       CORBA::Boolean theReverse)
+                                                               CORBA::Double theLength,
+                                                               CORBA::Boolean theReverse)
 {
   beginService( " GEOM_Superv_i::MakePointOnCurveByLength" );
   MESSAGE("GEOM_Superv_i::MakePointOnCurveByLength");
@@ -658,7 +657,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnSurfaceByCoord (GEOM::GEOM_Objec
 //  MakePointOnLinesIntersection:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnLinesIntersection (GEOM::GEOM_Object_ptr theRefLine1,
-								   GEOM::GEOM_Object_ptr theRefLine2)
+                                                                   GEOM::GEOM_Object_ptr theRefLine2)
 {
   beginService( " GEOM_Superv_i::MakePointOnLinesIntersection" );
   MESSAGE("GEOM_Superv_i::MakePointOnLinesIntersection");
@@ -672,7 +671,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnLinesIntersection (GEOM::GEOM_Ob
 //  MakeTangentOnCurve:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentOnCurve (GEOM::GEOM_Object_ptr theRefCurve,
-							 CORBA::Double theParameter)
+                                                         CORBA::Double theParameter)
 {
   beginService( " GEOM_Superv_i::MakeTangentOnCurve" );
   MESSAGE("GEOM_Superv_i::MakeTangentOnCurve");
@@ -686,8 +685,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentOnCurve (GEOM::GEOM_Object_ptr t
 //  MakeVectorDXDYDZ:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorDXDYDZ (CORBA::Double theDX,
-						       CORBA::Double theDY,
-						       CORBA::Double theDZ)
+                                                       CORBA::Double theDY,
+                                                       CORBA::Double theDZ)
 {
   beginService( " GEOM_Superv_i::MakeVectorDXDYDZ" );
   MESSAGE("GEOM_Superv_i::MakeVectorDXDYDZ");
@@ -701,7 +700,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorDXDYDZ (CORBA::Double theDX,
 //  MakeVectorTwoPnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
-						       GEOM::GEOM_Object_ptr thePnt2)
+                                                       GEOM::GEOM_Object_ptr thePnt2)
 {
   beginService( " GEOM_Superv_i::MakeVectorTwoPnt" );
   MESSAGE("GEOM_Superv_i::MakeVector");
@@ -715,7 +714,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeVectorTwoPnt (GEOM::GEOM_Object_ptr the
 //  MakeLineTwoPnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
-						     GEOM::GEOM_Object_ptr thePnt2)
+                                                     GEOM::GEOM_Object_ptr thePnt2)
 {
   beginService( " GEOM_Superv_i::MakeLineTwoPnt");
   MESSAGE("GEOM_Superv_i::MakeLineTwoPnt");
@@ -729,7 +728,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoPnt (GEOM::GEOM_Object_ptr thePn
 //  MakeLineTwoFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoFaces (GEOM::GEOM_Object_ptr theFace1,
-						       GEOM::GEOM_Object_ptr theFace2)
+                                                       GEOM::GEOM_Object_ptr theFace2)
 {
   beginService( " GEOM_Superv_i::MakeLineTwoFaces");
   MESSAGE("GEOM_Superv_i::MakeLineTwoFaces");
@@ -743,9 +742,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeLineTwoFaces (GEOM::GEOM_Object_ptr the
 //  MakePlaneThreePnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneThreePnt (GEOM::GEOM_Object_ptr thePnt1,
-							GEOM::GEOM_Object_ptr thePnt2,
-							GEOM::GEOM_Object_ptr thePnt3,
-							CORBA::Double theTrimSize)
+                                                        GEOM::GEOM_Object_ptr thePnt2,
+                                                        GEOM::GEOM_Object_ptr thePnt3,
+                                                        CORBA::Double theTrimSize)
 {
   beginService( " GEOM_Superv_i::MakePlaneThreePnt");
   MESSAGE("GEOM_Superv_i::MakePlaneThreePnt");
@@ -759,9 +758,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneThreePnt (GEOM::GEOM_Object_ptr th
 //  MakePlanePntVec:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlanePntVec (GEOM::GEOM_Object_ptr thePnt,
-						      GEOM::GEOM_Object_ptr theVec,
-						      CORBA::Double theTrimSize)
-{ 
+                                                      GEOM::GEOM_Object_ptr theVec,
+                                                      CORBA::Double theTrimSize)
+{
   beginService( " GEOM_Superv_i::MakePlanePntVec" );
   MESSAGE("GEOM_Superv_i::MakePlanePntVec");
   getBasicOp();
@@ -774,7 +773,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlanePntVec (GEOM::GEOM_Object_ptr theP
 //  MakePlaneFace:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneFace (GEOM::GEOM_Object_ptr theFace,
-						    CORBA::Double theTrimSize)
+                                                    CORBA::Double theTrimSize)
 {
   beginService( " GEOM_Superv_i::MakePlaneFace" );
   MESSAGE("GEOM_Superv_i::MakePlaneFace");
@@ -788,9 +787,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneFace (GEOM::GEOM_Object_ptr theFac
 //  MakePlane2Vec:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlane2Vec (GEOM::GEOM_Object_ptr theVec1,
-						    GEOM::GEOM_Object_ptr theVec2,
-						    CORBA::Double theTrimSize)
-{ 
+                                                    GEOM::GEOM_Object_ptr theVec2,
+                                                    CORBA::Double theTrimSize)
+{
   beginService( " GEOM_Superv_i::MakePlane2Vec" );
   MESSAGE("GEOM_Superv_i::MakePlane2Vec");
   getBasicOp();
@@ -803,9 +802,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlane2Vec (GEOM::GEOM_Object_ptr theVec
 //  MakePlaneLCS:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneLCS (GEOM::GEOM_Object_ptr theLCS,
-					           CORBA::Double theTrimSize,
-						   CORBA::Double theOrientation)
-{ 
+                                                   CORBA::Double theTrimSize,
+                                                   CORBA::Double theOrientation)
+{
   beginService( " GEOM_Superv_i::MakePlaneLCS" );
   MESSAGE("GEOM_Superv_i::MakePlaneLCS");
   getBasicOp();
@@ -817,7 +816,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePlaneLCS (GEOM::GEOM_Object_ptr theLCS,
 //=============================================================================
 //  MakeMarker:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker 
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarker
 (CORBA::Double theOX , CORBA::Double theOY , CORBA::Double theOZ,
  CORBA::Double theXDX, CORBA::Double theXDY, CORBA::Double theXDZ,
  CORBA::Double theYDX, CORBA::Double theYDY, CORBA::Double theYDZ)
@@ -861,10 +860,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMarkerPntTwoVec (GEOM::GEOM_Object_ptr 
 //=============================================================================
 //  MakeTangentPlaneOnFace:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace, 
-						 CORBA::Double theParameterU,
-						 CORBA::Double theParameterV,
-						 CORBA::Double theTrimSize)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentPlaneOnFace (GEOM::GEOM_Object_ptr theFace,
+                                                 CORBA::Double theParameterU,
+                                                 CORBA::Double theParameterV,
+                                                 CORBA::Double theTrimSize)
 {
   beginService( " GEOM_Superv_i::MakeTangentPlaneOnFace" );
   MESSAGE("GEOM_Superv_i::MakeTangentPlaneOnFace");
@@ -879,18 +878,18 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTangentPlaneOnFace (GEOM::GEOM_Object_p
 //  MakeBox:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBox (CORBA::Double theX1,
-					      CORBA::Double theY1,
-					      CORBA::Double theZ1,
-					      CORBA::Double theX2,
-					      CORBA::Double theY2,
-					      CORBA::Double theZ2)
+                                              CORBA::Double theY1,
+                                              CORBA::Double theZ1,
+                                              CORBA::Double theX2,
+                                              CORBA::Double theY2,
+                                              CORBA::Double theZ2)
 {
   beginService( " GEOM_Superv_i::MakeBox" );
   MESSAGE("GEOM_Superv_i::MakeBox");
   getBasicOp();
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeBoxTwoPnt(myBasicOp->MakePointXYZ(theX1, theY1, theZ1),
-							  myBasicOp->MakePointXYZ(theX2, theY2, theZ2));
+                                                          myBasicOp->MakePointXYZ(theX2, theY2, theZ2));
   endService( " GEOM_Superv_i::MakeBox" );
   return anObj;
 }
@@ -898,9 +897,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBox (CORBA::Double theX1,
 //=============================================================================
 //  MakeBoxDXDYDZ:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxDXDYDZ (CORBA::Double theDX, 
-						    CORBA::Double theDY, 
-						    CORBA::Double theDZ)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxDXDYDZ (CORBA::Double theDX,
+                                                    CORBA::Double theDY,
+                                                    CORBA::Double theDZ)
 {
   beginService( " GEOM_Superv_i::MakeBoxDXDYDZ" );
   MESSAGE("GEOM_Superv_i::MakeBoxDXDYDZ");
@@ -913,8 +912,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxDXDYDZ (CORBA::Double theDX,
 //=============================================================================
 //  MakeBoxTwoPnt:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt1, 
-						    GEOM::GEOM_Object_ptr thePnt2)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt1,
+                                                    GEOM::GEOM_Object_ptr thePnt2)
 {
   beginService( " GEOM_Superv_i::MakeBoxTwoPnt" );
   MESSAGE("GEOM_Superv_i::MakeBoxTwoPnt");
@@ -928,8 +927,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoxTwoPnt (GEOM::GEOM_Object_ptr thePnt
 //  MakeFaceHW:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceHW (CORBA::Double theH,
-						 CORBA::Double theW,
-						 CORBA::Short  theOrientation)
+                                                 CORBA::Double theW,
+                                                 CORBA::Short  theOrientation)
 {
   beginService( " GEOM_Superv_i::MakeFaceHW" );
   MESSAGE("GEOM_Superv_i::MakeFaceHW");
@@ -942,9 +941,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceHW (CORBA::Double theH,
 //=============================================================================
 //  MakeFaceObjHW:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj, 
-						    CORBA::Double theH,
-						    CORBA::Double theW)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj,
+                                                    CORBA::Double theH,
+                                                    CORBA::Double theW)
 {
   beginService( " GEOM_Superv_i::MakeFaceObjHW" );
   MESSAGE("GEOM_Superv_i::MakeFaceObjHW");
@@ -958,8 +957,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceObjHW (GEOM::GEOM_Object_ptr theObj
 //  MakeDiskPntVecR:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
-						      GEOM::GEOM_Object_ptr theVector,
-						      CORBA::Double theR)
+                                                      GEOM::GEOM_Object_ptr theVector,
+                                                      CORBA::Double theR)
 {
   beginService( " GEOM_Superv_i::MakeDiskPntVecR" );
   MESSAGE("GEOM_Superv_i::MakeDiskPntVecR");
@@ -973,8 +972,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskPntVecR (GEOM::GEOM_Object_ptr theC
 //  MakeDiskThreePnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskThreePnt (GEOM::GEOM_Object_ptr thePnt1,
-						       GEOM::GEOM_Object_ptr thePnt2,
-						       GEOM::GEOM_Object_ptr thePnt3)
+                                                       GEOM::GEOM_Object_ptr thePnt2,
+                                                       GEOM::GEOM_Object_ptr thePnt3)
 {
   beginService( " GEOM_Superv_i::MakeDiskThreePnt" );
   MESSAGE("GEOM_Superv_i::MakeDiskThreePnt");
@@ -988,7 +987,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskThreePnt (GEOM::GEOM_Object_ptr the
 //  MakeDiskR:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskR (CORBA::Double theR,
-						CORBA::Short  theOrientation)
+                                                CORBA::Short  theOrientation)
 {
   beginService( " GEOM_Superv_i::MakeDiskR" );
   MESSAGE("GEOM_Superv_i::MakeDiskR");
@@ -1002,9 +1001,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDiskR (CORBA::Double theR,
 //  MakeCylinderPntVecRH:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr thePnt,
-							   GEOM::GEOM_Object_ptr theAxis,
-							   CORBA::Double theRadius,
-							   CORBA::Double theHeight)
+                                                           GEOM::GEOM_Object_ptr theAxis,
+                                                           CORBA::Double theRadius,
+                                                           CORBA::Double theHeight)
 {
   beginService( " GEOM_Superv_i::MakeCylinderPntVecRH" );
   MESSAGE("GEOM_Superv_i::MakeCylinderPntVecRH");
@@ -1017,24 +1016,24 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderPntVecRH (GEOM::GEOM_Object_ptr
 //=============================================================================
 //  MakeCylinderRH:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderRH (CORBA::Double theR, 
-						     CORBA::Double theH)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCylinderRH (CORBA::Double theR,
+                                                     CORBA::Double theH)
 {
   beginService( " GEOM_Superv_i::MakeCylinderRH" );
   MESSAGE("GEOM_Superv_i::MakeCylinderRH");
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj = my3DPrimOp->MakeCylinderRH(theR, theH);
   endService( " GEOM_Superv_i::MakeCylinderRH" );
-  return anObj; 
+  return anObj;
 }
 
 //=============================================================================
 //  MakeSphere:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphere  (CORBA::Double theX,
-						  CORBA::Double theY,
-						  CORBA::Double theZ,
-						  CORBA::Double theRadius)
+                                                  CORBA::Double theY,
+                                                  CORBA::Double theZ,
+                                                  CORBA::Double theRadius)
 {
   beginService( " GEOM_Superv_i::MakeSphepe" );
   MESSAGE("GEOM_Superv_i::MakeSphepe");
@@ -1061,8 +1060,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSphereR (CORBA::Double theR)
 //=============================================================================
 //  MakeSpherePntR:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSpherePntR (GEOM::GEOM_Object_ptr thePnt, 
-						     CORBA::Double theR)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSpherePntR (GEOM::GEOM_Object_ptr thePnt,
+                                                     CORBA::Double theR)
 {
   beginService( " GEOM_Superv_i::MakeSpherePntR" );
   MESSAGE("GEOM_Superv_i::MakeSpherePntR");
@@ -1076,9 +1075,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSpherePntR (GEOM::GEOM_Object_ptr thePn
 //  MakeTorusPntVecRR:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTorusPntVecRR (GEOM::GEOM_Object_ptr thePnt,
-							GEOM::GEOM_Object_ptr theVec,
-							CORBA::Double theRMajor,
-							CORBA::Double theRMinor)
+                                                        GEOM::GEOM_Object_ptr theVec,
+                                                        CORBA::Double theRMajor,
+                                                        CORBA::Double theRMinor)
 {
   beginService( " GEOM_Superv_i::MakeTorusPntVecRR" );
   MESSAGE("GEOM_Superv_i::MakeTorusPntVecRR");
@@ -1092,7 +1091,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTorusPntVecRR (GEOM::GEOM_Object_ptr th
 //  MakeTorusRR:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTorusRR (CORBA::Double theRMajor,
-						  CORBA::Double theRMinor)
+                                                  CORBA::Double theRMinor)
 {
   beginService( " GEOM_Superv_i::MakeTorusRR" );
   MESSAGE("GEOM_Superv_i::MakeTorusRR");
@@ -1106,10 +1105,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeTorusRR (CORBA::Double theRMajor,
 //  MakeConePntVecR1R2H:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConePntVecR1R2H (GEOM::GEOM_Object_ptr thePnt,
-							  GEOM::GEOM_Object_ptr theAxis,
-							  CORBA::Double theR1,
-							  CORBA::Double theR2,
-							  CORBA::Double theHeight)
+                                                          GEOM::GEOM_Object_ptr theAxis,
+                                                          CORBA::Double theR1,
+                                                          CORBA::Double theR2,
+                                                          CORBA::Double theHeight)
 {
   beginService( " GEOM_Superv_i::MakeConePntVecR1R2H" );
   MESSAGE("GEOM_Superv_i::MakeConePntVecR1R2H");
@@ -1122,9 +1121,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConePntVecR1R2H (GEOM::GEOM_Object_ptr 
 //=============================================================================
 //  MakeConeR1R2H:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConeR1R2H (CORBA::Double theR1, 
-						    CORBA::Double theR2, 
-						    CORBA::Double theHeight)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConeR1R2H (CORBA::Double theR1,
+                                                    CORBA::Double theR2,
+                                                    CORBA::Double theHeight)
 {
   beginService( " GEOM_Superv_i::MakeConeR1R2H" );
   MESSAGE("GEOM_Superv_i::MakeConeR1R2H");
@@ -1138,8 +1137,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeConeR1R2H (CORBA::Double theR1,
 //  MakePrismVecH:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH (GEOM::GEOM_Object_ptr theBase,
-						    GEOM::GEOM_Object_ptr theVec,
-						    CORBA::Double         theH)
+                                                    GEOM::GEOM_Object_ptr theVec,
+                                                    CORBA::Double         theH)
 {
   beginService( " GEOM_Superv_i::MakePrismVecH" );
   MESSAGE("GEOM_Superv_i::MakePrismVecH");
@@ -1153,8 +1152,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH (GEOM::GEOM_Object_ptr theBas
 //  MakePrismVecH2Ways:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH2Ways (GEOM::GEOM_Object_ptr theBase,
-							 GEOM::GEOM_Object_ptr theVec,
-							 CORBA::Double         theH)
+                                                         GEOM::GEOM_Object_ptr theVec,
+                                                         CORBA::Double         theH)
 {
   beginService( " GEOM_Superv_i::MakePrismVecH2Ways" );
   MESSAGE("GEOM_Superv_i::MakePrismVecH2Ways");
@@ -1168,8 +1167,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismVecH2Ways (GEOM::GEOM_Object_ptr t
 //  MakePrismTwoPnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt (GEOM::GEOM_Object_ptr theBase,
-						      GEOM::GEOM_Object_ptr thePoint1,
-						      GEOM::GEOM_Object_ptr thePoint2)
+                                                      GEOM::GEOM_Object_ptr thePoint1,
+                                                      GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::MakePrismTwoPnt" );
   MESSAGE("GEOM_Superv_i::MakePrismTwoPnt");
@@ -1183,8 +1182,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt (GEOM::GEOM_Object_ptr theB
 //  MakePrismTwoPnt2Ways:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
-							   GEOM::GEOM_Object_ptr thePoint1,
-							   GEOM::GEOM_Object_ptr thePoint2)
+                                                           GEOM::GEOM_Object_ptr thePoint1,
+                                                           GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::MakePrismTwoPnt2Ways" );
   MESSAGE("GEOM_Superv_i::MakePrismTwoPnt2Ways");
@@ -1198,7 +1197,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr
 //  MakePrismDXDYDZ:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
-		      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+                      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
 {
   beginService( " GEOM_Superv_i::MakePrismDXDYDZ" );
   MESSAGE("GEOM_Superv_i::MakePrismDXDYDZ");
@@ -1212,7 +1211,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theB
 //  MakePrismDXDYDZ:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr theBase,
-		      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
+                      CORBA::Double theDX, CORBA::Double theDY, CORBA::Double theDZ)
 {
   beginService( " GEOM_Superv_i::MakePrismDXDYDZ2Ways" );
   MESSAGE("GEOM_Superv_i::MakePrismDXDYDZ2Ways");
@@ -1225,8 +1224,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePrismDXDYDZ2Ways (GEOM::GEOM_Object_ptr
 //=============================================================================
 //  MakePipe:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase, 
-					       GEOM::GEOM_Object_ptr thePath)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase,
+                                               GEOM::GEOM_Object_ptr thePath)
 {
   beginService( " GEOM_Superv_i::MakePipe" );
   MESSAGE("GEOM_Superv_i::MakePipe");
@@ -1240,8 +1239,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipe (GEOM::GEOM_Object_ptr theBase,
 //  MakeRevolutionAxisAngle:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle (GEOM::GEOM_Object_ptr theBase,
-							      GEOM::GEOM_Object_ptr theAxis,
-							      CORBA::Double theAngle)
+                                                              GEOM::GEOM_Object_ptr theAxis,
+                                                              CORBA::Double theAngle)
 {
   beginService( " GEOM_Superv_i::MakeRevolutionAxisAngle" );
   MESSAGE("GEOM_Superv_i::MakeRevolutionAxisAngle");
@@ -1255,8 +1254,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle (GEOM::GEOM_Object_
 //  MakeRevolutionAxisAngle:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Object_ptr theBase,
-								   GEOM::GEOM_Object_ptr theAxis,
-								   CORBA::Double theAngle)
+                                                                   GEOM::GEOM_Object_ptr theAxis,
+                                                                   CORBA::Double theAngle)
 {
   beginService( " GEOM_Superv_i::MakeRevolutionAxisAngle2Ways" );
   MESSAGE("GEOM_Superv_i::MakeRevolutionAxisAngle2Ways");
@@ -1270,11 +1269,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeRevolutionAxisAngle2Ways (GEOM::GEOM_Ob
 //  MakeFilling:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape,
-						  CORBA::Long theMinDeg,
+                                                  CORBA::Long theMinDeg,
                                                   CORBA::Long theMaxDeg,
-						  CORBA::Double theTol2D,
+                                                  CORBA::Double theTol2D,
                                                   CORBA::Double theTol3D,
-						  CORBA::Long theNbIter,
+                                                  CORBA::Long theNbIter,
                                                   GEOM::filling_oper_method theMethod,
                                                   CORBA::Boolean theApprox)
 {
@@ -1293,8 +1292,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilling (GEOM::GEOM_Object_ptr theShape
 //  MakeBoolean:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean (GEOM::GEOM_Object_ptr theShape1,
-						  GEOM::GEOM_Object_ptr theShape2,
-						  CORBA::Long theOperation)
+                                                  GEOM::GEOM_Object_ptr theShape2,
+                                                  CORBA::Long theOperation)
 {
   beginService( " GEOM_Superv_i::MakeBoolean" );
   // theOperation indicates the operation to be done:
@@ -1310,9 +1309,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeBoolean (GEOM::GEOM_Object_ptr theShape
 //  MakeThruSections:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeThruSections(const GEOM::ListOfGO& theSeqSections,
-					 CORBA::Boolean theModeSolid,
-					 CORBA::Double thePreci,
-					 CORBA::Boolean theRuled)
+                                         CORBA::Boolean theModeSolid,
+                                         CORBA::Double thePreci,
+                                         CORBA::Boolean theRuled)
 {
   beginService( " GEOM_Superv_i::MakeThruSections" );
   MESSAGE("GEOM_Superv_i::MakeThruSections");
@@ -1327,10 +1326,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeThruSections(const GEOM::ListOfGO& theS
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
                      (const GEOM::ListOfGO& theBases,
-		      const GEOM::ListOfGO& theLocations,
-		      GEOM::GEOM_Object_ptr thePath,
-		      CORBA::Boolean theWithContact,
-		      CORBA::Boolean theWithCorrections)
+                      const GEOM::ListOfGO& theLocations,
+                      GEOM::GEOM_Object_ptr thePath,
+                      CORBA::Boolean theWithContact,
+                      CORBA::Boolean theWithCorrections)
 {
   beginService( " GEOM_Superv_i::MakePipeWithDifferentSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithDifferentSections");
@@ -1346,19 +1345,19 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithDifferentSections
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
                    (const GEOM::ListOfGO& theBases,
-		    const GEOM::ListOfGO& theSubBases,
-		    const GEOM::ListOfGO& theLocations,
-		    GEOM::GEOM_Object_ptr thePath,
-		    CORBA::Boolean theWithContact,
-		    CORBA::Boolean theWithCorrections)
+                    const GEOM::ListOfGO& theSubBases,
+                    const GEOM::ListOfGO& theLocations,
+                    GEOM::GEOM_Object_ptr thePath,
+                    CORBA::Boolean theWithContact,
+                    CORBA::Boolean theWithCorrections)
 {
   beginService( " GEOM_Superv_i::MakePipeWithShellSections" );
   MESSAGE("GEOM_Superv_i::MakePipeWithShellSections");
   get3DPrimOp();
   GEOM::GEOM_Object_ptr anObj =
     my3DPrimOp->MakePipeWithShellSections(theBases, theSubBases,
-					  theLocations, thePath,
-					  theWithContact, theWithCorrections);
+                                          theLocations, thePath,
+                                          theWithContact, theWithCorrections);
   endService( " GEOM_Superv_i::MakePipeWithShellSections" );
   return anObj;
 }
@@ -1369,7 +1368,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeWithShellSections
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
                    (const GEOM::ListOfGO& theBases,
-		    const GEOM::ListOfGO& theLocations)
+                    const GEOM::ListOfGO& theLocations)
 {
   beginService( " GEOM_Superv_i::MakePipeShellsWithoutPath" );
   MESSAGE("GEOM_Superv_i::MakePipeShellsWithoutPath");
@@ -1384,15 +1383,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeShellsWithoutPath
 //=============================================================================
 //  MakePipe:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector 
-                                                (GEOM::GEOM_Object_ptr theBase, 
-						 GEOM::GEOM_Object_ptr thePath, 
-						 GEOM::GEOM_Object_ptr theVec)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector
+                                                (GEOM::GEOM_Object_ptr theBase,
+                                                 GEOM::GEOM_Object_ptr thePath,
+                                                 GEOM::GEOM_Object_ptr theVec)
 {
   beginService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
   MESSAGE("GEOM_Superv_i::MakePipeBiNormalAlongVector");
   get3DPrimOp();
-  GEOM::GEOM_Object_ptr anObj = 
+  GEOM::GEOM_Object_ptr anObj =
     my3DPrimOp->MakePipeBiNormalAlongVector(theBase, thePath, theVec);
   endService( " GEOM_Superv_i::MakePipeBiNormalAlongVector" );
   return anObj;
@@ -1403,7 +1402,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePipeBiNormalAlongVector
 //  MakeFuse:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
-					       GEOM::GEOM_Object_ptr theShape2)
+                                               GEOM::GEOM_Object_ptr theShape2)
 {
   beginService( " GEOM_Superv_i::MakeFuse" );
   MESSAGE("GEOM_Superv_i::MakeFuse");
@@ -1417,33 +1416,33 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFuse (GEOM::GEOM_Object_ptr theShape1,
 //  MakePartition:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theShapes,
-						    GEOM::GEOM_List_ptr   theTools,
-						    GEOM::GEOM_List_ptr   theKeepInside,
-						    GEOM::GEOM_List_ptr   theRemoveInside,
-						    CORBA::Short      theLimit,
-						    CORBA::Boolean    theRemoveWebs,
-						    GEOM::GEOM_List_ptr theMaterials,
-						    CORBA::Short theKeepNonlimitShapes)
+                                                    GEOM::GEOM_List_ptr   theTools,
+                                                    GEOM::GEOM_List_ptr   theKeepInside,
+                                                    GEOM::GEOM_List_ptr   theRemoveInside,
+                                                    CORBA::Short      theLimit,
+                                                    CORBA::Boolean    theRemoveWebs,
+                                                    GEOM::GEOM_List_ptr theMaterials,
+                                                    CORBA::Short theKeepNonlimitShapes)
 {
   beginService( " GEOM_Superv_i::MakePartition" );
   MESSAGE("GEOM_Superv_i::MakePartition");
-  GEOM_List_i<GEOM::ListOfGO>* aListImplS = 
+  GEOM_List_i<GEOM::ListOfGO>* aListImplS =
     dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShapes, myPOA).in());
-  GEOM_List_i<GEOM::ListOfGO>* aListImplT = 
+  GEOM_List_i<GEOM::ListOfGO>* aListImplT =
     dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theTools, myPOA).in());
-  GEOM_List_i<GEOM::ListOfGO>* aListImplKI = 
+  GEOM_List_i<GEOM::ListOfGO>* aListImplKI =
     dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theKeepInside, myPOA).in());
-  GEOM_List_i<GEOM::ListOfGO>* aListImplRI = 
+  GEOM_List_i<GEOM::ListOfGO>* aListImplRI =
     dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theRemoveInside, myPOA).in());
-  GEOM_List_i<GEOM::ListOfLong>* aListImplM = 
+  GEOM_List_i<GEOM::ListOfLong>* aListImplM =
     dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theMaterials, myPOA).in());
   if (aListImplS && aListImplT && aListImplKI && aListImplRI && aListImplM) {
     getBoolOp();
     GEOM::GEOM_Object_ptr anObj =
-      myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(), 
-			      aListImplKI->GetList(), aListImplRI->GetList(),
-			      theLimit, theRemoveWebs, aListImplM->GetList(),
-			      theKeepNonlimitShapes);
+      myBoolOp->MakePartition(aListImplS->GetList(), aListImplT->GetList(),
+                              aListImplKI->GetList(), aListImplRI->GetList(),
+                              theLimit, theRemoveWebs, aListImplM->GetList(),
+                              theKeepNonlimitShapes);
     endService( " GEOM_Superv_i::MakePartition" );
     return anObj;
   }
@@ -1455,7 +1454,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePartition (GEOM::GEOM_List_ptr   theSha
 //  MakeHalfPartition:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHalfPartition (GEOM::GEOM_Object_ptr theShape,
-							GEOM::GEOM_Object_ptr thePlane)
+                                                        GEOM::GEOM_Object_ptr thePlane)
 {
   beginService( " GEOM_Superv_i::MakeHalfPartition" );
   MESSAGE("GEOM_Superv_i::MakeHalfPartition");
@@ -1482,9 +1481,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCopy (GEOM::GEOM_Object_ptr theOriginal
 //=============================================================================
 //  Export:
 //=============================================================================
-void GEOM_Superv_i::Export (GEOM::GEOM_Object_ptr theObject, 
-			    const char*           theFileName, 
-			    const char*           theFormatName)
+void GEOM_Superv_i::Export (GEOM::GEOM_Object_ptr theObject,
+                            const char*           theFileName,
+                            const char*           theFormatName)
 {
   beginService( " GEOM_Superv_i::Export" );
   MESSAGE("GEOM_Superv_i::Export");
@@ -1496,8 +1495,8 @@ void GEOM_Superv_i::Export (GEOM::GEOM_Object_ptr theObject,
 //=============================================================================
 //  Import:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::Import (const char* theFileName, 
-					     const char* theFormatName)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::Import (const char* theFileName,
+                                             const char* theFormatName)
 {
   beginService( " GEOM_Superv_i::Import" );
   MESSAGE("GEOM_Superv_i::Import");
@@ -1511,7 +1510,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::Import (const char* theFileName,
 //  ImportTranslators:
 //=============================================================================
 void GEOM_Superv_i::ImportTranslators (GEOM::string_array_out theFormats,
-				       GEOM::string_array_out thePatterns)
+                                       GEOM::string_array_out thePatterns)
 {
   beginService( " GEOM_Superv_i::ImportTranslators" );
   MESSAGE("GEOM_Superv_i::ImportTranslators");
@@ -1524,7 +1523,7 @@ void GEOM_Superv_i::ImportTranslators (GEOM::string_array_out theFormats,
 //  ExportTranslators:
 //=============================================================================
 void GEOM_Superv_i::ExportTranslators (GEOM::string_array_out theFormats,
-				       GEOM::string_array_out thePatterns)
+                                       GEOM::string_array_out thePatterns)
 {
   beginService( " GEOM_Superv_i::ExportTranslators" );
   MESSAGE("GEOM_Superv_i::ExportTranslators");
@@ -1538,8 +1537,8 @@ void GEOM_Superv_i::ExportTranslators (GEOM::string_array_out theFormats,
 //  TranslateTwoPoints:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateTwoPoints (GEOM::GEOM_Object_ptr theObject,
-							 GEOM::GEOM_Object_ptr thePoint1,
-							 GEOM::GEOM_Object_ptr thePoint2)
+                                                         GEOM::GEOM_Object_ptr thePoint1,
+                                                         GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::TranslateTwoPoints" );
   MESSAGE("GEOM_Superv_i::TranslateTwoPoints");
@@ -1553,8 +1552,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateTwoPoints (GEOM::GEOM_Object_ptr t
 //  TranslateTwoPointsCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateTwoPointsCopy (GEOM::GEOM_Object_ptr theObject,
-							     GEOM::GEOM_Object_ptr thePoint1,
-							     GEOM::GEOM_Object_ptr thePoint2)
+                                                             GEOM::GEOM_Object_ptr thePoint1,
+                                                             GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::TranslateTwoPointsCopy" );
   MESSAGE("GEOM_Superv_i::TranslateTwoPointsCopy");
@@ -1568,9 +1567,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateTwoPointsCopy (GEOM::GEOM_Object_p
 //  TranslateDXDYDZ:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateDXDYDZ (GEOM::GEOM_Object_ptr theObject,
-						      CORBA::Double theDX, 
-						      CORBA::Double theDY, 
-						      CORBA::Double theDZ)
+                                                      CORBA::Double theDX,
+                                                      CORBA::Double theDY,
+                                                      CORBA::Double theDZ)
 {
   beginService( " GEOM_Superv_i::TranslateDXDYDZ" );
   MESSAGE("GEOM_Superv_i::TranslateDXDYDZ");
@@ -1584,9 +1583,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateDXDYDZ (GEOM::GEOM_Object_ptr theO
 //  TranslateDXDYDZCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr theObject,
-							  CORBA::Double theDX, 
-							  CORBA::Double theDY, 
-							  CORBA::Double theDZ)
+                                                          CORBA::Double theDX,
+                                                          CORBA::Double theDY,
+                                                          CORBA::Double theDZ)
 {
   beginService( " GEOM_Superv_i::TranslateDXDYDZCopy" );
   MESSAGE("GEOM_Superv_i::TranslateDXDYDZCopy");
@@ -1600,7 +1599,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateDXDYDZCopy (GEOM::GEOM_Object_ptr 
 //  TranslateVector:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVector (GEOM::GEOM_Object_ptr theObject,
-						      GEOM::GEOM_Object_ptr theVector)
+                                                      GEOM::GEOM_Object_ptr theVector)
 {
   beginService( " GEOM_Superv_i::TranslateVector" );
   MESSAGE("GEOM_Superv_i::TranslateVector");
@@ -1614,7 +1613,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVector (GEOM::GEOM_Object_ptr theO
 //  TranslateVectorCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorCopy (GEOM::GEOM_Object_ptr theObject,
-							  GEOM::GEOM_Object_ptr theVector)
+                                                          GEOM::GEOM_Object_ptr theVector)
 {
   beginService( " GEOM_Superv_i::TranslateVectorCopy" );
   MESSAGE("GEOM_Superv_i::TranslateVectorCopy");
@@ -1628,15 +1627,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorCopy (GEOM::GEOM_Object_ptr 
 //  TranslateVectorDistance:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorDistance (GEOM::GEOM_Object_ptr theObject,
-							      GEOM::GEOM_Object_ptr theVector,
-							      CORBA::Double theDistance,
-							      CORBA::Boolean theCopy)
+                                                              GEOM::GEOM_Object_ptr theVector,
+                                                              CORBA::Double theDistance,
+                                                              CORBA::Boolean theCopy)
 {
   beginService( " GEOM_Superv_i::TranslateVectorDistance" );
   MESSAGE("GEOM_Superv_i::TranslateVectorDistance");
   getTransfOp();
-  GEOM::GEOM_Object_ptr anObj = myTransfOp->TranslateVectorDistance(theObject, 
-								    theVector, theDistance, theCopy);
+  GEOM::GEOM_Object_ptr anObj = myTransfOp->TranslateVectorDistance(theObject,
+                                                                    theVector, theDistance, theCopy);
   endService( " GEOM_Superv_i::TranslateVectorDistance" );
   return anObj;
 }
@@ -1645,9 +1644,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::TranslateVectorDistance (GEOM::GEOM_Object_
 //  MultiTranslate1D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate1D (GEOM::GEOM_Object_ptr theObject,
-						       GEOM::GEOM_Object_ptr theVector,
-						       CORBA::Double theStep,
-						       CORBA::Long theNbTimes)
+                                                       GEOM::GEOM_Object_ptr theVector,
+                                                       CORBA::Double theStep,
+                                                       CORBA::Long theNbTimes)
 {
   beginService( " GEOM_Superv_i::MultiTranslate1D" );
   MESSAGE("GEOM_Superv_i::MultiTranslate1D");
@@ -1661,18 +1660,18 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate1D (GEOM::GEOM_Object_ptr the
 //  MultiTranslate2D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate2D (GEOM::GEOM_Object_ptr theObject,
-						       GEOM::GEOM_Object_ptr theVector1,
-						       CORBA::Double theStep1,
-						       CORBA::Long theNbTimes1,
-						       GEOM::GEOM_Object_ptr theVector2,
-						       CORBA::Double theStep2,
-						       CORBA::Long theNbTimes2)
+                                                       GEOM::GEOM_Object_ptr theVector1,
+                                                       CORBA::Double theStep1,
+                                                       CORBA::Long theNbTimes1,
+                                                       GEOM::GEOM_Object_ptr theVector2,
+                                                       CORBA::Double theStep2,
+                                                       CORBA::Long theNbTimes2)
 {
   beginService( " GEOM_Superv_i::MultiTranslate2D" );
   MESSAGE("GEOM_Superv_i::MultiTranslate2D");
   getTransfOp();
   GEOM::GEOM_Object_ptr anObj = myTransfOp->MultiTranslate2D(theObject, theVector1, theStep1, theNbTimes1,
-							     theVector2, theStep2, theNbTimes2);
+                                                             theVector2, theStep2, theNbTimes2);
   endService( " GEOM_Superv_i::MultiTranslate2D" );
   return anObj;
 }
@@ -1681,8 +1680,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiTranslate2D (GEOM::GEOM_Object_ptr the
 //  Rotate:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::Rotate (GEOM::GEOM_Object_ptr theObject,
-					     GEOM::GEOM_Object_ptr theAxis,
-					     CORBA::Double theAngle)
+                                             GEOM::GEOM_Object_ptr theAxis,
+                                             CORBA::Double theAngle)
 {
   beginService( " GEOM_Superv_i::Rotate" );
   MESSAGE("GEOM_Superv_i::Rotate");
@@ -1696,8 +1695,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::Rotate (GEOM::GEOM_Object_ptr theObject,
 //  RotateCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateCopy (GEOM::GEOM_Object_ptr theObject,
-						 GEOM::GEOM_Object_ptr theAxis,
-						 CORBA::Double theAngle)
+                                                 GEOM::GEOM_Object_ptr theAxis,
+                                                 CORBA::Double theAngle)
 {
   beginService( " GEOM_Superv_i::RotateCopy" );
   MESSAGE("GEOM_Superv_i::RotateCopy");
@@ -1710,9 +1709,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateCopy (GEOM::GEOM_Object_ptr theObject
 //  RotateThreePoints:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateThreePoints (GEOM::GEOM_Object_ptr theObject,
-							GEOM::GEOM_Object_ptr theCentPoint,
-							GEOM::GEOM_Object_ptr thePoint1,
-							GEOM::GEOM_Object_ptr thePoint2)
+                                                        GEOM::GEOM_Object_ptr theCentPoint,
+                                                        GEOM::GEOM_Object_ptr thePoint1,
+                                                        GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::RotateThreePoints" );
   MESSAGE("GEOM_Superv_i::RotateThreePoints");
@@ -1726,9 +1725,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateThreePoints (GEOM::GEOM_Object_ptr th
 //  RotateThreePointsCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateThreePointsCopy (GEOM::GEOM_Object_ptr theObject,
-							    GEOM::GEOM_Object_ptr theCentPoint,
-							    GEOM::GEOM_Object_ptr thePoint1,
-							    GEOM::GEOM_Object_ptr thePoint2)
+                                                            GEOM::GEOM_Object_ptr theCentPoint,
+                                                            GEOM::GEOM_Object_ptr thePoint1,
+                                                            GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::RotateThreePointsCopy" );
   MESSAGE("GEOM_Superv_i::RotateThreePointsCopy");
@@ -1742,8 +1741,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::RotateThreePointsCopy (GEOM::GEOM_Object_pt
 //  MultiRotate1D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiRotate1D (GEOM::GEOM_Object_ptr theObject,
-						    GEOM::GEOM_Object_ptr theAxis,
-						    CORBA::Long theNbTimes)
+                                                    GEOM::GEOM_Object_ptr theAxis,
+                                                    CORBA::Long theNbTimes)
 {
   beginService( " GEOM_Superv_i::MultiRotate1D" );
   MESSAGE("GEOM_Superv_i::MultiRotate1D");
@@ -1757,11 +1756,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiRotate1D (GEOM::GEOM_Object_ptr theObj
 //  MultiRotate2D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiRotate2D (GEOM::GEOM_Object_ptr theObject,
-						    GEOM::GEOM_Object_ptr theAxis,
-						    CORBA::Double theAngle,
-						    CORBA::Long theNbTimes1,
-						    CORBA::Double theStep,
-						    CORBA::Long theNbTimes2)
+                                                    GEOM::GEOM_Object_ptr theAxis,
+                                                    CORBA::Double theAngle,
+                                                    CORBA::Long theNbTimes1,
+                                                    CORBA::Double theStep,
+                                                    CORBA::Long theNbTimes2)
 {
   beginService( " GEOM_Superv_i::MultiRotate2D" );
   MESSAGE("GEOM_Superv_i::MultiRotate2D");
@@ -1774,8 +1773,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MultiRotate2D (GEOM::GEOM_Object_ptr theObj
 //=============================================================================
 //  MirrorPlane:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlane (GEOM::GEOM_Object_ptr theObject, 
-						  GEOM::GEOM_Object_ptr thePlane)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlane (GEOM::GEOM_Object_ptr theObject,
+                                                  GEOM::GEOM_Object_ptr thePlane)
 {
   beginService( " GEOM_Superv_i::MirrorPlane" );
   MESSAGE("GEOM_Superv_i::MirrorPlane");
@@ -1788,8 +1787,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlane (GEOM::GEOM_Object_ptr theObjec
 //=============================================================================
 //  MirrorPlaneCopy:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlaneCopy (GEOM::GEOM_Object_ptr theObject, 
-						      GEOM::GEOM_Object_ptr thePlane)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlaneCopy (GEOM::GEOM_Object_ptr theObject,
+                                                      GEOM::GEOM_Object_ptr thePlane)
 {
   beginService( " GEOM_Superv_i::MirrorPlaneCopy" );
   MESSAGE("GEOM_Superv_i::MirrorPlaneCopy");
@@ -1802,8 +1801,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPlaneCopy (GEOM::GEOM_Object_ptr theO
 //=============================================================================
 //  MirrorAxis:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxis (GEOM::GEOM_Object_ptr theObject, 
-						 GEOM::GEOM_Object_ptr theAxis)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxis (GEOM::GEOM_Object_ptr theObject,
+                                                 GEOM::GEOM_Object_ptr theAxis)
 {
   beginService( " GEOM_Superv_i::MirrorAxis" );
   MESSAGE("GEOM_Superv_i::MirrorAxis");
@@ -1816,8 +1815,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxis (GEOM::GEOM_Object_ptr theObject
 //=============================================================================
 //  MirrorAxisCopy:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxisCopy (GEOM::GEOM_Object_ptr theObject, 
-						     GEOM::GEOM_Object_ptr theAxis)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxisCopy (GEOM::GEOM_Object_ptr theObject,
+                                                     GEOM::GEOM_Object_ptr theAxis)
 {
   beginService( " GEOM_Superv_i::MirrorAxisCopy" );
   MESSAGE("GEOM_Superv_i::MirrorAxisCopy");
@@ -1830,8 +1829,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorAxisCopy (GEOM::GEOM_Object_ptr theOb
 //=============================================================================
 //  MirrorPoint:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPoint (GEOM::GEOM_Object_ptr theObject, 
-						  GEOM::GEOM_Object_ptr thePoint)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPoint (GEOM::GEOM_Object_ptr theObject,
+                                                  GEOM::GEOM_Object_ptr thePoint)
 {
   beginService( " GEOM_Superv_i::MirrorPoint" );
   MESSAGE("GEOM_Superv_i::MirrorPoint");
@@ -1844,8 +1843,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPoint (GEOM::GEOM_Object_ptr theObjec
 //=============================================================================
 //  MirrorPointCopy:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPointCopy (GEOM::GEOM_Object_ptr theObject, 
-						      GEOM::GEOM_Object_ptr thePoint)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPointCopy (GEOM::GEOM_Object_ptr theObject,
+                                                      GEOM::GEOM_Object_ptr thePoint)
 {
   beginService( " GEOM_Superv_i::MirrorPoint" );
   MESSAGE("GEOM_Superv_i::MirrorPointCopy");
@@ -1858,8 +1857,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MirrorPointCopy (GEOM::GEOM_Object_ptr theO
 //=============================================================================
 //  OffsetShape:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShape (GEOM::GEOM_Object_ptr theObject, 
-						  CORBA::Double theOffset)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShape (GEOM::GEOM_Object_ptr theObject,
+                                                  CORBA::Double theOffset)
 {
   beginService( " GEOM_Superv_i::OffsetShape" );
   MESSAGE("GEOM_Superv_i::OffsetShape");
@@ -1872,8 +1871,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShape (GEOM::GEOM_Object_ptr theObjec
 //=============================================================================
 //  OffsetShapeCopy:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject, 
-						      CORBA::Double theOffset)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject,
+                                                      CORBA::Double theOffset)
 {
   beginService( " GEOM_Superv_i::OffsetShapeCopy" );
   MESSAGE("GEOM_Superv_i::OffsetShapeCopy");
@@ -1886,9 +1885,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::OffsetShapeCopy (GEOM::GEOM_Object_ptr theO
 //=============================================================================
 //  ScaleShape:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShape (GEOM::GEOM_Object_ptr theObject, 
-						 GEOM::GEOM_Object_ptr thePoint,
-						 CORBA::Double theFactor)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShape (GEOM::GEOM_Object_ptr theObject,
+                                                 GEOM::GEOM_Object_ptr thePoint,
+                                                 CORBA::Double theFactor)
 {
   beginService( " GEOM_Superv_i::ScaleShape" );
   MESSAGE("GEOM_Superv_i::ScaleShape");
@@ -1901,9 +1900,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShape (GEOM::GEOM_Object_ptr theObject
 //=============================================================================
 //  ScaleShapeCopy:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theObject, 
-						     GEOM::GEOM_Object_ptr thePoint,
-						     CORBA::Double theFactor)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theObject,
+                                                     GEOM::GEOM_Object_ptr thePoint,
+                                                     CORBA::Double theFactor)
 {
   beginService( " GEOM_Superv_i::ScaleShapeCopy" );
   MESSAGE("GEOM_Superv_i::ScaleShapeCopy");
@@ -1917,10 +1916,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeCopy (GEOM::GEOM_Object_ptr theOb
 //  ScaleShapeAlongAxes:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr theObject,
-							  GEOM::GEOM_Object_ptr thePoint,
-							  CORBA::Double theFactorX,
-							  CORBA::Double theFactorY,
-							  CORBA::Double theFactorZ)
+                                                          GEOM::GEOM_Object_ptr thePoint,
+                                                          CORBA::Double theFactorX,
+                                                          CORBA::Double theFactorY,
+                                                          CORBA::Double theFactorZ)
 {
   beginService( " GEOM_Superv_i::ScaleShapeAlongAxes" );
   MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxes");
@@ -1935,10 +1934,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxes (GEOM::GEOM_Object_ptr 
 //  ScaleShapeAlongAxesCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_ptr theObject,
-							      GEOM::GEOM_Object_ptr thePoint,
-							      CORBA::Double theFactorX,
-							      CORBA::Double theFactorY,
-							      CORBA::Double theFactorZ)
+                                                              GEOM::GEOM_Object_ptr thePoint,
+                                                              CORBA::Double theFactorX,
+                                                              CORBA::Double theFactorY,
+                                                              CORBA::Double theFactorZ)
 {
   beginService( " GEOM_Superv_i::ScaleShapeAlongAxesCopy" );
   MESSAGE("GEOM_Superv_i::ScaleShapeAlongAxesCopy");
@@ -1953,8 +1952,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ScaleShapeAlongAxesCopy (GEOM::GEOM_Object_
 //  PositionShape:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShape (GEOM::GEOM_Object_ptr theObject,
-						    GEOM::GEOM_Object_ptr theStartLCS,
-						    GEOM::GEOM_Object_ptr theEndLCS)
+                                                    GEOM::GEOM_Object_ptr theStartLCS,
+                                                    GEOM::GEOM_Object_ptr theEndLCS)
 {
   beginService( " GEOM_Superv_i::PositionShape" );
   MESSAGE("GEOM_Superv_i::PositionShape");
@@ -1968,8 +1967,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShape (GEOM::GEOM_Object_ptr theObj
 //  PositionShapeCopy:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShapeCopy (GEOM::GEOM_Object_ptr theObject,
-							GEOM::GEOM_Object_ptr theStartLCS,
-							GEOM::GEOM_Object_ptr theEndLCS)
+                                                        GEOM::GEOM_Object_ptr theStartLCS,
+                                                        GEOM::GEOM_Object_ptr theEndLCS)
 {
   beginService( " GEOM_Superv_i::PositionShapeCopy" );
   MESSAGE("GEOM_Superv_i::PositionShapeCopy");
@@ -1983,10 +1982,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionShapeCopy (GEOM::GEOM_Object_ptr th
 //  PositionAlongPath:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionAlongPath (GEOM::GEOM_Object_ptr theObject,
-							GEOM::GEOM_Object_ptr thePath,
-							CORBA::Double         theDistance,
-							CORBA::Boolean        theCopy,
-							CORBA::Boolean        theReverse)
+                                                        GEOM::GEOM_Object_ptr thePath,
+                                                        CORBA::Double         theDistance,
+                                                        CORBA::Boolean        theCopy,
+                                                        CORBA::Boolean        theReverse)
 {
   beginService( " GEOM_Superv_i::PositionAlongPath" );
   MESSAGE("GEOM_Superv_i::PositionAlongPath");
@@ -2001,7 +2000,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::PositionAlongPath (GEOM::GEOM_Object_ptr th
 //  Make:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
-					       GEOM::GEOM_Object_ptr thePnt2)
+                                               GEOM::GEOM_Object_ptr thePnt2)
 {
   beginService( " GEOM_Superv_i::MakeEdge" );
   MESSAGE("GEOM_Superv_i::MakeEdge");
@@ -2019,7 +2018,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWi
 {
   beginService( " GEOM_Superv_i::MakeWire" );
   MESSAGE("GEOM_Superv_i::MakeWire");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplEW = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplEW =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theEdgesAndWires, myPOA).in())) {
     getShapesOp();
     GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeWire(aListImplEW->GetList(), theTolerance);
@@ -2034,7 +2033,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeWire (GEOM::GEOM_List_ptr theEdgesAndWi
 //  MakeFace:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFace (GEOM::GEOM_Object_ptr theWire,
-					       CORBA::Boolean isPlanarWanted)
+                                               CORBA::Boolean isPlanarWanted)
 {
   beginService( " GEOM_Superv_i::MakeFace" );
   MESSAGE("GEOM_Superv_i::MakeFace");
@@ -2048,11 +2047,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFace (GEOM::GEOM_Object_ptr theWire,
 //  MakeFaceWires:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFaceWires (GEOM::GEOM_List_ptr theWires,
-						    CORBA::Boolean isPlanarWanted)
+                                                    CORBA::Boolean isPlanarWanted)
 {
   beginService( " GEOM_Superv_i::MakeFaceWires" );
   MESSAGE("GEOM_Superv_i::MakeFaceWires");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplW = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplW =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theWires, myPOA).in())) {
     getShapesOp();
     GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeFaceWires(aListImplW->GetList(), isPlanarWanted);
@@ -2070,7 +2069,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeShell (GEOM::GEOM_List_ptr theFacesAndS
 {
   beginService( " GEOM_Superv_i::MakeShell" );
   MESSAGE("GEOM_Superv_i::MakeShell");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplFS = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplFS =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theFacesAndShells, myPOA).in())) {
     getShapesOp();
     GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeShell(aListImplFS->GetList());
@@ -2101,7 +2100,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSolidShells (GEOM::GEOM_List_ptr theShe
 {
   beginService( " GEOM_Superv_i::MakeSolidShells" );
   MESSAGE("GEOM_Superv_i::MakeSolidShells");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplS = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplS =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShells, myPOA).in())) {
     getShapesOp();
     GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeSolidShells(aListImplS->GetList());
@@ -2119,7 +2118,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 {
   beginService( " GEOM_Superv_i::MakeCompound" );
   MESSAGE("GEOM_Superv_i::MakeCompound");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImpl = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImpl =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theShapes, myPOA).in())) {
     getShapesOp();
     GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeCompound(aListImpl->GetList());
@@ -2134,8 +2133,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCompound (GEOM::GEOM_List_ptr theShapes
 //  MakeGlueFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Double   theTolerance,
-						    CORBA::Boolean doKeepNonSolids)
+                                                    CORBA::Double   theTolerance,
+                                                    CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFaces" );
   MESSAGE("GEOM_Superv_i::MakeGlueFaces");
@@ -2150,7 +2149,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFaces (GEOM::GEOM_Object_ptr theSha
 //  GetGlueFaces:
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
-						 CORBA::Double theTolerance)
+                                                 CORBA::Double theTolerance)
 {
   beginService( " GEOM_Superv_i::GetGlueFaces" );
   MESSAGE("GEOM_Superv_i::GetGlueFaces");
@@ -2166,9 +2165,9 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 //  MakeGlueFacesByList:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
-							  CORBA::Double theTolerance,
-							  const GEOM::ListOfGO& theFaces,
-							  CORBA::Boolean doKeepNonSolids)
+                                                          CORBA::Double theTolerance,
+                                                          const GEOM::ListOfGO& theFaces,
+                                                          CORBA::Boolean doKeepNonSolids)
 {
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
@@ -2183,8 +2182,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr 
 //  MakeExplode:
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::MakeExplode (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Long theShapeType,
-						    CORBA::Boolean isSorted)
+                                                    CORBA::Long theShapeType,
+                                                    CORBA::Boolean isSorted)
 {
   beginService( " GEOM_Superv_i::MakeExplode" );
   MESSAGE("GEOM_Superv_i::MakeExplode");
@@ -2243,9 +2242,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::ChangeOrientation (GEOM::GEOM_Object_ptr th
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::GetShapesOnShape
                                           (GEOM::GEOM_Object_ptr theCheckShape,
-					   GEOM::GEOM_Object_ptr theShape,
-					   CORBA::Short theShapeType,
-					   GEOM::shape_state theState)
+                                           GEOM::GEOM_Object_ptr theShape,
+                                           CORBA::Short theShapeType,
+                                           GEOM::shape_state theState)
 {
   beginService( " GEOM_Superv_i::GetShapesOnShape" );
   MESSAGE("GEOM_Superv_i::GetShapesOnShape");
@@ -2264,14 +2263,14 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetShapesOnShape
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetShapesOnShapeAsCompound
                                           (GEOM::GEOM_Object_ptr theCheckShape,
-					   GEOM::GEOM_Object_ptr theShape,
-					   CORBA::Short theShapeType,
-					   GEOM::shape_state theState)
+                                           GEOM::GEOM_Object_ptr theShape,
+                                           CORBA::Short theShapeType,
+                                           GEOM::shape_state theState)
 {
   beginService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
   MESSAGE("GEOM_Superv_i::GetShapesOnShapeAsCompound");
   getShapesOp();
-  GEOM::GEOM_Object_ptr anObj = 
+  GEOM::GEOM_Object_ptr anObj =
     myShapesOp->GetShapesOnShapeAsCompound(theCheckShape, theShape, theShapeType, theState);
   endService( " GEOM_Superv_i::GetShapesOnShapeAsCompound" );
   return anObj;
@@ -2283,9 +2282,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetShapesOnShapeAsCompound
 //  MakeQuad4Vertices:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad4Vertices (GEOM::GEOM_Object_ptr thePnt1,
-							GEOM::GEOM_Object_ptr thePnt2,
-							GEOM::GEOM_Object_ptr thePnt3,
-							GEOM::GEOM_Object_ptr thePnt4)
+                                                        GEOM::GEOM_Object_ptr thePnt2,
+                                                        GEOM::GEOM_Object_ptr thePnt3,
+                                                        GEOM::GEOM_Object_ptr thePnt4)
 {
   beginService( " GEOM_Superv_i::MakeQuad4Vertices" );
   MESSAGE("GEOM_Superv_i::MakeQuad4Vertices");
@@ -2299,9 +2298,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad4Vertices (GEOM::GEOM_Object_ptr th
 //  MakeQuad:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad (GEOM::GEOM_Object_ptr theEdge1,
-					       GEOM::GEOM_Object_ptr theEdge2,
-					       GEOM::GEOM_Object_ptr theEdge3,
-					       GEOM::GEOM_Object_ptr theEdge4)
+                                               GEOM::GEOM_Object_ptr theEdge2,
+                                               GEOM::GEOM_Object_ptr theEdge3,
+                                               GEOM::GEOM_Object_ptr theEdge4)
 {
   beginService( " GEOM_Superv_i::MakeQuad" );
   MESSAGE("GEOM_Superv_i::MakeQuad");
@@ -2315,7 +2314,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad (GEOM::GEOM_Object_ptr theEdge1,
 //  MakeQuad2Edges:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad2Edges (GEOM::GEOM_Object_ptr theEdge1,
-						     GEOM::GEOM_Object_ptr theEdge2)
+                                                     GEOM::GEOM_Object_ptr theEdge2)
 {
   beginService( " GEOM_Superv_i::MakeQuad2Edges" );
   MESSAGE("GEOM_Superv_i::MakeQuad2Edges");
@@ -2329,11 +2328,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeQuad2Edges (GEOM::GEOM_Object_ptr theEd
 //  MakeHexa:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa (GEOM::GEOM_Object_ptr theFace1,
-					       GEOM::GEOM_Object_ptr theFace2,
-					       GEOM::GEOM_Object_ptr theFace3,
-					       GEOM::GEOM_Object_ptr theFace4,
-					       GEOM::GEOM_Object_ptr theFace5,
-					       GEOM::GEOM_Object_ptr theFace6)
+                                               GEOM::GEOM_Object_ptr theFace2,
+                                               GEOM::GEOM_Object_ptr theFace3,
+                                               GEOM::GEOM_Object_ptr theFace4,
+                                               GEOM::GEOM_Object_ptr theFace5,
+                                               GEOM::GEOM_Object_ptr theFace6)
 {
   beginService( " GEOM_Superv_i::MakeHexa" );
   MESSAGE("GEOM_Superv_i::MakeHexa");
@@ -2347,7 +2346,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa (GEOM::GEOM_Object_ptr theFace1,
 //  MakeHexa2Faces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa2Faces (GEOM::GEOM_Object_ptr theFace1,
-						     GEOM::GEOM_Object_ptr theFace2)
+                                                     GEOM::GEOM_Object_ptr theFace2)
 {
   beginService( " GEOM_Superv_i::MakeHexa2Faces" );
   MESSAGE("GEOM_Superv_i::MakeHexa2Faces");
@@ -2361,10 +2360,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeHexa2Faces (GEOM::GEOM_Object_ptr theFa
 //  GetPoint:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetPoint (GEOM::GEOM_Object_ptr theShape,
-					       CORBA::Double   theX,
-					       CORBA::Double   theY,
-					       CORBA::Double   theZ,
-					       CORBA::Double   theEpsilon)
+                                               CORBA::Double   theX,
+                                               CORBA::Double   theY,
+                                               CORBA::Double   theZ,
+                                               CORBA::Double   theEpsilon)
 {
   beginService( " GEOM_Superv_i::GetPoint" );
   MESSAGE("GEOM_Superv_i::GetPoint");
@@ -2378,8 +2377,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetPoint (GEOM::GEOM_Object_ptr theShape,
 //  GetEdge:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetEdge (GEOM::GEOM_Object_ptr theShape,
-					      GEOM::GEOM_Object_ptr thePoint1,
-					      GEOM::GEOM_Object_ptr thePoint2)
+                                              GEOM::GEOM_Object_ptr thePoint1,
+                                              GEOM::GEOM_Object_ptr thePoint2)
 {
   beginService( " GEOM_Superv_i::GetEdge" );
   MESSAGE("GEOM_Superv_i::GetEdge");
@@ -2393,7 +2392,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetEdge (GEOM::GEOM_Object_ptr theShape,
 //  GetEdgeNearPoint:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetEdgeNearPoint (GEOM::GEOM_Object_ptr theShape,
-						       GEOM::GEOM_Object_ptr thePoint)
+                                                       GEOM::GEOM_Object_ptr thePoint)
 {
   beginService( " GEOM_Superv_i::GetEdgeNearPoint" );
   MESSAGE("GEOM_Superv_i::GetEdgeNearPoint");
@@ -2407,10 +2406,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetEdgeNearPoint (GEOM::GEOM_Object_ptr the
 //  GetFaceByPoints:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByPoints (GEOM::GEOM_Object_ptr theShape,
-						      GEOM::GEOM_Object_ptr thePoint1,
-						      GEOM::GEOM_Object_ptr thePoint2,
-						      GEOM::GEOM_Object_ptr thePoint3,
-						      GEOM::GEOM_Object_ptr thePoint4)
+                                                      GEOM::GEOM_Object_ptr thePoint1,
+                                                      GEOM::GEOM_Object_ptr thePoint2,
+                                                      GEOM::GEOM_Object_ptr thePoint3,
+                                                      GEOM::GEOM_Object_ptr thePoint4)
 {
   beginService( " GEOM_Superv_i::GetFaceByPoints" );
   MESSAGE("GEOM_Superv_i::GetFaceByPoints");
@@ -2424,8 +2423,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByPoints (GEOM::GEOM_Object_ptr theS
 //  GetFaceByEdges:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByEdges (GEOM::GEOM_Object_ptr theShape,
-						     GEOM::GEOM_Object_ptr theEdge1,
-						     GEOM::GEOM_Object_ptr theEdge2)
+                                                     GEOM::GEOM_Object_ptr theEdge1,
+                                                     GEOM::GEOM_Object_ptr theEdge2)
 {
   beginService( " GEOM_Superv_i::GetFaceByEdges" );
   MESSAGE("GEOM_Superv_i::GetFaceByEdges");
@@ -2439,7 +2438,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByEdges (GEOM::GEOM_Object_ptr theSh
 //  GetOppositeFace:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetOppositeFace (GEOM::GEOM_Object_ptr theBlock,
-						      GEOM::GEOM_Object_ptr theFace)
+                                                      GEOM::GEOM_Object_ptr theFace)
 {
   beginService( " GEOM_Superv_i::GetOppositeFace" );
   MESSAGE("GEOM_Superv_i::GetOppositeFace");
@@ -2453,7 +2452,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetOppositeFace (GEOM::GEOM_Object_ptr theB
 //  GetFaceNearPoint:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceNearPoint (GEOM::GEOM_Object_ptr theShape,
-						       GEOM::GEOM_Object_ptr thePoint)
+                                                       GEOM::GEOM_Object_ptr thePoint)
 {
   beginService( " GEOM_Superv_i::GetFaceNearPoint" );
   MESSAGE("GEOM_Superv_i::GetFaceNearPoint");
@@ -2467,7 +2466,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceNearPoint (GEOM::GEOM_Object_ptr the
 //  GetFaceByNormale:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByNormale (GEOM::GEOM_Object_ptr theBlock,
-						       GEOM::GEOM_Object_ptr theVector)
+                                                       GEOM::GEOM_Object_ptr theVector)
 {
   beginService( " GEOM_Superv_i::GetFaceByNormale" );
   MESSAGE("GEOM_Superv_i::GetFaceByNormale");
@@ -2481,9 +2480,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetFaceByNormale (GEOM::GEOM_Object_ptr the
 //  IsCompoundOfBlocks:
 //=============================================================================
 CORBA::Boolean GEOM_Superv_i::IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-						  CORBA::Long     theMinNbFaces,
-						  CORBA::Long     theMaxNbFaces,
-						  CORBA::Long&          theNbBlocks)
+                                                  CORBA::Long     theMinNbFaces,
+                                                  CORBA::Long     theMaxNbFaces,
+                                                  CORBA::Long&          theNbBlocks)
 {
   beginService( " GEOM_Superv_i::IsCompoundOfBlocks" );
   MESSAGE("GEOM_Superv_i::IsCompoundOfBlocks");
@@ -2496,7 +2495,7 @@ CORBA::Boolean GEOM_Superv_i::IsCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompo
 //=============================================================================
 //  CheckCompoundOfBlocks:
 //=============================================================================
-CORBA::Boolean GEOM_Superv_i::CheckCompoundOfBlocks 
+CORBA::Boolean GEOM_Superv_i::CheckCompoundOfBlocks
 (GEOM::GEOM_Object_ptr theCompound,
  GEOM::GEOM_IBlocksOperations::BCErrors_out theErrors)
 {
@@ -2512,7 +2511,7 @@ CORBA::Boolean GEOM_Superv_i::CheckCompoundOfBlocks
 //  PrintBCErrors:
 //=============================================================================
 char* GEOM_Superv_i::PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
-				    const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
+                                    const GEOM::GEOM_IBlocksOperations::BCErrors& theErrors)
 {
   beginService( " GEOM_Superv_i::PrintBCErrors" );
   MESSAGE("GEOM_Superv_i::PrintBCErrors");
@@ -2526,8 +2525,8 @@ char* GEOM_Superv_i::PrintBCErrors (GEOM::GEOM_Object_ptr theCompound,
 //  ExplodeCompoundOfBlocks:
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::ExplodeCompoundOfBlocks (GEOM::GEOM_Object_ptr theCompound,
-								CORBA::Long     theMinNbFaces,
-								CORBA::Long     theMaxNbFaces)
+                                                                CORBA::Long     theMinNbFaces,
+                                                                CORBA::Long     theMaxNbFaces)
 {
   beginService( " GEOM_Superv_i::ExplodeCompoundOfBlocks" );
   MESSAGE("GEOM_Superv_i::ExplodeCompoundOfBlocks");
@@ -2542,7 +2541,7 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::ExplodeCompoundOfBlocks (GEOM::GEOM_Object_pt
 //  GetBlockNearPoint:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockNearPoint (GEOM::GEOM_Object_ptr theCompound,
-							GEOM::GEOM_Object_ptr thePoint)
+                                                        GEOM::GEOM_Object_ptr thePoint)
 {
   beginService( " GEOM_Superv_i::GetBlockNearPoint" );
   MESSAGE("GEOM_Superv_i::GetBlockNearPoint");
@@ -2556,11 +2555,11 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockNearPoint (GEOM::GEOM_Object_ptr th
 //  GetBlockByParts:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockByParts (GEOM::GEOM_Object_ptr theCompound,
-						      GEOM::GEOM_List_ptr theParts)
+                                                      GEOM::GEOM_List_ptr theParts)
 {
   beginService( " GEOM_Superv_i::GetBlockByParts" );
   MESSAGE("GEOM_Superv_i::GetBlockByParts");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theParts, myPOA).in())) {
     getBlocksOp();
     GEOM::GEOM_Object_ptr anObj = myBlocksOp->GetBlockByParts(theCompound, aListImplP->GetList());
@@ -2575,14 +2574,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::GetBlockByParts (GEOM::GEOM_Object_ptr theC
 //  GetBlocksByParts:
 //=============================================================================
 GEOM::GEOM_List_ptr GEOM_Superv_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCompound,
-							 GEOM::GEOM_List_ptr theParts)
+                                                         GEOM::GEOM_List_ptr theParts)
 {
   beginService( " GEOM_Superv_i::GetBlocksByParts" );
   MESSAGE("GEOM_Superv_i::GetBlocksByParts");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(theParts, myPOA).in())) {
     getBlocksOp();
-    
+
     GEOM::ListOfGO* aBlocks = myBlocksOp->GetBlocksByParts(theCompound, aListImplP->GetList());
     GEOM_List_i<GEOM::ListOfGO>* aListPtr = new GEOM_List_i<GEOM::ListOfGO>(*(aBlocks));
     endService( " GEOM_Superv_i::GetBlocksByParts" );
@@ -2596,9 +2595,9 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetBlocksByParts (GEOM::GEOM_Object_ptr theCo
 //  MakeMultiTransformation1D:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation1D (GEOM::GEOM_Object_ptr theBlock,
-								CORBA::Long     theDirFace1,
-								CORBA::Long     theDirFace2,
-								CORBA::Long     theNbTimes)
+                                                                CORBA::Long     theDirFace1,
+                                                                CORBA::Long     theDirFace2,
+                                                                CORBA::Long     theNbTimes)
 {
   beginService( " GEOM_Superv_i::MakeMultiTransformation1D" );
   MESSAGE("GEOM_Superv_i::MakeMultiTransformation1D");
@@ -2611,7 +2610,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation1D (GEOM::GEOM_Objec
 //=============================================================================
 //  MakeMultiTransformation2D:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation2D 
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation2D
 (GEOM::GEOM_Object_ptr theBlock,
  CORBA::Long     theDirFace1U,
  CORBA::Long     theDirFace2U,
@@ -2623,9 +2622,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation2D
   beginService( " GEOM_Superv_i::MakeMultiTransformation2D" );
   MESSAGE("GEOM_Superv_i::MakeMultiTransformation2D");
   getBlocksOp();
-  GEOM::GEOM_Object_ptr anObj = myBlocksOp->MakeMultiTransformation2D(theBlock, 
-								      theDirFace1U, theDirFace2U, theNbTimesU,
-								      theDirFace1V, theDirFace2V, theNbTimesV);
+  GEOM::GEOM_Object_ptr anObj = myBlocksOp->MakeMultiTransformation2D(theBlock,
+                                                                      theDirFace1U, theDirFace2U, theNbTimesU,
+                                                                      theDirFace1V, theDirFace2V, theNbTimesV);
   endService( " GEOM_Superv_i::MakeMultiTransformation2D" );
   return anObj;
 }
@@ -2635,8 +2634,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeMultiTransformation2D
 //  MakeCirclePntVecR:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCirclePntVecR (GEOM::GEOM_Object_ptr theCenter,
-							GEOM::GEOM_Object_ptr theVector,
-							CORBA::Double theR)
+                                                        GEOM::GEOM_Object_ptr theVector,
+                                                        CORBA::Double theR)
 {
   beginService( " GEOM_Superv_i::MakeCirclePntVecR" );
   MESSAGE("GEOM_Superv_i::MakeCirclePntVecR");
@@ -2650,8 +2649,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCirclePntVecR (GEOM::GEOM_Object_ptr th
 //  MakeCircleThreePnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleThreePnt (GEOM::GEOM_Object_ptr thePnt1,
-							 GEOM::GEOM_Object_ptr thePnt2,
-							 GEOM::GEOM_Object_ptr thePnt3)
+                                                         GEOM::GEOM_Object_ptr thePnt2,
+                                                         GEOM::GEOM_Object_ptr thePnt3)
 {
   beginService( " GEOM_Superv_i::MakeCircleThreePnt" );
   MESSAGE("GEOM_Superv_i::MakeCircleThreePnt");
@@ -2664,8 +2663,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleThreePnt (GEOM::GEOM_Object_ptr t
 //  MakeCircleCenter2Pnt:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleCenter2Pnt (GEOM::GEOM_Object_ptr thePnt1,
-						  	   GEOM::GEOM_Object_ptr thePnt2,
-							   GEOM::GEOM_Object_ptr thePnt3)
+                                                             GEOM::GEOM_Object_ptr thePnt2,
+                                                           GEOM::GEOM_Object_ptr thePnt3)
 {
   beginService( " GEOM_Superv_i::MakeCircleCenter2Pnt" );
   MESSAGE("GEOM_Superv_i::MakeCircleCenter2Pnt");
@@ -2679,9 +2678,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeCircleCenter2Pnt (GEOM::GEOM_Object_ptr
 //  MakeEllipse:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipse (GEOM::GEOM_Object_ptr theCenter,
-						  GEOM::GEOM_Object_ptr theVector,
-						  CORBA::Double theRMajor, 
-						  CORBA::Double theRMinor)
+                                                  GEOM::GEOM_Object_ptr theVector,
+                                                  CORBA::Double theRMajor,
+                                                  CORBA::Double theRMinor)
 {
   beginService( " GEOM_Superv_i::MakeEllipse" );
   MESSAGE("GEOM_Superv_i::MakeEllipse");
@@ -2695,10 +2694,10 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipse (GEOM::GEOM_Object_ptr theCente
 //  MakeEllipseVec:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipseVec (GEOM::GEOM_Object_ptr theCenter,
-						     GEOM::GEOM_Object_ptr theVector,
-						     CORBA::Double theRMajor, 
-						     CORBA::Double theRMinor,
-						     GEOM::GEOM_Object_ptr theVectorMajor)
+                                                     GEOM::GEOM_Object_ptr theVector,
+                                                     CORBA::Double theRMajor,
+                                                     CORBA::Double theRMinor,
+                                                     GEOM::GEOM_Object_ptr theVectorMajor)
 {
   beginService( " GEOM_Superv_i::MakeEllipseVec" );
   MESSAGE("GEOM_Superv_i::MakeEllipseVec");
@@ -2712,8 +2711,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEllipseVec (GEOM::GEOM_Object_ptr theCe
 //  MakeArc:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArc (GEOM::GEOM_Object_ptr thePnt1,
-					      GEOM::GEOM_Object_ptr thePnt2,
-					      GEOM::GEOM_Object_ptr thePnt3)
+                                              GEOM::GEOM_Object_ptr thePnt2,
+                                              GEOM::GEOM_Object_ptr thePnt3)
 {
   beginService( " GEOM_Superv_i::MakeArc" );
   MESSAGE("GEOM_Superv_i::MakeArc");
@@ -2743,8 +2742,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcCenter (GEOM::GEOM_Object_ptr theCen
 //  MakeArcOfEllipse:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcOfEllipse (GEOM::GEOM_Object_ptr thePnt1,
-						       GEOM::GEOM_Object_ptr thePnt2,
-						       GEOM::GEOM_Object_ptr thePnt3)
+                                                       GEOM::GEOM_Object_ptr thePnt2,
+                                                       GEOM::GEOM_Object_ptr thePnt3)
 {
   beginService( " GEOM_Superv_i::MakeArcOfEllipse" );
   MESSAGE("GEOM_Superv_i::MakeArcOfEllipse");
@@ -2761,7 +2760,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints
 {
   beginService( " GEOM_Superv_i::MakePolyline" );
   MESSAGE("GEOM_Superv_i::MakePolyline");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
     GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakePolyline(aListImplP->GetList());
@@ -2779,7 +2778,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePo
 {
   beginService( " GEOM_Superv_i::MakeSplineBezier" );
   MESSAGE("GEOM_Superv_i::MakeSplineBezier");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
     GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineBezier(aListImplP->GetList());
@@ -2798,7 +2797,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_pt
 {
   beginService( " GEOM_Superv_i::MakeSplineInterpolation" );
   MESSAGE("GEOM_Superv_i::MakeSplineInterpolation");
-  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP = 
+  if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
     GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineInterpolation(aListImplP->GetList(), theIsClosed);
@@ -2812,12 +2811,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_pt
 //=============================================================================
 //  MakeSketcher:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand, 
-						   GEOM::GEOM_List_ptr theWorkingPlane)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSketcher (const char* theCommand,
+                                                   GEOM::GEOM_List_ptr theWorkingPlane)
 {
   beginService( " GEOM_Superv_i::MakeSketcher" );
   MESSAGE("GEOM_Superv_i::MakeSketcher");
-  if (GEOM_List_i<GEOM::ListOfDouble>* aListImplWP = 
+  if (GEOM_List_i<GEOM::ListOfDouble>* aListImplWP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theWorkingPlane, myPOA).in())) {
     getCurvesOp();
     GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSketcher(theCommand, aListImplWP->GetList());
@@ -2835,7 +2834,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::Make3DSketcher ( GEOM::GEOM_List_ptr theCoo
 {
   beginService( " GEOM_Superv_i::Make3DSketcher" );
   MESSAGE("GEOM_Superv_i::Make3DSketcher");
-  if (GEOM_List_i<GEOM::ListOfDouble>* aListImpl = 
+  if (GEOM_List_i<GEOM::ListOfDouble>* aListImpl =
       dynamic_cast<GEOM_List_i<GEOM::ListOfDouble>*>(GetServant(theCoordinates, myPOA).in())) {
     getCurvesOp();
     GEOM::GEOM_Object_ptr anObj = myCurvesOp->Make3DSketcher(aListImpl->GetList());
@@ -2851,7 +2850,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::Make3DSketcher ( GEOM::GEOM_List_ptr theCoo
 //  MakeFilletAll:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletAll (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Double theR)
+                                                    CORBA::Double theR)
 {
   beginService( " GEOM_Superv_i::MakeFilletAll" );
   MESSAGE("GEOM_Superv_i::MakeFilletAllMakeSketcher");
@@ -2864,13 +2863,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletAll (GEOM::GEOM_Object_ptr theSha
 //=============================================================================
 //  MakeFilletEdges:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theShape, 
-						      CORBA::Double theR,
-						      GEOM::GEOM_List_ptr theEdges)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theShape,
+                                                      CORBA::Double theR,
+                                                      GEOM::GEOM_List_ptr theEdges)
 {
   beginService( " GEOM_Superv_i::MakeFilletEdges" );
   MESSAGE("GEOM_Superv_i::MakeFilletEdges");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplE = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplE =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFilletEdges(theShape, theR, aListImplE->GetList());
@@ -2884,14 +2883,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdges (GEOM::GEOM_Object_ptr theS
 //=============================================================================
 //  MakeFilletEdges R1 R2:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr theShape, 
-						          CORBA::Double theR1,
-						          CORBA::Double theR2,
-						          GEOM::GEOM_List_ptr theEdges)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr theShape,
+                                                          CORBA::Double theR1,
+                                                          CORBA::Double theR2,
+                                                          GEOM::GEOM_List_ptr theEdges)
 {
   beginService( " GEOM_Superv_i::MakeFilletEdgesR1R2" );
   MESSAGE("GEOM_Superv_i::MakeFilletEdgesR1R2");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplE = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplE =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFilletEdgesR1R2(theShape, theR1,
@@ -2906,13 +2905,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletEdgesR1R2 (GEOM::GEOM_Object_ptr 
 //=============================================================================
 //  MakeFilletFaces:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theShape, 
-						      CORBA::Double theR,
-						      GEOM::GEOM_List_ptr theFaces)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theShape,
+                                                      CORBA::Double theR,
+                                                      GEOM::GEOM_List_ptr theFaces)
 {
   beginService( " GEOM_Superv_i::MakeFilletFaces" );
   MESSAGE("GEOM_Superv_i::MakeFilletFaces");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFilletFaces(theShape, theR, aListImplF->GetList());
@@ -2926,14 +2925,14 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFaces (GEOM::GEOM_Object_ptr theS
 //=============================================================================
 //  MakeFilletFaces R1 R2:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape, 
-						          CORBA::Double theR1,
-						          CORBA::Double theR2,
-						          GEOM::GEOM_List_ptr theFaces)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr theShape,
+                                                          CORBA::Double theR1,
+                                                          CORBA::Double theR2,
+                                                          GEOM::GEOM_List_ptr theFaces)
 {
   beginService( " GEOM_Superv_i::MakeFilletFacesR1R2" );
   MESSAGE("GEOM_Superv_i::MakeFilletFacesR1R2");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFilletFacesR1R2(theShape, theR1, theR2,
@@ -2948,13 +2947,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFilletFacesR1R2 (GEOM::GEOM_Object_ptr 
 //=============================================================================
 //  MakeFillet2D:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShape, 
-						   CORBA::Double theR,
-						   GEOM::GEOM_List_ptr theVertexes)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShape,
+                                                   CORBA::Double theR,
+                                                   GEOM::GEOM_List_ptr theVertexes)
 {
   beginService( " GEOM_Superv_i::MakeFillet2D" );
   MESSAGE("GEOM_Superv_i::MakeFillet2D");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theVertexes, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet2D(theShape, theR, aListImplV->GetList());
@@ -2968,13 +2967,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShap
 //=============================================================================
 //  MakeFillet1D:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet1D (GEOM::GEOM_Object_ptr theShape, 
-						   CORBA::Double theR,
-						   GEOM::GEOM_List_ptr theVertexes)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet1D (GEOM::GEOM_Object_ptr theShape,
+                                                   CORBA::Double theR,
+                                                   GEOM::GEOM_List_ptr theVertexes)
 {
   beginService( " GEOM_Superv_i::MakeFillet1D" );
   MESSAGE("GEOM_Superv_i::MakeFillet1D");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplV =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theVertexes, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet1D(theShape, theR, aListImplV->GetList());
@@ -2997,13 +2996,13 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferAll (GEOM::GEOM_Object_ptr theSh
   endService( " GEOM_Superv_i::MakeChamferAll" );
   return anObj;
 }
-  
+
 //=============================================================================
 //  MakeChamferEdge:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdge (GEOM::GEOM_Object_ptr theShape,
-						      CORBA::Double theD1, CORBA::Double theD2,
-						      CORBA::Long theFace1, CORBA::Long theFace2)
+                                                      CORBA::Double theD1, CORBA::Double theD2,
+                                                      CORBA::Long theFace1, CORBA::Long theFace2)
 {
   beginService( " GEOM_Superv_i::MakeChamferEdge" );
   MESSAGE("GEOM_Superv_i::MakeChamferEdge");
@@ -3017,8 +3016,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdge (GEOM::GEOM_Object_ptr theS
 //  MakeChamferEdgeAD:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdgeAD (GEOM::GEOM_Object_ptr theShape,
-						        CORBA::Double theD, CORBA::Double theAngle,
-						        CORBA::Long theFace1, CORBA::Long theFace2)
+                                                        CORBA::Double theD, CORBA::Double theAngle,
+                                                        CORBA::Long theFace1, CORBA::Long theFace2)
 {
   beginService( " GEOM_Superv_i::MakeChamferEdgeAD" );
   MESSAGE("GEOM_Superv_i::MakeChamferEdgeAD");
@@ -3032,12 +3031,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdgeAD (GEOM::GEOM_Object_ptr th
 //  MakeChamferFaces:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFaces (GEOM::GEOM_Object_ptr theShape,
-						       CORBA::Double theD1, CORBA::Double theD2,
-						       GEOM::GEOM_List_ptr theFaces)
+                                                       CORBA::Double theD1, CORBA::Double theD2,
+                                                       GEOM::GEOM_List_ptr theFaces)
 {
   beginService( " GEOM_Superv_i::MakeChamferFaces" );
   MESSAGE("GEOM_Superv_i::MakeChamferFaces");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferFaces(theShape, theD1, theD2, aListImplF->GetList());
@@ -3052,12 +3051,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFaces (GEOM::GEOM_Object_ptr the
 //  MakeChamferFacesAD:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFacesAD (GEOM::GEOM_Object_ptr theShape,
-						         CORBA::Double theD, CORBA::Double theAngle,
-						         GEOM::GEOM_List_ptr theFaces)
+                                                         CORBA::Double theD, CORBA::Double theAngle,
+                                                         GEOM::GEOM_List_ptr theFaces)
 {
   beginService( " GEOM_Superv_i::MakeChamferFacesAD" );
   MESSAGE("GEOM_Superv_i::MakeChamferFacesAD");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theFaces, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferFacesAD(theShape, theD, theAngle, aListImplF->GetList());
@@ -3072,12 +3071,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferFacesAD (GEOM::GEOM_Object_ptr t
 //  MakeChamferEdges:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdges (GEOM::GEOM_Object_ptr theShape,
-						       CORBA::Double theD1, CORBA::Double theD2,
-						       GEOM::GEOM_List_ptr theEdges)
+                                                       CORBA::Double theD1, CORBA::Double theD2,
+                                                       GEOM::GEOM_List_ptr theEdges)
 {
   beginService( " GEOM_Superv_i::MakeChamferEdges" );
   MESSAGE("GEOM_Superv_i::MakeChamferEdges");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferEdges(theShape, theD1, theD2, aListImplF->GetList());
@@ -3092,12 +3091,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdges (GEOM::GEOM_Object_ptr the
 //  MakeChamferEdgesAD:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdgesAD (GEOM::GEOM_Object_ptr theShape,
-						         CORBA::Double theD, CORBA::Double theAngle,
-						         GEOM::GEOM_List_ptr theEdges)
+                                                         CORBA::Double theD, CORBA::Double theAngle,
+                                                         GEOM::GEOM_List_ptr theEdges)
 {
   beginService( " GEOM_Superv_i::MakeChamferEdgesAD" );
   MESSAGE("GEOM_Superv_i::MakeChamferEdgesAD");
-  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF = 
+  if (GEOM_List_i<GEOM::ListOfLong>* aListImplF =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theEdges, myPOA).in())) {
     getLocalOp();
     GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeChamferEdgesAD(theShape, theD, theAngle, aListImplF->GetList());
@@ -3112,9 +3111,9 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeChamferEdgesAD (GEOM::GEOM_Object_ptr t
 //  MakeArchimede:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArchimede (GEOM::GEOM_Object_ptr theShape,
-						    CORBA::Double theWeight,
-						    CORBA::Double theWaterDensity,
-						    CORBA::Double theMeshingDeflection)
+                                                    CORBA::Double theWeight,
+                                                    CORBA::Double theWaterDensity,
+                                                    CORBA::Double theMeshingDeflection)
 {
   beginService( " GEOM_Superv_i::MakeArchimede" );
   MESSAGE("GEOM_Superv_i::MakeArchimede");
@@ -3128,7 +3127,7 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArchimede (GEOM::GEOM_Object_ptr theSha
 //  GetSubShapeIndexMakeFilletAll:
 //=============================================================================
 CORBA::Long GEOM_Superv_i::GetSubShapeIndex (GEOM::GEOM_Object_ptr theShape,
-					     GEOM::GEOM_Object_ptr theSubShape)
+                                             GEOM::GEOM_Object_ptr theSubShape)
 {
   beginService( " GEOM_Superv_i::GetSubShapeIndex" );
   MESSAGE("GEOM_Superv_i::GetSubShapeIndexMakeArchimede");
@@ -3142,8 +3141,8 @@ CORBA::Long GEOM_Superv_i::GetSubShapeIndex (GEOM::GEOM_Object_ptr theShape,
 //=============================================================================
 //  CreateGroup:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::CreateGroup (GEOM::GEOM_Object_ptr theMainShape, 
-						  CORBA::Long theShapeType)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::CreateGroup (GEOM::GEOM_Object_ptr theMainShape,
+                                                  CORBA::Long theShapeType)
 {
   beginService( " GEOM_Superv_i::CreateGroup" );
   MESSAGE("GEOM_Superv_i::CreateGroup");
@@ -3156,8 +3155,8 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::CreateGroup (GEOM::GEOM_Object_ptr theMainS
 //=============================================================================
 //  AddObject:
 //=============================================================================
-void GEOM_Superv_i::AddObject (GEOM::GEOM_Object_ptr theGroup, 
-			       CORBA::Long theSubShapeId)
+void GEOM_Superv_i::AddObject (GEOM::GEOM_Object_ptr theGroup,
+                               CORBA::Long theSubShapeId)
 {
   beginService( " GEOM_Superv_i::AddObject" );
   MESSAGE("GEOM_Superv_i::AddObject");
@@ -3169,8 +3168,8 @@ void GEOM_Superv_i::AddObject (GEOM::GEOM_Object_ptr theGroup,
 //=============================================================================
 //  RemoveObject:
 //=============================================================================
-void GEOM_Superv_i::RemoveObject (GEOM::GEOM_Object_ptr theGroup, 
-				  CORBA::Long theSubShapeId)
+void GEOM_Superv_i::RemoveObject (GEOM::GEOM_Object_ptr theGroup,
+                                  CORBA::Long theSubShapeId)
 {
   beginService( " GEOM_Superv_i::RemoveObject" );
   MESSAGE("GEOM_Superv_i::RemoveObject");
@@ -3225,8 +3224,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetObjects (GEOM::GEOM_Object_ptr theGroup)
 //=============================================================================
 //  MakePipeTShape
 //=============================================================================
-GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShape (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShape
+                    (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                     CORBA::Boolean theHexMesh)
 {
   beginService( " GEOM_Superv_i::MakePipeTShape" );
   MESSAGE("GEOM_Superv_i::MakePipeTShape");
@@ -3242,9 +3243,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShape (CORBA::Double theR1, CORBA::D
 //=============================================================================
 //  MakePipeTShapeWithPosition
 //=============================================================================
-GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh,
-                                          GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeWithPosition
+                    (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, CORBA::Boolean theHexMesh,
+                     GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
 {
   beginService( " GEOM_Superv_i::MakePipeTShapeWithPosition" );
   MESSAGE("GEOM_Superv_i::MakePipeTShapeWithPosition");
@@ -3260,9 +3262,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeWithPosition (CORBA::Double the
 //=============================================================================
 //  MakePipeTShapeChamfer
 //=============================================================================
-GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamfer (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
-                                    CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamfer
+                    (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                     CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh)
 {
   beginService( " GEOM_Superv_i::MakePipeTShapeChamfer" );
   MESSAGE("GEOM_Superv_i::MakePipeTShapeChamfer");
@@ -3278,10 +3281,11 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamfer (CORBA::Double theR1, C
 //=============================================================================
 //  MakePipeTShapeChamferWithPosition
 //=============================================================================
-GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamferWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
-                                             CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
-                                          GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamferWithPosition
+                    (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                     CORBA::Double theH, CORBA::Double theW, CORBA::Boolean theHexMesh,
+                     GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
 {
   beginService( " GEOM_Superv_i::MakePipeTShapeChamferWithPosition" );
   MESSAGE("GEOM_Superv_i::MakePipeTShapeChamferWithPosition");
@@ -3297,9 +3301,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeChamferWithPosition (CORBA::Dou
 //=============================================================================
 //  MakePipeTShapeFillet
 //=============================================================================
-GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFillet (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
-                                    CORBA::Double theRF, CORBA::Boolean theHexMesh)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFillet
+                    (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                     CORBA::Double theRF, CORBA::Boolean theHexMesh)
 {
   beginService( " GEOM_Superv_i::MakePipeTShapeFillet" );
   MESSAGE("GEOM_Superv_i::MakePipeTShapeFillet");
@@ -3315,10 +3320,11 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFillet (CORBA::Double theR1, CO
 //=============================================================================
 //  MakePipeTShapeFilletWithPosition
 //=============================================================================
-GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1, 
-                                  CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2, 
-                                             CORBA::Double theRF, CORBA::Boolean theHexMesh,
-                                          GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
+GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition
+                    (CORBA::Double theR1, CORBA::Double theW1, CORBA::Double theL1,
+                     CORBA::Double theR2, CORBA::Double theW2, CORBA::Double theL2,
+                     CORBA::Double theRF, CORBA::Boolean theHexMesh,
+                     GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3)
 {
   beginService( " GEOM_Superv_i::MakePipeTShapeFilletWithPosition" );
   MESSAGE("GEOM_Superv_i::MakePipeTShapeFilletWithPosition");
@@ -3339,10 +3345,10 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition (CORBA::Doub
 extern "C"
 {
   PortableServer::ObjectId * GEOM_SupervEngine_factory(CORBA::ORB_ptr orb,
-						      PortableServer::POA_ptr poa, 
-						      PortableServer::ObjectId * contId,
-						      const char *instanceName, 
-						      const char * interfaceName)
+                                                       PortableServer::POA_ptr poa,
+                                                       PortableServer::ObjectId * contId,
+                                                       const char *instanceName,
+                                                       const char * interfaceName)
   {
     GEOM_Superv_i * myGEOM_Superv_i = new GEOM_Superv_i(orb, poa, contId, instanceName, interfaceName);
     //Don't understand the reason why this component is registered ???

@@ -172,8 +172,9 @@ GeometryGUI::GeometryGUI() :
 {
   if ( CORBA::is_nil( myComponentGeom ) )
   {
-    Engines::Component_var comp = SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
-    myComponentGeom  = GEOM::GEOM_Gen::_narrow( comp );
+    Engines::EngineComponent_var comp =
+      SalomeApp_Application::lcc()->FindOrLoad_Component( "FactoryServer", "GEOM" );
+    myComponentGeom = GEOM::GEOM_Gen::_narrow( comp );
   }
 
   myActiveDialogBox = 0;
@@ -588,22 +589,22 @@ void GeometryGUI::OnMousePress( SUIT_ViewWindow* w, QMouseEvent* e )
 // function : createGeomAction
 // purpose  :
 //=======================================================================
-void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel, 
-				    const int accel, const bool toggle, const QString& shortcutAction )
+void GeometryGUI::createGeomAction( const int id, const QString& label, const QString& icolabel,
+                                    const int accel, const bool toggle, const QString& shortcutAction )
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QPixmap icon = icolabel.isEmpty() ? resMgr->loadPixmap( "GEOM", tr( (QString( "ICO_" )+label).toLatin1().constData() ), false )
                                     : resMgr->loadPixmap( "GEOM", tr( icolabel.toLatin1().constData() ) );
   createAction( id,
-		tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
-		icon,
-		tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ),
-		tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
-		accel,
-		application()->desktop(),
-		toggle,
-		this, SLOT( OnGUIEvent() ),
-		shortcutAction );
+                tr( QString( "TOP_%1" ).arg( label ).toLatin1().constData() ),
+                icon,
+                tr( QString( "MEN_%1" ).arg( label ).toLatin1().constData() ),
+                tr( QString( "STB_%1" ).arg( label ).toLatin1().constData() ),
+                accel,
+                application()->desktop(),
+                toggle,
+                this, SLOT( OnGUIEvent() ),
+                shortcutAction );
 }
 
 //=======================================================================
@@ -787,18 +788,18 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
-  
+
   // Create actions for increase/decrease transparency shortcuts
-  createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false, 
-		    "Geometry:Increase transparency");
-  createGeomAction( GEOMOp::OpDecrTransparency, "", "", 0, false, 
-		    "Geometry:Decrease transparency");
+  createGeomAction( GEOMOp::OpIncrTransparency, "", "", 0, false,
+                    "Geometry:Increase transparency");
+  createGeomAction( GEOMOp::OpDecrTransparency, "", "", 0, false,
+                    "Geometry:Decrease transparency");
 
   // Create actions for increase/decrease number of isolines
-  createGeomAction( GEOMOp::OpIncrNbIsos, "", "", 0, false, 
-		    "Geometry:Increase number of isolines");
-  createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false, 
-		    "Geometry:Decrease number of isolines");
+  createGeomAction( GEOMOp::OpIncrNbIsos, "", "", 0, false,
+                    "Geometry:Increase number of isolines");
+  createGeomAction( GEOMOp::OpDecrNbIsos, "", "", 0, false,
+                    "Geometry:Decrease number of isolines");
 
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
@@ -1543,7 +1544,7 @@ void GeometryGUI::createPreferences()
   const int nbQuantities = 8;
   int prec[nbQuantities], ii = 0;
   prec[ii++] = addPreference( tr( "GEOM_PREF_length_precision" ), precGroup,
-			      LightApp_Preferences::IntSpin, "Geometry", "length_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "length_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_angle_precision" ), precGroup,
                               LightApp_Preferences::IntSpin, "Geometry", "angle_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_len_tol_precision" ), precGroup,
@@ -1553,11 +1554,11 @@ void GeometryGUI::createPreferences()
   prec[ii++] = addPreference( tr( "GEOM_PREF_weight_precision" ), precGroup,
                               LightApp_Preferences::IntSpin, "Geometry", "weight_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_density_precision" ), precGroup,
-			      LightApp_Preferences::IntSpin, "Geometry", "density_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "density_precision" );
   prec[ii++] = addPreference( tr( "GEOM_PREF_parametric_precision" ), precGroup,
                               LightApp_Preferences::IntSpin, "Geometry", "parametric_precision" );
   prec[ii  ] = addPreference( tr( "GEOM_PREF_param_tol_precision" ), precGroup,
-			      LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );
+                              LightApp_Preferences::IntSpin, "Geometry", "param_tol_precision" );
 
   // Set property for precision value for spinboxes
   for ( ii = 0; ii < nbQuantities; ii++ ){
@@ -1691,7 +1692,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
                                                              componentName.c_str(),
                                                              savePoint);
   _PTR(IParameters) ip = ClientFactory::getIParameters(ap);
-  
+
   QList<SUIT_ViewManager*> lst;
   QList<SUIT_ViewManager*>::Iterator it;
 
@@ -1708,65 +1709,65 @@ void GeometryGUI::storeVisualParameters (int savePoint)
       const ObjMap anObjects = appStudy->getObjectMap(aMgrId);
       ObjMap::ConstIterator o_it = anObjects.begin();
       for( ;o_it != anObjects.end(); o_it++ ) {
-	const PropMap aProps = o_it.value();	
+        const PropMap aProps = o_it.value();
 
-	//Check that object exists in the study
-	_PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
-	if ( !obj ) 
-	  continue;	
-	// entry is "encoded" = it does NOT contain component adress, since it is a
-	// subject to change on next component loading
+        //Check that object exists in the study
+        _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
+        if ( !obj )
+          continue;
+        // entry is "encoded" = it does NOT contain component adress, since it is a
+        // subject to change on next component loading
 
-	std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
-	
-	_PTR(GenericAttribute) anAttr;
-	if( !obj->FindAttribute(anAttr, "AttributeIOR"))
-	  continue;
-	
-	std::string param, occParam = vType.toLatin1().data();
-	occParam += NAME_SEPARATOR;
-	occParam += QString::number(aMgrId).toLatin1().data();
-	occParam += NAME_SEPARATOR;
-	
-	param = occParam + VISIBILITY_PROP;
-	ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
-	
-	param = occParam + DISPLAY_MODE_PROP;
-	
-	ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
-	
-	QColor c = aProps.value(COLOR_PROP).value<QColor>();
-	QString colorStr = QString::number(c.red()/255.);
-	colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
-	colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
-	param = occParam + COLOR_PROP;
-	ip->setParameter(entry, param, colorStr.toLatin1().data());
-	
-	if(vType == SVTK_Viewer::Type()) {
-	  param = occParam + OPACITY_PROP;
-	  ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
-	} else if (vType == SOCC_Viewer::Type()) {
-	  param = occParam + TRANSPARENCY_PROP;
-	  ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
-	}
-	 
-	param = occParam + ISOS_PROP;
-	ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
-	
-	param = occParam + VECTOR_MODE_PROP;
-	ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+        std::string entry = ip->encodeEntry(o_it.key().toLatin1().data(), componentName);
 
-	param = occParam + DEFLECTION_COEFF_PROP;
-	ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+        _PTR(GenericAttribute) anAttr;
+        if( !obj->FindAttribute(anAttr, "AttributeIOR"))
+          continue;
 
-	param = occParam + DEFLECTION_COEFF_PROP;
-	ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+        std::string param, occParam = vType.toLatin1().data();
+        occParam += NAME_SEPARATOR;
+        occParam += QString::number(aMgrId).toLatin1().data();
+        occParam += NAME_SEPARATOR;
 
-	//Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
-	if(aProps.contains(MARKER_TYPE_PROP)) {
-	  param = occParam + MARKER_TYPE_PROP;
-	  ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
-	}
+        param = occParam + VISIBILITY_PROP;
+        ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+
+        param = occParam + DISPLAY_MODE_PROP;
+
+        ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
+
+        QColor c = aProps.value(COLOR_PROP).value<QColor>();
+        QString colorStr = QString::number(c.red()/255.);
+        colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
+        colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
+        param = occParam + COLOR_PROP;
+        ip->setParameter(entry, param, colorStr.toLatin1().data());
+
+        if(vType == SVTK_Viewer::Type()) {
+          param = occParam + OPACITY_PROP;
+          ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+        } else if (vType == SOCC_Viewer::Type()) {
+          param = occParam + TRANSPARENCY_PROP;
+          ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+        }
+
+        param = occParam + ISOS_PROP;
+        ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+
+        param = occParam + VECTOR_MODE_PROP;
+        ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+
+        param = occParam + DEFLECTION_COEFF_PROP;
+        ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+
+        param = occParam + DEFLECTION_COEFF_PROP;
+        ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+
+        //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
+        if(aProps.contains(MARKER_TYPE_PROP)) {
+          param = occParam + MARKER_TYPE_PROP;
+          ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
+        }
 
       } // object iterator
     } // for (views)
@@ -1823,7 +1824,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
     QString viewIndexStr;
     int viewIndex;
     QVector<PropMap> aListOfMap;
-    
+
     for (; namesIt != paramNames.end(); ++namesIt, ++valuesIt)
     {
       // visual parameters are stored in strings as follows: ViewerType_ViewIndex_ParamName.
@@ -1840,41 +1841,41 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       viewIndex = viewIndexStr.toUInt(&ok);
       if (!ok) // bad conversion of view index to integer
         continue;
-      
+
       if((viewIndex + 1) > aListOfMap.count()) {
-	aListOfMap.resize(viewIndex + 1);
+        aListOfMap.resize(viewIndex + 1);
       }
 
       QString val((*valuesIt).c_str());
       if(paramNameStr == VISIBILITY_PROP){
-	aListOfMap[viewIndex].insert(VISIBILITY_PROP, val == "On" ? 1 : 0);
+        aListOfMap[viewIndex].insert(VISIBILITY_PROP, val == "On" ? 1 : 0);
 
       } else if(paramNameStr == OPACITY_PROP) {
-	aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, 1. - val.toDouble());
+        aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, 1. - val.toDouble());
 
-      }	else if(paramNameStr == TRANSPARENCY_PROP) { 
-	aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, val.toDouble());
+      }        else if(paramNameStr == TRANSPARENCY_PROP) {
+        aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, val.toDouble());
 
       } else if(paramNameStr == DISPLAY_MODE_PROP) {
-	aListOfMap[viewIndex].insert( DISPLAY_MODE_PROP, val.toInt());
-	
+        aListOfMap[viewIndex].insert( DISPLAY_MODE_PROP, val.toInt());
+
       } else if(paramNameStr == ISOS_PROP) {
-	aListOfMap[viewIndex].insert( ISOS_PROP, val);
+        aListOfMap[viewIndex].insert( ISOS_PROP, val);
 
       } else if(paramNameStr == COLOR_PROP) {
-	QStringList rgb = val.split(DIGIT_SEPARATOR);
-	if(rgb.count() == 3) {
-	  QColor c(int(rgb[0].toDouble()*255), int(rgb[1].toDouble()*255), int(rgb[2].toDouble()*255));
-	  aListOfMap[viewIndex].insert( COLOR_PROP, c);	  
-	}
+        QStringList rgb = val.split(DIGIT_SEPARATOR);
+        if(rgb.count() == 3) {
+          QColor c(int(rgb[0].toDouble()*255), int(rgb[1].toDouble()*255), int(rgb[2].toDouble()*255));
+          aListOfMap[viewIndex].insert( COLOR_PROP, c);
+        }
       } else if(paramNameStr == VECTOR_MODE_PROP) {
-	aListOfMap[viewIndex].insert( VECTOR_MODE_PROP, val.toInt());
+        aListOfMap[viewIndex].insert( VECTOR_MODE_PROP, val.toInt());
 
       }  else if(paramNameStr == DEFLECTION_COEFF_PROP) {
-	aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
+        aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
       }  else if(paramNameStr == MARKER_TYPE_PROP) {
-	aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
-      }     
+        aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
+      }
 
     } // for names/parameters iterator
 
@@ -1886,15 +1887,15 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
       QColor c = aListOfMap[index].value(COLOR_PROP).value<QColor>();
       //Get Visibility property of the current PropMap
-      if(aListOfMap[index].value(VISIBILITY_PROP) == 1) {
-	SUIT_ViewManager* vman = lst.at(index);
-	SUIT_ViewModel* vmodel = vman->getViewModel();
-	displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));    
+      if (aListOfMap[index].value(VISIBILITY_PROP) == 1) {
+        SUIT_ViewManager* vman = lst.at(index);
+        SUIT_ViewModel* vmodel = vman->getViewModel();
+        displayer()->Display(entry, true, dynamic_cast<SALOME_View*>(vmodel));
       }
     }
-    
+
   } // for entries iterator
-  
+
   // update all VTK and OCC views
   QList<SUIT_ViewManager*> lst;
   getApp()->viewManagers(lst);

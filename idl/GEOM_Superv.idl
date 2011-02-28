@@ -19,10 +19,9 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File   : GEOM_Superv.idl
 //  Author : Lucien PIGNOLONI
-//
+
 #ifndef __GEOM_SUPERV__
 #define __GEOM_SUPERV__
 
@@ -33,220 +32,222 @@ module GEOM
   interface GEOM_List
   { };
 
-  interface GEOM_Superv : Engines::Component,SALOMEDS::Driver
+  interface GEOM_Superv : Engines::EngineComponent,SALOMEDS::Driver
   {
     //-----------------------------------------------------------//
-    // Set current study ID                                      // 
+    // Set current study ID                                      //
     //-----------------------------------------------------------//
     void SetStudyID (in long theStudyID) ;
-    
+
     //-----------------------------------------------------------//
-    // Create ListOfGO and add items to it                       // 
+    // Create ListOfGO and add items to it                       //
     //-----------------------------------------------------------//
     GEOM_List CreateListOfGO();
-    void AddItemToListOfGO( inout GEOM_List theList, 
-			    in GEOM_Object theObject);
+    void AddItemToListOfGO( inout GEOM_List theList,
+                            in GEOM_Object theObject);
 
     //-----------------------------------------------------------//
-    // Create ListOfLong and add items to it                     // 
+    // Create ListOfLong and add items to it                     //
     //-----------------------------------------------------------//
     GEOM_List CreateListOfLong();
-    void AddItemToListOfLong( inout GEOM_List theList, 
-			      in long theObject);
+    void AddItemToListOfLong( inout GEOM_List theList,
+                              in long theObject);
 
     //-----------------------------------------------------------//
-    // Create ListOfDouble and add items to it                   // 
+    // Create ListOfDouble and add items to it                   //
     //-----------------------------------------------------------//
     GEOM_List CreateListOfDouble();
-    void AddItemToListOfDouble( inout GEOM_List theList, 
-				in double theObject);
+    void AddItemToListOfDouble( inout GEOM_List theList,
+                                in double theObject);
 
     //-----------------------------------------------------------//
-    // Primitives Construction : BasicOperations                 // 
+    // Primitives Construction : BasicOperations                 //
     //-----------------------------------------------------------//
     GEOM_Object MakePointXYZ (in double theX,
-			      in double theY,
-			      in double theZ) ;
+                              in double theY,
+                              in double theZ) ;
     GEOM_Object MakePointWithReference (in GEOM_Object theReference,
-					in double theX, 
-					in double theY, 
-					in double theZ) ;
+                                        in double theX,
+                                        in double theY,
+                                        in double theZ) ;
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
-				  in double theParameter) ;
+                                  in double theParameter) ;
 
     GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
-				     in double theParameter);
+                                     in double theParameter);
 
     GEOM_Object MakeVectorDXDYDZ (in double theDX,
-				  in double theDY,
-				  in double theDZ) ;
+                                  in double theDY,
+                                  in double theDZ) ;
     GEOM_Object MakeVectorTwoPnt (in GEOM_Object thePnt1,
-				  in GEOM_Object thePnt2) ;
+                                  in GEOM_Object thePnt2) ;
     GEOM_Object MakeLineTwoPnt (in GEOM_Object thePnt1,
-				in GEOM_Object thePnt2) ;
+                                in GEOM_Object thePnt2) ;
     GEOM_Object MakeLineTwoFaces (in GEOM_Object theFace1,
-				  in GEOM_Object theFace2) ;
+                                  in GEOM_Object theFace2) ;
     GEOM_Object MakePlaneThreePnt (in GEOM_Object thePnt1,
-				   in GEOM_Object thePnt2,
-				   in GEOM_Object thePnt3,
-				   in double theTrimSize) ;
+                                   in GEOM_Object thePnt2,
+                                   in GEOM_Object thePnt3,
+                                   in double theTrimSize) ;
     GEOM_Object MakePlanePntVec (in GEOM_Object thePnt,
-				 in GEOM_Object theVec,
-				 in double      theTrimSize) ;
+                                 in GEOM_Object theVec,
+                                 in double      theTrimSize) ;
     GEOM_Object MakePlaneFace (in GEOM_Object theFace,
-			       in double      theTrimSize) ;
+                               in double      theTrimSize) ;
     GEOM_Object MakePlane2Vec (in GEOM_Object theVec1,
-			       in GEOM_Object theVec2,
-			       in double      theTrimSize) ;
+                               in GEOM_Object theVec2,
+                               in double      theTrimSize) ;
     GEOM_Object MakePlaneLCS (in GEOM_Object theLCS,
-			      in double      theTrimSize,
-			      in double      theOrientation) ;
+                              in double      theTrimSize,
+                              in double      theOrientation) ;
     GEOM_Object MakeMarker (in double theOX , in double theOY , in double theOZ,
-			    in double theXDX, in double theXDY, in double theXDZ,
-			    in double theYDX, in double theYDY, in double theYDZ) ;
-			    
+                            in double theXDX, in double theXDY, in double theXDZ,
+                            in double theYDX, in double theYDY, in double theYDZ) ;
+
     GEOM_Object MakeMarkerFromShape (in GEOM_Object theShape) ;
-    
-    GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin, in GEOM_Object theXVec, in GEOM_Object theYVec) ;
+
+    GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin,
+                                     in GEOM_Object theXVec,
+                                     in GEOM_Object theYVec) ;
 
     /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
      *  Values of parameters should be between 0. and 1.0
-     *  \param theFace - face for which tangent plane shuold be built. 
+     *  \param theFace - face for which tangent plane shuold be built.
      *  \param theParameterU - value of parameter by U
      *  \param theParameterV - value of parameter Vthe
      *  \param theTrimSize - defines sizes of created face
      *  \return New GEOM_Object, containing the face built on tangent plane.
      */
     GEOM_Object MakeTangentPlaneOnFace(in GEOM_Object theFace,
-				       in double theParameterU,
-				       in double theParameterV,
-				       in double theTrimSize);
+                                       in double theParameterU,
+                                       in double theParameterV,
+                                       in double theTrimSize);
 
     //-----------------------------------------------------------//
     // Primitives Construction : 3DPrimOperations                //
     //-----------------------------------------------------------//
     GEOM_Object MakeBox (in double theX1,
-			 in double theY1,
-			 in double theZ1,
-			 in double theX2,
-			 in double theY2,
-			 in double theZ2) ; 
-    GEOM_Object MakeBoxDXDYDZ (in double theDX, 
-			       in double theDY, 
-			       in double theDZ) ;
-    GEOM_Object MakeBoxTwoPnt (in GEOM_Object thePnt1, 
-			       in GEOM_Object thePnt2) ;
-    GEOM_Object MakeFaceHW (in double theH, 
-			    in double theW,
-			    in short  theOrientation) ;
-    GEOM_Object MakeFaceObjHW (in GEOM_Object theObj, 
-			       in double      theH,
-			       in double      theW) ;
+                         in double theY1,
+                         in double theZ1,
+                         in double theX2,
+                         in double theY2,
+                         in double theZ2) ;
+    GEOM_Object MakeBoxDXDYDZ (in double theDX,
+                               in double theDY,
+                               in double theDZ) ;
+    GEOM_Object MakeBoxTwoPnt (in GEOM_Object thePnt1,
+                               in GEOM_Object thePnt2) ;
+    GEOM_Object MakeFaceHW (in double theH,
+                            in double theW,
+                            in short  theOrientation) ;
+    GEOM_Object MakeFaceObjHW (in GEOM_Object theObj,
+                               in double      theH,
+                               in double      theW) ;
     GEOM_Object MakeDiskPntVecR (in GEOM_Object thePnt,
-				 in GEOM_Object theVec,
-				 in double      theR) ;
+                                 in GEOM_Object theVec,
+                                 in double      theR) ;
     GEOM_Object MakeDiskThreePnt (in GEOM_Object thePnt1,
-				  in GEOM_Object thePnt2,
-				  in GEOM_Object thePnt3) ;
-    GEOM_Object MakeDiskR (in double theR, 
- 		           in short  theOrientation) ;
+                                  in GEOM_Object thePnt2,
+                                  in GEOM_Object thePnt3) ;
+    GEOM_Object MakeDiskR (in double theR,
+                            in short  theOrientation) ;
     GEOM_Object MakeCylinderPntVecRH (in GEOM_Object thePnt,
-				      in GEOM_Object theAxis,
-				      in double      theRadius,
-				      in double      theHeight) ;
-    GEOM_Object MakeCylinderRH (in double theR, 
-				in double theH) ;
+                                      in GEOM_Object theAxis,
+                                      in double      theRadius,
+                                      in double      theHeight) ;
+    GEOM_Object MakeCylinderRH (in double theR,
+                                in double theH) ;
     GEOM_Object MakeSphere (in double theX,
-			    in double theY,
-			    in double theZ,
-			    in double theRadius) ;
+                            in double theY,
+                            in double theZ,
+                            in double theRadius) ;
     GEOM_Object MakeSphereR (in double theR) ;
-    GEOM_Object MakeSpherePntR (in GEOM_Object thePnt, 
-				in double      theR) ;
+    GEOM_Object MakeSpherePntR (in GEOM_Object thePnt,
+                                in double      theR) ;
     GEOM_Object MakeTorusPntVecRR (in GEOM_Object thePnt,
-				   in GEOM_Object theVec,
-				   in double      theRMajor,
-				   in double      theRMinor) ;
+                                   in GEOM_Object theVec,
+                                   in double      theRMajor,
+                                   in double      theRMinor) ;
     GEOM_Object MakeTorusRR (in double theRMajor,
-			     in double theRMinor) ;
+                             in double theRMinor) ;
     GEOM_Object MakeConePntVecR1R2H (in GEOM_Object thePnt,
-				     in GEOM_Object theAxis,
-				     in double      theR1,
-				     in double      theR2,
-				     in double      theHeight) ;
-    GEOM_Object MakeConeR1R2H (in double theR1, 
-			       in double theR2, 
-			       in double theHeight) ;
+                                     in GEOM_Object theAxis,
+                                     in double      theR1,
+                                     in double      theR2,
+                                     in double      theHeight) ;
+    GEOM_Object MakeConeR1R2H (in double theR1,
+                               in double theR2,
+                               in double theHeight) ;
     GEOM_Object MakePrismVecH (in GEOM_Object theBase,
-			       in GEOM_Object theVec,
-			       in double      theH) ;
+                               in GEOM_Object theVec,
+                               in double      theH) ;
     GEOM_Object MakePrismVecH2Ways (in GEOM_Object theBase,
-				    in GEOM_Object theVec,
-				    in double      theH) ;
+                                    in GEOM_Object theVec,
+                                    in double      theH) ;
     GEOM_Object MakePrismTwoPnt (in GEOM_Object theBase,
-				 in GEOM_Object thePoint1,
-				 in GEOM_Object thePoint2) ;
+                                 in GEOM_Object thePoint1,
+                                 in GEOM_Object thePoint2) ;
     GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
-				      in GEOM_Object thePoint1,
-				      in GEOM_Object thePoint2) ;
-    GEOM_Object MakePipe (in GEOM_Object theBase, 
-			  in GEOM_Object thePath) ;
+                                      in GEOM_Object thePoint1,
+                                      in GEOM_Object thePoint2) ;
+    GEOM_Object MakePipe (in GEOM_Object theBase,
+                          in GEOM_Object thePath) ;
     GEOM_Object MakeRevolutionAxisAngle (in GEOM_Object theBase,
-					 in GEOM_Object theAxis,
-					 in double      theAngle) ;
+                                         in GEOM_Object theAxis,
+                                         in double      theAngle) ;
     GEOM_Object MakeRevolutionAxisAngle2Ways (in GEOM_Object theBase,
-					      in GEOM_Object theAxis,
-					      in double      theAngle) ;
+                                              in GEOM_Object theAxis,
+                                              in double      theAngle) ;
     GEOM_Object MakeFilling (in GEOM_Object theShape,
-			     in long theMinDeg, in long theMaxDeg,
-			     in double theTol2D, in double theTol3D,
-			     in long theNbIter,
+                             in long theMinDeg, in long theMaxDeg,
+                             in double theTol2D, in double theTol3D,
+                             in long theNbIter,
                              in filling_oper_method theMethod,
                              in boolean theApprox) ;
     GEOM_Object MakeThruSections(in ListOfGO theSeqSections,
-				 in boolean theModeSolid,
-				 in double thePreci,
+                                 in boolean theModeSolid,
+                                 in double thePreci,
                                  in boolean theRuled);
 
     GEOM_Object MakePipeWithDifferentSections (in ListOfGO theSeqBases,
-					       in ListOfGO theLocations,
-					       in GEOM_Object thePath,
-					       in boolean theWithContact ,
-					       in boolean theWithCorrection );
-    
-    GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
-					   in ListOfGO theSeqSubBases,
-					   in ListOfGO theLocations,
-					   in GEOM_Object thePath,
-					   in boolean theWithContact ,
-					   in boolean theWithCorrection );
-    
-    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
-					   in ListOfGO theLocations );
+                                               in ListOfGO theLocations,
+                                               in GEOM_Object thePath,
+                                               in boolean theWithContact ,
+                                               in boolean theWithCorrection );
 
-    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase, 
-					     in GEOM_Object thePath, 
-					     in GEOM_Object theVec);
+    GEOM_Object MakePipeWithShellSections (in ListOfGO theSeqBases,
+                                           in ListOfGO theSeqSubBases,
+                                           in ListOfGO theLocations,
+                                           in GEOM_Object thePath,
+                                           in boolean theWithContact ,
+                                           in boolean theWithCorrection );
+
+    GEOM_Object MakePipeShellsWithoutPath (in ListOfGO theSeqBases,
+                                           in ListOfGO theLocations );
+
+    GEOM_Object MakePipeBiNormalAlongVector (in GEOM_Object theBase,
+                                             in GEOM_Object thePath,
+                                             in GEOM_Object theVec);
 
     //-----------------------------------------------------------//
     // BooleanOperations                                         //
     //-----------------------------------------------------------//
     GEOM_Object MakeBoolean (in GEOM_Object theShape1,
-			     in GEOM_Object theShape2,
-			     in long        theOperation) ;
+                             in GEOM_Object theShape2,
+                             in long        theOperation) ;
     GEOM_Object MakeFuse (in GEOM_Object theShape1,
-			  in GEOM_Object theShape2) ;
+                          in GEOM_Object theShape2) ;
     GEOM_Object MakePartition (in GEOM_List   theShapes,
-			       in GEOM_List   theTools,
-			       in GEOM_List   theKeepInside,
-			       in GEOM_List   theRemoveInside,
-			       in short       theLimit,
-			       in boolean     theRemoveWebs,
-			       in GEOM_List   theMaterials,
-			       in short       theKeepNonlimitShapes);
+                               in GEOM_List   theTools,
+                               in GEOM_List   theKeepInside,
+                               in GEOM_List   theRemoveInside,
+                               in short       theLimit,
+                               in boolean     theRemoveWebs,
+                               in GEOM_List   theMaterials,
+                               in short       theKeepNonlimitShapes);
     GEOM_Object MakeHalfPartition (in GEOM_Object theShape,
-				   in GEOM_Object thePlane) ;
+                                   in GEOM_Object thePlane) ;
 
     //-----------------------------------------------------------//
     // InsertOperations                                          //
@@ -255,91 +256,91 @@ module GEOM
     void Export (in GEOM_Object theObject, in string theFileName, in string theFormatName) ;
     GEOM_Object Import (in string theFileName, in string theFormatName) ;
     void ImportTranslators (out string_array theFormats,
-			    out string_array thePatterns) ;
+                            out string_array thePatterns) ;
     void ExportTranslators (out string_array theFormats,
-			    out string_array thePatterns) ;
+                            out string_array thePatterns) ;
 
     //-----------------------------------------------------------//
     // TransformOperations                                       //
     //-----------------------------------------------------------//
     GEOM_Object TranslateTwoPoints (in GEOM_Object theObject,
-				    in GEOM_Object thePoint1,
-				    in GEOM_Object thePoint2) ;
+                                    in GEOM_Object thePoint1,
+                                    in GEOM_Object thePoint2) ;
     GEOM_Object TranslateTwoPointsCopy (in GEOM_Object theObject,
-					in GEOM_Object thePoint1,
+                                        in GEOM_Object thePoint1,
                                         in GEOM_Object thePoint2) ;
     GEOM_Object TranslateDXDYDZ (in GEOM_Object theObject,
-				 in double      theDX, 
-				 in double      theDY, 
-				 in double      theDZ) ;
+                                 in double      theDX,
+                                 in double      theDY,
+                                 in double      theDZ) ;
     GEOM_Object TranslateDXDYDZCopy (in GEOM_Object theObject,
-				     in double      theDX, 
-				     in double      theDY, 
-				     in double      theDZ) ;
+                                     in double      theDX,
+                                     in double      theDY,
+                                     in double      theDZ) ;
     GEOM_Object TranslateVector (in GEOM_Object theObject,
-				 in GEOM_Object theVector) ;
+                                 in GEOM_Object theVector) ;
     GEOM_Object TranslateVectorCopy (in GEOM_Object theObject,
-				     in GEOM_Object theVector) ;
+                                     in GEOM_Object theVector) ;
     GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
-					 in GEOM_Object theVector,
-					 in double      theDistance,
-					 in boolean     theCopy) ;
+                                         in GEOM_Object theVector,
+                                         in double      theDistance,
+                                         in boolean     theCopy) ;
     GEOM_Object MultiTranslate1D (in GEOM_Object theObject,
-				  in GEOM_Object theVector,
-				  in double      theStep,
-				  in long        theNbTimes) ;
+                                  in GEOM_Object theVector,
+                                  in double      theStep,
+                                  in long        theNbTimes) ;
     GEOM_Object MultiTranslate2D (in GEOM_Object theObject,
-				  in GEOM_Object theVector1,
-				  in double      theStep1,
-				  in long        theNbTimes1,
-				  in GEOM_Object theVector2,
-				  in double      theStep2,
-				  in long        theNbTimes2) ;
+                                  in GEOM_Object theVector1,
+                                  in double      theStep1,
+                                  in long        theNbTimes1,
+                                  in GEOM_Object theVector2,
+                                  in double      theStep2,
+                                  in long        theNbTimes2) ;
     GEOM_Object Rotate (in GEOM_Object theObject,
-			in GEOM_Object theAxis,
-			in double      theAngle) ;
+                        in GEOM_Object theAxis,
+                        in double      theAngle) ;
     GEOM_Object RotateCopy (in GEOM_Object theObject,
-			    in GEOM_Object theAxis,
-			    in double      theAngle) ;
+                            in GEOM_Object theAxis,
+                            in double      theAngle) ;
     GEOM_Object RotateThreePoints (in GEOM_Object theObject,
-				   in GEOM_Object theCentPoint,
-				   in GEOM_Object thePoint1,
-				   in GEOM_Object thePoint2);
+                                   in GEOM_Object theCentPoint,
+                                   in GEOM_Object thePoint1,
+                                   in GEOM_Object thePoint2);
     GEOM_Object RotateThreePointsCopy (in GEOM_Object theObject,
-				       in GEOM_Object theCentPoint,
-				       in GEOM_Object thePoint1,
-				       in GEOM_Object thePoint2);
+                                       in GEOM_Object theCentPoint,
+                                       in GEOM_Object thePoint1,
+                                       in GEOM_Object thePoint2);
     GEOM_Object MultiRotate1D (in GEOM_Object theObject,
-			       in GEOM_Object theAxis,
-			       in long        theNbTimes) ;
+                               in GEOM_Object theAxis,
+                               in long        theNbTimes) ;
     GEOM_Object MultiRotate2D (in GEOM_Object theObject,
-			       in GEOM_Object theAxis,
-			       in double      theAngle,
-			       in long        theNbTimes1,
-			       in double      theStep,
-			       in long        theNbTimes2) ;
-    GEOM_Object MirrorPlane (in GEOM_Object theObject, 
-			     in GEOM_Object thePlane) ;
-    GEOM_Object MirrorPlaneCopy (in GEOM_Object theObject, 
-				 in GEOM_Object thePlane) ;
-    GEOM_Object MirrorAxis (in GEOM_Object theObject, 
-			    in GEOM_Object theAxis) ;
-    GEOM_Object MirrorAxisCopy (in GEOM_Object theObject, 
-				in GEOM_Object theAxis) ;
-    GEOM_Object MirrorPoint (in GEOM_Object theObject, 
-			     in GEOM_Object thePoint) ;
-    GEOM_Object MirrorPointCopy (in GEOM_Object theObject, 
-				 in GEOM_Object thePoint) ;
-    GEOM_Object OffsetShape (in GEOM_Object theObject, 
-			     in double      theOffset) ;
-    GEOM_Object OffsetShapeCopy (in GEOM_Object theObject, 
-				 in double      theOffset) ;
-    GEOM_Object ScaleShape (in GEOM_Object theObject, 
-			    in GEOM_Object thePoint,
-			    in double      theFactor) ;
-    GEOM_Object ScaleShapeCopy (in GEOM_Object theObject, 
-				in GEOM_Object thePoint,
-				in double      theFactor) ;
+                               in GEOM_Object theAxis,
+                               in double      theAngle,
+                               in long        theNbTimes1,
+                               in double      theStep,
+                               in long        theNbTimes2) ;
+    GEOM_Object MirrorPlane (in GEOM_Object theObject,
+                             in GEOM_Object thePlane) ;
+    GEOM_Object MirrorPlaneCopy (in GEOM_Object theObject,
+                                 in GEOM_Object thePlane) ;
+    GEOM_Object MirrorAxis (in GEOM_Object theObject,
+                            in GEOM_Object theAxis) ;
+    GEOM_Object MirrorAxisCopy (in GEOM_Object theObject,
+                                in GEOM_Object theAxis) ;
+    GEOM_Object MirrorPoint (in GEOM_Object theObject,
+                             in GEOM_Object thePoint) ;
+    GEOM_Object MirrorPointCopy (in GEOM_Object theObject,
+                                 in GEOM_Object thePoint) ;
+    GEOM_Object OffsetShape (in GEOM_Object theObject,
+                             in double      theOffset) ;
+    GEOM_Object OffsetShapeCopy (in GEOM_Object theObject,
+                                 in double      theOffset) ;
+    GEOM_Object ScaleShape (in GEOM_Object theObject,
+                            in GEOM_Object thePoint,
+                            in double      theFactor) ;
+    GEOM_Object ScaleShapeCopy (in GEOM_Object theObject,
+                                in GEOM_Object thePoint,
+                                in double      theFactor) ;
     GEOM_Object ScaleShapeAlongAxes (in GEOM_Object theObject,
                                      in GEOM_Object thePoint,
                                      in double theFactorX,
@@ -351,227 +352,227 @@ module GEOM
                                          in double theFactorY,
                                          in double theFactorZ);
     GEOM_Object PositionShape (in GEOM_Object theObject,
-			       in GEOM_Object theStartLCS,
-			       in GEOM_Object theEndLCS) ;
+                               in GEOM_Object theStartLCS,
+                               in GEOM_Object theEndLCS) ;
     GEOM_Object PositionShapeCopy (in GEOM_Object theObject,
-				   in GEOM_Object theStartLCS,
-				   in GEOM_Object theEndLCS) ;
+                                   in GEOM_Object theStartLCS,
+                                   in GEOM_Object theEndLCS) ;
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
-				   in GEOM_Object thePath,
-				   in double theDistance,
-				   in boolean theCopy,
-				   in boolean theReverse);
+                                   in GEOM_Object thePath,
+                                   in double theDistance,
+                                   in boolean theCopy,
+                                   in boolean theReverse);
 
     //-----------------------------------------------------------//
     // ShapesOperations                                          //
     //-----------------------------------------------------------//
-    GEOM_Object MakeEdge (in GEOM_Object thePnt1, 
-			  in GEOM_Object thePnt2) ;
+    GEOM_Object MakeEdge (in GEOM_Object thePnt1,
+                          in GEOM_Object thePnt2) ;
     GEOM_Object MakeWire (in GEOM_List theEdgesAndWires,
                           in double    theTolerance) ;
-    GEOM_Object MakeFace (in GEOM_Object theWire, 
-			  in boolean     isPlanarWanted) ;
-    GEOM_Object MakeFaceWires (in GEOM_List theWires, 
-			       in boolean   isPlanarWanted) ;
+    GEOM_Object MakeFace (in GEOM_Object theWire,
+                          in boolean     isPlanarWanted) ;
+    GEOM_Object MakeFaceWires (in GEOM_List theWires,
+                               in boolean   isPlanarWanted) ;
     GEOM_Object MakeShell (in GEOM_List theFacesAndShells) ;
     GEOM_Object MakeSolidShell (in GEOM_Object theShell) ;
     GEOM_Object MakeSolidShells (in GEOM_List theShells) ;
     GEOM_Object MakeCompound (in GEOM_List theShapes) ;
-    GEOM_Object MakeGlueFaces (in GEOM_Object theShape, 
-			       in double theTolerance,
-			       in boolean doKeepNonSolids);
-    GEOM_List GetGlueFaces (in GEOM_Object theShape, 
-			    in double theTolerance);
-    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape, 
-				     in double theTolerance,
-				     in ListOfGO theFaces,
-				     in boolean doKeepNonSolids);
+    GEOM_Object MakeGlueFaces (in GEOM_Object theShape,
+                               in double theTolerance,
+                               in boolean doKeepNonSolids);
+    GEOM_List GetGlueFaces (in GEOM_Object theShape,
+                            in double theTolerance);
+    GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape,
+                                     in double theTolerance,
+                                     in ListOfGO theFaces,
+                                     in boolean doKeepNonSolids);
     GEOM_List MakeExplode (in GEOM_Object theShape,
-			   in long        theShapeType,
-			   in boolean     isSorted) ;
+                           in long        theShapeType,
+                           in boolean     isSorted) ;
     long NumberOfFaces (in GEOM_Object theShape) ;
     long NumberOfEdges (in GEOM_Object theShape) ;
     GEOM_Object ChangeOrientation (in GEOM_Object theShape) ;
 
     GEOM_List GetShapesOnShape (in GEOM_Object theCheckShape,
-				in GEOM_Object theShape, 
-				in short       theShapeType,
-				in shape_state theState);
+                                in GEOM_Object theShape,
+                                in short       theShapeType,
+                                in shape_state theState);
     GEOM_Object GetShapesOnShapeAsCompound (in GEOM_Object theCheckShape,
-					    in GEOM_Object theShape, 
-					    in short       theShapeType,
-					    in shape_state theState);
+                                            in GEOM_Object theShape,
+                                            in short       theShapeType,
+                                            in shape_state theState);
 
     //-----------------------------------------------------------//
     // BlocksOperations                                          //
     //-----------------------------------------------------------//
     GEOM_Object MakeQuad4Vertices (in GEOM_Object thePnt1,
-				   in GEOM_Object thePnt2,
-				   in GEOM_Object thePnt3,
-				   in GEOM_Object thePnt4) ;
+                                   in GEOM_Object thePnt2,
+                                   in GEOM_Object thePnt3,
+                                   in GEOM_Object thePnt4) ;
     GEOM_Object MakeQuad (in GEOM_Object theEdge1,
-			  in GEOM_Object theEdge2,
-			  in GEOM_Object theEdge3,
-			  in GEOM_Object theEdge4) ;
+                          in GEOM_Object theEdge2,
+                          in GEOM_Object theEdge3,
+                          in GEOM_Object theEdge4) ;
     GEOM_Object MakeQuad2Edges (in GEOM_Object theEdge1,
-				in GEOM_Object theEdge2) ;
+                                in GEOM_Object theEdge2) ;
     GEOM_Object MakeHexa (in GEOM_Object theFace1,
-			  in GEOM_Object theFace2,
-			  in GEOM_Object theFace3,
-			  in GEOM_Object theFace4,
-			  in GEOM_Object theFace5,
-			  in GEOM_Object theFace6) ;
+                          in GEOM_Object theFace2,
+                          in GEOM_Object theFace3,
+                          in GEOM_Object theFace4,
+                          in GEOM_Object theFace5,
+                          in GEOM_Object theFace6) ;
     GEOM_Object MakeHexa2Faces (in GEOM_Object theFace1,
-				in GEOM_Object theFace2) ;
+                                in GEOM_Object theFace2) ;
     GEOM_Object GetPoint (in GEOM_Object theShape,
-			  in double      theX,
-			  in double      theY,
-			  in double      theZ,
-			  in double      theEpsilon) ;
+                          in double      theX,
+                          in double      theY,
+                          in double      theZ,
+                          in double      theEpsilon) ;
     GEOM_Object GetEdge (in GEOM_Object theShape,
-			 in GEOM_Object thePoint1,
-			 in GEOM_Object thePoint2) ;
+                         in GEOM_Object thePoint1,
+                         in GEOM_Object thePoint2) ;
     GEOM_Object GetEdgeNearPoint (in GEOM_Object theShape,
-				  in GEOM_Object thePoint) ;
+                                  in GEOM_Object thePoint) ;
     GEOM_Object GetFaceByPoints (in GEOM_Object theShape,
-				 in GEOM_Object thePoint1,
-				 in GEOM_Object thePoint2,
-				 in GEOM_Object thePoint3,
-				 in GEOM_Object thePoint4) ;
+                                 in GEOM_Object thePoint1,
+                                 in GEOM_Object thePoint2,
+                                 in GEOM_Object thePoint3,
+                                 in GEOM_Object thePoint4) ;
     GEOM_Object GetFaceByEdges (in GEOM_Object theShape,
-				in GEOM_Object theEdge1,
-				in GEOM_Object theEdge2) ;
+                                in GEOM_Object theEdge1,
+                                in GEOM_Object theEdge2) ;
     GEOM_Object GetOppositeFace (in GEOM_Object theBlock,
-				 in GEOM_Object theFace) ;
+                                 in GEOM_Object theFace) ;
     GEOM_Object GetFaceNearPoint (in GEOM_Object theShape,
-				  in GEOM_Object thePoint) ;
+                                  in GEOM_Object thePoint) ;
     GEOM_Object GetFaceByNormale (in GEOM_Object theBlock,
-				  in GEOM_Object theVector) ;
+                                  in GEOM_Object theVector) ;
     boolean IsCompoundOfBlocks (in GEOM_Object theCompound,
-				in long        theMinNbFaces,
-				in long        theMaxNbFaces,
-				out long       theNbBlocks) ;
+                                in long        theMinNbFaces,
+                                in long        theMaxNbFaces,
+                                out long       theNbBlocks) ;
     boolean CheckCompoundOfBlocks (in GEOM_Object theCompound,
-				   out GEOM_IBlocksOperations::BCErrors   theErrors) ;
+                                   out GEOM_IBlocksOperations::BCErrors   theErrors) ;
     string PrintBCErrors (in GEOM_Object theCompound,
-			  in GEOM_IBlocksOperations::BCErrors    theErrors) ;
+                          in GEOM_IBlocksOperations::BCErrors    theErrors) ;
     GEOM_List ExplodeCompoundOfBlocks (in GEOM_Object theCompound,
-				       in long        theMinNbFaces,
-				       in long        theMaxNbFaces) ;
+                                       in long        theMinNbFaces,
+                                       in long        theMaxNbFaces) ;
     GEOM_Object GetBlockNearPoint (in GEOM_Object theCompound,
-				   in GEOM_Object thePoint) ;
+                                   in GEOM_Object thePoint) ;
     GEOM_Object GetBlockByParts (in GEOM_Object theCompound,
-				 in GEOM_List   theParts) ;
+                                 in GEOM_List   theParts) ;
     GEOM_List GetBlocksByParts (in GEOM_Object theCompound,
-				in GEOM_List   theParts) ;
+                                in GEOM_List   theParts) ;
     GEOM_Object MakeMultiTransformation1D (in GEOM_Object theBlock,
-					   in long        theDirFace1,
-					   in long        theDirFace2,
-					   in long        theNbTimes) ;
+                                           in long        theDirFace1,
+                                           in long        theDirFace2,
+                                           in long        theNbTimes) ;
     GEOM_Object MakeMultiTransformation2D (in GEOM_Object theBlock,
-					   in long        theDirFace1U,
-					   in long        theDirFace2U,
-					   in long        theNbTimesU,
-					   in long        theDirFace1V,
-					   in long        theDirFace2V,
-					   in long        theNbTimesV) ;
+                                           in long        theDirFace1U,
+                                           in long        theDirFace2U,
+                                           in long        theNbTimesU,
+                                           in long        theDirFace1V,
+                                           in long        theDirFace2V,
+                                           in long        theNbTimesV) ;
 
     //-----------------------------------------------------------//
     // CurvesOperations                                          //
     //-----------------------------------------------------------//
     GEOM_Object MakeCirclePntVecR (in GEOM_Object thePnt,
-				   in GEOM_Object theVec,
-				   in double      theR) ;
+                                   in GEOM_Object theVec,
+                                   in double      theR) ;
     GEOM_Object MakeCircleThreePnt (in GEOM_Object thePnt1,
-				    in GEOM_Object thePnt2,
-				    in GEOM_Object thePnt3) ;
+                                    in GEOM_Object thePnt2,
+                                    in GEOM_Object thePnt3) ;
     GEOM_Object MakeCircleCenter2Pnt (in GEOM_Object thePnt1,
-   				      in GEOM_Object thePnt2,
-				      in GEOM_Object thePnt3) ;
+                                         in GEOM_Object thePnt2,
+                                      in GEOM_Object thePnt3) ;
     GEOM_Object MakeEllipse (in GEOM_Object thePnt,
-			     in GEOM_Object theVec,
-			     in double      theRMajor,
-			     in double      theRMinor) ;
+                             in GEOM_Object theVec,
+                             in double      theRMajor,
+                             in double      theRMinor) ;
     GEOM_Object MakeEllipseVec (in GEOM_Object thePnt,
-				in GEOM_Object theVec,
-				in double      theRMajor,
-				in double      theRMinor,
-				in GEOM_Object theVecMaj) ;
+                                in GEOM_Object theVec,
+                                in double      theRMajor,
+                                in double      theRMinor,
+                                in GEOM_Object theVecMaj) ;
     GEOM_Object MakeArc (in GEOM_Object thePnt1,
-			 in GEOM_Object thePnt2,
-			 in GEOM_Object thePnt3) ;
+                         in GEOM_Object thePnt2,
+                         in GEOM_Object thePnt3) ;
     GEOM_Object MakeArcCenter (in GEOM_Object theCenter,
                                in GEOM_Object thePnt1,
                                in GEOM_Object thePnt2,
                                in boolean theSense) ;
     GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
-			         in GEOM_Object thePnt1,
-			         in GEOM_Object thePnt2) ;
+                                 in GEOM_Object thePnt1,
+                                 in GEOM_Object thePnt2) ;
     GEOM_Object MakePolyline (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineBezier (in GEOM_List thePoints) ;
     GEOM_Object MakeSplineInterpolation (in GEOM_List thePoints,
                                          in boolean   theIsClosed) ;
-    GEOM_Object MakeSketcher (in string    theCommand, 
-			      in GEOM_List theWorkingPlane) ;
-    
+    GEOM_Object MakeSketcher (in string    theCommand,
+                              in GEOM_List theWorkingPlane) ;
+
     //-----------------------------------------------------------//
     // LocalOperations                                           //
     //-----------------------------------------------------------//
     GEOM_Object MakeFilletAll (in GEOM_Object theShape,
-			       in double      theR) ;
+                               in double      theR) ;
     GEOM_Object MakeFilletEdges (in GEOM_Object theShape,
-				 in double      theR,
-				 in GEOM_List   theEdges) ;
+                                 in double      theR,
+                                 in GEOM_List   theEdges) ;
     GEOM_Object MakeFilletEdgesR1R2 (in GEOM_Object theShape,
-				     in double      theR1,
-				     in double      theR2,
-				     in GEOM_List   theEdges) ;
+                                     in double      theR1,
+                                     in double      theR2,
+                                     in GEOM_List   theEdges) ;
     GEOM_Object MakeFilletFaces (in GEOM_Object theShape,
-				 in double      theR,
-				 in GEOM_List   theFaces) ;
+                                 in double      theR,
+                                 in GEOM_List   theFaces) ;
     GEOM_Object MakeFilletFacesR1R2 (in GEOM_Object theShape,
-				     in double      theR1,
-				     in double      theR2,
-				     in GEOM_List   theFaces) ;
+                                     in double      theR1,
+                                     in double      theR2,
+                                     in GEOM_List   theFaces) ;
     GEOM_Object MakeFillet2D (in GEOM_Object theShape,
-			      in double      theR,
-			      in GEOM_List   theVertexes) ;
+                              in double      theR,
+                              in GEOM_List   theVertexes) ;
     GEOM_Object MakeChamferAll (in GEOM_Object theShape,
-				in double      theD) ;
+                                in double      theD) ;
     GEOM_Object MakeChamferEdge (in GEOM_Object theShape,
-				 in double theD1, in double theD2,
-				 in long theFace1, in long theFace2) ;
+                                 in double theD1, in double theD2,
+                                 in long theFace1, in long theFace2) ;
     GEOM_Object MakeChamferEdgeAD (in GEOM_Object theShape,
-				   in double theD, in double theAngle,
-				   in long theFace1, in long theFace2) ;
+                                   in double theD, in double theAngle,
+                                   in long theFace1, in long theFace2) ;
     GEOM_Object MakeChamferFaces (in GEOM_Object theShape,
-				  in double theD1, in double theD2,
-				  in GEOM_List theFaces) ;
+                                  in double theD1, in double theD2,
+                                  in GEOM_List theFaces) ;
     GEOM_Object MakeChamferFacesAD (in GEOM_Object theShape,
-				    in double theD, in double theAngle,
-				    in GEOM_List theFaces) ;
+                                    in double theD, in double theAngle,
+                                    in GEOM_List theFaces) ;
     GEOM_Object MakeChamferEdges (in GEOM_Object theShape,
-				  in double theD1, in double theD2,
-				  in GEOM_List theEdges) ;
+                                  in double theD1, in double theD2,
+                                  in GEOM_List theEdges) ;
     GEOM_Object MakeChamferEdgesAD (in GEOM_Object theShape,
-				    in double theD, in double theAngle,
-				    in GEOM_List theEdges) ;
+                                    in double theD, in double theAngle,
+                                    in GEOM_List theEdges) ;
     GEOM_Object MakeArchimede (in GEOM_Object theShape,
-			       in double      theWeight,
-			       in double      theWaterDensity,
-			       in double      theMeshDeflection) ;
-    long GetSubShapeIndex (in GEOM_Object theShape, 
-			   in GEOM_Object theSubShape) ;
+                               in double      theWeight,
+                               in double      theWaterDensity,
+                               in double      theMeshDeflection) ;
+    long GetSubShapeIndex (in GEOM_Object theShape,
+                           in GEOM_Object theSubShape) ;
 
     //-----------------------------------------------------------//
     // GroupOperations                                           //
     //-----------------------------------------------------------//
-    GEOM_Object CreateGroup (in GEOM_Object theMainShape, 
-			     in long        theShapeType) ;
-    void AddObject (in GEOM_Object theGroup, 
-		    in long        theSubShapeId) ;
-    void RemoveObject (in GEOM_Object theGroup, 
-		       in long        theSubShapeId) ;
+    GEOM_Object CreateGroup (in GEOM_Object theMainShape,
+                             in long        theShapeType) ;
+    void AddObject (in GEOM_Object theGroup,
+                    in long        theSubShapeId) ;
+    void RemoveObject (in GEOM_Object theGroup,
+                       in long        theSubShapeId) ;
     long GetType (in GEOM_Object theGroup) ;
     GEOM_Object  GetMainShape(in GEOM_Object theGroup) ;
     GEOM_List  GetObjects(in GEOM_Object theGroup) ;
@@ -579,30 +580,30 @@ module GEOM
     //-----------------------------------------------------------//
     // AdvancedOperations                                        //
     //-----------------------------------------------------------//
-    GEOM_List MakePipeTShape (in double theR1, in double theW1, in double theL1, 
+    GEOM_List MakePipeTShape (in double theR1, in double theW1, in double theL1,
                 in double theR2, in double theW2, in double theL2,
                 in boolean theHexMesh);
-              
-    GEOM_List MakePipeTShapeWithPosition (in double theR1, in double theW1, in double theL1, 
+
+    GEOM_List MakePipeTShapeWithPosition (in double theR1, in double theW1, in double theL1,
                         in double theR2, in double theW2, in double theL2,
                         in boolean theHexMesh,
                         in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
-                        
+
     GEOM_List MakePipeTShapeChamfer (in double theR1, in double theW1, in double theL1,
                     in double theR2, in double theW2, in double theL2,
                     in double theH, in double theW, in boolean theHexMesh);
-                    
-    GEOM_List MakePipeTShapeChamferWithPosition (in double theR1, in double theW1, in double theL1, 
-                           in double theR2, in double theW2, in double theL2, 
+
+    GEOM_List MakePipeTShapeChamferWithPosition (in double theR1, in double theW1, in double theL1,
+                           in double theR2, in double theW2, in double theL2,
                            in double theH, in double theW, in boolean theHexMesh,
                            in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
-                           
-    GEOM_List MakePipeTShapeFillet (in double theR1, in double theW1, in double theL1, 
-                      in double theR2, in double theW2, in double theL2, 
+
+    GEOM_List MakePipeTShapeFillet (in double theR1, in double theW1, in double theL1,
+                      in double theR2, in double theW2, in double theL2,
                       in double theRF, in boolean theHexMesh);
-                      
-    GEOM_List MakePipeTShapeFilletWithPosition (in double theR1, in double theW1, in double theL1, 
-                          in double theR2, in double theW2, in double theL2, 
+
+    GEOM_List MakePipeTShapeFilletWithPosition (in double theR1, in double theW1, in double theL1,
+                          in double theR2, in double theW2, in double theL2,
                           in double theRF, in boolean theHexMesh,
                           in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
 

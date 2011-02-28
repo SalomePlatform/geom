@@ -198,7 +198,7 @@ module GEOM
      *  \sa GetShapeType(), GetTopologyType(), GetMinShapeType()
      */
     shape_type GetMaxShapeType();
-    
+
     /*!
      *  Set name of the object.
      *  \param theName is a name which will be associated with this object.
@@ -331,7 +331,7 @@ module GEOM
      *  \param other object being compared with this one
      */
     boolean IsSame(in GEOM_Object other);
-     
+
      /*!
      *  Set list of parameters
      *  \param theParameters is a string containing the notebook variables separated by ":" symbol,
@@ -619,7 +619,8 @@ module GEOM
      *  \param theYVec Vector of Y direction.
      *  \return New GEOM_Object, containing the created coordinate system.
      */
-    GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin, in GEOM_Object theXVec, in GEOM_Object theYVec);
+    GEOM_Object MakeMarkerPntTwoVec (in GEOM_Object theOrigin,
+                                     in GEOM_Object theXVec, in GEOM_Object theYVec);
 
     /*!
      *  Create a tangent plane to specified face in the point with specified parameters.
@@ -985,9 +986,9 @@ module GEOM
      *  Modify the Location of the given object by Path,
      *  \param  theObject The object to be displaced.
      *  \param  thePath Wire or Edge along that the object will be translated.
-     *        \param  theDistance progress of Path (0 = actual location, 1 = end of path location).
-     *        \param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
-     *        \param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
+     *  \param  theDistance progress of Path (0 = actual location, 1 = end of path location).
+     *  \param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
+     *  \param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
      *  \return New GEOM_Object, containing the displaced shape.
      */
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
@@ -1372,8 +1373,8 @@ module GEOM
      *  \return New GEOM_Object, containing the created edge.
      */
     GEOM_Object MakeEdgeWire (in GEOM_Object theWire,
-			      in double theLinearTolerance, 
-			      in double theAngularTolerance);
+                              in double theLinearTolerance,
+                              in double theAngularTolerance);
 
     /*!
      *  Create a wire from the set of edges and wires.
@@ -1475,8 +1476,8 @@ module GEOM
      *  Deprecated method. Use MakeAllSubShapes() instead.
      */
     ListOfGO MakeExplode (in GEOM_Object theShape,
-			  in long        theShapeType,
-			  in boolean     isSorted);
+                          in long        theShapeType,
+                          in boolean     isSorted);
 
     /*!
      *  Explode a shape on subshapes of a given type. If the
@@ -1508,8 +1509,8 @@ module GEOM
      *  Deprecated method. Use GetAllSubShapesIDs() instead.
      */
     ListOfLong SubShapeAllIDs (in GEOM_Object theShape,
-			       in long        theShapeType,
-			       in boolean     isSorted);
+                               in long        theShapeType,
+                               in boolean     isSorted);
 
     /*!
      *  Explode a shape on subshapes of a given type.
@@ -2471,7 +2472,8 @@ module GEOM
      *  Create an arc of ellipse of center C and two points P1 P2.
      *  \param theCenter Center point of the arc.
      *  \param thePnt1 Major radius is distance from center to Pnt1.
-     *  \param thePnt2 define a plane and Minor radius as a shortest distance from Pnt2 to vector Center->Pnt1.
+     *  \param thePnt2 define a plane and Minor radius as a shortest
+     *                 distance from Pnt2 to vector Center->Pnt1.
      *  \return New GEOM_Object, containing the created arc.
      */
     GEOM_Object MakeArcOfEllipse (in GEOM_Object theCenter,
@@ -3327,8 +3329,8 @@ module GEOM
      *  \return List of GEOM_Objects, containing the created shape and propagation groups.
      */
     ListOfGO MakePipeTShape (in double theR1, in double theW1, in double theL1,
-                                in double theR2, in double theW2, in double theL2,
-                                in boolean theHexMesh);
+                             in double theR2, in double theW2, in double theL2,
+                             in boolean theHexMesh);
     /*!
      *  Create a T-shape object with specified caracteristics for the main and
      *  the incident pipes (radius, width, half-length).
@@ -3347,9 +3349,9 @@ module GEOM
      *  \return List of GEOM_Objects, containing the created shape and propagation groups.
      */
     ListOfGO MakePipeTShapeWithPosition (in double theR1, in double theW1, in double theL1,
-                                            in double theR2, in double theW2, in double theL2,
-                                            in boolean theHexMesh,
-                                            in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                                         in double theR2, in double theW2, in double theL2,
+                                         in boolean theHexMesh,
+                                         in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
     /*!
      *  Create a T-shape object with specified caracteristics for the main and
      *  the incident pipes (radius, width, half-length). A chamfer is created
@@ -3390,9 +3392,9 @@ module GEOM
      *  \return List of GEOM_Objects, containing the created shape and propagation groups.
      */
     ListOfGO MakePipeTShapeChamferWithPosition (in double theR1, in double theW1, in double theL1,
-                                                   in double theR2, in double theW2, in double theL2,
-                                                   in double theH, in double theW, in boolean theHexMesh,
-                                                   in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                                                in double theR2, in double theW2, in double theL2,
+                                                in double theH, in double theW, in boolean theHexMesh,
+                                                in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
     /*!
      *  Create a T-shape object with specified caracteristics for the main and
      *  the incident pipes (radius, width, half-length). A fillet is created
@@ -3409,8 +3411,8 @@ module GEOM
      *  \return List of GEOM_Objects, containing the created shape and propagation groups.
      */
     ListOfGO MakePipeTShapeFillet (in double theR1, in double theW1, in double theL1,
-                                      in double theR2, in double theW2, in double theL2,
-                                      in double theRF, in boolean theHexMesh);
+                                   in double theR2, in double theW2, in double theL2,
+                                   in double theRF, in boolean theHexMesh);
     /*!
      *  Create a T-shape object with specified caracteristics for the main and
      *  the incident pipes (radius, width, half-length). A fillet is created
@@ -3431,9 +3433,9 @@ module GEOM
      *  \return List of GEOM_Objects, containing the created shape and propagation groups.
      */
     ListOfGO MakePipeTShapeFilletWithPosition (in double theR1, in double theW1, in double theL1,
-                                                  in double theR2, in double theW2, in double theL2,
-                                                  in double theRF, in boolean theHexMesh,
-                                                  in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+                                               in double theR2, in double theW2, in double theL2,
+                                               in double theRF, in boolean theHexMesh,
+                                               in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 
@@ -3441,7 +3443,7 @@ module GEOM
    *  GEOM_Gen: Interface to access other GEOM interfaces.
    *  Also contains some methods to access and manage GEOM objects.
    */
-  interface GEOM_Gen : Engines::Component,SALOMEDS::Driver
+  interface GEOM_Gen : Engines::EngineComponent,SALOMEDS::Driver
   {
     /*!
      *  Undo/Redo Management
@@ -3486,7 +3488,7 @@ module GEOM
      *  \return list of published sub-shapes
      */
     ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
-                                 in GEOM_Object       theObject,
+                                in GEOM_Object       theObject,
                                 in ListOfGO          theArgs,
                                 in find_shape_method theFindMethod,
                                 in boolean           theInheritFirstArg,
