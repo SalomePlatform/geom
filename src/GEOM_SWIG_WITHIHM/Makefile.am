@@ -53,12 +53,14 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 SWIG_FLAGS    = @SWIG_FLAGS@ -I$(srcdir) -I$(srcdir)/../GEOMGUI
 SWIG_SOURCES  = libGEOM_Swig.i
 
-libGEOM_Swig.py: swig_wrap.cpp
+salomepython_PYTHON = libGEOM_Swig.py
+salomepyexec_LTLIBRARIES = _libGEOM_Swig.la
 
-# Libraries targets
-lib_LTLIBRARIES                 = _libGEOM_Swig.la
+libGEOM_Swig.py: swig_wrap.cpp
+BUILT_SOURCES = swig_wrap.cpp
 _libGEOM_Swig_la_SOURCES        = $(SWIG_SOURCES)
-nodist__libGEOM_Swig_la_SOURCES = swig_wrap.cpp
+nodist__libGEOM_Swig_la_SOURCES = $(BUILT_SOURCES)
+
 salomeinclude_HEADERS           = $(SWIG_SOURCES)
 
 _libGEOM_Swig_la_CPPFLAGS =		\
@@ -84,14 +86,3 @@ swig_wrap.cpp : $(SWIG_SOURCES)
 
 CLEANFILES = swig_wrap.cpp libGEOM_Swig.py
 
-#
-# ===============================================================
-# Files to be installed
-# ===============================================================
-#
-
-# Scripts to be installed (distributed)
-dist_salomescript_DATA =
-
-# Scripts to be installed (non-distributed)
-nodist_salomescript_DATA = libGEOM_Swig.py
