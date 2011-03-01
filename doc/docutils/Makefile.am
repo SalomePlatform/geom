@@ -31,6 +31,8 @@ if SPHINX_IS_OK
 html/index.html:$(RSTFILES)
 	make htm
 
+usr_docs: html/index.html
+
 endif
 
 EXTRA_DIST+= images
@@ -73,7 +75,7 @@ RSTFILES= \
 
 EXTRA_DIST+= $(RSTFILES)
 
-install-data-local: html/index.html
+install-data-local:
 	test -z $(pydocdir) || mkdir -p $(DESTDIR)$(pydocdir)
 	if test -d "html"; then b=; else b="$(srcdir)/"; fi; \
 	cp -rf $$b"html"/* $(pydocdir) ; \
