@@ -55,22 +55,23 @@ docs: usr_docs
 clean-local:
 	@for filen in `find . -maxdepth 1` ; do					\
 	  case $${filen} in							\
-	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;	\
-	    . | .. | ./static ) ;;								\
+	    ./Makefile* | ./doxyfile* | ./images | ./input | ./static ) ;;	\
+	    . | .. ) ;;								\
 	    *) echo "Removing $${filen}" ; rm -rf $${filen} ;;			\
 	  esac ;								\
 	done ;
 
-install-data-local: usr_docs
-	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM
-	@for filen in `find . -maxdepth 1` ; do							\
+install-data-local:
+	@if [ -e main.html ]; then \
+	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM ; \
+	for filen in `find . -maxdepth 1` ; do							\
 	  case $${filen} in									\
-	    ./Makefile | ./doxyfile | ./doxyfile_py | ./doxyfile_tui ) ;;			\
-	    ./doxyfile.bak | ./doxyfile_py.bak | ./doxyfile_tui.bak ) ;;			\
+	    ./Makefile* | ./doxyfile* ) ;;			\
 	    . | .. | ./static ) ;;										\
 	    *) echo "Installing $${filen}" ; cp -rp $${filen} $(DESTDIR)$(docdir)/gui/GEOM ;;	\
 	  esac ;										\
-	done ;
+	done ; \
+	fi
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(docdir)/gui/GEOM
