@@ -37,7 +37,7 @@ SUBDIRS = idl adm_local resources src doc bin
 
 DIST_SUBDIRS = idl adm_local resources src doc bin 
 
-DISTCLEANFILES = a.out aclocal.m4 configure local-install.sh hack_libtool
+DISTCLEANFILES = a.out aclocal.m4 configure local-install.sh hack_libtool adm_local/unix/config_files/config.guess adm_local/unix/config_files/config.sub adm_local/unix/config_files/depcomp adm_local/unix/config_files/install-sh adm_local/unix/config_files/libtool.m4 adm_local/unix/config_files/ltmain.sh adm_local/unix/config_files/ltoptions.m4 adm_local/unix/config_files/ltsugar.m4 adm_local/unix/config_files/ltversion.m4 adm_local/unix/config_files/lt~obsolete.m4 adm_local/unix/config_files/missing adm_local/unix/config_files/py-compile
 
 salomeinclude_DATA = GEOM_version.h
 
