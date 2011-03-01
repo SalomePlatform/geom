@@ -1305,27 +1305,28 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
     theObjListToPublish.Append( anEntry );
     
     TObjectData& data = aEntry2ObjData[ anEntry ];
-    if ( !data._name.IsEmpty() ) { // published object
-      if ( data._pyName.IsEmpty() ) { // encounted for the 1st time
+    if ( data._pyName.IsEmpty() ) { // encounted for the 1st time
+      if ( !data._name.IsEmpty() ) { // published object
         data._pyName = data._name;
         healPyName( data._pyName, anEntry, aNameToEntry);
       }
+      else {
+	do {
+	  data._pyName = aBaseName + TCollection_AsciiString(++objectCounter);
+	} while(aNameToEntry.IsBound(data._pyName));
+      }
     }
-    else {
-      do {
-        data._pyName = aBaseName + TCollection_AsciiString(++objectCounter);
-      } while(aNameToEntry.IsBound(data._pyName));
-    }
+    
     aNameToEntry.Bind(data._pyName, anEntry); // to detect same name of diff objects
-
+    
     anUpdatedScript += data._pyName;
     aStart = aSeq->Value(i+1) + 1;
   }
-
+  
   //Add final part of the script
   if (aLen && aSeq->Value(aLen) < aScriptLength)
     anUpdatedScript += theScript.SubString(aSeq->Value(aLen)+1, aScriptLength); // mkr : IPAL11865
-
+  
   theScript = anUpdatedScript;
 }
 
