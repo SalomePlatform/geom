@@ -463,11 +463,10 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
         
   else if ( isOCC ) {
     GEOMBase* gb = new GEOMBase();
-    Standard_Boolean found;
     Handle(GEOM_AISShape) aisShape;
    
-    aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, found );
-    if( !found )
+    aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS );
+    if( aisShape.IsNull() )
       return;
     float transp = aisShape->Transparency();
 
@@ -483,8 +482,8 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
       return;
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), found );
-      if ( found ) {
+      aisShape = gb->ConvertIOinGEOMAISShape( It.Value() );
+      if ( !aisShape.IsNull() ) {
         ic->SetTransparency( aisShape, transp, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );
       }

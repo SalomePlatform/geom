@@ -293,16 +293,14 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
         
   else if ( isOCC ) {
     GEOMBase* gb = new GEOMBase();
-    Standard_Boolean found;
     Handle(GEOM_AISShape) aisShape;
     if ( myFirstInit ) {
       mySlider->setValue(mySlider->maximum());
       myFirstInit = false;
-      aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, found );
-      if( !found )
+      aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS );
+      if( aisShape.IsNull() )
         return;
       int transp = int( 100 - ( aisShape->Transparency() * 100.0 ) + 0.5);
-      std::cout << "transp: " << transp << std::endl;
       mySlider->setValue(transp);
       ValueHasChanged();
       return;
@@ -314,8 +312,8 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       return;
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), found );
-      if ( found ) {
+      aisShape = gb->ConvertIOinGEOMAISShape( It.Value() );
+      if ( !aisShape.IsNull() ) {
         ic->SetTransparency( aisShape, newValue, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );
 	aStudy->setObjectProperty( aMgrId , It.Value()->getEntry(), TRANSPARENCY_PROP , newValue );
