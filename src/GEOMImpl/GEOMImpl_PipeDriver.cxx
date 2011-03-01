@@ -760,10 +760,10 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
         // find distance between E and aLocs(jcurr)
         double fp,lp;
         Handle(Geom_Curve) C = BRep_Tool::Curve(E,fp,lp);
-        GeomAPI_ProjectPointOnCurve PPC (PLocs.Value(jcurr),C);
-        if( PPC.NbPoints()>0 &&
-            PLocs.Value(jcurr).Distance(PPC.Point(1)) < tol ) {
-          double param = PPC.Parameter(1);
+        GeomAPI_ProjectPointOnCurve PPCurve (PLocs.Value(jcurr),C);
+        if( PPCurve.NbPoints()>0 &&
+            PLocs.Value(jcurr).Distance(PPCurve.Point(1)) < tol ) {
+          double param = PPCurve.Parameter(1);
           gp_Pnt PC1;
           C->D0(param,PC1);
           // split current edge
@@ -2148,10 +2148,10 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
           // find distance between E and aLocs(jcurr)
           double fp,lp;
           Handle(Geom_Curve) C = BRep_Tool::Curve(E,fp,lp);
-          GeomAPI_ProjectPointOnCurve PPC (PLocs.Value(jcurr),C);
-          if( PPC.NbPoints()>0 &&
-              PLocs.Value(jcurr).Distance(PPC.Point(1)) < tol ) {
-            double param = PPC.Parameter(1);
+          GeomAPI_ProjectPointOnCurve PPCurve (PLocs.Value(jcurr),C);
+          if( PPCurve.NbPoints()>0 &&
+              PLocs.Value(jcurr).Distance(PPCurve.Point(1)) < tol ) {
+            double param = PPCurve.Parameter(1);
             gp_Pnt PC1;
             C->D0(param,PC1);
             // split current edge

@@ -2011,10 +2011,10 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
-    GeomAPI_ProjectPointOnCurve PPC(aPoint, aCurve, aFP, aLP);
-    if(PPC.NbPoints()>0) {
+    GeomAPI_ProjectPointOnCurve PPCurve(aPoint, aCurve, aFP, aLP);
+    if(PPCurve.NbPoints()>0) {
       GeomLProp_CLProps Prop = GeomLProp_CLProps 
-        (aCurve, PPC.LowerDistanceParameter(), 2, Precision::Confusion());
+        (aCurve, PPCurve.LowerDistanceParameter(), 2, Precision::Confusion());
       aRes = fabs(Prop.Curvature());
       SetErrorCode(OK);
     }
