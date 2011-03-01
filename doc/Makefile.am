@@ -21,15 +21,15 @@
 # Author : Patrick GOLDBRONN (CEA)
 # Date : 30/11/2001
 # Modified by : Alexander BORODIN (OCN) - autotools usage
-# $Header$
-# source path
 #
 SUBDIRS = salome docutils
 
 usr_docs:
 	(cd salome && $(MAKE) $(AM_MAKEFLAGS) usr_docs)
+	(cd docutils && $(MAKE) $(AM_MAKEFLAGS) usr_docs)
 
 docs: usr_docs
 
 dev_docs:
 	(cd salome && $(MAKE) $(AM_MAKEFLAGS) dev_docs)
+	(cd docutils && $(MAKE) $(AM_MAKEFLAGS) dev_docs)
