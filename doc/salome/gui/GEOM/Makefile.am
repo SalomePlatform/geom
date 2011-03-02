@@ -35,7 +35,7 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
 	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
 	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
-	  $(top_builddir)/src/GEOM_SWIG/geompy.py ; 				\
+	  ./geompy.py ; 							\
 	echo "===========================================" ;			\
 	echo "Generating examples documentation" ;				\
 	echo "===========================================" ;			\
@@ -48,7 +48,7 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "Generating GUI documentation" ;					\
 	echo "===========================================" ;			\
 	$(DOXYGEN) doxyfile ; 							\
-	rm -f $(top_builddir)/src/GEOM_SWIG/geompy.py
+	rm -f ./geompy.py
 
 docs: usr_docs
 
