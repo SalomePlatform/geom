@@ -56,7 +56,7 @@ clean-local:
 	@for filen in `find . -maxdepth 1` ; do					\
 	  case $${filen} in							\
 	    ./Makefile* | ./doxyfile* | ./images | ./input | ./static ) ;;	\
-	    . | .. ) ;;								\
+	    . | .. | CVS ) ;;							\
 	    *) echo "Removing $${filen}" ; rm -rf $${filen} ;;			\
 	  esac ;								\
 	done ;
