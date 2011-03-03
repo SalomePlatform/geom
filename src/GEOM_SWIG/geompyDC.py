@@ -961,29 +961,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #     .
         #       \n
         #     - "C radius length" : Create arc by direction, radius and length(in degree)
-	#     - "AA x y": Create arc by point at X & Y
+        #     - "AA x y": Create arc by point at X & Y
         #     - "A dx dy" : Create arc by point with DX & DY
         #     - "A dx dy" : Create arc by point with DX & DY
-	#     - "UU x y radius flag1": Create arc by point at X & Y with given radiUs 
-	#     - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
-	#     - "EE x y xc yc flag1 flag2": Create arc by point at X & Y with given cEnter coordinates 
-	#     - "E dx dy dxc dyc radius flag1 flag2" : Create arc by point with DX & DY with given cEnter coordinates
-	#     .
+        #     - "UU x y radius flag1": Create arc by point at X & Y with given radiUs
+        #     - "U dx dy radius flag1" : Create arc by point with DX & DY with given radiUs
+        #     - "EE x y xc yc flag1 flag2": Create arc by point at X & Y with given cEnter coordinates
+        #     - "E dx dy dxc dyc radius flag1 flag2" : Create arc by point with DX & DY with given cEnter coordinates
+        #     .
         #       \n
         #     - "WW" : Close Wire (to finish)
         #     - "WF" : Close Wire and build face (to finish)
         #     .
-	#	\n
-	#  - Flag1 (= reverse) is 0 or 2 ... 
-	#     - if 0 the drawn arc is the one of lower angle (< Pi)
-	#     - if 2 the drawn arc ius the one of greater angle (> Pi)
-	#     .
-	#	\n
-	#  - Flag2 (= control tolerance) is 0 or 1 ...
-	#     - if 0 the specified end point can be at a distance of the arc greater than the tolerance (10^-7)
-	#     - if 1 the wire is built only if the end point is on the arc 
-	#       with a tolerance of 10^-7 on the distance else the creation fails
-	#
+        #        \n
+        #  - Flag1 (= reverse) is 0 or 2 ...
+        #     - if 0 the drawn arc is the one of lower angle (< Pi)
+        #     - if 2 the drawn arc ius the one of greater angle (> Pi)
+        #     .
+        #        \n
+        #  - Flag2 (= control tolerance) is 0 or 1 ...
+        #     - if 0 the specified end point can be at a distance of the arc greater than the tolerance (10^-7)
+        #     - if 1 the wire is built only if the end point is on the arc
+        #       with a tolerance of 10^-7 on the distance else the creation fails
+        #
         #  @param theCommand String, defining the sketcher in local
         #                    coordinates of the working plane.
         #  @param theWorkingPlane Nine double values, defining origin,
@@ -1303,6 +1303,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
             return anObj
 
+        ## Create a shape by extrusion of the base shape along a
+        #  vector, defined by two points, in 2 Ways (forward/backward).
+        #  @param theBase Base shape to be extruded.
+        #  @param thePoint1 First end of extrusion vector.
+        #  @param thePoint2 Second end of extrusion vector.
+        #  @return New GEOM_Object, containing the created prism.
+        #
+        #  @ref tui_creation_prism "Example"
+        def MakePrism2Ways(self, theBase, thePoint1, thePoint2):
+            # Example: see GEOM_TestAll.py
+            anObj = self.PrimOp.MakePrismTwoPnt2Ways(theBase, thePoint1, thePoint2)
+            RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
+            return anObj
+
         ## Create a shape by extrusion of the base shape along the vector,
         #  i.e. all the space, transfixed by the base shape during its translation
         #  along the vector on the given distance.
@@ -1322,7 +1336,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a shape by extrusion of the base shape along the vector,
         #  i.e. all the space, transfixed by the base shape during its translation
-        #  along the vector on the given distance in 2 Ways (forward/backward) .
+        #  along the vector on the given distance in 2 Ways (forward/backward).
         #  @param theBase Base shape to be extruded.
         #  @param theVec Direction of extrusion.
         #  @param theH Prism dimension along theVec in forward direction.
@@ -1353,7 +1367,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  i.e. all the space, transfixed by the base shape during its translation
-        #  along the vector on the given distance in 2 Ways (forward/backward) .
+        #  along the vector on the given distance in 2 Ways (forward/backward).
         #  @param theBase Base shape to be extruded.
         #  @param theDX, theDY, theDZ Directions of extrusion.
         #  @return New GEOM_Object, containing the created prism.
@@ -2274,7 +2288,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 ListOfIDs.append(AllShapeIDsList[ind - 1])
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
-        
+
         # end of l4_decompose_d
         ## @}
 
@@ -3325,7 +3339,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             return aTuple
 
         ## Get if coords are included in the shape (ST_IN or ST_ON)
-        #  @param theShape Shape 
+        #  @param theShape Shape
         #  @param coords list of points coordinates [x1, y1, z1, x2, y2, z2, ...]
         #  @param tolerance to be used (default is 1.0e-7)
         #  @return list_of_boolean = [res1, res2, ...]
