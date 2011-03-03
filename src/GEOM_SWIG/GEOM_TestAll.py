@@ -19,7 +19,6 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : GEOM_usinggeom.py
@@ -194,13 +193,15 @@ def TestAll (geompy, math):
 
   #Create advanced objects
   Copy       = geompy.MakeCopy(Box)                      #(GEOM_Object_ptr)->GEOM_Object_ptr
-  Prism      = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Prism2Ways = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  PrismDXDYDZ= geompy.MakePrismDXDYDZ(Face2, 10, 20, 100)#(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  PrismDXDYDZ2Ways= geompy.MakePrismDXDYDZ2Ways(Face, 30, -20, 200)#(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
-  Revolution = geompy.MakeRevolution(Face, vz, angle2)   #
-  Revolution2Ways = geompy.MakeRevolution(Face, vz, angle1)   #
-  Filling    = geompy.MakeFilling(Compound, mindeg, maxdeg,
+  Prism            = geompy.MakePrismVecH(Face, vz, 100.0)     #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Prism2Ways       = geompy.MakePrismVecH2Ways(Face, vz, 10.0) #(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  PrismTwoPnt      = geompy.MakePrism(Face2, p0, pxyz)         #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  PrismTwoPnt2Ways = geompy.MakePrism2Ways(Face2, p0, pxyz)    #(3 GEOM_Object_ptr)->GEOM_Object_ptr
+  PrismDXDYDZ      = geompy.MakePrismDXDYDZ(Face2, 10, 20, 100)#(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  PrismDXDYDZ2Ways = geompy.MakePrismDXDYDZ2Ways(Face, 30, -20, 200)#(2 GEOM_Object_ptr, Double)->GEOM_Object_ptr
+  Revolution       = geompy.MakeRevolution(Face, vz, angle2)   #
+  Revolution2Ways  = geompy.MakeRevolution(Face, vz, angle1)   #
+  Filling          = geompy.MakeFilling(Compound, mindeg, maxdeg,
                                   tol2d, tol3d, nbiter)  #(GEOM_Object_ptr, 4 Doubles, Short)->GEOM_Object_ptr
   Pipe       = geompy.MakePipe(Wire, Edge)               #(2 GEOM_Object_ptr)->GEOM_Object_ptr
   Sewing     = geompy.MakeSewing([Face, S], precision)   #(List Of GEOM_Object_ptr, Double)->GEOM_Object_ptr
@@ -378,12 +379,14 @@ def TestAll (geompy, math):
   id_Plane2   = geompy.addToStudy(Plane2,   "Plane on Face")
 
   id_Copy       = geompy.addToStudy(Copy,       "Copy")
-  id_Prism      = geompy.addToStudy(Prism,      "Prism")
-  id_Prism2Ways = geompy.addToStudy(Prism2Ways, "Prism2Ways")
-  id_PrismDXDYDZ= geompy.addToStudy(PrismDXDYDZ,"PrismDXDYDZ")
-  id_PrismDXDYDZ2Ways= geompy.addToStudy(PrismDXDYDZ2Ways,"PrismDXDYDZ2Ways")
-  id_Revolution = geompy.addToStudy(Revolution, "Revolution")
-  id_Revolution2Ways = geompy.addToStudy(Revolution2Ways, "Revolution2Ways")
+  id_Prism            = geompy.addToStudy(Prism,            "Prism")
+  id_Prism2Ways       = geompy.addToStudy(Prism2Ways,       "Prism2Ways")
+  id_PrismTwoPnt      = geompy.addToStudy(PrismTwoPnt,      "PrismTwoPnt")
+  id_PrismTwoPnt2Ways = geompy.addToStudy(PrismTwoPnt2Ways, "PrismTwoPnt2Ways")
+  id_PrismDXDYDZ      = geompy.addToStudy(PrismDXDYDZ,      "PrismDXDYDZ")
+  id_PrismDXDYDZ2Ways = geompy.addToStudy(PrismDXDYDZ2Ways, "PrismDXDYDZ2Ways")
+  id_Revolution       = geompy.addToStudy(Revolution,       "Revolution")
+  id_Revolution2Ways  = geompy.addToStudy(Revolution2Ways,  "Revolution2Ways")
   id_Filling    = geompy.addToStudy(Filling,    "Filling")
   id_Pipe       = geompy.addToStudy(Pipe,       "Pipe")
   id_Sewing     = geompy.addToStudy(Sewing,     "Sewing")
