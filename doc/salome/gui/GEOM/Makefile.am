@@ -61,7 +61,7 @@ clean-local:
 	  esac ;								\
 	done ;
 
-install-data-local:
+install-data-local: usr_docs
 	@if [ -e main.html ]; then \
 	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM ; \
 	for filen in `find . -maxdepth 1` ; do							\
