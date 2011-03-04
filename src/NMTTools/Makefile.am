@@ -15,26 +15,25 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM NMTTools : partition algorithm
 #  File   : Makefile.in
 #  Author : Julia DOROVSKIKH
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-# header files 
+# header files
 salomeinclude_HEADERS = \
-	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger.hxx \
-	Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
+	Handle_NMTTools_DataMapNodeOfDataMapOfIntegerFaceInfo.hxx \
+	Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCommonBlock.hxx \
 	Handle_NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
+	Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx \
 	NMTTools_CheckerSI.hxx \
 	NMTTools_CheckerSI.ixx \
 	NMTTools_CheckerSI.jxx \
@@ -48,9 +47,19 @@ salomeinclude_HEADERS = \
 	NMTTools_CoupleOfShape.hxx \
 	NMTTools_CoupleOfShape.ixx \
 	NMTTools_CoupleOfShape.jxx \
+	NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo.hxx \
+	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx \
+	NMTTools_DataMapNodeOfDataMapOfIntegerFaceInfo.hxx \
+	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
+	NMTTools_DataMapOfIntegerFaceInfo.hxx \
+	NMTTools_DataMapOfIntegerListOfPaveBlock.hxx \
 	NMTTools_DEProcessor.hxx \
 	NMTTools_DEProcessor.ixx \
 	NMTTools_DEProcessor.jxx \
+	NMTTools_FaceInfo.hxx \
+	NMTTools_FaceInfo.ixx \
+	NMTTools_FaceInfo.jxx \
+	NMTTools_FaceInfo.lxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock.hxx \
@@ -66,6 +75,8 @@ salomeinclude_HEADERS = \
 	NMTTools_ListNodeOfListOfCoupleOfShape.hxx \
 	NMTTools_ListOfCommonBlock.hxx \
 	NMTTools_ListOfCoupleOfShape.hxx \
+	NMTTools_MapIteratorOfMapOfPaveBlock.hxx \
+	NMTTools_MapOfPaveBlock.hxx \
 	NMTTools_PaveFiller.hxx \
 	NMTTools_PaveFiller.ixx \
 	NMTTools_PaveFiller.jxx \
@@ -73,13 +84,6 @@ salomeinclude_HEADERS = \
 	NMTTools_Tools.hxx \
 	NMTTools_Tools.ixx \
 	NMTTools_Tools.jxx \
-	Handle_NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
-	Handle_NMTTools_StdMapNodeOfMapOfPaveBlock.hxx \
-	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx \
-	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock.hxx \
-	NMTTools_DataMapOfIntegerListOfPaveBlock.hxx \
-	NMTTools_MapIteratorOfMapOfPaveBlock.hxx \
-	NMTTools_MapOfPaveBlock.hxx \
 	NMTTools_StdMapNodeOfMapOfPaveBlock.hxx
 
 # Libraries targets
@@ -92,7 +96,14 @@ dist_libNMTTools_la_SOURCES = \
 	NMTTools_CommonBlock.cxx \
 	NMTTools_CommonBlockPool_0.cxx \
 	NMTTools_CoupleOfShape.cxx \
+	NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo_0.cxx \
+	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock_0.cxx \
+	NMTTools_DataMapNodeOfDataMapOfIntegerFaceInfo_0.cxx \
+	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock_0.cxx \
+	NMTTools_DataMapOfIntegerFaceInfo_0.cxx \
+	NMTTools_DataMapOfIntegerListOfPaveBlock_0.cxx \
 	NMTTools_DEProcessor.cxx \
+	NMTTools_FaceInfo.cxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger_0.cxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape_0.cxx \
 	NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapePaveBlock_0.cxx \
@@ -106,6 +117,8 @@ dist_libNMTTools_la_SOURCES = \
 	NMTTools_ListNodeOfListOfCoupleOfShape_0.cxx \
 	NMTTools_ListOfCommonBlock_0.cxx \
 	NMTTools_ListOfCoupleOfShape_0.cxx \
+	NMTTools_MapIteratorOfMapOfPaveBlock_0.cxx \
+	NMTTools_MapOfPaveBlock_0.cxx \
 	NMTTools_PaveFiller_0.cxx \
 	NMTTools_PaveFiller_1.cxx \
 	NMTTools_PaveFiller_2.cxx \
@@ -118,11 +131,6 @@ dist_libNMTTools_la_SOURCES = \
 	NMTTools_PaveFiller_9.cxx \
 	NMTTools_PaveFiller.cxx \
 	NMTTools_Tools.cxx \
-	NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock_0.cxx \
-	NMTTools_DataMapNodeOfDataMapOfIntegerListOfPaveBlock_0.cxx \
-	NMTTools_DataMapOfIntegerListOfPaveBlock_0.cxx \
-	NMTTools_MapIteratorOfMapOfPaveBlock_0.cxx \
-	NMTTools_MapOfPaveBlock_0.cxx \
 	NMTTools_StdMapNodeOfMapOfPaveBlock_0.cxx
 
 # additional information to compile and link file
@@ -145,6 +153,7 @@ CDL_FILES =					\
 	NMTTools_CommonBlockAPI.cdl		\
 	NMTTools_CoupleOfShape.cdl		\
 	NMTTools_DEProcessor.cdl		\
+	NMTTools_FaceInfo.cdl			\
 	NMTTools_IteratorOfCoupleOfShape.cdl	\
 	NMTTools_PaveFiller.cdl			\
 	NMTTools_Tools.cdl

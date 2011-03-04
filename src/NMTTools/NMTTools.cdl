@@ -46,21 +46,16 @@ uses
     NMTDS
 
 is 
-    --class IteratorOfCoupleOfShape; 
-    --class DSFiller; 
     class PaveFiller; 
     class Tools; 
     class CommonBlock; 
     class CommonBlockAPI; 
-    --class PCurveMaker; 
     class DEProcessor; 
     class CoupleOfShape;  
-    --modified by NIZNHY-PKV Mon Feb 19 11:39:24 2007f
     class CheckerSI;
-    --modified by NIZNHY-PKV Mon Feb 19 11:39:27 2007t 
+    class FaceInfo;
 
     pointer PPaveFiller to PaveFiller from NMTTools;
-    --pointer PDSFiller   to DSFiller   from NMTTools;
 
     class ListOfCommonBlock  instantiates  
     	List from TCollection(CommonBlock from NMTTools); 
@@ -94,6 +89,12 @@ is
 				 
     class  MapOfPaveBlock  instantiates 
     	Map from TCollection   (PaveBlock from BOPTools, 
-    	    	    	    	PaveBlockMapHasher from BOPTools);	
+    	    	    	    	PaveBlockMapHasher from BOPTools); 
+				 
+    class DataMapOfIntegerFaceInfo instantiates 
+    	DataMap from TCollection(Integer from  Standard, 
+                                 FaceInfo from  NMTTools,
+				 MapIntegerHasher from TColStd); 
+ 
 --
 end NMTTools;

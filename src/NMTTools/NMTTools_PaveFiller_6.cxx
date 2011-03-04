@@ -32,13 +32,16 @@
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
 #include <TColStd_DataMapOfIntegerListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
-#include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
+
 
 #include <Geom_TrimmedCurve.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
 #include <Geom2d_Curve.hxx>
 #include <GeomAdaptor_Curve.hxx>
+#include <GeomAdaptor_Surface.hxx>
+#include <Geom_Surface.hxx>
 
 #include <BndLib_Add3dCurve.hxx>
 
@@ -73,9 +76,11 @@
 #include <IntTools_FaceFace.hxx>
 #include <IntTools_Tools.hxx>
 #include <IntTools_ShrunkRange.hxx>
+#include <IntTools_Context.hxx>
 
 #include <BOPTools_CArray1OfSSInterference.hxx>
-
+#include <BOPTools_VSInterference.hxx>
+#include <BOPTools_ESInterference.hxx>
 #include <BOPTools_SSInterference.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
@@ -84,6 +89,7 @@
 #include <BOPTools_Tools.hxx>
 #include <BOPTools_PaveBlockIterator.hxx>
 #include <BOPTools_Tools2D.hxx>
+#include <BOPTools_Tools3D.hxx>
 
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
@@ -91,12 +97,17 @@
 
 #include <NMTTools_Tools.hxx>
 #include <NMTTools_IndexedDataMapOfShapePaveBlock.hxx>
+#include <NMTTools_CommonBlock.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
+#include <NMTTools_ListOfCommonBlock.hxx>
+#include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
 #include <NMTTools_DataMapOfIntegerListOfPaveBlock.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
-
 #include <NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock.hxx>
 #include <NMTTools_MapOfPaveBlock.hxx>
+#include <NMTTools_MapIteratorOfMapOfPaveBlock.hxx>
+#include <NMTTools_FaceInfo.hxx>
+#include <NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo.hxx>
 
 static
   Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE,
@@ -212,146 +223,103 @@ void NMTTools_PaveFiller::MakeBlocks()
   Standard_Integer i, aNbFFs, nF1, nF2;
   Standard_Integer nV1, nV2, j, aNbCurves;
   Standard_Real aTolR3D, aTol2D, aT1, aT2, aTolPPC=Precision::PConfusion();
+  TopoDS_Face aF1, aF2;
   NMTTools_IndexedDataMapOfShapePaveBlock aMEPB;
   BooleanOperations_IndexedDataMapOfShapeInteger aMapEI;
   BOPTools_ListIteratorOfListOfPaveBlock anIt;
   //
   BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
   //
-  aNbFFs=aFFs.Extent();
+  
   //
-  NMTTools_DataMapOfIntegerListOfPaveBlock aMFInOn;
-  NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock aItMF;
-  //---
-  {
-    Standard_Integer aNbS, aNbF, nF, aNbOn, nSp;
-    TopAbs_ShapeEnum aType;
-    BOPTools_ListIteratorOfListOfPaveBlock anItPB;
-    NMTTools_ListIteratorOfListOfCommonBlock aItCB;
-    TColStd_ListIteratorOfListOfInteger aItF;
-    //
-    aNbS=myDS->NumberOfShapesOfTheObject();
-    for (i=1; i<=aNbS; ++i) {
-      const TopoDS_Shape& aS=myDS->Shape(i);
-      aType=aS.ShapeType();
-      //
-      if (aType==TopAbs_EDGE) {
-        const NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(i));
-        aItCB.Initialize(aLCB);
-        for (; aItCB.More(); aItCB.Next()) {
-          const NMTTools_CommonBlock& aCB=aItCB.Value();
-          const BOPTools_PaveBlock &aPB1=aCB.PaveBlock1();
-          //
-          const TColStd_ListOfInteger& aLF=aCB.Faces();
-          aNbF=aLF.Extent();
-          if (aNbF) {
-            aItF.Initialize(aLF);
-            for (; aItF.More(); aItF.Next()) {
-              nF=aItF.Value();
-              if (aMFInOn.IsBound(nF)) {
-                BOPTools_ListOfPaveBlock& aLPB=aMFInOn.ChangeFind(nF);
-                aLPB.Append(aPB1);
-              }
-              else {
-                BOPTools_ListOfPaveBlock aLPB;
-                aLPB.Append(aPB1);
-                aMFInOn.Bind(nF, aLPB);
-              }
-            }
-          }// if (aNbF) {
-        } // for (; aItCB.More(); aItCB.Next()) {
-      }//if (aS.ShapeType()==TopAbs_EDGE) {
-      //
-      else if (aType==TopAbs_FACE) {
-        BOPTools_ListOfPaveBlock aLPBOn;
-        //
-        nF=i;
-        RealSplitsFace(nF, aLPBOn);
-        //
-        aNbOn=aLPBOn.Extent();
-        if (aNbOn) {
-          if (aMFInOn.IsBound(nF)) {
-            BOPTools_ListOfPaveBlock& aLPB=aMFInOn.ChangeFind(nF);
-            aLPB.Append(aLPBOn);
-          }
-          else {
-            aMFInOn.Bind(nF, aLPBOn);
-          }
-        }
-      }
-    } // for (i=1; i<=aNbS; ++i) {
-    //
-    // Refine ListOfPaveBlocks
-    aItMF.Initialize(aMFInOn);
-    for(; aItMF.More(); aItMF.Next()) {
-      TColStd_MapOfInteger aMTmp;
-      BOPTools_ListOfPaveBlock aLPBX;
-      //
-      nF=aItMF.Key();
-      BOPTools_ListOfPaveBlock& aLPB=aMFInOn.ChangeFind(nF);
-      anItPB.Initialize(aLPB);
-      for (; anItPB.More(); anItPB.Next()) {
-        const BOPTools_PaveBlock& aPB=anItPB.Value();
-        nSp=aPB.Edge();
-        if (aMTmp.Add(nSp)) {
-          aLPBX.Append(aPB);
-        }
-      }
-      aLPB.Clear();
-      aLPB.Append(aLPBX);
-    }
-  }
-  //---
-  //
-  // 1. Produce Section Edges from intersection curves
+  // 1. Make Section Edges from intersection curves
   //    between each pair of faces
   aNbFFs=aFFs.Extent();
+  if (!aNbFFs) {
+    return;
+  }
+  //
+  FillFaceInfo();
   //
   for (i=1; i<=aNbFFs; ++i) {
+    BOPTools_ListOfPaveBlock aLPB;
+    TColStd_MapOfInteger aMVStick;
+    TopTools_ListOfShape aLSE;
+    TColStd_ListOfInteger aLNE;
+    BOPTools_PaveSet aPSF;
+    NMTTools_MapOfPaveBlock aMPBX;
+    TColStd_MapIteratorOfMapOfInteger aItMI;
+    NMTTools_MapIteratorOfMapOfPaveBlock aItMPB;
+    //
     BOPTools_SSInterference& aFFi=aFFs(i);
     //
     // Faces
     aFFi.Indices(nF1, nF2);
-    const TopoDS_Face aF1=TopoDS::Face(myDS->Shape(nF1));//mpv
-    const TopoDS_Face aF2=TopoDS::Face(myDS->Shape(nF2));//mpv
+    aF1=*((TopoDS_Face*)(&myDS->Shape(nF1)));
+    aF2=*((TopoDS_Face*)(&myDS->Shape(nF2)));
     //
-    BOPTools_ListOfPaveBlock aLPB;
-    //
-    //---
-    {
-      BOPTools_ListIteratorOfListOfPaveBlock anItPB;
-      NMTTools_MapOfPaveBlock aMPB;
-      //
-      if (aMFInOn.IsBound(nF1)) {
-        const BOPTools_ListOfPaveBlock& aLPBF1=aMFInOn.Find(nF1);
-        anItPB.Initialize(aLPBF1);
-        for (; anItPB.More(); anItPB.Next()) {
-          const BOPTools_PaveBlock& aPB=anItPB.Value();
-          if (aMPB.Add(aPB)) {
-            aLPB.Append(aPB);
-          }
-        }
-      }
-      if (aMFInOn.IsBound(nF2)) {
-        const BOPTools_ListOfPaveBlock& aLPBF2=aMFInOn.Find(nF2);
-        anItPB.Initialize(aLPBF2);
-        for (; anItPB.More(); anItPB.Next()) {
-          const BOPTools_PaveBlock& aPB=anItPB.Value();
-          if (aMPB.Contains(aPB)) {
-            aFFi.AppendBlock(aPB);
-          }
-          else {
-            aLPB.Append(aPB);
-          }
-        }
-      }
-    }
-    //---
-    //
-    TopTools_ListOfShape aLSE;
-    TColStd_ListOfInteger aLNE;
     SharedEdges(nF1, nF2, aLNE, aLSE);
     aFFi.SetSharedEdges(aLNE);
+    //
+    // aMVStick
+    const NMTTools_FaceInfo& aFI1=myFaceInfo.Find(nF1);
+    const NMTTools_FaceInfo& aFI2=myFaceInfo.Find(nF2);
+    //
+    const TColStd_MapOfInteger& aMVOn1=aFI1.VerticesOn();
+    const TColStd_MapOfInteger& aMVIn1=aFI1.VerticesIn();
+    const TColStd_MapOfInteger& aMVOn2=aFI2.VerticesOn();
+    const TColStd_MapOfInteger& aMVIn2=aFI2.VerticesIn();
+    //
+    for (j=0; j<2; ++j) {
+      const TColStd_MapOfInteger& aMV1=(!j) ? aMVOn1 :aMVIn1;
+      aItMI.Initialize(aMV1);
+      for (; aItMI.More(); aItMI.Next()) {
+	nV1=aItMI.Key();
+	if (aMVOn2.Contains(nV1) || aMVIn2.Contains(nV1)) {
+	  aMVStick.Add(nV1);
+	}
+      }
+    }
+    //
+    //  aLPB
+    const NMTTools_MapOfPaveBlock& aMPBIn1=aFI1.PaveBlocksIn();
+    const NMTTools_MapOfPaveBlock& aMPBOn1=aFI1.PaveBlocksOn();
+    const NMTTools_MapOfPaveBlock& aMPBIn2=aFI2.PaveBlocksIn();
+    const NMTTools_MapOfPaveBlock& aMPBOn2=aFI2.PaveBlocksOn();
+    //
+    aMPBX.Clear();
+    for (j=0; j<4; ++j) {
+      NMTTools_MapOfPaveBlock *pMPB;
+      //
+      if (!j) {
+	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBIn1);
+      }
+      else if (j==1) {
+	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBOn1);
+      }
+      else if (j==2) {
+	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBIn2);
+      }
+      else if (j==3) {
+	pMPB=((NMTTools_MapOfPaveBlock*)&aMPBOn2);
+      }
+      //
+      const NMTTools_MapOfPaveBlock& aMPB=*pMPB;
+      aItMPB.Initialize(aMPB);
+      for (; aItMPB.More(); aItMPB.Next()) {
+	const BOPTools_PaveBlock& aPB=aItMPB.Key();
+	if (aMPBX.Add(aPB)) {
+	  aLPB.Append(aPB);
+	}
+	//
+	else {
+	  if (j>1) {
+	    aFFi.AppendBlock(aPB);
+	  }
+	}
+	//
+      }
+    }
     //
     BOPTools_SequenceOfCurves& aSCvs=aFFi.Curves();
     aNbCurves=aSCvs.Length();
@@ -359,19 +327,18 @@ void NMTTools_PaveFiller::MakeBlocks()
       continue;
     }
     //
-    // Contribution of Samtech www.samcef.com END
     aTolR3D=aFFi.TolR3D();
     aTol2D=(aTolR3D < 1.e-3) ? 1.e-3 : aTolR3D;
     //
-    BOPTools_PaveSet aPSF;
+    CorrectTolR3D(aFFi, aMVStick, aTolR3D);
     //
     PrepareSetForFace (nF1, nF2, aLPB, aPSF);
     //
     // Put Paves On Curves
     for (j=1; j<=aNbCurves; ++j) {
       BOPTools_Curve& aBC=aSCvs(j);
-      // DEBUG f
       const IntTools_Curve& aC=aBC.Curve();
+      // DEBUG f
       Handle(Geom_Curve) aC3D = aC.Curve();
       // DEBUG t
       PutPaveOnCurve (aPSF, aTolR3D, aBC);
@@ -417,18 +384,12 @@ void NMTTools_PaveFiller::MakeBlocks()
           continue;
         }
         //
-        // Modified
-        // to provide checking whether aPBNew already exists in list
-        // of section edges aLSE
-        // Thu Sep 14 14:35:18 2006
-        // Contribution of Samtech www.samcef.com BEGIN
         // 2
         bIsExistingPaveBlock=IsExistingPaveBlock(aPBNew, aLSE, aTolR3D);
         if (bIsExistingPaveBlock) {
           continue;
         }
-        // Contribution of Samtech www.samcef.com END
-        //
+	//
         // Checking of validity in 2D
         //
         bIsValidIn2D=myContext.IsValidBlockForFaces(aT1, aT2, aIC, aF1, aF2, aTol2D);
@@ -443,7 +404,6 @@ void NMTTools_PaveFiller::MakeBlocks()
         const TopoDS_Vertex aV1=TopoDS::Vertex(myDS->Shape(nV1));
         const TopoDS_Vertex aV2=TopoDS::Vertex(myDS->Shape(nV2));
         //
-        //modified by NIZNHY-PKV Thu Apr 22 07:54:35 2010f
         {
           Standard_Real aT;
           //
@@ -453,7 +413,6 @@ void NMTTools_PaveFiller::MakeBlocks()
           myContext.IsVertexOnLine(aV2, aIC, aTolR3D, aT);
           BOPTools_Tools::UpdateVertex (aIC, aT, aV2);
         }
-        //modified by NIZNHY-PKV Thu Apr 22 07:54:37 2010t
         //
         BOPTools_Tools::MakeSectEdge (aIC, aV1, aT1, aV2, aT2, aES);
         //
@@ -519,7 +478,6 @@ void NMTTools_PaveFiller::MakeBlocks()
   // 2.1.VV
   tPF.Init();
   tPF.PerformVV();
-  //tPF.PerformNewVertices(); qq
   //
   // 2.2.VE
   tPF.myPavePool.Resize (tPF.myNbEdges);
@@ -1260,7 +1218,6 @@ Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE,
   //
   return bRet;
 }
-
 //=======================================================================
 // function: PutPaveOnCurve
 // purpose:
@@ -1287,7 +1244,7 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
     const BOPTools_Pave& aPave=anIt.Value();
     //
     nV=aPave.Index();
-    const TopoDS_Vertex aV=TopoDS::Vertex(myDS->Shape(nV));//mpv
+    const TopoDS_Vertex aV=TopoDS::Vertex(myDS->Shape(nV));
     //
     Bnd_Box aBBV;
     BRepBndLib::Add(aV, aBBV);
@@ -1296,6 +1253,7 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
     }
     //
     bIsVertexOnLine=myContext.IsVertexOnLine(aV, aC, aTolR3D, aT);
+    //
     //
     if (bIsVertexOnLine) {
       BOPTools_Pave aPaveNew(nV, aT, BooleanOperations_SurfaceSurface);
@@ -1308,3 +1266,256 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
     }
   }
 }
+//modified by NIZNHY-PKV Tue Feb 08 12:24:35 2011f
+//
+//=======================================================================
+//function : FillFaceInfo
+//purpose  : 
+//=======================================================================
+void NMTTools_PaveFiller::FillFaceInfo()
+{
+  Standard_Integer i, aNbS, aNbFFs, nF, aNbVFs, aNbEFs, j, n1, n2, nX, aNbF;
+  TopAbs_ShapeEnum aType;
+  TopoDS_Shape aS;
+  TColStd_ListIteratorOfListOfInteger aItF; 
+  BOPTools_ListIteratorOfListOfPaveBlock anItPB;
+  NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo aItMFI;
+  NMTTools_ListIteratorOfListOfCommonBlock aItCB;
+  //
+  myFaceInfo.Clear();
+  //
+  BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
+  BOPTools_CArray1OfVSInterference& aVFs=myIP->VSInterferences();
+  BOPTools_CArray1OfESInterference& aEFs=myIP->ESInterferences();
+  //
+  aNbFFs=aFFs.Extent();
+  if (!aNbFFs) {
+    return;
+  }
+  //
+  // 0.
+  for (i=1; i<=aNbFFs; ++i) {
+    NMTTools_FaceInfo aFI;
+    //
+    BOPTools_SSInterference& aFFi=aFFs(i);
+    aFFi.Indices(n1, n2);
+    myFaceInfo.Bind(n1, aFI);
+    myFaceInfo.Bind(n2, aFI);
+  }
+  //
+  // 1.
+  aNbS=myDS->NumberOfShapesOfTheObject();
+  for (i=1; i<=aNbS; ++i) {
+    aS=myDS->Shape(i);
+    aType=aS.ShapeType();
+    if (aType==TopAbs_EDGE) {
+      const NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(i));
+      aItCB.Initialize(aLCB);
+      for (; aItCB.More(); aItCB.Next()) {
+	const NMTTools_CommonBlock& aCB=aItCB.Value();
+	const BOPTools_PaveBlock &aPB1=aCB.PaveBlock1();
+	const TColStd_ListOfInteger& aLF=aCB.Faces();
+	aNbF=aLF.Extent();
+	if (!aNbF) {
+	  continue;
+	}
+	//
+	aItF.Initialize(aLF);
+	for (; aItF.More(); aItF.Next()) {
+	  nF=aItF.Value();
+	  if (!myFaceInfo.IsBound(nF)) {
+	    continue;
+	  }
+	  //
+	  NMTTools_FaceInfo& aFI=myFaceInfo.ChangeFind(nF);
+	  aFI.ChangePaveBlocksIn().Add(aPB1);
+	  //
+	  n1=aPB1.Pave1().Index();
+	  n2=aPB1.Pave2().Index();
+	  aFI.ChangeVerticesIn().Add(n1);
+	  aFI.ChangeVerticesIn().Add(n2);
+	}
+      }
+    }// if (aType==TopAbs_EDGE) {
+    else if (aType==TopAbs_FACE) {
+      if (!myFaceInfo.IsBound(i)) {
+	continue;
+      }
+      //
+      BOPTools_ListOfPaveBlock aLPBOn;
+      //
+      nF=i;
+      NMTTools_FaceInfo& aFI=myFaceInfo.ChangeFind(nF);
+      //
+      RealSplitsFace(nF, aLPBOn);
+      //
+      anItPB.Initialize(aLPBOn);
+      for (; anItPB.More(); anItPB.Next()) {
+	const BOPTools_PaveBlock &aPB=anItPB.Value();
+	aFI.ChangePaveBlocksOn().Add(aPB);
+	//
+	n1=aPB.Pave1().Index();
+	n2=aPB.Pave2().Index();
+	aFI.ChangeVerticesOn().Add(n1);
+	aFI.ChangeVerticesOn().Add(n2);
+      }
+      //
+    }// else if (aType==TopAbs_FACE) {
+  }// for (i=1; i<=aNbS; ++i) {
+  //
+  // 2.
+  aItMFI.Initialize(myFaceInfo);
+  for (; aItMFI.More(); aItMFI.Next()) {
+    nF=aItMFI.Key();
+    NMTTools_FaceInfo& aFI=*((NMTTools_FaceInfo*)&aItMFI.Value());
+    //
+    aFI.SetIndex(nF);
+    //
+    //
+    // 2.1 aVFs
+    aNbVFs=aVFs.Extent();
+    for (j=1; j<=aNbVFs; ++j) {
+      BOPTools_VSInterference& aVFj=aVFs(j);
+      aVFj.Indices(n1, n2);
+      if (nF==n1) {
+	aFI.ChangeVerticesIn().Add(n2);
+      }
+      else if (nF==n2){
+	aFI.ChangeVerticesIn().Add(n1);
+      }
+    }//  for (j=1; j<=aNbVFs; ++j) {
+    //
+    // 2.2 aEFs
+    aNbEFs=aEFs.Extent();
+    for (j=1; j<=aNbEFs; ++j) {
+      BOPTools_ESInterference& aEFj=aEFs(j);
+      aEFj.Indices(n1, n2);
+      if (!(nF==n1 || nF==n2)) {
+	continue;
+      }
+      //
+      nX=aEFj.NewShape();
+      if (nX<1) {
+	continue;
+      }
+      //
+      aS=myDS->Shape(nX);
+      aType=aS.ShapeType();
+      if (aType!=TopAbs_VERTEX) {
+	continue;
+      }
+      //
+      aFI.ChangeVerticesIn().Add(nX);
+    }//  for (j=1; j<=aNbEFs; ++j) {
+  }// for (; aItMFI.More(); aItMFI.Next()) {
+}
+
+
+#include <gp_Pnt.hxx>
+#include <gp_Dir.hxx>
+#include <gp_Vec.hxx>
+#include <GeomAPI_ProjectPointOnSurf.hxx>
+//=======================================================================
+//function : CorrectTolR3D
+//purpose  : Attempt to correct the value of tolerance aTolR3D for
+//           the intersection curve in order to 
+//           compel it to pass through the sticks.
+//           Prerequisites: 
+//             2. The are based on B-Spline surfaces;
+//             1. There is at least the one intersection curve;
+//             2. The faces have stick vertices to catch the curve;
+//             3. The intersection angle is rather small (0.7-7 deg)
+//              
+//=======================================================================
+void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
+					const TColStd_MapOfInteger& aMVStick,
+					Standard_Real& aTolR3D)
+     
+{
+  Standard_Boolean bHasBounds;
+  Standard_Integer i, nF[2], nV, aNbCurves;
+  Standard_Real aT1, aT2, aU, aV, aT, aA, aTolV, aTolVmax;
+  Standard_Real aTolR, aTolTresh, aAmin, aAmax;
+  TColStd_MapIteratorOfMapOfInteger aIt;
+  gp_Pnt aP, aP1, aP2;
+  gp_Dir aDN[2];
+  gp_Vec aVT;
+  Handle(Geom_Surface) aS[2];
+  Handle(Geom_Curve) aC3D;
+  GeomAdaptor_Surface aGAS;
+  GeomAbs_SurfaceType aType;
+  TopoDS_Face aF[2];
+  //
+  aTolTresh=0.0005;
+  aAmin=0.012;// 0.7-7 deg
+  aAmax=0.12;
+  //
+  if (!aMVStick.Extent()) {
+    return;
+  }
+  //
+  BOPTools_SSInterference& aFFi=*((BOPTools_SSInterference*)&aFF);
+  BOPTools_SequenceOfCurves& aSCvs=aFFi.Curves();
+  aNbCurves=aSCvs.Length();
+  if (aNbCurves!=1){
+    return;
+  }
+  //
+  aFFi.Indices(nF[0], nF[1]);
+  for (i=0; i<2; ++i) {
+    aF[i]=*((TopoDS_Face*)(&myDS->Shape(nF[i])));
+    aS[i]=BRep_Tool::Surface(aF[i]);
+    aGAS.Load(aS[i]);
+    aType=aGAS.GetType();
+    if (aType!=GeomAbs_BSplineSurface) {
+      return;
+    }
+  }
+  //
+  BOPTools_Curve& aBC=aSCvs(1);
+  const IntTools_Curve& aIC=aBC.Curve();
+  bHasBounds=aIC.HasBounds();
+  if (!bHasBounds){
+    return;
+  }
+  //
+  aIC.Bounds (aT1, aT2, aP1, aP2);
+  aT=IntTools_Tools::IntermediatePoint(aT1, aT2);
+  aC3D=aIC.Curve();
+  aC3D->D0(aT, aP);
+  //
+  for (i=0; i<2; ++i) {
+    GeomAPI_ProjectPointOnSurf& aPPS=myContext.ProjPS(aF[i]);
+    aPPS.Perform(aP);
+    aPPS.LowerDistanceParameters(aU, aV);
+    BOPTools_Tools3D::GetNormalToSurface(aS[i], aU, aV, aDN[i]);
+  }
+  //
+  aA=aDN[0].Angle(aDN[1]);
+  aA=fabs(aA);
+  if (aA>0.5*PI) {
+    aA=PI-aA;
+  }
+  //
+  if (aA<aAmin || aA>aAmax) {
+    return;
+  }
+  //
+  aTolVmax=-1.;
+  aIt.Initialize(aMVStick);
+  for (; aIt.More(); aIt.Next()) {
+    nV=aIt.Key();
+    const TopoDS_Vertex& aV=*((TopoDS_Vertex*)(&myDS->Shape(nV)));
+    aTolV=BRep_Tool::Tolerance(aV);
+    if (aTolV>aTolVmax) {
+      aTolVmax=aTolV;
+    }
+  }
+  //
+  
+  aTolR=aTolVmax/aA;
+  if (aTolR<aTolTresh) {
+    aTolR3D=aTolR;
+  }
+}
+//modified by NIZNHY-PKV Tue Feb 08 12:24:56 2011t

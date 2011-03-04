@@ -1,0 +1,9 @@
+#ifndef _NMTTools_MapOfPaveBlock_HeaderFile
+#include <NMTTools_MapOfPaveBlock.hxx>
+#endif
+#ifndef _TColStd_MapOfInteger_HeaderFile
+#include <TColStd_MapOfInteger.hxx>
+#endif
+#ifndef _NMTTools_FaceInfo_HeaderFile
+#include <NMTTools_FaceInfo.hxx>
+#endif

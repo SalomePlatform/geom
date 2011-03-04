@@ -61,6 +61,9 @@
 #ifndef _NMTDS_PInterfPool_HeaderFile
 #include <NMTDS_PInterfPool.hxx>
 #endif
+#ifndef _NMTTools_DataMapOfIntegerFaceInfo_HeaderFile
+#include <NMTTools_DataMapOfIntegerFaceInfo.hxx>
+#endif
 #ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
 #endif
@@ -92,6 +95,7 @@ class NMTTools_IndexedDataMapOfIndexedMapOfInteger;
 class TopTools_ListOfShape;
 class TopoDS_Edge;
 class TopTools_DataMapOfShapeShape;
+class TColStd_MapOfInteger;
 
 
 #ifndef _Standard_HeaderFile
@@ -402,6 +406,12 @@ Standard_EXPORT   void PerformVF1() ;
 Standard_EXPORT   void MakeAloneVertices() ;
 
 
+Standard_EXPORT   void FillFaceInfo() ;
+
+
+Standard_EXPORT   void CorrectTolR3D(const BOPTools_SSInterference& aFF,const TColStd_MapOfInteger& aMVStick,Standard_Real& aTolR3D) ;
+
+
  // Fields PROTECTED
  //
 NMTDS_PShapesDataStructure myDS;
@@ -419,6 +429,7 @@ TColStd_DataMapOfIntegerInteger myVSD;
 NMTDS_PIterator myDSIt;
 TopoDS_Shape myCompositeShape;
 NMTDS_PInterfPool myIP;
+NMTTools_DataMapOfIntegerFaceInfo myFaceInfo;
 
 
 private: 
