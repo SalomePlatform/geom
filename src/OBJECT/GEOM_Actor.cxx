@@ -39,8 +39,6 @@
 #include "GEOM_ShadingFace.h"
 #include "SVTK_Actor.h"
 
-#include <OCC2VTK_Tools.h>
-
 #include <vtkObjectFactory.h> 
 #include <vtkRenderer.h> 
 #include <vtkProperty.h> 
@@ -49,8 +47,14 @@
  
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopExp_Explorer.hxx>
+#include <Poly_Triangulation.hxx>
+#include <BRepMesh_IncrementalMesh.hxx>
+#include <Bnd_Box.hxx>
 #include <TopoDS.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepBndLib.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopoDS_Iterator.hxx>
 #include <TopExp.hxx>
  
 #include <vtkPolyDataWriter.h> 
@@ -102,7 +106,10 @@ GEOM_Actor::GEOM_Actor():
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
   myShadingFaceProp(vtkProperty::New()),
-  isOnlyVertex(false)
+  isOnlyVertex(false),
+  // Making deflection relative similarly to GEOM_AISShape
+  myDeflection( .001 ), 
+  myIsRelative( true ) 
 { 
 #ifdef MYDEBUG
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
@@ -174,7 +181,6 @@ GEOM_Actor::GEOM_Actor():
 
   // Toggle display mode 
   setDisplayMode(0); // WIRE FRAME
-  SetVectorMode(0);  //
 
 } 
  
@@ -351,6 +357,39 @@ GEOM_Actor
   return myVectorMode;
 }
 
+static 
+void 
+MeshShape(const TopoDS_Shape& theShape,
+          float& theDeflection, 
+          bool theIsRelative)
+{ 
+  static Standard_Real RELATIVE_DEFLECTION = 0.0001; 
+  Standard_Real aDeflection = theDeflection <= 0 ? RELATIVE_DEFLECTION : theDeflection;
+  
+  // theDeflection <= 0 -> Compute default theDeflection
+  // Otherwise compute the absolute deflection on the basis of relative
+  if(theDeflection <= 0 || theIsRelative ){ 
+    Bnd_Box B;
+    BRepBndLib::Add(theShape, B);
+	if(!B.IsVoid()){
+	  Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+	  B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+
+	  // This magic line comes from Prs3d_ShadedShape.gxx in OCCT
+	  aDeflection = std::max( aXmax-aXmin , std::max(aYmax-aYmin , aZmax-aZmin)) 
+    	*aDeflection*4;
+    }
+	else
+	  // Just to assign some value, because a void bnd box is not a good case
+	  aDeflection = RELATIVE_DEFLECTION; 
+ 
+    if(theDeflection <= 0) 
+      theDeflection = theIsRelative ? RELATIVE_DEFLECTION : aDeflection; 
+  }
+
+  BRepMesh_IncrementalMesh aMesh(theShape,aDeflection);
+}
+
 void  
 GEOM_Actor:: 
 SetDeflection(float theDeflection, bool theIsRelative) 
@@ -358,7 +397,7 @@ SetDeflection(float theDeflection, bool theIsRelative)
   myDeflection = theDeflection; 
   myIsRelative = theIsRelative; 
  
-  GEOM::MeshShape2(myShape,myDeflection,myIsRelative); 
+  MeshShape(myShape,myDeflection,myIsRelative); 
  
   SetModified(); 
 } 
@@ -389,12 +428,7 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
   TopExp::MapShapesAndAncestors(theShape,TopAbs_EDGE,TopAbs_FACE,anEdgeMap);
   
-  GEOM::SetShape(theShape,anEdgeMap,theIsVector,
-                 myIsolatedEdgeSource.Get(),
-                 myOneFaceEdgeSource.Get(),
-                 mySharedEdgeSource.Get(),
-                 myWireframeFaceSource.Get(),
-                 myShadingFaceSource.Get());
+  SetShape(theShape,anEdgeMap,theIsVector);
   isOnlyVertex =  
     myIsolatedEdgeSource->IsEmpty() &&
     myOneFaceEdgeSource->IsEmpty() &&
@@ -406,6 +440,65 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
   if((bool)myShape.Infinite() || isOnlyVertex ){
     myVertexActor->GetDeviceActor()->SetInfinitive(true);
     myHighlightActor->GetDeviceActor()->SetInfinitive(true);
+  }
+}
+
+void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
+                           const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+                           bool theIsVector)
+{
+  if (theShape.ShapeType() == TopAbs_COMPOUND) {
+    TopoDS_Iterator anItr(theShape);
+    for (; anItr.More(); anItr.Next()) {
+      SetShape(anItr.Value(),theEdgeMap,theIsVector);
+    }
+  }
+
+  switch (theShape.ShapeType()) {
+    case TopAbs_WIRE: {
+      TopExp_Explorer anEdgeExp(theShape,TopAbs_EDGE);
+      for (; anEdgeExp.More(); anEdgeExp.Next()){
+        const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
+        if (!BRep_Tool::Degenerated(anEdge))
+          myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+      }
+      break;
+    }
+    case TopAbs_EDGE: {
+      const TopoDS_Edge& anEdge = TopoDS::Edge(theShape);
+      if (!BRep_Tool::Degenerated(anEdge))
+        myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+      break;
+    }
+    case TopAbs_VERTEX: {
+      break;
+    }
+    default: {
+      TopExp_Explorer aFaceExp (theShape,TopAbs_FACE);
+      for(; aFaceExp.More(); aFaceExp.Next()) {
+        const TopoDS_Face& aFace = TopoDS::Face(aFaceExp.Current());
+        myWireframeFaceSource->AddFace(aFace);
+        myShadingFaceSource->AddFace(aFace);
+        TopExp_Explorer anEdgeExp(aFaceExp.Current(), TopAbs_EDGE);
+        for(; anEdgeExp.More(); anEdgeExp.Next()) {
+          const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
+          if(!BRep_Tool::Degenerated(anEdge)){
+            // compute the number of faces
+            int aNbOfFaces = theEdgeMap.FindFromKey(anEdge).Extent();
+            switch(aNbOfFaces){
+            case 0:  // isolated edge
+              myIsolatedEdgeSource->AddEdge(anEdge,theIsVector);
+              break;
+            case 1:  // edge in only one face
+              myOneFaceEdgeSource->AddEdge(anEdge,theIsVector);
+              break;
+            default: // edge shared by at least two faces
+              mySharedEdgeSource->AddEdge(anEdge,theIsVector);
+            }
+          }
+        }
+      }
+    }
   }
 }
 

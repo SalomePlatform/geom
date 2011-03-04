@@ -56,6 +56,8 @@ class vtkRenderer;
 class vtkAppendPolyData;
 typedef GEOM_SmartPtr<vtkAppendPolyData> PAppendFilter;
 
+class TopTools_IndexedDataMapOfShapeListOfShape;
+
 class GEOM_OBJECT_EXPORT GEOM_Actor: public SALOME_Actor
 {
 public:
@@ -66,6 +68,10 @@ public:
                 float theDeflection,
                 bool theIsRelative,
                 bool theIsVector = false);
+
+  void SetShape (const TopoDS_Shape& theShape,
+		 const TopTools_IndexedDataMapOfShapeListOfShape& theEdgeMap,
+		 bool theIsVector);
 
   void SetDeflection(float theDeflection, bool theIsRelative);
   float GetDeflection() const{ return myDeflection;}
