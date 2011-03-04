@@ -695,7 +695,7 @@ void AdvancedGUI_PipeTShapeDlg::DisplayPreview(const bool activate, const bool u
 			GEOM::GEOM_Object_var obj = *it;
 			displayPreview(obj, true, activate, false, lineWidth, displayMode, color);
 			if (toRemoveFromEngine)
-				obj->Destroy();
+				obj->UnRegister();
 		}
 		HexMeshCheckBox->setChecked(hexMeshState);
 	} catch (const SALOME::SALOME_Exception& e) {

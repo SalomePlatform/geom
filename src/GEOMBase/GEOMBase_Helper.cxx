@@ -115,7 +115,7 @@ GEOMBase_Helper::~GEOMBase_Helper()
   if (myDisplayer)
     delete myDisplayer;
   if ( !CORBA::is_nil( myOperation ) )
-    myOperation->Destroy();
+    myOperation->UnRegister();
 }
 
 //================================================================
@@ -278,7 +278,7 @@ void GEOMBase_Helper::displayPreview( const bool   activate,
             GEOM::GEOM_Object_var obj=*it;
         displayPreview( obj, true, activate, false, lineWidth, displayMode, color );
         if ( toRemoveFromEngine )
-              obj->Destroy();
+              obj->UnRegister();
       }
     }
   }
@@ -536,7 +536,7 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
   // Each dialog is responsible for this method implementation,
   // default implementation does nothing
   restoreSubShapes(aStudyDS, aSO);
-  aSO->Destroy();
+  aSO->UnRegister();
 }
 
 //================================================================
@@ -845,7 +845,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
             // obj has been published in study. Its refcount has been incremented.
             // It is safe to decrement its refcount
             // so that it will be destroyed when the entry in study will be removed
-            obj->Destroy();
+            obj->UnRegister();
 #endif
           }
           else {

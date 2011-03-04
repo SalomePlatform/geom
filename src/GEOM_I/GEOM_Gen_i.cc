@@ -181,11 +181,11 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
     anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributeName");
     SALOMEDS::AttributeName_var aName = SALOMEDS::AttributeName::_narrow(anAttr);
     aName->SetValue("Geometry");
-    aName->Destroy();
+    aName->UnRegister();
     anAttr = aStudyBuilder->FindOrCreateAttribute(aFather, "AttributePixMap");
     SALOMEDS::AttributePixMap_var aPixMap=SALOMEDS::AttributePixMap::_narrow(anAttr);
     aPixMap->SetPixMap("ICON_OBJBROWSER_Geometry");
-    aPixMap->Destroy();
+    aPixMap->UnRegister();
     aStudyBuilder->DefineComponentInstance(aFather, (GEOM::GEOM_Gen_var)GEOM_Gen::_this());
   }
   if (aFather->_is_nil()) return aResultSO;
@@ -341,7 +341,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   }
   aResultSO->SetAttrString("AttributeString",aVars.ToCString());
 
-  aFather->Destroy();
+  aFather->UnRegister();
 
   //Set a name of the GEOM object
   aShape->SetName(theName);
@@ -616,7 +616,7 @@ CORBA::Boolean GEOM_Gen_i::CanCopy(SALOMEDS::SObject_ptr theObject) {
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
 
   CORBA::String_var aString=anIOR->Value();
-  anIOR->Destroy();
+  anIOR->UnRegister();
   CORBA::Object_var anObj = _orb->string_to_object(aString);
   GEOM::GEOM_Object_var anObject = GEOM::GEOM_Object::_narrow(anObj);
   // If the object is null one it can't be copied: return false
@@ -705,7 +705,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PasteInto(const SALOMEDS::TMPFile& theStream,
   SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
   CORBA::String_var objStr = _orb->object_to_string(obj);
   anIOR->SetValue(objStr.in());
-  anIOR->Destroy();
+  anIOR->UnRegister();
 
   // Return the created in the Study SObject
   return aNewSO._retn();
@@ -740,7 +740,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     SALOMEDS::SObject_var aFatherSO = theStudy->FindObjectIOR(IOR.in());
     if(aFatherSO->_is_nil()) return aResultSO._retn();
     aResultSO = aStudyBuilder->NewObject(aFatherSO);
-    aFatherSO->Destroy();
+    aFatherSO->UnRegister();
     //aStudyBuilder->Addreference(aResultSO, aResultSO);
   }
 
@@ -760,8 +760,8 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
     if(aSO->_is_nil()) continue;
     SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
-    aSO->Destroy();
-    aSubSO->Destroy();
+    aSO->UnRegister();
+    aSubSO->UnRegister();
   }
 
   return aResultSO._retn();
@@ -793,7 +793,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapesO (SALOMEDS::Study_ptr     theStudy,
 
   aParts = RestoreSubShapes(theStudy, theObject, aSO, theArgs,
                             theFindMethod, theInheritFirstArg, theAddPrefix);
-  if (!CORBA::is_nil(aSO)) aSO->Destroy();
+  if (!CORBA::is_nil(aSO)) aSO->UnRegister();
   return aParts._retn();
 }
 
@@ -823,7 +823,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapesO (SALOMEDS::Study_ptr     theS
 
   aParts = RestoreGivenSubShapes(theStudy, theObject, aSO, theArgs,
                                  theFindMethod, theInheritFirstArg, theAddPrefix);
-  if (!CORBA::is_nil(aSO)) aSO->Destroy();
+  if (!CORBA::is_nil(aSO)) aSO->UnRegister();
   return aParts._retn();
 }
 
@@ -954,7 +954,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
         theObject->SetMarkerTexture(aList[0]->GetMarkerTexture());
     }
 
-    anArgSO->Destroy();
+    anArgSO->UnRegister();
   }
   else {
     // Get interface, containing method, which we will use to reconstruct sub-shapes
@@ -1179,7 +1179,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreSubShapes(SALOMEDS::Study_ptr     theStudy,
             }
           }
         } // try to build from published parts
-        anArgSO->Destroy();
+        anArgSO->UnRegister();
       }
     } // process arguments
   }
@@ -1545,7 +1545,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
         theObject->SetMarkerTexture(aList[0]->GetMarkerTexture());
     }
 
-    anArgSO->Destroy();
+    anArgSO->UnRegister();
   }
   else {
     // Get interface, containing method, which we will use to reconstruct sub-shapes
@@ -1719,7 +1719,7 @@ GEOM::ListOfGO* GEOM_Gen_i::RestoreGivenSubShapes(SALOMEDS::Study_ptr     theStu
             }
           }
         } // try to build from published parts
-        anArgSO->Destroy();
+        anArgSO->UnRegister();
       }
     } // process arguments
   }
@@ -2418,12 +2418,12 @@ char* GEOM_Gen_i::getObjectInfo(CORBA::Long studyId, const char* entry)
   if (!aSObj->_is_nil() && aSObj->FindAttribute(anAttr, "AttributeIOR")) {
     SALOMEDS::AttributeIOR_var anIOR = SALOMEDS::AttributeIOR::_narrow(anAttr);
     CORBA::String_var aVal = anIOR->Value();
-    anIOR->Destroy();
+    anIOR->UnRegister();
     CORBA::Object_var anObject = aStudy->ConvertIORToObject(aVal);
     aGeomObject = GEOM::GEOM_Object::_narrow(anObject);
   }
   if (!aSObj->_is_nil() )
-    aSObj->Destroy();
+    aSObj->UnRegister();
 
   const char* aTypeInfo = "Object";
   if ( !aGeomObject->_is_nil() ) {

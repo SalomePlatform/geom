@@ -37,7 +37,7 @@ namespace GEOM
     This class can be used in conjunction with the references to the CORBA objects which
     interfaces are inherited from the SALOME::GenericObj CORBA interface.
 
-    The smart pointer class automatically invokes Register() / Destroy() functions of th
+    The smart pointer class automatically invokes Register() / UnRegister() functions of th
     interface in order to prevent memory leaks and other such problems caused by improper
     usage of the CORBA references.
 
@@ -89,10 +89,10 @@ namespace GEOM
     }
 
     //! Decrement counter for the object.
-    void Destroy()
+    void UnRegister()
     {
       if ( !CORBA::is_nil( this->myObject ) ) {
-	this->myObject->Destroy();
+	this->myObject->UnRegister();
 	this->myObject = TInterface::_nil();
       }
     }
@@ -119,13 +119,13 @@ namespace GEOM
     //! Destroy pointer and remove the reference to the object.
     ~GenericObjPtr()
     {
-      this->Destroy();
+      this->UnRegister();
     }
     
     //! Assign object to reference and remove reference to an old object.
     GenericObjPtr& operator=( TInterfacePtr theObject )
     {
-      this->Destroy();
+      this->UnRegister();
       this->myObject = TInterface::_duplicate( theObject );
       this->Register();
       return *this;
@@ -134,7 +134,7 @@ namespace GEOM
     //! Assign object to reference and remove reference to an old object.
     GenericObjPtr& operator=( const GenericObjPtr& thePointer )
     {
-      this->Destroy();
+      this->UnRegister();
       this->myObject = thePointer.myObject;
       this->Register();
       return *this;
@@ -184,7 +184,7 @@ namespace GEOM
     //! Initialize pointer to the given generic object reference and take ownership on it.
     void take( TInterfacePtr theObject )
     {
-      this->Destroy();
+      this->UnRegister();
       this->myObject = TInterface::_duplicate( theObject );
     }
 
@@ -209,7 +209,7 @@ namespace GEOM
     //! Nullify pointer.
     void nullify()
     {
-      this->Destroy();
+      this->UnRegister();
     }
   };
   

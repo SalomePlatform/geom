@@ -160,7 +160,7 @@ GEOMToolsGUI_MarkerDlg::GEOMToolsGUI_MarkerDlg( QWidget* parent )
 
 GEOMToolsGUI_MarkerDlg::~GEOMToolsGUI_MarkerDlg()
 {
-  myOperation->Destroy();
+  myOperation->UnRegister();
 }
 
 void GEOMToolsGUI_MarkerDlg::setStandardMarker( GEOM::marker_type type, GEOM::marker_size size )

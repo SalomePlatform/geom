@@ -71,11 +71,11 @@ GEOM_Superv_i::~GEOM_Superv_i()
 {
   MESSAGE("GEOM_Superv_i::~GEOM_Superv_i");
   if (!CORBA::is_nil(myBasicOp))
-    myBasicOp->Destroy();
+    myBasicOp->UnRegister();
   if (!CORBA::is_nil(myBoolOp))
-    myBoolOp->Destroy();
+    myBoolOp->UnRegister();
   if (!CORBA::is_nil(my3DPrimOp))
-    my3DPrimOp->Destroy();
+    my3DPrimOp->UnRegister();
   delete name_service;
 }
 

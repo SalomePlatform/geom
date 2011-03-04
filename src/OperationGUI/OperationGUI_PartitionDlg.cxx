@@ -311,7 +311,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
       GEOM::ListOfLong_var   intList;
       GEOM::ListOfDouble_var dblList;
       GEOM::GEOM_IKindOfShape::shape_kind kind = mOp->KindOfShape( myListTools[0].in(), intList.out(), dblList.out() );
-      mOp->Destroy();
+      mOp->UnRegister();
       if ( kind < GEOM::GEOM_IKindOfShape::DISK_CIRCLE || kind > GEOM::GEOM_IKindOfShape::PLANAR ) {
         myListTools.length( 0 );
         return;
