@@ -21,9 +21,8 @@
 //
 
 // File:        GEOMAlgo_Builder_2.cxx
-// Created:     
-// Author:      Peter KURNEV 
-//
+// Author:      Peter KURNEV
+
 #include <GEOMAlgo_Builder.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
@@ -88,6 +87,14 @@
 #include <GEOMAlgo_BuilderFace.hxx>
 
 #include <GEOMAlgo_ShapeSet.hxx>
+//
+#include <NMTDS_BoxBndTree.hxx>
+#include <NCollection_UBTreeFiller.hxx>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <TopTools_DataMapOfIntegerShape.hxx>
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 
 static
   void UpdateCandidates(const Standard_Integer ,
@@ -96,7 +103,7 @@ static
 
 //=======================================================================
 //function : FillImagesFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesFaces()
 {
@@ -108,9 +115,10 @@ static
   FillImagesFaces1();
   FillInternalVertices();
 }
+
 //=======================================================================
 // function: FillIn2DParts
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillIn2DParts()
 {
@@ -192,9 +200,10 @@ static
     }
   }//for (nF=1; nF<=aNbS; ++nF) {
 }
+
 //=======================================================================
 // function: BuildSplitFaces
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::BuildSplitFaces()
 {
@@ -257,9 +266,7 @@ static
         aNbSE=aLSE.Extent();
         if (aNbSE) {
           aMFP.Add(i);
-	  //modified by NIZNHY-PKV Wed Oct 27 11:40:57 2010f
-	  break;
-	  //modified by NIZNHY-PKV Wed Oct 27 11:41:07 2010t
+          break;
         }
       }
     }
@@ -278,7 +285,7 @@ static
     //
     aMFence.Clear();
     //
-    // 2.1. Fill WES 
+    // 2.1. Fill WES
     GEOMAlgo_WireEdgeSet aWES;
     aWES.SetFace(aFF);
     //
@@ -368,13 +375,11 @@ static
     GEOMAlgo_ShapeSet aS1, aS2;
     //
     const TopTools_ListOfShape& aSE=aWES.StartElements();
-    //modified by NIZNHY-PKV Thu Oct 28 08:30:41 2010f
     aS1.Add(aSE);
     aS2.Add(aFF, TopAbs_EDGE);
     if (aS1.IsEqual(aS2)) {
       aLFR.Append(aF);
     }
-    //modified by NIZNHY-PKV Thu Oct 28 08:30:42 2010t
     else {
       GEOMAlgo_BuilderFace aBF;
       //
@@ -387,11 +392,11 @@ static
       const TopTools_ListOfShape& aLF=aBF.Areas();
       aIt.Initialize(aLF);
       for (; aIt.More(); aIt.Next()) {
-	TopoDS_Shape& aFR=aIt.Value();
-	if (anOriF==TopAbs_REVERSED) {
-	  aFR.Orientation(TopAbs_REVERSED);
-	}
-	aLFR.Append(aFR);
+        TopoDS_Shape& aFR=aIt.Value();
+        if (anOriF==TopAbs_REVERSED) {
+          aFR.Orientation(TopAbs_REVERSED);
+        }
+        aLFR.Append(aFR);
       }
     }
     //
@@ -399,23 +404,27 @@ static
     mySplitFaces.Bind(aF, aLFR);
   }//for (i=1; i<=aNbF; ++i)
 }
+
 //=======================================================================
 // function: FillSameDomainFaces
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillSameDomainFaces()
 {
+  Standard_Boolean bIsSDF, bHasImage1, bHasImage2;
+  Standard_Integer i, j, aNbFF, nF1, nF2, aNbPBInOn, aNbC, aNbSE;
+  Standard_Integer aNbF1, aNbF2, i2s, aNbSD;
+  TopTools_MapOfShape aMFence;
+  TopTools_ListOfShape aLSempty;
+  TopTools_ListIteratorOfListOfShape aItF1, aItF2;
+  NMTTools_ListOfCoupleOfShape aLCS;
+  //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   NMTDS_InterfPool* pIP=pPF->IP();
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
-  Standard_Boolean bIsSDF;
-  Standard_Integer i, j, aNbFF, nF1, nF2, aNbPBInOn, aNbC, aNbSE;
-  TopTools_MapOfShape aMFence;
-  TopTools_ListIteratorOfListOfShape aItF1, aItF2;
-  NMTTools_ListOfCoupleOfShape aLCS;   
   //
   //mySameDomainShapes.Clear();
   //
@@ -453,16 +462,62 @@ static
     // the faces are suspected to be SDF.
     // Try to find SDF among images of nF1, nF2
     aMFence.Clear();
-    const TopTools_ListOfShape& aLF1=mySplitFaces.Image(aF1);
-    const TopTools_ListOfShape& aLF2=mySplitFaces.Image(aF2);
     //
-    aItF1.Initialize(aLF1);
-    for (; aItF1.More(); aItF1.Next()) {
-      const TopoDS_Face& aF1x=TopoDS::Face(aItF1.Value());
+    //XXXXXXXXXXXXXf
+    bHasImage1=mySplitFaces.HasImage(aF1);
+    bHasImage2=mySplitFaces.HasImage(aF2);
+    //
+    const TopTools_ListOfShape& aLF1r=(bHasImage1)? mySplitFaces.Image(aF1) : aLSempty;
+    const TopTools_ListOfShape& aLF2r=(bHasImage2)? mySplitFaces.Image(aF2) : aLSempty;
+    //
+    TopTools_DataMapOfIntegerShape aMIS;
+    TColStd_ListIteratorOfListOfInteger aItLI;
+    NMTDS_BoxBndTreeSelector aSelector;
+    NMTDS_BoxBndTree aBBTree;
+    NCollection_UBTreeFiller <Standard_Integer, Bnd_Box> aTreeFiller(aBBTree);
+    //
+    aNbF1=aLF1r.Extent();
+    aNbF2=aLF2r.Extent();
+    const TopTools_ListOfShape& aLF1=(aNbF1<aNbF2)? aLF1r : aLF2r;
+    const TopTools_ListOfShape& aLF2=(aNbF1<aNbF2)? aLF2r : aLF1r;
+    //
+    // 1. aTreeFiller
+    aItF2.Initialize(aLF2);
+    for (i2s=1; aItF2.More(); aItF2.Next(), ++i2s) {
+      Bnd_Box aBoxF2s;
       //
-      aItF2.Initialize(aLF2);
-      for (; aItF2.More(); aItF2.Next()) {
-        const TopoDS_Face& aF2y=TopoDS::Face(aItF2.Value());
+      const TopoDS_Face& aF2s=*((TopoDS_Face*)(&aItF2.Value()));
+      //
+      BRepBndLib::Add(aF2s, aBoxF2s);
+      //
+      aMIS.Bind(i2s, aF2s);
+      //
+      aTreeFiller.Add(i2s, aBoxF2s);
+    }//for (i2s=1; aItF2.More(); aItF2.Next(), ++i2s) {
+    //
+    aTreeFiller.Fill();
+    //
+    // 2.
+    aItF1.Initialize(aLF1);
+    for (j=1; aItF1.More(); aItF1.Next(), ++j) {
+      Bnd_Box aBoxF1x;
+      //
+      const TopoDS_Face& aF1x=*((TopoDS_Face*)(&aItF1.Value()));
+      //
+      BRepBndLib::Add(aF1x, aBoxF1x);
+      //
+      aSelector.Clear();
+      aSelector.SetBox(aBoxF1x);
+      aNbSD=aBBTree.Select(aSelector);
+      if (!aNbSD) {
+        continue;
+      }
+      //
+      const TColStd_ListOfInteger& aLI=aSelector.Indices();
+      aItLI.Initialize(aLI);
+      for (; aItLI.More(); aItLI.Next()) {
+        i2s=aItLI.Value();
+        const TopoDS_Face& aF2y=*((TopoDS_Face*)(&aMIS.Find(i2s)));
         bIsSDF=NMTTools_Tools::AreFacesSameDomain(aF1x, aF2y, aCtx);
         if (bIsSDF) {
           if (aMFence.Contains(aF1x) ||
@@ -488,22 +543,21 @@ static
               mySplitFaces.Bind(aF2, aF2);
             }
           }
-          //
-          
-        }
-      }
-    }
+          break;
+        }//if (bIsSDF) {
+      }//for (; aItLI.More(); aItLI.Next()) {
+    }//for (; aItF1.More(); aItF1.Next()) {
   }//for (i=1; i<=aNbFF; ++i)
-  //
+  //XXXXXXXXXXXXXt
   aNbC=aLCS.Extent();
   if (!aNbC) {
     return;
   }
   //
   // 2. Find Chains
-  NMTTools_IndexedDataMapOfShapeIndexedMapOfShape aMC;  
+  NMTTools_IndexedDataMapOfShapeIndexedMapOfShape aMC;
   //
-  NMTTools_Tools::FindChains(aLCS, aMC); 
+  NMTTools_Tools::FindChains(aLCS, aMC);
   //
   // 3. Fill the map of SDF mySameDomainFaces
   aNbC=aMC.Extent();
@@ -519,9 +573,10 @@ static
   }
   //
 }
+
 //=======================================================================
 // function: FillImagesFaces1
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesFaces1()
 {
@@ -564,22 +619,21 @@ static
       }
     }
     if (!myImages.HasImage(aF)) {
-      //modified by NIZNHY-PKV Wed Oct 27 14:41:34 2010f
       aNbLFx=aLFx.Extent();
       if (aNbLFx==1) {
-	const TopoDS_Shape& aFx=aLFx.First();
-	if (aF.IsSame(aFx)) {
-	  continue;
-	}
+        const TopoDS_Shape& aFx=aLFx.First();
+        if (aF.IsSame(aFx)) {
+          continue;
+        }
       }
-      //modified by NIZNHY-PKV Wed Oct 27 14:41:36 2010t
       myImages.Bind(aF, aLFx);
     }
   }
 }
+
 //=======================================================================
 // function: FillInternalVertices
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillInternalVertices()
 {
@@ -593,8 +647,8 @@ static
   BOPTools_CArray1OfESInterference& aEFs=pIP->ESInterferences();
   const NMTTools_IndexedDataMapOfIndexedMapOfInteger& aMAV=pPF->AloneVertices();
   //
-  Standard_Boolean bHasImage; 
-  Standard_Integer i, j, nF, aNbS, nV, nVSD, n1, n2, iFlag; 
+  Standard_Boolean bHasImage;
+  Standard_Integer i, j, nF, aNbS, nV, nVSD, n1, n2, iFlag;
   Standard_Integer aNbVFs, aNbAVF, aNbEFs, aNbVC, aNbE, aNbV;
   Standard_Real aU1, aU2, aTol;
   NMTTools_IndexedDataMapOfIndexedMapOfInteger aMFMV;
@@ -664,7 +718,7 @@ static
       const TColStd_IndexedMapOfInteger& aMAVF=aMAV.FindFromKey(nF);
       aNbAVF=aMAVF.Extent();
       for (j=1; j<=aNbAVF; ++j) {
-        nV=aMAVF(j); 
+        nV=aMAVF(j);
         nVSD=pPF->FindSDVertex(nV);
         if (nVSD) {
           nV=nVSD;
@@ -714,7 +768,7 @@ static
         TopExp::MapShapesAndAncestors(aFx, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
       }
     }
-    else {      
+    else {
       Standard_Boolean bFaceToProcess;
       //
       TopExp::MapShapesAndAncestors(aF, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
@@ -770,7 +824,7 @@ static
             }
           }
         }
-        else {  
+        else {
           const TopoDS_Face& aFx=TopoDS::Face(aF);
           // update classifier
           IntTools_FClass2d& aClsf=aCtx.FClass2d(aFx);
@@ -780,7 +834,7 @@ static
           if (!iFlag) {
             TopoDS_Face aFz;
             //
-            GEOMAlgo_Tools3D::CopyFace(aFx, aFz); 
+            GEOMAlgo_Tools3D::CopyFace(aFx, aFz);
             aBB.Add(aFz, aV);
             myImages.Bind(aF, aFz);
           }
@@ -789,9 +843,10 @@ static
     }// if (aNbV) {
   }// for (nF=1; nF<=aNb; ++nF) {
 }
+
 //=======================================================================
 // function: UpdateCandidates
-// purpose: 
+// purpose:
 //=======================================================================
 void UpdateCandidates(const Standard_Integer theNF,
                       const Standard_Integer theNV,
