@@ -353,20 +353,21 @@ GEOM_Actor
 
 void  
 GEOM_Actor:: 
-SetDeflection(float theDeflection, bool theIsRelative) 
+SetDeflection(float theDeflection) 
 { 
+  if( myDeflection == theDeflection ) 
+    return;
+    
   myDeflection = theDeflection; 
-  myIsRelative = theIsRelative; 
  
-  GEOM::MeshShape2(myShape,myDeflection,myIsRelative); 
- 
+  GEOM::MeshShape(myShape,myDeflection);
+  
   SetModified(); 
-} 
+}
 
 void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
                            float theDeflection,
-                           bool theIsRelative,
-                           bool theIsVector)
+			   bool theIsVector)
 {
   myShape = theShape;
 
@@ -383,7 +384,8 @@ void GEOM_Actor::SetShape (const TopoDS_Shape& theShape,
      const TopoDS_Vertex& aVertex = TopoDS::Vertex(aVertexExp.Current());
      myVertexSource->AddVertex(aVertex);
   }
-  SetDeflection(theDeflection, theIsRelative);
+  
+  SetDeflection(theDeflection);
 
   // look if edges are free or shared
   TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
@@ -414,7 +416,7 @@ void GEOM_Actor::setDeflection(double adef) {
 #ifdef MYDEBUG
   MESSAGE ( "GEOM_Actor::setDeflection" );
 #endif
-  SetDeflection((float)adef,GetIsRelative());
+  SetDeflection((float)adef);
 }
 
 
@@ -539,7 +541,7 @@ void GEOM_Actor::ShallowCopy(vtkProp *prop)
   GEOM_Actor *f = GEOM_Actor::SafeDownCast(prop);
   if ( f != NULL )
     {
-      this->SetShape(f->getTopo(),f->GetDeflection(),f->GetIsRelative());
+      this->SetShape(f->getTopo(),f->GetDeflection());
     }
 
   // Now do superclass

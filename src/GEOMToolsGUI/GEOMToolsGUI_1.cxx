@@ -769,8 +769,7 @@ void GEOMToolsGUI::OnDeflection()
       while (anAct != NULL) {
         if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
           // There are no casting to needed actor.
-          bool isRel = anActor->GetIsRelative();
-          anActor->SetDeflection(aDC, isRel);
+          anActor->SetDeflection(aDC);
 	  appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aDC);
         }
         anAct = aCollection->GetNextActor();

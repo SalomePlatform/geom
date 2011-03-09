@@ -26,6 +26,8 @@
 
 #include <Bnd_Box.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
+
 #include <BRepBndLib.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 #include <Poly_Triangulation.hxx>
@@ -36,62 +38,51 @@
 #define MAX2(X, Y)    (Abs(X) > Abs(Y) ? Abs(X) : Abs(Y))
 #define MAX3(X, Y, Z) (MAX2(MAX2(X,Y), Z))
 
+
+#define DEFAULT_DEFLECTION 0.001
+
 namespace GEOM
 {
   void MeshShape(const TopoDS_Shape theShape,
-                 Standard_Real theDeflection,
-                 Standard_Boolean theForced)
-  {
-    // Mesh the shape if necessary
-    Standard_Boolean alreadymesh = Standard_True;
+                 float& theDeflection,
+                 bool theForced ) {
+    
+    Standard_Real aDeflection = theDeflection <= 0 ? DEFAULT_DEFLECTION : theDeflection;
+    
+    //If deflection <= 0, than return default deflection
+    if(theDeflection <= 0)
+      theDeflection = aDeflection;  
+    
+    // Is shape triangulated?
+    Standard_Boolean alreadymeshed = Standard_True;
     TopExp_Explorer ex;
     TopLoc_Location aLoc;
-
     for (ex.Init(theShape, TopAbs_FACE); ex.More(); ex.Next()) {
       const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
       Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
-      if(aPoly.IsNull()) { alreadymesh = Standard_False; break; }
-    }
-
-    if(!alreadymesh || theForced) {
-      if(theDeflection<=0) {
-        // Compute default deflection
-        Bnd_Box B;
-        BRepBndLib::Add(theShape, B);
-        if ( B.IsVoid() ) return; // NPAL15983 (Bug when displaying empty groups) 
-        Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
-        B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-        theDeflection = MAX3(aXmax-aXmin, aYmax-aYmin, aZmax-aZmin) * 0.001 * 4;
+      if(aPoly.IsNull()) { 
+	alreadymeshed = Standard_False; 
+	break; 
       }
-      BRepMesh_IncrementalMesh MESH(theShape,theDeflection);
     }
-  }
 
-  void MeshShape2(const TopoDS_Shape& theShape,
-                  float& theDeflection, 
-                  bool theIsRelative)
-  {
-    static Standard_Real RELATIVE_DEFLECTION = 0.0001;
-    Standard_Real aDeflection = theDeflection;
-
-    if(theDeflection <= 0) { // Compute default theDeflection
+    if(!alreadymeshed || theForced) {
       Bnd_Box B;
       BRepBndLib::Add(theShape, B);
+      if ( B.IsVoid() )
+	return; // NPAL15983 (Bug when displaying empty groups) 
       Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
       B.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
-      Standard_Real aDiagonal = (aXmax-aXmin)*(aXmax-aXmin) +
-                                (aYmax-aYmin)*(aYmax-aYmin) +
-                                (aZmax-aZmin)*(aZmax-aZmin);
-      aDiagonal = sqrt(aDiagonal);
-      aDeflection = aDiagonal*RELATIVE_DEFLECTION;
 
-      if(theIsRelative)
-        theDeflection = RELATIVE_DEFLECTION;
-      else
-        theDeflection = aDeflection;
+      // This magic line comes from Prs3d_ShadedShape.gxx in OCCT
+      aDeflection = MAX3(aXmax-aXmin, aYmax-aYmin, aZmax-aZmin) * aDeflection * 4;
+      
+      //Clean triangulation before compute incremental mesh
+      BRepTools::Clean(theShape);
+      
+      //Compute triangulation
+      BRepMesh_IncrementalMesh MESH(theShape,aDeflection); 
     }
- 
-    BRepMesh_IncrementalMesh aMesh(theShape,aDeflection);
   }
 
   void SetShape(const TopoDS_Shape& theShape,
@@ -140,6 +131,7 @@ namespace GEOM
           const TopoDS_Face& aFace = TopoDS::Face(aFaceExp.Current());
           theWireframeFaceSource->AddFace(aFace);
           theShadingFaceSource->AddFace(aFace);
+	  std::cout<<"RNV face Added!!!!"<<std::endl;
           TopExp_Explorer anEdgeExp(aFaceExp.Current(), TopAbs_EDGE);
           for(; anEdgeExp.More(); anEdgeExp.Next()) {
             const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());

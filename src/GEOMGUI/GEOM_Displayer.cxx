@@ -37,7 +37,6 @@
 #include <GEOM_OCCFilter.h>
 
 #include <GEOM_Actor.h>
-#include <GEOM_AssemblyBuilder.h>
 #include <GEOM_AISShape.hxx>
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
@@ -84,6 +83,7 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopoDS.hxx>
 
 // VTK Includes
 #include <vtkActorCollection.h>
@@ -980,17 +980,24 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     theActors->AddItem( aTrh );
   }
   else {
-    theActors = GEOM_AssemblyBuilder::BuildActors( myShape, 0, 0, Standard_True, myType == GEOM_VECTOR );
+    PropMap aDefPropMap = getDefaultPropepryMap(SVTK_Viewer::Type());
+
     QString anEntry;
     if(!myIO.IsNull()) {
       aMgrId = getViewManagerId(myViewFrame);
       anEntry = myIO->getEntry();
     }
     useStudy = !anEntry.isEmpty() && aMgrId != -1;
+
+    
+    theActors = vtkActorCollection::New();
+    GEOM_Actor* aGeomActor = GEOM_Actor::New();
+    aGeomActor->SetShape(myShape,aDefPropMap.value(DEFLECTION_COEFF_PROP).toDouble(),myType == GEOM_VECTOR);
+    theActors->AddItem(aGeomActor);
+    aGeomActor->Delete();
     
     if(useStudy){
       aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-      PropMap aDefPropMap = getDefaultPropepryMap(SVTK_Viewer::Type());
       bool isDiff = MergePropertyMaps(aPropMap, aDefPropMap);
       if(isDiff)
 	aStudy->setObjectPropMap(aMgrId,anEntry,aPropMap);
@@ -1048,8 +1055,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 	  aGeomGActor->SetOpacity(1.0 - aPropMap.value(TRANSPARENCY_PROP).toDouble());
 	  aGeomGActor->SetVectorMode(aPropMap.value(VECTOR_MODE_PROP).toInt());
 	  aGeomGActor->setDisplayMode(aPropMap.value(DISPLAY_MODE_PROP).toInt());
-	  //VSR: do not set deflection until OCC2VTK algo is not improved (to keep performance)
-	  //aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble(), aGeomGActor->GetIsRelative());
+	  aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble()); 
 
 	  vtkFloatingPointType aColor[3] = {1.,0.,0.};
 	  if(aPropMap.contains(COLOR_PROP)) {
@@ -1691,12 +1697,13 @@ PropMap GEOM_Displayer::getDefaultPropepryMap(const QString& viewer_type){
     
   //7. Deflection Coeff
   double aDC;
-  //rnv: Currently deflection coefficient is not supported by VTK viewer.
+
   if(viewer_type == SOCC_Viewer::Type()) {
     aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
   } else if( viewer_type==SVTK_Viewer::Type()) {
-    aDC = 0.0;
+    aDC = 0.001;
   }
+
   aDefaultMap.insert( DEFLECTION_COEFF_PROP , aDC);
 
   return aDefaultMap;

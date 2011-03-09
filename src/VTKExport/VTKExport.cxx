@@ -42,6 +42,9 @@
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
+#include <Poly_Triangulation.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 
 #ifdef WIN32
 # if defined VTKEXPORT_EXPORTS || defined VTKExport_EXPORTS
@@ -85,12 +88,23 @@ extern "C"
       //myAppendFilter->AddInput( myWireframeFaceSource->GetOutput() ); // iso-lines are unnecessary
       myAppendFilter->AddInput( myShadingFaceSource->GetOutput() );
 
-      float aDeflection = 1.0;
-      bool anIsForced = true;
-      bool anIsRelative = false;
+      float aDeflection = 0.001;
       bool anIsVector = false;
 
-      GEOM::MeshShape( theShape, aDeflection, anIsForced );
+      // Is shape triangulated?
+      bool wasMeshed = true;
+      TopExp_Explorer ex;
+      TopLoc_Location aLoc;
+      for (ex.Init(theShape, TopAbs_FACE); ex.More(); ex.Next()) {
+	const TopoDS_Face& aFace = TopoDS::Face(ex.Current());
+	Handle(Poly_Triangulation) aPoly = BRep_Tool::Triangulation(aFace,aLoc);
+	if(aPoly.IsNull()) { 
+	  wasMeshed = false;
+	  break; 
+	}
+      }
+
+      GEOM::MeshShape( theShape, aDeflection );
 
       TopExp_Explorer aVertexExp( theShape, TopAbs_VERTEX );
       for( ; aVertexExp.More(); aVertexExp.Next() )
@@ -98,8 +112,6 @@ extern "C"
         const TopoDS_Vertex& aVertex = TopoDS::Vertex( aVertexExp.Current() );
         myVertexSource->AddVertex( aVertex );
       }
-
-      GEOM::MeshShape2( theShape, aDeflection, anIsRelative );
 
       TopTools_IndexedDataMapOfShapeListOfShape anEdgeMap;
       TopExp::MapShapesAndAncestors( theShape, TopAbs_EDGE, TopAbs_FACE, anEdgeMap );
@@ -132,6 +144,9 @@ extern "C"
       myShadingFaceSource->Delete();
 
       myAppendFilter->Delete();
+
+      if(!wasMeshed)
+	BRepTools::Clean(theShape);
 
       return 1;
     }

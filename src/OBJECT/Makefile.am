@@ -28,7 +28,6 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # header files 
 salomeinclude_HEADERS =				\
 	GEOM_Actor.h				\
-	GEOM_AssemblyBuilder.h			\
 	GEOM_AISShape.hxx			\
 	GEOM_AISShape.ixx			\
 	GEOM_AISShape.jxx			\
@@ -51,7 +50,6 @@ lib_LTLIBRARIES = libGEOMObject.la
 dist_libGEOMObject_la_SOURCES =		\
 	GEOM_Actor.cxx			\
 	GEOM_OCCReader.cxx		\
-	GEOM_AssemblyBuilder.cxx	\
 	GEOM_AISShape.cxx		\
 	GEOM_InteractiveObject.cxx	\
 	GEOM_AISTrihedron.cxx		\

@@ -63,13 +63,11 @@ public:
   static GEOM_Actor* New();
 
   void SetShape(const TopoDS_Shape& theShape,
-                float theDeflection,
-                bool theIsRelative,
-                bool theIsVector = false);
+		float theDeflection,
+		bool theIsVector = false);
 
-  void SetDeflection(float theDeflection, bool theIsRelative);
+  void SetDeflection(float theDeflection);
   float GetDeflection() const{ return myDeflection;}
-  bool GetIsRelative() const{ return myIsRelative;}
 
   void AddToRender(vtkRenderer* theRenderer);
   void RemoveFromRender(vtkRenderer* theRenderer);
@@ -186,7 +184,6 @@ private:
   bool isOnlyVertex;
 
   float myDeflection;
-  bool myIsRelative;
   bool myIsForced;
 
   //  EDisplayMode myDisplayMode;
