@@ -343,9 +343,9 @@ void GEOM_Displayer::Display( const Handle(SALOME_InteractiveObject)& theIO,
 
     if ( prs )
     {
-      vf->BeforeDisplay( this );
+      vf->BeforeDisplay( this, prs );
       vf->Display( prs );
-      vf->AfterDisplay( this );
+      vf->AfterDisplay( this, prs );
 
       if ( updateViewer )
         vf->Repaint();
@@ -399,7 +399,9 @@ void GEOM_Displayer::Erase( const Handle(SALOME_InteractiveObject)& theIO,
   if ( vf ) {
     SALOME_Prs* prs = vf->CreatePrs( theIO->getEntry() );
     if ( prs ) {
+      vf->BeforeErase( this, prs );
       vf->Erase( prs, forced );
+      vf->AfterErase( this, prs );
       if ( updateViewer )
         vf->Repaint();
       delete prs;  // delete presentation because displayer is its owner
@@ -662,7 +664,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	  QStringList uv =  anIsos.split(DIGIT_SEPARATOR);
 	  anUIsoNumber = uv[0].toInt();
 	  aVIsoNumber = uv[1].toInt();
-	  AISShape->SetTransparency(aPropMap.value(TRANSPARENCY_PROP).toDouble());
+	  //AISShape->SetTransparency(aPropMap.value(TRANSPARENCY_PROP).toDouble());
 	} else {
 	  anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
 	  aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
@@ -1429,7 +1431,7 @@ void GEOM_Displayer::LocalSelection( const SALOME_ListIO& theIOList, const int t
  *  [ Reimplemented from SALOME_Displayer ]
  */
 //=================================================================
-void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCViewType& )
+void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCPrs* )
 {
   SOCC_Viewer* vf = dynamic_cast<SOCC_Viewer*>( v );
   if ( vf )
@@ -1443,10 +1445,34 @@ void GEOM_Displayer::BeforeDisplay( SALOME_View* v, const SALOME_OCCViewType& )
   }
 }
 
-void GEOM_Displayer::AfterDisplay( SALOME_View*, const SALOME_OCCViewType& )
+void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 {
+  SalomeApp_Study* aStudy = getStudy();
+  if (!aStudy) return;
+  SOCC_Viewer* vf = dynamic_cast<SOCC_Viewer*>( v );
+  if ( vf && !p->IsNull() ) {
+    int aMgrId = getViewManagerId( vf );
+    Handle(AIS_InteractiveContext) ic = vf->getAISContext();
+    const SOCC_Prs* prs = dynamic_cast<const SOCC_Prs*>( p );
+    if ( !ic.IsNull() && prs ) {
+      AIS_ListOfInteractive objects;
+      prs->GetObjects( objects );
+      AIS_ListIteratorOfListOfInteractive it( objects );
+      while( it.More() ) {
+        Handle(GEOM_AISShape) sh = Handle(GEOM_AISShape)::DownCast( it.Value() );
+	if ( sh.IsNull() ) continue;
+	Handle(SALOME_InteractiveObject) IO = sh->getIO();
+	if ( IO.IsNull() ) continue;
+	PropMap aPropMap = aStudy->getObjectPropMap( aMgrId, IO->getEntry() );
+	if ( aPropMap.contains( TRANSPARENCY_PROP ) ) {
+	  double transparency = aPropMap.value(TRANSPARENCY_PROP).toDouble();
+	  ic->SetTransparency( sh, transparency, true );
+	  it.Next();
+	}
+      }
+    }
+  }
 }
-
 
 //=================================================================
 /*!

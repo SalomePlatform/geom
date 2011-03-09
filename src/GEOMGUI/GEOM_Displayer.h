@@ -140,8 +140,8 @@ public:
   /* Reimplemented from SALOME_Displayer */
   virtual void  Update( SALOME_OCCPrs* );
   virtual void  Update( SALOME_VTKPrs* );
-  virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCViewType& );
-  virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCViewType& );
+  virtual void  BeforeDisplay( SALOME_View*, const SALOME_OCCPrs* );
+  virtual void  AfterDisplay ( SALOME_View*, const SALOME_OCCPrs* );
 
   /* This methos is used for activisation/deactivisation of objects to be displayed*/
   void          SetToActivate( const bool );
