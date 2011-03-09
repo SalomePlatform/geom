@@ -297,7 +297,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     if ( myFirstInit ) {
       mySlider->setValue(mySlider->maximum());
       myFirstInit = false;
-      aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS );
+      aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, true );
       if( aisShape.IsNull() )
         return;
       int transp = int( 100 - ( aisShape->Transparency() * 100.0 ) + 0.5);
@@ -312,7 +312,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       return;
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      aisShape = gb->ConvertIOinGEOMAISShape( It.Value() );
+      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), true );
       if ( !aisShape.IsNull() ) {
         ic->SetTransparency( aisShape, newValue, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );

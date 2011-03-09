@@ -465,7 +465,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
     GEOMBase* gb = new GEOMBase();
     Handle(GEOM_AISShape) aisShape;
    
-    aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS );
+    aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, true );
     if( aisShape.IsNull() )
       return;
     float transp = aisShape->Transparency();
@@ -482,7 +482,7 @@ void GEOMToolsGUI::OnChangeTransparency( bool increase )
       return;
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      aisShape = gb->ConvertIOinGEOMAISShape( It.Value() );
+      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), true );
       if ( !aisShape.IsNull() ) {
         ic->SetTransparency( aisShape, transp, false );
         ic->Redisplay( aisShape, Standard_False, Standard_True );
