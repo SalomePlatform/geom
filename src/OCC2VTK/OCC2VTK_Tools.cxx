@@ -131,7 +131,6 @@ namespace GEOM
           const TopoDS_Face& aFace = TopoDS::Face(aFaceExp.Current());
           theWireframeFaceSource->AddFace(aFace);
           theShadingFaceSource->AddFace(aFace);
-	  std::cout<<"RNV face Added!!!!"<<std::endl;
           TopExp_Explorer anEdgeExp(aFaceExp.Current(), TopAbs_EDGE);
           for(; anEdgeExp.More(); anEdgeExp.Next()) {
             const TopoDS_Edge& anEdge = TopoDS::Edge(anEdgeExp.Current());
