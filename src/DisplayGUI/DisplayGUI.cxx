@@ -401,7 +401,7 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
   if ( !viewWindow ) 
     viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
   if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    viewWindow->setCustomData( "VectorsMode", QVariant( mode ) );
+    viewWindow->setProperty( "VectorsMode", mode );
     SVTK_ViewWindow* vw = dynamic_cast<SVTK_ViewWindow*>( viewWindow );
     vtkActorCollection* allActors = vw->getRenderer()->GetActors();
     allActors->InitTraversal();
@@ -418,7 +418,7 @@ void DisplayGUI::SetVectorMode( const bool mode, SUIT_ViewWindow* viewWindow )
     GeometryGUI::Modified();
   }
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-    viewWindow->setCustomData( "VectorsMode", QVariant( mode ) );
+    viewWindow->setProperty( "VectorsMode", mode );
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
     AIS_ListOfInteractive List;
@@ -448,7 +448,7 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 {
   if ( !viewWindow ) 
     viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
-  return viewWindow->getCustomData( "VectorsMode" ).toBool();
+  return viewWindow->property( "VectorsMode" ).toBool();
 }
 
 //=====================================================================================

@@ -1923,7 +1923,7 @@ void GeometryGUI::onViewAboutToShow()
   QAction* a = action( GEOMOp::OpSwitchVectors );
   if ( window ) {
     a->setEnabled(true);
-    bool vmode = window->getCustomData("VectorsMode").toBool();
+    bool vmode = window->property("VectorsMode").toBool();
     a->setText ( vmode == 1 ? tr( "MEN_VECTOR_MODE_OFF" ) : tr("MEN_VECTOR_MODE_ON") );
   } else {
     a->setText ( tr("MEN_VECTOR_MODE_ON") );
