@@ -133,9 +133,18 @@ Standard_Integer GEOMImpl_EllipseDriver::Execute(TFunction_Logbook& log) const
         anAxes  = gp_Ax2 (aP, aV, aVM);
       }
     }
+    // Radiuses
+    double radiusMaj = aCI.GetRMajor();
+    double radiusMin = aCI.GetRMinor();
+    if ( radiusMaj < radiusMin )
+      Standard_ConstructionError::Raise
+        ("Ellipse creation aborted: a major radius is less that a minor one");
+    if ( radiusMin < 0.0 )
+      Standard_ConstructionError::Raise
+        ("Ellipse creation aborted: raduis must be positive");
 
     // Ellipse
-    gp_Elips anEll (anAxes, aCI.GetRMajor(), aCI.GetRMinor());
+    gp_Elips anEll (anAxes, radiusMaj, radiusMin);
     aShape = BRepBuilderAPI_MakeEdge(anEll).Edge();
   }
   else {
