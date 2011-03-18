@@ -1458,7 +1458,7 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
       AIS_ListOfInteractive objects;
       prs->GetObjects( objects );
       AIS_ListIteratorOfListOfInteractive it( objects );
-      while( it.More() ) {
+      for ( ; it.More(); it.Next() ) {
         Handle(GEOM_AISShape) sh = Handle(GEOM_AISShape)::DownCast( it.Value() );
 	if ( sh.IsNull() ) continue;
 	Handle(SALOME_InteractiveObject) IO = sh->getIO();
@@ -1467,7 +1467,6 @@ void GEOM_Displayer::AfterDisplay( SALOME_View* v, const SALOME_OCCPrs* p )
 	if ( aPropMap.contains( TRANSPARENCY_PROP ) ) {
 	  double transparency = aPropMap.value(TRANSPARENCY_PROP).toDouble();
 	  ic->SetTransparency( sh, transparency, true );
-	  it.Next();
 	}
       }
     }
