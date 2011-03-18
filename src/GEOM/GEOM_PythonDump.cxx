@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "GEOM_PythonDump.hxx"
 
@@ -50,6 +49,15 @@ namespace GEOM
       aDescr += (char *)aString.c_str();
       myFunction->SetDescription( aDescr );
     }
+  }
+
+  TPythonDump& TPythonDump::operator<< (bool theArg)
+  {
+    if (theArg)
+      myStream << "True";
+    else
+      myStream << "False";
+    return *this;
   }
 
   TPythonDump& TPythonDump::operator<< (long int theArg)

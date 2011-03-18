@@ -901,35 +901,39 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a polyline on the set of points.
         #  @param thePoints Sequence of points for the polyline.
+        #  @param theIsClosed If True, build a closed wire.
         #  @return New GEOM_Object, containing the created polyline.
         #
         #  @ref tui_creation_curve "Example"
-        def MakePolyline(self,thePoints):
+        def MakePolyline(self, thePoints, theIsClosed=False):
             # Example: see GEOM_TestAll.py
-            anObj = self.CurvesOp.MakePolyline(thePoints)
+            anObj = self.CurvesOp.MakePolyline(thePoints, theIsClosed)
             RaiseIfFailed("MakePolyline", self.CurvesOp)
             return anObj
 
         ## Create bezier curve on the set of points.
         #  @param thePoints Sequence of points for the bezier curve.
+        #  @param theIsClosed If True, build a closed curve.
         #  @return New GEOM_Object, containing the created bezier curve.
         #
         #  @ref tui_creation_curve "Example"
-        def MakeBezier(self,thePoints):
+        def MakeBezier(self, thePoints, theIsClosed=False):
             # Example: see GEOM_TestAll.py
-            anObj = self.CurvesOp.MakeSplineBezier(thePoints)
+            anObj = self.CurvesOp.MakeSplineBezier(thePoints, theIsClosed)
             RaiseIfFailed("MakeSplineBezier", self.CurvesOp)
             return anObj
 
         ## Create B-Spline curve on the set of points.
         #  @param thePoints Sequence of points for the B-Spline curve.
         #  @param theIsClosed If True, build a closed curve.
+        #  @param theDoReordering If TRUE, the algo does not follow the order of
+        #                         \a thePoints but searches for the closest vertex.
         #  @return New GEOM_Object, containing the created B-Spline curve.
         #
         #  @ref tui_creation_curve "Example"
-        def MakeInterpol(self, thePoints, theIsClosed=False):
+        def MakeInterpol(self, thePoints, theIsClosed=False, theDoReordering=False):
             # Example: see GEOM_TestAll.py
-            anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed)
+            anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed, theDoReordering)
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             return anObj
 
@@ -1294,13 +1298,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be extruded.
         #  @param thePoint1 First end of extrusion vector.
         #  @param thePoint2 Second end of extrusion vector.
+        #  @param theScaleFactor Use it to make prism with scaled second base.
+        #                        Nagative value means not scaled second base.
         #  @return New GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrism(self, theBase, thePoint1, thePoint2):
+        def MakePrism(self, theBase, thePoint1, thePoint2, theScaleFactor = -1.0):
             # Example: see GEOM_TestAll.py
-            anObj = self.PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
+            anObj = None
+            Parameters = ""
+            if theScaleFactor > 0:
+                theScaleFactor,Parameters = ParseParameters(theScaleFactor)
+                anObj = self.PrimOp.MakePrismTwoPntWithScaling(theBase, thePoint1, thePoint2, theScaleFactor)
+            else:
+                anObj = self.PrimOp.MakePrismTwoPnt(theBase, thePoint1, thePoint2)
             RaiseIfFailed("MakePrismTwoPnt", self.PrimOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create a shape by extrusion of the base shape along a
@@ -1323,13 +1336,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBase Base shape to be extruded.
         #  @param theVec Direction of extrusion.
         #  @param theH Prism dimension along theVec.
+        #  @param theScaleFactor Use it to make prism with scaled second base.
+        #                        Nagative value means not scaled second base.
         #  @return New GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrismVecH(self, theBase, theVec, theH):
+        def MakePrismVecH(self, theBase, theVec, theH, theScaleFactor = -1.0):
             # Example: see GEOM_TestAll.py
-            theH,Parameters = ParseParameters(theH)
-            anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
+            anObj = None
+            Parameters = ""
+            if theScaleFactor > 0:
+                theH,theScaleFactor,Parameters = ParseParameters(theH,theScaleFactor)
+                anObj = self.PrimOp.MakePrismVecHWithScaling(theBase, theVec, theH, theScaleFactor)
+            else:
+                theH,Parameters = ParseParameters(theH)
+                anObj = self.PrimOp.MakePrismVecH(theBase, theVec, theH)
             RaiseIfFailed("MakePrismVecH", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
@@ -1354,13 +1375,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Create a shape by extrusion of the base shape along the dx, dy, dz direction
         #  @param theBase Base shape to be extruded.
         #  @param theDX, theDY, theDZ Directions of extrusion.
+        #  @param theScaleFactor Use it to make prism with scaled second base.
+        #                        Nagative value means not scaled second base.
         #  @return New GEOM_Object, containing the created prism.
         #
         #  @ref tui_creation_prism "Example"
-        def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ):
+        def MakePrismDXDYDZ(self, theBase, theDX, theDY, theDZ, theScaleFactor = -1.0):
             # Example: see GEOM_TestAll.py
-            theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
-            anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
+            anObj = None
+            Parameters = ""
+            if theScaleFactor > 0:
+                theDX,theDY,theDZ,theScaleFactor,Parameters = ParseParameters(theDX, theDY, theDZ, theScaleFactor)
+                anObj = self.PrimOp.MakePrismDXDYDZWithScaling(theBase, theDX, theDY, theDZ, theScaleFactor)
+            else:
+                theDX,theDY,theDZ,Parameters = ParseParameters(theDX, theDY, theDZ)
+                anObj = self.PrimOp.MakePrismDXDYDZ(theBase, theDX, theDY, theDZ)
             RaiseIfFailed("MakePrismDXDYDZ", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj

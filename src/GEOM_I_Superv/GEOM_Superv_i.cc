@@ -2756,14 +2756,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeArcOfEllipse (GEOM::GEOM_Object_ptr the
 //=============================================================================
 //  MakePolyline:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints,
+                                                   CORBA::Boolean      theIsClosed)
 {
   beginService( " GEOM_Superv_i::MakePolyline" );
   MESSAGE("GEOM_Superv_i::MakePolyline");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
-    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakePolyline(aListImplP->GetList());
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakePolyline(aListImplP->GetList(), theIsClosed);
     endService( " GEOM_Superv_i::MakePolyline" );
     return anObj;
   }
@@ -2774,14 +2775,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePolyline (GEOM::GEOM_List_ptr thePoints
 //=============================================================================
 //  MakeSplineBezier:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePoints)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePoints,
+                                                       CORBA::Boolean      theIsClosed)
 {
   beginService( " GEOM_Superv_i::MakeSplineBezier" );
   MESSAGE("GEOM_Superv_i::MakeSplineBezier");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
-    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineBezier(aListImplP->GetList());
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineBezier(aListImplP->GetList(), theIsClosed);
     endService( " GEOM_Superv_i::MakeSplineBezier" );
     return anObj;
   }
@@ -2793,14 +2795,15 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineBezier (GEOM::GEOM_List_ptr thePo
 //  MakeSplineInterpolation:
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeSplineInterpolation (GEOM::GEOM_List_ptr thePoints,
-                                                              CORBA::Boolean      theIsClosed)
+                                                              CORBA::Boolean      theIsClosed,
+                                                              CORBA::Boolean      theDoReordering)
 {
   beginService( " GEOM_Superv_i::MakeSplineInterpolation" );
   MESSAGE("GEOM_Superv_i::MakeSplineInterpolation");
   if (GEOM_List_i<GEOM::ListOfGO>* aListImplP =
       dynamic_cast<GEOM_List_i<GEOM::ListOfGO>*>(GetServant(thePoints, myPOA).in())) {
     getCurvesOp();
-    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineInterpolation(aListImplP->GetList(), theIsClosed);
+    GEOM::GEOM_Object_ptr anObj = myCurvesOp->MakeSplineInterpolation(aListImplP->GetList(), theIsClosed, theDoReordering);
     endService( " GEOM_Superv_i::MakeSplineInterpolation" );
     return anObj;
   }

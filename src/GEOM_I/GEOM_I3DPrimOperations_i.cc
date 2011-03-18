@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -458,7 +457,7 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecH
 
   //Create the Prism
   Handle(GEOM_Object) anObject =
-      GetOperations()->MakePrismVecH(aBase, aVec, theH);
+    GetOperations()->MakePrismVecH(aBase, aVec, theH);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -488,6 +487,35 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecH2Ways
   //Create the Prism
   Handle(GEOM_Object) anObject =
       GetOperations()->MakePrismVecH2Ways(aBase, aVec, theH);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePrismVecH
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismVecHWithScaling
+                      (GEOM::GEOM_Object_ptr theBase, GEOM::GEOM_Object_ptr theVec,
+                       CORBA::Double theH, CORBA::Double theScaleFactor)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
+  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+
+  if (aBase.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePrismVecH(aBase, aVec, theH, theScaleFactor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -560,6 +588,39 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPnt2Ways
 
 //=============================================================================
 /*!
+ *  MakePrismTwoPnt
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismTwoPntWithScaling
+                                             (GEOM::GEOM_Object_ptr theBase,
+                                              GEOM::GEOM_Object_ptr thePoint1,
+                                              GEOM::GEOM_Object_ptr thePoint2,
+                                              CORBA::Double         theScaleFactor)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
+  Handle(GEOM_Object) aPoint1 = GetObjectImpl(thePoint1);
+  Handle(GEOM_Object) aPoint2 = GetObjectImpl(thePoint2);
+
+  if (aBase.IsNull() || aPoint1.IsNull() || aPoint2.IsNull())
+    return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePrismTwoPnt(aBase, aPoint1, aPoint2, theScaleFactor);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePrismDXDYDZ
  */
 //=============================================================================
@@ -608,6 +669,35 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZ2Ways
   //Create the Prism
   Handle(GEOM_Object) anObject =
       GetOperations()->MakePrismDXDYDZ2Ways(aBase, theDX, theDY, theDZ);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakePrismDXDYDZ
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZWithScaling
+                      (GEOM::GEOM_Object_ptr theBase, CORBA::Double theDX,
+                       CORBA::Double theDY, CORBA::Double theDZ,
+                       CORBA::Double theScaleFactor)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aBase = GetObjectImpl(theBase);
+
+  if (aBase.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakePrismDXDYDZ(aBase, theDX, theDY, theDZ, theScaleFactor);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

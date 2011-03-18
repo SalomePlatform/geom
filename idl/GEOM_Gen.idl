@@ -1196,6 +1196,11 @@ module GEOM
     GEOM_Object MakePrismVecH2Ways (in GEOM_Object theBase,
                                     in GEOM_Object theVec,
                                     in double      theH);
+    /*  The Same as MakePrismVecH but with scaling */
+    GEOM_Object MakePrismVecHWithScaling (in GEOM_Object theBase,
+                                          in GEOM_Object theVec,
+                                          in double      theH,
+                                          in double      theScaleFactor);
 
     /*!
      *  Create a shape by extrusion of the base shape along a vector, defined by two points.
@@ -1211,6 +1216,11 @@ module GEOM
     GEOM_Object MakePrismTwoPnt2Ways (in GEOM_Object theBase,
                                       in GEOM_Object thePoint1,
                                       in GEOM_Object thePoint2);
+    /*  The Same as MakePrismTwoPnt but with scaling */
+    GEOM_Object MakePrismTwoPntWithScaling (in GEOM_Object theBase,
+                                            in GEOM_Object thePoint1,
+                                            in GEOM_Object thePoint2,
+                                            in double      theScaleFactor);
 
     /*!
      *  Create a shape by extrusion of the base shape along a vector, defined by DX DY DZ.
@@ -1223,6 +1233,10 @@ module GEOM
     /*  The same prism but in two directions forward&backward */
     GEOM_Object MakePrismDXDYDZ2Ways (in GEOM_Object theBase,
                                       in double theDX, in double theDY, in double theDZ);
+    /*  The Same as MakePrismDXDYDZ but with scaling */
+    GEOM_Object MakePrismDXDYDZWithScaling (in GEOM_Object theBase,
+                                            in double theDX, in double theDY, in double theDZ,
+                                            in double theScaleFactor);
 
     /*!
      *  Create a shape by extrusion of the base shape along
@@ -2484,25 +2498,32 @@ module GEOM
     /*!
      *  Create a polyline on the set of points.
      *  \param thePoints Sequence of points for the polyline.
+     *  \param theIsClosed If TRUE, build a closed wire.
      *  \return New GEOM_Object, containing the created polyline.
      */
-    GEOM_Object MakePolyline (in ListOfGO thePoints);
+    GEOM_Object MakePolyline (in ListOfGO thePoints,
+                              in boolean  theIsClosed);
 
     /*!
      *  Create bezier curve on the set of points.
      *  \param thePoints Sequence of points for the bezier curve.
+     *  \param theIsClosed If TRUE, build a closed curve.
      *  \return New GEOM_Object, containing the created bezier curve.
      */
-    GEOM_Object MakeSplineBezier (in ListOfGO thePoints);
+    GEOM_Object MakeSplineBezier (in ListOfGO thePoints,
+                                  in boolean  theIsClosed);
 
     /*!
      *  Create B-Spline curve on the set of points.
      *  \param thePoints Sequence of points for the B-Spline curve.
      *  \param theIsClosed If TRUE, build a closed curve.
+     *  \param theDoReordering If TRUE, the algo does not follow the order of
+     *                         \a thePoints but searches for the closest vertex.
      *  \return New GEOM_Object, containing the created B-Spline curve.
      */
     GEOM_Object MakeSplineInterpolation (in ListOfGO thePoints,
-                                         in boolean  theIsClosed);
+                                         in boolean  theIsClosed,
+                                         in boolean  theDoReordering);
 
     /*!
      *  Create a sketcher (wire or face), following the textual description,

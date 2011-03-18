@@ -18,14 +18,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  NOTE: This is an interface to a function for the Spline creation.
-//
+
 #include "GEOM_Function.hxx"
 
 #define SPL_ARG_LENG 1
 #define SPL_ARG_CLOS 2
+#define SPL_ARG_REOR 3
 #define SPL_ARG_LAST 2
 
 class GEOMImpl_ISpline
@@ -38,11 +38,15 @@ class GEOMImpl_ISpline
 
   void SetIsClosed(bool theIsClosed) { _func->SetInteger(SPL_ARG_CLOS, (int)theIsClosed); }
 
+  void SetDoReordering(bool theDoReordering) { _func->SetInteger(SPL_ARG_REOR, (int)theDoReordering); }
+
   void SetPoint(int theId, Handle(GEOM_Function) theP) { _func->SetReference(SPL_ARG_LAST + theId, theP); }
 
   int GetLength() { return _func->GetInteger(SPL_ARG_LENG); }
 
   bool GetIsClosed() { return (bool)_func->GetInteger(SPL_ARG_CLOS); }
+
+  bool GetDoReordering() { return (bool)_func->GetInteger(SPL_ARG_REOR); }
 
   Handle(GEOM_Function) GetPoint(int theId) { return _func->GetReference(SPL_ARG_LAST + theId); }
 

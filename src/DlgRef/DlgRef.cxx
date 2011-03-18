@@ -15,11 +15,10 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : DlgRef.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include "DlgRef.h"
 
 //////////////////////////////////////////
@@ -187,6 +186,20 @@ DlgRef_1Sel3Spin1Check::DlgRef_1Sel3Spin1Check( QWidget* parent, Qt::WindowFlags
 }
 
 DlgRef_1Sel3Spin1Check::~DlgRef_1Sel3Spin1Check()
+{
+}
+
+//////////////////////////////////////////
+// DlgRef_1Sel4Spin2Check
+//////////////////////////////////////////
+
+DlgRef_1Sel4Spin2Check::DlgRef_1Sel4Spin2Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Sel4Spin2Check::~DlgRef_1Sel4Spin2Check()
 {
 }
 
@@ -383,6 +396,20 @@ DlgRef_2Sel2Spin1Check::DlgRef_2Sel2Spin1Check( QWidget* parent, Qt::WindowFlags
 }
 
 DlgRef_2Sel2Spin1Check::~DlgRef_2Sel2Spin1Check()
+{
+}
+
+//////////////////////////////////////////
+// DlgRef_2Sel2Spin3Check
+//////////////////////////////////////////
+
+DlgRef_2Sel2Spin3Check::DlgRef_2Sel2Spin3Check( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel2Spin3Check::~DlgRef_2Sel2Spin3Check()
 {
 }
 

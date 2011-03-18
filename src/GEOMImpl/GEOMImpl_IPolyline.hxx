@@ -18,14 +18,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//NOTE: This is an intreface to a function for the Polyline creation.
-//
+//NOTE: This is an interface to a function for the Polyline creation.
+
 #include "GEOM_Function.hxx"
 
 #define POLY_ARG_LENG 1
 #define POLY_ARG_LAST 1
+#define POLY_ARG_CLOS 2
 
 class GEOMImpl_IPolyline
 {
@@ -37,9 +37,13 @@ class GEOMImpl_IPolyline
 
   void SetPoint(int theId, Handle(GEOM_Function) theP) { _func->SetReference(POLY_ARG_LAST + theId, theP); }
 
+  void SetIsClosed(bool theIsClosed) { _func->SetInteger(POLY_ARG_CLOS, (int)theIsClosed); }
+
   int GetLength() { return _func->GetInteger(POLY_ARG_LENG); }
 
   Handle(GEOM_Function) GetPoint(int theId) { return _func->GetReference(POLY_ARG_LAST + theId); }
+
+  bool GetIsClosed() { return (bool)_func->GetInteger(POLY_ARG_CLOS); }
 
  private:
 

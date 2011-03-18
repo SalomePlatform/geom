@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -75,73 +74,6 @@ GEOMImpl_ICurvesOperations::~GEOMImpl_ICurvesOperations()
   MESSAGE("GEOMImpl_ICurvesOperations::~GEOMImpl_ICurvesOperations");
 }
 
-
-//=============================================================================
-/*!
- *  MakePolyline
- */
-//=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(GEOM_Object)> thePoints)
-{
-  SetErrorCode(KO);
-
-  //Add a new Polyline object
-  Handle(GEOM_Object) aPolyline = GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE);
-
-  //Add a new Polyline function for creation a polyline relatively to points set
-  Handle(GEOM_Function) aFunction =
-    aPolyline->AddFunction(GEOMImpl_PolylineDriver::GetID(), POLYLINE_POINTS);
-  if (aFunction.IsNull()) return NULL;
-
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) return NULL;
-
-  GEOMImpl_IPolyline aCI (aFunction);
-
-  int aLen = thePoints.size();
-  aCI.SetLength(aLen);
-
-  int ind = 1;
-  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
-  for (; it != thePoints.end(); it++, ind++) {
-    Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
-    if (aRefPnt.IsNull()) {
-      SetErrorCode("NULL point for Polyline");
-      return NULL;
-    }
-    aCI.SetPoint(ind, aRefPnt);
-  }
-
-  //Compute the Polyline value
-  try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
-    OCC_CATCH_SIGNALS;
-#endif
-    if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Polyline driver failed");
-      return NULL;
-    }
-  }
-  catch (Standard_Failure) {
-    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-    SetErrorCode(aFail->GetMessageString());
-    return NULL;
-  }
-
-  //Make a Python command
-  GEOM::TPythonDump pd (aFunction);
-  pd << aPolyline << " = geompy.MakePolyline([";
-
-  it = thePoints.begin();
-  pd << (*it++);
-  while (it != thePoints.end()) {
-    pd << ", " << (*it++);
-  }
-  pd << "])";
-
-  SetErrorCode(OK);
-  return aPolyline;
-}
 
 //=============================================================================
 /*!
@@ -594,26 +526,26 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
 
 //=============================================================================
 /*!
- *  MakeSplineBezier
+ *  MakePolyline
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
-                                          (std::list<Handle(GEOM_Object)> thePoints)
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(GEOM_Object)> thePoints,
+                                                              bool theIsClosed)
 {
   SetErrorCode(KO);
 
-  //Add a new Spline object
-  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+  //Add a new Polyline object
+  Handle(GEOM_Object) aPolyline = GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE);
 
-  //Add a new Spline function for creation a bezier curve relatively to points set
+  //Add a new Polyline function for creation a polyline relatively to points set
   Handle(GEOM_Function) aFunction =
-    aSpline->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_BEZIER);
+    aPolyline->AddFunction(GEOMImpl_PolylineDriver::GetID(), POLYLINE_POINTS);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_SplineDriver::GetID()) return NULL;
+  if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) return NULL;
 
-  GEOMImpl_ISpline aCI (aFunction);
+  GEOMImpl_IPolyline aCI (aFunction);
 
   int aLen = thePoints.size();
   aCI.SetLength(aLen);
@@ -622,19 +554,22 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
   std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
   for (; it != thePoints.end(); it++, ind++) {
     Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
-
-    if (aRefPnt.IsNull()) return NULL;
-
+    if (aRefPnt.IsNull()) {
+      SetErrorCode("NULL point for Polyline");
+      return NULL;
+    }
     aCI.SetPoint(ind, aRefPnt);
   }
 
-  //Compute the Spline value
+  aCI.SetIsClosed(theIsClosed);
+
+  //Compute the Polyline value
   try {
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
-      SetErrorCode("Spline driver failed");
+      SetErrorCode("Polyline driver failed");
       return NULL;
     }
   }
@@ -646,27 +581,27 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
-  pd << aSpline << " = geompy.MakeBezier([";
+  pd << aPolyline << " = geompy.MakePolyline([";
 
   it = thePoints.begin();
   pd << (*it++);
   while (it != thePoints.end()) {
     pd << ", " << (*it++);
   }
-  pd << "])";
+  pd << "], " << theIsClosed << ")";
 
   SetErrorCode(OK);
-  return aSpline;
+  return aPolyline;
 }
 
 //=============================================================================
 /*!
- *  MakeSplineInterpolation
+ *  MakeSplineBezier
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
                                           (std::list<Handle(GEOM_Object)> thePoints,
-                                           bool                      theIsClosed)
+                                           bool theIsClosed)
 {
   SetErrorCode(KO);
 
@@ -675,7 +610,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Add a new Spline function for creation a bezier curve relatively to points set
   Handle(GEOM_Function) aFunction =
-    aSpline->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_INTERPOLATION);
+    aSpline->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_BEZIER);
   if (aFunction.IsNull()) return NULL;
 
   //Check if the function is set correctly
@@ -716,6 +651,78 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
+  pd << aSpline << " = geompy.MakeBezier([";
+
+  it = thePoints.begin();
+  pd << (*it++);
+  while (it != thePoints.end()) {
+    pd << ", " << (*it++);
+  }
+  pd << "], " << theIsClosed << ")";
+
+  SetErrorCode(OK);
+  return aSpline;
+}
+
+//=============================================================================
+/*!
+ *  MakeSplineInterpolation
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
+                                          (std::list<Handle(GEOM_Object)> thePoints,
+                                           bool theIsClosed,
+                                           bool theDoReordering)
+{
+  SetErrorCode(KO);
+
+  //Add a new Spline object
+  Handle(GEOM_Object) aSpline = GetEngine()->AddObject(GetDocID(), GEOM_SPLINE);
+
+  //Add a new Spline function for creation a bezier curve relatively to points set
+  Handle(GEOM_Function) aFunction =
+    aSpline->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_INTERPOLATION);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_SplineDriver::GetID()) return NULL;
+
+  GEOMImpl_ISpline aCI (aFunction);
+
+  int aLen = thePoints.size();
+  aCI.SetLength(aLen);
+
+  int ind = 1;
+  std::list<Handle(GEOM_Object)>::iterator it = thePoints.begin();
+  for (; it != thePoints.end(); it++, ind++) {
+    Handle(GEOM_Function) aRefPnt = (*it)->GetLastFunction();
+
+    if (aRefPnt.IsNull()) return NULL;
+
+    aCI.SetPoint(ind, aRefPnt);
+  }
+
+  aCI.SetIsClosed(theIsClosed);
+  aCI.SetDoReordering(theDoReordering);
+
+  //Compute the Spline value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Spline driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump pd (aFunction);
   pd << aSpline << " = geompy.MakeInterpol([";
 
   it = thePoints.begin();
@@ -723,9 +730,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
   while (it != thePoints.end()) {
     pd << ", " << (*it++);
   }
-  pd << "]";
-  if ( theIsClosed ) pd << ", True";
-  pd << ")";
+  pd << "], " << theIsClosed << ", " << theDoReordering << ")";
 
   SetErrorCode(OK);
   return aSpline;

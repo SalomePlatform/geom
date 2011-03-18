@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -86,7 +85,21 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
     if (aLen < 2) return 0;
     Standard_Boolean isSeveral = Standard_False;
     gp_Pnt aPrevP;
-    TColgp_Array1OfPnt CurvePoints (1, aLen);
+    int aRealLen = aLen;
+    if (aType == SPLINE_BEZIER && aCI.GetIsClosed()) {
+      Handle(GEOM_Function) aFPoint = aCI.GetPoint(1);
+      TopoDS_Shape aFirstPnt = aFPoint->GetValue();
+      TopoDS_Vertex aV1 = TopoDS::Vertex(aFirstPnt);
+
+      Handle(GEOM_Function) aLPoint = aCI.GetPoint(aLen);
+      TopoDS_Shape aLastPnt = aLPoint->GetValue();
+      TopoDS_Vertex aV2 = TopoDS::Vertex(aLastPnt);
+
+      if (!aV1.IsNull() && !aV2.IsNull() && !aV1.IsSame(aV2)) {
+        aRealLen++;
+      }
+    }
+    TColgp_Array1OfPnt CurvePoints (1, aRealLen);
     for (ind = 1; ind <= aLen; ind++) {
       Handle(GEOM_Function) aRefPoint = aCI.GetPoint(ind);
       TopoDS_Shape aShapePnt = aRefPoint->GetValue();
@@ -105,16 +118,27 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
       if (!isSeveral) {
         Standard_ConstructionError::Raise("Points for Bezier Curve are too close");
       }
+      if (aRealLen > aLen) { // set last point equal to first for the closed curve
+        CurvePoints.SetValue(aRealLen, CurvePoints.Value(1));
+      }
       Handle(Geom_BezierCurve) GBC = new Geom_BezierCurve(CurvePoints);
       aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
     } else {
       //GeomAPI_PointsToBSpline GBC (CurvePoints);
       //aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
       Handle(TColgp_HArray1OfPnt) aHCurvePoints = new TColgp_HArray1OfPnt(1, aLen);
-      for (ind = 1; ind <= aLen; ind++) {
-        aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
+      if (aCI.GetDoReordering()) {
+        // TODO
+        for (ind = 1; ind <= aLen; ind++) {
+          aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
+        }
       }
-      int isClosed = aCI.GetIsClosed();
+      else {
+        for (ind = 1; ind <= aLen; ind++) {
+          aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
+        }
+      }
+      bool isClosed = aCI.GetIsClosed();
       GeomAPI_Interpolate GBC (aHCurvePoints, isClosed, gp::Resolution());
       GBC.Perform();
       if (GBC.IsDone())

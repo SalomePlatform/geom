@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_I3DPrimOperations_i_HeaderFile
 #define _GEOM_I3DPrimOperations_i_HeaderFile
@@ -107,6 +106,11 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 					    GEOM::GEOM_Object_ptr theVec,
 					    CORBA::Double theH);
 
+  GEOM::GEOM_Object_ptr MakePrismVecHWithScaling (GEOM::GEOM_Object_ptr theBase,
+                                                  GEOM::GEOM_Object_ptr theVec,
+                                                  CORBA::Double theH,
+                                                  CORBA::Double theScaleFactor);
+
   GEOM::GEOM_Object_ptr MakePrismTwoPnt (GEOM::GEOM_Object_ptr theBase,
 					 GEOM::GEOM_Object_ptr thePoint1,
 					 GEOM::GEOM_Object_ptr thePoint2);
@@ -114,6 +118,11 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
   GEOM::GEOM_Object_ptr MakePrismTwoPnt2Ways (GEOM::GEOM_Object_ptr theBase,
 					      GEOM::GEOM_Object_ptr thePoint1,
 					      GEOM::GEOM_Object_ptr thePoint2);
+
+  GEOM::GEOM_Object_ptr MakePrismTwoPntWithScaling (GEOM::GEOM_Object_ptr theBase,
+                                                    GEOM::GEOM_Object_ptr thePoint1,
+                                                    GEOM::GEOM_Object_ptr thePoint2,
+                                                    CORBA::Double         theScaleFactor);
 
   GEOM::GEOM_Object_ptr MakePrismDXDYDZ (GEOM::GEOM_Object_ptr theBase,
 				         CORBA::Double         theDX,
@@ -123,6 +132,11 @@ class GEOM_I_EXPORT GEOM_I3DPrimOperations_i :
 				              CORBA::Double         theDX,
 				              CORBA::Double         theDY,
 				              CORBA::Double         theDZ);
+  GEOM::GEOM_Object_ptr MakePrismDXDYDZWithScaling (GEOM::GEOM_Object_ptr theBase,
+                                                    CORBA::Double         theDX,
+                                                    CORBA::Double         theDY,
+                                                    CORBA::Double         theDZ,
+                                                    CORBA::Double         theScaleFactor);
 
   GEOM::GEOM_Object_ptr MakePipe (GEOM::GEOM_Object_ptr theBase,
 				  GEOM::GEOM_Object_ptr thePath);

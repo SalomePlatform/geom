@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_I3DPrimOperations_HXX_
 #define _GEOMImpl_I3DPrimOperations_HXX_
@@ -68,31 +67,34 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
                                          double theRMajor, double theRMinor);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH (Handle(GEOM_Object) theBase,
-                                     Handle(GEOM_Object) theVec, double theH);
+                                                     Handle(GEOM_Object) theVec,
+                                                     double theH, double theScaleFactor = -1.0);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismVecH2Ways (Handle(GEOM_Object) theBase,
-                                              Handle(GEOM_Object) theVec, double theH);
+                                                          Handle(GEOM_Object) theVec, double theH);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismTwoPnt (Handle(GEOM_Object) theBase,
-                                       Handle(GEOM_Object) thePoint1,
-                                       Handle(GEOM_Object) thePoint2);
+                                                       Handle(GEOM_Object) thePoint1,
+                                                       Handle(GEOM_Object) thePoint2,
+                                                       double theScaleFactor = -1.0);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismTwoPnt2Ways (Handle(GEOM_Object) theBase,
-                                       Handle(GEOM_Object) thePoint1,
-                                       Handle(GEOM_Object) thePoint2);
+                                                            Handle(GEOM_Object) thePoint1,
+                                                            Handle(GEOM_Object) thePoint2);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismDXDYDZ (Handle(GEOM_Object) theBase,
-                                     double theDX, double theDY, double theDZ);
+                                                       double theDX, double theDY, double theDZ,
+                                                       double theScaleFactor = -1.0);
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismDXDYDZ2Ways (Handle(GEOM_Object) theBase,
-                                     double theDX, double theDY, double theDZ);
+                                                            double theDX, double theDY, double theDZ);
 
   Standard_EXPORT Handle(GEOM_Object) MakePipe (Handle(GEOM_Object) theBase,
-                                Handle(GEOM_Object) thePath);
+                                                Handle(GEOM_Object) thePath);
 
   Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle (Handle(GEOM_Object) theBase,
-                                               Handle(GEOM_Object) theAxis,
-                                               double theAngle);
+                                                               Handle(GEOM_Object) theAxis,
+                                                               double theAngle);
 
   Standard_EXPORT Handle(GEOM_Object) MakeRevolutionAxisAngle2Ways (Handle(GEOM_Object) theBase,
                                                                     Handle(GEOM_Object) theAxis,

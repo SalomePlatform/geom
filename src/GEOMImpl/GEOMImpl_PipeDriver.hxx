@@ -18,11 +18,10 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_PipeDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_PipeDriver_HeaderFile
 #define _GEOMImpl_PipeDriver_HeaderFile
 
@@ -120,6 +119,10 @@ class Handle(GEOMImpl_PipeDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
+#include <TopoDS_Wire.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+
 class TColStd_SequenceOfExtendedString;
 
 
@@ -149,6 +152,13 @@ public:
   { return Standard_True; }
   Standard_EXPORT static const Standard_GUID& GetID();
   Standard_EXPORT ~GEOMImpl_PipeDriver() {};
+
+  Standard_EXPORT static TopoDS_Shape CreatePipeWithDifferentSections
+                                     (const TopoDS_Wire& theWirePath,
+                                      const Handle(TopTools_HSequenceOfShape) theBases,
+                                      const Handle(TopTools_HSequenceOfShape) theLocs,
+                                      const Standard_Boolean theWithContact,
+                                      const Standard_Boolean theWithCorrect);
 
 
   // Type management

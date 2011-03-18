@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -334,7 +333,8 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeArcOfEllipse
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
-                                    (const GEOM::ListOfGO& thePoints)
+                                    (const GEOM::ListOfGO& thePoints,
+                                     CORBA::Boolean        theIsClosed)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -353,7 +353,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
 
   // Make Polyline
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakePolyline(aPoints);
+    GetOperations()->MakePolyline(aPoints, theIsClosed);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -366,38 +366,6 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakePolyline
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineBezier
-                                              (const GEOM::ListOfGO& thePoints)
-{
-  GEOM::GEOM_Object_var aGEOMObject;
-
-  //Set a not done flag
-  GetOperations()->SetNotDone();
-
-  //Get the reference point
-  int ind = 0;
-  int aLen = thePoints.length();
-  std::list<Handle(GEOM_Object)> aPoints;
-  for (; ind < aLen; ind++) {
-    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
-    if (aPnt.IsNull()) return aGEOMObject._retn();
-    aPoints.push_back(aPnt);
-  }
-
-  // Make Bezier curve
-  Handle(GEOM_Object) anObject =
-      GetOperations()->MakeSplineBezier(aPoints);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
-    return aGEOMObject._retn();
-
-  return GetObject(anObject);
-}
-
-//=============================================================================
-/*!
- *  MakeSplineInterpolation
- */
-//=============================================================================
-GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
                                               (const GEOM::ListOfGO& thePoints,
                                                CORBA::Boolean        theIsClosed)
 {
@@ -416,9 +384,43 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
     aPoints.push_back(aPnt);
   }
 
+  // Make Bezier curve
+  Handle(GEOM_Object) anObject =
+      GetOperations()->MakeSplineBezier(aPoints, theIsClosed);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeSplineInterpolation
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
+                                              (const GEOM::ListOfGO& thePoints,
+                                               CORBA::Boolean        theIsClosed,
+                                               CORBA::Boolean        theDoReordering)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference point
+  int ind = 0;
+  int aLen = thePoints.length();
+  std::list<Handle(GEOM_Object)> aPoints;
+  for (; ind < aLen; ind++) {
+    Handle(GEOM_Object) aPnt = GetObjectImpl(thePoints[ind]);
+    if (aPnt.IsNull()) return aGEOMObject._retn();
+    aPoints.push_back(aPnt);
+  }
+
   // Make Polyline
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeSplineInterpolation(aPoints, theIsClosed);
+    GetOperations()->MakeSplineInterpolation(aPoints, theIsClosed, theDoReordering);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

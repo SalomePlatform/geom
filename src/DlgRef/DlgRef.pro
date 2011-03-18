@@ -15,7 +15,6 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 TEMPLATE = lib
 TARGET = DlgRef
@@ -63,8 +62,10 @@ HEADERS += DlgRef_2Sel2Spin_QTD.h
 HEADERS += DlgRef_2Sel3Spin_QTD.h
 HEADERS += DlgRef_1Sel1Spin1Check_QTD.h
 HEADERS += DlgRef_1Sel3Spin1Check_QTD.h
+HEADERS += DlgRef_1Sel4Spin2Check_QTD.h
 HEADERS += DlgRef_2Sel1Spin2Check_QTD.h
 HEADERS += DlgRef_2Sel2Spin1Check_QTD.h
+HEADERS += DlgRef_2Sel2Spin3Check_QTD.h
 HEADERS += DlgRef_2Sel4Spin1Check_QTD.h
 HEADERS += DlgRef_3Sel4Spin2Check_QTD.h
 HEADERS += DlgRef_4Sel1List_QTD.h
@@ -89,8 +90,10 @@ HEADERS += DlgRef_2Sel2Spin.h
 HEADERS += DlgRef_2Sel3Spin.h
 HEADERS += DlgRef_1Sel1Spin1Check.h
 HEADERS += DlgRef_1Sel3Spin1Check.h
+HEADERS += DlgRef_1Sel4Spin2Check.h
 HEADERS += DlgRef_2Sel1Spin2Check.h
 HEADERS += DlgRef_2Sel2Spin1Check.h
+HEADERS += DlgRef_2Sel2Spin3Check.h
 HEADERS += DlgRef_2Sel4Spin1Check.h
 HEADERS += DlgRef_3Sel4Spin2Check.h
 HEADERS += DlgRef_3Sel3Spin1Check.h
@@ -117,8 +120,10 @@ SOURCES += DlgRef_2Sel2Spin.cxx
 SOURCES += DlgRef_2Sel3Spin.cxx
 SOURCES += DlgRef_1Sel1Spin1Check.cxx
 SOURCES += DlgRef_1Sel3Spin1Check.cxx
+SOURCES += DlgRef_1Sel4Spin2Check.cxx
 SOURCES += DlgRef_2Sel1Spin2Check.cxx
 SOURCES += DlgRef_2Sel2Spin1Check.cxx
+SOURCES += DlgRef_2Sel2Spin3Check.cxx
 SOURCES += DlgRef_2Sel4Spin1Check.cxx
 SOURCES += DlgRef_3Sel4Spin2Check.cxx
 SOURCES += DlgRef_3Sel3Spin1Check.cxx

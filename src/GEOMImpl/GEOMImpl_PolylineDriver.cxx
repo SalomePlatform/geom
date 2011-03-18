@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -87,7 +86,7 @@ Standard_Integer GEOMImpl_PolylineDriver::Execute(TFunction_Logbook& log) const
       }
       if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
         aMakePoly.Add(TopoDS::Vertex(aShapePnt));
-//        if (!aMakePoly.Added()) return 0;
+        //if (!aMakePoly.Added()) return 0;
       }
     }
     // Compare first and last point coordinates and close polyline if it's the same.
@@ -100,7 +99,8 @@ Standard_Integer GEOMImpl_PolylineDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Shape aLastPnt = aLPoint->GetValue();
       TopoDS_Vertex aV2 = TopoDS::Vertex(aLastPnt);
 
-      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+      if ( (!aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2)) ||
+           aCI.GetIsClosed())
         aMakePoly.Close();
     }
 

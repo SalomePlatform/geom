@@ -18,10 +18,9 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //NOTE: This is an intreface to a function for the Prism creation.
-//
+
 #include "GEOM_Function.hxx"
 
 #define PRISM_ARG_H     1
@@ -32,6 +31,7 @@
 #define PRISM_ARG_DX    6
 #define PRISM_ARG_DY    7
 #define PRISM_ARG_DZ    8
+#define PRISM_ARG_SCALE 9
 
 class GEOMImpl_IPrism
 {
@@ -44,6 +44,11 @@ class GEOMImpl_IPrism
   void SetFirstPoint(Handle(GEOM_Function) thePoint) { _func->SetReference(PRISM_ARG_PNT_F, thePoint); }
   void SetLastPoint (Handle(GEOM_Function) thePoint) { _func->SetReference(PRISM_ARG_PNT_L, thePoint); }
 
+  Handle(GEOM_Function) GetBase  () { return _func->GetReference(PRISM_ARG_BASE); }
+  Handle(GEOM_Function) GetVector() { return _func->GetReference(PRISM_ARG_VEC ); }
+  Handle(GEOM_Function) GetFirstPoint() { return _func->GetReference(PRISM_ARG_PNT_F ); }
+  Handle(GEOM_Function) GetLastPoint () { return _func->GetReference(PRISM_ARG_PNT_L ); }
+
   void SetDX(double theDX) { _func->SetReal(PRISM_ARG_DX, theDX); }
   void SetDY(double theDY) { _func->SetReal(PRISM_ARG_DY, theDY); }
   void SetDZ(double theDZ) { _func->SetReal(PRISM_ARG_DZ, theDZ); }
@@ -52,14 +57,13 @@ class GEOMImpl_IPrism
   double GetDY() { return _func->GetReal(PRISM_ARG_DY); }
   double GetDZ() { return _func->GetReal(PRISM_ARG_DZ); }
 
-  Handle(GEOM_Function) GetBase  () { return _func->GetReference(PRISM_ARG_BASE); }
-  Handle(GEOM_Function) GetVector() { return _func->GetReference(PRISM_ARG_VEC ); }
-  Handle(GEOM_Function) GetFirstPoint() { return _func->GetReference(PRISM_ARG_PNT_F ); }
-  Handle(GEOM_Function) GetLastPoint () { return _func->GetReference(PRISM_ARG_PNT_L ); }
-
   void SetH(double theH) { _func->SetReal(PRISM_ARG_H, theH); }
 
   double GetH() { return _func->GetReal(PRISM_ARG_H); }
+
+  void SetScale(double theH) { _func->SetReal(PRISM_ARG_SCALE, theH); }
+
+  double GetScale() { return _func->GetReal(PRISM_ARG_SCALE); }
 
  private:
 

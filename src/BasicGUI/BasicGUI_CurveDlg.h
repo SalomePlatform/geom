@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.h
 // Author : Alexander SLADKOV, Open CASCADE S.A.S. (alexander.sladkov@opencascade.com)
-//
+
 #ifndef BASICGUI_CURVEDLG_H
 #define BASICGUI_CURVEDLG_H
 
@@ -32,7 +31,7 @@
 
 #include <list>
 
-class DlgRef_1Sel1Check;
+class DlgRef_1Sel3Check;
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
@@ -58,7 +57,7 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
-  DlgRef_1Sel1Check*                 GroupPoints;
+  DlgRef_1Sel3Check*                 GroupPoints;
   QList<GEOM::GeomObjPtr>            myPoints;
 
 private slots:

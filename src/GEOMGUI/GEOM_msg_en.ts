@@ -574,6 +574,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Construction by Extrusion</translation>
     </message>
     <message>
+        <source>GEOM_SCALE_PRISM</source>
+        <translation>Scale the face opposite to the base</translation>
+    </message>
+    <message>
         <source>GEOM_FACE</source>
         <translation>Face</translation>
     </message>
@@ -4217,6 +4221,14 @@ Otherwise the dimensions will be kept without modifications.</translation>
     <message>
         <source>GEOM_IS_CLOSED</source>
         <translation>Build a closed edge</translation>
+    </message>
+    <message>
+        <source>GEOM_BUILD_CLOSED_WIRE</source>
+        <translation>Build a closed wire</translation>
+    </message>
+    <message>
+        <source>GEOM_IS_REORDER</source>
+        <translation>Reorder vertices taking into account distances</translation>
     </message>
 </context>
 <context>

@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_PYTHONDUMP_HXX_
 #define _GEOM_PYTHONDUMP_HXX_
@@ -44,8 +43,9 @@ namespace GEOM
     Standard_EXPORT TPythonDump (Handle(GEOM_Function)& theFunction, bool theAppend=false);
     Standard_EXPORT virtual ~TPythonDump();
 
-//    operator TCollection_AsciiString () const;
+    //operator TCollection_AsciiString () const;
 
+    Standard_EXPORT TPythonDump& operator<< (bool theArg);
     Standard_EXPORT TPythonDump& operator<< (long int theArg);
     Standard_EXPORT TPythonDump& operator<< (int theArg);
     Standard_EXPORT TPythonDump& operator<< (double theArg);

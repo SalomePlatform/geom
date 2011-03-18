@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_ICurvesOperations_i_HeaderFile
 #define _GEOM_ICurvesOperations_i_HeaderFile
@@ -76,12 +75,15 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
 					  GEOM::GEOM_Object_ptr thePnt2,
 					  GEOM::GEOM_Object_ptr thePnt3);
   
-  GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakePolyline (const GEOM::ListOfGO& thePoints,
+                                      CORBA::Boolean        theIsClosed);
 
-  GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints);
+  GEOM::GEOM_Object_ptr MakeSplineBezier (const GEOM::ListOfGO& thePoints,
+                                          CORBA::Boolean        theIsClosed);
 
   GEOM::GEOM_Object_ptr MakeSplineInterpolation (const GEOM::ListOfGO& thePoints,
-                                                 CORBA::Boolean        theIsClosed);
+                                                 CORBA::Boolean        theIsClosed,
+                                                 CORBA::Boolean        theDoReordering);
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
   

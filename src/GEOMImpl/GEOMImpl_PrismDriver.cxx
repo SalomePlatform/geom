@@ -18,59 +18,68 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
-#include <Standard_Stream.hxx>
 
 #include <GEOMImpl_PrismDriver.hxx>
 
-#include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IPrism.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
+#include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMImpl_PipeDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakePrism.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
+
+#include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Vertex.hxx>
-#include <TopAbs.hxx>
-#include <TopExp.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
 #include <Precision.hxx>
+#include <gp_Ax3.hxx>
 #include <gp_Pnt.hxx>
-#include <gp_Trsf.hxx>
 #include <gp_Vec.hxx>
+#include <gp_Trsf.hxx>
+
+#include <Standard_Stream.hxx>
+
 #include <Standard_ConstructionError.hxx>
 
 //=======================================================================
 //function : GetID
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Standard_GUID& GEOMImpl_PrismDriver::GetID()
 {
   static Standard_GUID aPrismDriver("FF1BBB17-5D14-4df2-980B-3A668264EA16");
-  return aPrismDriver; 
+  return aPrismDriver;
 }
 
 
 //=======================================================================
 //function : GEOMImpl_PrismDriver
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMImpl_PrismDriver::GEOMImpl_PrismDriver() 
+GEOMImpl_PrismDriver::GEOMImpl_PrismDriver()
 {
 }
 
 //=======================================================================
 //function : Execute
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
 {
-  if (Label().IsNull()) return 0;    
+  if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
 
   GEOMImpl_IPrism aCI (aFunction);
@@ -94,14 +103,19 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
         }
         if (aV.Magnitude() > Precision::Confusion()) {
           aV.Normalize();
-          if (aType == PRISM_BASE_VEC_H_2WAYS) {
-            gp_Trsf aTrsf;
-            aTrsf.SetTranslation( (-aV) * aCI.GetH() );
-            BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
-            aShapeBase = aTransformation.Shape();
-            aCI.SetH( aCI.GetH()*2 );
+          if (aType != PRISM_BASE_DXDYDZ_2WAYS && aCI.GetScale() > Precision::Confusion()) {
+            aShape = MakeScaledPrism(aShapeBase, aV * aCI.GetH(), aCI.GetScale());
           }
-          aShape = BRepPrimAPI_MakePrism(aShapeBase, aV * aCI.GetH(), Standard_False).Shape();
+          else {
+            if (aType == PRISM_BASE_VEC_H_2WAYS) {
+              gp_Trsf aTrsf;
+              aTrsf.SetTranslation((-aV) * aCI.GetH());
+              BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
+              aShapeBase = aTransformation.Shape();
+              aCI.SetH(aCI.GetH()*2);
+            }
+            aShape = BRepPrimAPI_MakePrism(aShapeBase, aV * aCI.GetH(), Standard_False).Shape();
+          }
         }
       }
     }
@@ -119,15 +133,19 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       if (!V1.IsNull() && !V2.IsNull()) {
         gp_Vec aV (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
         if (aV.Magnitude() > gp::Resolution()) {
-          if (aType == PRISM_BASE_TWO_PNT_2WAYS)
-            {
+          if (aType != PRISM_BASE_DXDYDZ_2WAYS && aCI.GetScale() > Precision::Confusion()) {
+            aShape = MakeScaledPrism(aShapeBase, aV, aCI.GetScale());
+          }
+          else {
+            if (aType == PRISM_BASE_TWO_PNT_2WAYS) {
               gp_Trsf aTrsf;
               aTrsf.SetTranslation(-aV);
               BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
               aShapeBase = aTransformation.Shape();
               aV = aV * 2;
             }
-          aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
+            aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
+          }
         }
       }
     }
@@ -136,15 +154,19 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
     TopoDS_Shape aShapeBase = aRefBase->GetValue();
     gp_Vec aV (aCI.GetDX(), aCI.GetDY(), aCI.GetDZ());
     if (aV.Magnitude() > gp::Resolution()) {
-      if (aType == PRISM_BASE_DXDYDZ_2WAYS)
-        {
+      if (aType != PRISM_BASE_DXDYDZ_2WAYS && aCI.GetScale() > Precision::Confusion()) {
+        aShape = MakeScaledPrism(aShapeBase, aV, aCI.GetScale());
+      }
+      else {
+        if (aType == PRISM_BASE_DXDYDZ_2WAYS) {
           gp_Trsf aTrsf;
           aTrsf.SetTranslation(-aV);
           BRepBuilderAPI_Transform aTransformation(aShapeBase, aTrsf, Standard_False);
           aShapeBase = aTransformation.Shape();
           aV = aV * 2;
         }
-      aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
+        aShape = BRepPrimAPI_MakePrism(aShapeBase, aV, Standard_False).Shape();
+      }
     }
   }
 
@@ -153,26 +175,91 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
 
-  log.SetTouched(Label()); 
+  log.SetTouched(Label());
 
-  return 1;    
+  return 1;
 }
 
+//=======================================================================
+//function : MakeScaledPrism
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_PrismDriver::MakeScaledPrism (const TopoDS_Shape& theShapeBase,
+                                                    const gp_Vec&       theVector,
+                                                    const Standard_Real theScaleFactor)
+{
+  TopoDS_Shape aShape;
+
+  // 1. aCDG = geompy.MakeCDG(theBase)
+  gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(theShapeBase);
+  gp_Pnt aCDG = aPos.Location();
+  TopoDS_Shape aShapeCDG_1 = BRepBuilderAPI_MakeVertex(aCDG).Shape();
+
+  // 2. Scale = geompy.MakeScaleTransform(theBase, aCDG, theScaleFactor)
+
+  // Bug 6839: Check for standalone (not included in faces) degenerated edges
+  TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
+  TopExp::MapShapesAndAncestors(theShapeBase, TopAbs_EDGE, TopAbs_FACE, aEFMap);
+  Standard_Integer i, nbE = aEFMap.Extent();
+  for (i = 1; i <= nbE; i++) {
+    TopoDS_Shape anEdgeSh = aEFMap.FindKey(i);
+    if (BRep_Tool::Degenerated(TopoDS::Edge(anEdgeSh))) {
+      const TopTools_ListOfShape& aFaces = aEFMap.FindFromIndex(i);
+      if (aFaces.IsEmpty())
+        Standard_ConstructionError::Raise
+          ("Scaling aborted : cannot scale standalone degenerated edge");
+    }
+  }
+
+  // Perform Scaling
+  gp_Trsf aTrsf;
+  aTrsf.SetScale(aCDG, theScaleFactor);
+  BRepBuilderAPI_Transform aBRepTrsf (theShapeBase, aTrsf, Standard_False);
+  TopoDS_Shape aScale = aBRepTrsf.Shape();
+
+  // 3. aBase2 = geompy.MakeTranslationVectorDistance(Scale, theVec, theH)
+  gp_Trsf aTrsf3;
+  aTrsf3.SetTranslation(theVector);
+  TopLoc_Location aLocOrig = aScale.Location();
+  gp_Trsf aTrsfOrig = aLocOrig.Transformation();
+  TopLoc_Location aLocRes (aTrsf3 * aTrsfOrig);
+  TopoDS_Shape aBase2 = aScale.Located(aLocRes);
+
+  // 4. aCDG_2 = geompy.MakeTranslationVectorDistance(aCDG, theVec, theH)
+  gp_Pnt aCDG_2 = aCDG.Translated(theVector);
+  TopoDS_Shape aShapeCDG_2 = BRepBuilderAPI_MakeVertex(aCDG_2).Shape();
+
+  // 5. Vector = geompy.MakeVector(aCDG, aCDG_2)
+  TopoDS_Shape aShapeVec = BRepBuilderAPI_MakeEdge(aCDG, aCDG_2).Shape();
+  TopoDS_Edge anEdge = TopoDS::Edge(aShapeVec);
+  TopoDS_Wire aWirePath = BRepBuilderAPI_MakeWire(anEdge);
+
+  // 6. aPrism = geompy.MakePipeWithDifferentSections([theBase, aBase2], [aCDG, aCDG_2], Vector, False, False)
+  Handle(TopTools_HSequenceOfShape) aBases = new TopTools_HSequenceOfShape;
+  aBases->Append(theShapeBase);
+  aBases->Append(aBase2);
+
+  Handle(TopTools_HSequenceOfShape) aLocs = new TopTools_HSequenceOfShape;
+  aLocs->Append(aShapeCDG_1);
+  aLocs->Append(aShapeCDG_2);
+
+  aShape = GEOMImpl_PipeDriver::CreatePipeWithDifferentSections(aWirePath, aBases, aLocs, false, false);
+  return aShape;
+}
 
 //=======================================================================
-//function :  GEOMImpl_PrismDriver_Type_
+//function : GEOMImpl_PrismDriver_Type_
 //purpose  :
-//======================================================================= 
+//=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_PrismDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
+  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared); 
+  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_PrismDriver",
@@ -187,7 +274,7 @@ Standard_EXPORT Handle_Standard_Type& GEOMImpl_PrismDriver_Type_()
 //=======================================================================
 //function : DownCast
 //purpose  :
-//======================================================================= 
+//=======================================================================
 const Handle(GEOMImpl_PrismDriver) Handle(GEOMImpl_PrismDriver)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(GEOMImpl_PrismDriver) _anOtherObject;
@@ -198,5 +285,5 @@ const Handle(GEOMImpl_PrismDriver) Handle(GEOMImpl_PrismDriver)::DownCast(const 
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

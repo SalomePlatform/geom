@@ -15,13 +15,12 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 # GEOM DLGREF : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : DlgRef
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
@@ -48,6 +47,7 @@ UIC_FILES =					\
 	ui_DlgRef_1Sel3Check_QTD.h		\
 	ui_DlgRef_1Sel3Spin_QTD.h		\
 	ui_DlgRef_1Sel3Spin1Check_QTD.h		\
+	ui_DlgRef_1Sel4Spin2Check_QTD.h		\
 	ui_DlgRef_1Sel4Spin_QTD.h		\
 	ui_DlgRef_1Sel5Spin1Check_QTD.h		\
 	ui_DlgRef_1Sel5Spin_QTD.h		\
@@ -62,6 +62,7 @@ UIC_FILES =					\
 	ui_DlgRef_2Sel1SpinInt_QTD.h		\
 	ui_DlgRef_2Sel2List_QTD.h		\
 	ui_DlgRef_2Sel2Spin1Check_QTD.h		\
+	ui_DlgRef_2Sel2Spin3Check_QTD.h		\
 	ui_DlgRef_2Sel2Spin_QTD.h		\
 	ui_DlgRef_2Sel3Spin2Rb_QTD.h		\
 	ui_DlgRef_2Sel3Spin_QTD.h		\

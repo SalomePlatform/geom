@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BasicGUI_CurveDlg.h"
 
 #include <DlgRef.h>
@@ -70,7 +69,7 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   mainFrame()->RadioButton2->setIcon( image3 );
   mainFrame()->RadioButton3->setIcon( image2 );
 
-  GroupPoints = new DlgRef_1Sel1Check( centralWidget() );
+  GroupPoints = new DlgRef_1Sel3Check( centralWidget() );
 
   GroupPoints->GroupBox1->setTitle( tr( "GEOM_NODES" ) );
   GroupPoints->TextLabel1->setText( tr( "GEOM_POINTS" ) );
@@ -81,7 +80,13 @@ BasicGUI_CurveDlg::BasicGUI_CurveDlg( GeometryGUI* theGeometryGUI, QWidget* pare
 
   GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
   GroupPoints->CheckButton1->setChecked(false);
-  GroupPoints->CheckButton1->hide();
+  //GroupPoints->CheckButton1->hide();
+
+  GroupPoints->CheckButton2->setText( tr( "GEOM_IS_REORDER" ) );
+  GroupPoints->CheckButton2->setChecked(false);
+  GroupPoints->CheckButton2->hide();
+
+  GroupPoints->CheckButton3->hide();
 
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
@@ -121,14 +126,15 @@ void BasicGUI_CurveDlg::Init()
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(),  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
-  connect( this,           SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+  connect( this,          SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
 
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( GroupPoints->CheckButton1,SIGNAL( toggled(bool) ),   this, SLOT( CheckButtonToggled() ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled(bool) ),  this, SLOT( CheckButtonToggled() ) );
+  connect( GroupPoints->CheckButton2, SIGNAL( toggled(bool) ),  this, SLOT( CheckButtonToggled() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
@@ -147,10 +153,21 @@ void BasicGUI_CurveDlg::ConstructorsClicked( int id )
   QString aTitle = tr( id == 0 ? "GEOM_POLYLINE" : id == 1 ? "GEOM_BEZIER" : "GEOM_INTERPOL" );
   mainFrame()->GroupConstructors->setTitle( aTitle );
 
-  if (id == 2) // b-spline
-    GroupPoints->CheckButton1->show();
-  else
-    GroupPoints->CheckButton1->hide();
+  if (id == 0) { // polyline (wire)
+    //GroupPoints->CheckButton1->hide();
+    GroupPoints->CheckButton1->setText( tr( "GEOM_BUILD_CLOSED_WIRE" ) );
+    GroupPoints->CheckButton2->hide();
+  }
+  else if (id == 1) { // bezier
+    //GroupPoints->CheckButton1->hide();
+    GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+    GroupPoints->CheckButton2->hide();
+  }
+  else { // b-spline
+    //GroupPoints->CheckButton1->show();
+    GroupPoints->CheckButton1->setText( tr( "GEOM_IS_CLOSED" ) );
+    GroupPoints->CheckButton2->show();
+  }
 
   myPoints.clear();
 
@@ -323,15 +340,16 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
 
   switch ( getConstructorId() ) {
   case 0 :
-    anObj = anOper->MakePolyline( points.in() );
+    anObj = anOper->MakePolyline( points.in(), GroupPoints->CheckButton1->isChecked() );
     res = true;
     break;
   case 1 :
-    anObj = anOper->MakeSplineBezier( points.in() );
+    anObj = anOper->MakeSplineBezier( points.in(), GroupPoints->CheckButton1->isChecked() );
     res = true;
     break;
   case 2 :
-    anObj = anOper->MakeSplineInterpolation( points.in(), GroupPoints->CheckButton1->isChecked() );
+    anObj = anOper->MakeSplineInterpolation( points.in(), GroupPoints->CheckButton1->isChecked(),
+                                             GroupPoints->CheckButton2->isChecked() );
     res = true;
     break;
   }

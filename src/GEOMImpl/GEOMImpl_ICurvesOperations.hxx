@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_ICurvesOperations_HXX_
 #define _GEOMImpl_ICurvesOperations_HXX_
@@ -36,8 +35,6 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
  public:
   Standard_EXPORT GEOMImpl_ICurvesOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_ICurvesOperations();
-
-  Standard_EXPORT Handle(GEOM_Object) MakePolyline (std::list<Handle(GEOM_Object)> thePoints);
 
   Standard_EXPORT Handle(GEOM_Object) MakeCircleThreePnt (Handle(GEOM_Object) thePnt1,
                                                           Handle(GEOM_Object) thePnt2,
@@ -66,9 +63,15 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
                                                         Handle(GEOM_Object) thePnt2,
                                                         Handle(GEOM_Object) thePnt3);
 
-  Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier        (std::list<Handle(GEOM_Object)> thePoints);
+  Standard_EXPORT Handle(GEOM_Object) MakePolyline (std::list<Handle(GEOM_Object)> thePoints,
+                                                    bool theIsClosed = false);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeSplineBezier (std::list<Handle(GEOM_Object)> thePoints,
+                                                        bool theIsClosed = false);
+
   Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (std::list<Handle(GEOM_Object)> thePoints,
-                                                               bool                      theIsClosed = false);
+                                                               bool theIsClosed = false,
+                                                               bool theDoReordering = false);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
                                                     std::list<double> theWorkingPlane);
