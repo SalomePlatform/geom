@@ -41,6 +41,7 @@
 #include <TopExp.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+#include <Precision.hxx>
 
 #include <GEOMImpl_Types.hxx>
 
@@ -142,6 +143,7 @@ void GenerationGUI_PrismDlg::Init()
   // min, max, step and decimals for spin boxes & initial values
   double aScaleFactor = 2.0;
   double aScaleStep = 0.5;
+  double aScaleMin = Precision::Confusion() * 10.0;
 
   initSpinBox(GroupVecH->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   GroupVecH->SpinBox_DX->setValue(100.0);
@@ -153,9 +155,9 @@ void GenerationGUI_PrismDlg::Init()
   GroupDXDYDZ->SpinBox_DY->setValue(0.0);
   GroupDXDYDZ->SpinBox_DZ->setValue(0.0);
 
-  initSpinBox(GroupVecH->SpinBox_DY, 0.0, COORD_MAX, aScaleStep, "parametric_precision" );
-  initSpinBox(Group2Points->SpinBox1, 0.0, COORD_MAX, aScaleStep, "parametric_precision" );
-  initSpinBox(GroupDXDYDZ->SpinBox_SC, 0.0, COORD_MAX, aScaleStep, "parametric_precision" );
+  initSpinBox(GroupVecH->SpinBox_DY, aScaleMin, COORD_MAX, aScaleStep, "parametric_precision" );
+  initSpinBox(Group2Points->SpinBox1, aScaleMin, COORD_MAX, aScaleStep, "parametric_precision" );
+  initSpinBox(GroupDXDYDZ->SpinBox_SC, aScaleMin, COORD_MAX, aScaleStep, "parametric_precision" );
 
   GroupVecH->SpinBox_DY->setValue(aScaleFactor);
   Group2Points->SpinBox1->setValue(aScaleFactor);

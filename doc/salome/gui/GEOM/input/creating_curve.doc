@@ -13,17 +13,22 @@ possible types of curves: Polyline, Besier or B-spline (Interpolated).
 
 \n <b>TUI Commands:</b>
 <ul>
-<li><em>geompy.MakePolyline(ListOfShapes)</em></li>
-<li><em>geompy.MakeBezier(ListOfShapes)</em></li>
-<li><em>geompy.MakeInterpol(ListOfShapes,isClosed)</em></li>
+<li><em>geompy.MakePolyline(ListOfShapes,isClosed)</em></li>
+<li><em>geompy.MakeBezier(ListOfShapes,isClosed)</em></li>
+<li><em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em></li>
 </ul>
 ListOfShape is a list of points through which the curve passes.
-If isClosed is True, MakeInterpol builds a closed edge.
+If isClosed is True, MakeBezier and MakeInterpol builds a closed edge,
+MakePolyline builds a closed wire. If doReordering is True,
+MakeInterpol does not follow the order of vertices but searches for the
+closest vertex.
 
 <b>Arguments:</b> Name + at least 2 points which will serve as nodes
 on the curve.
 
 \image html curve.png
+\image html curve1.png
+\image html curve2.png
 
 <b>Examples:</b>
 
