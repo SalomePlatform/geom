@@ -126,9 +126,35 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
     } else {
       //GeomAPI_PointsToBSpline GBC (CurvePoints);
       //aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
+
       Handle(TColgp_HArray1OfPnt) aHCurvePoints = new TColgp_HArray1OfPnt(1, aLen);
+
       if (aCI.GetDoReordering()) {
-        // TODO
+        for (int curInd = 1; curInd < aLen - 1; curInd++) {
+          gp_Pnt curPnt = CurvePoints.Value(curInd);
+          int nearInd = 0;
+          double nearDist = RealLast();
+          for (ind = curInd + 1; ind <= aLen; ind++) {
+            double dist = curPnt.SquareDistance(CurvePoints.Value(ind));
+            if (dist < nearDist && (nearDist - dist) > Precision::Confusion()) {
+              nearInd = ind;
+              nearDist = dist;
+            }
+          }
+          if (nearInd > 0 && nearInd != curInd + 1) {
+            // Keep given order of points to use it in case of equidistant candidates
+            //               .-<---<-.
+            //              /         \
+            // o  o  o  c  o->o->o->o->n  o  o
+            //          |  |           |
+            //     curInd  curInd+1    nearInd
+            gp_Pnt nearPnt = CurvePoints.Value(nearInd);
+            for (ind = nearInd; ind > curInd + 1; ind--) {
+              CurvePoints.SetValue(ind, CurvePoints.Value(ind - 1));
+            }
+            CurvePoints.SetValue(curInd + 1, nearPnt);
+          }
+        }
         for (ind = 1; ind <= aLen; ind++) {
           aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
         }
@@ -138,6 +164,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
           aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
         }
       }
+
       bool isClosed = aCI.GetIsClosed();
       GeomAPI_Interpolate GBC (aHCurvePoints, isClosed, gp::Resolution());
       GBC.Perform();
