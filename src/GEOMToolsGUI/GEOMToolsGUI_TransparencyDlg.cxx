@@ -97,8 +97,8 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   GroupC1Layout->setMargin( 11 );
   
   QLabel* TextLabelTransparent = new QLabel( tr( "GEOM_TRANSPARENCY_TRANSPARENT" ), GroupC1 );
-  TextLabelTransparent->setAlignment( Qt::AlignRight );
-  GroupC1Layout->addWidget( TextLabelTransparent, 0, 0 );
+  TextLabelTransparent->setAlignment( Qt::AlignLeft );
+  GroupC1Layout->addWidget( TextLabelTransparent, 0, 2 );
   
   myValueLab = new QLabel( GroupC1 );
   myValueLab->setAlignment( Qt::AlignCenter );
@@ -107,8 +107,8 @@ GEOMToolsGUI_TransparencyDlg::GEOMToolsGUI_TransparencyDlg( QWidget* parent )
   GroupC1Layout->addWidget( myValueLab, 0, 1 );
 
   QLabel* TextLabelOpaque = new QLabel( tr( "GEOM_TRANSPARENCY_OPAQUE" ), GroupC1 );
-  TextLabelOpaque->setAlignment( Qt::AlignLeft );
-  GroupC1Layout->addWidget( TextLabelOpaque, 0, 2 );
+  TextLabelOpaque->setAlignment( Qt::AlignRight );
+  GroupC1Layout->addWidget( TextLabelOpaque, 0, 0 );
   //GroupC1Layout->addItem( new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum ), 0, 1 );
   
   mySlider = new QSlider( Qt::Horizontal, GroupC1 );
@@ -242,7 +242,7 @@ void GEOMToolsGUI_TransparencyDlg::SliderHasMoved(int value)
 //=================================================================================
 void GEOMToolsGUI_TransparencyDlg::SetTransparency()
 {
-  float newValue = ( 100 - mySlider->value() ) / 100.;
+  float newValue = mySlider->value() / 100.;
 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app )
@@ -276,7 +276,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
     SVTK_View* aView = vtkVW->getView();
     if ( myFirstInit ) {        
       myFirstInit = false;
-      int transp = int (100 - ((aView->GetTransparency(FirstIOS))*100.0) + 0.5);
+      int transp = int ((aView->GetTransparency(FirstIOS))*100.0 + 0.5);
       mySlider->setValue(transp);
       ValueHasChanged();
       return;
@@ -300,7 +300,7 @@ void GEOMToolsGUI_TransparencyDlg::SetTransparency()
       aisShape = gb->ConvertIOinGEOMAISShape( FirstIOS, true );
       if( aisShape.IsNull() )
         return;
-      int transp = int( 100 - ( aisShape->Transparency() * 100.0 ) + 0.5);
+      int transp = int( aisShape->Transparency() * 100.0 + 0.5);
       mySlider->setValue(transp);
       ValueHasChanged();
       return;
