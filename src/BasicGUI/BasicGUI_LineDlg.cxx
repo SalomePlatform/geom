@@ -244,7 +244,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2.nullify();
     else if (myEditCurrentArgument == GroupFaces->LineEdit1)  myFace1.nullify();
     else if (myEditCurrentArgument == GroupFaces->LineEdit2)  myFace2.nullify();
-    displayPreview();
+    displayPreview(true);
     return;
   }
 
@@ -278,7 +278,7 @@ void BasicGUI_LineDlg::SelectionIntoArgument()
     }
   }
   
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -322,7 +322,7 @@ void BasicGUI_LineDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

@@ -402,7 +402,7 @@ void BasicGUI_WorkingPlaneDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 

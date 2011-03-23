@@ -83,6 +83,7 @@ private slots:
 	void DisplayPreview(const bool activate = false, const bool update = true,
 			const bool toRemoveFromEngine = true, const double lineWidth = -1,
 			const int displayMode = -1, const int color = -1);
+	virtual void processPreview();
 	void SetPosition(bool);
 	void ChamferOrFillet(bool);
 	void SetDoubleSpinBoxStep(double);

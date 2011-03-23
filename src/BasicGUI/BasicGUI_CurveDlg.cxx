@@ -122,6 +122,8 @@ void BasicGUI_CurveDlg::Init()
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
+  showOnlyPreviewControl();
+
   /* signals and slots connections */
   connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
   connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
@@ -141,7 +143,7 @@ void BasicGUI_CurveDlg::Init()
 
   initName( tr( "GEOM_CURVE" ) );
   resize(100,100);
-  ConstructorsClicked( 0 );
+  ConstructorsClicked( 0 );  
 }
 
 //=================================================================================
@@ -197,7 +199,7 @@ void BasicGUI_CurveDlg::SetEditCurrentArgument()
 //=================================================================================
 void BasicGUI_CurveDlg::CheckButtonToggled()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -263,7 +265,7 @@ void BasicGUI_CurveDlg::SelectionIntoArgument()
     GroupPoints->LineEdit1->setText( QString::number( myPoints.count() ) + "_" + tr( "GEOM_POINT" ) + tr( "_S_" ) );
   else
     GroupPoints->LineEdit1->setText( "" );
-  displayPreview();
+  processPreview();
 }
 
 

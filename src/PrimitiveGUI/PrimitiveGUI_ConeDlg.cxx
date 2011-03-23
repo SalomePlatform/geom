@@ -200,7 +200,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
       disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
       globalSelection(); // close local contexts, if any
 
-      displayPreview();
+      displayPreview(true);
       break;
     }
   }
@@ -210,7 +210,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
   resize(minimumSizeHint());
   SelectionIntoArgument();
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -286,7 +286,7 @@ void PrimitiveGUI_ConeDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -326,7 +326,7 @@ void PrimitiveGUI_ConeDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -359,7 +359,7 @@ void PrimitiveGUI_ConeDlg::enterEvent (QEvent*)
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

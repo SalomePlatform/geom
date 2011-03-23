@@ -248,13 +248,19 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 // Function : displayPreview
 // Purpose  : Method for displaying preview based on execute() results
 //================================================================
-void GEOMBase_Helper::displayPreview( const bool   activate,
+void GEOMBase_Helper::displayPreview( const bool   display,
+				      const bool   activate,
                                       const bool   update,
                                       const bool   toRemoveFromEngine,
                                       const double lineWidth,
                                       const int    displayMode,
                                       const int    color )
 {
+  if(!display) {
+    erasePreview( update );
+    return;
+  }
+  
   isPreview = true;
   QString msg;
   if ( !isValid( msg ) )

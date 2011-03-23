@@ -282,7 +282,7 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked (int constructor
     SelectionIntoArgument();
   }
   else {
-    displayPreview();
+    processPreview();
   }
 }
 
@@ -378,7 +378,7 @@ void TransformationGUI_MultiTranslationDlg::SelectionIntoArgument()
     myEditCurrentArgument->setText("");
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -444,7 +444,7 @@ void TransformationGUI_MultiTranslationDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -524,7 +524,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox (double newVal
     break;
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -547,7 +547,7 @@ void TransformationGUI_MultiTranslationDlg::ValueChangedInSpinBox (int newValue)
     break;
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -565,7 +565,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseStepU()
   else if (aConstructorId == 1)
     GroupDimensions->SpinBox_DX1->setValue(myStepU);
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -578,7 +578,7 @@ void TransformationGUI_MultiTranslationDlg::ReverseStepV()
 
   GroupDimensions->SpinBox_DX2->setValue(myStepV);
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

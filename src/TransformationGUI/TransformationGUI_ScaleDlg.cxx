@@ -235,7 +235,7 @@ void TransformationGUI_ScaleDlg::ConstructorsClicked (int constructorId)
     SelectionIntoArgument();
   }
   else {
-    displayPreview();
+    processPreview();
   }
 }
 
@@ -304,7 +304,7 @@ void TransformationGUI_ScaleDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -342,7 +342,7 @@ void TransformationGUI_ScaleDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -374,7 +374,7 @@ void TransformationGUI_ScaleDlg::enterEvent (QEvent*)
 //=================================================================================
 void TransformationGUI_ScaleDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

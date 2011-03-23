@@ -122,6 +122,8 @@ void GenerationGUI_RevolDlg::Init()
   myBaseObjects.clear();
   myAxis.nullify();
 
+  showOnlyPreviewControl();
+
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -209,7 +211,7 @@ void GenerationGUI_RevolDlg::SelectionIntoArgument()
 	GroupPoints->PushButton1->click();
     }
   }
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -243,7 +245,7 @@ void GenerationGUI_RevolDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -256,7 +258,7 @@ void GenerationGUI_RevolDlg::ActivateThisDialog()
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -275,7 +277,7 @@ void GenerationGUI_RevolDlg::enterEvent (QEvent*)
 //=================================================================================
 void GenerationGUI_RevolDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -350,7 +352,7 @@ void GenerationGUI_RevolDlg::onReverse()
 void GenerationGUI_RevolDlg::onBothway()
 {
   GroupPoints->CheckButton2->setEnabled(!GroupPoints->CheckButton1->isChecked());
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

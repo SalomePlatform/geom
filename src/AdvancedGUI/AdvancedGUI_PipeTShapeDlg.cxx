@@ -217,6 +217,8 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
     CssAcceptable = "QDoubleSpinBox, QPushButton {background-color: rgb(85, 170, 127)}";
     CssRefused = "QDoubleSpinBox, QPushButton {background-color: rgb(255, 0, 0)}";
 
+    showOnlyPreviewControl();
+
 	// Signal/slot connections
 	connect(buttonOk(), SIGNAL(clicked()), this, SLOT(ClickOnOk()));
 	connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -249,7 +251,7 @@ void AdvancedGUI_PipeTShapeDlg::Init() {
 
 	initName(tr("GEOM_PIPE_TSHAPE"));
     updateTshapeScreenshotLabel();
-	DisplayPreview();
+    processPreview();
 }
 
 //=================================================================================
@@ -271,7 +273,7 @@ void AdvancedGUI_PipeTShapeDlg::ApplyNewDimensions() {
                 MainTubeGroupParams->SpinBox_DZ->setToolTip("");
                 MainTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 255, 255);");
                 CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-                DisplayPreview();
+		processPreview();
             }
         }
     }
@@ -285,7 +287,7 @@ void AdvancedGUI_PipeTShapeDlg::ApplyNewDimensions() {
                 IncidentTubeGroupParams->SpinBox_DZ->setToolTip("");
                 IncidentTubeGroupParams->SpinBox_DZ->setStyleSheet("background-color: rgb(255, 255, 255);");
                 CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-                DisplayPreview();
+		processPreview();
             }
         }
     }
@@ -369,7 +371,7 @@ void AdvancedGUI_PipeTShapeDlg::SetPosition(bool isChecked) {
 		disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
 		JunctionPointsSel->LineEdit4->setText("");
 		JunctionPointsSel->LineEdit5->setText("");
-		DisplayPreview();
+		processPreview();
 	}
 }
 
@@ -381,7 +383,7 @@ void AdvancedGUI_PipeTShapeDlg::ValueChangedInSpinBox(double newValue)
 {
     if (JunctionPointsSel->GroupBox1->isChecked() && myOkPoint1 && myOkPoint2 && myOkPoint3)
         CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-    DisplayPreview();
+    processPreview();
 }
 
 //=================================================================================
@@ -467,7 +469,7 @@ void AdvancedGUI_PipeTShapeDlg::SelectionIntoArgument() {
 
 	if (myOkPoint1 && myOkPoint2 && myOkPoint3) {
         CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-		DisplayPreview();
+	processPreview();
     }
 
 //	GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject(aSelList.First());
@@ -596,7 +598,7 @@ void AdvancedGUI_PipeTShapeDlg::ActivateThisDialog() {
 	//			currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
     if (myOkPoint1 && myOkPoint2 && myOkPoint3)
         CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-	DisplayPreview();
+    processPreview();
 }
 
 //=================================================================================
@@ -649,7 +651,7 @@ void AdvancedGUI_PipeTShapeDlg::ChamferOrFillet(bool) {
         updateTshapeScreenshotLabel();
         if (myOkPoint1 && myOkPoint2 && myOkPoint3)
             CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-		DisplayPreview();
+		processPreview();
 	} else if (send == FilletGroupParams->GroupBox1) {
 		if (send->isChecked()) {
 			disconnect(ChamferGroupParams->GroupBox1, SIGNAL(toggled(bool)), this, 0);
@@ -662,7 +664,7 @@ void AdvancedGUI_PipeTShapeDlg::ChamferOrFillet(bool) {
         updateTshapeScreenshotLabel();
         if (myOkPoint1 && myOkPoint2 && myOkPoint3)
             CheckCompatiblePosition(myPoint1, myPoint2, myPoint3, 0.01);
-		DisplayPreview();
+	        processPreview();
 	}
 
 }
@@ -972,4 +974,15 @@ void AdvancedGUI_PipeTShapeDlg::restoreSubShapes(SALOMEDS::Study_ptr theStudy, S
 		getGeomEngine()->AddInStudy(theStudy, (*it), tr((*it)->GetName()).toStdString().c_str(), theFather);
 	}
 
+}
+
+//=================================================================================
+// function : processPreview()
+// purpose  : Display preview if CheckBoxPreview is checked
+//=================================================================================
+void AdvancedGUI_PipeTShapeDlg::processPreview() {
+  if(mainFrame()->CheckBoxPreview->isChecked())
+    DisplayPreview();
+  else
+    erasePreview(true);
 }

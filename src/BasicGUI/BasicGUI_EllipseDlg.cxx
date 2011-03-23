@@ -159,7 +159,7 @@ void BasicGUI_EllipseDlg::Init()
 
   resize( minimumSizeHint() );
   SelectionIntoArgument();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -212,7 +212,7 @@ bool BasicGUI_EllipseDlg::ClickOnApply()
 
   globalSelection(); // close local contexts, if any
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-  displayPreview();
+  displayPreview(true);
   
   return true;
 }
@@ -261,7 +261,7 @@ void BasicGUI_EllipseDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -307,7 +307,7 @@ void BasicGUI_EllipseDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //SelectionIntoArgument();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -361,7 +361,7 @@ void BasicGUI_EllipseDlg::enterEvent( QEvent* )
 //=================================================================================
 void BasicGUI_EllipseDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

@@ -73,6 +73,7 @@ GEOMBase_Skeleton::GEOMBase_Skeleton( GeometryGUI* theGeometryGUI, QWidget* pare
   myMainFrame->GroupBoxPublish->setTitle( tr( "GEOM_PUBLISH_RESULT_GRP" ) );
   myMainFrame->CheckBoxRestoreSS->setText( tr( "GEOM_RESTORE_SUB_SHAPES" ) );
   myMainFrame->CheckBoxAddPrefix->setText( tr( "GEOM_RSS_ADD_FREFIX" ) );
+  myMainFrame->CheckBoxPreview->setText( tr("GEOM_PREVIEW") );
 
   buttonCancel()->setText( tr( "GEOM_BUT_CLOSE" ) );
   buttonOk()->setText( tr( "GEOM_BUT_APPLY_AND_CLOSE" ) );
@@ -125,6 +126,8 @@ void GEOMBase_Skeleton::Init()
   // connect help button on a private slot that displays help information
   connect( buttonHelp(), SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
 
+  connect( myMainFrame->CheckBoxPreview, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
+
   /* displays Dialog */
   myMainFrame->RadioButton1->setChecked( true );
   myMainFrame->RadioButton4->hide();
@@ -132,6 +135,11 @@ void GEOMBase_Skeleton::Init()
 
   myMainFrame->CheckBoxRestoreSS->setChecked( false );
   myMainFrame->CheckBoxAddPrefix->setChecked( true );
+
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  bool aPrv = (resMgr == 0) ? false : resMgr->booleanValue( "Geometry", "geom_preview", false );
+  
+  myMainFrame->CheckBoxPreview->setChecked( aPrv );
   myMainFrame->GroupBoxPublish->hide();
 }
 
@@ -408,4 +416,23 @@ void GEOMBase_Skeleton::keyPressEvent( QKeyEvent* e )
     e->accept();
     ClickOnHelp();
   }
+}
+
+//=================================================================================
+// function : showOnlyPreviewControl()
+// purpose  : display only CheckBoxPreview check box,
+//            hide CheckBoxRestoreSS and CheckBoxAddPrefix 
+//=================================================================================
+void GEOMBase_Skeleton::showOnlyPreviewControl(){
+  mainFrame()->GroupBoxPublish->show();
+  mainFrame()->CheckBoxRestoreSS->hide();
+  mainFrame()->CheckBoxAddPrefix->hide();
+}
+
+//=================================================================================
+// function : processPreview()
+// purpose  : Display preview if CheckBoxPreview is checked
+//=================================================================================
+void GEOMBase_Skeleton::processPreview() {
+  displayPreview(mainFrame()->CheckBoxPreview->isChecked());
 }

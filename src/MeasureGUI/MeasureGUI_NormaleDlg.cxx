@@ -246,7 +246,7 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
       GroupArgs->PushButton1->click();
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -286,7 +286,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -313,7 +313,7 @@ void MeasureGUI_NormaleDlg::ActivateThisDialog()
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

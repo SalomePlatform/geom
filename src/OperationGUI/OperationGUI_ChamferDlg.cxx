@@ -193,6 +193,8 @@ void OperationGUI_ChamferDlg::Init()
   myFace[ Face1 ] = -1;
   myFace[ Face2 ] = -1;
 
+  showOnlyPreviewControl();
+
   // signals and slots connections
 
   // main buttons
@@ -354,7 +356,7 @@ void OperationGUI_ChamferDlg::ConstructorsClicked (int constructorId)
       myEditCurrentArgument->setText("");
     }
 
-    displayPreview();
+    processPreview();
   }
 
   qApp->processEvents();
@@ -421,7 +423,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
       if ( !anObj->_is_nil() ) {
         myShape = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
-        displayPreview();
+        processPreview();
       }
     }
 
@@ -444,7 +446,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
             QString aFaceName = QString(GEOMBase::GetName(anObj)) + ":%1";
             myEditCurrentArgument->setText(aFaceName.arg(anIndex));
             myFace[ aCurrFocus ] = anIndex;
-            displayPreview();
+            processPreview();
          }
       }
     }
@@ -479,7 +481,7 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
           else if (aConstructorId == 3)
             myEdges = anIndexes;
 
-          displayPreview();
+          processPreview();
         }
       }
     }
@@ -567,7 +569,7 @@ void OperationGUI_ChamferDlg::SetEditCurrentArgument()
   activateSelection();
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -615,7 +617,7 @@ void OperationGUI_ChamferDlg::enterEvent (QEvent*)
 //=================================================================================
 void OperationGUI_ChamferDlg::ValueChangedInSpinBox (double)
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -960,5 +962,5 @@ void OperationGUI_ChamferDlg::RadioButtonPressed()
   myRadioButton[ RadioButton41 ]->blockSignals(false);
   myRadioButton[ RadioButton42 ]->blockSignals(false);
 
-  displayPreview();
+  processPreview();
 }

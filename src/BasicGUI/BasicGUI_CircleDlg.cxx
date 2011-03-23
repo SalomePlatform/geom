@@ -289,7 +289,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -391,7 +391,7 @@ void BasicGUI_CircleDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -476,7 +476,7 @@ void BasicGUI_CircleDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -520,7 +520,7 @@ void BasicGUI_CircleDlg::DeactivateActiveDialog()
 //=================================================================================
 void BasicGUI_CircleDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

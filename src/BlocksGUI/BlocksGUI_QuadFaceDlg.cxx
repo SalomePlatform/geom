@@ -328,7 +328,7 @@ void BlocksGUI_QuadFaceDlg::SelectionIntoArgument()
     myEditCurrentArgument->setText( "" );
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -411,7 +411,7 @@ void BlocksGUI_QuadFaceDlg::ActivateThisDialog()
   activateSelection();
 
   // ??
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

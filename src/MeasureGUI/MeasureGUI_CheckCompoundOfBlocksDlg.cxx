@@ -188,7 +188,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
   myObj = aSelectedObject;
   myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
   processObject();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -228,7 +228,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::ActivateThisDialog()
     connect( aSel, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

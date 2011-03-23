@@ -541,8 +541,8 @@ void BasicGUI_PointDlg::SelectionIntoArgument()
     }
     myBusy = false;
   }
-
-  displayPreview();
+  
+  displayPreview(true);
 }
 
 
@@ -638,7 +638,7 @@ void BasicGUI_PointDlg::DeactivateActiveDialog()
 //=================================================================================
 void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -647,7 +647,7 @@ void BasicGUI_PointDlg::ValueChangedInSpinBox(double newValue)
 //=================================================================================
 void BasicGUI_PointDlg::CheckBoxClicked( int  State ) 
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -692,7 +692,7 @@ void BasicGUI_PointDlg::OnPointSelected( const gp_Pnt& thePnt )
     GroupXYZ->SpinBox_DY->setValue( thePnt.Y() );
     GroupXYZ->SpinBox_DZ->setValue( thePnt.Z() );
 
-    displayPreview();
+    displayPreview(true);
   }
 }
 
@@ -919,7 +919,7 @@ void BasicGUI_PointDlg::addSubshapesToStudy()
 void BasicGUI_PointDlg::ClickParamCoord( int id )
 {
   updateParamCoord( true );
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

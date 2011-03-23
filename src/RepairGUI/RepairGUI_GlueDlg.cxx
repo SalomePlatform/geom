@@ -157,6 +157,8 @@ void RepairGUI_GlueDlg::Init()
   //globalSelection( GEOM_COMPOUND );
 
   mainFrame()->GroupBoxPublish->show();
+  //Hide preview checkbox
+  mainFrame()->CheckBoxPreview->hide();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -237,7 +239,7 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
   updateGeometry();
   resize( minimumSizeHint() );
 
-  displayPreview();
+  processPreview();
   updateButtonState();
   activateSelection();
   SelectionIntoArgument();

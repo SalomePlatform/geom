@@ -2722,6 +2722,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Origin and base vectors</translation>
     </message>
     <message>
+        <source>PREF_GROUP_OPERATIONS</source>
+        <translation>Operations</translation>
+    </message>
+    <message>
         <source>PREF_GROUP_GENERAL</source>
         <translation>General</translation>
     </message>
@@ -4116,6 +4120,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_RSS_ADD_FREFIX</source>
         <translation>Add prefix to names of restored subshapes</translation>
+    </message>
+    <message>
+        <source>GEOM_PREVIEW</source>
+        <translation>Preview</translation>
     </message>
     <message>
         <source>GEOM_ALL_IMPORT_FILES</source>

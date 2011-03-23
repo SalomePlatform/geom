@@ -194,7 +194,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
   resize( minimumSizeHint() );
   SelectionIntoArgument();
 
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -252,7 +252,7 @@ void PrimitiveGUI_SphereDlg::SelectionIntoArgument()
     myPoint = aSelectedObject;
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -314,7 +314,7 @@ void PrimitiveGUI_SphereDlg::enterEvent( QEvent* )
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 

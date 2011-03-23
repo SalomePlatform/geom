@@ -284,7 +284,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 
   qApp->processEvents();
   updateGeometry();
@@ -351,7 +351,7 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
       myData[ DY2 ]->setValue( aYDir.Y() );
       myData[ DZ2 ]->setValue( aYDir.Z() );
     }
-    displayPreview();
+    displayPreview(true);
     return;
   }
   aSelectedObject = getSelected( TopAbs_VERTEX );
@@ -360,7 +360,7 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
     myData[ X ]->setValue( aPnt.X() );
     myData[ Y ]->setValue( aPnt.Y() );
     myData[ Z ]->setValue( aPnt.Z() );
-    displayPreview();
+    displayPreview(true);
     return;
   }
 }
@@ -423,7 +423,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -617,7 +617,7 @@ void BasicGUI_MarkerDlg::addSubshapesToStudy()
 //=================================================================================
 void BasicGUI_MarkerDlg::onValueChanged( double )
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

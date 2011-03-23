@@ -114,6 +114,8 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
   GroupPoints->LineEdit2->clear();
   myObject1 = myObject2 = GEOM::GEOM_Object::_nil();
 
+  showOnlyPreviewControl();
+
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -211,6 +213,7 @@ void OperationGUI_GetShapesOnShapeDlg::SelectionIntoArgument()
       }
     }
   }
+  processPreview();
 }
 
 //=================================================================================
@@ -265,6 +268,7 @@ void OperationGUI_GetShapesOnShapeDlg::ActivateThisDialog()
   globalSelection(GEOM_ALLSHAPES);
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
+  processPreview();
 }
 
 //=================================================================================
@@ -346,4 +350,5 @@ void OperationGUI_GetShapesOnShapeDlg::ComboTextChanged()
 {
   // VRS ???? What is it for ??? commented for a while...
   //bool IsEnabled = GroupPoints->ComboBox1->currentIndex() < 3;
+  processPreview();
 }

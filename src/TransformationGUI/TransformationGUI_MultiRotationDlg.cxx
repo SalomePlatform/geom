@@ -252,7 +252,7 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked (int constructorId)
     SelectionIntoArgument();
   }
   else {
-    displayPreview();
+    processPreview();
   }
 }
 
@@ -334,7 +334,7 @@ void TransformationGUI_MultiRotationDlg::SelectionIntoArgument()
     myEditCurrentArgument->setText("");
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -386,7 +386,7 @@ void TransformationGUI_MultiRotationDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -437,7 +437,7 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox (double newValue)
   else if (send == GroupDimensions->SpinBox_DX2)
     myStep = newValue;
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -453,7 +453,7 @@ void TransformationGUI_MultiRotationDlg::ValueChangedInSpinBox (int newValue)
   else if (send == GroupDimensions->SpinBox_DY2)
     myNbTimes2 = newValue;
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -469,7 +469,7 @@ void TransformationGUI_MultiRotationDlg::ReverseAngle()
   if (aConstructorId == 1)
     GroupDimensions->SpinBox_DX1->setValue(myAng);
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

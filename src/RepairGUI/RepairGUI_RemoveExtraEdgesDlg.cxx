@@ -107,6 +107,8 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
   activateSelection();
   
   mainFrame()->GroupBoxPublish->show();
+  //Hide preview checkbox
+  mainFrame()->CheckBoxPreview->hide();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );

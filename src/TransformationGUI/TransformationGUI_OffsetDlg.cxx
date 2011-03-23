@@ -176,7 +176,7 @@ void TransformationGUI_OffsetDlg::SelectionIntoArgument()
     myEditCurrentArgument->setText("");
   }
 
-  displayPreview();
+  processPreview();
 }
 
 
@@ -229,7 +229,7 @@ void TransformationGUI_OffsetDlg::ActivateThisDialog()
 //=================================================================================
 void TransformationGUI_OffsetDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 

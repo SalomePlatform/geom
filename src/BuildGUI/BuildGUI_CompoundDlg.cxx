@@ -102,6 +102,7 @@ void BuildGUI_CompoundDlg::Init()
   myShapes.clear();
 
   mainFrame()->GroupBoxPublish->show();
+  mainFrame()->CheckBoxPreview->hide();
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );

@@ -263,7 +263,7 @@ void BooleanGUI_Dialog::ActivateThisDialog()
 
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

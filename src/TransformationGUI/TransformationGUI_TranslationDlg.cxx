@@ -261,7 +261,7 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
     SelectionIntoArgument();
   }
   else {
-    displayPreview();
+    processPreview();
   }
 }
 
@@ -356,7 +356,7 @@ void TransformationGUI_TranslationDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -411,7 +411,7 @@ void TransformationGUI_TranslationDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -443,7 +443,7 @@ void TransformationGUI_TranslationDlg::enterEvent (QEvent*)
 //=================================================================================
 void TransformationGUI_TranslationDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -639,7 +639,7 @@ void TransformationGUI_TranslationDlg::CreateCopyModeChanged()
 void TransformationGUI_TranslationDlg::ActivateDistanceChanged()
 {
   GroupPoints->SpinBox3->setEnabled( GroupPoints->CheckBox1->isChecked() );
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

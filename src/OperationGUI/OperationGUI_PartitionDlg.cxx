@@ -151,6 +151,9 @@ void OperationGUI_PartitionDlg::Init()
 
   connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+
+  connect( GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
+  connect( GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
   
   initName( tr( "GEOM_PARTITION" ) );
 
@@ -318,8 +321,9 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
       }
     }
   }
-
+  
   myEditCurrentArgument->setText( aString );
+  processPreview();
 }
 
 
@@ -352,6 +356,7 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
   send->setDown(true);
+  processPreview();
 }
 
 
@@ -382,6 +387,7 @@ void OperationGUI_PartitionDlg::ActivateThisDialog()
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   ConstructorsClicked( getConstructorId() ); 
+  processPreview();
 }
 
 
@@ -496,6 +502,7 @@ void OperationGUI_PartitionDlg::ComboTextChanged()
   //GroupPoints->TextLabel5->setEnabled(IsEnabled);
   //GroupPoints->PushButton3->setEnabled(IsEnabled);
   //GroupPoints->PushButton4->setEnabled(IsEnabled);
+  processPreview();
 }
 
 //=================================================================================

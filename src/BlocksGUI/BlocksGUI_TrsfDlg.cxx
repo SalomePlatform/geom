@@ -118,6 +118,8 @@ void BlocksGUI_TrsfDlg::Init()
     initSpinBox(anIter.value(), 1, 999, SpecificStep);
   }
 
+  showOnlyPreviewControl();
+  
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -270,7 +272,7 @@ void BlocksGUI_TrsfDlg::SelectionIntoArgument()
     }
     myEditCurrentArgument->setText(aName);
     myFaces[aCurrFocus] = anIndex;
-    displayPreview();
+    processPreview();
   }
 
   switch (aCurrFocus) {
@@ -388,7 +390,7 @@ void BlocksGUI_TrsfDlg::ActivateThisDialog()
   activateSelection();
 
   // ??
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -407,7 +409,7 @@ void BlocksGUI_TrsfDlg::enterEvent (QEvent*)
 //=================================================================================
 void BlocksGUI_TrsfDlg::ValueChangedInSpinBox(int)
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

@@ -198,7 +198,7 @@ void PrimitiveGUI_FaceDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void PrimitiveGUI_FaceDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -213,7 +213,7 @@ void PrimitiveGUI_FaceDlg::RadioButtonClicked()
     myOrientationType = 2;
   else if ( GroupOrientation->RadioButton3->isChecked() )
     myOrientationType = 3;
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -306,7 +306,7 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
   updateGeometry();
   resize( minimumSizeHint() );
   SelectionIntoArgument();
-  //displayPreview();
+  //displayPreview(true);
 }
 
 //=================================================================================
@@ -316,7 +316,7 @@ void PrimitiveGUI_FaceDlg::ConstructorsClicked( int constructorId )
 void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
 {
   if (getConstructorId() == 0) {
-    displayPreview();
+    displayPreview(true);
     return;
   }
 
@@ -345,7 +345,7 @@ void PrimitiveGUI_FaceDlg::SelectionIntoArgument()
       myFace = aSelectedObject;
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 

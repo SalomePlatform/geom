@@ -72,7 +72,8 @@ protected:
   void redisplay       ( const ObjectList&, const bool = true, const bool = true );
   void redisplay       ( GEOM::GEOM_Object_ptr, const bool = true, const bool = true );
 
-  virtual void displayPreview ( const bool   activate = false, 
+  virtual void displayPreview ( const bool   display,
+				const bool   activate = false, 
                                 const bool   update = true,
                                 const bool   toRemoveFromEngine = true,
                                 const double lineWidth = -1, 

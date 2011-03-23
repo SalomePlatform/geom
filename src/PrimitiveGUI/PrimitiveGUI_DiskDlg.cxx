@@ -201,7 +201,7 @@ void PrimitiveGUI_DiskDlg::RadioButtonClicked()
     myOrientationType = 2;
   else if (GroupOrientation->RadioButton3->isChecked())
     myOrientationType = 3;
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -251,7 +251,7 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked (int constructorId)
   resize(minimumSizeHint());
   SelectionIntoArgument();
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -345,7 +345,7 @@ void PrimitiveGUI_DiskDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -412,7 +412,7 @@ void PrimitiveGUI_DiskDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -444,7 +444,7 @@ void PrimitiveGUI_DiskDlg::enterEvent (QEvent*)
 //=================================================================================
 void PrimitiveGUI_DiskDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

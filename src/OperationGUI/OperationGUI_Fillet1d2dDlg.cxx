@@ -120,6 +120,8 @@ void OperationGUI_Fillet1d2dDlg::Init()
 
   myVertexes.Clear();
 
+  showOnlyPreviewControl();
+
   // signals and slots connections
 
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()   ));
@@ -221,7 +223,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
         myShape = anObj;
         myEditCurrentArgument->setText(aName
 );
-        displayPreview();
+        processPreview();
       }
     }
   } else if (myEditCurrentArgument == GroupVertexes->LineEdit2) {
@@ -251,7 +253,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
       }
     }
     if ( isPreview )
-      displayPreview();
+      processPreview();
   }
 
   if (myEditCurrentArgument == GroupVertexes->LineEdit1) {
@@ -288,7 +290,7 @@ void OperationGUI_Fillet1d2dDlg::SetEditCurrentArgument()
   activateSelection();
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -334,7 +336,7 @@ void OperationGUI_Fillet1d2dDlg::enterEvent (QEvent*)
 //=================================================================================
 void OperationGUI_Fillet1d2dDlg::ValueChangedInSpinBox (double)
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

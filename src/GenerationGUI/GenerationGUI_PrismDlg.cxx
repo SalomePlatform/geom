@@ -195,6 +195,8 @@ void GenerationGUI_PrismDlg::Init()
   myPoint2.nullify();
   myVec.nullify();
 
+  showOnlyPreviewControl();
+    
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -290,7 +292,7 @@ void GenerationGUI_PrismDlg::ConstructorsClicked (int constructorId)
   resize(minimumSizeHint());
 
   SelectionIntoArgument();
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -382,7 +384,7 @@ void GenerationGUI_PrismDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -442,7 +444,7 @@ void GenerationGUI_PrismDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -475,7 +477,7 @@ void GenerationGUI_PrismDlg::enterEvent (QEvent*)
 //=================================================================================
 void GenerationGUI_PrismDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -550,7 +552,7 @@ void GenerationGUI_PrismDlg::onBothway()
   GroupDXDYDZ->SpinBox_SC->setEnabled(!GroupDXDYDZ->CheckBox1->isChecked() &&
                                       GroupDXDYDZ->CheckBox2->isChecked()); // scale factor
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -568,7 +570,7 @@ void GenerationGUI_PrismDlg::onScalePrism()
   GroupDXDYDZ->TextLabel5->setEnabled(GroupDXDYDZ->CheckBox2->isChecked());
   GroupDXDYDZ->SpinBox_SC->setEnabled(GroupDXDYDZ->CheckBox2->isChecked());
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

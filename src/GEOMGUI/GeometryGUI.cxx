@@ -1196,7 +1196,6 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   if ( !res )
     return false;
-
   setMenuShown( true );
   setToolShown( true );
 
@@ -1637,6 +1636,13 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_AUTO_CREATE" ), originGroup,
                  LightApp_Preferences::Bool, "Geometry", "auto_create_base_objects" );
 
+
+  int operationsGroup = addPreference( tr( "PREF_GROUP_OPERATIONS" ), tabId );
+  setPreferenceProperty( operationsGroup, "columns", 2 );
+  
+  addPreference( tr( "GEOM_PREVIEW" ), operationsGroup,
+                 LightApp_Preferences::Bool, "Geometry", "geom_preview" );
+  
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )

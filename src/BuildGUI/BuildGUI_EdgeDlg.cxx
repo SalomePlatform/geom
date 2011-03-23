@@ -239,7 +239,7 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
     if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1.nullify();
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2.nullify();
     else if (myEditCurrentArgument == GroupWire->LineEdit1)   myWire.nullify();
-    displayPreview();
+    displayPreview(true);
     return;
   }
 
@@ -268,7 +268,7 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -297,7 +297,7 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

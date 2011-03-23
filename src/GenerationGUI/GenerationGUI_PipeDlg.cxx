@@ -119,6 +119,8 @@ void GenerationGUI_PipeDlg::Init()
 
   GroupPoints->CheckButton1->setEnabled(false);
 
+  showOnlyPreviewControl();
+
   // signals and slots connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -172,7 +174,7 @@ void GenerationGUI_PipeDlg::ConstructorsClicked( int constructorId )
   resize(100,100);
 
   SelectionIntoArgument();
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -195,7 +197,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
     myEditCurrentArgument->setText("");
     myPath.nullify();
   }
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -275,7 +277,7 @@ void GenerationGUI_PipeDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -327,7 +329,7 @@ void GenerationGUI_PipeDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

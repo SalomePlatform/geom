@@ -377,7 +377,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
   myEditCurrentArgument->setFocus();
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -420,7 +420,7 @@ void BasicGUI_PlaneDlg::GroupClicked()
     myOriginType = 2;
   else if ( send == GroupLCS->RadioButton3 )
     myOriginType = 3;
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -445,7 +445,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
     else if ( myEditCurrentArgument == Group2Vec->LineEdit1 )   myVec1.nullify();
     else if ( myEditCurrentArgument == Group2Vec->LineEdit2 )   myVec2.nullify();
     else if ( myEditCurrentArgument == GroupLCS->LineEdit1 )    myLCS.nullify();
-    displayPreview();
+    displayPreview(true);
     return;
   }
 
@@ -502,7 +502,7 @@ void BasicGUI_PlaneDlg::SelectionIntoArgument()
       myLCS = aSelectedObject;
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -590,7 +590,7 @@ void BasicGUI_PlaneDlg::SetEditCurrentArgument()
   //  SelectionIntoArgument();
   myEditCurrentArgument->setFocus();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -634,7 +634,7 @@ void BasicGUI_PlaneDlg::enterEvent( QEvent* )
 //=================================================================================
 void BasicGUI_PlaneDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

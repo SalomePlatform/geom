@@ -248,7 +248,7 @@ void TransformationGUI_PositionDlg::ConstructorsClicked (int constructorId)
     SelectionIntoArgument();
   }
   else {
-    displayPreview();
+    processPreview();
   }
 }
 
@@ -274,7 +274,7 @@ void TransformationGUI_PositionDlg::SelectionTypeButtonClicked()
 //=================================================================================
 void TransformationGUI_PositionDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -369,7 +369,7 @@ void TransformationGUI_PositionDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -460,7 +460,7 @@ void TransformationGUI_PositionDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================

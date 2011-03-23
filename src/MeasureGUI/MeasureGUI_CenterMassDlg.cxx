@@ -180,7 +180,7 @@ void MeasureGUI_CenterMassDlg::SelectionIntoArgument()
 
   myObj = aSelectedObject;
   processObject();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -221,7 +221,7 @@ void MeasureGUI_CenterMassDlg::ActivateThisDialog()
            SIGNAL(currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   globalSelection();
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -250,7 +250,7 @@ void MeasureGUI_CenterMassDlg::processObject()
     myGrp->LineEdit3->setText( DlgRef::PrintDoubleValue( y, aPrecision ) );
     myGrp->LineEdit4->setText( DlgRef::PrintDoubleValue( z, aPrecision ) );
 
-    displayPreview();
+    displayPreview(true);
   }
 }
 

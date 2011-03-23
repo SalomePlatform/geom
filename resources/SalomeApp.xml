@@ -52,6 +52,7 @@
     <parameter name="auto_create_base_objects" value="false"  />
     <parameter name="base_vectors_length" value="1"  />
     <parameter name="marker_scale"        value="1"  />
+    <parameter name="geom_preview"        value="false"  />
     <!-- Input field precisions -->
     <parameter name="def_precision"       value="3"  />
     <parameter name="length_precision"    value="6"  />

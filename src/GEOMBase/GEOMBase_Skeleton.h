@@ -86,6 +86,8 @@ protected:
      */
     void                unsetConstructorId();
 
+    void                showOnlyPreviewControl();
+    
     void                setHelpFileName( const QString& );
 
     DlgRef_Skeleton*    mainFrame();
@@ -105,6 +107,7 @@ protected:
 
 protected slots:
     virtual void        ClickOnCancel();
+    virtual void        processPreview();
     void                LineEditReturnPressed();
     void                DeactivateActiveDialog();
     void                ActivateThisDialog();

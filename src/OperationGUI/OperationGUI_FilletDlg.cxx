@@ -160,6 +160,8 @@ void OperationGUI_FilletDlg::Init()
   myFaces.Clear();
   myEdges.Clear();
 
+  showOnlyPreviewControl();
+
   // signals and slots connections
 
   // main buttons
@@ -292,7 +294,7 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
     else
       myEditCurrentArgument->setText("");
 
-    displayPreview();
+    processPreview();
   }
 
   qApp->processEvents();
@@ -351,7 +353,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
       if ( !anObj->_is_nil() ) {
         myShape = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
-        displayPreview();
+        processPreview();
       }
     }
 
@@ -389,7 +391,7 @@ void OperationGUI_FilletDlg::SelectionIntoArgument()
           else
             myFaces = anIndexes;
 
-          displayPreview();
+          processPreview();
         }
       }
     }
@@ -476,7 +478,7 @@ void OperationGUI_FilletDlg::SetEditCurrentArgument()
   activateSelection();
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -528,7 +530,7 @@ void OperationGUI_FilletDlg::enterEvent (QEvent*)
 //=================================================================================
 void OperationGUI_FilletDlg::ValueChangedInSpinBox (double)
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -749,5 +751,5 @@ void OperationGUI_FilletDlg::RadioButtonClicked()
   Group3->RadioButton1->blockSignals(false);
   Group3->RadioButton2->blockSignals(false);
 
-  displayPreview();
+  processPreview();
 }

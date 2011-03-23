@@ -126,6 +126,8 @@ void GenerationGUI_FillingDlg::Init()
   GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_USEORI"));
   GroupPoints->ComboBox1->addItem(tr("GEOM_FILLING_AUTO"));
 
+  showOnlyPreviewControl();
+
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
@@ -211,7 +213,7 @@ void GenerationGUI_FillingDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -242,7 +244,7 @@ void GenerationGUI_FillingDlg::ActivateThisDialog()
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   globalSelection( GEOM_COMPOUND );
-  displayPreview();
+  processPreview();
 }
 
 
@@ -263,7 +265,7 @@ void GenerationGUI_FillingDlg::enterEvent( QEvent* )
 //=================================================================================
 void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -272,7 +274,7 @@ void GenerationGUI_FillingDlg::ValueChangedInSpinBox( double newValue )
 //=================================================================================
 void GenerationGUI_FillingDlg::MethodChanged()
 {
-  displayPreview();
+  processPreview();
 }
 
 //=================================================================================
@@ -281,7 +283,7 @@ void GenerationGUI_FillingDlg::MethodChanged()
 //=================================================================================
 void GenerationGUI_FillingDlg::ApproxChanged()
 {
-  displayPreview();
+  processPreview();
 }
 
 

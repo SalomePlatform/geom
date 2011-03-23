@@ -230,7 +230,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
   resize( minimumSizeHint() );
   SelectionIntoArgument();
 
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -299,7 +299,7 @@ void BasicGUI_VectorDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -326,7 +326,7 @@ void BasicGUI_VectorDlg::SetEditCurrentArgument()
   globalSelection(); // close local selection to clear it
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -368,7 +368,7 @@ void BasicGUI_VectorDlg::enterEvent( QEvent* )
 //=================================================================================
 void BasicGUI_VectorDlg::ValueChangedInSpinBox( double newValue )
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -385,7 +385,7 @@ void BasicGUI_VectorDlg::ReverseVector( int state )
   GroupDimensions->SpinBox_DY->setValue( dy );
   GroupDimensions->SpinBox_DZ->setValue( dz );
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

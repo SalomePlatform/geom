@@ -307,7 +307,7 @@ void BlocksGUI_BlockDlg::SelectionIntoArgument()
     myEditCurrentArgument->setText( "" );
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -402,7 +402,7 @@ void BlocksGUI_BlockDlg::ActivateThisDialog()
   localSelection(GEOM::GEOM_Object::_nil(), TopAbs_FACE); //Select Faces on All Shapes
   connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
           this, SLOT(SelectionIntoArgument()));
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

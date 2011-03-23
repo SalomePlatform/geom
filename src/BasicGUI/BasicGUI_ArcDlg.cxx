@@ -319,7 +319,7 @@ void BasicGUI_ArcDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -416,7 +416,7 @@ void BasicGUI_ArcDlg::SetEditCurrentArgument()
   myEditCurrentArgument->setFocus();
   //  SelectionIntoArgument();
   send->setDown(true);
-  displayPreview();
+  displayPreview(true);
 }
 
 
@@ -592,7 +592,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 
   SelectionIntoArgument();
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -601,7 +601,7 @@ void BasicGUI_ArcDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BasicGUI_ArcDlg::ReverseSense()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================

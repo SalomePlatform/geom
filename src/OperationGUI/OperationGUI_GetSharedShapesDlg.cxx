@@ -114,6 +114,8 @@ void OperationGUI_GetSharedShapesDlg::Init()
 
   GroupPoints->ComboBox1->setCurrentIndex(0);
 
+  showOnlyPreviewControl();
+
   /* signals and slots connections */
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
@@ -212,6 +214,7 @@ void OperationGUI_GetSharedShapesDlg::SelectionIntoArgument()
     return;
 
   myEditCurrentArgument->setText(aString);
+  processPreview();
 }
 
 //=================================================================================
@@ -245,6 +248,7 @@ void OperationGUI_GetSharedShapesDlg::ActivateThisDialog()
           SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
 
   ConstructorsClicked(getConstructorId());
+  processPreview();
 }
 
 //=================================================================================
@@ -265,6 +269,7 @@ void OperationGUI_GetSharedShapesDlg::ComboTextChanged()
 {
   //initName(getNewObjectName());
   initName(getPrefixByType());
+  processPreview();
 }
 
 //=================================================================================

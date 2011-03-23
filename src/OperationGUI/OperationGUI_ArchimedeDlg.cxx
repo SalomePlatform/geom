@@ -111,6 +111,8 @@ void OperationGUI_ArchimedeDlg::Init()
   initSpinBox( GroupPoints->SpinBox_DY, 0.001, COORD_MAX, SpecificStep1, "density_precision" );
   initSpinBox( GroupPoints->SpinBox_DZ, 0.001, COORD_MAX, SpecificStep2, "parametric_precision" );
 
+  showOnlyPreviewControl();
+
   GroupPoints->SpinBox_DX->setValue( 100.0 );
   GroupPoints->SpinBox_DY->setValue( 1.0 );
   GroupPoints->SpinBox_DZ->setValue( 0.01 );
@@ -125,6 +127,11 @@ void OperationGUI_ArchimedeDlg::Init()
   
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
+
+
+  connect(GroupPoints->SpinBox_DX, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DY, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
+  connect(GroupPoints->SpinBox_DZ, SIGNAL(valueChanged( double )), this, SLOT(ValueChangedInSpinBox(double)));
   
   initName( tr( "GEOM_ARCHIMEDE" ) );
   
@@ -194,8 +201,8 @@ void OperationGUI_ArchimedeDlg::SelectionIntoArgument()
     myShape = GEOM::GEOM_Object::_nil();
     return;
   }
-
   myEditCurrentArgument->setText(GEOMBase::GetName(myShape));
+  processPreview();
 }
 
 //=================================================================================
@@ -223,6 +230,7 @@ void OperationGUI_ArchimedeDlg::ActivateThisDialog()
   globalSelection( GEOM_ALLSHAPES );
   connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  processPreview();
 }
 
 
@@ -287,4 +295,13 @@ bool OperationGUI_ArchimedeDlg::execute( ObjectList& objects )
   }
 
   return true;
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void OperationGUI_ArchimedeDlg::ValueChangedInSpinBox(double newValue)
+{
+  processPreview();
 }

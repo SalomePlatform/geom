@@ -200,7 +200,7 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked (int constructorId)
   resize(minimumSizeHint());
   SelectionIntoArgument();
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -276,7 +276,7 @@ void PrimitiveGUI_TorusDlg::SelectionIntoArgument()
     }
   }
 
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -316,7 +316,7 @@ void PrimitiveGUI_TorusDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -349,7 +349,7 @@ void PrimitiveGUI_TorusDlg::enterEvent (QEvent*)
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ValueChangedInSpinBox()
 {
-  displayPreview();
+  displayPreview(true);
 }
 
 //=================================================================================
