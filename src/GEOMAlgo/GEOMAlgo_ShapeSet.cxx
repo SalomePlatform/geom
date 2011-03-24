@@ -154,7 +154,6 @@
 {
   Standard_Boolean bRet;
   Standard_Integer aNb1, aNb2;
-  TopAbs_Orientation aOr;
   TopTools_ListIteratorOfListOfShape aIt;
   //
   bRet=Standard_True;

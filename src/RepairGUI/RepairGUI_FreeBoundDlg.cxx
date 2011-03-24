@@ -63,7 +63,7 @@
 // purpose  : Constructor
 //=================================================================================
 RepairGUI_FreeBoundDlg::RepairGUI_FreeBoundDlg( GeometryGUI* theGUI, QWidget* theParent )
-  : QDialog( theParent, false ),
+  : QDialog( theParent, 0 ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( theParent ) ),
     myGeomGUI( theGUI )
 {

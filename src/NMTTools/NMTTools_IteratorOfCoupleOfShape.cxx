@@ -76,7 +76,7 @@
   //
   Standard_Integer n1, n2, aIR1, aIR2;//, aN1, aN2, aNS;
   //
-  const NMTDS_CArray1OfIndexRange& aRanges=myPNMTPS->Ranges();
+  /*const NMTDS_CArray1OfIndexRange& aRanges=*/myPNMTPS->Ranges();
   //
   //aNS=myPNMTPS->NumberOfShapesOfTheObject(); 
   myIndex1=0;

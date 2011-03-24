@@ -94,7 +94,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
 {
   myErrorStatus=0;
   //
-  const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
+  /*const NMTDS_ShapesDataStructure& aDS=**/myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   IntTools_Context& aCtx= pPF->ChangeContext();
   //

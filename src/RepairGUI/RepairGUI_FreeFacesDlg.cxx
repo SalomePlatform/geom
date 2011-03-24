@@ -68,7 +68,7 @@
 //=================================================================================
 RepairGUI_FreeFacesDlg::RepairGUI_FreeFacesDlg( GeometryGUI* GUI, QWidget* parent,
                                                 bool modal )
-  : QDialog( parent, false ),
+  : QDialog( parent, 0 ),
     GEOMBase_Helper( dynamic_cast<SUIT_Desktop*>( parent ) ),
     myGeomGUI( GUI ), 
     myDisplayer( 0 )

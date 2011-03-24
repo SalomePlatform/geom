@@ -190,9 +190,9 @@ static
       if (!myShapesToAvoid.Contains(aE)) {
         TopExp::MapShapesAndAncestors(aE, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
       }
-      else {
-        int a=0;
-      }
+//       else {
+//         int a=0;
+//       }
     }
     aNbV=aMVE.Extent();
     //

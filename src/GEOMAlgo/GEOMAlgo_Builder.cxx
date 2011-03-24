@@ -378,8 +378,8 @@
   PostTreat();
 }
 //
-static 
-  void CorrectWires(const TopoDS_Shape& aS);
+// static 
+//   void CorrectWires(const TopoDS_Shape& aS);
 //
 //=======================================================================
 //function : PostTreat

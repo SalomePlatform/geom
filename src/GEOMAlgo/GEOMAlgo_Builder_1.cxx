@@ -112,7 +112,7 @@ static
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   const BOPTools_SplitShapesPool& aSSP=pPF->SplitShapesPool();
-  NMTTools_CommonBlockPool& aCBP=pPF->ChangeCommonBlockPool();
+/*  NMTTools_CommonBlockPool& aCBP=*/pPF->ChangeCommonBlockPool();
   IntTools_Context& aCtx=pPF->ChangeContext();
   //
   Standard_Boolean bToReverse;

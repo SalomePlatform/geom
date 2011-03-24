@@ -945,13 +945,13 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
   }
   else {
     // PAL16008 (Sketcher Validation should be equal to Apply&Close)
-    if ( Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ||
-         Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ||
-         Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ||
-         Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ||
-         Group1Sel->buttonApply->isEnabled() && Group1Sel->isVisible()  ||
-	 Group2Sel->buttonApply->isEnabled() && Group2Sel->isVisible()  ||
-         Group1Sel1Spin->buttonApply->isEnabled() && Group1Sel1Spin->isVisible() )  {     
+    if ( ( Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ) ||
+         ( Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ) ||
+         ( Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ) ||
+         ( Group4Spin->buttonApply->isEnabled() && Group4Spin->isVisible() ) ||
+         ( Group1Sel->buttonApply->isEnabled()  && Group1Sel->isVisible()  ) ||
+         ( Group2Sel->buttonApply->isEnabled()  && Group2Sel->isVisible()  ) ||
+         ( Group1Sel1Spin->buttonApply->isEnabled() && Group1Sel1Spin->isVisible() ) )  {     
       ClickOnApply();
     }
     myIsAllAdded = true;
@@ -2164,17 +2164,17 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
                                           TopoDS_Shape&         theLastSegment )
 {
   TopoDS_Shape aShape;
-  if ( !GEOMBase::GetShape( theObject, aShape ) ||
-       aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX )
+  if (  !GEOMBase::GetShape( theObject, aShape ) ||
+       ( aShape.ShapeType() != TopAbs_WIRE && aShape.ShapeType() != TopAbs_VERTEX ) )
     return false;
 
-  if ( Group1Sel->isVisible()  && !Group1Sel->buttonApply->isEnabled()  ||
-       Group2Sel->isVisible()  && !Group2Sel->buttonApply->isEnabled()  ||
-       Group1Sel1Spin->isVisible()  && !Group1Sel1Spin->buttonApply->isEnabled()  ||
-       Group1Spin->isVisible() && !Group1Spin->buttonApply->isEnabled() ||
-       Group2Spin->isVisible() && !Group2Spin->buttonApply->isEnabled() ||
-       Group3Spin->isVisible() && !Group3Spin->buttonApply->isEnabled() ||
-       Group4Spin->isVisible() && !Group4Spin->buttonApply->isEnabled() ) {
+  if ( ( Group1Sel->isVisible()  && !Group1Sel->buttonApply->isEnabled() )||
+       ( Group2Sel->isVisible()  && !Group2Sel->buttonApply->isEnabled() ) ||
+       ( Group1Sel1Spin->isVisible()  && !Group1Sel1Spin->buttonApply->isEnabled() ) ||
+       ( Group1Spin->isVisible() && !Group1Spin->buttonApply->isEnabled() ) ||
+       ( Group2Spin->isVisible() && !Group2Spin->buttonApply->isEnabled() ) ||
+       ( Group3Spin->isVisible() && !Group3Spin->buttonApply->isEnabled() ) ||
+       ( Group4Spin->isVisible() && !Group4Spin->buttonApply->isEnabled() ) ) {
      theApplyedWire = aShape;
      return true;
   }

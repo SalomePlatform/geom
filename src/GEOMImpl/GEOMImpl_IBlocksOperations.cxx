@@ -1542,7 +1542,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
                                          (Handle(GEOM_Object)    theShape,
                                           Handle(GEOM_Object)    thePoint,
                                           const Standard_Integer theShapeType,
-                                          const Standard_Real    theTolerance)
+                                          const Standard_Real    theConstTolerance)
 {
   SetErrorCode(KO);
 
@@ -1572,9 +1572,10 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
     SetErrorCode("Invalid type of result is requested");
     return NULL;
   }
-
+  
+  Standard_Real theTolerance = theConstTolerance;
   if (theTolerance < Precision::Confusion()) {
-    theTolerance == Precision::Confusion();
+    theTolerance = Precision::Confusion();
   }
 
   // Compute the result

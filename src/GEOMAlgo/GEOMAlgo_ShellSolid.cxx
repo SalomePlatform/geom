@@ -243,7 +243,7 @@ void GEOMAlgo_ShellSolid::BuildResult()
           const BOPTools_PaveBlock& aPB=aLPB.First();
           nSp=aPB.Edge();
         }
-        const TopoDS_Shape& aSp=aDS.Shape(nSp);
+        /*const TopoDS_Shape& aSp=*/aDS.Shape(nSp);
         //
         aState=aDS.GetState(nSp);
         if (aState==BooleanOperations_IN) {

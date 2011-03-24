@@ -1441,7 +1441,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
 
   if (edges_e.IsNull() || edges_e->Length() == 0) {
     SetErrorCode("External edges not found");
-    return false;
+    return NULL;
   }
   int nbEdgesInChamfer = 0;
   std::list<int> theEdges;
@@ -1657,7 +1657,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
 
   if (edges_e.IsNull() || edges_e->Length() == 0) {
     SetErrorCode("External edges not found");
-    return false;
+    return NULL;
   }
   int nbEdgesInChamfer = 0;
   std::list<int> theEdges;
@@ -1845,7 +1845,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
 
   if (edges_e.IsNull() || edges_e->Length() == 0) {
     SetErrorCode("External edges not found");
-    return false;
+    return NULL;
   }
   int nbEdgesInFillet = 0;
   std::list<int> theEdges;
@@ -2046,7 +2046,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
 
   if (edges_e.IsNull() || edges_e->Length() == 0) {
     SetErrorCode("External edges not found");
-    return false;
+    return NULL;
   }
   int nbEdgesInFillet = 0;
   std::list<int> theEdges;

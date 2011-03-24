@@ -141,10 +141,10 @@ Standard_Integer GEOMImpl_ArcDriver::Execute(TFunction_Logbook& log) const
         GC_MakeEllipse ellipse (aP2, aP3, aP1);
         Handle(Geom_Ellipse) aGeomEllipse = ellipse.Value();
 
-        gp_Vec aV1 (aP1, aP2);
-        gp_Vec aV2 (aP1, aP3);
-
-        double alpha = fabs(aV1.Angle(aV2));
+//         gp_Vec aV1 (aP1, aP2);
+//         gp_Vec aV2 (aP1, aP3);
+// 
+//         double alpha = fabs(aV1.Angle(aV2));
         
         GC_MakeArcOfEllipse arc (aGeomEllipse->Elips(), aP2, aP3, Standard_True);
         aShape = BRepBuilderAPI_MakeEdge(arc).Edge();

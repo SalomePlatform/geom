@@ -686,9 +686,9 @@ GEOM_Actor
     switch(aSelectionMode){
     case ActorSelection : 
     {
-      //      cout << "=============== " << myIO->getEntry() << endl;
-      int nbio = mySelector->IObjectCount();
-      //      cout << " nbio = " << nbio << endl;
+//       cout << "=============== " << myIO->getEntry() << endl;
+//       int nbio = mySelector->IObjectCount();
+//       cout << " nbio = " << nbio << endl;
 
       if( !mySelector->IsSelected( myIO ) ) {
         //      printf ("!!!!!!!!!!!!!!!!\n");

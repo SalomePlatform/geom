@@ -456,14 +456,14 @@ GEOM::GEOM_IOperations_ptr PrimitiveGUI_DiskDlg::createOperation()
   return getGeomEngine()->GetI3DPrimOperations(getStudyId());
 }
 
-//=================================================================================
-// function : isEqual
-// purpose  : it may also be needed to check for min distance between gp_Pnt-s...
-//=================================================================================
-static bool isEqual (const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2)
-{
-  return thePnt1->_is_equivalent(thePnt2);
-}
+// //=================================================================================
+// // function : isEqual
+// // purpose  : it may also be needed to check for min distance between gp_Pnt-s...
+// //=================================================================================
+// static bool isEqual (const GEOM::GEOM_Object_var& thePnt1, const GEOM::GEOM_Object_var& thePnt2)
+// {
+//   return thePnt1->_is_equivalent(thePnt2);
+// }
 
 //=================================================================================
 // function : isValid

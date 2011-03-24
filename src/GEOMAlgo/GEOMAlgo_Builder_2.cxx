@@ -642,7 +642,7 @@ static
   NMTDS_InterfPool* pIP=pPF->IP();
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
-  BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
+  /*BOPTools_CArray1OfSSInterference& aFFs=*/pIP->SSInterferences();
   BOPTools_CArray1OfVSInterference& aVFs=pIP->VSInterferences();
   BOPTools_CArray1OfESInterference& aEFs=pIP->ESInterferences();
   const NMTTools_IndexedDataMapOfIndexedMapOfInteger& aMAV=pPF->AloneVertices();

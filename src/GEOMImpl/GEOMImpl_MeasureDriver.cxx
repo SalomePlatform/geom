@@ -141,8 +141,8 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
       if (index < 0 || index > 1)
         Standard_NullObject::Raise("Vertex index is out of range");
 
-      if ( anEdgeE.Orientation() == TopAbs_FORWARD && index == 0 ||
-           anEdgeE.Orientation() == TopAbs_REVERSED && index == 1 )
+      if ( ( anEdgeE.Orientation() == TopAbs_FORWARD && index == 0 ) ||
+           ( anEdgeE.Orientation() == TopAbs_REVERSED && index == 1 ) )
         aVertex = aP1;
       else
       aVertex = aP2;

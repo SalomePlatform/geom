@@ -329,7 +329,7 @@
 {
   Standard_Integer nE1;
   //
-  BooleanOperations_ShapesDataStructure *pDS=myDS;
+//   BooleanOperations_ShapesDataStructure *pDS=myDS;
   BooleanOperations_OnceExplorer aExp(*myDS);
   aExp.Init(nF1, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
@@ -525,7 +525,7 @@
   if (aT1!=TopAbs_FACE || aT2!=TopAbs_FACE) {
     return 1; // Type mismatch
   }
-  BooleanOperations_ShapesDataStructure *pDS=myDS;
+//   BooleanOperations_ShapesDataStructure *pDS=myDS;
   BooleanOperations_OnceExplorer aExp(*myDS);
   aExp.Init(nF1, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {

@@ -142,7 +142,6 @@ void GEOMAlgo_VertexSolid::Prepare()
   const TopoDS_Shape& aTool=aDS.Tool();
   //
   const TopoDS_Solid& aSolid=(myRank==1) ? TopoDS::Solid(aTool) : TopoDS::Solid(aObj);
-  const TopoDS_Shape& aSV   =(myRank==1)? aObj : aTool;
   //
   BRepClass3d_SolidClassifier& aSC=aCtx.SolidClassifier(aSolid);
   //

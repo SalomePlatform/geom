@@ -216,7 +216,7 @@ static
     TopoDS_Shape aSold[2];
     aItLS.Initialize(aLS);
     for (i=0; aItLS.More(); aItLS.Next(), ++i) {
-      const TopoDS_Shape& aSi=aItLS.Value();
+//       const TopoDS_Shape& aSi=aItLS.Value();
       aSold[i]=aItLS.Value();
     }
     //

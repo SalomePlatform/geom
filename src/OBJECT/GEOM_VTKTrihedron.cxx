@@ -113,7 +113,7 @@ void GEOM_VTKTrihedronAxis::SetSize( vtkFloatingPointType theSize )
   aTrsf.SetDisplacement( gp_Ax3( gp_Pnt( 0, 0, 0 ), gp_Dir( 1, 0, 0 ) ),
                          gp_Ax3( GetOri(), gp_Dir( myDir[ 0 ], myDir[ 1 ], myDir[ 2 ] ) ) );
 
-  const gp_XYZ& aTrans = aTrsf.TranslationPart();
+//   const gp_XYZ& aTrans = aTrsf.TranslationPart();
   gp_Mat aRot = aTrsf.VectorialPart();
 
   for ( int i = 1; i <= 3; i++ )

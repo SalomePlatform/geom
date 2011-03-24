@@ -370,7 +370,6 @@ Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSu
     }
     aB.SameParameter(anEdge,Standard_False);
     aB.Add (aWire, anEdge);
-    Standard_Boolean isAdd = Standard_False;
     TopoDS_Shape aParent;
     if(!myEdgeFaces.Contains(anEdge))
       continue;
