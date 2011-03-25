@@ -21,6 +21,7 @@ solid or compsolid).
 \n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or
 shell) serving as base object + 1 shape (edge or wire) for
 definition of the path.
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html pipe.png
 

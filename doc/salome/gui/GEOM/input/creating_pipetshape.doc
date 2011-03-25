@@ -23,6 +23,8 @@ The <b>result</b> of the operation will be a <b>GEOM_Object</b>.
 - \b P2 - Second junction point of the main pipe (GEOM Vertex).
 - \b P3 - Junction point of the incident pipe (GEOM Vertex).
 
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
 \image html pipetshape_dlg.png
 
 Example:

@@ -18,6 +18,8 @@ Shared Shapes.</b> The following dialog box will appear.
 <li> <b>Sub Shapes Type</b> is the type of required sub shapes; </li>
 </ul>
 
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
 \n <b>TUI Command:</b> <em> geompy.GetSharedShapesMulti(Shapes,
 Type),</em> where \em Shapes is a list of shapes to fing shared sub
 shapes of and \em Type is the type of required sub shapes.

@@ -36,6 +36,7 @@ slows the algorithm, but allows building the surface for complex cases.
 \n <b>Arguments:</b> Name + 1 List of edges + 7 Parameters
 (Min. degree, Max. degree, Number of iterations, 2D tolerance, 3D
 tolerance, Number of iterations, Method, Approximation).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html filling.png
 

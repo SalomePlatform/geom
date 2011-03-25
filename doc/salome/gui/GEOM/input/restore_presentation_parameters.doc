@@ -61,5 +61,7 @@ This option allows adding the prefix "from_" to the names of
 restored sub-shapes, and the prefix "from_subshapes_of_" to the names of partially restored subshapes. 
 By default this option is On.
 
+\anchor preview_anchor <br><center><b>Preview</b></center>
+<b>Preview</b> checkbox allows display/erase simulation of the <b>Result</b> in the viewer.
 
 */

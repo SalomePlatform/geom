@@ -16,6 +16,7 @@ solid or compsolid).
 
 \n <b>TUI Command:</b> <em>geompy.MakeRevolution(Shape, Axis, Angle).</em>
 \n <b>Arguments:</b> Name + 1 shape (vertex, edge, planar wire, face or shell) serving as base object + 1 vector (for direction) + 1 value (angle).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html revolution.png
 

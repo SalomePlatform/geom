@@ -25,6 +25,7 @@ object both forward and backward. With this option scaling is not possible.
 shell) serving as base objects + 1 vector (for direction of the
 extrusion) + 1 value (dimension) + 1 optional value (scale factor for
 the opposite base).
+\n<b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html extrusion1.png
 

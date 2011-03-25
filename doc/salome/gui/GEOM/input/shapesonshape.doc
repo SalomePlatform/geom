@@ -28,6 +28,8 @@ a solid; </li>
         </ul> </li>
 </ul>
 
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
+
 Example: 
 
 In the images below the box is the exploded shape and the cylinder is the reference shape. In the first image the edge IN the reference cylinder is highlighted in red, in the second the edges OUT of the reference cylinder are highlighted.

@@ -1,6 +1,6 @@
 /*!
 
-\page fillet_operation_page Fillet
+\page fillet_operation_page Fillet 3D
 
 \n To produce a \b Fillet in the <b>Main Menu</b> select 
 <b>Operations - > Fillet</b>
@@ -13,6 +13,7 @@ select the <b>Main Object</b> to create a fillet on and to define the \b Radius 
 Fillet.
 \n <b>TUI Command:</b> <em>geompy.MakeFilletAll(Shape, R)</em>
 \n <b>Arguments:</b> Name + 1 shape + 1 value (fillet radius).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html fillet1.png
 
@@ -23,6 +24,7 @@ the \b Radius of the Fillet.
 \n <b>TUI Command:</b> <em>geompy.MakeFillet(Shape, R, ShapeType, ListShapes)</em>
 \n <b>Arguments:</b> Name + 1 shape + one or several edges (or faces)
 + 1 value (Fillet radius).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \n Alternatively, there is a possibility to create a fillet with a
 variable radius.  For this, toggle the lower radio button and define

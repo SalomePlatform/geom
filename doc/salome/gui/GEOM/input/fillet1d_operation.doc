@@ -19,6 +19,7 @@ vertexes on this wire in the OCC Viewer and define the \b Radius of the Fillet.
 
 <b>TUI Command:</b> <em>geompy.MakeFillet1D(Shape, R, ListVertexes)</em>
 \n <b>Arguments:</b> Name + 1 shape + empty list or several vertexes + 1 value (Fillet radius).
+\n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 <b>Examples:</b>
 

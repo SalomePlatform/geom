@@ -25,6 +25,7 @@ closest vertex.
 
 <b>Arguments:</b> Name + at least 2 points which will serve as nodes
 on the curve.
+\n<b>Advanced options</b> \ref preview_anchor "Preview"
 
 \image html curve.png
 \image html curve1.png
