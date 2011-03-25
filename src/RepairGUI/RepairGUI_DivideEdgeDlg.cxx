@@ -199,6 +199,7 @@ void RepairGUI_DivideEdgeDlg::displayPreview()
 //=================================================================================
 void RepairGUI_DivideEdgeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

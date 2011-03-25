@@ -181,6 +181,7 @@ void TransformationGUI_MirrorDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void TransformationGUI_MirrorDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -196,13 +197,10 @@ bool TransformationGUI_MirrorDlg::ClickOnApply()
 
   initName();
 
-  myObjects.clear();
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  myEditCurrentArgument->setText("");
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
+  SelectionIntoArgument();
+
   return true;
 }
 

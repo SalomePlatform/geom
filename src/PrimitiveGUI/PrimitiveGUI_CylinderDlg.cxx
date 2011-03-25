@@ -211,6 +211,7 @@ void PrimitiveGUI_CylinderDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void PrimitiveGUI_CylinderDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

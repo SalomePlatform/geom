@@ -208,6 +208,7 @@ void BasicGUI_CurveDlg::CheckButtonToggled()
 //=================================================================================
 void BasicGUI_CurveDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

@@ -203,6 +203,7 @@ void PrimitiveGUI_BoxDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void PrimitiveGUI_BoxDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

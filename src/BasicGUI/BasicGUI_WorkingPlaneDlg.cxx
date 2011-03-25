@@ -264,6 +264,7 @@ void BasicGUI_WorkingPlaneDlg::GroupClicked( int groupId )
 //=================================================================================
 void BasicGUI_WorkingPlaneDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

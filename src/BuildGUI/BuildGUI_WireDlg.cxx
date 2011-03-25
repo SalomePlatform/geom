@@ -147,6 +147,7 @@ void BuildGUI_WireDlg::Init()
 //=================================================================================
 void BuildGUI_WireDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

@@ -147,6 +147,7 @@ void RepairGUI_SewingDlg::Init()
 //=================================================================================
 void RepairGUI_SewingDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

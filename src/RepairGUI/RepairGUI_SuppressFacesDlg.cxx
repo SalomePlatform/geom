@@ -138,6 +138,7 @@ void RepairGUI_SuppressFacesDlg::Init()
 //=================================================================================
 void RepairGUI_SuppressFacesDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

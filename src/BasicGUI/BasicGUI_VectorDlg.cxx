@@ -240,6 +240,7 @@ void BasicGUI_VectorDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BasicGUI_VectorDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

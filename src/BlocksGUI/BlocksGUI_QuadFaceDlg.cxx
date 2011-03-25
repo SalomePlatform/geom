@@ -193,6 +193,7 @@ void BlocksGUI_QuadFaceDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void BlocksGUI_QuadFaceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

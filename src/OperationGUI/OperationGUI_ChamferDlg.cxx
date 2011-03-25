@@ -370,6 +370,7 @@ void OperationGUI_ChamferDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void OperationGUI_ChamferDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

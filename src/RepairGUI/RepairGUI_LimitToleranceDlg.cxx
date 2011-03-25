@@ -177,6 +177,7 @@ void RepairGUI_LimitToleranceDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void RepairGUI_LimitToleranceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

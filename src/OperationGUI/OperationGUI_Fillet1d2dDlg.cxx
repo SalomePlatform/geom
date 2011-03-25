@@ -149,6 +149,7 @@ void OperationGUI_Fillet1d2dDlg::Init()
 //=================================================================================
 void OperationGUI_Fillet1d2dDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

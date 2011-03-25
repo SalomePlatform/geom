@@ -449,6 +449,7 @@ void BasicGUI_PointDlg::ConstructorsClicked(int constructorId)
 //=================================================================================
 void BasicGUI_PointDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( onAccept() )
     ClickOnCancel();
 }

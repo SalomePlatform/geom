@@ -127,6 +127,7 @@ void BuildGUI_FaceDlg::Init()
 //=================================================================================
 void BuildGUI_FaceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

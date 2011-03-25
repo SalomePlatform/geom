@@ -171,6 +171,7 @@ void OperationGUI_GetSharedShapesDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void OperationGUI_GetSharedShapesDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

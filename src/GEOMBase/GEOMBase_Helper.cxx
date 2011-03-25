@@ -87,7 +87,8 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 // Purpose  :
 //================================================================
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
-  : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false )
+  : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false ),
+    myIsApplyAndClose( false ), myIsOptimizedBrowsing( false )
 {
 }
 
@@ -523,14 +524,14 @@ void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 // Function : addInStudy
 // Purpose  : Add object in study
 //================================================================
-void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName )
+QString GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theName )
 {
   if ( !hasCommand() )
-    return;
+    return QString();
 
   _PTR(Study) aStudy = getStudy()->studyDS();
   if ( !aStudy || theObj->_is_nil() )
-    return;
+    return QString();
 
   SALOMEDS::Study_var aStudyDS = GeometryGUI::ClientStudyToStudy(aStudy);
 
@@ -539,10 +540,16 @@ void GEOMBase_Helper::addInStudy( GEOM::GEOM_Object_ptr theObj, const char* theN
   SALOMEDS::SObject_var aSO =
     getGeomEngine()->AddInStudy(aStudyDS, theObj, theName, aFatherObj);
 
+  QString anEntry;
+  if ( !aSO->_is_nil() )
+    anEntry = aSO->GetID();
+
   // Each dialog is responsible for this method implementation,
   // default implementation does nothing
   restoreSubShapes(aStudyDS, aSO);
   aSO->UnRegister();
+
+  return anEntry;
 }
 
 //================================================================
@@ -824,6 +831,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
       else {
         addSubshapesToStudy(); // add Subshapes if local selection
         const int nbObjs = objects.size();
+        QStringList anEntryList;
         int aNumber = 1;
         for ( ObjectList::iterator it = objects.begin(); it != objects.end(); ++it ) {
           GEOM::GEOM_Object_var obj=*it;
@@ -844,7 +852,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
               if ( aName.isEmpty() )
                 aName = GEOMBase::GetDefaultName( getPrefix( obj ) );
             }
-            addInStudy( obj, aName.toLatin1().constData() );
+            anEntryList << addInStudy( obj, aName.toLatin1().constData() );
             // updateView=false
             display( obj, false );
 #ifdef WITHGENERICOBJ
@@ -866,7 +874,11 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
         if ( nbObjs ) {
           commitCommand();
           updateObjBrowser();
-          SUIT_Session::session()->activeApplication()->putInfo( QObject::tr("GEOM_PRP_DONE") );
+          if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
+            if( LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp ) )
+              aLightApp->browseObjects( anEntryList, isApplyAndClose(), isOptimizedBrowsing() );
+            anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
+          }
           result = true;
         }
         else
@@ -1292,4 +1304,46 @@ QList<GEOM::GeomObjPtr> GEOMBase_Helper::getSelected( const QList<TopAbs_ShapeEn
     }
   }
   return result;
+}
+
+//================================================================
+// Function : setIsApplyAndClose
+// Purpose  : Set value of the flag indicating that the dialog is
+//            accepted by Apply & Close button
+//================================================================
+void GEOMBase_Helper::setIsApplyAndClose( const bool theFlag )
+{
+  myIsApplyAndClose = theFlag;
+}
+
+//================================================================
+// Function : isApplyAndClose
+// Purpose  : Get value of the flag indicating that the dialog is
+//            accepted by Apply & Close button
+//================================================================
+bool GEOMBase_Helper::isApplyAndClose() const
+{
+  return myIsApplyAndClose;
+}
+
+//================================================================
+// Function : setIsOptimizedBrowsing
+// Purpose  : Set value of the flag switching to optimized
+//            browsing mode (to select the first published
+//            object only)
+//================================================================
+void GEOMBase_Helper::setIsOptimizedBrowsing( const bool theFlag )
+{
+  myIsOptimizedBrowsing = theFlag;
+}
+
+//================================================================
+// Function : isOptimizedBrowsing
+// Purpose  : Get value of the flag switching to optimized
+//            browsing mode (to select the first published
+//            object only)
+//================================================================
+bool GEOMBase_Helper::isOptimizedBrowsing() const
+{
+  return myIsOptimizedBrowsing;
 }

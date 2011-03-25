@@ -308,6 +308,7 @@ void OperationGUI_FilletDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void OperationGUI_FilletDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

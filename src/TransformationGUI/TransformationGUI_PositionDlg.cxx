@@ -283,6 +283,7 @@ void TransformationGUI_PositionDlg::ValueChangedInSpinBox()
 //=================================================================================
 void TransformationGUI_PositionDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -298,13 +299,10 @@ bool TransformationGUI_PositionDlg::ClickOnApply()
 
   initName();
 
-  myObjects.clear();
-  myEditCurrentArgument = Group1->LineEdit1;
-  myEditCurrentArgument->setText("");
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
+  SelectionIntoArgument();
+
   return true;
 }
 

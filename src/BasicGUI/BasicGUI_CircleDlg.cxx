@@ -298,6 +298,7 @@ void BasicGUI_CircleDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BasicGUI_CircleDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

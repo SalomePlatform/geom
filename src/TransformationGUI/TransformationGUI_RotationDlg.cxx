@@ -225,6 +225,7 @@ void TransformationGUI_RotationDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void TransformationGUI_RotationDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -240,13 +241,10 @@ bool TransformationGUI_RotationDlg::ClickOnApply()
 
   initName();
 
-  myObjects.clear();
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  myEditCurrentArgument->setText("");
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
+  SelectionIntoArgument();
+
   return true;
 }
 

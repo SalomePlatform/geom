@@ -244,6 +244,7 @@ void PrimitiveGUI_FaceDlg::TypeButtonClicked()
 //=================================================================================
 void PrimitiveGUI_FaceDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

@@ -204,6 +204,7 @@ void PrimitiveGUI_SphereDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void PrimitiveGUI_SphereDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

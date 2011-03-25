@@ -161,6 +161,7 @@ void OperationGUI_ArchimedeDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void OperationGUI_ArchimedeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

@@ -204,6 +204,7 @@ void BasicGUI_ArcDlg::Init()
 //=================================================================================
 void BasicGUI_ArcDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

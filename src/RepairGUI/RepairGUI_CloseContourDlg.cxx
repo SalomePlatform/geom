@@ -143,6 +143,7 @@ void RepairGUI_CloseContourDlg::Init()
 //=================================================================================
 void RepairGUI_CloseContourDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

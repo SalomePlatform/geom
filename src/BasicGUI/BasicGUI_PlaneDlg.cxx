@@ -387,6 +387,7 @@ void BasicGUI_PlaneDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BasicGUI_PlaneDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

@@ -163,6 +163,7 @@ void BlocksGUI_ExplodeDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BlocksGUI_ExplodeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

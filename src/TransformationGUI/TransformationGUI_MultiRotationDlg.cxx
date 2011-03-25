@@ -262,6 +262,7 @@ void TransformationGUI_MultiRotationDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void TransformationGUI_MultiRotationDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

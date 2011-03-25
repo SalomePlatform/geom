@@ -132,6 +132,7 @@ void RepairGUI_RemoveIntWiresDlg::Init()
 //=================================================================================
 void RepairGUI_RemoveIntWiresDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

@@ -301,6 +301,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void BasicGUI_MarkerDlg::onOk()
 {
+  setIsApplyAndClose( true );
   if ( onApply() )
     ClickOnCancel();
 }

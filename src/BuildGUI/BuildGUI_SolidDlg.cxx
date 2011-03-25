@@ -127,6 +127,7 @@ void BuildGUI_SolidDlg::Init()
 //=================================================================================
 void BuildGUI_SolidDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

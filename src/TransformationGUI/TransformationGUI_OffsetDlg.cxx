@@ -142,6 +142,7 @@ void TransformationGUI_OffsetDlg::Init()
 //=================================================================================
 void TransformationGUI_OffsetDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

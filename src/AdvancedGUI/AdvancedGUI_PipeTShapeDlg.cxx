@@ -570,6 +570,7 @@ void AdvancedGUI_PipeTShapeDlg::SetDoubleSpinBoxStep(double step) {
 // purpose  :
 //=================================================================================
 void AdvancedGUI_PipeTShapeDlg::ClickOnOk() {
+  setIsApplyAndClose( true );
 	if (ClickOnApply())
 		ClickOnCancel();
 }

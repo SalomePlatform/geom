@@ -287,6 +287,7 @@ void GroupGUI_GroupDlg::closeEvent(QCloseEvent* e)
 //=================================================================================
 void GroupGUI_GroupDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

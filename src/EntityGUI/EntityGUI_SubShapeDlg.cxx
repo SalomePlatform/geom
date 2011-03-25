@@ -83,6 +83,8 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg( GeometryGUI* theGeometryGUI, QWidg
   layout->addWidget( GroupPoints );
   /***************************************************************/
 
+  setIsOptimizedBrowsing( true );
+
   setHelpFileName( "create_explode_page.html" );
 
   mainFrame()->GroupBoxName->hide();
@@ -154,6 +156,7 @@ void EntityGUI_SubShapeDlg::Init()
 //=================================================================================
 void EntityGUI_SubShapeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

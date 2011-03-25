@@ -156,6 +156,7 @@ void BasicGUI_LineDlg::Init()
 //=================================================================================
 void BasicGUI_LineDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

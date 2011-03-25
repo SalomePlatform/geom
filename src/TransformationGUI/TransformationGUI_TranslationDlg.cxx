@@ -271,6 +271,7 @@ void TransformationGUI_TranslationDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void TransformationGUI_TranslationDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -286,13 +287,10 @@ bool TransformationGUI_TranslationDlg::ClickOnApply()
 
   initName();
 
-  myObjects.clear();
-  myEditCurrentArgument = GroupPoints->LineEdit1;
-  myEditCurrentArgument->setText("");
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
+  SelectionIntoArgument();
+
   return true;
 }
 

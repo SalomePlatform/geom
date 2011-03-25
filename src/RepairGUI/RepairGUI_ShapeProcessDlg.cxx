@@ -331,6 +331,7 @@ void RepairGUI_ShapeProcessDlg::init()
 //=================================================================================
 void RepairGUI_ShapeProcessDlg::onOk()
 {
+  setIsApplyAndClose( true );
   if ( onApply() )
     ClickOnCancel();
 }

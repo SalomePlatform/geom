@@ -260,6 +260,7 @@ void PrimitiveGUI_DiskDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void PrimitiveGUI_DiskDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

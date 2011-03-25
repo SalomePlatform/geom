@@ -169,6 +169,7 @@ void BooleanGUI_Dialog::Init()
 //=================================================================================
 void BooleanGUI_Dialog::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

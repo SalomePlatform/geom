@@ -587,7 +587,8 @@ bool GEOMToolsGUI::Import()
 
   QList< GEOM::GEOM_Object_var > objsForDisplay;
 
-  
+  QStringList anEntryList;
+
   // iterate through all selected files
 
   SUIT_MessageBox::StandardButton igesAnswer = SUIT_MessageBox::NoButton;
@@ -688,10 +689,12 @@ bool GEOMToolsGUI::Import()
           GEOMBase::GetDefaultName( SUIT_Tools::file( fileName, /*withExten=*/true ) );
         
         SALOMEDS::Study_var aDSStudy = GeometryGUI::ClientStudyToStudy( aStudy );
-        GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
-                                                   SALOMEDS::SObject::_nil(),
-                                                   anObj,
-                                                   aPublishObjName.toLatin1().constData() );
+        SALOMEDS::SObject_var aSO = GeometryGUI::GetGeomGen()->PublishInStudy( aDSStudy,
+                                                                               SALOMEDS::SObject::_nil(),
+                                                                               anObj,
+                                                                               aPublishObjName.toLatin1().constData() );
+        if( ( !aSO->_is_nil() ) )
+          anEntryList.append( aSO->GetID() );
         
         objsForDisplay.append( anObj );
         
@@ -715,6 +718,9 @@ bool GEOMToolsGUI::Import()
 
   // update object browser
   getGeometryGUI()->updateObjBrowser( true );
+
+  // browse published objects
+  app->browseObjects( anEntryList );
 
   // display imported model (if only one file is selected)
   if ( objsForDisplay.count() == 1 )

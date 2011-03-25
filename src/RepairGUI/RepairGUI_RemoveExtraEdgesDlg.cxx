@@ -132,6 +132,7 @@ void RepairGUI_RemoveExtraEdgesDlg::Init()
 //=================================================================================
 void RepairGUI_RemoveExtraEdgesDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

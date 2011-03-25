@@ -105,7 +105,7 @@ protected:
   void prepareSelection( const ObjectList&, const int );
   void prepareSelection( GEOM::GEOM_Object_ptr, const int );
 
-  void addInStudy      ( GEOM::GEOM_Object_ptr, const char* theName ); 
+  QString addInStudy   ( GEOM::GEOM_Object_ptr, const char* theName ); 
 
   bool openCommand     ();
   bool abortCommand    ();
@@ -182,6 +182,12 @@ protected:
   GEOM_Displayer*             getDisplayer();
   SUIT_Desktop*               getDesktop() const;
 
+  virtual void                setIsApplyAndClose( const bool theFlag );
+  virtual bool                isApplyAndClose() const;
+
+  virtual void                setIsOptimizedBrowsing( const bool theFlag );
+  virtual bool                isOptimizedBrowsing() const;
+
 private:
   QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
   void                        clearShapeBuffer( GEOM::GEOM_Object_ptr );
@@ -198,6 +204,8 @@ private:
   bool                        isPreview;
   SALOME_ListIO               mySelected;
   SUIT_Desktop*               myDesktop;
+  bool                        myIsApplyAndClose;
+  bool                        myIsOptimizedBrowsing;
 
 };
 

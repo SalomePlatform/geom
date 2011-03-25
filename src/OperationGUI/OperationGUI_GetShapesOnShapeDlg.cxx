@@ -153,6 +153,7 @@ void OperationGUI_GetShapesOnShapeDlg::Init()
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

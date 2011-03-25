@@ -160,6 +160,7 @@ void GenerationGUI_RevolDlg::SetDoubleSpinBoxStep (double step)
 //=================================================================================
 void GenerationGUI_RevolDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

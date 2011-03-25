@@ -154,6 +154,7 @@ void BuildGUI_EdgeDlg::Init()
 //=================================================================================
 void BuildGUI_EdgeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

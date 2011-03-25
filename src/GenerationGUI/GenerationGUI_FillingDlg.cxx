@@ -172,6 +172,7 @@ void GenerationGUI_FillingDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void GenerationGUI_FillingDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

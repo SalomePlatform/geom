@@ -195,6 +195,7 @@ void BlocksGUI_TrsfDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void BlocksGUI_TrsfDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

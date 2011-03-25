@@ -252,6 +252,7 @@ void RepairGUI_GlueDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void RepairGUI_GlueDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

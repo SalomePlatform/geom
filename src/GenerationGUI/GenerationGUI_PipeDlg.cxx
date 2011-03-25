@@ -206,6 +206,7 @@ void GenerationGUI_PipeDlg::SelectionTypeButtonClicked()
 //=================================================================================
 void GenerationGUI_PipeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

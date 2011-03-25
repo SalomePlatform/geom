@@ -219,6 +219,7 @@ void PrimitiveGUI_ConeDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void PrimitiveGUI_ConeDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

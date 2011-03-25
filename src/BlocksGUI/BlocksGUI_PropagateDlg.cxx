@@ -117,6 +117,7 @@ void BlocksGUI_PropagateDlg::Init()
 //=================================================================================
 void BlocksGUI_PropagateDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

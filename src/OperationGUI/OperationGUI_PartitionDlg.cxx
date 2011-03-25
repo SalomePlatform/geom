@@ -226,6 +226,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
 //=================================================================================
 void OperationGUI_PartitionDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

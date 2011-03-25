@@ -249,6 +249,7 @@ bool OperationGUI_ClippingDlg::ClickOnApply()
 //=================================================================================
 void OperationGUI_ClippingDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

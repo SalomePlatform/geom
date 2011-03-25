@@ -245,6 +245,7 @@ void TransformationGUI_ScaleDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void TransformationGUI_ScaleDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -260,13 +261,10 @@ bool TransformationGUI_ScaleDlg::ClickOnApply()
 
   initName(tr("GEOM_SCALE"));
 
-  myObjects.clear();
-  myEditCurrentArgument = LineEdit1;
-  myEditCurrentArgument->setText("");
-  myGeomGUI->getApp()->selectionMgr()->clearSelected();
-
   // activate selection and connect selection manager
   ConstructorsClicked(getConstructorId());
+  SelectionIntoArgument();
+
   return true;
 }
 

@@ -179,6 +179,7 @@ void BasicGUI_EllipseDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void BasicGUI_EllipseDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

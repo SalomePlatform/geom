@@ -124,6 +124,7 @@ void BuildGUI_CompoundDlg::Init()
 //=================================================================================
 void BuildGUI_CompoundDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

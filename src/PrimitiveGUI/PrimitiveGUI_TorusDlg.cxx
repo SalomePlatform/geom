@@ -209,6 +209,7 @@ void PrimitiveGUI_TorusDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void PrimitiveGUI_TorusDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

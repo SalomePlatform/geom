@@ -144,6 +144,7 @@ void RepairGUI_RemoveHolesDlg::Init()
 //=================================================================================
 void RepairGUI_RemoveHolesDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

@@ -132,6 +132,7 @@ void BuildGUI_ShellDlg::Init()
 //=================================================================================
 void BuildGUI_ShellDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

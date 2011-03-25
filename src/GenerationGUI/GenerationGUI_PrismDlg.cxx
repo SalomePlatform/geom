@@ -301,6 +301,7 @@ void GenerationGUI_PrismDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void GenerationGUI_PrismDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }

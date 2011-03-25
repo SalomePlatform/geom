@@ -128,6 +128,7 @@ void RepairGUI_ChangeOrientationDlg::Init()
 //=================================================================================
 void RepairGUI_ChangeOrientationDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if ( ClickOnApply() )
     ClickOnCancel();
 }

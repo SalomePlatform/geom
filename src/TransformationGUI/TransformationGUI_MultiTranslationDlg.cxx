@@ -292,6 +292,7 @@ void TransformationGUI_MultiTranslationDlg::ConstructorsClicked (int constructor
 //=================================================================================
 void TransformationGUI_MultiTranslationDlg::ClickOnOk()
 {
+  setIsApplyAndClose( true );
   if (ClickOnApply())
     ClickOnCancel();
 }
