@@ -8,10 +8,7 @@ The GEOM python package essentially contains:
 * The visualization of structural elements: a function to create
   geometrical 3D representations of mechanical models called
   "structural elements".
-
-Note that these functions either encapsulate the python programming
-interface of GEOM core (the CORBA or SWIG interfaces for example) or
-extend existing utilities as the ``geompy.py`` module.
+* Utility functions to handle GEOM items in Salome study.
 
 The functions are distributed in the python package
 ``salome.geom``. For example, the usage of the visualization of

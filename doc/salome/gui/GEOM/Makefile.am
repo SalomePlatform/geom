@@ -62,7 +62,7 @@ clean-local:
 	done ;
 
 install-data-local: usr_docs
-	@if [ -e main.html ]; then \
+	@if [ -e index.html ]; then \
 	$(INSTALL) -d $(DESTDIR)$(docdir)/gui/GEOM ; \
 	for filen in `find . -maxdepth 1` ; do							\
 	  case $${filen} in									\

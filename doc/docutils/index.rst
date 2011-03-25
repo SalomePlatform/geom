@@ -1,10 +1,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
- Documentation of the GEOM python packages
+ Documentation of the GEOM python package
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Main documentation
-==================
 
 .. toctree::
    :maxdepth: 3
