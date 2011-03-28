@@ -574,6 +574,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction par Extrusion</translation>
     </message>
     <message>
+        <source>GEOM_SCALE_PRISM</source>
+        <translation>Appliquer le facteur d'échelle</translation>
+    </message>
+    <message>
         <source>GEOM_FACE</source>
         <translation>Face</translation>
     </message>
@@ -4112,6 +4116,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_RSS_ADD_FREFIX</source>
         <translation>Ajouter un préfixe aux noms des sous-objets restaurés</translation>
+    </message>
+    <message>
+        <source>GEOM_PREVIEW</source>
+        <translation>Prévisualiser</translation>
     </message>
     <message>
         <source>GEOM_ALL_IMPORT_FILES</source>
