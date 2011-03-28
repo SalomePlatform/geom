@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -162,8 +161,8 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurve
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByLength
                   (GEOM::GEOM_Object_ptr theCurve,  
-		   CORBA::Double theLength,
-		   CORBA::Boolean theReverse)
+		   CORBA::Double         theLength,
+		   GEOM::GEOM_Object_ptr theStartPoint)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -174,10 +173,15 @@ GEOM::GEOM_Object_ptr GEOM_IBasicOperations_i::MakePointOnCurveByLength
   Handle(GEOM_Object) aReference = GetObjectImpl(theCurve);
   if (aReference.IsNull()) return aGEOMObject._retn();
 
+  //Get the reference point (can be NULL)
+  Handle(GEOM_Object) aRefPoint;
+  if (!CORBA::is_nil(theStartPoint)) {
+    aRefPoint = GetObjectImpl(theStartPoint);
+  }
+
   //Create the point
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakePointOnCurveByLength(aReference, theLength,
-					      theReverse);
+    GetOperations()->MakePointOnCurveByLength(aReference, theLength, aRefPoint);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

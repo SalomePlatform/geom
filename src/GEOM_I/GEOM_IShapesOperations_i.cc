@@ -87,6 +87,40 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
 
 //=============================================================================
 /*!
+ *  MakeEdgeOnCurveByLength
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeOnCurveByLength
+                  (GEOM::GEOM_Object_ptr theCurve,  
+		   CORBA::Double         theLength,
+		   GEOM::GEOM_Object_ptr theStartPoint)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference curve
+  Handle(GEOM_Object) aRefCurve = GetObjectImpl(theCurve);
+  if (aRefCurve.IsNull()) return aGEOMObject._retn();
+
+  //Get the reference point (can be NULL)
+  Handle(GEOM_Object) aRefPoint;
+  if (!CORBA::is_nil(theStartPoint)) {
+    aRefPoint = GetObjectImpl(theStartPoint);
+  }
+
+  //Create the point
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeEdgeOnCurveByLength(aRefCurve, theLength, aRefPoint);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeEdgeWire
  */
 //=============================================================================

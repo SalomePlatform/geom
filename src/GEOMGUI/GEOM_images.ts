@@ -114,6 +114,10 @@
             <translation>build_edge_wire.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_BUILD_EDGE_CURVE</source>
+            <translation>build_edge_curve.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_BUILD_FACE</source>
             <translation>build_face.png</translation>
         </message>

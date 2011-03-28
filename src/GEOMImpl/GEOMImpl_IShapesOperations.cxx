@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 //  File      : GEOMImpl_IShapesOperations.cxx
 //  Created   :
 //  Author    : modified by Lioka RAZAFINDRAZAKA (CEA) 22/06/2007
@@ -204,6 +204,67 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdge
   //Make a Python command
   GEOM::TPythonDump(aFunction) << anEdge << " = geompy.MakeEdge("
                                << thePnt1 << ", " << thePnt2 << ")";
+
+  SetErrorCode(OK);
+  return anEdge;
+}
+
+//=============================================================================
+/*!
+ *  MakeEdgeOnCurveByLength
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeEdgeOnCurveByLength
+                     (Handle(GEOM_Object) theRefCurve,
+                      const Standard_Real theLength,
+                      Handle(GEOM_Object) theStartPoint)
+{
+  SetErrorCode(KO);
+
+  if (theRefCurve.IsNull()) return NULL;
+
+  //Add a new Edge object
+  Handle(GEOM_Object) anEdge = GetEngine()->AddObject(GetDocID(), GEOM_EDGE);
+
+  //Add a new Vector function
+  Handle(GEOM_Function) aFunction =
+    anEdge->AddFunction(GEOMImpl_ShapeDriver::GetID(), EDGE_CURVE_LENGTH);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ShapeDriver::GetID()) return NULL;
+
+  GEOMImpl_IVector aPI (aFunction);
+
+  Handle(GEOM_Function) aRef1 = theRefCurve->GetLastFunction();
+  if (aRef1.IsNull()) return NULL;
+  aPI.SetPoint1(aRef1);
+
+  if (!theStartPoint.IsNull()) {
+    Handle(GEOM_Function) aRef2 = theStartPoint->GetLastFunction();
+    aPI.SetPoint2(aRef2);
+  }
+
+  aPI.SetParameter(theLength);
+
+  //Compute the Edge value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Vector driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << anEdge << " = geompy.MakeEdgeOnCurveByLength("
+                               << theRefCurve << ", " << theLength << ", " << theStartPoint << ")";
 
   SetErrorCode(OK);
   return anEdge;
@@ -4089,7 +4150,17 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
   TopoDS_Shape aSubShape;
   TopTools_MapOfShape aMap;
 
-  switch(aWhat.ShapeType()) {
+  if (aWhat.ShapeType() == TopAbs_COMPOUND || aWhat.ShapeType() == TopAbs_COMPSOLID) {
+    TopoDS_Iterator It (aWhat, Standard_True, Standard_True);
+    if (It.More()) aWhat = It.Value();
+    It.Next();
+    if (It.More()) {
+      SetErrorCode("Compounds of two or more shapes are not allowed for aWhat argument");
+      return NULL;
+    }
+  }
+
+  switch (aWhat.ShapeType()) {
     case TopAbs_VERTEX: {
       gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aWhat));
       TopExp_Explorer E(aWhere, TopAbs_VERTEX);
@@ -4104,12 +4175,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
       }
       break;
                         }
-    case TopAbs_FACE: {
-      TopoDS_Face aFace = TopoDS::Face(aWhat);
-      TopExp_Explorer E(aWhere, TopAbs_FACE);
+    case TopAbs_EDGE: {
+      TopoDS_Edge anEdge = TopoDS::Edge(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_EDGE);
       for(; E.More(); E.Next()) {
         if(!aMap.Add(E.Current())) continue;
-        if(isSameFace(aFace, TopoDS::Face(E.Current()))) {
+        if(isSameEdge(anEdge, TopoDS::Edge(E.Current()))) {
           aSubShape = E.Current();
           isFound = true;
           break;
@@ -4117,12 +4188,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
       }
       break;
                       }
-    case TopAbs_EDGE: {
-      TopoDS_Edge anEdge = TopoDS::Edge(aWhat);
-      TopExp_Explorer E(aWhere, TopAbs_EDGE);
+    case TopAbs_FACE: {
+      TopoDS_Face aFace = TopoDS::Face(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_FACE);
       for(; E.More(); E.Next()) {
         if(!aMap.Add(E.Current())) continue;
-        if(isSameEdge(anEdge, TopoDS::Edge(E.Current()))) {
+        if(isSameFace(aFace, TopoDS::Face(E.Current()))) {
           aSubShape = E.Current();
           isFound = true;
           break;
@@ -4147,14 +4218,14 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
       return NULL;
   }
 
-  if(isFound) {
+  if (isFound) {
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(aWhere, anIndices);
     if (anIndices.Contains(aSubShape))
       anIndex = anIndices.FindIndex(aSubShape);
   }
 
-  if(anIndex < 0) return NULL;
+  if (anIndex < 0) return NULL;
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1,1);
 

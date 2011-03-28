@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -27,27 +26,34 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
+#include <ShapeAnalysis.hxx>
+
+#include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepAdaptor_Curve.hxx>
-#include <Precision.hxx>
+
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Face.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
 
-#include <Geom_Curve.hxx>
-#include <Geom_Surface.hxx>
-#include <gp_Pnt.hxx>
-#include <TopoDS_Face.hxx>
-#include <ShapeAnalysis.hxx>
-
 #include <GCPnts_AbscissaPoint.hxx>
 #include <IntTools.hxx>
+
+#include <Geom_Curve.hxx>
+#include <Geom_Surface.hxx>
+
+#include <gp_Pnt.hxx>
+
+#include <Precision.hxx>
+
+#include <Standard_NullObject.hxx>
 
 //=======================================================================
 //function : GetID
@@ -73,23 +79,22 @@ GEOMImpl_PointDriver::GEOMImpl_PointDriver()
 //purpose  : local function
 //=======================================================================
 static Standard_Boolean getExtremaSolution
-(GEOMImpl_IPoint& thePI,
- TopoDS_Shape&    theRefShape,
+(const gp_Pnt&       theInitPnt,
+ const TopoDS_Shape& theRefShape,
  gp_Pnt& thePnt)
 {
-  gp_Pnt anInitPnt( thePI.GetX(), thePI.GetY(), thePI.GetZ() );
-  BRepBuilderAPI_MakeVertex mkVertex (anInitPnt);
+  BRepBuilderAPI_MakeVertex mkVertex (theInitPnt);
   TopoDS_Vertex anInitV = TopoDS::Vertex(mkVertex.Shape());
   
-  BRepExtrema_DistShapeShape anExt( anInitV, theRefShape );
+  BRepExtrema_DistShapeShape anExt (anInitV, theRefShape);
   if ( !anExt.IsDone() || anExt.NbSolution() < 1 )
     return Standard_False;
   thePnt = anExt.PointOnShape2(1);
-  Standard_Real aMinDist2 = anInitPnt.SquareDistance( thePnt );
+  Standard_Real aMinDist2 = theInitPnt.SquareDistance( thePnt );
   for ( Standard_Integer j = 2, jn = anExt.NbSolution(); j <= jn; j++ )
   {
     gp_Pnt aPnt = anExt.PointOnShape2(j);
-    Standard_Real aDist2 = anInitPnt.SquareDistance( aPnt );
+    Standard_Real aDist2 = theInitPnt.SquareDistance( aPnt );
     if ( aDist2 > aMinDist2)
       continue;
     aMinDist2 = aDist2;
@@ -116,10 +121,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
 
   if (aType == POINT_XYZ) {
     aPnt = gp_Pnt(aPI.GetX(), aPI.GetY(), aPI.GetZ());
-
   }
   else if (aType == POINT_XYZ_REF) {
-
     Handle(GEOM_Function) aRefPoint = aPI.GetRef();
     TopoDS_Shape aRefShape = aRefPoint->GetValue();
     if (aRefShape.ShapeType() != TopAbs_VERTEX) {
@@ -148,35 +151,72 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
     }
-    if (!getExtremaSolution( aPI, aRefShape, aPnt ) ) {
+    gp_Pnt anInitPnt (aPI.GetX(), aPI.GetY(), aPI.GetZ());
+    if (!getExtremaSolution(anInitPnt, aRefShape, aPnt)) {
       Standard_ConstructionError::Raise
         ("Point On Curve creation aborted : cannot project point");
     }
   }
   else if (aType == POINT_CURVE_LENGTH) {
+    // RefCurve
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
-    Standard_Real theLength = aPI.GetLength();
-    Standard_Integer theReversed = aPI.GetReversed(); 
-    TopoDS_Shape aRefShape = aRefCurve->GetValue();
-    Standard_Real UFirst = 0;
-    Standard_Real ULast = 0;
-    if (aRefShape.ShapeType() != TopAbs_EDGE) {
+    if (aRefCurve.IsNull()) {
+      Standard_NullObject::Raise
+        ("Point On Curve creation aborted : curve object is null");
+    }
+    TopoDS_Shape aRefShape1 = aRefCurve->GetValue();
+    if (aRefShape1.ShapeType() != TopAbs_EDGE) {
       Standard_TypeMismatch::Raise
         ("Point On Curve creation aborted : curve shape is not an edge");
-    }    
-    Standard_Real theCurveLength = IntTools::Length(TopoDS::Edge(aRefShape));
-    if (theLength > theCurveLength) {
-      Standard_ConstructionError::Raise
-	("Point On Curve creation aborted : given length is greater than edges length");
     }
-    Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(TopoDS::Edge(aRefShape), UFirst, ULast);
+    TopoDS_Edge aRefEdge = TopoDS::Edge(aRefShape1);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(aRefEdge, V1, V2, Standard_True);
+
+    // RefPoint
+    TopoDS_Vertex aRefVertex;
+    Handle(GEOM_Function) aRefPoint = aPI.GetRef();
+    if (aRefPoint.IsNull()) {
+      aRefVertex = V1;
+    }
+    else {
+      TopoDS_Shape aRefShape2 = aRefPoint->GetValue();
+      if (aRefShape2.ShapeType() != TopAbs_VERTEX) {
+        Standard_TypeMismatch::Raise
+          ("Point On Curve creation aborted : start point shape is not a vertex");
+      }
+      aRefVertex = TopoDS::Vertex(aRefShape2);
+    }
+    gp_Pnt aRefPnt = BRep_Tool::Pnt(aRefVertex);
+
+    // Length
+    Standard_Real aLength = aPI.GetLength();
+    //Standard_Real theCurveLength = IntTools::Length(aRefEdge);
+    //if (aLength > theCurveLength) {
+    //  Standard_ConstructionError::Raise
+    //    ("Point On Curve creation aborted : given length is greater than edges length");
+    //}
+
+    // Check orientation
+    Standard_Real UFirst, ULast;
+    Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(aRefEdge, UFirst, ULast);
     Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
-    if ( theReversed ) {
-      ReOrientedCurve = EdgeCurve -> Reversed();
-      UFirst = EdgeCurve -> ReversedParameter(ULast);
+
+    Standard_Real dU = ULast - UFirst;
+    Standard_Real par1 = UFirst + 0.1 * dU;
+    Standard_Real par2 = ULast  - 0.1 * dU;
+
+    gp_Pnt P1 = EdgeCurve->Value(par1);
+    gp_Pnt P2 = EdgeCurve->Value(par2);
+
+    if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
+      ReOrientedCurve = EdgeCurve->Reversed();
+      UFirst = EdgeCurve->ReversedParameter(ULast);
     }
+
+    // Get the point by length
     GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
-    GCPnts_AbscissaPoint anAbsPnt(AdapCurve, theLength, UFirst); 
+    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst); 
     Standard_Real aParam = anAbsPnt.Parameter();
     aPnt = AdapCurve.Value(aParam);
   }
@@ -203,7 +243,8 @@ Standard_Integer GEOMImpl_PointDriver::Execute(TFunction_Logbook& log) const
       Standard_TypeMismatch::Raise
         ("Point On Surface creation aborted : surface shape is not a face");
     }
-    if (!getExtremaSolution( aPI, aRefShape, aPnt ) ) {
+    gp_Pnt anInitPnt (aPI.GetX(), aPI.GetY(), aPI.GetZ());
+    if (!getExtremaSolution(anInitPnt, aRefShape, aPnt)) {
       Standard_ConstructionError::Raise
         ("Point On Surface creation aborted : cannot project point");
     }

@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -60,6 +59,7 @@
 #include <GProp_PrincipalProps.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
@@ -157,13 +157,13 @@ GEOMImpl_IMeasureOperations::ShapeKind GEOMImpl_IMeasureOperations::KindOfShape
   if (aShape.IsNull()) return aKind;
 
   int geom_type = theShape->GetType();
-  
+
   // check if it's advanced shape
   if ( geom_type > ADVANCED_BASE ) {
     SetErrorCode(OK);
     return SK_ADVANCED;
   }
-  
+
   // Call algorithm
   GEOMAlgo_ShapeInfoFiller aSF;
   aSF.SetShape(aShape);
@@ -1301,6 +1301,53 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
 
 //=============================================================================
 /*!
+ *  IsGoodForSolid
+ */
+//=============================================================================
+TCollection_AsciiString GEOMImpl_IMeasureOperations::IsGoodForSolid (Handle(GEOM_Object) theShape)
+{
+  SetErrorCode(KO);
+
+  TCollection_AsciiString aRes = "";
+
+  if (theShape.IsNull()) {
+    aRes = "WRN_NULL_OBJECT_OR_SHAPE";
+  }
+  else {
+    Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+    if (aRefShape.IsNull()) {
+      aRes = "WRN_NULL_OBJECT_OR_SHAPE";
+    }
+    else {
+      TopoDS_Shape aShape = aRefShape->GetValue();
+      if (aShape.IsNull()) {
+        aRes = "WRN_NULL_OBJECT_OR_SHAPE";
+      }
+      else {
+        if (aShape.ShapeType() == TopAbs_COMPOUND) {
+          TopoDS_Iterator It (aShape, Standard_True, Standard_True);
+          if (It.More()) aShape = It.Value();
+        }
+        if (aShape.ShapeType() == TopAbs_SHELL) {
+          if (!aShape.Closed()) {
+            aRes = "WRN_SHAPE_UNCLOSED";
+          }
+        }
+        else {
+          aRes = "WRN_SHAPE_NOT_SHELL";
+        }
+      }
+    }
+  }
+
+  if (aRes.IsEmpty())
+    SetErrorCode(OK);
+
+  return aRes;
+}
+
+//=============================================================================
+/*!
  *  WhatIs
  */
 //=============================================================================
@@ -1411,9 +1458,9 @@ static double CheckSingularCase(const TopoDS_Shape& aSh1,
         //S->Bounds(U1,U2,V1,V2); changed by
         ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh1),U1,U2,V1,V2);
         // end of changes for 020677 (dmv)
-        Handle(Geom_RectangularTrimmedSurface) TrS1 = 
+        Handle(Geom_RectangularTrimmedSurface) TrS1 =
           new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS2 = 
+        Handle(Geom_RectangularTrimmedSurface) TrS2 =
           new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
         BRep_Builder B;
         TopoDS_Face F1,F2;
@@ -1481,9 +1528,9 @@ static double CheckSingularCase(const TopoDS_Shape& aSh1,
         double U1,U2,V1,V2;
         //S->Bounds(U1,U2,V1,V2);
         ShapeAnalysis::GetFaceUVBounds(TopoDS::Face(tmpSh2),U1,U2,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS1 = 
+        Handle(Geom_RectangularTrimmedSurface) TrS1 =
           new Geom_RectangularTrimmedSurface(S,U1,(U1+U2)/2.,V1,V2);
-        Handle(Geom_RectangularTrimmedSurface) TrS2 = 
+        Handle(Geom_RectangularTrimmedSurface) TrS2 =
           new Geom_RectangularTrimmedSurface(S,(U1+U2)/2.,U2,V1,V2);
         BRep_Builder B;
         TopoDS_Face F1,F2;
@@ -1686,8 +1733,8 @@ static bool CheckSingularCase(const TopoDS_Shape& aSh1,
  */
 //=============================================================================
 std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Object) theShape,
-							       const std::vector<double>& coords,
-							       double tolerance)
+                                                               const std::vector<double>& coords,
+                                                               double tolerance)
 {
   std::vector<bool> res;
   if (!theShape.IsNull()) {
@@ -1695,16 +1742,16 @@ std::vector<bool> GEOMImpl_IMeasureOperations::AreCoordsInside(Handle(GEOM_Objec
     if (!aRefShape.IsNull()) {
       TopoDS_Shape aShape = aRefShape->GetValue();
       if (!aShape.IsNull()) {
-	BRepClass3d_SolidClassifier SC(aShape);
-	unsigned int nb_points = coords.size()/3;
-	for (int i = 0; i < nb_points; i++) {
-	  double x = coords[3*i];
-	  double y = coords[3*i+1];
-	  double z = coords[3*i+2];
-	  gp_Pnt aPnt(x, y, z);
-	  SC.Perform(aPnt, tolerance);
-	  res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
-	}
+        BRepClass3d_SolidClassifier SC(aShape);
+        unsigned int nb_points = coords.size()/3;
+        for (int i = 0; i < nb_points; i++) {
+          double x = coords[3*i];
+          double y = coords[3*i+1];
+          double z = coords[3*i+2];
+          gp_Pnt aPnt(x, y, z);
+          SC.Perform(aPnt, tolerance);
+          res.push_back( ( SC.State() == TopAbs_IN ) || ( SC.State() == TopAbs_ON ) );
+        }
       }
     }
   }
@@ -1912,6 +1959,72 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
     anAngle = aLin1.Angle(aLin2);
     anAngle /= PI180; // convert radians into degrees
 
+    if (anAngle > 90.0) {
+      anAngle = 180.0 - anAngle;
+    }
+
+    SetErrorCode(OK);
+  }
+  catch (Standard_Failure)
+  {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+  }
+
+  return anAngle;
+}
+
+//=======================================================================
+/*!
+ *  Compute angle (in degrees) between two vectors
+ */
+//=======================================================================
+Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Object) theVec1,
+                                                               Handle(GEOM_Object) theVec2)
+{
+  SetErrorCode(KO);
+
+  Standard_Real anAngle = -1.0;
+
+  if (theVec1.IsNull() || theVec2.IsNull())
+    return anAngle;
+
+  Handle(GEOM_Function) aRefVec1 = theVec1->GetLastFunction();
+  Handle(GEOM_Function) aRefVec2 = theVec2->GetLastFunction();
+  if (aRefVec1.IsNull() || aRefVec2.IsNull())
+    return anAngle;
+
+  TopoDS_Shape aVec1 = aRefVec1->GetValue();
+  TopoDS_Shape aVec2 = aRefVec2->GetValue();
+  if (aVec1.IsNull() || aVec2.IsNull() ||
+      aVec1.ShapeType() != TopAbs_EDGE ||
+      aVec2.ShapeType() != TopAbs_EDGE)
+  {
+    SetErrorCode("Two edges must be given");
+    return anAngle;
+  }
+
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    TopoDS_Edge aE1 = TopoDS::Edge(aVec1);
+    TopoDS_Edge aE2 = TopoDS::Edge(aVec2);
+
+    TopoDS_Vertex aP11, aP12, aP21, aP22;
+    TopExp::Vertices(aE1, aP11, aP12, Standard_True);
+    TopExp::Vertices(aE2, aP21, aP22, Standard_True);
+    if (aP11.IsNull() || aP12.IsNull() || aP21.IsNull() || aP22.IsNull()) {
+      SetErrorCode("Bad edge given");
+      return anAngle;
+    }
+
+    gp_Vec aV1 (BRep_Tool::Pnt(aP11), BRep_Tool::Pnt(aP12));
+    gp_Vec aV2 (BRep_Tool::Pnt(aP21), BRep_Tool::Pnt(aP22)) ;
+
+    anAngle = aV1.Angle(aV2);
+    anAngle /= PI180; // convert radians into degrees
+
     SetErrorCode(OK);
   }
   catch (Standard_Failure)
@@ -1957,7 +2070,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
-    GeomLProp_CLProps Prop = GeomLProp_CLProps 
+    GeomLProp_CLProps Prop = GeomLProp_CLProps
       (aCurve, aP, 2, Precision::Confusion());
     aRes = fabs(Prop.Curvature());
     SetErrorCode(OK);
@@ -1972,7 +2085,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
     aRes = 1/aRes;
   else
     aRes = RealLast();
-  
+
   return aRes;
 }
 
@@ -2013,7 +2126,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
 #endif
     GeomAPI_ProjectPointOnCurve PPCurve(aPoint, aCurve, aFP, aLP);
     if(PPCurve.NbPoints()>0) {
-      GeomLProp_CLProps Prop = GeomLProp_CLProps 
+      GeomLProp_CLProps Prop = GeomLProp_CLProps
         (aCurve, PPCurve.LowerDistanceParameter(), 2, Precision::Confusion());
       aRes = fabs(Prop.Curvature());
       SetErrorCode(OK);
@@ -2029,7 +2142,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
     aRes = 1/aRes;
   else
     aRes = RealLast();
-  
+
   return aRes;
 }
 
@@ -2054,7 +2167,7 @@ Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
 #if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
     OCC_CATCH_SIGNALS;
 #endif
-    GeomLProp_SLProps Prop = GeomLProp_SLProps 
+    GeomLProp_SLProps Prop = GeomLProp_SLProps
       (aSurf, theUParam, theVParam, 2, Precision::Confusion());
     if(Prop.IsCurvatureDefined()) {
       if(Prop.IsUmbilic()) {
@@ -2083,7 +2196,7 @@ Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
     aRes = 1/aRes;
   else
     aRes = RealLast();
-  
+
   return aRes;
 }
 
@@ -2120,7 +2233,7 @@ Standard_Real GEOMImpl_IMeasureOperations::MaxSurfaceCurvatureByParam
   ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
   Standard_Real U = U1 + (U2-U1)*theUParam;
   Standard_Real V = V1 + (V2-V1)*theVParam;
-  
+
   return getSurfaceCurvatures(aSurf, U, V, true);
 }
 
@@ -2193,7 +2306,7 @@ Standard_Real GEOMImpl_IMeasureOperations::MinSurfaceCurvatureByParam
   ShapeAnalysis::GetFaceUVBounds(F,U1,U2,V1,V2);
   Standard_Real U = U1 + (U2-U1)*theUParam;
   Standard_Real V = V1 + (V2-V1)*theVParam;
-  
+
   return getSurfaceCurvatures(aSurf, U, V, false);
 }
 

@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_EdgeDlg.h
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #ifndef BUILDGUI_EDGEDLG_H
 #define BUILDGUI_EDGEDLG_H
 
@@ -32,6 +31,7 @@
 
 class DlgRef_1Sel2Spin;
 class DlgRef_2Sel;
+class DlgRef_2Sel1Spin;
 
 //=================================================================================
 // class    : BuildGUI_EdgeDlg
@@ -42,34 +42,38 @@ class BuildGUI_EdgeDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  BuildGUI_EdgeDlg( GeometryGUI*, QWidget* = 0 );
+  BuildGUI_EdgeDlg (GeometryGUI*, QWidget* = 0);
   ~BuildGUI_EdgeDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );    
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);    
   virtual void                       addSubshapesToStudy();
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
+  void                               enterEvent (QEvent*);
   
 private:
-  GEOM::GeomObjPtr                   myPoint1, myPoint2;   /* Points containing the edge */
+  GEOM::GeomObjPtr                   myPoint1, myPoint2;   /* Points */
   GEOM::GeomObjPtr                   myWire;               /* Wire */
+  GEOM::GeomObjPtr                   myCurve;              /* Edge */
+  GEOM::GeomObjPtr                   myStartPoint;         /* Point */
   
   DlgRef_2Sel*                       GroupPoints;
   DlgRef_1Sel2Spin*                  GroupWire;
+  DlgRef_2Sel1Spin*                  GroupOnCurve;
 
 private slots:
-  void                               ConstructorsClicked( int );
+  void                               ConstructorsClicked (int);
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               ValueChangedInSpinBox (double);
 };
 
 #endif // BUILDGUI_EDGEDLG_H

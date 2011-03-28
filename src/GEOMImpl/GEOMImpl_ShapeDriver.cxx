@@ -18,11 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
 #include <GEOMImpl_IShapes.hxx>
+#include <GEOMImpl_IVector.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
 
@@ -33,26 +33,27 @@
 #include <ShapeFix_Edge.hxx>
 #include <ShapeFix_Shape.hxx>
 
-#include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepAdaptor_Curve.hxx>
 #include <BRepAlgo_FaceRestrictor.hxx>
-#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_Copy.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
+#include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepCheck.hxx>
 #include <BRepCheck_Analyzer.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
-#include <BRepBuilderAPI_MakeWire.hxx>
-#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepLib.hxx>
 #include <BRepLib_MakeEdge.hxx>
 #include <BRepTools_WireExplorer.hxx>
-#include <BRepAdaptor_Curve.hxx>
 
 #include <ShapeAnalysis_FreeBounds.hxx>
-#include <ElCLib.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Edge.hxx>
@@ -61,11 +62,19 @@
 #include <TopoDS_Solid.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
+
+#include <ElCLib.hxx>
+
+#include <GCPnts_AbscissaPoint.hxx>
+
+#include <Geom_TrimmedCurve.hxx>
+#include <GeomAbs_CurveType.hxx>
+#include <GeomConvert_CompCurveToBSplineCurve.hxx>
+#include <GeomConvert.hxx>
+#include <GeomLProp.hxx>
 
 #include <TColStd_SequenceOfReal.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
@@ -74,13 +83,8 @@
 #include <TColGeom_Array1OfBSplineCurve.hxx>
 #include <TColGeom_HArray1OfBSplineCurve.hxx>
 
-#include <GeomAbs_CurveType.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <GeomConvert_CompCurveToBSplineCurve.hxx>
-#include <GeomConvert.hxx>
-#include <GeomLProp.hxx>
-
 #include <Precision.hxx>
+
 #include <Standard_NullObject.hxx>
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
@@ -145,7 +149,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     Handle(ShapeFix_Wire) aFW = new ShapeFix_Wire;
     aFW->Load(aWire);
     aFW->FixReorder();
-    
+
     if (aFW->StatusReorder(ShapeExtend_FAIL1)) {
       Standard_ConstructionError::Raise("Wire construction failed: several loops detected");
     } else if (aFW->StatusReorder(ShapeExtend_FAIL)) {
@@ -157,7 +161,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     Standard_Real aTolerance = aCI.GetTolerance();
     if (aTolerance < Precision::Confusion())
       aTolerance = Precision::Confusion();
-    
+
     aFW->ClosedWireMode() = Standard_False;
     aFW->FixConnected(aTolerance);
     if (aFW->StatusConnected(ShapeExtend_FAIL)) {
@@ -204,7 +208,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (!MW.IsDone()) {
         Standard_ConstructionError::Raise("Wire construction failed");
       }
-          W = MW;
+      W = MW;
     }
     else {
       Standard_NullObject::Raise
@@ -370,12 +374,16 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   else if (aType == SOLID_SHELL) {
     Handle(GEOM_Function) aRefShell = aCI.GetBase();
     TopoDS_Shape aShapeShell = aRefShell->GetValue();
+    if (!aShapeShell.IsNull() && aShapeShell.ShapeType() == TopAbs_COMPOUND) {
+      TopoDS_Iterator It (aShapeShell, Standard_True, Standard_True);
+      if (It.More()) aShapeShell = It.Value();
+    }
     if (aShapeShell.IsNull() || aShapeShell.ShapeType() != TopAbs_SHELL) {
       Standard_NullObject::Raise("Shape for solid construction is null or not a shell");
     }
 
     BRepCheck_Shell chkShell(TopoDS::Shell(aShapeShell));
-    if(chkShell.Closed() == BRepCheck_NotClosed) return 0;
+    if (chkShell.Closed() == BRepCheck_NotClosed) return 0;
 
     TopoDS_Solid Sol;
     B.MakeSolid(Sol);
@@ -404,12 +412,16 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aShapeShell.IsNull()) {
         Standard_NullObject::Raise("Shell for solid construction is null");
       }
+      if (aShapeShell.ShapeType() == TopAbs_COMPOUND) {
+        TopoDS_Iterator It (aShapeShell, Standard_True, Standard_True);
+        if (It.More()) aShapeShell = It.Value();
+      }
       if (aShapeShell.ShapeType() == TopAbs_SHELL) {
         B.Add(Sol, aShapeShell);
         ish++;
       }
     }
-    if ( ish == 0 ) return 0;
+    if (ish == 0) return 0;
     BRepClass3d_SolidClassifier SC (Sol);
     SC.PerformInfinitePoint(Precision::Confusion());
     if (SC.State() == TopAbs_IN)
@@ -550,7 +562,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
           case GeomAbs_Line:
             {
               gp_Lin aLine    = BAcurve.Line();
-              gp_Lin PrevLine = GAprevcurve.Line(); 
+              gp_Lin PrevLine = GAprevcurve.Line();
               if (aLine.Contains(PrevLine.Location(), LinTol) &&
                   aLine.Direction().IsParallel(PrevLine.Direction(), AngTol))
               {
@@ -719,33 +731,33 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       Standard_Integer nb_curve = CurveSeq.Length();   //number of curves
       TColGeom_Array1OfBSplineCurve tab(0,nb_curve-1);                    //array of the curves
       TColStd_Array1OfReal tabtolvertex(0,nb_curve-1); //(0,nb_curve-2);  //array of the tolerances
-      
+
       Standard_Integer i;
-      
+
       if (nb_curve > 1)
       {
         for (i = 1; i <= nb_curve; i++)
         {
           if (CurveSeq(i)->IsInstance(STANDARD_TYPE(Geom_TrimmedCurve)))
             CurveSeq(i) = (*((Handle(Geom_TrimmedCurve)*)&(CurveSeq(i))))->BasisCurve();
-          
+
           Handle(Geom_TrimmedCurve) aTrCurve = new Geom_TrimmedCurve(CurveSeq(i), FparSeq(i), LparSeq(i));
           tab(i-1) = GeomConvert::CurveToBSplineCurve(aTrCurve);
           tab(i-1)->Transform(LocSeq(i).Location().Transformation());
           GeomConvert::C0BSplineToC1BSplineCurve(tab(i-1), Precision::Confusion());
           if (LocSeq(i).Orientation() == TopAbs_REVERSED)
             tab(i-1)->Reverse();
-          
+
           //Temporary
           //char* name = new char[100];
           //sprintf(name, "c%d", i);
           //DrawTrSurf::Set(name, tab(i-1));
-          
+
           if (i > 1)
             tabtolvertex(i-2) = TolSeq(i-1);
         } // end for (i = 1; i <= nb_curve; i++)
         tabtolvertex(nb_curve-1) = TolSeq(TolSeq.Length());
-        
+
         Standard_Boolean closed_flag = Standard_False;
         Standard_Real closed_tolerance = 0.;
         if (FirstVertex.IsSame(LastVertex) &&
@@ -757,7 +769,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
           closed_flag = Standard_True ;
           closed_tolerance = BRep_Tool::Tolerance(FirstVertex);
         }
-        
+
         Handle(TColGeom_HArray1OfBSplineCurve)  concatcurve;     //array of the concatenated curves
         Handle(TColStd_HArray1OfInteger)        ArrayOfIndices;  //array of the remining Vertex
         GeomConvert::ConcatC1(tab,
@@ -766,17 +778,17 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
                               concatcurve,
                               closed_flag,
                               closed_tolerance);   //C1 concatenation
-        
+
         if (concatcurve->Length() > 1)
         {
           GeomConvert_CompCurveToBSplineCurve Concat(concatcurve->Value(concatcurve->Lower()));
-          
+
           for (i = concatcurve->Lower()+1; i <= concatcurve->Upper(); i++)
             Concat.Add( concatcurve->Value(i), LinTol, Standard_True );
-          
+
           concatcurve->SetValue(concatcurve->Lower(), Concat.BSplineCurve());
         }
-        
+
         ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
                                    FirstVertex, LastVertex);
       }
@@ -784,15 +796,92 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       {
         if (CurveSeq(1)->IsInstance(STANDARD_TYPE(Geom_TrimmedCurve)))
           CurveSeq(1) = (*((Handle(Geom_TrimmedCurve)*)&(CurveSeq(i))))->BasisCurve();
-        
+
         CurveSeq(1)->Transform(LocSeq(1).Location().Transformation());
         ResEdge = BRepLib_MakeEdge(CurveSeq(1),
                                    FirstVertex, LastVertex,
                                    FparSeq(1), LparSeq(1));
       }
     }
-      
+
     aShape = ResEdge;
+  }
+  else if (aType == EDGE_CURVE_LENGTH) {
+    GEOMImpl_IVector aVI (aFunction);
+
+    // RefCurve
+    Handle(GEOM_Function) aRefCurve = aVI.GetPoint1();
+    if (aRefCurve.IsNull()) Standard_NullObject::Raise("Argument Curve is null");
+    TopoDS_Shape aRefShape1 = aRefCurve->GetValue();
+    if (aRefShape1.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise
+        ("Edge On Curve creation aborted : curve shape is not an edge");
+    }
+    TopoDS_Edge aRefEdge = TopoDS::Edge(aRefShape1);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(aRefEdge, V1, V2, Standard_True);
+
+    // RefPoint
+    TopoDS_Vertex aRefVertex;
+    Handle(GEOM_Function) aRefPoint = aVI.GetPoint2();
+    if (aRefPoint.IsNull()) {
+      aRefVertex = V1;
+    }
+    else {
+      TopoDS_Shape aRefShape2 = aRefPoint->GetValue();
+      if (aRefShape2.ShapeType() != TopAbs_VERTEX) {
+        Standard_TypeMismatch::Raise
+          ("Edge On Curve creation aborted : start point shape is not a vertex");
+      }
+      aRefVertex = TopoDS::Vertex(aRefShape2);
+    }
+    gp_Pnt aRefPnt = BRep_Tool::Pnt(aRefVertex);
+
+    // Length
+    Standard_Real aLength = aVI.GetParameter();
+    //Standard_Real aCurveLength = IntTools::Length(aRefEdge);
+    //if (aLength > aCurveLength) {
+    //  Standard_ConstructionError::Raise
+    //    ("Edge On Curve creation aborted : given length is greater than edges length");
+    //}
+    if (fabs(aLength) < Precision::Confusion()) {
+      Standard_ConstructionError::Raise
+        ("Edge On Curve creation aborted : given length is smaller than Precision::Confusion()");
+    }
+
+    // Check orientation
+    Standard_Real UFirst, ULast;
+    Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(aRefEdge, UFirst, ULast);
+    Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
+
+    Standard_Real dU = ULast - UFirst;
+    Standard_Real par1 = UFirst + 0.1 * dU;
+    Standard_Real par2 = ULast  - 0.1 * dU;
+
+    gp_Pnt P1 = EdgeCurve->Value(par1);
+    gp_Pnt P2 = EdgeCurve->Value(par2);
+
+    if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
+      ReOrientedCurve = EdgeCurve->Reversed();
+      UFirst = EdgeCurve->ReversedParameter(ULast);
+    }
+
+    // Get the point by length
+    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
+    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst); 
+    Standard_Real aParam = anAbsPnt.Parameter();
+
+    if (AdapCurve.IsClosed() && aLength < 0.0) {
+      Standard_Real aTmp = aParam;
+      aParam = UFirst;
+      UFirst = aTmp;
+    }
+
+    BRepBuilderAPI_MakeEdge aME (ReOrientedCurve, UFirst, aParam);
+    if (aME.IsDone())
+      aShape = aME.Shape();
+  }
+  else {
   }
 
   if (aShape.IsNull()) return 0;

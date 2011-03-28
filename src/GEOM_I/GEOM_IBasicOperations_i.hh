@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IBasicOperations_i_HeaderFile
 #define _GEOM_IBasicOperations_i_HeaderFile
@@ -56,8 +55,8 @@ class GEOM_I_EXPORT GEOM_IBasicOperations_i :
 					   CORBA::Double theParameter);
 
    GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theCurve,
-						   CORBA::Double theLength,
-						   CORBA::Boolean theReverse);
+						   CORBA::Double         theLength,
+						   GEOM::GEOM_Object_ptr theStartPoint);
 
    GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theCurve,
                                                   CORBA::Double theXParameter,

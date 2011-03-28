@@ -151,7 +151,7 @@ public:
                                           CORBA::Double theParameter);
   GEOM::GEOM_Object_ptr MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
                                                   CORBA::Double theLength,
-                                                  CORBA::Boolean theReverse);
+                                                  GEOM::GEOM_Object_ptr theStartPoint);
   GEOM::GEOM_Object_ptr MakePointOnCurveByCoord (GEOM::GEOM_Object_ptr theRefCurve,
                                                  CORBA::Double theXParameter,
                                                  CORBA::Double theYParameter,
@@ -465,6 +465,9 @@ public:
   //-----------------------------------------------------------//
   GEOM::GEOM_Object_ptr MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
                                   GEOM::GEOM_Object_ptr thePnt2);
+  GEOM::GEOM_Object_ptr MakeEdgeOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
+                                                 CORBA::Double theLength,
+                                                 GEOM::GEOM_Object_ptr theStartPoint);
   GEOM::GEOM_Object_ptr MakeWire (GEOM::GEOM_List_ptr theEdgesAndWires,
                                   CORBA::Double       theTolerance);
   GEOM::GEOM_Object_ptr MakeFace (GEOM::GEOM_Object_ptr theWire,

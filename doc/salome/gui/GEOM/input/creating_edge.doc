@@ -5,10 +5,10 @@
 To create an \b Edge, in the <b>Main Menu</b> select <b>New Entity >
 Build > Edge</b>  
 
-There are two ways to create an edge. In both cases the \b Result
+There are three ways to create an edge. In all cases the \b Result
 will be a \b GEOM_Object (EDGE). 
 
-Firstly, you can create an \b Edge by specifying two points (\b Point1 and
+Firstly, you can create a linear \b Edge by specifying two points (\b Point1 and
 \b Point2), which are the first and the last vertices of the edge.
 
 <b>TUI Command:</b> <em>geompy.MakeEdge(Vertex1, Vertex2)</em><br>
@@ -40,6 +40,20 @@ the connection points (sharp bend) is not processed.
 (tolerance values are used to check coincidence of the underlying curves).
 
 \image html edge2.png "Create edge from wire"
+
+The third case allows building edges of desired length on any existing
+curve (selected existing edge). <b>Start Point</b> parameter is optional.
+Any point can be selected for it, the new edge will begin at the end
+of initial edge, close to the selected point. <b>Length</b> can exceed
+the initial edge's length or be negative to extrapolate existing edge
+along its curve (except bezier and b-spline curves).
+
+<b>TUI Command:</b> <em>geompy.MakeEdgeOnCurveByLength(Edge, Length, StartPoint = None)</em><br>
+<b>Arguments:</b> Name + 1 edge + Length + 1 Vertex
+(StartPoint parameter is optional, it allows switching from one end of
+initial edge to another. Length can exceed the initial edge's length or be negative).
+
+\image html edge3.png "Create edge on curve"
 
 <b>Example:</b>
 

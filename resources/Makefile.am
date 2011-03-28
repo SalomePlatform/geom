@@ -47,7 +47,8 @@ box2points.png			\
 boxdxyz.png			\
 build_compound.png		\
 build_edge.png			\
-build_edge_wire.png			\
+build_edge_wire.png		\
+build_edge_curve.png		\
 build_face.png			\
 build_shell.png			\
 build_solid.png			\

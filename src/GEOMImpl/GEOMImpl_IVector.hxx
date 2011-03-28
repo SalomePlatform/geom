@@ -18,10 +18,9 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//NOTE: This is an intreface to a function for the vector creation.
-//
+//NOTE: This is an interface to a function for the vector creation.
+
 #include "GEOM_Function.hxx"
 
 #define VEC_ARG_DX   1

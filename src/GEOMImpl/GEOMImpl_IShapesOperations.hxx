@@ -54,6 +54,11 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) MakeEdge (Handle(GEOM_Object) thePoint1,
                                                 Handle(GEOM_Object) thePoint2);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeEdgeOnCurveByLength (Handle(GEOM_Object) theCurve,
+                                                               const Standard_Real theLength,
+                                                               Handle(GEOM_Object) theStartPoint);
+
   Standard_EXPORT Handle(GEOM_Object) MakeEdgeWire (Handle(GEOM_Object) theWire,
                                                     const Standard_Real theLinearTolerance,
                                                     const Standard_Real theAngularTolerance);

@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -369,6 +368,25 @@ CORBA::Boolean GEOM_IMeasureOperations_i::CheckShapeWithGeometry (GEOM::GEOM_Obj
 
 //=============================================================================
 /*!
+ *  IsGoodForSolid
+ */
+//=============================================================================
+char* GEOM_IMeasureOperations_i::IsGoodForSolid (GEOM::GEOM_Object_ptr theShape)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shape
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return CORBA::string_dup("WRN_NULL_OBJECT_OR_SHAPE");
+
+  // Get shape parameters
+  TCollection_AsciiString aDescription = GetOperations()->IsGoodForSolid(aShape);
+  return CORBA::string_dup(aDescription.ToCString());
+}
+
+//=============================================================================
+/*!
  *  WhatIs
  */
 //=============================================================================
@@ -392,8 +410,8 @@ char* GEOM_IMeasureOperations_i::WhatIs (GEOM::GEOM_Object_ptr theShape)
  */
 //=============================================================================
 GEOM::ListOfBool* GEOM_IMeasureOperations_i::AreCoordsInside (GEOM::GEOM_Object_ptr theShape,
-							      const GEOM::ListOfDouble& theCoords,
-							      CORBA::Double tolerance)
+                                                              const GEOM::ListOfDouble& theCoords,
+                                                              CORBA::Double tolerance)
 {
   //Set a not done flag
   GetOperations()->SetNotDone();
@@ -475,6 +493,26 @@ CORBA::Double GEOM_IMeasureOperations_i::GetAngle (GEOM::GEOM_Object_ptr theShap
 
   // Get the angle
   return GetOperations()->GetAngle(aShape1, aShape2);
+}
+
+//=============================================================================
+/*!
+ *  GetAngle
+ */
+//=============================================================================
+CORBA::Double GEOM_IMeasureOperations_i::GetAngleBtwVectors (GEOM::GEOM_Object_ptr theShape1,
+                                                             GEOM::GEOM_Object_ptr theShape2)
+{
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference shapes
+  Handle(GEOM_Object) aShape1 = GetObjectImpl(theShape1);
+  Handle(GEOM_Object) aShape2 = GetObjectImpl(theShape2);
+  if (aShape1.IsNull() || aShape2.IsNull()) return -1.0;
+
+  // Get the angle
+  return GetOperations()->GetAngleBtwVectors(aShape1, aShape2);
 }
 
 

@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_SolidDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "BuildGUI_SolidDlg.h"
 
 #include <DlgRef.h>
@@ -38,9 +37,11 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <TColStd_MapOfInteger.hxx>
+
 //=================================================================================
 // class    : BuildGUI_SolidDlg()
-// purpose  : Constructs a BuildGUI_SolidDlg which is a child of 'parent', with the 
+// purpose  : Constructs a BuildGUI_SolidDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -52,7 +53,7 @@ BuildGUI_SolidDlg::BuildGUI_SolidDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
 
   setWindowTitle( tr( "GEOM_SOLID_TITLE" ) );
-    
+
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_SOLID" ) );
   mainFrame()->RadioButton1->setIcon( image0 );
@@ -68,7 +69,7 @@ BuildGUI_SolidDlg::BuildGUI_SolidDlg( GeometryGUI* theGeometryGUI, QWidget* pare
   GroupSolid->CheckButton1->setText( tr( "GEOM_CREATE_SINGLE_SOLID" ) );
   GroupSolid->PushButton1->setIcon( image1 );
   GroupSolid->LineEdit1->setReadOnly( true );
-  
+
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupSolid );
@@ -103,8 +104,14 @@ void BuildGUI_SolidDlg::Init()
   GroupSolid->CheckButton1->setChecked( true );
 
   myShells.clear();
-  
-  globalSelection( GEOM_SHELL );
+
+  //globalSelection( GEOM_SHELL );
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_SHELL );
+  globalSelection( aMap, aSubShapes );
 
   /* signals and slots connections */
   connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -154,7 +161,10 @@ void BuildGUI_SolidDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
 
-  myShells = getSelected( TopAbs_SHELL, -1 );
+  //myShells = getSelected( TopAbs_SHELL, -1 );
+  QList<TopAbs_ShapeEnum> types;
+  types << TopAbs_SHELL << TopAbs_COMPOUND;
+  myShells = getSelected( types, -1 );
 
   if ( !myShells.isEmpty() ) {
     QString aName = myShells.count() > 1 ? QString( "%1_objects").arg( myShells.count() ) : GEOMBase::GetName( myShells[0].get() );
@@ -171,8 +181,15 @@ void BuildGUI_SolidDlg::SetEditCurrentArgument()
   QPushButton* send = (QPushButton*)sender();
   if ( send != GroupSolid->PushButton1 )
     return;
-  
-  globalSelection( GEOM_SHELL );
+
+  //globalSelection( GEOM_SHELL );
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_SHELL );
+  globalSelection( aMap, aSubShapes );
+
   myEditCurrentArgument = GroupSolid->LineEdit1;
 
   myEditCurrentArgument->setFocus();
@@ -189,7 +206,14 @@ void BuildGUI_SolidDlg::ActivateThisDialog()
   GEOMBase_Skeleton::ActivateThisDialog();
   connect( ( (SalomeApp_Application*)( SUIT_Session::session()->activeApplication() ) )->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
-  globalSelection( GEOM_SHELL );
+
+  //globalSelection( GEOM_SHELL );
+  TColStd_MapOfInteger aMap;
+  aMap.Add( GEOM_SHELL );
+  aMap.Add( GEOM_COMPOUNDFILTER );
+  QList<int> aSubShapes;
+  aSubShapes.append( GEOM_SHELL );
+  globalSelection( aMap, aSubShapes );
 }
 
 
@@ -210,7 +234,7 @@ void BuildGUI_SolidDlg::enterEvent( QEvent* )
 //=================================================================================
 void  BuildGUI_SolidDlg::EnableNameField( bool toEnable )
 {
-  mainFrame()->GroupBoxName->setEnabled( toEnable ); 
+  mainFrame()->GroupBoxName->setEnabled( toEnable );
 }
 
 //=================================================================================
@@ -226,17 +250,24 @@ GEOM::GEOM_IOperations_ptr BuildGUI_SolidDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool BuildGUI_SolidDlg::isValid( QString& msg )
+bool BuildGUI_SolidDlg::isValid (QString& msg)
 {
   bool ok = !myShells.isEmpty();
+
+  GEOM::MeasureOpPtr anOp;
+  anOp.take(myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId()));
+
   for ( int i = 0, n = myShells.count(); i < n && ok; i++ ) {
-    ok = isClosed( myShells[i].get() );
-    if ( !ok )
-      msg = QObject::tr("WRN_SHAPE_UNCLOSED").arg( GEOMBase::GetName( myShells[i].get() ) );
+    CORBA::String_var aRes = anOp->IsGoodForSolid(myShells[i].get());
+    if (strlen(aRes.in())) {
+      msg = QObject::tr(aRes.in()).arg(GEOMBase::GetName(myShells[i].get()));
+      ok = false;
+    }
   }
   return ok;
 }
 
+/*
 //=================================================================================
 // function : isClosed
 // purpose  : Check the object 'i' in myShells list is closed or unclosed
@@ -252,15 +283,15 @@ bool BuildGUI_SolidDlg::isClosed( GEOM::GEOM_Object_ptr shell )
   if ( !CORBA::is_nil( shell ) ) {
     GEOM::MeasureOpPtr anOp;
     anOp.take( myGeomGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() ) );
-    
+
     // Detect kind of shape and parameters
     aKind = anOp->KindOfShape(shell, anInts, aDbls);
-    
+
     if ( anOp->IsDone() ) {
       if ( anInts[0] == 1 )
-	ok = true;
+        ok = true;
       else if ( anInts[0] == 2 )
-	ok = false;
+        ok = false;
     }
     else {
       MESSAGE ("KindOfShape Operation is NOT DONE!!!");
@@ -272,6 +303,7 @@ bool BuildGUI_SolidDlg::isClosed( GEOM::GEOM_Object_ptr shell )
 
   return ok;
 }
+*/
 
 //=================================================================================
 // function : execute
@@ -280,7 +312,7 @@ bool BuildGUI_SolidDlg::isClosed( GEOM::GEOM_Object_ptr shell )
 bool BuildGUI_SolidDlg::execute( ObjectList& objects )
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-    
+
   if ( GroupSolid->CheckButton1->isChecked() ) {
     GEOM::ListOfGO_var objlist = new GEOM::ListOfGO();
     objlist->length( myShells.count() );
@@ -303,4 +335,3 @@ bool BuildGUI_SolidDlg::execute( ObjectList& objects )
 
   return true;
 }
-

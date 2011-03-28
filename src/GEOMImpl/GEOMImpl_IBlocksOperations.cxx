@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -35,6 +34,7 @@
 #include <GEOMImpl_IBlockTrsf.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
 #include <GEOMImpl_Block6Explorer.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
@@ -3283,6 +3283,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
   TopTools_MapOfShape mapAcceptedEdges;
   TCollection_AsciiString aListRes, anEntry;
 
+  // Sort shapes in current chain (Mantis issue 21053)
+  TopTools_DataMapOfShapeListOfShape aMapChains;
+  TopTools_ListOfShape aFirstInChains;
+
   for (ie = 1; ie <= nbEdges; ie++) {
     TopoDS_Shape curE = MEW.FindKey(ie);
 
@@ -3342,6 +3346,21 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
 
       listPrevEdges = listCurEdges;
     } // while (listPrevEdges.Extent() > 0)
+
+    // Sort shapes in current chain (Mantis issue 21053)
+    GEOMImpl_IShapesOperations::SortShapes(currentChain, Standard_False);
+    aFirstInChains.Append(currentChain.First());
+    aMapChains.Bind(currentChain.First(), currentChain);
+  }
+
+  // Sort chains (Mantis issue 21053)
+  GEOMImpl_IShapesOperations::SortShapes(aFirstInChains, Standard_False);
+
+  // Store sorted chains in the document
+  TopTools_ListIteratorOfListOfShape aChainsIt (aFirstInChains);
+  for (; aChainsIt.More(); aChainsIt.Next()) {
+    TopoDS_Shape aFirstInChain = aChainsIt.Value();
+    const TopTools_ListOfShape& currentChain = aMapChains.Find(aFirstInChain);
 
     // Store the chain in the document
     Handle(TColStd_HArray1OfInteger) anArray =

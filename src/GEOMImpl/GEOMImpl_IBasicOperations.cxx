@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -192,7 +191,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
                      double theParam2,
                      double theParam3,
                      const PointLocation theLocation,
-		     bool theReverse)
+		     Handle(GEOM_Object) theRefPoint)
 {
   SetErrorCode(KO);
 
@@ -231,7 +230,10 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
     case PointOn_CurveByLength:
       aPI.SetCurve(aRefFunction);
       aPI.SetLength(theParam1);
-      aPI.SetReversed(theReverse);
+      if (!theRefPoint.IsNull()) {
+        Handle(GEOM_Function) aRefPoint = theRefPoint->GetLastFunction();
+        aPI.SetRef(aRefPoint);
+      }
       break;
     case PointOn_CurveByCoord:
       aPI.SetCurve(aRefFunction);
@@ -277,7 +279,7 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::makePointOnGeom
       break;
     case PointOn_CurveByLength:
       GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByLength("
-                                   << theGeomObj << ", " << theParam1 << ", " << theReverse <<  ")";
+                                   << theGeomObj << ", " << theParam1 << ", " << theRefPoint <<  ")";
       break;
     case PointOn_CurveByCoord:
   GEOM::TPythonDump(aFunction) << aPoint << " = geompy.MakeVertexOnCurveByCoord("
@@ -332,10 +334,10 @@ Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByCoord
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_IBasicOperations::MakePointOnCurveByLength
                     (Handle(GEOM_Object) theCurve, 
-		     double theLength, 
-		     bool theReverse)
+		     double              theLength, 
+		     Handle(GEOM_Object) theStartPoint)
 {
-  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength, theReverse);
+  return makePointOnGeom(theCurve, theLength, 0.0, 0.0, PointOn_CurveByLength, theStartPoint);
 }
 
 //=============================================================================

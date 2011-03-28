@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_EdgeDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BuildGUI_EdgeDlg.h"
 
 #include <DlgRef.h>
@@ -48,9 +47,11 @@
 BuildGUI_EdgeDlg::BuildGUI_EdgeDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
   : GEOMBase_Skeleton(theGeometryGUI, parent)
 {
-  QPixmap image0 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
-  QPixmap image1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_EDGE")));
-  QPixmap image2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_BUILD_EDGE_WIRE")));
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_BUILD_EDGE")));
+  QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_BUILD_EDGE_WIRE")));
+  QPixmap image3 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_BUILD_EDGE_CURVE")));
 
   setWindowTitle(tr("GEOM_EDGE_TITLE"));
 
@@ -58,8 +59,7 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg (GeometryGUI* theGeometryGUI, QWidget* parent
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_EDGE"));
   mainFrame()->RadioButton1->setIcon(image1);
   mainFrame()->RadioButton2->setIcon(image2);
-  mainFrame()->RadioButton3->setAttribute( Qt::WA_DeleteOnClose );
-  mainFrame()->RadioButton3->close();
+  mainFrame()->RadioButton3->setIcon(image3);
 
   // two points
 
@@ -79,15 +79,30 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg (GeometryGUI* theGeometryGUI, QWidget* parent
   GroupWire->TextLabel1->setText(tr("GEOM_WIRE"));
   GroupWire->PushButton1->setIcon(image0);
   GroupWire->LineEdit1->setReadOnly(true);
-  GroupWire->TextLabel2->setText( tr( "GEOM_LINEAR_TOLERANCE" ) );
-  GroupWire->TextLabel3->setText( tr( "GEOM_ANGULAR_TOLERANCE" ) );
+  GroupWire->TextLabel2->setText(tr("GEOM_LINEAR_TOLERANCE"));
+  GroupWire->TextLabel3->setText(tr("GEOM_ANGULAR_TOLERANCE"));
   double SpecificStep = 0.0001;
   double prec1 = Precision::Confusion();
   double prec2 = Precision::Angular();
-  initSpinBox(GroupWire->SpinBox_DX, prec1, MAX_NUMBER, SpecificStep, "len_tol_precision" );
-  initSpinBox(GroupWire->SpinBox_DY, prec2, MAX_NUMBER, SpecificStep, "ang_tol_precision" );
+  initSpinBox(GroupWire->SpinBox_DX, prec1, MAX_NUMBER, SpecificStep, "len_tol_precision");
+  initSpinBox(GroupWire->SpinBox_DY, prec2, MAX_NUMBER, SpecificStep, "ang_tol_precision");
   GroupWire->SpinBox_DX->setValue(prec1);
   GroupWire->SpinBox_DY->setValue(prec2);
+
+  // on curve
+
+  GroupOnCurve = new DlgRef_2Sel1Spin(centralWidget());
+  GroupOnCurve->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupOnCurve->TextLabel1->setText(tr("GEOM_EDGE"));
+  GroupOnCurve->PushButton1->setIcon(image0);
+  GroupOnCurve->LineEdit1->setReadOnly(true);
+  GroupOnCurve->TextLabel2->setText(tr("GEOM_START_POINT"));
+  GroupOnCurve->PushButton2->setIcon(image0);
+  GroupOnCurve->LineEdit2->setReadOnly(true);
+  GroupOnCurve->TextLabel3->setText(tr("GEOM_LENGTH"));
+  double step = aResMgr->doubleValue("Geometry", "SettingsGeomStep", 100.0);
+  initSpinBox(GroupOnCurve->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision");
+  GroupOnCurve->SpinBox_DX->setValue(step);
 
   // layout
 
@@ -95,6 +110,7 @@ BuildGUI_EdgeDlg::BuildGUI_EdgeDlg (GeometryGUI* theGeometryGUI, QWidget* parent
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupPoints);
   layout->addWidget(GroupWire);
+  layout->addWidget(GroupOnCurve);
   /***************************************************************/
 
   setHelpFileName("create_edge_page.html");
@@ -122,30 +138,37 @@ void BuildGUI_EdgeDlg::Init()
   myPoint1.nullify();
   myPoint2.nullify();
   myWire.nullify();
+  myCurve.nullify();
+  myStartPoint.nullify();
+
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->PushButton1->setDown(true);
   globalSelection(); // close local contexts, if any
-  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+  localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
   // signals and slots connections
-  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
-  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+  connect(myGeomGUI, SIGNAL(SignalDeactivateActiveDialog()), this, SLOT(DeactivateActiveDialog()));
+  connect(myGeomGUI, SIGNAL(SignalCloseAllDialogs()),        this, SLOT(ClickOnCancel()));
 
-  connect( this,      SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+  connect(this,      SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
 
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
-  connect(GroupPoints->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupPoints->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
-  connect(GroupWire->PushButton1,   SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton1,  SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPoints->PushButton2,  SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupWire->PushButton1,    SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupOnCurve->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
+  connect(GroupOnCurve->PushButton2, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
 
-  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-           this, SLOT( SelectionIntoArgument() ) );
+  connect(GroupOnCurve->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
+
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+           this, SLOT(SelectionIntoArgument()));
 
   initName(tr("GEOM_EDGE"));
 
-  ConstructorsClicked( 0 );
+  ConstructorsClicked(0);
 }
 
 //=================================================================================
@@ -170,8 +193,8 @@ bool BuildGUI_EdgeDlg::ClickOnApply()
 
   initName();
 
-  myEditCurrentArgument->setText( "" );
-  ConstructorsClicked( getConstructorId() );
+  myEditCurrentArgument->setText("");
+  ConstructorsClicked(getConstructorId());
 
   return true;
 }
@@ -180,17 +203,17 @@ bool BuildGUI_EdgeDlg::ClickOnApply()
 // function : ConstructorsClicked()
 // purpose  : Radio button management
 //=================================================================================
-void BuildGUI_EdgeDlg::ConstructorsClicked( int constructorId )
+void BuildGUI_EdgeDlg::ConstructorsClicked(int constructorId)
 {
-  switch ( constructorId ) {
+  switch (constructorId) {
   case 0:
     {
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
 
       myEditCurrentArgument = GroupPoints->LineEdit1;
-      GroupPoints->LineEdit1->setText( "" );
-      GroupPoints->LineEdit2->setText( "" );
+      GroupPoints->LineEdit1->setText("");
+      GroupPoints->LineEdit2->setText("");
       myPoint1.nullify();
       myPoint2.nullify();
       GroupPoints->PushButton1->setDown(true);
@@ -199,12 +222,13 @@ void BuildGUI_EdgeDlg::ConstructorsClicked( int constructorId )
       GroupPoints->LineEdit2->setEnabled(false);
       GroupPoints->show();
       GroupWire->hide();
+      GroupOnCurve->hide();
       break;
     }
   case 1:
     {
       globalSelection(); // close local contexts, if any
-      localSelection( GEOM::GEOM_Object::_nil(), TopAbs_WIRE );
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_WIRE);
 
       myEditCurrentArgument = GroupWire->LineEdit1;
       GroupWire->LineEdit1->setText("");
@@ -212,14 +236,34 @@ void BuildGUI_EdgeDlg::ConstructorsClicked( int constructorId )
       GroupWire->PushButton1->setDown(true);
       GroupWire->LineEdit1->setEnabled(true);
       GroupPoints->hide();
+      GroupOnCurve->hide();
       GroupWire->show();
+      break;
+    }
+  case 2:
+    {
+      globalSelection(); // close local contexts, if any
+      localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+
+      myEditCurrentArgument = GroupOnCurve->LineEdit1;
+      GroupOnCurve->LineEdit1->setText("");
+      GroupOnCurve->LineEdit2->setText("");
+      myCurve.nullify();
+      myStartPoint.nullify();
+      GroupOnCurve->PushButton1->setDown(true);
+      GroupOnCurve->PushButton2->setDown(false);
+      GroupOnCurve->LineEdit1->setEnabled(true);
+      GroupOnCurve->LineEdit2->setEnabled(false);
+      GroupPoints->hide();
+      GroupWire->hide();
+      GroupOnCurve->show();
       break;
     }
   }
 
   qApp->processEvents();
   updateGeometry();
-  resize( minimumSizeHint() );
+  resize(minimumSizeHint());
   SelectionIntoArgument();
 }
 
@@ -237,35 +281,50 @@ void BuildGUI_EdgeDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   if (aSelList.Extent() != 1) {
-    if      (myEditCurrentArgument == GroupPoints->LineEdit1) myPoint1.nullify();
-    else if (myEditCurrentArgument == GroupPoints->LineEdit2) myPoint2.nullify();
-    else if (myEditCurrentArgument == GroupWire->LineEdit1)   myWire.nullify();
+    if      (myEditCurrentArgument == GroupPoints->LineEdit1)  myPoint1.nullify();
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2)  myPoint2.nullify();
+    else if (myEditCurrentArgument == GroupWire->LineEdit1)    myWire.nullify();
+    else if (myEditCurrentArgument == GroupOnCurve->LineEdit1) myCurve.nullify();
+    else if (myEditCurrentArgument == GroupOnCurve->LineEdit2) myStartPoint.nullify();
     displayPreview(true);
     return;
   }
 
-  TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupWire->LineEdit1 ? TopAbs_WIRE : TopAbs_VERTEX;
-  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+  if (myEditCurrentArgument == GroupWire->LineEdit1) aNeedType = TopAbs_WIRE;
+  else if (myEditCurrentArgument == GroupOnCurve->LineEdit1) aNeedType = TopAbs_EDGE;
+  GEOM::GeomObjPtr aSelectedObject = getSelected(aNeedType);
+
   TopoDS_Shape aShape;
-  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
-    QString aName = GEOMBase::GetName( aSelectedObject.get() );
-    myEditCurrentArgument->setText( aName );
+  if (aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) && !aShape.IsNull()) {
+    QString aName = GEOMBase::GetName(aSelectedObject.get());
+    myEditCurrentArgument->setText(aName);
 
     globalSelection();
-    localSelection( GEOM::GEOM_Object::_nil(), aNeedType );
+    localSelection(GEOM::GEOM_Object::_nil(), aNeedType);
 
-    if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
+    if (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myPoint1 = aSelectedObject;
-      if ( myPoint1 && !myPoint2 )
+      if (myPoint1 && !myPoint2)
         GroupPoints->PushButton2->click();
     }
-    else if ( myEditCurrentArgument == GroupPoints->LineEdit2 ) {
+    else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
       myPoint2 = aSelectedObject;
-      if ( myPoint2 && !myPoint1 )
+      if (myPoint2 && !myPoint1)
         GroupPoints->PushButton1->click();
     }
-    else if ( myEditCurrentArgument == GroupWire->LineEdit1 ) {
+    else if (myEditCurrentArgument == GroupWire->LineEdit1) {
       myWire = aSelectedObject;
+    }
+    else if (myEditCurrentArgument == GroupOnCurve->LineEdit1) {
+      myCurve = aSelectedObject;
+      if (myCurve && !myStartPoint)
+        GroupOnCurve->PushButton2->click();
+    }
+    else if (myEditCurrentArgument == GroupOnCurve->LineEdit2) {
+      myStartPoint = aSelectedObject;
+      if (myStartPoint && !myCurve)
+        GroupOnCurve->PushButton1->click();
     }
   }
 
@@ -293,6 +352,22 @@ void BuildGUI_EdgeDlg::SetEditCurrentArgument()
   else if (send == GroupWire->PushButton1) {
     myEditCurrentArgument = GroupWire->LineEdit1;
   }
+  else if (send == GroupOnCurve->PushButton1) {
+    myEditCurrentArgument = GroupOnCurve->LineEdit1;
+    GroupOnCurve->PushButton2->setDown(false);
+    GroupOnCurve->LineEdit2->setEnabled(false);
+
+    globalSelection(); // close local contexts, if any
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+  }
+  else if (send == GroupOnCurve->PushButton2) {
+    myEditCurrentArgument = GroupOnCurve->LineEdit2;
+    GroupOnCurve->PushButton1->setDown(false);
+    GroupOnCurve->LineEdit1->setEnabled(false);
+
+    globalSelection(); // close local contexts, if any
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  }
 
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
@@ -309,10 +384,10 @@ void BuildGUI_EdgeDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 
-  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
-           this, SLOT( SelectionIntoArgument() ) );
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
 
-  ConstructorsClicked( getConstructorId() );
+  ConstructorsClicked(getConstructorId());
 }
 
 //=================================================================================
@@ -323,6 +398,15 @@ void BuildGUI_EdgeDlg::enterEvent (QEvent*)
 {
   if (!mainFrame()->GroupConstructors->isEnabled())
     ActivateThisDialog();
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void BuildGUI_EdgeDlg::ValueChangedInSpinBox(double newValue)
+{
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -341,14 +425,18 @@ GEOM::GEOM_IOperations_ptr BuildGUI_EdgeDlg::createOperation()
 bool BuildGUI_EdgeDlg::isValid (QString& msg)
 {
   bool ok = false;
-  switch ( getConstructorId() ) {
+  switch (getConstructorId()) {
   case 0:
     ok = myPoint1 && myPoint2;
     break;
   case 1:
-    ok = GroupWire->SpinBox_DX->isValid( msg, !IsPreview() ) && 
-         GroupWire->SpinBox_DY->isValid( msg, !IsPreview() ) &&
+    ok = GroupWire->SpinBox_DX->isValid(msg, !IsPreview()) &&
+         GroupWire->SpinBox_DY->isValid(msg, !IsPreview()) &&
          myWire;
+    break;
+  case 2:
+    ok = GroupOnCurve->SpinBox_DX->isValid(msg, !IsPreview()) &&
+         myCurve;
     break;
   default:
     break;
@@ -365,12 +453,12 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
   bool res = false;
   GEOM::GEOM_Object_var anObj;
 
-  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
 
-  switch ( getConstructorId() ) {
-  case 0 :
+  switch (getConstructorId()) {
+  case 0:
     {
-      anObj = anOper->MakeEdge( myPoint1.get(), myPoint2.get() );
+      anObj = anOper->MakeEdge(myPoint1.get(), myPoint2.get());
       res = true;
       break;
     }
@@ -378,22 +466,34 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
     {
       double aLinearTolerance   = GroupWire->SpinBox_DX->value();
       double anAngularTolerance = GroupWire->SpinBox_DY->value();
-      
+
       QStringList aParameters;
       aParameters << GroupWire->SpinBox_DX->text();
       aParameters << GroupWire->SpinBox_DY->text();
-      
-      anObj = anOper->MakeEdgeWire( myWire.get(), aLinearTolerance, anAngularTolerance );
-      
-      if ( !anObj->_is_nil() && !IsPreview() )
-	anObj->SetParameters( aParameters.join(":").toLatin1().constData() );
-      
+
+      anObj = anOper->MakeEdgeWire(myWire.get(), aLinearTolerance, anAngularTolerance);
+
+      if (!anObj->_is_nil() && !IsPreview())
+        anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+
+      res = true;
+      break;
+    }
+  case 2:
+    {
+      double aLength = GroupOnCurve->SpinBox_DX->value();
+
+      anObj = anOper->MakeEdgeOnCurveByLength(myCurve.get(), aLength, myStartPoint.get());
+
+      if (!anObj->_is_nil() && !IsPreview())
+        anObj->SetParameters(GroupOnCurve->SpinBox_DX->text().toLatin1().constData());
+
       res = true;
       break;
     }
   }
 
-  if ( !anObj->_is_nil() ) objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil()) objects.push_back(anObj._retn());
 
   return res;
 }
@@ -404,13 +504,17 @@ bool BuildGUI_EdgeDlg::execute (ObjectList& objects)
 //=================================================================================
 void BuildGUI_EdgeDlg::addSubshapesToStudy()
 {
-  switch ( getConstructorId() ) {
-  case 0 :
-    GEOMBase::PublishSubObject( myPoint1.get() );
-    GEOMBase::PublishSubObject( myPoint2.get() );
+  switch (getConstructorId()) {
+  case 0:
+    GEOMBase::PublishSubObject(myPoint1.get());
+    GEOMBase::PublishSubObject(myPoint2.get());
     break;
-  case 1 :
-    GEOMBase::PublishSubObject( myWire.get() );
+  case 1:
+    GEOMBase::PublishSubObject(myWire.get());
+    break;
+  case 2:
+    GEOMBase::PublishSubObject(myCurve.get());
+    GEOMBase::PublishSubObject(myStartPoint.get());
     break;
   default:
     break;

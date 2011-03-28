@@ -65,13 +65,16 @@ module GEOM
     //-----------------------------------------------------------//
     GEOM_Object MakePointXYZ (in double theX,
                               in double theY,
-                              in double theZ) ;
+                              in double theZ);
     GEOM_Object MakePointWithReference (in GEOM_Object theReference,
                                         in double theX,
                                         in double theY,
-                                        in double theZ) ;
+                                        in double theZ);
     GEOM_Object MakePointOnCurve (in GEOM_Object theRefCurve,
-                                  in double theParameter) ;
+                                  in double theParameter);
+    GEOM_Object MakePointOnCurveByLength (in GEOM_Object theRefCurve,
+                                          in double theLength,
+                                          in GEOM_Object theStartPoint);
 
     GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
                                      in double theParameter);
@@ -368,6 +371,9 @@ module GEOM
     //-----------------------------------------------------------//
     GEOM_Object MakeEdge (in GEOM_Object thePnt1,
                           in GEOM_Object thePnt2) ;
+    GEOM_Object MakeEdgeOnCurveByLength (in GEOM_Object theRefCurve,
+                                         in double theLength,
+                                         in GEOM_Object theStartPoint);
     GEOM_Object MakeWire (in GEOM_List theEdgesAndWires,
                           in double    theTolerance) ;
     GEOM_Object MakeFace (in GEOM_Object theWire,

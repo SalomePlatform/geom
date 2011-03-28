@@ -44,6 +44,11 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
 
   GEOM::GEOM_Object_ptr MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
                                   GEOM::GEOM_Object_ptr thePnt2);
+
+  GEOM::GEOM_Object_ptr MakeEdgeOnCurveByLength (GEOM::GEOM_Object_ptr theCurve,
+                                                 CORBA::Double         theLength,
+                                                 GEOM::GEOM_Object_ptr theStartPoint);
+
   GEOM::GEOM_Object_ptr MakeEdgeWire (GEOM::GEOM_Object_ptr theWire,
 				      const CORBA::Double theLinearTolerance,
 				      const CORBA::Double theAngularTolerance);

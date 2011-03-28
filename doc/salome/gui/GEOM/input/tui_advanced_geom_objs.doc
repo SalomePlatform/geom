@@ -46,6 +46,22 @@ id_edge = geompy.addToStudy(edge,"Edge_2")
 # display an edge
 gg.createAndDisplayGO(id_edge) 
 
+#
+# create edge from existing curve and a length
+#
+
+# create a circle
+c = geompy.MakeCircle(None, None, 100)
+
+# create an edge of length 25.0 from the circle
+edge = geompy.MakeEdgeOnCurveByLength(c, 25.0)
+
+# add object in the study
+id_edge = geompy.addToStudy(edge,"Edge_3")
+
+# display an edge
+gg.createAndDisplayGO(id_edge) 
+
 \endcode
  
 \anchor tui_creation_wire

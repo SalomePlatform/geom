@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
@@ -127,11 +126,13 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                    const Standard_Boolean   theIsCheckGeom,
                                    TCollection_AsciiString& theDump);
 
+  Standard_EXPORT TCollection_AsciiString IsGoodForSolid (Handle(GEOM_Object) theShape);
+
   Standard_EXPORT TCollection_AsciiString WhatIs (Handle(GEOM_Object) theShape);
 
   Standard_EXPORT std::vector<bool> AreCoordsInside (Handle(GEOM_Object) theShape,
-						     const std::vector<double>& coords,
-						     double tolerance = Precision::Confusion());
+                                                     const std::vector<double>& coords,
+                                                     double tolerance = Precision::Confusion());
 
   Standard_EXPORT Standard_Real GetMinDistance (Handle(GEOM_Object) theShape1,
                                                 Handle(GEOM_Object) theShape2,
@@ -142,6 +143,8 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
                                          Standard_Real& theX, Standard_Real& theY, Standard_Real& theZ);
 
   Standard_EXPORT Standard_Real GetAngle (Handle(GEOM_Object) theLine1, Handle(GEOM_Object) theLine2);
+
+  Standard_EXPORT Standard_Real GetAngleBtwVectors (Handle(GEOM_Object) theVec1, Handle(GEOM_Object) theVec2);
 
 
   // Methods for recieving radiuses of curvature of curves and surfaces

@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_PointDlg.h
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #ifndef BASICGUI_POINTDLG_H
 #define BASICGUI_POINTDLG_H
 
@@ -31,7 +30,7 @@
 #include "GEOM_GenericObjPtr.h"
 #include <QMap>
 
-class DlgRef_1Sel1Spin1Check;
+class DlgRef_2Sel1Spin;
 class DlgRef_3Spin;
 class DlgRef_2Sel;
 class DlgRef_1Sel3Spin;
@@ -87,7 +86,7 @@ private:
 
   DlgRef_3Spin*                      GroupXYZ;
   DlgRef_1Sel3Spin*                  GroupRefPoint;
-  DlgRef_1Sel1Spin1Check*            GroupOnCurve;
+  DlgRef_2Sel1Spin*                  GroupOnCurve;
   DlgRef_2Sel*                       GroupLineIntersection;
   DlgRef_1Sel2Spin*                  GroupOnSurface;
   

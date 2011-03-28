@@ -18,7 +18,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI_SubShapeDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
@@ -125,7 +125,7 @@ void EntityGUI_SubShapeDlg::Init()
   GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Vertex" );
   GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Shape" );
 
-  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() 
+  if ( SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType()
        != OCCViewer_Viewer::Type() )
     GroupPoints->CheckButton1->setEnabled( false );
 
@@ -169,7 +169,7 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
 bool EntityGUI_SubShapeDlg::ClickOnApply()
 {
   SUIT_Session::session()->activeApplication()->putInfo( "" );
-    
+
   /* Explode all sub shapes */
   if ( isAllSubShapes() ) {
     /* More than 30 subshapes : ask confirmation */
@@ -301,7 +301,7 @@ void EntityGUI_SubShapeDlg::SetEditCurrentArgument()
 {
   GroupPoints->LineEdit1->setFocus();
   myEditCurrentArgument = GroupPoints->LineEdit1;
-  
+
   GroupPoints->CheckButton1->setChecked( false );
   SubShapeToggled();
   SelectionIntoArgument();
@@ -313,7 +313,7 @@ void EntityGUI_SubShapeDlg::SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
 void EntityGUI_SubShapeDlg::LineEditReturnPressed()
-{  
+{
   QLineEdit* send = (QLineEdit*)sender();
   if ( send == GroupPoints->LineEdit1 )
     SetEditCurrentArgument();
@@ -386,9 +386,9 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Edge" );
   GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Vertex" );
   GroupPoints->ComboBox1->insertItem( GroupPoints->ComboBox1->count(), "Shape" );
-  
+
   myWithShape = true;
-  
+
   GroupPoints->ComboBox1->setCurrentIndex( 8 - count + SelectedShapeType );
   ComboTextChanged();
 
@@ -412,13 +412,13 @@ void EntityGUI_SubShapeDlg::SubShapeToggled()
 
 //=================================================================================
 // function : ComboTextChanged()
-// purpose  : 
+// purpose  :
 //=================================================================================
 void EntityGUI_SubShapeDlg::ComboTextChanged()
 {
   /* Select sub shapes mode not checked */
   updateButtonState();
-  SubShapeToggled();    
+  SubShapeToggled();
 }
 
 
@@ -448,7 +448,7 @@ unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes( const TopoDS_Shape& S,
         }
       }
     }
-  } 
+  }
   else {
     TopExp_Explorer Exp ( S, TopAbs_ShapeEnum( shapeType ) );
     for ( ; Exp.More(); Exp.Next() ) {
@@ -563,7 +563,7 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
   if (!aList->length())
     return false;
 
-  // Throw away sub-shapes not selected by user if not in preview mode 
+  // Throw away sub-shapes not selected by user if not in preview mode
   // and manual selection is active
   if (!isAllSubShapes()) {
     LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -578,7 +578,7 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
         TColStd_IndexedMapOfInteger aMapIndex;
         aSelMgr->GetIndexes(aSelList.First(), aMapIndex);
 
-        GEOM::GEOM_ILocalOperations_var aLocOp = 
+        GEOM::GEOM_ILocalOperations_var aLocOp =
           getGeomEngine()->GetILocalOperations(getStudyId());
 
         for (int i = 0, n = aList->length(); i < n; i++)
@@ -590,7 +590,7 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
   else
     for (int i = 0, n = aList->length(); i < n; i++)
       objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
-  
+
   return objects.size();
 }
 

@@ -591,12 +591,12 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurve (GEOM::GEOM_Object_ptr the
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakePointOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
                                                                CORBA::Double theLength,
-                                                               CORBA::Boolean theReverse)
+                                                               GEOM::GEOM_Object_ptr theStartPoint)
 {
   beginService( " GEOM_Superv_i::MakePointOnCurveByLength" );
   MESSAGE("GEOM_Superv_i::MakePointOnCurveByLength");
   getBasicOp();
-  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnCurveByLength(theRefCurve, theLength, theReverse);
+  GEOM::GEOM_Object_ptr anObj = myBasicOp->MakePointOnCurveByLength(theRefCurve, theLength, theStartPoint);
   endService( " GEOM_Superv_i::MakePointOnCurveByLength" );
   return anObj;
 }
@@ -2007,6 +2007,21 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEdge (GEOM::GEOM_Object_ptr thePnt1,
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeEdge(thePnt1, thePnt2);
   endService( " GEOM_Superv_i::MakeEdge" );
+  return anObj;
+}
+
+//=============================================================================
+//  MakeEdgeOnCurveByLength:
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeEdgeOnCurveByLength (GEOM::GEOM_Object_ptr theRefCurve,
+                                                              CORBA::Double theLength,
+                                                              GEOM::GEOM_Object_ptr theStartPoint)
+{
+  beginService( " GEOM_Superv_i::MakeEdgeOnCurveByLength" );
+  MESSAGE("GEOM_Superv_i::MakeEdgeOnCurveByLength");
+  getShapesOp();
+  GEOM::GEOM_Object_ptr anObj = myShapesOp->MakeEdgeOnCurveByLength(theRefCurve, theLength, theStartPoint);
+  endService( " GEOM_Superv_i::MakeEdgeOnCurveByLength" );
   return anObj;
 }
 

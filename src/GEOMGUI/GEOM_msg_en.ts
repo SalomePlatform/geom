@@ -1206,6 +1206,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Point Construction</translation>
     </message>
     <message>
+        <source>GEOM_START_POINT</source>
+        <translation>Start Point</translation>
+    </message>
+    <message>
         <source>GEOM_POLYLINE</source>
         <translation>Polyline</translation>
     </message>
@@ -2084,6 +2088,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>WRN_SHAPE_UNCLOSED</source>
         <translation>Unable to create solid from unclosed shape %1</translation>
+    </message>
+    <message>
+        <source>WRN_SHAPE_NOT_SHELL</source>
+        <translation>Unable to create solid from shape %1 as it is not a shell</translation>
+    </message>
+    <message>
+        <source>WRN_NULL_OBJECT_OR_SHAPE</source>
+        <translation>Shape %1 for solid creation is null</translation>
     </message>
     <message>
         <source>GEOM_X</source>

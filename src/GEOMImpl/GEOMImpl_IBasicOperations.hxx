@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IBasicOperations_HXX_
 #define _GEOMImpl_IBasicOperations_HXX_
@@ -44,8 +43,8 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                                         double theParameter);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByLength (Handle(GEOM_Object) theCurve,
-								double theLength,
-								bool theReverse);
+								double              theLength,
+								Handle(GEOM_Object) theStartPoint);
 
   Standard_EXPORT Handle(GEOM_Object) MakePointOnCurveByCoord (Handle(GEOM_Object) theCurve,
                                                                double theXParam,
@@ -136,7 +135,7 @@ class GEOMImpl_IBasicOperations : public GEOM_IOperations {
                                        double theParam2,
                                        double theParam3,
                                        const PointLocation theLocation,
-				       bool   theReverse = false);
+				       Handle(GEOM_Object) theRefPoint = 0);
 };
 
 #endif

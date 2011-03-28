@@ -428,13 +428,15 @@ module GEOM
     /*!
      *  Create a point, corresponding to the given length on the given curve.
      *  \param theRefCurve The referenced curve.
-     *  \param theLength Length on the referenced curve.
-     *  \param theReverse Direction for the calculation of the length (false = forward or true = reversed).
+     *  \param theLength Length on the referenced curve. It can be negative.
+     *  \param theStartPoint Any vertex close to one of edge's
+     *                       ends to select start point among them.
+     *                       If NULL, fist vertex is used.
      *  \return New GEOM_Object, containing the created point.
      */
     GEOM_Object MakePointOnCurveByLength (in GEOM_Object theRefCurve,
-                                          in double theLength,
-                                          in boolean theReverse);
+                                          in double      theLength,
+                                          in GEOM_Object theStartPoint);
 
     /*!
      *  Create a point on the given curve, projecting given point
@@ -1378,6 +1380,20 @@ module GEOM
      *  \return New GEOM_Object, containing the created edge.
      */
     GEOM_Object MakeEdge (in GEOM_Object thePnt1, in GEOM_Object thePnt2);
+
+    /*!
+     *  Create an edge on another edge, corresponding to the given length on the given edge.
+     *  \param theRefCurve The referenced edge.
+     *  \param theLength Length on the referenced edge. It can be
+     *                   negative for extrapolation on base curve.
+     *  \param theStartPoint Any vertex close to one of edge's
+     *                       ends to select start point among them.
+     *                       If NULL, fist vertex is used.
+     *  \return New GEOM_Object, containing the created edge.
+     */
+    GEOM_Object MakeEdgeOnCurveByLength (in GEOM_Object theRefCurve,
+                                         in double      theLength,
+                                         in GEOM_Object theStartPoint);
 
     /*!
      *  Create an edge from specified wire.
@@ -3159,6 +3175,13 @@ module GEOM
                                     out string     theDescription);
 
     /*!
+     *  Check if the given shape can be an argument for MakeSolid operation
+     *  \param theShape Shape to be described.
+     *  \return Empty string if a solid can be made on this shape, error code otherwise.
+     */
+    string IsGoodForSolid (in GEOM_Object theShape);
+
+    /*!
      *  Obtain description of the given shape
      *  \param theShape Shape to be described.
      *  \return Description of the given shape.
@@ -3192,6 +3215,13 @@ module GEOM
      *  \return Value of the angle between the given shapes.
      */
     double GetAngle (in GEOM_Object theShape1, in GEOM_Object theShape2);
+
+    /*!
+     *  Get angle between the given vectors.
+     *  \param theShape1,theShape2 Vectors to find angle between.
+     *  \return Value of the angle between the given vectors.
+     */
+    double GetAngleBtwVectors (in GEOM_Object theShape1, in GEOM_Object theShape2);
 
     /*!
      *  Get point coordinates

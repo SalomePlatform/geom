@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_SolidDlg.h
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #ifndef BUILDGUI_SOLIDDLG_H
 #define BUILDGUI_SOLIDDLG_H
 
@@ -52,7 +51,7 @@ protected:
 
 private:
   void                               Init();
-  bool                               isClosed( GEOM::GEOM_Object_ptr shell );
+  //bool                               isClosed( GEOM::GEOM_Object_ptr shell );
   void                               enterEvent( QEvent* );
 
 private:

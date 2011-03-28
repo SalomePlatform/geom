@@ -514,15 +514,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a point, corresponding to the given length on the given curve.
         #  @param theRefCurve The referenced curve.
-        #  @param theLength Length on the referenced curve.
-        #  @param theReverse Flag allowing to choose the direction for the calculation of the length (False = forward or True = reversed).
+        #  @param theLength Length on the referenced curve. It can be negative.
+        #  @param theStartPoint Point allowing to choose the direction for the calculation
+        #                       of the length. If None, start from the first point of theRefCurve.
         #  @return New GEOM_Object, containing the created point.
         #
         #  @ref tui_creation_point "Example"
-        def MakeVertexOnCurveByLength(self,theRefCurve, theLength, theReverse = False):
+        def MakeVertexOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None):
             # Example: see GEOM_TestAll.py
             theLength, Parameters = ParseParameters(theLength)
-            anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength, theReverse)
+            anObj = self.BasicOp.MakePointOnCurveByLength(theRefCurve, theLength, theStartPoint)
             RaiseIfFailed("MakePointOnCurveByLength", self.BasicOp)
             anObj.SetParameters(Parameters)
             return anObj
@@ -1634,6 +1635,23 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeEdge(thePnt1, thePnt2)
             RaiseIfFailed("MakeEdge", self.ShapesOp)
+            return anObj
+
+        ## Create a new edge, corresponding to the given length on the given curve.
+        #  @param theRefCurve The referenced curve (edge).
+        #  @param theLength Length on the referenced curve. It can be negative.
+        #  @param theStartPoint Any point can be selected for it, the new edge will begin
+        #                       at the end of \a theRefCurve, close to the selected point.
+        #                       If None, start from the first point of \a theRefCurve.
+        #  @return New GEOM_Object, containing the created edge.
+        #
+        #  @ref tui_creation_edge "Example"
+        def MakeEdgeOnCurveByLength(self, theRefCurve, theLength, theStartPoint = None):
+            # Example: see GEOM_TestAll.py
+            theLength, Parameters = ParseParameters(theLength)
+            anObj = self.ShapesOp.MakeEdgeOnCurveByLength(theRefCurve, theLength, theStartPoint)
+            RaiseIfFailed("MakeEdgeOnCurveByLength", self.BasicOp)
+            anObj.SetParameters(Parameters)
             return anObj
 
         ## Create an edge from specified wire.

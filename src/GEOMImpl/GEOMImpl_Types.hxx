@@ -18,10 +18,9 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //GEOM_Object types
-//
+
 #define GEOM_COPY    0
 #define GEOM_IMPORT  1
 
@@ -259,6 +258,7 @@
 #define FACE_WIRES          9
 #define REVERSE_ORIENTATION 10
 #define EDGE_WIRE           11
+#define EDGE_CURVE_LENGTH   12
 
 #define ARCHIMEDE_TYPE 1
 
