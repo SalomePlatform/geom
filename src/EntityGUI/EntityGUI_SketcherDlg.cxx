@@ -429,7 +429,7 @@ void EntityGUI_SketcherDlg::Init()
   resize(100,100);
 
   ActivateLocalCS();
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -544,7 +544,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group2Spin->show();
       Group2Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+      GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
     else if ( constructorId == 0 ){   // Point + radius
       mySketchType = PT_ABS_RADIUS;
@@ -563,7 +563,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group3Spin->show();
       Group3Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+      GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
     else if ( constructorId == 2 ){   // Point + center
       mySketchType = PT_ABS_CENTER;
@@ -586,7 +586,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group4Spin->show();
       Group4Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+      GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
 
   }
@@ -604,7 +604,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group2Spin->show();
       Group2Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+      GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
     else if ( constructorId == 0 ){   // Point + radius 
       mySketchType = PT_REL_RADIUS;
@@ -623,7 +623,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group3Spin->show();
       Group3Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+      GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
     else if ( constructorId == 2 ){   // Point + center
       mySketchType = PT_REL_CENTER;
@@ -646,7 +646,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group4Spin->show();
       Group4Spin->buttonApply->setFocus();
 
-      GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+      GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
     }
 
   }
@@ -891,7 +891,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
     }
   }
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -902,7 +902,7 @@ void EntityGUI_SketcherDlg::CheckBoxClicked(int State)
 {
   myCheckFlag = State;
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -989,7 +989,7 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   setEnabledRedo( false );
 
   myIsApply = true;
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   myIsApply = false;
 
   // Set focus to SpinBox_DX
@@ -1069,7 +1069,7 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
 
   setEnabledRedo( true );
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -1093,7 +1093,7 @@ void EntityGUI_SketcherDlg::ClickOnRedo()
   if ( myUndoCommand.count() == 1 )
     setEnabledRedo( false );
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -1327,7 +1327,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 
 
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -1446,7 +1446,7 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
      myEditCurrentArgument->setFocus();
    }
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -1744,7 +1744,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     }
   }
 
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -2120,7 +2120,7 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                             const double          lineWidth,
                                             const int             displayMode,
                                             const int             color )
-{
+{ 
   // Set color for preview shape
   getDisplayer()->SetColor( Quantity_NOC_RED );
 
