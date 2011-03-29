@@ -37,13 +37,33 @@
 #include <string>
 
 //=======================================================================
+//function : RemoveTabulation
+//purpose  : 
+//=======================================================================
+void RemoveTabulation( TCollection_AsciiString& theScript )
+{
+  std::string aString( theScript.ToCString() );
+  std::string::size_type aPos = 0;
+  while( aPos < aString.length() )
+  {
+    aPos = aString.find( "\n\t", aPos );
+    if( aPos == std::string::npos )
+      break;
+    aString.replace( aPos, 2, "\n" );
+    aPos++;
+  }
+  theScript = aString.c_str();
+}
+
+//=======================================================================
 //function : DumpPython
 //purpose  : 
 //=======================================================================
 
 Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy, 
 					 CORBA::Boolean isPublished, 
-					 CORBA::Boolean& isValidScript)
+					 CORBA::Boolean isMultiFile,
+                                         CORBA::Boolean& isValidScript)
 {
   SALOMEDS::Study_var aStudy = SALOMEDS::Study::_narrow(theStudy);
   if(CORBA::is_nil(aStudy))
@@ -98,7 +118,7 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
   }
   
   TCollection_AsciiString aScript;
-  aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isValidScript);
+  aScript += _impl->DumpPython(aStudy->StudyId(), objectDataVec, aVariableMap, isPublished, isMultiFile, isValidScript);
 
   if (isPublished)
   {
@@ -111,7 +131,12 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
     }
   }
 
-  aScript += "\n\tpass\n";
+  if( isMultiFile )
+    aScript += "\n\tpass";
+  aScript += "\n";
+
+  if( !isMultiFile ) // remove unnecessary tabulation
+    RemoveTabulation( aScript );
 
   int aLen = aScript.Length(); 
   unsigned char* aBuffer = new unsigned char[aLen+1];

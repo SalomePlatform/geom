@@ -139,6 +139,7 @@ class GEOM_Engine
                                                      std::vector<TObjectData>& theObjectData,
                                                      TVariablesList theVariables,
                                                      bool isPublished, 
+                                                     bool isMultiFile, 
                                                      bool& aValidScript);
 
   Standard_EXPORT const char* GetDumpName (const char* theStudyEntry) const;

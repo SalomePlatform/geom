@@ -252,6 +252,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
 
   virtual Engines::TMPFile* DumpPython(CORBA::Object_ptr theStudy,
                                        CORBA::Boolean isPublished,
+                                       CORBA::Boolean isMultiFile,
                                        CORBA::Boolean& isValidScript);
 
   char* GetDumpName (const char* theStudyEntry);

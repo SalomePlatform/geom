@@ -561,6 +561,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                                                 std::vector<TObjectData>& theObjectData,
                                                 TVariablesList theVariables,
                                                 bool isPublished,
+                                                bool isMultiFile, 
                                                 bool& aValidScript)
 {
   // Set "C" numeric locale to save numbers correctly
@@ -569,13 +570,22 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   TCollection_AsciiString aScript;
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
 
-  if (aDoc.IsNull()) return TCollection_AsciiString("def RebuildData(theStudy): pass\n");
+  if (aDoc.IsNull())
+  {
+    TCollection_AsciiString anEmptyScript;
+    if( isMultiFile )
+      anEmptyScript = "def RebuildData(theStudy): pass\n";
+    return anEmptyScript;
+  }
 
   aScript  = "import GEOM\n";
   aScript += "import geompy\n";
   aScript += "import math\n";
   aScript += "import SALOMEDS\n\n";
-  aScript += "def RebuildData(theStudy):";
+  if( isMultiFile )
+    aScript += "def RebuildData(theStudy):";
+  else
+    aScript += "theStudy = salome.myStudy";
   aScript += "\n\tgeompy.init_geom(theStudy)\n";
 
   AddTextures(theDocID, aScript);
