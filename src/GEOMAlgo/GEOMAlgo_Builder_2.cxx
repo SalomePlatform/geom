@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_Builder_2.cxx
 // Author:      Peter KURNEV
@@ -411,11 +410,11 @@ static
 //=======================================================================
   void GEOMAlgo_Builder::FillSameDomainFaces()
 {
-  Standard_Boolean bIsSDF, bHasImage1, bHasImage2;
+  Standard_Boolean bIsSDF, bHasImage1, bHasImage2, bForward;
   Standard_Integer i, j, aNbFF, nF1, nF2, aNbPBInOn, aNbC, aNbSE;
   Standard_Integer aNbF1, aNbF2, i2s, aNbSD;
   TopTools_MapOfShape aMFence;
-  TopTools_ListOfShape aLSempty;
+  TopTools_ListOfShape aLX1, aLX2;
   TopTools_ListIteratorOfListOfShape aItF1, aItF2;
   NMTTools_ListOfCoupleOfShape aLCS;
   //
@@ -463,12 +462,22 @@ static
     // Try to find SDF among images of nF1, nF2
     aMFence.Clear();
     //
-    //XXXXXXXXXXXXXf
+    //--------------------------------------------------------
     bHasImage1=mySplitFaces.HasImage(aF1);
     bHasImage2=mySplitFaces.HasImage(aF2);
     //
-    const TopTools_ListOfShape& aLF1r=(bHasImage1)? mySplitFaces.Image(aF1) : aLSempty;
-    const TopTools_ListOfShape& aLF2r=(bHasImage2)? mySplitFaces.Image(aF2) : aLSempty;
+    aLX1.Clear();
+    if (!bHasImage1) {
+      aLX1.Append(aF1);
+    }
+    //
+    aLX2.Clear();
+    if (!bHasImage2) {
+      aLX2.Append(aF2);
+    }
+    //
+    const TopTools_ListOfShape& aLF1r=(bHasImage1)? mySplitFaces.Image(aF1) : aLX1;
+    const TopTools_ListOfShape& aLF2r=(bHasImage2)? mySplitFaces.Image(aF2) : aLX2;
     //
     TopTools_DataMapOfIntegerShape aMIS;
     TColStd_ListIteratorOfListOfInteger aItLI;
@@ -478,8 +487,10 @@ static
     //
     aNbF1=aLF1r.Extent();
     aNbF2=aLF2r.Extent();
-    const TopTools_ListOfShape& aLF1=(aNbF1<aNbF2)? aLF1r : aLF2r;
-    const TopTools_ListOfShape& aLF2=(aNbF1<aNbF2)? aLF2r : aLF1r;
+    bForward=(aNbF1<aNbF2);
+    //
+    const TopTools_ListOfShape& aLF1=bForward ? aLF1r : aLF2r;
+    const TopTools_ListOfShape& aLF2=bForward ? aLF2r : aLF1r;
     //
     // 1. aTreeFiller
     aItF2.Initialize(aLF2);
@@ -518,10 +529,10 @@ static
       for (; aItLI.More(); aItLI.Next()) {
         i2s=aItLI.Value();
         const TopoDS_Face& aF2y=*((TopoDS_Face*)(&aMIS.Find(i2s)));
+        //
         bIsSDF=NMTTools_Tools::AreFacesSameDomain(aF1x, aF2y, aCtx);
         if (bIsSDF) {
-          if (aMFence.Contains(aF1x) ||
-              aMFence.Contains(aF2y)) {
+          if (aMFence.Contains(aF1x) || aMFence.Contains(aF2y)) {
             continue;
           }
           aMFence.Add(aF1x);
@@ -533,22 +544,37 @@ static
           aCS.SetShape2(aF2y);
           aLCS.Append(aCS);
           //
-          if (aF1x==aF1) {
-            if (!mySplitFaces.HasImage(aF1)) {
-              mySplitFaces.Bind(aF1, aF1);
+          if (bForward) {
+            if (aF1x==aF1) {
+              if (!mySplitFaces.HasImage(aF1)) {
+                mySplitFaces.Bind(aF1, aF1);
+              }
+            }
+            if (aF2y==aF2) {
+              if (!mySplitFaces.HasImage(aF2)) {
+                mySplitFaces.Bind(aF2, aF2);
+              }
             }
           }
-          if (aF2y==aF2) {
-            if (!mySplitFaces.HasImage(aF2)) {
-              mySplitFaces.Bind(aF2, aF2);
+          else {
+            if (aF1x==aF2) {
+              if (!mySplitFaces.HasImage(aF2)) {
+                mySplitFaces.Bind(aF2, aF2);
+              }
+            }
+            if (aF2y==aF1) {
+              if (!mySplitFaces.HasImage(aF1)) {
+                mySplitFaces.Bind(aF1, aF1);
+              }
             }
           }
+          //
           break;
         }//if (bIsSDF) {
       }//for (; aItLI.More(); aItLI.Next()) {
     }//for (; aItF1.More(); aItF1.Next()) {
   }//for (i=1; i<=aNbFF; ++i)
-  //XXXXXXXXXXXXXt
+  //-------------------------------------------------------------
   aNbC=aLCS.Extent();
   if (!aNbC) {
     return;
@@ -598,19 +624,19 @@ static
       continue;
     }
     //
-    aF=TopoDS::Face(aS);
+    aF=*((TopoDS_Face*)&aS);
     //
     aLFx.Clear();
     const TopTools_ListOfShape& aLF=mySplitFaces.Image(aF);
     aIt.Initialize(aLF);
     for (; aIt.More(); aIt.Next()) {
-      aFSp=TopoDS::Face(aIt.Value());
+      aFSp=*((TopoDS_Face*)(&aIt.Value()));
       if (!mySameDomainShapes.Contains(aFSp)) {
         aLFx.Append(aFSp);
       }
       else {
         const TopoDS_Shape& aSx=mySameDomainShapes.FindFromKey(aFSp);
-        aFSD=TopoDS::Face(aSx);
+        aFSD=*((TopoDS_Face*)(&aSx));
         iSense=GEOMAlgo_Tools3D::Sense(aFSp, aFSD);
         if (iSense<0) {
           aFSD.Reverse();
@@ -618,6 +644,7 @@ static
         aLFx.Append(aFSD);
       }
     }
+    //
     if (!myImages.HasImage(aF)) {
       aNbLFx=aLFx.Extent();
       if (aNbLFx==1) {
