@@ -329,7 +329,7 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 	  Standard_Real error = Abs(length2 - radius);
 	  if ( error > Precision::Confusion() ){
 	    MESSAGE("Warning : The specified end point is not on the Arc, distance = "<<error);
-	    myErrMsg = "Warning : The specified End Point is not on the Arc";
+	    myErrMsg = "GEOM_SKETCHER_WARNING";//"Warning : The specified End Point is not on the Arc";
  	  }
           if ( error > Precision::Confusion() &&                                                // Don't create the arc if the end point 
 	       control_Tolerance == 1)								// is too far from it
