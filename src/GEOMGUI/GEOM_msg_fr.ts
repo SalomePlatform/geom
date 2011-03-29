@@ -1206,6 +1206,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction d&apos;un Point </translation>
     </message>
     <message>
+        <source>GEOM_START_POINT</source>
+        <translation>Point de départ</translation>
+    </message>
+    <message>
         <source>GEOM_POLYLINE</source>
         <translation>Ligne brisée</translation>
     </message>
