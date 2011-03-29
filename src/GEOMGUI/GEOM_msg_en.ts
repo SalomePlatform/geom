@@ -1542,6 +1542,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Center :</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_WARNING</source>
+        <translation>Warning : The specified End Point is not on the Arc</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
         <translation>Center X coord. :</translation>
     </message>

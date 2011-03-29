@@ -1511,7 +1511,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ADD_PARAMS</source>
-        <translation>TODO</translation>
+        <translation>Paramètre additionnel</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ANGLE</source>
@@ -1531,11 +1531,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER</source>
-        <translation>Center</translation>
+        <translation>Centre</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER2</source>
         <translation>Centre :</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_WARNING</source>
+        <translation>Attention : Le point final choisi n'est pas sur l'arc</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
