@@ -2730,6 +2730,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Vecteurs de base et origine</translation>
     </message>
     <message>
+        <source>PREF_GROUP_OPERATIONS</source>
+        <translation>Opérations</translation>
+    </message>
+    <message>
         <source>PREF_GROUP_GENERAL</source>
         <translation>Général</translation>
     </message>
