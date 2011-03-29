@@ -122,6 +122,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 
   topLayout->addWidget(GroupBox1);
   topLayout->addWidget( MainWidget );
+  topLayout->setStretch( 1, 1);
 
   GroupPt = new EntityGUI_Point( MainWidget->DestCnt );
 
@@ -231,6 +232,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   SkeletonCntlayout->addWidget( Group2Spin, 0, 0 );
   SkeletonCntlayout->addWidget( Group3Spin, 0, 0 );
   SkeletonCntlayout->addWidget( Group4Spin, 0, 0 );
+  //SkeletonCntlayout->setStretch( 0, 1);
   /***************************************************************/
 
   QButtonGroup* ButtonGroup = new QButtonGroup( this );
@@ -238,75 +240,75 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   ButtonGroup->addButton( MainWidget->RB_Dest2, 0 );
 
   /* signals and slots connections */
-  connect( MainWidget->buttonEnd,    SIGNAL( clicked() ), this, SLOT( ClickOnEnd() ) );
-  connect( MainWidget->buttonClose,  SIGNAL( clicked() ), this, SLOT( ClickOnEnd() ) );
-  connect( MainWidget->buttonCancel, SIGNAL( clicked() ), this, SLOT( ClickOnCancel() ) );
-  connect( MainWidget->buttonHelp,   SIGNAL( clicked() ), this, SLOT( ClickOnHelp() ) );
+  connect( MainWidget->buttonEnd,    SIGNAL( clicked() ),              this, SLOT( ClickOnEnd() ) );
+  connect( MainWidget->buttonClose,  SIGNAL( clicked() ),              this, SLOT( ClickOnEnd() ) );
+  connect( MainWidget->buttonCancel, SIGNAL( clicked() ),              this, SLOT( ClickOnCancel() ) );
+  connect( MainWidget->buttonHelp,   SIGNAL( clicked() ),              this, SLOT( ClickOnHelp() ) );
 
-  connect( Group1Sel->buttonApply,   SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group1Sel->buttonUndo,    SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group1Sel->buttonRedo,    SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
-  connect( Group2Sel->buttonApply,   SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group2Sel->buttonUndo,    SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group2Sel->buttonRedo,    SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
-  connect( Group1Sel1Spin->buttonApply,   SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group1Sel1Spin->buttonUndo,    SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group1Sel1Spin->buttonRedo,    SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
-  connect( Group1Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group1Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group1Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
-  connect( Group2Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group2Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group2Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
-  connect( Group3Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group3Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group3Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) ) ;
-  connect( Group4Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
-  connect( Group4Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
-  connect( Group4Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) );
+  connect( Group1Sel->buttonApply,   SIGNAL( clicked() ),              this, SLOT( ClickOnApply() ) );
+  connect( Group1Sel->buttonUndo,    SIGNAL( clicked() ),              this, SLOT( ClickOnUndo() ) );
+  connect( Group1Sel->buttonRedo,    SIGNAL( clicked() ),              this, SLOT( ClickOnRedo() ) );
+  connect( Group2Sel->buttonApply,   SIGNAL( clicked() ),              this, SLOT( ClickOnApply() ) );
+  connect( Group2Sel->buttonUndo,    SIGNAL( clicked() ),              this, SLOT( ClickOnUndo() ) );
+  connect( Group2Sel->buttonRedo,    SIGNAL( clicked() ),              this, SLOT( ClickOnRedo() ) );
+  connect( Group1Sel1Spin->buttonApply,SIGNAL( clicked() ),            this, SLOT( ClickOnApply() ) );
+  connect( Group1Sel1Spin->buttonUndo, SIGNAL( clicked() ),            this, SLOT( ClickOnUndo() ) );
+  connect( Group1Sel1Spin->buttonRedo, SIGNAL( clicked() ),            this, SLOT( ClickOnRedo() ) );
+  connect( Group1Spin->buttonApply,  SIGNAL( clicked() ),              this, SLOT( ClickOnApply() ) );
+  connect( Group1Spin->buttonUndo,   SIGNAL( clicked() ),              this, SLOT( ClickOnUndo() ) );
+  connect( Group1Spin->buttonRedo,   SIGNAL( clicked() ),              this, SLOT( ClickOnRedo() ) );
+  connect( Group2Spin->buttonApply,  SIGNAL( clicked() ),              this, SLOT( ClickOnApply() ) );
+  connect( Group2Spin->buttonUndo,   SIGNAL( clicked() ),              this, SLOT( ClickOnUndo() ) );
+  connect( Group2Spin->buttonRedo,   SIGNAL( clicked() ),              this, SLOT( ClickOnRedo() ) );
+  connect( Group3Spin->buttonApply,  SIGNAL( clicked() ),              this, SLOT( ClickOnApply() ) );
+  connect( Group3Spin->buttonUndo,   SIGNAL( clicked() ),              this, SLOT( ClickOnUndo() ) );
+  connect( Group3Spin->buttonRedo,   SIGNAL( clicked() ),              this, SLOT( ClickOnRedo() ) ) ;
+  connect( Group4Spin->buttonApply,  SIGNAL( clicked() ),              this, SLOT( ClickOnApply() ) );
+  connect( Group4Spin->buttonUndo,   SIGNAL( clicked() ),              this, SLOT( ClickOnUndo() ) );
+  connect( Group4Spin->buttonRedo,   SIGNAL( clicked() ),              this, SLOT( ClickOnRedo() ) );
 
-  connect( MainWidget->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( TypeClicked( int ) ) );
-  connect( ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( DestClicked( int ) ) );
-  connect( GroupPt->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( PointClicked( int ) ) );
-  connect( GroupPt2->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( Point2Clicked( int ) ) );
-  connect( GroupD1->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( Dir1Clicked( int ) ) );
-  connect( GroupD2->ButtonGroup, SIGNAL( buttonClicked( int ) ), this, SLOT( Dir2Clicked( int ) ));
+  connect( MainWidget->ButtonGroup,  SIGNAL( buttonClicked( int ) ),   this, SLOT( TypeClicked( int ) ) );
+  connect( ButtonGroup,              SIGNAL( buttonClicked( int ) ),   this, SLOT( DestClicked( int ) ) );
+  connect( GroupPt->ButtonGroup,     SIGNAL( buttonClicked( int ) ),   this, SLOT( PointClicked( int ) ) );
+  connect( GroupPt2->ButtonGroup,    SIGNAL( buttonClicked( int ) ),   this, SLOT( Point2Clicked( int ) ) );
+  connect( GroupD1->ButtonGroup,     SIGNAL( buttonClicked( int ) ),   this, SLOT( Dir1Clicked( int ) ) );
+  connect( GroupD2->ButtonGroup,     SIGNAL( buttonClicked( int ) ),   this, SLOT( Dir2Clicked( int ) ));
 
-  connect( Group1Sel->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group1Sel->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group1Sel->LineEdit1,     SIGNAL( returnPressed() ),        this, SLOT( LineEditReturnPressed() ) );
+  connect( Group1Sel->PushButton1,   SIGNAL( clicked() ),              this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( Group2Sel->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2Sel->LineEdit2,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group2Sel->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group2Sel->PushButton2, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2Sel->LineEdit1,     SIGNAL( returnPressed() ),        this, SLOT( LineEditReturnPressed() ) );
+  connect( Group2Sel->LineEdit2,     SIGNAL( returnPressed() ),        this, SLOT( LineEditReturnPressed() ) );
+  connect( Group2Sel->PushButton1,   SIGNAL( clicked() ),              this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group2Sel->PushButton2,   SIGNAL( clicked() ),              this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( Group1Sel1Spin->LineEdit1,   SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  connect( Group1Sel1Spin->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
-  connect( Group1Sel1Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group1Sel1Spin->LineEdit1,SIGNAL( returnPressed() ),        this, SLOT( LineEditReturnPressed() ) );
+  connect( Group1Sel1Spin->PushButton1,SIGNAL( clicked() ),            this, SLOT( SetEditCurrentArgument() ) );
+  connect( Group1Sel1Spin->SpinBox_DX,SIGNAL( valueChanged( double ) ),this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect( Group1Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group3Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-  connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group1Spin->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2Spin->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group2Spin->SpinBox_DY,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3Spin->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3Spin->SpinBox_DY,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group3Spin->SpinBox_DZ,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DX,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DY,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DZ,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( Group4Spin->SpinBox_DS,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
-  connect( Group3Spin->checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( CheckBoxClicked( int ) ) );
-  connect( Group4Spin->checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( CheckBoxClicked( int ) ) );
-  connect( Group2Sel->checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( CheckBoxClicked( int ) ) );
-  connect( Group1Sel1Spin->checkBox, SIGNAL( stateChanged( int ) ), this, SLOT( CheckBoxClicked( int ) ) );
+  connect( Group3Spin->checkBox,     SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
+  connect( Group4Spin->checkBox,     SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
+  connect( Group2Sel->checkBox,      SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
+  connect( Group1Sel1Spin->checkBox, SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
 
-  connect( ComboBox1, SIGNAL( activated( int ) ), this, SLOT( SelectionIntoArgument() ) );
-  connect( planeButton, SIGNAL( clicked() ), this, SLOT( ActivateLocalCS() ) );
+  connect( ComboBox1,                SIGNAL( activated( int ) ),       this, SLOT( SelectionIntoArgument() ) );
+  connect( planeButton,              SIGNAL( clicked() ),              this, SLOT( ActivateLocalCS() ) );
 
-  connect( myGeometryGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
+  connect( myGeometryGUI,            SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
-  connect( myGeometryGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
-  connect( myGeometryGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+  connect( myGeometryGUI,            SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog() ) );
+  connect( myGeometryGUI,            SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
   
   // install event filter on spin-boxes to provide Apply action on Return pressed
   Group1Spin->SpinBox_DX->installEventFilter(this);
@@ -505,6 +507,7 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
     Group4Spin->checkBox->hide();
     Dir1Clicked( 2 );  // Angle
   }
+  resize( minimumSizeHint() );
 }
 
 //=================================================================================
@@ -513,10 +516,11 @@ void EntityGUI_SketcherDlg::DestClicked( int constructorId )
 //=================================================================================
 void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 {
+  MESSAGE("PointClicked")
   myConstructorPntId = constructorId;  
   GroupPt2->RB_Point1->setChecked( true );
   GroupPt->RB_Point3->setEnabled( true ); 
-  Point2Clicked( 1 );
+  Point2Clicked( 1 ); 
 }
 
 //=================================================================================
@@ -525,6 +529,7 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 //=================================================================================
 void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
 {
+  MESSAGE("Point2Clicked")
   InitClick();
 
   // Get setting of step value from file configuration
@@ -687,6 +692,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
     }
 
   }
+  resize( minimumSizeHint() );
   connect( myGeometryGUI->getApp()->selectionMgr(),
 	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
@@ -890,7 +896,7 @@ void EntityGUI_SketcherDlg::Dir2Clicked( int constructorId )
       }
     }
   }
-
+  resize( minimumSizeHint() );
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
@@ -1969,13 +1975,13 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     if ( mySketchType == PT_ABS_CENTER || 
 	 mySketchType == PT_REL_CENTER  ){
       Group4Spin->label->show();
-      Group4Spin->label->setText(QString(aProfile2.ErrMsg().c_str()));
+      Group4Spin->label->setText( tr( aProfile2.ErrMsg().c_str() ) );
     }
     else 
       Group4Spin->label->hide();
     if ( mySketchType == PT_SEL_CENTER ){
       Group2Sel->label->show();
-      Group2Sel->label->setText(QString(aProfile2.ErrMsg().c_str()));	
+      Group2Sel->label->setText( tr( aProfile2.ErrMsg().c_str() ) );	
     }
     else 
       Group2Sel->label->hide();
