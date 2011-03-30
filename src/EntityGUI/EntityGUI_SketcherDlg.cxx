@@ -559,10 +559,10 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
       Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
       Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_RADIUS2" ) ); 
-      myDX = 0.0;
-      Group3Spin->SpinBox_DX->setValue( myDX );
-      myDY = 0.0;
-      Group3Spin->SpinBox_DY->setValue( myDY );
+      myX = 0.0;
+      Group3Spin->SpinBox_DX->setValue( myX );
+      myY = 0.0;
+      Group3Spin->SpinBox_DY->setValue( myY );
       myRadius=0.0;
       Group3Spin->SpinBox_DZ->setValue( myRadius ); 
       Group3Spin->show();
@@ -576,18 +576,18 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, step, "length_precision" );
-      Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
-      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
-      Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_CENTER_X" ) );
-      Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_CENTER_Y" ) ); 
-      myDX = 0.0;
-      Group4Spin->SpinBox_DX->setValue( myDX );
-      myDY = 0.0;
-      Group4Spin->SpinBox_DY->setValue( myDY );
+      Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_X2" ) );
+      Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_Y2" ) );
+      Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_CENTER_X" ) );
+      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER_Y" ) ); 
       myXc = 0.0;
-      Group4Spin->SpinBox_DZ->setValue( myXc ); 
+      Group4Spin->SpinBox_DX->setValue( myXc );
       myYc = 0.0;
-      Group4Spin->SpinBox_DS->setValue( myYc );
+      Group4Spin->SpinBox_DY->setValue( myYc );
+      myX = 0.0;
+      Group4Spin->SpinBox_DZ->setValue( myX ); 
+      myY = 0.0;
+      Group4Spin->SpinBox_DS->setValue( myY );
       Group4Spin->show();
       Group4Spin->buttonApply->setFocus();
 
@@ -636,18 +636,18 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
       initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
       initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, step, "length_precision" );
-      Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
-      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
-      Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_CENTER_DX" ) );
-      Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_CENTER_DY" ) ); 
-      myDX = 0.0;
-      Group4Spin->SpinBox_DX->setValue( myDX );
-      myDY = 0.0;
-      Group4Spin->SpinBox_DY->setValue( myDY );
+      Group4Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_DX2" ) );
+      Group4Spin->TextLabel4->setText( tr( "GEOM_SKETCHER_DY2" ) );
+      Group4Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_CENTER_DX" ) );
+      Group4Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER_DY" ) ); 
       myDXc = 0.0;
-      Group4Spin->SpinBox_DZ->setValue( myDXc ); 
+      Group4Spin->SpinBox_DX->setValue( myDXc );
       myDYc = 0.0;
-      Group4Spin->SpinBox_DS->setValue( myDYc );
+      Group4Spin->SpinBox_DY->setValue( myDYc );
+      myDX = 0.0;
+      Group4Spin->SpinBox_DZ->setValue( myDX ); 
+      myDY = 0.0;
+      Group4Spin->SpinBox_DS->setValue( myDY );
       Group4Spin->show();
       Group4Spin->buttonApply->setFocus();
 
@@ -680,8 +680,8 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
     else if ( constructorId == 2 ){   // Point + center 
       mySketchType = PT_SEL_CENTER;
       myEditCurrentArgument = Group2Sel->LineEdit1;
-      Group2Sel->TextLabel1->setText( tr( "GEOM_SKETCHER_END_POINT2" ) );  
-      Group2Sel->TextLabel2->setText( tr( "GEOM_SKETCHER_CENTER2" ) );
+      Group2Sel->TextLabel2->setText( tr( "GEOM_SKETCHER_END_POINT2" ) );  
+      Group2Sel->TextLabel1->setText( tr( "GEOM_SKETCHER_CENTER2" ) );
       Group2Sel->LineEdit1->setEnabled(true);
       Group2Sel->PushButton1->setDown(true);
       Group2Sel->LineEdit2->setEnabled(false);
@@ -1255,27 +1255,27 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 
         gp_Pnt aPnt;
         if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-          myX = aPnt.X();
-          myY = aPnt.Y();
+          myXc = aPnt.X();
+          myYc = aPnt.Y();
           Group2Sel->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
           if( Group4Spin->isVisible() && mySketchType == PT_ABS ) {
             disconnect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             disconnect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            Group4Spin->SpinBox_DX->setValue(myX);
-            Group4Spin->SpinBox_DY->setValue(myY);
+            Group4Spin->SpinBox_DX->setValue(myXc);
+            Group4Spin->SpinBox_DY->setValue(myYc);
             connect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
           } else if ( Group4Spin->isVisible() && mySketchType == PT_RELATIVE ) {
             if ( myLastX1 && myLastY1 ) {
-              Group4Spin->SpinBox_DX->setValue(myX - myLastX1);
-              Group4Spin->SpinBox_DY->setValue(myY - myLastY1);
+              Group4Spin->SpinBox_DX->setValue(myXc - myLastX1);
+              Group4Spin->SpinBox_DY->setValue(myYc - myLastY1);
             } else {
               if ( mySketchState != FIRST_POINT ) {
-                Group4Spin->SpinBox_DX->setValue(myX - tmpX);
-                Group4Spin->SpinBox_DY->setValue(myY - tmpY);
+                Group4Spin->SpinBox_DX->setValue(myXc - tmpX);
+                Group4Spin->SpinBox_DY->setValue(myYc - tmpY);
               } else {
-                Group4Spin->SpinBox_DX->setValue(myX);
-                Group4Spin->SpinBox_DY->setValue(myY);
+                Group4Spin->SpinBox_DX->setValue(myXc);
+                Group4Spin->SpinBox_DY->setValue(myYc);
               }
             }
           }
@@ -1302,27 +1302,27 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 
         gp_Pnt aPnt;
         if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-          myXc = aPnt.X();
-          myYc = aPnt.Y();
+          myX = aPnt.X();
+          myY = aPnt.Y();
           Group2Sel->LineEdit2->setText( GEOMBase::GetName( aSelectedObject ) );
           if( Group4Spin->isVisible() && mySketchType == PT_ABS ) {
             disconnect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             disconnect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            Group4Spin->SpinBox_DZ->setValue(myXc);
-            Group4Spin->SpinBox_DS->setValue(myYc);
+            Group4Spin->SpinBox_DZ->setValue(myX);
+            Group4Spin->SpinBox_DS->setValue(myY);
             connect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
           } else if ( Group4Spin->isVisible() && mySketchType == PT_RELATIVE ) {
             if ( myLastX1 && myLastY1 ) {
-              Group4Spin->SpinBox_DZ->setValue(myXc - myLastX1);
-              Group4Spin->SpinBox_DS->setValue(myYc - myLastY1);
+              Group4Spin->SpinBox_DZ->setValue(myX - myLastX1);
+              Group4Spin->SpinBox_DS->setValue(myY - myLastY1);
             } else {
               if ( mySketchState != FIRST_POINT ) {
-                Group4Spin->SpinBox_DZ->setValue(myXc - tmpX);
-                Group4Spin->SpinBox_DS->setValue(myYc - tmpY);
+                Group4Spin->SpinBox_DZ->setValue(myX - tmpX);
+                Group4Spin->SpinBox_DS->setValue(myY - tmpY);
               } else {
-                Group4Spin->SpinBox_DZ->setValue(myXc);
-                Group4Spin->SpinBox_DS->setValue(myYc);
+                Group4Spin->SpinBox_DZ->setValue(myX);
+                Group4Spin->SpinBox_DS->setValue(myY);
               }
             }
           }
@@ -1699,24 +1699,24 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       myRadiusStr = vxStr;
     }
     if ( mySketchType == PT_ABS_CENTER ) {  
-      myX = vx;
-      myY = vy;
-      myXc = vz;
-      myYc = vs;
-      myXStr = vxStr;
-      myYStr = vyStr;
-      myXcStr = vzStr;
-      myYcStr = vsStr;
+      myXc = vx;
+      myYc = vy;
+      myX = vz;
+      myY = vs;
+      myXcStr = vxStr;
+      myYcStr = vyStr;
+      myXStr = vzStr;
+      myYStr = vsStr;
     }
     else if ( mySketchType == PT_REL_CENTER ) {
-      myDX = vx;
-      myDY = vy;
-      myDXc = vz;
-      myDYc = vs;
-      myDXStr = vxStr;
-      myDYStr = vyStr;
-      myDXcStr = vzStr;
-      myDYcStr = vsStr;
+      myDXc = vx;
+      myDYc = vy;
+      myDX = vz;
+      myDY = vs;
+      myDXcStr = vxStr;
+      myDYcStr = vyStr;
+      myDXStr = vzStr;
+      myDYStr = vsStr;
     }
     if ( mySketchType == DIR_ANGLE_LENGTH ) {
       myAngle = vx;
