@@ -1615,7 +1615,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_END_POINT2</source>
-        <translation>End Point :</translation>
+        <translation>Point d'arrivée :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RADIUS</source>
