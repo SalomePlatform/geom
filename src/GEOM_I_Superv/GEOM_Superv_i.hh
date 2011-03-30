@@ -347,8 +347,8 @@ public:
   void Export (GEOM::GEOM_Object_ptr theObject,
                const char*           theFileName,
                const char*           theFormatName);
-  GEOM::GEOM_Object_ptr Import (const char* theFileName,
-                                const char* theFormatName);
+  GEOM::GEOM_Object_ptr ImportFile (const char* theFileName,
+                                    const char* theFormatName);
   void ImportTranslators (GEOM::string_array_out theFormats,
                           GEOM::string_array_out thePatterns);
   void ExportTranslators (GEOM::string_array_out theFormats,

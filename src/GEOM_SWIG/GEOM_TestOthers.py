@@ -77,7 +77,7 @@ def TestExportImport (geompy, shape):
   geompy.ExportSTEP(shape, fileExportImportSTEP)
 
   # Import
-  Import = geompy.Import(fileExportImport, "BREP")
+  Import = geompy.ImportFile(fileExportImport, "BREP")
 
   id_Import = geompy.addToStudy(Import, "Import")
 

@@ -1495,14 +1495,14 @@ void GEOM_Superv_i::Export (GEOM::GEOM_Object_ptr theObject,
 //=============================================================================
 //  Import:
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::Import (const char* theFileName,
-                                             const char* theFormatName)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::ImportFile (const char* theFileName,
+                                                 const char* theFormatName)
 {
-  beginService( " GEOM_Superv_i::Import" );
-  MESSAGE("GEOM_Superv_i::Import");
+  beginService( " GEOM_Superv_i::ImportFile" );
+  MESSAGE("GEOM_Superv_i::ImportFile");
   getInsOp();
-  GEOM::GEOM_Object_ptr anObj = myInsOp->Import(theFileName, theFormatName);
-  endService( " GEOM_Superv_i::Import" );
+  GEOM::GEOM_Object_ptr anObj = myInsOp->ImportFile(theFileName, theFormatName);
+  endService( " GEOM_Superv_i::ImportFile" );
   return anObj;
 }
 

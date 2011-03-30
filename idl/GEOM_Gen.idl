@@ -2939,7 +2939,7 @@ module GEOM
      *         set to 'meter' and result model will be scaled.
      *  \return New GEOM_Object, containing the imported shape.
      */
-    GEOM_Object Import (in string theFileName, in string theFormatName);
+    GEOM_Object ImportFile (in string theFileName, in string theFormatName);
 
     /*!
      *  Get the supported import formats and corresponding patterns for File dialog.

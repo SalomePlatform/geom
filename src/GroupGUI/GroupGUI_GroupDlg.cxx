@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GroupGUI_GroupDlg.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
 #include "GroupGUI_GroupDlg.h"
 
 #include <DlgRef.h>
@@ -169,7 +168,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   aMedLayout->addWidget(myAddBtn,           6, 3);
   aMedLayout->addWidget(myRemBtn,           7, 3);
 
-  aMedLayout->setColumnStretch( 2, 5 );
+  aMedLayout->setColumnStretch(2, 5);
   aMedLayout->setRowStretch(5, 5);
   aMedLayout->setRowStretch(8, 5);
 
@@ -214,9 +213,9 @@ void GroupGUI_GroupDlg::Init()
 
     if (aSelList.Extent()) {
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First());
 
-      if ( !CORBA::is_nil(anObj) && anObj->GetType() == GEOM_GROUP ) {
+      if (!CORBA::is_nil(anObj) && anObj->GetType() == GEOM_GROUP) {
         myGroup = anObj;
 
         mainFrame()->ResultName->setText(GEOMBase::GetName(myGroup));
@@ -287,7 +286,7 @@ void GroupGUI_GroupDlg::closeEvent(QCloseEvent* e)
 //=================================================================================
 void GroupGUI_GroupDlg::ClickOnOk()
 {
-  setIsApplyAndClose( true );
+  setIsApplyAndClose(true);
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -377,8 +376,8 @@ void GroupGUI_GroupDlg::onGetInPlace()
     return;
 
   GEOM::GEOM_Object_var anObj =
-    GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-  if ( GEOMBase::IsShape(anObj) ) {
+    GEOMBase::ConvertIOinGEOMObject(aSelList.First());
+  if (GEOMBase::IsShape(anObj)) {
     if (!anObj->_is_equivalent(myMainObj) && !anObj->_is_equivalent(myGroup)) {
       SUIT_OverrideCursor wc;
       myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
@@ -455,9 +454,9 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
 
     if (nbSel == 1) {
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First());
 
-      if ( GEOMBase::IsShape(anObj) ) {
+      if (GEOMBase::IsShape(anObj)) {
         myMainObj = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         // activate subshapes selection by default
@@ -471,7 +470,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
     }
   }
   else { // an attempt to synchronize list box selection with 3d viewer
-    if ( myBusy || myMainObj->_is_nil() ) {
+    if (myBusy || myMainObj->_is_nil()) {
       return;
     }
 
@@ -494,7 +493,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
           highlight = true;
         }
       }
-      if ( highlight )
+      if (highlight)
         highlightSubShapes();
     }
     myIdList->blockSignals(isBlocked);
@@ -615,7 +614,7 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
   theMapIndex.Clear();
 
   SalomeApp_Application* app = myGeomGUI->getApp();
-  if ( !app || myMainObj->_is_nil() )
+  if (!app || myMainObj->_is_nil())
     return 0;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
@@ -851,7 +850,7 @@ void GroupGUI_GroupDlg::updateState (bool isAdd)
   myRestrictGroupBox->setEnabled(!CORBA::is_nil(myMainObj));
   mySelAllBtn->setEnabled(!CORBA::is_nil(myMainObj));
 
-  mySelBtn2->setEnabled(   subSelectionWay() != ALL_SUBSHAPES);
+  mySelBtn2->setEnabled(subSelectionWay() != ALL_SUBSHAPES);
   myShape2Name->setEnabled(subSelectionWay() != ALL_SUBSHAPES);
   if (subSelectionWay() == ALL_SUBSHAPES)
     setInPlaceObj(GEOM::GEOM_Object::_nil());
@@ -930,10 +929,10 @@ void GroupGUI_GroupDlg::highlightSubShapes()
     CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
     QString anEntry = aMainEntry.in();
     _PTR(SObject) aSObj (aStudy->FindObjectID(anEntry.toLatin1().constData()));
-    _PTR(ChildIterator) anIt ( aStudy->NewChildIterator( aSObj ) );
-    for ( anIt->InitEx( true ); anIt->More(); anIt->Next() ) {
+    _PTR(ChildIterator) anIt (aStudy->NewChildIterator(aSObj));
+    for (anIt->InitEx(true); anIt->More(); anIt->Next()) {
       GEOM::GEOM_Object_var aChild = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(anIt->Value()));
-      if ( !CORBA::is_nil( aChild ) ) {
+      if (!CORBA::is_nil(aChild)) {
         int index = aLocOp->GetSubShapeIndex(myMainObj, aChild);
         CORBA::String_var aChildEntry = aChild->GetStudyEntry();
         QString anEntry = aChildEntry.in();
@@ -952,13 +951,13 @@ void GroupGUI_GroupDlg::highlightSubShapes()
         int index = anEntry.lastIndexOf("_");
         anEntry.remove(0, index+1);
         int anIndex = anEntry.toInt();
-        if ( anIds.Contains(anIndex) ) {
+        if (anIds.Contains(anIndex)) {
           aSelList.Append(anIO);
-          if ( childsMap.contains ( anIndex )) {
-            Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject( childsMap.value(anIndex).toLatin1().constData(), "GEOM", "TEMP_IO" );
+          if (childsMap.contains (anIndex)) {
+            Handle(SALOME_InteractiveObject) tmpIO = new SALOME_InteractiveObject(childsMap.value(anIndex).toLatin1().constData(), "GEOM", "TEMP_IO");
             aSelList.Append(tmpIO);
           }
-        } 
+        }
       }
     }
   }
@@ -1075,7 +1074,7 @@ bool GroupGUI_GroupDlg::execute(ObjectList& objects)
 //================================================================
 // Function : getFather
 // Purpose  : Get father object for object to be added in study
-//            ( called with addInStudy method )
+//            (called with addInStudy method)
 //================================================================
 GEOM::GEOM_Object_ptr GroupGUI_GroupDlg::getFather(GEOM::GEOM_Object_ptr theObj)
 {

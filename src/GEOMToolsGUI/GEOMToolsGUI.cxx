@@ -634,7 +634,7 @@ bool GEOMToolsGUI::Import()
 
       // skl 29.05.2009
       if ( aCurrentType == "IGES" ) {
-        GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, "IGES_UNIT" );
+        GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, "IGES_UNIT" );
         bool needConvert = false;
         TCollection_AsciiString aUnitName = aInsOp->GetErrorCode();
         if ( aUnitName.SubString( 1, 4 ) == "UNIT" )
@@ -682,7 +682,7 @@ bool GEOMToolsGUI::Import()
         } // if ( acisAnswer != YesToAll && acisAnswer != NoToAll )
       } // else if ( aCurrentType == "ACIS" )
       
-      GEOM::GEOM_Object_var anObj = aInsOp->Import( fileN, fileT );
+      GEOM::GEOM_Object_var anObj = aInsOp->ImportFile( fileN, fileT );
 
       if ( !anObj->_is_nil() && aInsOp->IsDone() ) {
         QString aPublishObjName = 

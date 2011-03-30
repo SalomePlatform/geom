@@ -243,7 +243,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   //Make a Python command
   if( theFormatName != "IGES_UNIT" ) {
-    GEOM::TPythonDump(aFunction) << result << " = geompy.Import(\""
+    GEOM::TPythonDump(aFunction) << result << " = geompy.ImportFile(\""
       << theFileName.ToCString() << "\", \"" << theFormatName.ToCString() << "\")";
   }
 

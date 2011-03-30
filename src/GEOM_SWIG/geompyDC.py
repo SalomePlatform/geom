@@ -3738,32 +3738,39 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing the imported shape.
         #
         #  @ref swig_Import_Export "Example"
-        def Import(self,theFileName, theFormatName):
+        def ImportFile(self,theFileName, theFormatName):
             # Example: see GEOM_TestOthers.py
-            anObj = self.InsertOp.Import(theFileName, theFormatName)
+            anObj = self.InsertOp.ImportFile(theFileName, theFormatName)
             RaiseIfFailed("Import", self.InsertOp)
             return anObj
 
-        ## Shortcut to Import() for BREP format
+        ## Deprecated analog of ImportFile
+        def Import(self,theFileName, theFormatName):
+            print "WARNING: Function Import is deprecated, use ImportFile instead"
+            anObj = self.InsertOp.ImportFile(theFileName, theFormatName)
+            RaiseIfFailed("Import", self.InsertOp)
+            return anObj
+
+        ## Shortcut to ImportFile() for BREP format
         #
         #  @ref swig_Import_Export "Example"
         def ImportBREP(self,theFileName):
             # Example: see GEOM_TestOthers.py
-            return self.Import(theFileName, "BREP")
+            return self.ImportFile(theFileName, "BREP")
 
-        ## Shortcut to Import() for IGES format
+        ## Shortcut to ImportFile() for IGES format
         #
         #  @ref swig_Import_Export "Example"
         def ImportIGES(self,theFileName):
             # Example: see GEOM_TestOthers.py
-            return self.Import(theFileName, "IGES")
+            return self.ImportFile(theFileName, "IGES")
 
         ## Return length unit from given IGES file
         #
         #  @ref swig_Import_Export "Example"
         def GetIGESUnit(self,theFileName):
             # Example: see GEOM_TestOthers.py
-            anObj = self.InsertOp.Import(theFileName, "IGES_UNIT")
+            anObj = self.InsertOp.ImportFile(theFileName, "IGES_UNIT")
             #RaiseIfFailed("Import", self.InsertOp)
             # recieve name using returned vertex
             UnitName = "M"
@@ -3779,12 +3786,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                     UnitName = "MM"
             return UnitName
 
-        ## Shortcut to Import() for STEP format
+        ## Shortcut to ImportFile() for STEP format
         #
         #  @ref swig_Import_Export "Example"
         def ImportSTEP(self,theFileName):
             # Example: see GEOM_TestOthers.py
-            return self.Import(theFileName, "STEP")
+            return self.ImportFile(theFileName, "STEP")
 
         ## Export the given shape into a file with given name.
         #  @param theObject Shape to be stored in the file.

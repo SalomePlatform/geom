@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GroupGUI_GroupDlg.h
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
 #ifndef GROUPGUI_GROUPDLG_H
 #define GROUPGUI_GROUPDLG_H
 
@@ -52,17 +51,17 @@ public:
     EditGroup
   } Mode;
 
-  GroupGUI_GroupDlg( Mode mode, GeometryGUI*, QWidget* parent = 0 );
+  GroupGUI_GroupDlg (Mode mode, GeometryGUI*, QWidget* parent = 0);
   ~GroupGUI_GroupDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr  createOperation();
-  virtual bool                        isValid( QString& );
-  virtual bool                        execute( ObjectList& );
-  virtual GEOM::GEOM_Object_ptr       getFather( GEOM::GEOM_Object_ptr );
+  virtual bool                        isValid (QString&);
+  virtual bool                        execute (ObjectList&);
+  virtual GEOM::GEOM_Object_ptr       getFather (GEOM::GEOM_Object_ptr);
 
-  void                                closeEvent( QCloseEvent* );
+  void                                closeEvent (QCloseEvent*);
 
 private slots:
   void                                ClickOnOk();
@@ -70,7 +69,7 @@ private slots:
   void                                ActivateThisDialog();
   void                                SelectionIntoArgument();
   void                                SetEditCurrentArgument();
-  void                                ConstructorsClicked( int );
+  void                                ConstructorsClicked(int);
 
   void                                selectAllSubShapes();
   void                                add();
@@ -80,15 +79,16 @@ private slots:
 
 private:
   void                                Init();
-  void                                enterEvent( QEvent* );
+  void                                enterEvent (QEvent*);
+
   int                                 subSelectionWay() const;
   TopAbs_ShapeEnum                    getShapeType() const;
-  void                                setShapeType( const TopAbs_ShapeEnum );
+  void                                setShapeType (const TopAbs_ShapeEnum);
   void                                activateSelection();
-  void                                updateState(bool isAdd = false);
+  void                                updateState (bool isAdd = false);
   void                                highlightSubShapes();
   void                                onGetInPlace();
-  void                                setInPlaceObj( GEOM::GEOM_Object_var, const bool isVisible=1);
+  void                                setInPlaceObj (GEOM::GEOM_Object_var, const bool isVisible=1);
   int                                 getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMapIndex);
 
 private:

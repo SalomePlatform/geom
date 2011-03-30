@@ -257,7 +257,7 @@ module GEOM
     //-----------------------------------------------------------//
     GEOM_Object MakeCopy (in GEOM_Object theOriginal) ;
     void Export (in GEOM_Object theObject, in string theFileName, in string theFormatName) ;
-    GEOM_Object Import (in string theFileName, in string theFormatName) ;
+    GEOM_Object ImportFile (in string theFileName, in string theFormatName) ;
     void ImportTranslators (out string_array theFormats,
                             out string_array thePatterns) ;
     void ExportTranslators (out string_array theFormats,

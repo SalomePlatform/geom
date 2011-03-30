@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -115,10 +114,10 @@ void GEOM_IInsertOperations_i::Export
 
 //=============================================================================
 /*!
- *  Import
+ *  ImportFile
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::Import
+GEOM::GEOM_Object_ptr GEOM_IInsertOperations_i::ImportFile
                    (const char* theFileName,
                     const char* theFormatName)
 {
@@ -225,7 +224,7 @@ CORBA::Long GEOM_IInsertOperations_i::LoadTexture(const char* theTextureFile)
 }
 
 CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Long theHeight,
-						 const SALOMEDS::TMPFile& theTexture)
+                                                 const SALOMEDS::TMPFile& theTexture)
 {
   GetOperations()->SetNotDone();
   Handle(TDataStd_HArray1OfByte) aTexture;
@@ -237,9 +236,9 @@ CORBA::Long GEOM_IInsertOperations_i::AddTexture(CORBA::Long theWidth, CORBA::Lo
   return GetOperations()->AddTexture( theWidth, theHeight, aTexture );
 }
 
-SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID, 
-							CORBA::Long& theWidth,
-							CORBA::Long& theHeight)
+SALOMEDS::TMPFile* GEOM_IInsertOperations_i::GetTexture(CORBA::Long theID,
+                                                        CORBA::Long& theWidth,
+                                                        CORBA::Long& theHeight)
 {
   int aWidth, aHeight;
   Handle(TDataStd_HArray1OfByte) aTextureImpl = GetOperations()->GetTexture( theID, aWidth, aHeight );
