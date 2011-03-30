@@ -745,7 +745,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       globalVars += ", ";
     globalVars += data->_pyName;
   }
-  if ( !globalVars.IsEmpty() ) {
+  if ( isMultiFile && !globalVars.IsEmpty() ) {
     globalVars.Insert( 1, "\n\tglobal " );
     aScript.Insert( posToInsertGlobalVars, globalVars );
   }
