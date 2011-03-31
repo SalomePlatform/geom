@@ -406,6 +406,10 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 //=================================================================================
 void EntityGUI_SubShapeDlg::SubShapeToggled()
 {
+  GroupPoints->PushButton2->setEnabled(!isAllSubShapes());
+  GroupPoints->PushButton3->setEnabled(!isAllSubShapes());
+  GroupPoints->PushButton4->setEnabled(!isAllSubShapes());
+
   activateSelection();
 }
 
