@@ -98,6 +98,9 @@ public:
                             const bool forced = false,
                             const bool updateViewer = true );
 
+  void          EraseWithChildren(const Handle(SALOME_InteractiveObject)& theIO,
+				  const bool eraseOnlyChildren = false);
+
   /* Display/Erase list of objects methods */
 
   void          Display   ( const SALOME_ListIO& theIOList,

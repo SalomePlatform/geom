@@ -48,9 +48,11 @@
 #include <SUIT_ViewManager.h>
 #include <SUIT_ResourceMgr.h>
 
+
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+#include <LightApp_DataObject.h>
 #include <SalomeApp_TypeFilter.h>
 #include <SalomeApp_Tools.h>
 
@@ -1815,4 +1817,57 @@ SALOMEDS::Color GEOM_Displayer::getColor(GEOM::GEOM_Object_var theGeomObject, bo
     }
   }
   return aSColor;
+}
+
+
+void GEOM_Displayer::EraseWithChildren(const Handle(SALOME_InteractiveObject)& theIO,
+				       const bool eraseOnlyChildren) {
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if ( !app )
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( !appStudy )
+    return;
+
+  LightApp_DataObject* parent = appStudy->findObjectByEntry(theIO->getEntry());
+  
+  if( !parent)
+    return;
+
+  // Erase from all views
+  QList<SALOME_View*> views;
+  SALOME_View* view;
+  ViewManagerList vmans = app->viewManagers();
+  SUIT_ViewManager* vman;
+  foreach ( vman, vmans ) {
+    SUIT_ViewModel* vmod = vman->getViewModel();
+    view = dynamic_cast<SALOME_View*> ( vmod );
+    if ( view ) 
+      views.append( view );
+  }
+  
+  if( views.count() == 0 )
+    return;
+  
+  //Erase childrens w/o update views
+  DataObjectList listObj = parent->children( true );
+  SUIT_DataObject* obj;
+  foreach( obj, listObj ) {
+    LightApp_DataObject* l_obj = dynamic_cast<LightApp_DataObject*>(obj);
+    if(l_obj)
+      foreach ( view, views ) {
+      Handle(SALOME_InteractiveObject) anIO = 
+	new SALOME_InteractiveObject(qPrintable(l_obj->entry()), "GEOM", "");
+      Erase(anIO, false, false, view);
+    }
+  }
+  
+  //Erase parent with view update or repaint views
+  foreach ( view, views ) {
+    if(!eraseOnlyChildren)
+      Erase(theIO, false, true, view);
+    else
+      view->Repaint();
+  }
 }

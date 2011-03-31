@@ -358,6 +358,8 @@ void GeometryGUI::OnGUIEvent( int id )
                              << GEOMOp::OpShowOnly
                              << GEOMOp::OpShowChildren
                              << GEOMOp::OpHideChildren
+                             << GEOMOp::OpUnpublishObject
+                             << GEOMOp::OpPublishObject
                              << GEOMOp::OpPointMarker;
   if ( !ViewOCC && !ViewVTK && !NotViewerDependentCommands.contains( id ) )
       return;
@@ -398,6 +400,8 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpNoAutoColor:      // POPUP MENU - DISABLE AUTO COLOR
   case GEOMOp::OpShowChildren:     // POPUP MENU - SHOW CHILDREN
   case GEOMOp::OpHideChildren:     // POPUP MENU - HIDE CHILDREN
+  case GEOMOp::OpUnpublishObject:  // POPUP MENU - UNPUBLISH
+  case GEOMOp::OpPublishObject:    // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
   case GEOMOp::OpPointMarker:      // POPUP MENU - POINT MARKER
   case GEOMOp::OpRename:           // POPUP MENU - RENAME
     libName = "GEOMToolsGUI";
@@ -785,6 +789,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpGroupCreatePopup, "POP_CREATE_GROUP" );
   createGeomAction( GEOMOp::OpShowChildren,     "POP_SHOW_CHILDREN" );
   createGeomAction( GEOMOp::OpHideChildren,     "POP_HIDE_CHILDREN" );
+  createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
+  createGeomAction( GEOMOp::OpPublishObject,    "POP_PUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
@@ -975,6 +981,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpShowAll, viewId, -1 );
   createMenu( GEOMOp::OpHideAll, viewId, -1 );
   createMenu( separator(),       viewId, -1 );
+  createMenu( GEOMOp::OpPublishObject, viewId, -1 );
+  createMenu( separator(),       viewId, -1 );
 
 /*
   PAL9111:
@@ -1091,6 +1099,7 @@ void GeometryGUI::initialize( CAM_Application* app )
     "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
 
   QtxPopupMgr* mgr = popupMgr();
+
   mgr->insert( action(  GEOMOp::OpRename ), -1, -1 );  // rename
   mgr->setRule( action( GEOMOp::OpRename ), QString("$type in {'Shape' 'Group'} and selcount=1"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDelete ), -1, -1 );  // delete
@@ -1099,6 +1108,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpGroupCreatePopup ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpShowChildren ), -1, -1 ); // show children
   mgr->setRule( action( GEOMOp::OpShowChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasHiddenChildren=true"), QtxPopupMgr::VisibleRule );
+
   mgr->insert( action(  GEOMOp::OpHideChildren ), -1, -1 ); // hide children
   mgr->setRule( action( GEOMOp::OpHideChildren ), QString("client='ObjectBrowser' and type='Shape' and selcount=1 and hasShownChildren=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupEdit ), -1, -1 );  // edit group
@@ -1179,6 +1189,15 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(GEOMOp::OpShowOnly ), -1, -1 ); // display only
   mgr->setRule(action(GEOMOp::OpShowOnly ), rule.arg( types ).arg( "true" ), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );
+
+  mgr->insert( separator(), -1, -1 );     // -----------
+  mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
+  mgr->setRule( action( GEOMOp::OpUnpublishObject ), QString("client='ObjectBrowser' and $type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
+
+
+  mgr->insert( action(  GEOMOp::OpPublishObject ), -1, -1 ); // Publish object
+  mgr->setRule( action( GEOMOp::OpPublishObject ), QString("client='ObjectBrowser' and isComponent=true"), QtxPopupMgr::VisibleRule );
+
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 }

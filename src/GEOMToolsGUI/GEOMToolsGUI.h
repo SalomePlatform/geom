@@ -73,6 +73,8 @@ private:
   void         OnDeflection();
   void         OnSelectOnly(int mode);
   void         OnShowHideChildren( bool );
+  void         OnUnpublishObject();
+  void         OnPublishObject() ;
   void         OnPointMarker();
 
   // Shortcut commands

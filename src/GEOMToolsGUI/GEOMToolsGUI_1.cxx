@@ -31,6 +31,7 @@
 #include "GEOMToolsGUI_NbIsosDlg.h"
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include "GEOMToolsGUI_MarkerDlg.h"
+#include "GEOMToolsGUI_PublishDlg.h"
 
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
@@ -795,7 +796,12 @@ void GEOMToolsGUI::OnShowHideChildren( bool show )
   SALOME_ListIO selected;
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
+  
+  SalomeApp_Module* mod = app ? dynamic_cast<SalomeApp_Module*>(app->activeModule()) : 0;
+  
+  GEOM_Displayer* disp  = mod ? dynamic_cast<GEOM_Displayer*>(mod->displayer()) : 0;
+
+  if ( app && disp ) {
     LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
     SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
     if ( aSelMgr && appStudy ) {
@@ -820,6 +826,8 @@ void GEOMToolsGUI::OnShowHideChildren( bool show )
           if ( obj ) {
             _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
             aExp->SetExpandable( show );
+	    if(!show)
+	      disp->EraseWithChildren(IObject,true);
           } // if ( obj )
         } // iterator
       }
@@ -833,4 +841,79 @@ void GEOMToolsGUI::OnPointMarker()
 {
   GEOMToolsGUI_MarkerDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
   dlg.exec();
+}
+
+
+void GEOMToolsGUI::OnUnpublishObject() {
+  SALOME_ListIO selected;
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+
+  SalomeApp_Module* mod = app ? dynamic_cast<SalomeApp_Module*>(app->activeModule()) : 0;
+
+  GEOM_Displayer* disp  = mod ? dynamic_cast<GEOM_Displayer*>(mod->displayer()) : 0;
+  
+  if ( app && disp ) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+    if ( aSelMgr && appStudy ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+        _PTR(Study) aStudy = appStudy->studyDS();
+        _PTR(StudyBuilder) B = aStudy->NewBuilder();
+
+        bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+        if ( aLocked ) {
+          SUIT_MessageBox::warning( app->desktop(),
+                                    QObject::tr( "WRN_WARNING" ),
+                                    QObject::tr( "WRN_STUDY_LOCKED" ) );
+          return;
+        }
+
+        for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+          Handle(SALOME_InteractiveObject) IObject = It.Value();
+
+          _PTR(SObject) obj ( aStudy->FindObjectID( IObject->getEntry() ) );
+          _PTR(GenericAttribute) anAttr;
+          if ( obj ) {
+            _PTR(AttributeDrawable) aDrw = B->FindOrCreateAttribute( obj, "AttributeDrawable" );
+            aDrw->SetDrawable( false );
+	    disp->EraseWithChildren(IObject);
+          } // if ( obj )
+        } // iterator
+        aSelMgr->clearSelected();
+      }
+    }
+    app->updateObjectBrowser( false );
+    app->updateActions();
+  }
+ 
+}
+
+void GEOMToolsGUI::OnPublishObject() {
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  if(!app)
+    return;
+
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if(!appStudy)
+    return;
+  
+  _PTR(Study) aStudy = appStudy->studyDS();
+  
+  if(!aStudy)
+    return;
+
+  //Check lock of the study
+  bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
+  if ( aLocked ) {
+    SUIT_MessageBox::warning( app->desktop(),
+			      QObject::tr( "WRN_WARNING" ),
+			      QObject::tr( "WRN_STUDY_LOCKED" ) );
+    return;
+  } 
+  
+  GEOMToolsGUI_PublishDlg * publishDlg =
+    new GEOMToolsGUI_PublishDlg( SUIT_Session::session()->activeApplication()->desktop() );
+  publishDlg->exec();
 }

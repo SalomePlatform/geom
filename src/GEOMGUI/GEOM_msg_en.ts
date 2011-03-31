@@ -2474,6 +2474,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Hide Children</translation>
     </message>
     <message>
+        <source>MEN_POP_UNPUBLISH_OBJ</source>
+        <translation>Unpublish</translation>
+    </message>
+    <message>
+        <source>MEN_POP_PUBLISH_OBJ</source>
+        <translation>Publish...</translation>
+    </message>			    			    
+    <message>
         <source>MEN_POP_ISOS</source>
         <translation>Isos</translation>
     </message>
@@ -3110,6 +3118,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show child objects</translation>
     </message>
     <message>
+        <source>STB_POP_UNPUBLISH_OBJ</source>
+	<translation>Unpublish object</translation>
+   </message>
+    <message>
+        <source>STB_POP_PUBLISH_OBJ</source>
+        <translation>Publish object</translation>
+   </message>		          			    
+    <message>
         <source>STB_POP_HIDE_CHILDREN</source>
         <translation>Hide child objects</translation>
     </message>
@@ -3637,6 +3653,14 @@ Please, select face, shell or solid and try again</translation>
         <source>TOP_POP_SHOW_CHILDREN</source>
         <translation>Show Children</translation>
     </message>
+    <message>
+        <source>TOP_POP_UNPUBLISH_OBJ</source>
+        <translation>Unpublish object</translation>
+    </message> 
+    <message>
+        <source>TOP_POP_PUBLISH_OBJ</source>
+	<translation>Publish object</translation>
+   </message>			    
     <message>
         <source>TOP_POP_HIDE_CHILDREN</source>
         <translation>Hide Children</translation>
@@ -4819,5 +4843,36 @@ Would you like to continue?</translation>
         <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
         <translation>New L2</translation>
     </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_PublishDlg</name>
+    <message>
+        <source>GEOM_PUBLISH_OBJECTS_TLT</source>
+	<translation>Publish Objects</translation>
+    </message>			            
+    <message>
+	<source>OBJECT_NAME</source>
+	<translation>Name</translation>
+    </message>
+    <message>
+	<source>OBJECT_ENTRY</source>
+	<translation>Entry</translation>
+    </message>    
+    <message>
+        <source>UNSELECT_ALL</source>
+        <translation>U&amp;nselect All</translation>
+    </message>
+    <message>    
+        <source>SELECT_ALL</source>
+	<translation>Select &amp;All</translation>
+    </message>
+    <message>
+        <source>GEOM_PUBLISH_BTN</source>
+	<translation>&amp;Publish</translation>
+    </message>
+    <message>
+        <source>GEOM_PUBLISH_CLOSE_BTN</source>
+	<translation>P&amp;ublish And Close</translation>
+    </message>			        
 </context>
 </TS>

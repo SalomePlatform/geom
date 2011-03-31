@@ -51,6 +51,9 @@ namespace GEOMOp {
     OpShowChildren      = 1250,   // POPUP MENU - SHOW CHILDREN
     OpHideChildren      = 1251,   // POPUP MENU - HIDE CHILDREN
     OpRename            = 1252,   // POPUP MENU - RENAME
+    OpUnpublishObject   = 1253,   // POPUP MENU - UNPUBLISH
+    OpPublishObject     = 1254,   // GEOM ROOT OBJECT - POPUP MENU - PUBLISH
+
     // DisplayGUI ----------------//--------------------------------
     OpDisplayMode       = 2000,   // MENU VIEW  - DISPLAY MODE - WIREFRAME/SHADING
     OpSwitchVectors     = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION

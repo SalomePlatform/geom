@@ -362,6 +362,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpPointMarker:    // POPUP - POINT MARKER
     OnPointMarker();
     break;
+  case GEOMOp::OpUnpublishObject:// POPUP - UNPUBLISH
+    OnUnpublishObject();
+    break;
+  case GEOMOp::OpPublishObject:// GEOM ROOT OBJECT - POPUP - PUBLISH
+    OnPublishObject();
+    break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;
