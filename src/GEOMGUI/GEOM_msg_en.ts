@@ -4263,6 +4263,18 @@ Otherwise the dimensions will be kept without modifications.</translation>
         <source>GEOM_PLUGINS_OTHER</source>
         <translation>Other</translation>
     </message>
+    <message>
+        <source>SHOW_ONLY_SELECTED</source>
+        <translation>Show only selected</translation>
+    </message>
+    <message>
+        <source>HIDE_SELECTED</source>
+        <translation>Hide selected</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_SUB_SHAPES</source>
+        <translation>Show all sub-shapes</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -4512,18 +4524,6 @@ Number of sketch points too small</translation>
     <message>
         <source>REMOVE</source>
         <translation>Remove</translation>
-    </message>
-    <message>
-        <source>SHOW_ONLY_SELECTED</source>
-        <translation>Show only selected</translation>
-    </message>
-    <message>
-        <source>HIDE_SELECTED</source>
-        <translation>Hide selected</translation>
-    </message>
-    <message>
-        <source>SHOW_ALL_SUB_SHAPES</source>
-        <translation>Show all sub-shapes</translation>
     </message>
     <message>
         <source>SELECT_ALL</source>

@@ -4231,6 +4231,18 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_PLUGINS_OTHER</source>
         <translation>Autre</translation>
     </message>
+    <message>
+        <source>SHOW_ONLY_SELECTED</source>
+        <translation>Afficher uniquement la sélection</translation>
+    </message>
+    <message>
+        <source>HIDE_SELECTED</source>
+        <translation>Cacher la sélection</translation>
+    </message>
+    <message>
+        <source>SHOW_ALL_SUB_SHAPES</source>
+        <translation>Afficher tous les sous-objets</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -4472,18 +4484,6 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>REMOVE</source>
         <translation>Supprimer</translation>
-    </message>
-    <message>
-        <source>SHOW_ONLY_SELECTED</source>
-        <translation>Afficher uniquement la sélection</translation>
-    </message>
-    <message>
-        <source>HIDE_SELECTED</source>
-        <translation>Cacher la sélection</translation>
-    </message>
-    <message>
-        <source>SHOW_ALL_SUB_SHAPES</source>
-        <translation>Afficher tous les sous-objets</translation>
     </message>
     <message>
         <source>SELECT_ALL</source>
