@@ -384,6 +384,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 return ""
             return aShape.GetStudyEntry()
 
+        ## Unpublish object in study
+        #
+	def hideInStudy(self, obj):
+	    ior = salome.orb.object_to_string(obj)
+	    aSObject = self.myStudy.FindObjectIOR(ior)
+	    if aSObject is not None:
+		genericAttribute = self.myBuilder.FindOrCreateAttribute(aSObject, "AttributeDrawable")
+                drwAttribute = genericAttribute._narrow(SALOMEDS.AttributeDrawable)
+		drwAttribute.SetDrawable(False)
+	    pass
+	
         # end of l1_geompy_auxiliary
         ## @}
 
