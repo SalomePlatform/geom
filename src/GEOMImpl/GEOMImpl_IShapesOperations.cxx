@@ -937,7 +937,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetExistingSubO
   GEOM::TPythonDump pd (aMainShape, /*append=*/true);
   pd << "[" << anAsciiList.ToCString();
   pd << "] = geompy.GetExistingSubObjects(";
-  pd << theShape << ", " << (int)theGroupsOnly << ")";
+  pd << theShape << ", " << (bool)theGroupsOnly << ")";
 
   SetErrorCode(OK);
 
@@ -1031,6 +1031,9 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
       // because GEOM_SubShapeDriver will build TopTools_IndexedMapOfShape
       // on the main shape for each being calculated sub-shape separately.
       aFunction->SetValue(aValue);
+
+      // Put this subshape in the list of subshapes of theMainShape
+      aMainShape->AddSubShapeReference(aFunction);
     }
 
     if (!anObj.IsNull()) {
