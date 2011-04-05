@@ -141,7 +141,7 @@ void PublishObject (TObjectData&                              theObjectData,
                     TSting2ObjDataMap&                        theEntry2ObjData,
                     const TSting2ObjDataPtrMap&               theStEntry2ObjDataPtr,
                     Resource_DataMapOfAsciiStringAsciiString& theNameToEntry,
-                    TSting2StringMap&                         theEntryToCmdMap,
+                    std::map< int, TCollection_AsciiString >& theEntryToCmdMap,
                     std::set<TCollection_AsciiString>&        theMapOfPublished);
 
 namespace
@@ -658,7 +658,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                                aObjListToPublish, objectCounter, aNameToEntry );
 
         // publish collected objects
-        TSting2StringMap anEntryToCmdMap; // sort publishing commands by study entry
+        std::map< int, TCollection_AsciiString > anEntryToCmdMap; // sort publishing commands by study entry
         int i = 1, n = aObjListToPublish.Length();
         for ( ; i <= n; i++ )
         {
@@ -667,7 +667,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                          aNameToEntry, anEntryToCmdMap, anIgnoreObjMap );
         }
         // add publishing commands to the script
-        TSting2StringMap::iterator anEntryToCmd = anEntryToCmdMap.begin();
+        std::map< int, TCollection_AsciiString >::iterator anEntryToCmd = anEntryToCmdMap.begin();
         for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd )
           aFuncScript += anEntryToCmd->second;
 
@@ -709,7 +709,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   TSting2ObjDataPtrMap::iterator aStEntry2ObjDataPtrIt;
   if ( isPublished )
   {
-    TSting2StringMap anEntryToCmdMap; // sort publishing commands by object entry
+    std::map< int, TCollection_AsciiString > anEntryToCmdMap; // sort publishing commands by object entry
 
     for (aStEntry2ObjDataPtrIt  = aStEntry2ObjDataPtr.begin();
          aStEntry2ObjDataPtrIt != aStEntry2ObjDataPtr.end();
@@ -722,7 +722,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
                      aNameToEntry, anEntryToCmdMap, anIgnoreObjMap );
     }
     // add publishing commands to the script
-    TSting2StringMap::iterator anEntryToCmd = anEntryToCmdMap.begin();
+    std::map< int, TCollection_AsciiString >::iterator anEntryToCmd = anEntryToCmdMap.begin();
     for ( ; anEntryToCmd != anEntryToCmdMap.end(); ++anEntryToCmd )
       aScript += anEntryToCmd->second;
   }
@@ -1321,9 +1321,9 @@ void ReplaceEntriesByNames (TCollection_AsciiString&                  theScript,
         healPyName( data._pyName, anEntry, aNameToEntry);
       }
       else {
-	do {
-	  data._pyName = aBaseName + TCollection_AsciiString(++objectCounter);
-	} while(aNameToEntry.IsBound(data._pyName));
+        do {
+          data._pyName = aBaseName + TCollection_AsciiString(++objectCounter);
+        } while(aNameToEntry.IsBound(data._pyName));
       }
     }
     
@@ -1498,7 +1498,7 @@ void PublishObject (TObjectData&                              theObjectData,
                     TSting2ObjDataMap&                        theEntry2ObjData,
                     const TSting2ObjDataPtrMap&               theStEntry2ObjDataPtr,
                     Resource_DataMapOfAsciiStringAsciiString& theNameToEntry,
-                    TSting2StringMap&                         theEntryToCmdMap,
+                    std::map< int, TCollection_AsciiString >& theEntryToCmdMap,
                     std::set< TCollection_AsciiString>&       theIgnoreMap)
 {
   if ( theObjectData._studyEntry.IsEmpty() )
@@ -1517,6 +1517,8 @@ void PublishObject (TObjectData&                              theObjectData,
   if ( stEntry2DataPtr != theStEntry2ObjDataPtr.end() )
     aFatherData = stEntry2DataPtr->second;
 
+  const int geomObjDepth = 3;
+
   // treat multiply published object
   if ( theObjectData._pyName.IsEmpty() )
   {
@@ -1530,9 +1532,8 @@ void PublishObject (TObjectData&                              theObjectData,
     aCreationCommand += theObjectData._pyName + " = " + data0._pyName;
 
     // store aCreationCommand before publishing commands
-    TCollection_AsciiString mapKey(" ");
-    mapKey += theObjectData._studyEntry;
-    theEntryToCmdMap.insert( std::make_pair( mapKey, aCreationCommand ));
+    int tag = theObjectData._entry.Token( ":", geomObjDepth ).IntegerValue();
+    theEntryToCmdMap.insert( std::make_pair( tag + 2*theEntry2ObjData.size(), aCreationCommand ));
   }
 
   // make a command
@@ -1546,7 +1547,8 @@ void PublishObject (TObjectData&                              theObjectData,
   aCommand += theObjectData._pyName + ", '" + theObjectData._name + "' )";
 
   // bind a command to the study entry
-  theEntryToCmdMap.insert( std::make_pair( theObjectData._studyEntry, aCommand ));
+  int tag = theObjectData._entry.Token( ":", geomObjDepth ).IntegerValue();
+  theEntryToCmdMap.insert( std::make_pair( tag, aCommand ));
 
   theObjectData._studyEntry.Clear(); // not to publish any more
 }
