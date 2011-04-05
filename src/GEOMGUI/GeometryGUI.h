@@ -124,6 +124,8 @@ public:
   gp_Ax3                      GetWorkingPlane()            { return myWorkingPlane; }
   void                        ActiveWorkingPlane();
 
+  virtual bool                renameObject( const QString&, const QString& );
+
   virtual void                windows( QMap<int, int>& ) const;
   virtual void                viewManagers( QStringList& ) const;
 

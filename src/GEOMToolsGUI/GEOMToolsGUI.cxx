@@ -322,9 +322,6 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpSelectAll:      // POPUP - SELECT ONLY - SELECT ALL
     OnSelectOnly( GEOM_ALLOBJECTS );
     break;
-  case GEOMOp::OpRename:         // POPUP - RENAME
-    OnRename();
-    break;
   case GEOMOp::OpDeflection:     // POPUP - DEFLECTION ANGLE
     OnDeflection();
     break;

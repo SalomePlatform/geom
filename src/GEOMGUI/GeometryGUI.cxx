@@ -54,6 +54,7 @@
 #include <SVTK_ViewModel.h>
 
 #include <SalomeApp_Application.h>
+#include <SalomeApp_DataObject.h>
 #include <SalomeApp_Study.h>
 
 #include <LightApp_SelectionMgr.h>
@@ -352,8 +353,7 @@ void GeometryGUI::OnGUIEvent( int id )
   // if current viewframe is not of OCC and not of VTK type - return immediately
   // fix for IPAL8958 - allow some commands to execute even when NO viewer is active (rename for example)
   QList<int> NotViewerDependentCommands;
-  NotViewerDependentCommands << GEOMOp::OpRename
-                             << GEOMOp::OpDelete
+  NotViewerDependentCommands << GEOMOp::OpDelete
                              << GEOMOp::OpShow
                              << GEOMOp::OpShowOnly
                              << GEOMOp::OpShowChildren
@@ -403,7 +403,6 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpUnpublishObject:  // POPUP MENU - UNPUBLISH
   case GEOMOp::OpPublishObject:    // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
   case GEOMOp::OpPointMarker:      // POPUP MENU - POINT MARKER
-  case GEOMOp::OpRename:           // POPUP MENU - RENAME
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDisplayMode:      // MENU VIEW - WIREFRAME/SHADING
@@ -776,7 +775,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShowOnly,         "DISPLAY_ONLY" );
   createGeomAction( GEOMOp::OpHide,             "ERASE" );
 
-  createGeomAction( GEOMOp::OpRename,           "POP_RENAME", "", Qt::Key_F2 );
   createGeomAction( GEOMOp::OpWireframe,        "POP_WIREFRAME", "", 0, true );
   createGeomAction( GEOMOp::OpShading,          "POP_SHADING", "", 0, true );
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
@@ -1100,8 +1098,6 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   QtxPopupMgr* mgr = popupMgr();
 
-  mgr->insert( action(  GEOMOp::OpRename ), -1, -1 );  // rename
-  mgr->setRule( action( GEOMOp::OpRename ), QString("$type in {'Shape' 'Group'} and selcount=1"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpDelete ), -1, -1 );  // delete
   mgr->setRule( action( GEOMOp::OpDelete ), QString("$type in {'Shape' 'Group'} and selcount>0"), QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpGroupCreatePopup ), -1, -1 ); // create group
@@ -1240,7 +1236,6 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
   action(GEOMOp::OpImport)->setEnabled( true ); // Import: CTRL + Key_I
   action(GEOMOp::OpExport)->setEnabled( true ); // Export: CTRL + Key_E
   action(GEOMOp::OpDelete)->setEnabled( true ); // Delete: Key_Delete
-  action(GEOMOp::OpRename)->setEnabled( true ); // Rename: Key_F2
 
   GUIMap::Iterator it;
   for ( it = myGUIMap.begin(); it != myGUIMap.end(); ++it )
@@ -1330,7 +1325,6 @@ bool GeometryGUI::deactivateModule( SUIT_Study* study )
   action(GEOMOp::OpImport)->setEnabled( false ); // Import: CTRL + Key_I
   action(GEOMOp::OpExport)->setEnabled( false ); // Export: CTRL + Key_E
   action(GEOMOp::OpDelete)->setEnabled( false ); // Delete: Key_Delete
-  action(GEOMOp::OpRename)->setEnabled( false ); // Rename: Key_F2
 
   qDeleteAll(myOCCSelectors);
   myOCCSelectors.clear();
@@ -1954,4 +1948,46 @@ void GeometryGUI::onViewAboutToShow()
     a->setText ( tr("MEN_VECTOR_MODE_ON") );
     a->setEnabled(false);
   }
+}
+
+/*!
+  Rename object by entry.
+  \param entry entry of the object
+  \param name new name of the object
+  \brief Return \c true if rename operation finished successfully, \c false otherwise.
+*/
+bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
+  
+  bool appRes = SalomeApp_Module::renameObject(entry,name);
+  if( !appRes )
+    return false;
+  
+  bool result = false;
+  
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0; 
+
+  if(!appStudy)
+    return result;
+
+  _PTR(Study) aStudy = appStudy->studyDS();
+
+  if(!aStudy)
+    return result;
+
+  _PTR(SObject) obj ( aStudy->FindObjectID(qPrintable(entry)) );
+  _PTR(GenericAttribute) anAttr;
+  if ( obj ) {
+    if ( obj->FindAttribute(anAttr, "AttributeName") ) {
+      _PTR(AttributeName) aName (anAttr);
+      
+      GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
+      if (!CORBA::is_nil(anObj)) {
+	aName->SetValue( name.toLatin1().data() ); // rename the SObject
+	anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
+	result = true;
+      }
+    }
+  }
+  return result;
 }

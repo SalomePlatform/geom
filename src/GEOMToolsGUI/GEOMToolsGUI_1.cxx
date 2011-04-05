@@ -91,65 +91,6 @@
 // VTK includes
 #include <vtkRenderer.h>
 
-void GEOMToolsGUI::OnRename()
-{
-  SALOME_ListIO selected;
-  SalomeApp_Application* app =
-    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-    if ( aSelMgr && appStudy ) {
-      aSelMgr->selectedObjects( selected );
-      if ( !selected.IsEmpty() ) {
-        _PTR(Study) aStudy = appStudy->studyDS();
-
-        bool aLocked = (_PTR(AttributeStudyProperties)(aStudy->GetProperties()))->IsLocked();
-        if ( aLocked ) {
-          SUIT_MessageBox::warning ( app->desktop(),
-                                     QObject::tr("WRN_WARNING"),
-                                     QObject::tr("WRN_STUDY_LOCKED") );
-          return;
-        }
-
-        bool isAny = false; // is there any appropriate object selected
-        for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-          Handle(SALOME_InteractiveObject) IObject = It.Value();
-
-          _PTR(SObject) obj ( aStudy->FindObjectID(IObject->getEntry()) );
-          _PTR(GenericAttribute) anAttr;
-          if ( obj ) {
-            if ( obj->FindAttribute(anAttr, "AttributeName") ) {
-              _PTR(AttributeName) aName (anAttr);
-
-              GEOM::GEOM_Object_var anObj =
-                GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
-              if (!CORBA::is_nil(anObj)) {
-                isAny = true;
-                QString newName = LightApp_NameDlg::getName( app->desktop(), aName->Value().c_str() );
-                if (!newName.isEmpty()) {
-                  aName->SetValue( newName.toLatin1().data() ); // rename the SObject
-                  IObject->setName( newName.toLatin1().data() );// rename the InteractiveObject
-                  anObj->SetName( newName.toLatin1().data() );  // Rename the corresponding GEOM_Object
-                  (dynamic_cast<SalomeApp_Module*>(app->activeModule()))->updateObjBrowser( false );
-                }
-              } // if ( anObj )
-            } // if ( name attribute )
-          } // if ( obj )
-        } // iterator
-
-        if (!isAny) {
-          SUIT_MessageBox::warning( app->desktop(),
-                                    QObject::tr("WRN_WARNING"),
-                                    QObject::tr("GEOM_WRN_NO_APPROPRIATE_SELECTION") );
-          return;
-        }
-      }
-    }
-  }
-
-  app->updateActions(); //SRN: To update a Save button in the toolbar
-}
 
 void GEOMToolsGUI::OnCheckGeometry()
 {

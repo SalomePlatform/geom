@@ -60,8 +60,6 @@ private:
   bool         Export();
 
   void         OnEditDelete();
-
-  void         OnRename();
   void         OnCheckGeometry();
 
   // Popup commands
