@@ -254,34 +254,10 @@ class Beam(StructuralElementPart):
         orientation is different than the orientation of the underlying OCC
         object.
         """
-        fParam = 0.
-        lParam = 1.
-        fPoint = self.geom.MakeVertexOnCurve(path, fParam)
-        lPoint = self.geom.MakeVertexOnCurve(path, lParam)
-
-        fNormal = self.geom.MakeTangentOnCurve(path, fParam)
-        lNormal = self.geom.MakeTangentOnCurve(path, lParam)
-
-        fCircle = self.geom.MakeCircle(fPoint, fNormal, 10)
-        lCircle = self.geom.MakeCircle(lPoint, lNormal, 10)
-
-        try:
-            pipe = self.geom.MakePipeWithDifferentSections([fCircle, lCircle],
-                                                           [fPoint, lPoint],
-                                                           path, False, False)
-        except RuntimeError, e:
-            # This dirty trick is needed if the wire is not oriented in the
-            # direction corresponding to parameters 0.0 -> 1.0. In this case,
-            # we catch the error and invert the ends of the wire. This trick
-            # will be removed when the function giving the orientation of an
-            # edge will be added in geompy (see issue 1144 in PAL bugtracker).
-            if (str(e) == "MakePipeWithDifferentSections : First location "
-                          "shapes is not coincided with first vertex of "
-                          "aWirePath"):
-                return True
-            else:
-                raise
-        return False
+        p1 = self.geom.MakeVertexOnCurve(path, 0.0)
+        p2 = self.geom.GetFirstVertex(path)
+        dist = self.geom.MinDistance(p1, p2)
+        return dist != 0.0
 
     def _getVertexAndTangentOnOrientedWire(self, path, param):
         """
