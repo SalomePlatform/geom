@@ -80,11 +80,11 @@ class Orientation1D:
             logger.warning("Invalid orientation parameter(s) (ignored): %s" %
                            str(mydict))
 
-    def _buildDefaultMarker(self, center, vecX):
+    def _getDefaultVecYZ(self, center, vecX):
         """
-        Create the default marker, that use the main direction of the 1D
-        object as the local X axis and the global Z axis to determine the
-        local Z axis.
+        Get the vectors Y and Z for the default LCS, that use the main
+        direction of the 1D object as the local X axis and the global Z axis
+        to determine the local Z axis.
         """
         xPoint = self.geom.MakeTranslationVector(center, vecX)
         givenVecZ = self.geom.MakeVectorDXDYDZ(0.0, 0.0, 1.0)
@@ -97,18 +97,31 @@ class Orientation1D:
         zPoint = self.geom.MakeTranslationVector(center, givenVecZ)
         locPlaneZX = self.geom.MakePlaneThreePnt(center, zPoint, xPoint, 1.0)
         locY = self.geom.GetNormal(locPlaneZX)
-        marker = self.geom.MakeMarkerPntTwoVec(center,vecX,locY)
-        return marker
+        yPoint = self.geom.MakeTranslationVector(center, locY)
+        locPlaneXY = self.geom.MakePlaneThreePnt(center, xPoint, yPoint, 1.0)
+        locZ = self.geom.GetNormal(locPlaneXY)
+        return (locY, locZ)
 
     def buildMarker(self, geom, center, vecX):
         """
         Create a marker with origin `center` and X axis `vecX`. `geom` is the
         pseudo-geompy object used to build the geometric shapes.
         """
+        (locY, locZ) = self.getVecYZ(geom, center, vecX)
+        marker = geom.MakeMarkerPntTwoVec(center, vecX, locY)
+        return marker
+
+    def getVecYZ(self, geom, center, vecX):
+        """
+        Get the vectors Y and Z for the LCS with origin `center` and X axis
+        `vecX`. `geom` is the pseudo-geompy object used to build the geometric
+        shapes.
+        """
         self.geom = geom
-        marker = None
+        locY = None
+        locZ = None
         if self._vectorYCoords is None:
-            marker = self._buildDefaultMarker(center, vecX)
+            (locY, locZ) = self._getDefaultVecYZ(center, vecX)
         else:
             xPoint = self.geom.MakeTranslationVector(center, vecX)
             givenLocY = self.geom.MakeVectorDXDYDZ(self._vectorYCoords[0],
@@ -118,7 +131,7 @@ class Orientation1D:
             if abs(angle) < 1e-7 or abs(angle - math.pi) < 1e-7:
                 logger.warning("Vector Y is colinear to the beam X axis, "
                                "using default LCS.")
-                marker = self._buildDefaultMarker(center, vecX)
+                (locY, locZ) = self._getDefaultVecYZ(center, vecX)
             else:
                 yPoint = self.geom.MakeTranslationVector(center, givenLocY)
                 locPlaneXY = self.geom.MakePlaneThreePnt(center, xPoint,
@@ -128,13 +141,13 @@ class Orientation1D:
                 locPlaneZX = self.geom.MakePlaneThreePnt(center, zPoint,
                                                          xPoint, 1.0)
                 locY = self.geom.GetNormal(locPlaneZX)
-                marker = self.geom.MakeMarkerPntTwoVec(center,vecX,locY)
 
         if self._angle != 0.0:
             angleRad = math.radians(self._angle)
-            marker = self.geom.Rotate(marker, vecX, angleRad)
+            locY = self.geom.Rotate(locY, vecX, angleRad)
+            locZ = self.geom.Rotate(locZ, vecX, angleRad)
 
-        return marker
+        return (locY, locZ)
 
 
 class Orientation2D:

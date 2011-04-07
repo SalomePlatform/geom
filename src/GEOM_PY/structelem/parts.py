@@ -530,39 +530,45 @@ class RectangularBeam(Beam):
                             "%s - 2 * %s" % (self._getParamUserName("HZ2"),
                                              self._getParamUserName("EPZ2")))
 
-    def _makeRectangle(self, HY, HZ, planeSect):
+    def _makeRectangle(self, HY, HZ, lcs):
         """
         Create a rectangle in the specified plane.
         """
         halfHY = HY / 2.0
         halfHZ = HZ / 2.0
-        sketchStr = "Sketcher:F %g" % (-halfHZ) + " %g" % (-halfHY) + ":"
-        sketchStr += "TT %g" % (halfHZ) + " %g" % (-halfHY) + ":"
-        sketchStr += "TT %g" % (halfHZ) + " %g" % (halfHY) + ":" 
-        sketchStr += "TT %g" % (-halfHZ) + " %g" % (halfHY) + ":WW"
+        sketchStr = "Sketcher:F %g %g:" % (-halfHY, -halfHZ)
+        sketchStr += "TT %g %g:" % (halfHY, -halfHZ)
+        sketchStr += "TT %g %g:" % (halfHY, halfHZ)
+        sketchStr += "TT %g %g:WW" % (-halfHY, halfHZ)
         logger.debug('Drawing rectangle: "%s"' % sketchStr)
-        sketch = self.geom.MakeSketcherOnPlane(sketchStr, planeSect)
+        sketch = self.geom.MakeSketcherOnPlane(sketchStr, lcs)
         return sketch
+
+    def _makeSectionRectangles(self, point, vecX, HY, HZ, EPY, EPZ):
+        """
+        Create one side of the rectangular sections used to build the pipe.
+        """
+        (vecY, vecZ) = self._orientation.getVecYZ(self.geom, point, vecX)
+        lcs = self.geom.MakeMarkerPntTwoVec(point, vecY, vecZ)
+        outerRect = self._makeRectangle(HY, HZ, lcs)
+        if self.filling == HOLLOW:
+            innerRect = self._makeRectangle(HY - 2.0 * EPY,
+                                            HZ - 2.0 * EPZ,
+                                            lcs)
+        else:
+            innerRect = None
+        return (outerRect, innerRect)
 
     def _makeSectionWires(self, fPoint, fNormal, lPoint, lNormal):
         """
         Create the rectangular sections used to build the pipe.
         """
-        planeSect1 = self.geom.MakePlane(fPoint, fNormal, 1.0)
-        outerRect1 = self._makeRectangle(self.HY1, self.HZ1, planeSect1)
-        planeSect2 = self.geom.MakePlane(lPoint, lNormal, 1.0)
-        outerRect2 = self._makeRectangle(self.HY2, self.HZ2, planeSect2)
-        if self.filling == HOLLOW:
-            innerRect1 = self._makeRectangle(self.HY1 - 2 * self.EPY1,
-                                             self.HZ1 - 2 * self.EPZ1,
-                                             planeSect1)
-            innerRect2 = self._makeRectangle(self.HY2 - 2 * self.EPY2,
-                                             self.HZ2 - 2 * self.EPZ2,
-                                             planeSect2)
-        else:
-            innerRect1 = None
-            innerRect2 = None
-
+        (outerRect1, innerRect1) = \
+            self._makeSectionRectangles(fPoint, fNormal, self.HY1, self.HZ1,
+                                        self.EPY1, self.EPZ1)
+        (outerRect2, innerRect2) = \
+            self._makeSectionRectangles(lPoint, lNormal, self.HY2, self.HZ2,
+                                        self.EPY2, self.EPZ2)
         return (outerRect1, innerRect1, outerRect2, innerRect2)
 
 
