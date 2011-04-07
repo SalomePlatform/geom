@@ -55,6 +55,7 @@ HTML_STYLESHEET   = @srcdir@/static/doxygen.css
 TOC_EXPAND        = YES
 DISABLE_INDEX     = NO
 GENERATE_TREEVIEW = YES
+SEARCHENGINE     = YES
 TREEVIEW_WIDTH    = 300
 
 #---------------------------------------------------------------------------
@@ -69,7 +70,8 @@ GENERATE_RTF      = NO
 
 #---------------------------------------------------------------------------
 #External reference options
-#---------------------------------------------------------------------------
-TAGFILES          = geompy_doc.tag=geompy_doc
+#---------------------------------------------------------------------------                
+TAGFILES          = geompy_doc.tag=../GEOM/geompy_doc #rnv: 07.04.2011 Workaround for the doxygen 1.7.3:
+                                                      #because it wrongly defines location of the html files for search.
 ALLEXTERNALS      = NO
 SEARCHENGINE      = YES
