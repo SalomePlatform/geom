@@ -337,7 +337,7 @@ void RepairGUI_SewingDlg::initSelection()
 //=================================================================================
 void RepairGUI_SewingDlg::onDetect()
 {
-  displayPreview( false, true, true, 3 );
+  displayPreview( true, false, true, true, 3 );
 
   // field myClosed,myOpen is initialized in execute() method, called by displayPreview().
   QString msg;

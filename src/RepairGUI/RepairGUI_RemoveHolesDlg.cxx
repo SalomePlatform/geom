@@ -404,7 +404,7 @@ void RepairGUI_RemoveHolesDlg::initSelection()
 //=================================================================================
 void RepairGUI_RemoveHolesDlg::onDetect()
 {
-  displayPreview(false, true, true, 3);
+  displayPreview(true, false, true, true, 3);
 
   // field myClosed,myOpen is initialized in execute() method, called by displayPreview().
   QString msg;

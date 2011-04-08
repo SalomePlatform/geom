@@ -248,7 +248,7 @@ void RepairGUI_FreeFacesDlg::onSelectionDone()
   }
   else {
     myObj = anObj;
-    displayPreview( false, true, true, 3 );
+    displayPreview( true, false, true, true, 3 );
   }
 }
 
