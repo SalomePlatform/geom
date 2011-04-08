@@ -179,7 +179,7 @@ void EntityGUI_3DSketcherDlg::Init()
   initName( tr( "GEOM_3DSKETCHER" ) );
 
   UpdateButtonsState();
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -246,7 +246,7 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     Group3Spin->SpinBox_DZ->setValue( 0.0 );
   }
   UpdateButtonsState();
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -270,7 +270,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
   if (myPointsList.count() > 0) {
     myRedoList.append( myPointsList.takeLast() );
     UpdateButtonsState();
-    GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+    GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   }
 }
 
@@ -283,7 +283,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
   if ( myRedoList.count() > 0) {
     myPointsList.append( myRedoList.takeLast() );
     UpdateButtonsState();
-    GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+    GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   }
 }
 
@@ -344,7 +344,7 @@ void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
       }
     }
   }
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -374,7 +374,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -384,7 +384,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 {
-  GEOMBase_Helper::displayPreview( false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================

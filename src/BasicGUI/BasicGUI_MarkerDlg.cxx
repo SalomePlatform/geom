@@ -284,7 +284,7 @@ void BasicGUI_MarkerDlg::ConstructorsClicked( int constructorId )
     }
   }
 
-  displayPreview(true);
+  displayPreview();
 
   qApp->processEvents();
   updateGeometry();
@@ -352,7 +352,7 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
       myData[ DY2 ]->setValue( aYDir.Y() );
       myData[ DZ2 ]->setValue( aYDir.Z() );
     }
-    displayPreview(true);
+    displayPreview();
     return;
   }
   aSelectedObject = getSelected( TopAbs_VERTEX );
@@ -361,7 +361,7 @@ void BasicGUI_MarkerDlg::onSelectionDone0()
     myData[ X ]->setValue( aPnt.X() );
     myData[ Y ]->setValue( aPnt.Y() );
     myData[ Z ]->setValue( aPnt.Z() );
-    displayPreview(true);
+    displayPreview();
     return;
   }
 }
@@ -424,7 +424,7 @@ void BasicGUI_MarkerDlg::onSelectionDone()
     }
   }
 
-  displayPreview(true);
+  displayPreview();
 }
 
 //=================================================================================
@@ -618,7 +618,7 @@ void BasicGUI_MarkerDlg::addSubshapesToStudy()
 //=================================================================================
 void BasicGUI_MarkerDlg::onValueChanged( double )
 {
-  displayPreview(true);
+  displayPreview();
 }
 
 //=================================================================================
@@ -631,7 +631,7 @@ void BasicGUI_MarkerDlg::displayPreview ( const bool   activate,
                                           const double lineWidth )
 {
   if ( !myBlockPreview ) {
-    GEOMBase_Skeleton::displayPreview( activate, update, toRemoveFromEngine, lineWidth );
+    GEOMBase_Skeleton::displayPreview( true, activate, update, toRemoveFromEngine, lineWidth );
     if ( myConstructorId == 0 )
       GEOMBase_Skeleton::activate( GEOM_MARKER );
   }

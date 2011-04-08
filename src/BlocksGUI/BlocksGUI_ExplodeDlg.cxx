@@ -307,7 +307,7 @@ void BlocksGUI_ExplodeDlg::activateSelection()
              SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   } 
   else {
-    displayPreview( true, true, false );
+    displayPreview( true, true, true, false );
     globalSelection( GEOM_PREVIEW );
   }
 }
