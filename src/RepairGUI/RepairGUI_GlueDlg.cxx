@@ -431,15 +431,16 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
     {
       if ( IsPreview() ) {
         // if this method is used for displaying preview then we must detect glue faces only
-        ObjectList::iterator anIter;
-        for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter )
-          objects.push_back( GEOM::GEOM_Object::_duplicate( *anIter ) );
-        return myTmpObjs.size() ? true : false;
+	for ( int i = 0; i < myTmpObjs.count(); i++ ) {
+	  myTmpObjs[i].get()->Register(); // increment counter, since calling function will call UnRegister()
+          objects.push_back( myTmpObjs[i].copy() );
+	}
+        return !myTmpObjs.isEmpty();
       } // IsPreview
 
       // Make glue face by list.
       // Iterate through myTmpObjs and verifies where each object is currently selected or not.
-      QMap<QString, char> selected;
+      QSet<QString> selected;
 
       // Get names of selected objects
       LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -448,24 +449,22 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
 
       SALOME_ListIteratorOfListIO it (aSelList);
       for (; it.More(); it.Next()) 
-        selected.insert(it.Value()->getName(), 0);
+        selected.insert(it.Value()->getName());
 
       // Iterate through result and select objects with names from selection
       // ObjectList toRemoveFromEnggine;
-      ObjectList toGlue;
-      ObjectList::iterator anIter;
-      for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter ) {
-        if ( selected.contains( myGeomGUI->getApp()->orb()->object_to_string(*anIter) ) )
-          toGlue.push_back( *anIter );
-      }
       
       // make glue faces
       GEOM::ListOfGO_var aListForGlue = new GEOM::ListOfGO();
-      aListForGlue->length( toGlue.size() );
-      ObjectList::iterator anIter3 = toGlue.begin();
-      for ( int i = 0; anIter3 != toGlue.end(); ++anIter3, ++i )
-        aListForGlue[ i ] = *anIter3;
-      GEOM::GEOM_Object_var anObj = anOper->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue, true );
+      aListForGlue->length( myTmpObjs.count() );
+      int added = 0;
+      for ( int i = 0; i < myTmpObjs.count(); i++ ) {
+	CORBA::String_var tmpior = myGeomGUI->getApp()->orb()->object_to_string(myTmpObjs[i].get());
+        if ( selected.contains( tmpior.in() ) )
+	  aListForGlue[ added++ ] = myTmpObjs[i].copy();
+      }
+
+      GEOM::GEOM_Object_var anObj = anOper->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue.in(), true );
 
       aResult = !anObj->_is_nil();
 
@@ -652,13 +651,13 @@ void RepairGUI_GlueDlg::onDetect()
   globalSelection( GEOM_ALLSHAPES );
 
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
-  GEOM::ListOfGO_var aList = anOper->GetGlueFaces( myObject, myTolEdt2->value() );
+  GEOM::ListOfGO_var aList = anOper->GetGlueFaces( myObject.in(), myTolEdt2->value() );
   
   for ( int i = 0, n = aList->length(); i < n; i++ ) 
-    myTmpObjs.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+    myTmpObjs << GEOM::GeomObjPtr( aList[i].in() );
   
-  if ( myTmpObjs.size() > 0  ) {
-    msg = tr( "FACES_FOR_GLUING_ARE_DETECTED" ).arg( myTmpObjs.size() );
+  if ( !myTmpObjs.isEmpty()  ) {
+    msg = tr( "FACES_FOR_GLUING_ARE_DETECTED" ).arg( myTmpObjs.count() );
     mySubShapesChk->setChecked( true );
   }
   else {
@@ -698,7 +697,7 @@ void RepairGUI_GlueDlg::activateSelection()
     if ( !mySubShapesChk->isChecked() ) 
       globalSelection( GEOM_ALLSHAPES );
     else {
-      displayPreview( true, false, false, 2/*line width*/, 1/*display mode*/, Quantity_NOC_RED );
+      displayPreview( true, true, false, false, 2/*line width*/, 1/*display mode*/, Quantity_NOC_RED );
       disconnect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
                   this, SLOT( SelectionIntoArgument() ) ) ;
       globalSelection( GEOM_PREVIEW );
@@ -727,11 +726,9 @@ void RepairGUI_GlueDlg::updateButtonState()
     SALOME_ListIO aSelList;
     aSelMgr->selectedObjects(aSelList);
 
-    bool wasSelected = false;
     SALOME_ListIteratorOfListIO it (aSelList);
-    if (it.More() > 0)
-      wasSelected = true;
-    bool wasDetected = myTmpObjs.size() ? true : false;
+    bool wasSelected = it.More() > 0;
+    bool wasDetected = !myTmpObjs.isEmpty();
     buttonOk()->setEnabled( hasMainObj && wasDetected && wasSelected );
     buttonApply()->setEnabled( hasMainObj && wasDetected && wasSelected );
     mySubShapesChk->setEnabled( hasMainObj && wasDetected );
@@ -747,10 +744,6 @@ void RepairGUI_GlueDlg::updateButtonState()
 //=================================================================================
 void RepairGUI_GlueDlg::clearTemporary()
 {
-  ObjectList::iterator anIter;
-  for ( anIter = myTmpObjs.begin(); anIter != myTmpObjs.end(); ++anIter )
-    getGeomEngine()->RemoveObject(*anIter);
-
   myTmpObjs.clear();
 }
 

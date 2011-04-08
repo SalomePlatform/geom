@@ -29,6 +29,8 @@
 
 #include <GEOMBase_Skeleton.h>
 
+#include <QList>
+
 class DlgRef_1SelExt;
 class SalomeApp_DoubleSpinBox;
 class QPushButton;
@@ -70,7 +72,7 @@ private:
     
 private:    
   GEOM::GEOM_Object_var              myObject;
-  ObjectList                         myTmpObjs;
+  QList<GEOM::GeomObjPtr>            myTmpObjs;
     
   DlgRef_1SelExt*                    GroupPoints;
   DlgRef_1SelExt*                    GroupPoints2;
