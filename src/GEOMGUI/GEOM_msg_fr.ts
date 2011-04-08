@@ -2094,6 +2094,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Impossible de créer un solide à partir d&apos;une forme non-fermée %1</translation>
     </message>
     <message>
+        <source>WRN_SHAPE_NOT_SHELL</source>
+        <translation>Impossible de créer un solide à partir de la forme %1 car ce n&apos;est pas une coque</translation>
+    </message>
+    <message>
+        <source>WRN_NULL_OBJECT_OR_SHAPE</source>
+        <translation>La forme %1 pour la création d'un solide est invalide</translation>
+    </message>
+    <message>
         <source>GEOM_X</source>
         <translation>X :</translation>
     </message>
@@ -2465,6 +2473,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <source>MEN_POP_HIDE_CHILDREN</source>
         <translation>Cacher les enfants</translation>
     </message>
+    <message>
+        <source>MEN_POP_UNPUBLISH_OBJ</source>
+        <translation>Dépublier</translation>
+    </message>
+    <message>
+        <source>MEN_POP_PUBLISH_OBJ</source>
+        <translation>Publier...</translation>
+    </message>	
     <message>
         <source>MEN_POP_ISOS</source>
         <translation>Isos</translation>
@@ -3102,6 +3118,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Monter les objets fils</translation>
     </message>
     <message>
+        <source>STB_POP_UNPUBLISH_OBJ</source>
+	<translation>Dépublier l'objet</translation>
+   </message>
+    <message>
+        <source>STB_POP_PUBLISH_OBJ</source>
+        <translation>Publier l'objet</translation>
+   </message>	
+    <message>
         <source>STB_POP_HIDE_CHILDREN</source>
         <translation>Cacher les objets fils</translation>
     </message>
@@ -3629,6 +3653,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <source>TOP_POP_SHOW_CHILDREN</source>
         <translation>Montrer les enfants</translation>
     </message>
+    <message>
+        <source>TOP_POP_UNPUBLISH_OBJ</source>
+        <translation>Dépublier l'objet</translation>
+    </message> 
+    <message>
+        <source>TOP_POP_PUBLISH_OBJ</source>
+	<translation>Publier l'objet</translation>
+   </message>	
     <message>
         <source>TOP_POP_HIDE_CHILDREN</source>
         <translation>Cacher les enfants</translation>
@@ -4250,6 +4282,14 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_IS_CLOSED</source>
         <translation>Construire une arête fermée</translation>
     </message>
+    <message>
+        <source>GEOM_BUILD_CLOSED_WIRE</source>
+        <translation>Construite un contour fermé</translation>
+    </message>
+    <message>
+        <source>GEOM_IS_REORDER</source>
+        <translation>Réarranger les points en prenant en compte les distances</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_EllipseDlg</name>
@@ -4803,5 +4843,36 @@ Voulez-vous continuer?</translation>
         <source>GEOM_PIPE_TSHAPE_POSITION_LBL_L2</source>
         <translation>Nouvelle L2</translation>
     </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_PublishDlg</name>
+    <message>
+        <source>GEOM_PUBLISH_OBJECTS_TLT</source>
+	<translation>Publier les objets</translation>
+    </message>			            
+    <message>
+	<source>OBJECT_NAME</source>
+	<translation>Nom</translation>
+    </message>
+    <message>
+	<source>OBJECT_ENTRY</source>
+	<translation>Entrée</translation>
+    </message>    
+    <message>
+        <source>UNSELECT_ALL</source>
+        <translation>Tout désélectio&amp;nner</translation>
+    </message>
+    <message>    
+        <source>SELECT_ALL</source>
+	<translation>&amp;Sélectionner tout</translation>
+    </message>
+    <message>
+        <source>GEOM_PUBLISH_BTN</source>
+	<translation>&amp;Publier</translation>
+    </message>
+    <message>
+        <source>GEOM_PUBLISH_CLOSE_BTN</source>
+	<translation>P&amp;ublier et fermer</translation>
+    </message>			        
 </context>
 </TS>
