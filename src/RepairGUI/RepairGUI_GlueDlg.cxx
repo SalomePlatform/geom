@@ -463,6 +463,7 @@ bool RepairGUI_GlueDlg::execute( ObjectList& objects )
         if ( selected.contains( tmpior.in() ) )
 	  aListForGlue[ added++ ] = myTmpObjs[i].copy();
       }
+      aListForGlue->length( added );
 
       GEOM::GEOM_Object_var anObj = anOper->MakeGlueFacesByList( myObject, myTolEdt2->value(), aListForGlue.in(), true );
 
