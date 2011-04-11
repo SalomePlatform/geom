@@ -71,8 +71,9 @@ install-data-local: usr_docs
 	    *) echo "Installing $${filen}" ; cp -rp $${filen} $(DESTDIR)$(docdir)/gui/GEOM ;;	\
 	  esac ;										\
 	done ; \
+	cp -rp $(srcdir)/images/head.png $(DESTDIR)$(docdir)/gui/GEOM/geompy_doc ;              \
 	fi
-	cp -rp $(srcdir)/images/head.png $(DESTDIR)$(docdir)/gui/GEOM/geompy_doc
+
 
 uninstall-local:
 	rm -rf $(DESTDIR)$(docdir)/gui/GEOM
