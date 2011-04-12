@@ -24,10 +24,18 @@ find . -name "*.pyc" -print -exec rm {} \;
 #exit
 # ==================== ON SORT AVANT
 
+here=`pwd`
+libdir=adm_local/unix/config_files
+cd $libdir
+# Files created by libtoolize
+rm -f config.guess config.sub ltmain.sh
+# Files created by automake
+rm -rf install-sh missing depcomp py-compile
+cd $here
 find bin -name Makefile.in | xargs rm -f
 find doc -name Makefile.in | xargs rm -f
 find idl -name Makefile.in | xargs rm -f
 find resources -name Makefile.in | xargs rm -f
-find salome_adm -name Makefile.in | xargs rm -f
+find adm_local -name Makefile.in | xargs rm -f
 find src -name Makefile.in | xargs rm -f
 rm -f Makefile.in
