@@ -889,7 +889,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   // Check shape validity
   BRepCheck_Analyzer ana (aShape, false);
   if (!ana.IsValid()) {
-    //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
   }
 
   aFunction->SetValue(aShape);

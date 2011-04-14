@@ -1661,7 +1661,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             theLength, Parameters = ParseParameters(theLength)
             anObj = self.ShapesOp.MakeEdgeOnCurveByLength(theRefCurve, theLength, theStartPoint)
-            RaiseIfFailed("MakeEdgeOnCurveByLength", self.BasicOp)
+            RaiseIfFailed("MakeEdgeOnCurveByLength", self.ShapesOp)
             anObj.SetParameters(Parameters)
             return anObj
 
