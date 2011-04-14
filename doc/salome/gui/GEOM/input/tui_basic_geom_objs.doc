@@ -23,7 +23,7 @@ Arc = geompy.MakeArc(py, pz, px)
 # create a vertex by parameter
 p_on_arc = geompy.MakeVertexOnCurve(Arc, 0.25)
 # create a vertex by length
-p_on_arc2 = geompy.MakeVertexOnCurveByLength(Arc, 50., False)
+p_on_arc2 = geompy.MakeVertexOnCurveByLength(Arc, 50., None)
 #create a vertex by point projection
 p_on_arc3 = geompy.MakeVertexOnCurveByCoord(Arc, 100, -10, 10)
 
