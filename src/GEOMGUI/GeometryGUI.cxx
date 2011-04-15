@@ -1779,9 +1779,6 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         param = occParam + DEFLECTION_COEFF_PROP;
         ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
 
-        param = occParam + DEFLECTION_COEFF_PROP;
-        ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
-
         //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
         if(aProps.contains(MARKER_TYPE_PROP)) {
           param = occParam + MARKER_TYPE_PROP;
