@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -27,33 +26,15 @@
 #include <GEOM_Function.hxx>
 #include <GEOM_Object.hxx>
 
-#include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
-#include <BRepGProp.hxx>
 
-#include <TopAbs.hxx>
 #include <TopExp.hxx>
-#include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Wire.hxx>
-#include <TopoDS_Solid.hxx>
 #include <TopoDS_Compound.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <TopExp_Explorer.hxx>
 #include <TopTools_MapOfShape.hxx>
-#include <TopTools_SequenceOfShape.hxx>
-#include <TopTools_Array1OfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
-#include <GProp_GProps.hxx>
-#include <gp_Pnt.hxx>
-#include <TColStd_Array1OfReal.hxx>
-
-#include <Precision.hxx>
 #include <Standard_NullObject.hxx>
-#include <Standard_TypeMismatch.hxx>
-
 
 //=======================================================================
 //function : GEOM_SubShapeDriver
@@ -91,17 +72,15 @@ Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
   if (anIndices->Length() == 1 && anIndices->Value(1) == -1) { //The empty subshape
     B.MakeCompound(aCompound);
     aShape = aCompound;
-
-  } else {
-
+  }
+  else {
     TopTools_IndexedMapOfShape aMapOfShapes;
     TopExp::MapShapes(aMainShape, aMapOfShapes);
 
     if (anIndices->Length() > 1) {
-
       B.MakeCompound(aCompound);
 
-      for (int i = anIndices->Lower(); i<= anIndices->Upper(); i++) {
+      for (int i = anIndices->Lower(); i <= anIndices->Upper(); i++) {
         if (aMapOfShapes.Extent() < anIndices->Value(i))
           Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute: Index is out of range");
         TopoDS_Shape aSubShape = aMapOfShapes.FindKey(anIndices->Value(i));
@@ -110,12 +89,12 @@ Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
       }
 
       aShape = aCompound;
-
-    } else {
-
-      if (aMapOfShapes.Extent() < anIndices->Value(1))
+    }
+    else {
+      int i = anIndices->Lower();
+      if (aMapOfShapes.Extent() < anIndices->Value(i))
         Standard_NullObject::Raise("GEOM_SubShapeDriver::Execute: Index is out of range");
-      aShape = aMapOfShapes.FindKey(anIndices->Value(1));
+      aShape = aMapOfShapes.FindKey(anIndices->Value(i));
     }
   }
 
@@ -128,7 +107,6 @@ Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
   return 1;
 }
 
-
 //=======================================================================
 //function :  GEOM_SubShapeDriver_Type_
 //purpose  :
@@ -137,11 +115,11 @@ Standard_EXPORT Handle_Standard_Type& GEOM_SubShapeDriver_Type_()
 {
 
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
-  if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
+  if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
-  if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
+  if (aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
-  if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
+  if (aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
 
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
@@ -168,5 +146,5 @@ const Handle(GEOM_SubShapeDriver) Handle(GEOM_SubShapeDriver)::DownCast(const Ha
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
