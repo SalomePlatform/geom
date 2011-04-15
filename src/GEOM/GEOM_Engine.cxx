@@ -727,6 +727,23 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
       aScript += anEntryToCmd->second;
   }
 
+  //RNV: issue 16219: EDF PAL 469: "RemoveFromStudy" Function
+  //Add unpublish command if need
+  TCollection_AsciiString unpublishCmd("\n");
+  if(isMultiFile)
+    unpublishCmd += "\t";
+  unpublishCmd += "geompy.hideInStudy(";
+  
+  for (aStEntry2ObjDataPtrIt  = aStEntry2ObjDataPtr.begin();
+       aStEntry2ObjDataPtrIt != aStEntry2ObjDataPtr.end();
+       ++aStEntry2ObjDataPtrIt)
+    {
+      TObjectData* data = aStEntry2ObjDataPtrIt->second;      
+      if ( data->_unpublished && !data->_pyName.IsEmpty() ) {
+	aScript +=  unpublishCmd + data->_pyName + ")";
+      }
+    }    
+  
   //aScript += "\n\tpass\n";
   aScript += "\n";
   aValidScript = true;

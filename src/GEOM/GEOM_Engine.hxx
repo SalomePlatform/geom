@@ -48,6 +48,7 @@ struct TObjectData
   TCollection_AsciiString _studyEntry;
   TCollection_AsciiString _name;
   TCollection_AsciiString _pyName;
+  bool                    _unpublished;
 };
   
 class Handle_TDataStd_HArray1OfByte;

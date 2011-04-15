@@ -92,6 +92,16 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
         objData._name       = aName.in();
         objData._entry      = anEntry.in();
         objData._studyEntry = aStudyEntry.in();
+
+	//Find Drawable Attribute
+	SALOMEDS::GenericAttribute_var aGenAttr;
+	if(aValue->FindAttribute(aGenAttr, "AttributeDrawable") ) {
+	  SALOMEDS::AttributeDrawable_var aDrw = SALOMEDS::AttributeDrawable::_narrow(aGenAttr);
+	  objData._unpublished = !aDrw->IsDrawable();
+	} else {
+	  objData._unpublished = false;
+	}
+
 	objectDataVec.push_back( objData );
 
 	//Find attribute with list of used notebook variables
