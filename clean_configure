@@ -28,7 +28,7 @@ here=`pwd`
 libdir=adm_local/unix/config_files
 cd $libdir
 # Files created by libtoolize
-rm -f config.guess config.sub ltmain.sh
+rm -f config.* depcomp install-sh l*.m4 ltmain.sh missing py-compile
 # Files created by automake
 rm -rf install-sh missing depcomp py-compile
 cd $here
