@@ -33,18 +33,27 @@
 
 #include "GEOMAlgo_State.hxx"
 
+#include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <NCollection_DataMap.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#include <list>
 #include <Handle_Geom_Surface.hxx>
 
 #include <gp_Pnt.hxx>
 
+#include <list>
+#include <functional>
+
 class GEOM_Engine;
 class Handle(GEOM_Object);
 class Handle(TColStd_HArray1OfInteger);
+
+inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+{
+  return S1.IsSame(S2);
+}
 
 class GEOMImpl_IShapesOperations : public GEOM_IOperations
 {
@@ -342,6 +351,18 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \brief Sort shapes in the list by their coordinates.
    * \param SL The list of shapes to sort.
    */
+  struct CompareShapes : public std::binary_function<TopoDS_Shape, TopoDS_Shape, bool>
+  {
+    CompareShapes (bool isOldSorting)
+      : myIsOldSorting(isOldSorting) {}
+
+    bool operator()(const TopoDS_Shape& lhs, const TopoDS_Shape& rhs);
+
+    typedef NCollection_DataMap<TopoDS_Shape, std::pair<double, double> > NCollection_DataMapOfShapeDouble;
+    NCollection_DataMapOfShapeDouble myMap;
+    bool myIsOldSorting;
+  };
+
   Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL,
                                           const Standard_Boolean isOldSorting = Standard_True);
 

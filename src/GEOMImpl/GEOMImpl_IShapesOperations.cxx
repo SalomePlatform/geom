@@ -118,6 +118,8 @@
 #include <gp_Pnt.hxx>
 
 #include <vector>
+#include <algorithm>
+#include <functional>
 
 #include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
@@ -132,6 +134,8 @@
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
+
+#define STD_SORT_ALGO 1
 
 //=============================================================================
 /*!
@@ -3718,12 +3722,132 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
 }
 
 //=======================================================================
+//function : ShapeToDouble
+//purpose  : used by CompareShapes::operator()
+//=======================================================================
+std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
+{
+  // Computing of CentreOfMass
+  gp_Pnt GPoint;
+  double Len;
+
+  if (S.ShapeType() == TopAbs_VERTEX) {
+    GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
+    Len = (double)S.Orientation();
+  }
+  else {
+    GProp_GProps GPr;
+    // BEGIN: fix for Mantis issue 0020842
+    if (isOldSorting) {
+      BRepGProp::LinearProperties(S, GPr);
+    }
+    else {
+      if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
+        BRepGProp::LinearProperties(S, GPr);
+      }
+      else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
+        BRepGProp::SurfaceProperties(S, GPr);
+      }
+      else {
+        BRepGProp::VolumeProperties(S, GPr);
+      }
+    }
+    // END: fix for Mantis issue 0020842
+    GPoint = GPr.CentreOfMass();
+    Len = GPr.Mass();
+  }
+
+  double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
+  return std::make_pair(dMidXYZ, Len);
+}
+
+//=======================================================================
+//function : CompareShapes::operator()
+//purpose  : used by std::sort(), called from SortShapes()
+//=======================================================================
+bool GEOMImpl_IShapesOperations::CompareShapes::operator()(const TopoDS_Shape& theShape1,
+                                                           const TopoDS_Shape& theShape2)
+{
+  if (!myMap.IsBound(theShape1)) {
+    myMap.Bind(theShape1, ShapeToDouble(theShape1, myIsOldSorting));
+  }
+
+  if (!myMap.IsBound(theShape2)) {
+    myMap.Bind(theShape2, ShapeToDouble(theShape2, myIsOldSorting));
+  }
+
+  std::pair<double, double> val1 = myMap.Find(theShape1);
+  std::pair<double, double> val2 = myMap.Find(theShape2);
+
+  double tol = Precision::Confusion();
+  bool exchange = Standard_False;
+
+  double dMidXYZ = val1.first - val2.first;
+  if (dMidXYZ >= tol) {
+    exchange = Standard_True;
+  }
+  else if (Abs(dMidXYZ) < tol) {
+    double dLength = val1.second - val2.second;
+    if (dLength >= tol) {
+      exchange = Standard_True;
+    }
+    else if (Abs(dLength) < tol && theShape1.ShapeType() <= TopAbs_FACE) {
+      // PAL17233
+      // equal values possible on shapes such as two halves of a sphere and
+      // a membrane inside the sphere
+      Bnd_Box box1,box2;
+      BRepBndLib::Add(theShape1, box1);
+      if (!box1.IsVoid()) {
+        BRepBndLib::Add(theShape2, box2);
+        Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
+        if (dSquareExtent >= tol) {
+          exchange = Standard_True;
+        }
+        else if (Abs(dSquareExtent) < tol) {
+          Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, val1, val2;
+          box1.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val1 = (aXmin+aXmax)*999.0 + (aYmin+aYmax)*99.0 + (aZmin+aZmax)*0.9;
+          box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val2 = (aXmin+aXmax)*999.0 + (aYmin+aYmax)*99.0 + (aZmin+aZmax)*0.9;
+          if ((val1 - val2) >= tol) {
+            exchange = Standard_True;
+          }
+        }
+      }
+    }
+  }
+
+  //return val1 < val2;
+  return !exchange;
+}
+
+//=======================================================================
 //function : SortShapes
 //purpose  :
 //=======================================================================
 void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
                                             const Standard_Boolean isOldSorting)
 {
+#ifdef STD_SORT_ALGO
+  std::vector<TopoDS_Shape> aShapesVec;
+  aShapesVec.reserve(SL.Extent());
+
+  TopTools_ListIteratorOfListOfShape it (SL);
+  for (; it.More(); it.Next()) {
+    aShapesVec.push_back(it.Value());
+  }
+  SL.Clear();
+
+  CompareShapes shComp (isOldSorting);
+  std::stable_sort(aShapesVec.begin(), aShapesVec.end(), shComp);
+  //std::sort(aShapesVec.begin(), aShapesVec.end(), shComp);
+
+  std::vector<TopoDS_Shape>::const_iterator anIter = aShapesVec.begin();
+  for (; anIter != aShapesVec.end(); ++anIter) {
+    SL.Append(*anIter);
+  }
+#else
+  // old implementation
   Standard_Integer MaxShapes = SL.Extent();
   TopTools_Array1OfShape  aShapes (1,MaxShapes);
   TColStd_Array1OfInteger OrderInd(1,MaxShapes);
@@ -3765,8 +3889,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
       GPoint = GPr.CentreOfMass();
       Length.SetValue(Index, GPr.Mass());
     }
-    MidXYZ.SetValue(Index,
-                    GPoint.X()*999 + GPoint.Y()*99 + GPoint.Z()*0.9);
+    MidXYZ.SetValue(Index, GPoint.X()*999.0 + GPoint.Y()*99.0 + GPoint.Z()*0.9);
     //cout << Index << " L: " << Length(Index) << "CG: " << MidXYZ(Index) << endl;
   }
 
@@ -3833,6 +3956,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
 
   for (Index=1; Index <= MaxShapes; Index++)
     SL.Append( aShapes( OrderInd(Index) ));
+#endif
 }
 
 //=======================================================================
