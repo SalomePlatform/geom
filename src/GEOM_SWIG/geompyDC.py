@@ -333,6 +333,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
             pass
 
+        ## Dump component to the Python script
+        #  This method overrides IDL function to allow default values for the parameters.
+        def DumpPython(self, theStudy, theIsPublished=True, theIsMultiFile=True):
+            return GEOM._objref_GEOM_Gen.DumpPython(self, theStudy, theIsPublished, theIsMultiFile)
+
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
         # @ref swig_SubShapeAllSorted "Example"
