@@ -203,7 +203,29 @@ void EntityGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
 void EntityGUI_SubShapeDlg::ClickOnOk()
 {
   setIsApplyAndClose(true);
-  if (ClickOnApply())
+
+  SUIT_Session::session()->activeApplication()->putInfo("");
+
+  /* Explode all sub shapes */
+  bool isOk = true;
+  if (isAllSubShapes()) {
+    /* More than 30 subshapes : ask confirmation */
+    unsigned int nb = NumberOfSubShapes(myShape, shapeType());
+    if (nb > 30) {
+      const QString caption = tr("GEOM_CONFIRM");
+      const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
+      const QString button0 = tr("GEOM_BUT_EXPLODE");
+      const QString button1 = tr("GEOM_BUT_CANCEL");
+
+      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+        isOk = false;  /* aborted */
+    }
+  }
+
+  if (isOk)
+    isOk = onAccept();
+
+  if (isOk)
     ClickOnCancel();
 }
 
