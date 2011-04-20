@@ -429,7 +429,7 @@ void EntityGUI_SubShapeDlg::ComboTextChanged()
 // purpose  :
 //=================================================================================
 unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S,
-                                                       const int shapeType) const
+                                                      const int shapeType) const
 {
   if (S.IsNull())
     return 0;
@@ -702,7 +702,8 @@ bool EntityGUI_SubShapeDlg::isValid (QString& msg)
 bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
-  GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), true);
+  //GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), true);
+  GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), isAllSubShapes());
 
   if (!aList->length())
     return false;
@@ -714,19 +715,25 @@ bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
     int nbSel = getSelectedSubshapes(aMapIndex);
 
     if (nbSel > 0) {
-      GEOM::GEOM_ILocalOperations_var aLocOp =
-        getGeomEngine()->GetILocalOperations(getStudyId());
+      //GEOM::GEOM_ILocalOperations_var aLocOp =
+      //  getGeomEngine()->GetILocalOperations(getStudyId());
+      TopTools_IndexedMapOfShape aSubShapesMap;
+      TopExp::MapShapes(myShape, aSubShapesMap);
 
-      for (int i = 0, n = aList->length(); i < n; i++)
-        if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
+      for (int i = 0, n = aList->length(); i < n; i++) {
+        //if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
+        TopoDS_Shape aSShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), aList[i]);
+        if (aMapIndex.Contains(aSubShapesMap.FindIndex(aSShape)))
           objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
         else
           aList[i]->UnRegister();
+      }
     }
   }
-  else
+  else {
     for (int i = 0, n = aList->length(); i < n; i++)
       objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+  }
 
   return objects.size();
 }
