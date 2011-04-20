@@ -1547,19 +1547,19 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
-        <translation>Centre coord. X :</translation>
+        <translation>X Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_Y</source>
-        <translation>Centre coord. Y :</translation>
+        <translation>Y Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DX</source>
-        <translation>Centre coord. DX :</translation>
+        <translation>DX Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DY</source>
-        <translation>Centre coord. DY :</translation>
+        <translation>DY Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_DEST</source>

@@ -462,6 +462,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
 {
   myConstructorId = constructorId;
   if ( myConstructorId == 0 ) {    // SEGMENT
+    GroupPt2->RB_Point1->setChecked( true );
     GroupPt2->setEnabled( false );
     GroupD2->setEnabled( true );
     MainWidget->RB_Dest1->setEnabled( true );
@@ -470,6 +471,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
   }
   else if (  myConstructorId == 1 ) { // ARC
     GroupPt2->setEnabled( true );
+    GroupD2->RB_Dir21->setChecked( true );
     GroupD2->setEnabled( false );
     MainWidget->RB_Dest1->setEnabled( true ); 
     MainWidget->RB_Dest1->setChecked( true );
@@ -518,9 +520,16 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 {
   MESSAGE("PointClicked")
   myConstructorPntId = constructorId;  
-  GroupPt2->RB_Point1->setChecked( true );
-  GroupPt->RB_Point3->setEnabled( true ); 
-  Point2Clicked( 1 ); 
+  GroupPt->RB_Point3->setEnabled( true );
+  int buttonId = GroupPt2->ButtonGroup->checkedId();
+  MESSAGE("checkedId ="<< buttonId)
+  if (buttonId >= 0){           // = If a button is checked
+    Point2Clicked(buttonId);
+  }
+  else{ 
+    GroupPt2->RB_Point1->setChecked( true );
+    Point2Clicked( 1 ); 
+  }
 }
 
 //=================================================================================
@@ -706,8 +715,15 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
 void EntityGUI_SketcherDlg::Dir1Clicked( int constructorId )
 {
   myConstructorDirId = constructorId;
-  GroupD2->RB_Dir21->setChecked( true );
-  Dir2Clicked( 2 );
+  int dirButtonId = GroupD2->ButtonGroup->checkedId();
+  MESSAGE("checkedId ="<< dirButtonId)
+  if (dirButtonId >= 0){           // = If a button is checked
+    Dir2Clicked(dirButtonId);
+  }
+  else{ 
+    GroupD2->RB_Dir21->setChecked( true );
+    Dir2Clicked( 2 ); 
+  }
 }
 
 

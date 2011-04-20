@@ -1547,19 +1547,19 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
-        <translation>Center X coord. :</translation>
+        <translation>X Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_Y</source>
-        <translation>Center Y coord. :</translation>
+        <translation>Y Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DX</source>
-        <translation>Center DX coord. :</translation>
+        <translation>DX Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DY</source>
-        <translation>Center DY coord. :</translation>
+        <translation>DY Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_DEST</source>
