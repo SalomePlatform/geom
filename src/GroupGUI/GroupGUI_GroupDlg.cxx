@@ -784,6 +784,8 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Erase(myMainObj, false, false);
+
     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
     SUIT_ViewWindow* aViewWindow = 0;

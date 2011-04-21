@@ -638,6 +638,8 @@ void EntityGUI_SubShapeDlg::activateSelection()
   if (!myObject->_is_nil() && !isAllSubShapes())
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Erase(myObject, false, false);
+
     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
     SUIT_ViewWindow* aViewWindow = 0;
