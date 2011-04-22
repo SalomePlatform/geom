@@ -485,13 +485,19 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
 
   if (mapIDsToRemove.Extent() > 0) {
     Standard_Integer k = 1, aRemLength = mapIDsToRemove.Extent();
-    Handle(TColStd_HArray1OfInteger) aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
-
-    for (j = 1; j <= aLength; j++) {
-      if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
-        aNewSeq->SetValue(k, aSeq->Value(j));
-        k++;
+    Handle(TColStd_HArray1OfInteger) aNewSeq;
+    if ( aLength - aRemLength > 0 ) {
+      aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
+      for (j = 1; j <= aLength; j++) {
+	if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
+	  aNewSeq->SetValue(k, aSeq->Value(j));
+	  k++;
+	}
       }
+    }
+    else {
+      aNewSeq = new TColStd_HArray1OfInteger(1,1);
+      aNewSeq->SetValue(1, -1);
     }
 
     aSSI.SetIndices(aNewSeq);
