@@ -1178,6 +1178,60 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
 
 //=============================================================================
 /*!
+ *  ProjectShapeCopy
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
+       (Handle(GEOM_Object) theSource, Handle(GEOM_Object) theTarget)
+{
+  SetErrorCode(KO);
+
+  if (theSource.IsNull() || theTarget.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theSource->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be projected
+
+  //Add a new Projection object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+
+  //Add a Projection function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_MirrorDriver::GetID(), PROJECTION_COPY);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_MirrorDriver::GetID()) return NULL;
+
+  GEOMImpl_IMirror aTI (aFunction);
+  aTI.SetPlane(theTarget->GetLastFunction());
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the Projection
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Projection driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeProjection("
+                               << theSource << ", " << theTarget << ")";
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+
+//=============================================================================
+/*!
  *  ScaleShape
  */
 //=============================================================================

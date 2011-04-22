@@ -1066,6 +1066,22 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset Surface</translation>
     </message>
     <message>
+        <source>GEOM_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_TITLE</source>
+        <translation>Projection on Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SOURCE_OBJECT</source>
+        <translation>Source vertex, edge or wire</translation>
+    </message>
+    <message>
+        <source>GEOM_TARGET_OBJECT</source>
+        <translation>Target face</translation>
+    </message>
+    <message>
         <source>GEOM_OPERATIONS</source>
         <translation>Operations</translation>
     </message>
@@ -2426,6 +2442,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset Surface</translation>
     </message>
     <message>
+        <source>MEN_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>MEN_OPERATIONS</source>
         <translation>Operations</translation>
     </message>
@@ -3078,6 +3098,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset surface</translation>
     </message>
     <message>
+        <source>STB_PROJECTION</source>
+        <translation>Project a point, an edge or a wire on a face</translation>
+    </message>
+    <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
         <translation>Create an origin and base Vectors</translation>
     </message>
@@ -3612,6 +3636,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_OFFSET</source>
         <translation>Offset surface</translation>
+    </message>
+    <message>
+        <source>TOP_PROJECTION</source>
+        <translation>Projection</translation>
     </message>
     <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>

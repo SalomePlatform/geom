@@ -468,6 +468,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpMirror:           // MENU TRANSFORMATION - MIRROR
   case GEOMOp::OpScale:            // MENU TRANSFORMATION - SCALE
   case GEOMOp::OpOffset:           // MENU TRANSFORMATION - OFFSET
+  case GEOMOp::OpProjection:       // MENU TRANSFORMATION - PROJECTION
   case GEOMOp::OpMultiTranslate:   // MENU TRANSFORMATION - MULTI-TRANSLATION
   case GEOMOp::OpMultiRotate:      // MENU TRANSFORMATION - MULTI-ROTATION
   case GEOMOp::OpReimport:         // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
@@ -710,6 +711,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpMirror,         "MIRROR" );
   createGeomAction( GEOMOp::OpScale,          "SCALE" );
   createGeomAction( GEOMOp::OpOffset,         "OFFSET" );
+  createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
   createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
   createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
 
@@ -898,6 +900,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpMirror,         transId, -1 );
   createMenu( GEOMOp::OpScale,          transId, -1 );
   createMenu( GEOMOp::OpOffset,         transId, -1 );
+  createMenu( GEOMOp::OpProjection,     transId, -1 );
   createMenu( separator(),              transId, -1 );
   createMenu( GEOMOp::OpMultiTranslate, transId, -1 );
   createMenu( GEOMOp::OpMultiRotate,    transId, -1 );
@@ -1034,6 +1037,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpMirror,         transTbId );
   createTool( GEOMOp::OpScale,          transTbId );
   createTool( GEOMOp::OpOffset,         transTbId );
+  createTool( GEOMOp::OpProjection,     transTbId );
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );

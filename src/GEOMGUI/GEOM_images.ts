@@ -342,6 +342,10 @@
             <translation>offset.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_PROJECTION</source>
+            <translation>projection.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_PARTITION</source>
             <translation>partition.png</translation>
         </message>
@@ -920,6 +924,10 @@
         <message>
             <source>ICO_OFFSET</source>
             <translation>offset.png</translation>
+        </message>
+        <message>
+            <source>ICO_PROJECTION</source>
+            <translation>projection.png</translation>
         </message>
         <message>
             <source>ICO_ORIGIN_AND_VECTORS</source>

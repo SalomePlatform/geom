@@ -112,6 +112,7 @@ multitranslationdouble.png	\
 multitranslationsimple.png	\
 normale.png			\
 offset.png			\
+projection.png			\
 origin_and_vectors.png		\
 partition.png			\
 partitionkeep.png		\

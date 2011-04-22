@@ -15,13 +15,11 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
-# GEOM TRANSFORMATIONGUI : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : TransformationGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -34,6 +32,7 @@ salomeinclude_HEADERS =					\
 	TransformationGUI_MirrorDlg.h			\
 	TransformationGUI_ScaleDlg.h			\
 	TransformationGUI_OffsetDlg.h			\
+	TransformationGUI_ProjectionDlg.h		\
 	TransformationGUI_PositionDlg.h
 
 # Libraries targets
@@ -48,6 +47,7 @@ dist_libTransformationGUI_la_SOURCES =			\
 	TransformationGUI_MirrorDlg.h			\
 	TransformationGUI_ScaleDlg.h			\
 	TransformationGUI_OffsetDlg.h			\
+	TransformationGUI_ProjectionDlg.h		\
 	TransformationGUI_PositionDlg.h			\
 							\
 	TransformationGUI.cxx				\
@@ -58,6 +58,7 @@ dist_libTransformationGUI_la_SOURCES =			\
 	TransformationGUI_MirrorDlg.cxx			\
 	TransformationGUI_ScaleDlg.cxx			\
 	TransformationGUI_OffsetDlg.cxx			\
+	TransformationGUI_ProjectionDlg.cxx		\
 	TransformationGUI_PositionDlg.cxx
 
 MOC_FILES =						\
@@ -68,6 +69,7 @@ MOC_FILES =						\
 	TransformationGUI_MirrorDlg_moc.cxx		\
 	TransformationGUI_ScaleDlg_moc.cxx		\
 	TransformationGUI_OffsetDlg_moc.cxx		\
+	TransformationGUI_ProjectionDlg_moc.cxx		\
 	TransformationGUI_PositionDlg_moc.cxx
 
 nodist_libTransformationGUI_la_SOURCES =		\
@@ -99,4 +101,3 @@ libTransformationGUI_la_LDFLAGS  =				\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la				\
 	$(CAS_LDPATH) -lTKShHealing
-

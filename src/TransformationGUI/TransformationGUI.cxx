@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "TransformationGUI.h"
 
 #include <GEOMBase.h>
@@ -46,6 +45,7 @@
 #include "TransformationGUI_MirrorDlg.h"             // Method MIRROR
 #include "TransformationGUI_ScaleDlg.h"              // Method SCALE
 #include "TransformationGUI_OffsetDlg.h"             // Method OFFSET
+#include "TransformationGUI_ProjectionDlg.h"         // Method PROJECTION
 #include "TransformationGUI_PositionDlg.h"           // Method POSITION
 
 //=======================================================================
@@ -96,6 +96,9 @@ bool TransformationGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
     break;
   case GEOMOp::OpOffset:         // OFFSET
     aDlg = new TransformationGUI_OffsetDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpProjection:     // PROJECTION
+    aDlg = new TransformationGUI_ProjectionDlg( getGeometryGUI(), parent );
     break;
   case GEOMOp::OpMultiTranslate: // MULTI TRANSLATION
     aDlg = new TransformationGUI_MultiTranslationDlg( getGeometryGUI(), parent );

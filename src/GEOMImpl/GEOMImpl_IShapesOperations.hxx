@@ -123,6 +123,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
                                                    const Standard_Integer theID);
 
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeSubShapes
+    (Handle(GEOM_Object)              theMainShape,
+     Handle(TColStd_HArray1OfInteger) theIndices);
+
   Standard_EXPORT Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theMainShape,
                                                      Handle(GEOM_Object) theSubShape);
 

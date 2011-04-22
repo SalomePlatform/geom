@@ -2308,13 +2308,13 @@ GEOM::GEOM_Object_ptr GEOM_Gen_i::AddSubShape (GEOM::GEOM_Object_ptr theMainShap
   if (CORBA::is_nil(theMainShape) || theIndices.length() < 1)
     return GEOM::GEOM_Object::_nil();
   CORBA::String_var entry = theMainShape->GetEntry();
-  Handle(GEOM_Object) aMainsShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
-  if (aMainsShape.IsNull()) return GEOM::GEOM_Object::_nil();
+  Handle(GEOM_Object) aMainShape = _impl->GetObject(theMainShape->GetStudyID(), entry);
+  if (aMainShape.IsNull()) return GEOM::GEOM_Object::_nil();
 
   Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger(1, theIndices.length());
   for(Standard_Integer i = 0; i<theIndices.length(); i++) anArray->SetValue(i+1, theIndices[i]);
 
-  Handle(GEOM_Object) anObject = _impl->AddSubShape(aMainsShape, anArray, true);
+  Handle(GEOM_Object) anObject = _impl->AddSubShape(aMainShape, anArray, true);
   if(anObject.IsNull()) return GEOM::GEOM_Object::_nil();
 
   TCollection_AsciiString anEntry;

@@ -111,6 +111,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr GetSubShape (GEOM::GEOM_Object_ptr theMainShape,
                                      CORBA::Long           theID);
 
+  GEOM::ListOfGO* MakeSubShapes (GEOM::GEOM_Object_ptr theMainShape,
+                                 const GEOM::ListOfLong& theIndices);
+
   CORBA::Long GetSubShapeIndex (GEOM::GEOM_Object_ptr theMainShape,
                                 GEOM::GEOM_Object_ptr theSubShape);
 

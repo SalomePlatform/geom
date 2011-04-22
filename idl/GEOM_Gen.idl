@@ -907,6 +907,14 @@ module GEOM
     GEOM_Object OffsetShapeCopy (in GEOM_Object theObject, in double theOffset);
 
     /*!
+     *  Create new object as projection of the given one on a 2D surface.
+     *  \param theSource The source object for the projection. It can be a point, edge or wire.
+     *  \param theTarget The target object. It can be planar or cylindrical face.
+     *  \return New GEOM_Object, containing the projection.
+     */
+    GEOM_Object ProjectShapeCopy (in GEOM_Object theSource, in GEOM_Object theTarget);
+
+    /*!
      *  Scale the given object by the factor.
      *  \param theObject The object to be scaled.
      *  \param thePoint Center point for scaling.
@@ -1558,11 +1566,25 @@ module GEOM
 
     /*!
      *  Get a sub shape defined by its unique ID inside \a theMainShape
+     *  \param theMainShape Main shape.
+     *  \param theID Unique ID of sub shape inside \a theMainShape.
+     *  \return GEOM_Object, corresponding to found sub shape.
      *  \note The sub shape GEOM_Objects can has ONLY ONE function.
-     *        Don't try to apply modification operations on them.
+     *        Don't try to apply modification operations (without copy) on them.
      */
     GEOM_Object GetSubShape (in GEOM_Object theMainShape,
                              in long        theID);
+
+    /*!
+     *  Get a set of sub shapes defined by their unique IDs inside \a theMainShape
+     *  \param theMainShape Main shape.
+     *  \param theIndices List of unique IDs of sub shapes inside \a theMainShape.
+     *  \return List of GEOM_Objects, corresponding to found sub shapes.
+     *  \note The sub shape GEOM_Objects can has ONLY ONE function.
+     *        Don't try to apply modification operations (without copy) on them.
+     */
+    ListOfGO MakeSubShapes (in GEOM_Object theMainShape,
+                            in ListOfLong  theIndices);
 
     /*!
      *  Get global index of \a theSubShape in \a theMainShape.
@@ -3625,7 +3647,7 @@ module GEOM
 
     /*!
      *  Add a sub shape defined by indices in \a theIndices
-     *  (contains unique IDs of sub shapes inside theMainShape)
+     *  (contains unique IDs of sub shapes inside \a theMainShape)
      *  \note The sub shape GEOM_Objects can has ONLY ONE function.
      *        Don't try to apply modification operations on them.
      *  \note Internal method

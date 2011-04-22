@@ -726,35 +726,31 @@ bool EntityGUI_SubShapeDlg::isValid (QString& msg)
 bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
-  //GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), true);
-  GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), isAllSubShapes());
 
-  if (!aList->length())
-    return false;
-
-  // Throw away sub-shapes not selected by user if not in preview mode
-  // and manual selection is active
   if (!isAllSubShapes()) {
+    // manual selection
     TColStd_IndexedMapOfInteger aMapIndex;
     int nbSel = getSelectedSubshapes(aMapIndex);
 
     if (nbSel > 0) {
-      //GEOM::GEOM_ILocalOperations_var aLocOp =
-      //  getGeomEngine()->GetILocalOperations(getStudyId());
-      TopTools_IndexedMapOfShape aSubShapesMap;
-      TopExp::MapShapes(myShape, aSubShapesMap);
+      int i;
 
-      for (int i = 0, n = aList->length(); i < n; i++) {
-        //if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
-        TopoDS_Shape aSShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), aList[i]);
-        if (aMapIndex.Contains(aSubShapesMap.FindIndex(aSShape)))
-          objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
-        else
-          aList[i]->UnRegister();
-      }
+      GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+      anArray->length(nbSel);
+
+      for (i = 1; i <= nbSel; i++)
+        anArray[i - 1] = aMapIndex.FindKey(i);
+
+      GEOM::ListOfGO_var aList = anOper->MakeSubShapes(myObject, anArray);
+      int n = aList->length();
+      for (i = 0; i < n; i++)
+        objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
     }
   }
   else {
+    GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), true);
+    if (!aList->length())
+      return false;
     for (int i = 0, n = aList->length(); i < n; i++)
       objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
   }

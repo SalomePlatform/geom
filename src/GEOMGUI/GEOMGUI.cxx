@@ -18,12 +18,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GEOMGUI.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include "GEOMGUI.h"
 #include "GeometryGUI.h"
 
@@ -109,4 +108,3 @@ GeometryGUI* GEOMGUI::getGeometryGUI()
 {
   return myGeometryGUI;
 }
-

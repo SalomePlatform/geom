@@ -93,6 +93,8 @@
 
 #define GEOM_3DSKETCHER 44
 
+#define GEOM_PROJECTION 45
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -153,6 +155,8 @@
 
 #define OFFSET_SHAPE      1
 #define OFFSET_SHAPE_COPY 2
+
+#define PROJECTION_COPY 1
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2

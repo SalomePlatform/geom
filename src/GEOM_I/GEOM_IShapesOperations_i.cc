@@ -91,9 +91,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeOnCurveByLength
-                  (GEOM::GEOM_Object_ptr theCurve,  
-		   CORBA::Double         theLength,
-		   GEOM::GEOM_Object_ptr theStartPoint)
+                  (GEOM::GEOM_Object_ptr theCurve,
+                   CORBA::Double         theLength,
+                   GEOM::GEOM_Object_ptr theStartPoint)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -126,8 +126,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeOnCurveByLength
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeWire
                       (GEOM::GEOM_Object_ptr theWire,
-		       const CORBA::Double theLinearTolerance,
-		       const CORBA::Double theAngularTolerance)
+                       const CORBA::Double theLinearTolerance,
+                       const CORBA::Double theAngularTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -663,6 +663,42 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSubShape
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeSubShapes
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeSubShapes (GEOM::GEOM_Object_ptr theMainShape,
+                                                         const GEOM::ListOfLong& theIndices)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+  Standard_Integer i;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theIndices.length() < 1)
+    return aSeq._retn();
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theMainShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, theIndices.length());
+  for (i = 0; i < theIndices.length(); i++)
+    anArray->SetValue(i+1, theIndices[i]);
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakeSubShapes(aShape, anArray);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (i = 0; i < aLength; i++)
+    aSeq[i] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i+1)));
+
+  return aSeq._retn();
 }
 
 //=============================================================================

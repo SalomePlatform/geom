@@ -121,6 +121,9 @@ class GEOM_I_EXPORT GEOM_ITransformOperations_i :
   GEOM::GEOM_Object_ptr OffsetShapeCopy (GEOM::GEOM_Object_ptr theObject,
 					 CORBA::Double theOffset);
 
+  GEOM::GEOM_Object_ptr ProjectShapeCopy (GEOM::GEOM_Object_ptr theSource,
+                                          GEOM::GEOM_Object_ptr theTarget);
+
   GEOM::GEOM_Object_ptr ScaleShape (GEOM::GEOM_Object_ptr theObject,
 				    GEOM::GEOM_Object_ptr thePoint,
 				    CORBA::Double theFactor);

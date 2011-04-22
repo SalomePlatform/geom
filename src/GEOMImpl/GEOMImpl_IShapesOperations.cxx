@@ -1198,6 +1198,89 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
 
 //=============================================================================
 /*!
+ *  MakeSubShapes
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeSubShapes
+                                (Handle(GEOM_Object)              theMainShape,
+                                 Handle(TColStd_HArray1OfInteger) theIndices)
+{
+  SetErrorCode(KO);
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  if (!theIndices->Length()) {
+    SetErrorCode(NOT_FOUND_ANY);
+    return aSeq;
+  }
+
+  if (theMainShape.IsNull()) return NULL;
+  TopoDS_Shape aShape = theMainShape->GetValue();
+  if (aShape.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  Handle(TColStd_HArray1OfInteger) anArray;
+  Handle(GEOM_Object) anObj;
+
+  TCollection_AsciiString anAsciiList, anEntry;
+  Standard_Integer i, low = theIndices->Lower(), up = theIndices->Upper();
+  for (i = low; i <= up; i++) {
+    int id = theIndices->Value(i);
+    if (1 <= id && id <= anIndices.Extent()) {
+      TopoDS_Shape aValue = anIndices.FindKey(id);
+      anArray = new TColStd_HArray1OfInteger(1,1);
+      anArray->SetValue(1, id);
+
+      anObj = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+      if (!anObj.IsNull()) {
+        Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
+        if (aFunction.IsNull()) return aSeq;
+
+        GEOM_ISubShape aSSI (aFunction);
+        aSSI.SetMainShape(aMainShape);
+        aSSI.SetIndices(anArray);
+
+        // Set function value directly, as we know it.
+        // Usage of Solver here would lead to significant loss of time,
+        // because GEOM_SubShapeDriver will build TopTools_IndexedMapOfShape
+        // on the main shape for each being calculated sub-shape separately.
+        aFunction->SetValue(aValue);
+
+        // Put this subshape in the list of subshapes of theMainShape
+        aMainShape->AddSubShapeReference(aFunction);
+
+        aSeq->Append(anObj);
+
+        // for python command
+        TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+        anAsciiList += anEntry;
+        anAsciiList += ",";
+      }
+    }
+  }
+
+  //Make a Python command
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
+
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString() << "] = geompy.SubShapes("
+     << theMainShape << ", [" ;
+  for (i = low; i <= up - 1; i++) {
+    pd << theIndices->Value(i) << ", ";
+  }
+  pd << theIndices->Value(up) << "])";
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
+//=============================================================================
+/*!
  *  GetSubShapeIndex
  */
 //=============================================================================

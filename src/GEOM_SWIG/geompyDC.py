@@ -2319,6 +2319,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj
 
+        ## Get a set of sub shapes defined by their unique IDs inside <VAR>theMainShape</VAR>
+        #  @param theMainShape Main shape.
+        #  @param theIndices List of unique IDs of sub shapes inside <VAR>theMainShape</VAR>.
+        #  @return List of GEOM_Objects, corresponding to found sub shapes.
+        #
+        #  @ref swig_all_decompose "Example"
+        def SubShapes(self, aShape, anIDs):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.MakeSubShapes(aShape, anIDs)
+            RaiseIfFailed("SubShapes", self.ShapesOp)
+            return ListObj
+
         # end of l4_decompose
         ## @}
 
@@ -3003,6 +3015,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            return anObj
+
+        ## Create new object as projection of the given one on a 2D surface.
+        #  @param theSource The source object for the projection. It can be a point, edge or wire.
+        #  @param theTarget The target object. It can be planar or cylindrical face.
+        #  @return New GEOM_Object, containing the projection.
+        #
+        #  @ref tui_projection "Example"
+        def MakeProjection(self, theSource, theTarget):
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.ProjectShapeCopy(theSource, theTarget)
+            RaiseIfFailed("ProjectShapeCopy", self.TrsfOp)
             return anObj
 
         # -----------------------------------------------------------------------------

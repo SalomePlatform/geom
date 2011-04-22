@@ -638,6 +638,33 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShapeCopy
 
 //=============================================================================
 /*!
+ *  ProjectShapeCopy
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ProjectShapeCopy
+                                             (GEOM::GEOM_Object_ptr theSource,
+                                              GEOM::GEOM_Object_ptr theTarget)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the input objects
+  Handle(GEOM_Object) aSource = GetObjectImpl(theSource);
+  Handle(GEOM_Object) aTarget = GetObjectImpl(theTarget);
+  if (aSource.IsNull() || aTarget.IsNull()) return aGEOMObject._retn();
+
+  //Create the projection
+  Handle(GEOM_Object) anObject = GetOperations()->ProjectShapeCopy(aSource, aTarget);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  ScaleShape
  */
 //=============================================================================
