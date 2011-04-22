@@ -76,9 +76,10 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   getGeometryGUI()->EmitSignalDeactivateDialog();
 
   QDialog* aDlg = NULL;
-  switch ( theCommandID ) {
+  switch (theCommandID) {
   case GEOMOp::OpSewing:           aDlg = new RepairGUI_SewingDlg            (getGeometryGUI(), parent); break;
-  case GEOMOp::OpGlueFaces:        aDlg = new RepairGUI_GlueDlg              (getGeometryGUI(), parent); break;
+  case GEOMOp::OpGlueFaces: aDlg = new RepairGUI_GlueDlg (getGeometryGUI(), parent, false, TopAbs_FACE); break;
+  case GEOMOp::OpGlueEdges: aDlg = new RepairGUI_GlueDlg (getGeometryGUI(), parent, false, TopAbs_EDGE); break;
   case GEOMOp::OpLimitTolerance:   aDlg = new RepairGUI_LimitToleranceDlg    (getGeometryGUI(), parent); break;
   case GEOMOp::OpSuppressFaces:    aDlg = new RepairGUI_SuppressFacesDlg     (getGeometryGUI(), parent); break;
   case GEOMOp::OpSuppressHoles:    aDlg = new RepairGUI_RemoveHolesDlg       (getGeometryGUI(), parent); break;
@@ -91,11 +92,11 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpOrientation:      aDlg = new RepairGUI_ChangeOrientationDlg (getGeometryGUI(), parent); break;
   case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  (getGeometryGUI(), parent); break;
     default:
-      app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
+      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
       break;
   }
 
-  if ( aDlg )
+  if (aDlg)
     aDlg->show();
 
   return true;

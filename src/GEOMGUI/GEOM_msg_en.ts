@@ -754,8 +754,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Glue</translation>
     </message>
     <message>
-        <source>GEOM_GLUE_TITLE</source>
+        <source>GEOM_GLUE_FACES_TITLE</source>
         <translation>Glue faces</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_EDGES_TITLE</source>
+        <translation>Glue edges</translation>
     </message>
     <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
@@ -2358,6 +2362,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Glue Faces</translation>
     </message>
     <message>
+        <source>MEN_GLUE_EDGES</source>
+        <translation>Glue Edges</translation>
+    </message>
+    <message>
         <source>MEN_GROUP</source>
         <translation>Group</translation>
     </message>
@@ -2500,7 +2508,7 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_POP_PUBLISH_OBJ</source>
         <translation>Publish...</translation>
-    </message>			    			    
+    </message>
     <message>
         <source>MEN_POP_ISOS</source>
         <translation>Isos</translation>
@@ -3026,6 +3034,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Perform glue faces</translation>
     </message>
     <message>
+        <source>STB_GLUE_EDGES</source>
+        <translation>Perform glue edges</translation>
+    </message>
+    <message>
         <source>STB_GROUP_CREATE</source>
         <translation>Create a group</translation>
     </message>
@@ -3143,12 +3155,12 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
-	<translation>Unpublish object</translation>
+        <translation>Unpublish object</translation>
    </message>
     <message>
         <source>STB_POP_PUBLISH_OBJ</source>
         <translation>Publish object</translation>
-   </message>		          			    
+   </message>
     <message>
         <source>STB_POP_HIDE_CHILDREN</source>
         <translation>Hide child objects</translation>
@@ -3570,6 +3582,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Perform glue faces</translation>
     </message>
     <message>
+        <source>TOP_GLUE_EDGES</source>
+        <translation>Perform glue edges</translation>
+    </message>
+    <message>
         <source>TOP_GROUP_CREATE</source>
         <translation>Create a group</translation>
     </message>
@@ -3684,11 +3700,11 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
-    </message> 
+    </message>
     <message>
         <source>TOP_POP_PUBLISH_OBJ</source>
-	<translation>Publish object</translation>
-   </message>			    
+        <translation>Publish object</translation>
+   </message>
     <message>
         <source>TOP_POP_HIDE_CHILDREN</source>
         <translation>Hide Children</translation>
@@ -4670,19 +4686,36 @@ Number of sketch points too small</translation>
     <message>
         <source>FACES_FOR_GLUING_ARE_DETECTED</source>
         <translation>There are %1 face(s) that can be glued. They are coloured on the screen with red colour.
-Please close this message box and select faces for glueing</translation>
+Please close this message box and select faces for gluing</translation>
+    </message>
+    <message>
+        <source>EDGES_FOR_GLUING_ARE_DETECTED</source>
+        <translation>There are %1 edge(s) that can be glued. They are coloured on the screen with red colour.
+Please close this message box and select edges for gluing</translation>
     </message>
     <message>
         <source>GLUE_FACES</source>
         <translation>Glue faces</translation>
     </message>
     <message>
+        <source>GLUE_EDGES</source>
+        <translation>Glue edges</translation>
+    </message>
+    <message>
         <source>SELECT_FACES</source>
         <translation>Select Faces</translation>
     </message>
     <message>
+        <source>SELECT_EDGES</source>
+        <translation>Select Edges</translation>
+    </message>
+    <message>
         <source>THERE_ARE_NO_FACES_FOR_GLUING</source>
         <translation>There are no faces for gluing</translation>
+    </message>
+    <message>
+        <source>THERE_ARE_NO_EDGES_FOR_GLUING</source>
+        <translation>There are no edges for gluing</translation>
     </message>
 </context>
 <context>
@@ -4876,31 +4909,31 @@ Would you like to continue?</translation>
     <name>GEOMToolsGUI_PublishDlg</name>
     <message>
         <source>GEOM_PUBLISH_OBJECTS_TLT</source>
-	<translation>Publish Objects</translation>
-    </message>			            
-    <message>
-	<source>OBJECT_NAME</source>
-	<translation>Name</translation>
+        <translation>Publish Objects</translation>
     </message>
     <message>
-	<source>OBJECT_ENTRY</source>
-	<translation>Entry</translation>
-    </message>    
+      <source>OBJECT_NAME</source>
+      <translation>Name</translation>
+    </message>
+    <message>
+      <source>OBJECT_ENTRY</source>
+      <translation>Entry</translation>
+    </message>
     <message>
         <source>UNSELECT_ALL</source>
         <translation>U&amp;nselect All</translation>
     </message>
-    <message>    
+    <message>
         <source>SELECT_ALL</source>
-	<translation>Select &amp;All</translation>
+        <translation>Select &amp;All</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_BTN</source>
-	<translation>&amp;Publish</translation>
+        <translation>&amp;Publish</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
-	<translation>P&amp;ublish And Close</translation>
-    </message>			        
+        <translation>P&amp;ublish And Close</translation>
+    </message>
 </context>
 </TS>

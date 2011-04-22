@@ -279,8 +279,10 @@
 
 #define BASIC_FILLING 1
 
-#define GLUE_FACES 1
+#define GLUE_FACES         1
 #define GLUE_FACES_BY_LIST 2
+#define GLUE_EDGES         3
+#define GLUE_EDGES_BY_LIST 4
 
 #define SKETCHER_NINE_DOUBLS 1
 #define SKETCHER_PLANE 2

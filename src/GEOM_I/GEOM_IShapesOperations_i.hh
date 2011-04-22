@@ -82,6 +82,16 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                              const GEOM::ListOfGO& theFaces,
                                              CORBA::Boolean  doKeepNonSolids);
 
+  GEOM::GEOM_Object_ptr MakeGlueEdges (GEOM::GEOM_Object_ptr theShape,
+                                       CORBA::Double         theTolerance);
+
+  GEOM::ListOfGO* GetGlueEdges (GEOM::GEOM_Object_ptr theShape,
+                                CORBA::Double         theTolerance);
+
+  GEOM::GEOM_Object_ptr MakeGlueEdgesByList (GEOM::GEOM_Object_ptr theShape,
+                                             CORBA::Double         theTolerance,
+                                             const GEOM::ListOfGO& theEdges);
+
   GEOM::ListOfGO* GetExistingSubObjects (GEOM::GEOM_Object_ptr theShape,
                                          CORBA::Boolean        theGroupsOnly);
 

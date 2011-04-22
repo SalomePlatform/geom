@@ -496,6 +496,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpFreeFaces:        // MENU MEASURE - FREE FACES
   case GEOMOp::OpOrientation:      // MENU REPAIR - CHANGE ORIENTATION
   case GEOMOp::OpGlueFaces:        // MENU REPAIR - GLUE FACES
+  case GEOMOp::OpGlueEdges:        // MENU REPAIR - GLUE EDGES
   case GEOMOp::OpLimitTolerance:   // MENU REPAIR - LIMIT TOLERANCE
   case GEOMOp::OpRemoveExtraEdges: // MENU REPAIR - REMOVE EXTRA EDGES
     libName = "RepairGUI";
@@ -731,6 +732,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpSewing,           "SEWING" );
   createGeomAction( GEOMOp::OpGlueFaces,        "GLUE_FACES" );
+  createGeomAction( GEOMOp::OpGlueEdges,        "GLUE_EDGES" );
   createGeomAction( GEOMOp::OpLimitTolerance,   "LIMIT_TOLERANCE" );
   createGeomAction( GEOMOp::OpSuppressFaces,    "SUPPRESS_FACES" );
   createGeomAction( GEOMOp::OpSuppressHoles,    "SUPPERSS_HOLES" );
@@ -933,6 +935,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpSuppressHoles,   repairId, -1 );
   createMenu( GEOMOp::OpSewing,          repairId, -1 );
   createMenu( GEOMOp::OpGlueFaces,       repairId, -1 );
+  createMenu( GEOMOp::OpGlueEdges,       repairId, -1 );
   createMenu( GEOMOp::OpLimitTolerance,  repairId, -1 );
   createMenu( GEOMOp::OpAddPointOnEdge,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeBoundaries,  repairId, -1 );

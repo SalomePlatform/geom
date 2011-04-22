@@ -278,6 +278,14 @@
             <translation>glue2.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_GLUE_EDGES</source>
+            <translation>glue.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_GLUE_EDGES2</source>
+            <translation>glue2.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_LIMIT_TOLERANCE</source>
             <translation>limit_tolerance.png</translation>
         </message>
@@ -863,6 +871,10 @@
         </message>
         <message>
             <source>ICO_GLUE_FACES</source>
+            <translation>glue.png</translation>
+        </message>
+        <message>
+            <source>ICO_GLUE_EDGES</source>
             <translation>glue.png</translation>
         </message>
         <message>

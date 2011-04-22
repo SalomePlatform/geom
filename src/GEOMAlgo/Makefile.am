@@ -15,14 +15,11 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 #  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
-#
+
 #  GEOM GEOMAlgo : tools for Glue Faces algorithm
 #  File   : Makefile.in
 #  Author : Julia DOROVSKIKH
-#  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -78,6 +75,12 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_FinderShapeOnQuad.cxx		\
 	GEOMAlgo_GlueAnalyser.cxx		\
 	GEOMAlgo_Gluer.cxx			\
+	GEOMAlgo_GlueDetector.cxx		\
+	GEOMAlgo_Gluer2.cxx			\
+	GEOMAlgo_Gluer2_1.cxx			\
+	GEOMAlgo_Gluer2_2.cxx			\
+	GEOMAlgo_Gluer2_3.cxx			\
+	GEOMAlgo_GluerAlgo.cxx			\
 	GEOMAlgo_Gluer1.cxx			\
 	GEOMAlgo_HAlgo.cxx			\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx			\
@@ -223,6 +226,9 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_Gluer1.hxx			\
 	GEOMAlgo_Gluer1.ixx			\
 	GEOMAlgo_Gluer1.jxx			\
+	GEOMAlgo_GlueDetector.hxx		\
+	GEOMAlgo_Gluer2.hxx			\
+	GEOMAlgo_GluerAlgo.hxx			\
 	GEOMAlgo_HAlgo.hxx			\
 	GEOMAlgo_HAlgo.ixx			\
 	GEOMAlgo_HAlgo.jxx			\

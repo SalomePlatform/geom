@@ -90,13 +90,24 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                      const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
-                                                                     const Standard_Real theTolerance);
+  //Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
+  //                                                                   const Standard_Real theTolerance);
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
                                                            const Standard_Real theTolerance,
                                                            std::list<Handle(GEOM_Object)> theFaces,
                                                            const Standard_Boolean doKeepNonSolids);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (Handle(GEOM_Object) theShape,
+                                                     const Standard_Real theTolerance);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueShapes (Handle(GEOM_Object) theShape,
+                                                                      const Standard_Real theTolerance,
+                                                                      const TopAbs_ShapeEnum theType);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdgesByList (Handle(GEOM_Object) theShape,
+                                                           const Standard_Real theTolerance,
+                                                           std::list<Handle(GEOM_Object)> theEdges);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects
     (Handle(GEOM_Object)    theShape,

@@ -18,16 +18,17 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : RepairGUI_GlueDlg.h
-// Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : RepairGUI_GlueDlg.h
+//  Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
+
 #ifndef REPAIRGUI_GLUEDLG_H
 #define REPAIRGUI_GLUEDLG_H
 
 #include <GEOMBase_Skeleton.h>
+
+#include <TopAbs.hxx>
 
 #include <QList>
 
@@ -45,47 +46,49 @@ class RepairGUI_GlueDlg : public GEOMBase_Skeleton
   Q_OBJECT
 
 public:
-  RepairGUI_GlueDlg( GeometryGUI*, QWidget* = 0, bool = false );
+  RepairGUI_GlueDlg (GeometryGUI*, QWidget* = 0, bool = false, TopAbs_ShapeEnum theGlueMode = TopAbs_FACE);
   ~RepairGUI_GlueDlg();
 
 protected:
   // redefined from GEOMBase_Helper
   virtual GEOM::GEOM_IOperations_ptr createOperation();
-  virtual bool                       isValid( QString& );
-  virtual bool                       execute( ObjectList& );
-  virtual void                       restoreSubShapes( SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr );
+  virtual bool                       isValid (QString&);
+  virtual bool                       execute (ObjectList&);
+  virtual void                       restoreSubShapes (SALOMEDS::Study_ptr, SALOMEDS::SObject_ptr);
 
 private:
   void                               Init();
-  void                               enterEvent( QEvent* );
+  void                               enterEvent (QEvent*);
   void                               initSelection();
-  
+
   void                               clearTemporary();
-  
-  bool                               onAcceptLocal();
-  void                               clearShapeBufferLocal( GEOM::GEOM_Object_ptr );
+
   // Reimplementation of onAccept for local case of this class.
-  
+  bool                               onAcceptLocal();
+  void                               clearShapeBufferLocal (GEOM::GEOM_Object_ptr);
+
   void                               activateSelection();
   void                               updateButtonState();
   void                               selectTmpInViewer();
-    
-private:    
+
+private:
   GEOM::GEOM_Object_var              myObject;
   QList<GEOM::GeomObjPtr>            myTmpObjs;
-    
+
   DlgRef_1SelExt*                    GroupPoints;
   DlgRef_1SelExt*                    GroupPoints2;
   SalomeApp_DoubleSpinBox*           myTolEdt;
   SalomeApp_DoubleSpinBox*           myTolEdt2;
   QPushButton*                       myDetectBtn;
   QCheckBox*                         mySubShapesChk;
-  
+
   int                                myCurrConstrId;
-    
+
+  TopAbs_ShapeEnum                   myGlueMode;
+
 protected slots:
   virtual void                       ClickOnCancel();
-    
+
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
@@ -96,11 +99,10 @@ private slots:
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
 
-  void                               ConstructorsClicked( int );
-  //void                               ValueChangedInSpinBox();
-  
+  void                               ConstructorsClicked (int);
+
   void                               onDetect();
-  void                               onTolerChanged( double );
+  void                               onTolerChanged (double);
   void                               onSubShapesChk();
 };
 

@@ -18,11 +18,10 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_GlueDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_GlueDriver_HeaderFile
 #define _GEOMImpl_GlueDriver_HeaderFile
 
@@ -155,7 +154,7 @@ Standard_EXPORT ~GEOMImpl_GlueDriver() {};
 Standard_EXPORT static TopoDS_Shape GlueFaces (const TopoDS_Shape& theShape,
                                                const Standard_Real theTolerance,
                                                const Standard_Boolean doKeepNonSolids = Standard_True);
-
+  /*
 Standard_EXPORT TopoDS_Shape GlueFacesWithWarnings (const TopoDS_Shape& theShape,
                                                     const Standard_Real theTolerance,
                                                     const Standard_Boolean doKeepNonSolids,
@@ -165,6 +164,17 @@ Standard_EXPORT static TopoDS_Shape GlueFacesByList (const TopoDS_Shape& theShap
                                                      const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids,
                                                      const TopTools_MapOfShape& aFaces);
+  */
+Standard_EXPORT TopoDS_Shape GlueWithWarnings (const TopoDS_Shape& theShape,
+                                               const Standard_Real theTolerance,
+                                               const TopAbs_ShapeEnum theShapeType,
+                                               const Standard_Boolean doKeepNonSolids,
+                                               TCollection_AsciiString& theWarning) const;
+
+Standard_EXPORT static TopoDS_Shape GlueByList (const TopoDS_Shape& theShape,
+                                                const Standard_Real theTolerance,
+                                                const Standard_Boolean doKeepNonSolids,
+                                                const TopTools_MapOfShape& theShapesList);
 
 
  // Type management
