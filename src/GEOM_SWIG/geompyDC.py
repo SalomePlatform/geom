@@ -2571,13 +2571,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFaces List of faces for gluing.
         #  @param doKeepNonSolids If FALSE, only solids will present in the result,
         #                         otherwise all initial shapes.
+        #  @param doGlueAllEdges If TRUE, all coincident edges of <VAR>theShape</VAR>
+        #                        will be glued, otherwise only the edges,
+        #                        belonging to <VAR>theFaces</VAR>.
         #  @return New GEOM_Object, containing a copy of theShape
         #          without some faces.
         #
         #  @ref swig_todo "Example"
-        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces, doKeepNonSolids=True):
+        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
+                                doKeepNonSolids=True, doGlueAllEdges=True):
             # Example: see GEOM_Spanner.py
-            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
+            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces,
+                                                      doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
             return anObj

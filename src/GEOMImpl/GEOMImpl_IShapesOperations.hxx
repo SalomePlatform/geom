@@ -96,7 +96,8 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
                                                            const Standard_Real theTolerance,
                                                            std::list<Handle(GEOM_Object)> theFaces,
-                                                           const Standard_Boolean doKeepNonSolids);
+                                                           const Standard_Boolean doKeepNonSolids,
+                                                           const Standard_Boolean doGlueAllEdges);
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (Handle(GEOM_Object) theShape,
                                                      const Standard_Real theTolerance);

@@ -81,6 +81,7 @@ private:
   SalomeApp_DoubleSpinBox*           myTolEdt2;
   QPushButton*                       myDetectBtn;
   QCheckBox*                         mySubShapesChk;
+  QCheckBox*                         myGlueAllEdgesChk;
 
   int                                myCurrConstrId;
 

@@ -392,7 +392,8 @@ module GEOM
     GEOM_Object MakeGlueFacesByList (in GEOM_Object theShape,
                                      in double theTolerance,
                                      in ListOfGO theFaces,
-                                     in boolean doKeepNonSolids);
+                                     in boolean doKeepNonSolids,
+                                     in boolean doGlueAllEdges);
     GEOM_List MakeExplode (in GEOM_Object theShape,
                            in long        theShapeType,
                            in boolean     isSorted) ;

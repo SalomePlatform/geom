@@ -561,7 +561,8 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
 TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
                                               const Standard_Real theTolerance,
                                               const Standard_Boolean doKeepNonSolids,
-                                              const TopTools_MapOfShape& theShapesList)
+                                              const TopTools_MapOfShape& theShapesList,
+                                              const Standard_Boolean doGlueAllEdges)
 {
   TopoDS_Shape aRes;
 
@@ -606,11 +607,18 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueByList (const TopoDS_Shape& theShape,
     const TopTools_ListOfShape& aLSD = aItMSD.Value();
     TopTools_ListIteratorOfListOfShape anItLSD (aLSD);
     bool isToGlue = false;
-    for (; anItLSD.More() && !isToGlue; anItLSD.Next()) {
-      if (theShapesList.Contains(anItLSD.Value())) {
-        isToGlue = true;
-        aMSG.Bind(aSx, aLSD);
+    if (doGlueAllEdges && aSx.ShapeType() == TopAbs_EDGE) {
+      isToGlue = true;
+    }
+    else {
+      for (; anItLSD.More() && !isToGlue; anItLSD.Next()) {
+        if (theShapesList.Contains(anItLSD.Value())) {
+          isToGlue = true;
+        }
       }
+    }
+    if (isToGlue) {
+      aMSG.Bind(aSx, aLSD);
     }
   }
 
@@ -709,8 +717,13 @@ Standard_Integer GEOMImpl_GlueDriver::Execute(TFunction_Logbook& log) const
       if (!aFaces.Contains(aFace))
         aFaces.Add(aFace);
     }
+
+    Standard_Boolean aGlueAllEdges = Standard_False;
+    if (aType == GLUE_FACES_BY_LIST)
+      aGlueAllEdges = aCI.GetGlueAllEdges();
+
     //aShape = GlueFacesByList(aShapeBase, tol3d, aKeepNonSolids, aFaces);
-    aShape = GlueByList(aShapeBase, tol3d, aKeepNonSolids, aFaces);
+    aShape = GlueByList(aShapeBase, tol3d, aKeepNonSolids, aFaces, aGlueAllEdges);
   }
 
   if (aShape.IsNull()) return 0;

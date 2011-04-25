@@ -442,7 +442,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
                                            (GEOM::GEOM_Object_ptr theShape,
                                             CORBA::Double   theTolerance,
                                             const GEOM::ListOfGO& theFaces,
-                                            CORBA::Boolean  doKeepNonSolids)
+                                            CORBA::Boolean doKeepNonSolids,
+                                            CORBA::Boolean doGlueAllEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -465,7 +466,7 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids);
+    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids, doGlueAllEdges);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())

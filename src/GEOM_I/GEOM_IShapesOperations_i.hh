@@ -80,7 +80,8 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
                                              CORBA::Double         theTolerance,
                                              const GEOM::ListOfGO& theFaces,
-                                             CORBA::Boolean  doKeepNonSolids);
+                                             CORBA::Boolean doKeepNonSolids,
+                                             CORBA::Boolean doGlueAllEdges);
 
   GEOM::GEOM_Object_ptr MakeGlueEdges (GEOM::GEOM_Object_ptr theShape,
                                        CORBA::Double         theTolerance);

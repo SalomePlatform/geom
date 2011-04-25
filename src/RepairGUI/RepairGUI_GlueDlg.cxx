@@ -128,6 +128,7 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   }
   myDetectBtn = new QPushButton (tr("GEOM_DETECT") + aGlueString, GroupPoints2->Box);
   mySubShapesChk = new QCheckBox (aSelString, GroupPoints2->Box);
+  myGlueAllEdgesChk = 0;
 
   boxLayout = new QGridLayout(GroupPoints2->Box);
   boxLayout->setMargin(0); boxLayout->setSpacing(6);
@@ -135,6 +136,12 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
   boxLayout->addWidget(myTolEdt2,   0, 2);
   boxLayout->addWidget(myDetectBtn, 1, 0, 1, 3);
   boxLayout->addWidget(mySubShapesChk, 2, 0, 1, 3);
+
+  if (theGlueMode == TopAbs_FACE) {
+    myGlueAllEdgesChk = new QCheckBox (tr("GLUE_ALL_EDGES"), GroupPoints2->Box);
+    boxLayout->addWidget(myGlueAllEdgesChk, 3, 0, 1, 3);
+    myGlueAllEdgesChk->setChecked(false);
+  }
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
@@ -483,8 +490,10 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
       aListForGlue->length(added);
 
       GEOM::GEOM_Object_var anObj;
-      if (myGlueMode == TopAbs_FACE)
-        anObj = anOper->MakeGlueFacesByList(myObject, myTolEdt2->value(), aListForGlue.in(), true);
+      if (myGlueMode == TopAbs_FACE) {
+        bool doGlueAllEdges = myGlueAllEdgesChk->isChecked();
+        anObj = anOper->MakeGlueFacesByList(myObject, myTolEdt2->value(), aListForGlue.in(), true, false);
+      }
       else if (myGlueMode == TopAbs_EDGE)
         anObj = anOper->MakeGlueEdgesByList(myObject, myTolEdt2->value(), aListForGlue.in());
 

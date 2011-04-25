@@ -1,8 +1,9 @@
 /*!
 
-\page glue_faces_operation_page Glue Faces
+\page glue_faces_operation_page Glue Faces / Edges
 
 \n To <b>Glue Faces</b> in the <b>Main Menu</b> select <b>Repair - > Glue Faces</b>.
+\n To <b>Glue Edges</b> in the <b>Main Menu</b> select <b>Repair - > Glue Edges</b>.
 
 \n This operation glues faces that are coincident with respect to the
 given tolerance value.

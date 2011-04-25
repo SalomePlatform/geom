@@ -4710,6 +4710,10 @@ Please close this message box and select edges for gluing</translation>
         <translation>Select Edges</translation>
     </message>
     <message>
+        <source>GLUE_ALL_EDGES</source>
+        <translation>Glue all coincident edges</translation>
+    </message>
+    <message>
         <source>THERE_ARE_NO_FACES_FOR_GLUING</source>
         <translation>There are no faces for gluing</translation>
     </message>

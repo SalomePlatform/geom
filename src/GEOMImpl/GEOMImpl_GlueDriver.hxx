@@ -174,7 +174,8 @@ Standard_EXPORT TopoDS_Shape GlueWithWarnings (const TopoDS_Shape& theShape,
 Standard_EXPORT static TopoDS_Shape GlueByList (const TopoDS_Shape& theShape,
                                                 const Standard_Real theTolerance,
                                                 const Standard_Boolean doKeepNonSolids,
-                                                const TopTools_MapOfShape& theShapesList);
+                                                const TopTools_MapOfShape& theShapesList,
+                                                const Standard_Boolean doGlueAllEdges);
 
 
  // Type management

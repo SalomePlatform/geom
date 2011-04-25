@@ -18,10 +18,9 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // NOTE: This is an interface to a function for the Glueing of faces
-//
+
 #include "GEOM_Function.hxx"
 
 #include <TColStd_HSequenceOfTransient.hxx>
@@ -30,6 +29,7 @@
 #define GLUE_ARG_TOLER  2
 #define GLUE_ARG_FACES  3
 #define GLUE_ARG_KEEPALL 4
+#define GLUE_ARG_GLUEEDG 5
 
 class GEOMImpl_IGlue
 {
@@ -55,6 +55,9 @@ class GEOMImpl_IGlue
 
   void SetKeepNonSolids (Standard_Boolean theFlag) { _func->SetInteger(GLUE_ARG_KEEPALL, theFlag ? 1 : 0); }
   Standard_Boolean GetKeepNonSolids() { return (_func->GetInteger(GLUE_ARG_KEEPALL) != 0); }
+
+  void SetGlueAllEdges (Standard_Boolean theFlag) { _func->SetInteger(GLUE_ARG_GLUEEDG, theFlag ? 1 : 0); }
+  Standard_Boolean GetGlueAllEdges() { return (_func->GetInteger(GLUE_ARG_GLUEEDG) != 0); }
 
  private:
 

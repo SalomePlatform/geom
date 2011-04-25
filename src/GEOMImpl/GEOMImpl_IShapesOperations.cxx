@@ -808,7 +808,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
                                                 (Handle(GEOM_Object) theShape,
                                                  const Standard_Real theTolerance,
                                                  std::list<Handle(GEOM_Object)> theFaces,
-                                                 const Standard_Boolean doKeepNonSolids)
+                                                 const Standard_Boolean doKeepNonSolids,
+                                                 const Standard_Boolean doGlueAllEdges)
 {
   SetErrorCode(KO);
 
@@ -833,6 +834,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   aCI.SetBase(aRefShape);
   aCI.SetTolerance(theTolerance);
   aCI.SetKeepNonSolids(doKeepNonSolids);
+  aCI.SetGlueAllEdges(doGlueAllEdges);
 
   Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
   std::list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
@@ -881,7 +883,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
       pd << ", " << (*it++);
     }
   }
-  pd << "])";
+  pd << "], " << (bool)doKeepNonSolids << ", " << (bool)doGlueAllEdges << ")";
 
   // to provide warning
   if (!isWarning) SetErrorCode(OK);

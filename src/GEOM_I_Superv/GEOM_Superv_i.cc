@@ -2182,13 +2182,15 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
                                                           CORBA::Double theTolerance,
                                                           const GEOM::ListOfGO& theFaces,
-                                                          CORBA::Boolean doKeepNonSolids)
+                                                          CORBA::Boolean doKeepNonSolids,
+                                                          CORBA::Boolean doGlueAllEdges)
 {
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj =
-    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids);
+    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces,
+                                    doKeepNonSolids, doGlueAllEdges);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
 }
