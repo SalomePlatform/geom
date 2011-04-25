@@ -90,6 +90,12 @@ MeasureGUI_BndBoxDlg::MeasureGUI_BndBoxDlg( GeometryGUI* GUI, QWidget* parent )
   myGrp->LineEdit22->setReadOnly( true );
   myGrp->LineEdit31->setReadOnly( true );
   myGrp->LineEdit32->setReadOnly( true );
+  myGrp->LineEdit11->setMinimumWidth(120);
+  myGrp->LineEdit12->setMinimumWidth(120);
+  myGrp->LineEdit21->setMinimumWidth(120);
+  myGrp->LineEdit22->setMinimumWidth(120);
+  myGrp->LineEdit31->setMinimumWidth(120);
+  myGrp->LineEdit32->setMinimumWidth(120);
   myGrp->PushButton1->setIcon( image1 );
   myGrp->LineEdit1->setReadOnly( true );
 
