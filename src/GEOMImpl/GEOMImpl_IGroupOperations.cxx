@@ -297,6 +297,7 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
 
     TopoDS_Shape aShape_i = anObj_i->GetValue();
+    if ( aShape_i.IsNull() ) continue;
     TopAbs_ShapeEnum aType_i = aShape_i.ShapeType();
 
     // 1. If aShape_i is sub-shape of aMainShape - add it
