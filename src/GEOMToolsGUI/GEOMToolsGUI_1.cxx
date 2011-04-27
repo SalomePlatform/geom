@@ -292,7 +292,8 @@ void GEOMToolsGUI::OnColor()
                   
                   if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
                     TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
-                    if (theShape.ShapeType() == TopAbs_VERTEX) {
+		    bool onlyVertex = (theShape.ShapeType() == TopAbs_VERTEX || GEOM_Displayer::isCompoundOfVertices( theShape ));
+                    if (onlyVertex) {
                       // Set color for a point
 
                       Handle(AIS_Drawer) aCurDrawer = io->Attributes();

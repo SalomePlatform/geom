@@ -167,6 +167,13 @@ public:
   /*Get color of the geom object*/
   static SALOMEDS::Color getColor(GEOM::GEOM_Object_var aGeomObject, bool& hasColor);
 
+  /* Get minimum or maximum enclosed shape type */
+  static int getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin );
+
+  /* Check if the object is a vertex or a compound of vertices */
+  static bool isCompoundOfVertices( const TopoDS_Shape& theShape );
+
+
   /* Builds presentation of not published object */
   virtual SALOME_Prs* buildSubshapePresentation(const TopoDS_Shape& aShape,
                                                 const QString&,

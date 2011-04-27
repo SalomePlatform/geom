@@ -139,7 +139,7 @@ static inline int getTopAbsMode( const int implType )
   }
 }
 
-static int getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
+int GEOM_Displayer::getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
 {
   if ( shape.IsNull() )
     return TopAbs_SHAPE;
@@ -163,7 +163,7 @@ static int getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
   return ret;
 }
 
-static bool isCompoundOfVertices( const TopoDS_Shape& theShape )
+bool GEOM_Displayer::isCompoundOfVertices( const TopoDS_Shape& theShape )
 {
   return theShape.ShapeType() == TopAbs_COMPOUND && getMinMaxShapeType( theShape, false ) == TopAbs_VERTEX;
 }
