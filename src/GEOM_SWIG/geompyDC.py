@@ -2556,9 +2556,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                      which can be considered as coincident.
         #  @return ListOfGO.
         #
-        #  @ref swig_todo "Example"
+        #  @ref tui_glue_faces "Example"
         def GetGlueFaces(self, theShape, theTolerance):
-            # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
             RaiseIfFailed("GetGlueFaces", self.ShapesOp)
             return anObj
@@ -2577,10 +2576,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing a copy of theShape
         #          without some faces.
         #
-        #  @ref swig_todo "Example"
+        #  @ref tui_glue_faces "Example"
         def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
                                 doKeepNonSolids=True, doGlueAllEdges=True):
-            # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces,
                                                       doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
@@ -2592,9 +2590,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTolerance Maximum distance between edges, which can be considered as coincident.
         #  @return New GEOM_Object, containing a copy of theShape without coincident edges.
         #
-        #  @ref tui_glue_faces "Example"
+        #  @ref tui_glue_edges "Example"
         def MakeGlueEdges(self, theShape, theTolerance):
-            # Example: see GEOM_Spanner.py
             theTolerance,Parameters = ParseParameters(theTolerance)
             anObj = self.ShapesOp.MakeGlueEdges(theShape, theTolerance)
             if anObj is None:
@@ -2608,9 +2605,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                      which can be considered as coincident.
         #  @return ListOfGO.
         #
-        #  @ref tui_glue_faces "Example"
+        #  @ref tui_glue_edges "Example"
         def GetGlueEdges(self, theShape, theTolerance):
-            # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
             RaiseIfFailed("GetGlueEdges", self.ShapesOp)
             return anObj
@@ -2624,9 +2620,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM_Object, containing a copy of theShape
         #          without some edges.
         #
-        #  @ref tui_glue_faces "Example"
+        #  @ref tui_glue_edges "Example"
         def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges):
-            # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.MakeGlueEdgesByList(theShape, theTolerance, theEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()

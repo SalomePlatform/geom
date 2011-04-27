@@ -985,6 +985,8 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
   Handle(TColStd_HArray1OfInteger) anArray;
   Handle(GEOM_Object) anObj;
 
+  TopTools_ListOfShape listOnePerSet;
+
   const TopTools_DataMapOfShapeListOfShape& aImages = aGluer.Images();
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS (aImages);
   for (int index = 1; aItDMSLS.More(); aItDMSLS.Next(), ++index) {
@@ -998,17 +1000,26 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
     TopoDS_Shape aValue = aLSD.First();
 
     if (aValue.ShapeType() == theType) {
-      anArray = new TColStd_HArray1OfInteger(1,1);
-      anArray->SetValue(1, anIndices.FindIndex(aValue));
-      anObj = GetEngine()->AddSubShape(theShape, anArray);
-      if (!anObj.IsNull()) {
-        aSeq->Append(anObj);
+      listOnePerSet.Append(aValue);
+    }
+  }
 
-        // for python command
-        TDF_Tool::Entry(anObj->GetEntry(), anEntry);
-        anAsciiList += anEntry;
-        anAsciiList += ",";
-      }
+  // for stable order of returned entities
+  GEOMImpl_IShapesOperations::SortShapes(listOnePerSet, Standard_False);
+
+  TopTools_ListIteratorOfListOfShape aListIt (listOnePerSet);
+  for (; aListIt.More(); aListIt.Next()) {
+    TopoDS_Shape aValue = aListIt.Value();
+    anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(aValue));
+    anObj = GetEngine()->AddSubShape(theShape, anArray);
+    if (!anObj.IsNull()) {
+      aSeq->Append(anObj);
+
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
     }
   }
 
