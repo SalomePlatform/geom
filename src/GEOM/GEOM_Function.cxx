@@ -60,12 +60,21 @@
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
 
+// This modification was introduced in frame of Mantis issue 0021251.
+// This line allows to keep shape orientation together with the shape itself.
+// Otherwise orientation can be lost in some cases.
+#define KEEP_ORIENTATION_0021251
+
 #define ARGUMENT_LABEL 1
 #define RESULT_LABEL 2
 #define DESCRIPTION_LABEL 3
 #define HISTORY_LABEL 4
 #define SUBSHAPES_LABEL 5 // 0020756: GetGroups
-#define NAMING_LABEL 6 // 002020750: Naming during STEP import
+#define NAMING_LABEL 6 // 0020750: Naming during STEP import
+
+#ifdef KEEP_ORIENTATION_0021251
+#define ORIENTATION_LABEL 7 // 0021251: TNaming_NamedShape doesn't store orientation
+#endif
 
 #define ARGUMENTS _label.FindChild((ARGUMENT_LABEL))
 #define ARGUMENT(thePosition) _label.FindChild((ARGUMENT_LABEL)).FindChild((thePosition))
@@ -221,6 +230,15 @@ TopoDS_Shape GEOM_Function::GetValue()
 
   aShape = aNS->Get();
 
+#ifdef KEEP_ORIENTATION_0021251
+  // 0021251: TNaming_NamedShape doesn't store orientation
+  TDF_Label anOrientationLabel = _label.FindChild(ORIENTATION_LABEL);
+  Handle(TDataStd_Integer) anInteger;
+  if (anOrientationLabel.FindAttribute(TDataStd_Integer::GetID(), anInteger)) {
+    aShape.Orientation((TopAbs_Orientation)anInteger->Get());
+  }
+#endif
+
   _isDone = true;
   return aShape;
 }
@@ -234,9 +252,15 @@ void GEOM_Function::SetValue(TopoDS_Shape& theShape)
 {
   _isDone = false;
   TDF_Label aResultLabel = _label.FindChild(RESULT_LABEL);
-  TNaming_Builder aBuilder(aResultLabel);
+  TNaming_Builder aBuilder (aResultLabel);
 
   aBuilder.Generated(theShape);
+
+#ifdef KEEP_ORIENTATION_0021251
+  // 0021251: TNaming_NamedShape doesn't store orientation
+  TDF_Label anOrientationLabel = _label.FindChild(ORIENTATION_LABEL);
+  TDataStd_Integer::Set(anOrientationLabel, (int)theShape.Orientation());
+#endif
 
   // synchronisation between main shape and its sub-shapes
   TDF_Label aLabel = GetOwnerEntry();
