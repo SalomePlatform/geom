@@ -1,0 +1,27 @@
+/*!
+
+\page projection_operation_page Projection on a Face
+
+\n To produce a <b>Projection</b> in the <b>Main Menu</b> select
+<b>Operations - > Transformation - > Projection</b>
+
+\n This operation makes normal projection of a <b>Source vertex, edge
+   or wire</b> on a given <b>Target face</b>.
+\n <b>Arguments:</b> Name + 2 Objects.
+\n The \b Result will be an \b Object.
+
+\image html projection_dlg.png
+
+\n <b>Example:</b>
+
+\image html projection_preview.png "The curve (in red) and its projection on the cylindric surface"
+
+\n <b>TUI Command:</b> <em>geompy.MakeProjection(Source, Target),</em>
+   where \em Source is a shape which has to be projected, \em Target
+   is a face, on which the \em Source shape will be projected. The \em
+   Result will be a \em GEOM_Object.
+
+Our <b>TUI Scripts</b> provide you with useful examples of the use of
+\ref tui_projection "Transformation Operations".
+
+*/
