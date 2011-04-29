@@ -134,7 +134,7 @@
        <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DS"/>
       </item>
       <item row="4" column="0" colspan="3">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1,0">
         <item>
          <widget class="QCheckBox" name="checkBox">
           <property name="text">
@@ -148,6 +148,19 @@
            <string>TextLabel</string>
           </property>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </item>

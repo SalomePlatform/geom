@@ -45,6 +45,7 @@ private:
   TopoDS_Shape myShape;
   bool myOK;
   std::string myErrMsg;
+  double myError;
 
 public:
   Standard_EXPORT gp_Pnt GetLastPoint(){return myLastPoint;};
@@ -53,5 +54,6 @@ public:
   Standard_EXPORT const TopoDS_Shape& GetShape(){return myShape;};
   Standard_EXPORT bool IsDone(){return myOK;};
   Standard_EXPORT std::string ErrMsg(){return myErrMsg;};
+  Standard_EXPORT double Error(){return myError;};
 
 };

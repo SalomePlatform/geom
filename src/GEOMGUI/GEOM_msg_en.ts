@@ -1563,7 +1563,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_WARNING</source>
-        <translation>Warning : The specified End Point is not on the Arc</translation>
+        <translation>Warning: End point not on the arc, distance = </translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>

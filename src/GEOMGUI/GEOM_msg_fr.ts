@@ -235,7 +235,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BUT_CLOSE_SKETCH</source>
-        <translation>Fermer le contour et valider</translation>
+        <translation>Fermer le contour</translation>
     </message>
     <message>
         <source>GEOM_BUT_END_SKETCH</source>
@@ -1543,7 +1543,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_WARNING</source>
-        <translation>Attention : Le point final choisi n'est pas sur l'arc</translation>
+        <translation>Attention : Point final distant de l'arc de : </translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>

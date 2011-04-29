@@ -1964,6 +1964,13 @@ bool EntityGUI_SketcherDlg::isValid( QString& msg )
 //=================================================================================
 bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+  int DigNum = qAbs(aPrecision);                   // options for the format of numbers in  myNewCommand
+  char Format = 'f';
+  if ( aPrecision < 0 )                            // f --> DigNum is the number of digits after the decimal point
+    Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 
+    
   QString aParameters;
 
   if ( mySketchState == FIRST_POINT ) {
@@ -1988,16 +1995,25 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     Sketcher_Profile aProfile2( Command2.toAscii() );
 
     //Error Message
-    if ( mySketchType == PT_ABS_CENTER || 
-	 mySketchType == PT_REL_CENTER  ){
-      Group4Spin->label->show();
-      Group4Spin->label->setText( tr( aProfile2.ErrMsg().c_str() ) );
+    if ( mySketchType == PT_ABS_CENTER || mySketchType == PT_REL_CENTER  ){
+      if (aProfile2.Error() > Precision::Confusion()){
+        Group4Spin->label->show();
+        Group4Spin->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( aProfile2.Error(), Format, DigNum));
+      }
+      else{
+        Group4Spin->label->hide();
+      } 
     }
     else 
       Group4Spin->label->hide();
     if ( mySketchType == PT_SEL_CENTER ){
-      Group2Sel->label->show();
-      Group2Sel->label->setText( tr( aProfile2.ErrMsg().c_str() ) );	
+      if (aProfile2.Error() > Precision::Confusion()){
+        Group2Sel->label->show();
+        Group2Sel->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( aProfile2.Error(), Format, DigNum));
+      }
+      else{
+        Group2Sel->label->hide();
+      } 
     }
     else 
       Group2Sel->label->hide();
