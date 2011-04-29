@@ -615,11 +615,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	
 	if(useStudy){
 	  aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-	  aDefPropMap = getDefaultPropepryMap(SOCC_Viewer::Type());
-	  bool isDiff = MergePropertyMaps(aPropMap, aDefPropMap);
-	  	     
-	  if(isDiff)
-	    aStudy->setObjectPropMap(aMgrId,anEntry,aPropMap);
+	  aDefPropMap = getDefaultPropertyMap(SOCC_Viewer::Type());
+	  MergePropertyMaps(aPropMap, aDefPropMap);
 	}
 
         //Handle(GEOM_AISShape) AISShape = new GEOM_AISShape( myShape, "" );
@@ -984,7 +981,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     theActors->AddItem( aTrh );
   }
   else {
-    PropMap aDefPropMap = getDefaultPropepryMap(SVTK_Viewer::Type());
+    PropMap aDefPropMap = getDefaultPropertyMap(SVTK_Viewer::Type());
 
     QString anEntry;
     if(!myIO.IsNull()) {
@@ -1000,11 +997,9 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     theActors->AddItem(aGeomActor);
     aGeomActor->Delete();
     
-    if(useStudy){
+    if(useStudy) {
       aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-      bool isDiff = MergePropertyMaps(aPropMap, aDefPropMap);
-      if(isDiff)
-	aStudy->setObjectPropMap(aMgrId,anEntry,aPropMap);
+      MergePropertyMaps(aPropMap, aDefPropMap);
     }
   }
 
@@ -1689,7 +1684,7 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
 
 
 
-PropMap GEOM_Displayer::getDefaultPropepryMap(const QString& viewer_type){
+PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   PropMap aDefaultMap;
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();    
   //1. Visibility 

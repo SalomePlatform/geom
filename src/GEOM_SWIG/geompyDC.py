@@ -4694,6 +4694,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("LoadTexture", self.InsertOp)
             return ID
 
+        ## Get entry of the object
+        #  @param obj geometry object
+        #  @return unique object identifier
+        #  @ingroup l1_geompy_auxiliary
+        def getObjectID(self, obj):
+            ID = ""
+            entry = salome.ObjectToID(obj)
+            if entry is not None:
+                lst = entry.split(":")
+                if len(lst) > 0:
+                    ID = lst[-1] # -1 means last item in the list            
+                    return "GEOM_" + ID
+            return ID
+                
+            
+
         ## Add marker texture. @a Width and @a Height parameters
         #  specify width and height of the texture in pixels.
         #  If @a RowData is @c True, @a Texture parameter should represent texture data

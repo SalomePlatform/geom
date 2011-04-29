@@ -1704,7 +1704,7 @@ const char gDigitsSep = ':'; // character used to separate numeric parameter val
 void GeometryGUI::storeVisualParameters (int savePoint)
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-  if (!appStudy || !appStudy->studyDS())
+  if ( !appStudy || !appStudy->studyDS() )
     return;
   _PTR(Study) studyDS = appStudy->studyDS();
 
@@ -1739,7 +1739,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
 
         //Check that object exists in the study
         _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
-        if ( !obj )
+        if ( !obj || !(aProps.count() > 0))
           continue;
         // entry is "encoded" = it does NOT contain component adress, since it is a
         // subject to change on next component loading
@@ -1750,52 +1750,67 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         if( !obj->FindAttribute(anAttr, "AttributeIOR"))
           continue;
 
-        std::string param, occParam = vType.toLatin1().data();
+        std::string param,occParam = vType.toLatin1().data();
         occParam += NAME_SEPARATOR;
         occParam += QString::number(aMgrId).toLatin1().data();
         occParam += NAME_SEPARATOR;
 
-        param = occParam + VISIBILITY_PROP;
-        ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+	if(aProps.contains(VISIBILITY_PROP)) {
+	  param = occParam + VISIBILITY_PROP;
+	  ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+	}
 
-        param = occParam + DISPLAY_MODE_PROP;
-
-        ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
-
-        QColor c = aProps.value(COLOR_PROP).value<QColor>();
-        QString colorStr = QString::number(c.red()/255.);
-        colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
-        colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
-        param = occParam + COLOR_PROP;
-        ip->setParameter(entry, param, colorStr.toLatin1().data());
+	if(aProps.contains(DISPLAY_MODE_PROP)) {
+	  param = occParam + DISPLAY_MODE_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
+	}
+	
+	if(aProps.contains(COLOR_PROP)) {
+	  QColor c = aProps.value(COLOR_PROP).value<QColor>();
+	  QString colorStr = QString::number(c.red()/255.);
+	  colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
+	  colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
+	  param = occParam + COLOR_PROP;
+	  ip->setParameter(entry, param, colorStr.toLatin1().data());
+	}
 
         if(vType == SVTK_Viewer::Type()) {
-          param = occParam + OPACITY_PROP;
-          ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  if(aProps.contains(OPACITY_PROP)) {
+	    param = occParam + OPACITY_PROP;
+	    ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  }
         } else if (vType == SOCC_Viewer::Type()) {
-          param = occParam + TRANSPARENCY_PROP;
-          ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  if(aProps.contains(TRANSPARENCY_PROP)) {
+	    param = occParam + TRANSPARENCY_PROP;
+	    ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  }
         }
 
-        param = occParam + ISOS_PROP;
-        ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+	if(aProps.contains(ISOS_PROP)) {
+	  param = occParam + ISOS_PROP;
+	  ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+	}
 
-        param = occParam + VECTOR_MODE_PROP;
-        ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+	if(aProps.contains(VECTOR_MODE_PROP)) {
+	  param = occParam + VECTOR_MODE_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+	}
 
-        param = occParam + DEFLECTION_COEFF_PROP;
-        ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
-
+	if(aProps.contains(DEFLECTION_COEFF_PROP)) {
+	  param = occParam + DEFLECTION_COEFF_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+	}
+	
         //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
         if(aProps.contains(MARKER_TYPE_PROP)) {
           param = occParam + MARKER_TYPE_PROP;
           ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
-        }
-
+        }	
       } // object iterator
     } // for (views)
   } // for (viewManagers)
 }
+
 /*!
  * \brief Restore visual parameters
  *

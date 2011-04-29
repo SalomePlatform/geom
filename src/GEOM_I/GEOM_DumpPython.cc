@@ -132,6 +132,34 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
   if (isPublished)
   {
+
+    SALOMEDS::AttributeParameter_var ap = aStudy->GetModuleParameters("Interface Applicative", 
+								      ComponentDataType(),
+								      -1);
+    if(!CORBA::is_nil(ap)) {
+      //Add the id parameter of the object
+      std::vector<TObjectData>::iterator it = objectDataVec.begin();
+      for( ;it != objectDataVec.end(); it++ ) {
+      
+	//1. Encode entry 
+	std::string tail( (*it)._studyEntry.ToCString(), 6, (*it)._studyEntry.Length()-1 );
+	std::string newEntry(ComponentDataType());
+	newEntry+=("_"+tail);
+	
+	CORBA::String_var anEntry = CORBA::string_dup(newEntry.c_str());
+	
+	if( ap->IsSet(anEntry, 6) ) { //6 Means string array, see SALOMEDS_Attributes.idl AttributeParameter interface
+	  std::string idCommand = std::string("geompy.getObjectID(") + GetDumpName((*it)._studyEntry.ToCString()) + std::string(")");
+	  SALOMEDS::StringSeq_var aSeq= ap->GetStrArray(anEntry);
+	  int oldLenght = aSeq->length();	
+	  aSeq->length(oldLenght+2);
+	  aSeq[oldLenght] = CORBA::string_dup("_PT_OBJECT_ID_");
+	  aSeq[oldLenght + 1] = CORBA::string_dup(idCommand.c_str());
+	  ap->SetStrArray( anEntry, aSeq );
+	}	 
+      }
+    }
+  
     //Output the script that sets up the visual parameters.
     char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");
     if (script && strlen(script) > 0) {

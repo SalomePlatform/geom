@@ -160,7 +160,7 @@ public:
 
   static SALOMEDS::Color getUniqueColor( const QList<SALOMEDS::Color>& );
 
-  static PropMap getDefaultPropepryMap(const QString& viewer_type);
+  static PropMap getDefaultPropertyMap(const QString& viewer_type);
   
   static bool MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault);
   
