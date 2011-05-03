@@ -584,8 +584,7 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
   aScript += "import SALOMEDS\n\n";
   if( isMultiFile )
     aScript += "def RebuildData(theStudy):";
-  else
-    aScript += "theStudy = salome.myStudy";
+
   aScript += "\n\tgeompy.init_geom(theStudy)\n";
 
   AddTextures(theDocID, aScript);
