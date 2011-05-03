@@ -15,7 +15,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -30,7 +29,6 @@
 #include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include <GEOMAlgo_ClsfBox.hxx>
-#include <GEOMAlgo_Gluer.hxx>
 
 #include <TFunction_Logbook.hxx>
 #include <StdFail_NotDone.hxx>

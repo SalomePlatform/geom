@@ -159,18 +159,3 @@ CDL_FILES =					\
 	NMTTools_Tools.cdl
 
 EXTRA_DIST += $(CDL_FILES)
-
-########################################
-# Non-used (obsolete?) files
-########################################
-# NMTTools_PCurveMaker.cdl
-# NMTTools_PCurveMaker.cxx
-# NMTTools_PCurveMaker.hxx
-# NMTTools_PCurveMaker.ixx
-# NMTTools_PCurveMaker.jxx
-# NMTTools_PDSFiller.hxx
-# NMTTools_DSFiller.cdl
-# NMTTools_DSFiller.cxx
-# NMTTools_DSFiller.hxx
-# NMTTools_DSFiller.ixx
-# NMTTools_DSFiller.jxx

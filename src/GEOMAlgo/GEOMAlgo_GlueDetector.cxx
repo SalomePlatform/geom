@@ -58,7 +58,6 @@
 #include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
 
 #include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_Gluer.hxx>
 #include <GEOMAlgo_PassKeyShape.hxx>
 #include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 #include <GEOMAlgo_Tools.hxx>

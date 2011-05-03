@@ -224,9 +224,9 @@ void GEOMAlgo_Gluer2::MakeEdge(const TopoDS_Edge& aE,
     Standard_Real aTol;
     BRep_Builder aBB;
     TopoDS_Edge E;
-    TopAbs_Orientation anOrE;
+    //TopAbs_Orientation anOrE;
     //
-    anOrE=aE.Orientation();
+    //anOrE=aE.Orientation();
     aTol=BRep_Tool::Tolerance(aE);
     //
     E=aEx;
@@ -294,7 +294,7 @@ void GEOMAlgo_Gluer2::MakeVertex(const TopTools_ListOfShape& aLV,
 void GEOMAlgo_Gluer2::MapBRepShapes(const TopoDS_Shape& aS,
 				    TopTools_MapOfShape& aM)
 {
-  Standard_Boolean bHasBRep;
+  //Standard_Boolean bHasBRep;
   TopAbs_ShapeEnum aType;
   TopoDS_Iterator aIt;
   //

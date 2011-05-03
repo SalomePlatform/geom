@@ -50,7 +50,6 @@
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
 #include "GEOMAlgo_ClsfSolid.hxx"
-#include "GEOMAlgo_Gluer1.hxx"
 #include "GEOMAlgo_GlueDetector.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"

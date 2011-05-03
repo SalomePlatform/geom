@@ -155,7 +155,7 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
   // 1. Make pairs
   aItDMSLS.Initialize(myShapesToGlue);
   for (; aItDMSLS.More(); aItDMSLS.Next()) {
-    const TopoDS_Shape& aSkey=aItDMSLS.Key();
+    //const TopoDS_Shape& aSkey=aItDMSLS.Key();
     const TopTools_ListOfShape& aLSG=aItDMSLS.Value();
     aItLS1.Initialize(aLSG);
     for (i=0; aItLS1.More(); aItLS1.Next(), ++i) {
@@ -309,7 +309,7 @@ void GEOMAlgo_Gluer2::TreatPair(const NMTTools_CoupleOfShape& aCS,
   // 3.
   aItDMSLS.Initialize(aDMSLS);
   for (; aItDMSLS.More(); aItDMSLS.Next()) {
-    const TopoDS_Shape& aSkey=aItDMSLS.Key();
+    //const TopoDS_Shape& aSkey=aItDMSLS.Key();
     const TopTools_ListOfShape& aLS=aItDMSLS.Value();
     aNbS=aLS.Extent();
     if (aNbS!=2) {

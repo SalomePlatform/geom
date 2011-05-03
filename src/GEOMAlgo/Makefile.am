@@ -81,7 +81,6 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_Gluer2_2.cxx			\
 	GEOMAlgo_Gluer2_3.cxx			\
 	GEOMAlgo_GluerAlgo.cxx			\
-	GEOMAlgo_Gluer1.cxx			\
 	GEOMAlgo_HAlgo.cxx			\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_0.cxx			\
 	GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape_0.cxx		\
@@ -223,9 +222,6 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_Gluer.hxx			\
 	GEOMAlgo_Gluer.ixx			\
 	GEOMAlgo_Gluer.jxx			\
-	GEOMAlgo_Gluer1.hxx			\
-	GEOMAlgo_Gluer1.ixx			\
-	GEOMAlgo_Gluer1.jxx			\
 	GEOMAlgo_GlueDetector.hxx		\
 	GEOMAlgo_Gluer2.hxx			\
 	GEOMAlgo_GluerAlgo.hxx			\
@@ -381,7 +377,6 @@ CDL_FILES =					\
 	GEOMAlgo_FinderShapeOn2.cdl		\
 	GEOMAlgo_GlueAnalyser.cdl		\
 	GEOMAlgo_Gluer.cdl			\
-	GEOMAlgo_Gluer1.cdl			\
 	GEOMAlgo_HAlgo.cdl			\
 	GEOMAlgo_PassKey.cdl			\
 	GEOMAlgo_PassKeyMapHasher.cdl		\

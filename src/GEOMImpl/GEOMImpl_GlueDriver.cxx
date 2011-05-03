@@ -28,8 +28,8 @@
 #include <GEOM_Object.hxx>
 #include <GEOM_Function.hxx>
 
-#include <GEOMAlgo_Gluer.hxx>
-#include "GEOMAlgo_Gluer1.hxx"
+//#include <GEOMAlgo_Gluer.hxx>
+//#include "GEOMAlgo_Gluer1.hxx"
 #include "GEOMAlgo_Gluer2.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"

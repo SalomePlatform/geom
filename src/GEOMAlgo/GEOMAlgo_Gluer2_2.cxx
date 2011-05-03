@@ -40,7 +40,7 @@
 //=======================================================================
 void GEOMAlgo_Gluer2::PrepareHistory()
 {
-  Standard_Boolean bHasImage, bContainsSD;
+  //Standard_Boolean bHasImage, bContainsSD;
   //
   // 1. Clearing 
   GEOMAlgo_BuilderShape::PrepareHistory();
