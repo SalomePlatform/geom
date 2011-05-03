@@ -24,22 +24,32 @@
 #include <GEOMImpl_IPrism.hxx>
 #include <GEOMImpl_IShapesOperations.hxx>
 #include <GEOMImpl_IMeasureOperations.hxx>
+#include <GEOMImpl_GlueDriver.hxx>
 #include <GEOMImpl_PipeDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakePrism.hxx>
+
+#include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
+#include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
+#include <BRepCheck_Shell.hxx>
+#include <BRepClass3d_SolidClassifier.hxx>
 #include <BRep_Tool.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
-#include <TopoDS_Shape.hxx>
+#include <TopoDS_Compound.hxx>
 #include <TopoDS_Edge.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Shell.hxx>
+#include <TopoDS_Solid.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_HSequenceOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
@@ -186,14 +196,40 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 TopoDS_Shape GEOMImpl_PrismDriver::MakeScaledPrism (const TopoDS_Shape& theShapeBase,
                                                     const gp_Vec&       theVector,
-                                                    const Standard_Real theScaleFactor)
+                                                    const Standard_Real theScaleFactor,
+                                                    const gp_Pnt&       theCDG,
+                                                    bool                isCDG)
 {
   TopoDS_Shape aShape;
+  BRep_Builder B;
 
   // 1. aCDG = geompy.MakeCDG(theBase)
-  gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(theShapeBase);
-  gp_Pnt aCDG = aPos.Location();
+  gp_Pnt aCDG = theCDG;
+  if (!isCDG) {
+    gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(theShapeBase);
+    aCDG = aPos.Location();
+  }
   TopoDS_Shape aShapeCDG_1 = BRepBuilderAPI_MakeVertex(aCDG).Shape();
+
+  // Process case of several given shapes
+  if (theShapeBase.ShapeType() == TopAbs_COMPOUND ||
+      theShapeBase.ShapeType() == TopAbs_SHELL) {
+    int nbSub = 0;
+    TopoDS_Shape aShapeI;
+    TopoDS_Compound aCompound;
+    B.MakeCompound(aCompound);
+    TopoDS_Iterator It (theShapeBase, Standard_True, Standard_True);
+    for (; It.More(); It.Next()) {
+      nbSub++;
+      aShapeI = MakeScaledPrism(It.Value(), theVector, theScaleFactor, aCDG, true);
+      B.Add(aCompound, aShapeI);
+    }
+    if (nbSub == 1)
+      aShape = aShapeI;
+    else if (nbSub > 1)
+      aShape = GEOMImpl_GlueDriver::GlueFaces(aCompound, Precision::Confusion(), Standard_True);
+    return aShape;
+  }
 
   // 2. Scale = geompy.MakeScaleTransform(theBase, aCDG, theScaleFactor)
 
@@ -244,6 +280,54 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeScaledPrism (const TopoDS_Shape& theShape
   aLocs->Append(aShapeCDG_2);
 
   aShape = GEOMImpl_PipeDriver::CreatePipeWithDifferentSections(aWirePath, aBases, aLocs, false, false);
+
+  // 7. Make a solid, if possible
+  if (theShapeBase.ShapeType() == TopAbs_FACE) {
+    BRepBuilderAPI_Sewing aSewing (Precision::Confusion()*10.0);
+    TopExp_Explorer expF (aShape, TopAbs_FACE);
+    Standard_Integer ifa = 0;
+    for (; expF.More(); expF.Next()) {
+      aSewing.Add(expF.Current());
+      ifa++;
+    }
+    if (ifa > 0) {
+      aSewing.Perform();
+      TopoDS_Shape aShell;
+
+      TopoDS_Shape sh = aSewing.SewedShape();
+      if (sh.ShapeType() == TopAbs_FACE && ifa == 1) {
+        // case for creation of shell from one face
+        TopoDS_Shell ss;
+        B.MakeShell(ss);
+        B.Add(ss,sh);
+        aShell = ss;
+      }
+      else {
+        TopExp_Explorer exp (sh, TopAbs_SHELL);
+        Standard_Integer ish = 0;
+        for (; exp.More(); exp.Next()) {
+          aShell = exp.Current();
+          ish++;
+        }
+        if (ish != 1)
+          aShell = sh;
+      }
+      BRepCheck_Shell chkShell (TopoDS::Shell(aShell));
+      if (chkShell.Closed() == BRepCheck_NoError) {
+        TopoDS_Solid Sol;
+        B.MakeSolid(Sol);
+        B.Add(Sol, aShell);
+        BRepClass3d_SolidClassifier SC (Sol);
+        SC.PerformInfinitePoint(Precision::Confusion());
+        if (SC.State() == TopAbs_IN) {
+          B.MakeSolid(Sol);
+          B.Add(Sol, aShell.Reversed());
+        }
+        aShape = Sol;
+      }
+    }
+  }
+
   return aShape;
 }
 

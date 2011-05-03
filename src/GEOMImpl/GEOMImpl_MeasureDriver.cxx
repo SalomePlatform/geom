@@ -18,7 +18,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -96,22 +95,8 @@ Standard_Integer GEOMImpl_MeasureDriver::Execute(TFunction_Logbook& log) const
       Standard_NullObject::Raise("Shape for centre of mass calculation is null");
     }
 
-    GProp_GProps aSystem;
-    gp_Pnt aCenterMass;
-
-    if (aShapeBase.ShapeType() == TopAbs_VERTEX) {
-      aCenterMass = BRep_Tool::Pnt(TopoDS::Vertex(aShapeBase));
-    } else if (aShapeBase.ShapeType() == TopAbs_EDGE || aShapeBase.ShapeType() == TopAbs_WIRE) {
-      BRepGProp::LinearProperties(aShapeBase, aSystem);
-      aCenterMass = aSystem.CentreOfMass();
-    } else if (aShapeBase.ShapeType() == TopAbs_FACE || aShapeBase.ShapeType() == TopAbs_SHELL) {
-      BRepGProp::SurfaceProperties(aShapeBase, aSystem);
-      aCenterMass = aSystem.CentreOfMass();
-    } else {
-      BRepGProp::VolumeProperties(aShapeBase, aSystem);
-      aCenterMass = aSystem.CentreOfMass();
-    }
-
+    gp_Ax3 aPos = GEOMImpl_IMeasureOperations::GetPosition(aShapeBase);
+    gp_Pnt aCenterMass = aPos.Location();
     aShape = BRepBuilderAPI_MakeVertex(aCenterMass).Shape();
   }
   else if (aType == VERTEX_BY_INDEX)

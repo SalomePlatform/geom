@@ -3726,29 +3726,28 @@ namespace {
     }
     return defaultNorm;
   }
+}
 
-  //================================================================================
-  /*!
-   * \brief Return type of shape for explode. In case of compound it will be a type of sub shape.
-   */
-  //================================================================================
-
-  TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape)
-  {
-    TopAbs_ShapeEnum aType = theShape.ShapeType();
-    if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
-    else if (aType == TopAbs_EDGE  || aType == TopAbs_WIRE)      return TopAbs_EDGE;
-    else if (aType == TopAbs_FACE  || aType == TopAbs_SHELL)     return TopAbs_FACE;
-    else if (aType == TopAbs_SOLID || aType == TopAbs_COMPSOLID) return TopAbs_SOLID;
-    else if (aType == TopAbs_COMPOUND) {
-      // Only the iType of the first shape in the compound is taken into account
-      TopoDS_Iterator It (theShape, Standard_False, Standard_False);
-      if (It.More()) {
-        return GetTypeOfSimplePart(It.Value());
-      }
+//================================================================================
+/*!
+ * \brief Return type of shape for explode. In case of compound it will be a type of sub shape.
+ */
+//================================================================================
+TopAbs_ShapeEnum GEOMImpl_IShapesOperations::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
+{
+  TopAbs_ShapeEnum aType = theShape.ShapeType();
+  if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
+  else if (aType == TopAbs_EDGE  || aType == TopAbs_WIRE)      return TopAbs_EDGE;
+  else if (aType == TopAbs_FACE  || aType == TopAbs_SHELL)     return TopAbs_FACE;
+  else if (aType == TopAbs_SOLID || aType == TopAbs_COMPSOLID) return TopAbs_SOLID;
+  else if (aType == TopAbs_COMPOUND) {
+    // Only the iType of the first shape in the compound is taken into account
+    TopoDS_Iterator It (theShape, Standard_False, Standard_False);
+    if (It.More()) {
+      return GetTypeOfSimplePart(It.Value());
     }
-    return TopAbs_SHAPE;
   }
+  return TopAbs_SHAPE;
 }
 
 //=============================================================================

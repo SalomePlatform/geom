@@ -154,7 +154,9 @@ public:
 
   Standard_EXPORT static TopoDS_Shape MakeScaledPrism (const TopoDS_Shape& theShapeBase,
                                                        const gp_Vec&       theVector,
-                                                       const Standard_Real theScaleFactor); 
+                                                       const Standard_Real theScaleFactor,
+                                                       const gp_Pnt&       theCDG = gp::Origin(),
+                                                       bool                isCDG = false); 
 
 
   // Type management

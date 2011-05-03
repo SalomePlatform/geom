@@ -399,6 +399,13 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    */
   Standard_EXPORT static bool CheckTriangulation (const TopoDS_Shape& theShape);
 
+  /*!
+   * \brief Return type of shape for explode. In case of compound it will be a type of its first sub shape.
+   * \param theShape The shape to get type of.
+   * \retval TopAbs_ShapeEnum Return type of shape for explode.
+   */
+  Standard_EXPORT static TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
+
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,
                                  const Standard_Integer         theObjectType,

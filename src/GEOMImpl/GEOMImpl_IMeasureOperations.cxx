@@ -26,6 +26,7 @@
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_MeasureDriver.hxx>
 #include <GEOMImpl_IMeasure.hxx>
+#include <GEOMImpl_IShapesOperations.hxx>
 
 #include <GEOMAlgo_ShapeInfo.hxx>
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
@@ -778,14 +779,21 @@ gp_Ax3 GEOMImpl_IMeasureOperations::GetPosition (const TopoDS_Shape& theShape)
 
   // Origin
   gp_Pnt aPnt;
-  if (theShape.ShapeType() == TopAbs_VERTEX) {
+
+  TopAbs_ShapeEnum aShType = theShape.ShapeType();
+
+  if (aShType == TopAbs_VERTEX) {
     aPnt = BRep_Tool::Pnt(TopoDS::Vertex(theShape));
   }
   else {
+    if (aShType == TopAbs_COMPOUND) {
+      aShType = GEOMImpl_IShapesOperations::GetTypeOfSimplePart(theShape);
+    }
+
     GProp_GProps aSystem;
-    if (theShape.ShapeType() == TopAbs_EDGE || theShape.ShapeType() == TopAbs_WIRE)
+    if (aShType == TopAbs_EDGE || aShType == TopAbs_WIRE)
       BRepGProp::LinearProperties(theShape, aSystem);
-    else if (theShape.ShapeType() == TopAbs_FACE || theShape.ShapeType() == TopAbs_SHELL)
+    else if (aShType == TopAbs_FACE || aShType == TopAbs_SHELL)
       BRepGProp::SurfaceProperties(theShape, aSystem);
     else
       BRepGProp::VolumeProperties(theShape, aSystem);
