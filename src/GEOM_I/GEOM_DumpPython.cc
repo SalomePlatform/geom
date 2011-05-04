@@ -141,7 +141,8 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
       std::vector<TObjectData>::iterator it = objectDataVec.begin();
       for( ;it != objectDataVec.end(); it++ ) {
       
-	//1. Encode entry 
+	//1. Encode entry
+        if ( (*it)._studyEntry.Length() < 7 ) continue;
 	std::string tail( (*it)._studyEntry.ToCString(), 6, (*it)._studyEntry.Length()-1 );
 	std::string newEntry(ComponentDataType());
 	newEntry+=("_"+tail);
