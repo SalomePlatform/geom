@@ -48,8 +48,9 @@
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepCheck.hxx>
-#include <BRepCheck_Result.hxx>
 #include <BRepCheck_ListIteratorOfListOfStatus.hxx>
+#include <BRepCheck_Result.hxx>
+#include <BRepCheck_Shell.hxx>
 #include <BRepExtrema_DistShapeShape.hxx>
 #include <BRepGProp.hxx>
 #include <BRepTools.hxx>
@@ -1337,7 +1338,8 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::IsGoodForSolid (Handle(GEOM
           if (It.More()) aShape = It.Value();
         }
         if (aShape.ShapeType() == TopAbs_SHELL) {
-          if (!aShape.Closed()) {
+          BRepCheck_Shell chkShell (TopoDS::Shell(aShape));
+          if (chkShell.Closed() == BRepCheck_NotClosed) {
             aRes = "WRN_SHAPE_UNCLOSED";
           }
         }
