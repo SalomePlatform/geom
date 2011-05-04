@@ -4334,6 +4334,49 @@ Otherwise the dimensions will be kept without modifications.</translation>
         <source>GEOM_IS_REORDER</source>
         <translation>Reorder vertices taking into account distances</translation>
     </message>
+    <message>
+        <source>GEOM_CURVE_CRMODE</source>
+        <translation>Creation Mode</translation>
+    </message>
+    <message>
+        <source>GEOM_CURVE_SELECTION</source>
+        <translation>By Selection</translation>
+    </message>
+    <message>
+        <source>GEOM_CURVE_ANALITICAL</source>
+        <translation>Analitical</translation>
+    </message>        
+</context>
+<context>
+    <name>BasicGUI_ParamCurveWidget</name>
+    <message>
+        <source>GEOM_PCURVE_TITLE</source>
+        <translation>Curve parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_X</source>
+        <translation>X(t) equation</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_Y</source>
+        <translation>Y(t) equation</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_Z</source>
+        <translation>Z(t) equation</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_MIN</source>
+        <translation>Min t</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_MAX</source>
+        <translation>Max t</translation>
+    </message>        
+    <message>
+        <source>GEOM_PCURVE_STEP</source>
+        <translation>Step</translation>
+    </message>        
 </context>
 <context>
     <name>BasicGUI_EllipseDlg</name>

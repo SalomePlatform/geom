@@ -227,6 +227,7 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(CAS_CPPFLAGS)			\
 	$(KERNEL_CXXFLAGS)		\
 	$(BOOST_CPPFLAGS)		\
+        $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
 	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
@@ -243,7 +244,8 @@ libGEOMimpl_la_LDFLAGS  =			\
 	../SKETCHER/libGEOMSketcher.la		\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
-	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset
+	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset \
+        $(PYTHON_LIBS)
 
 # extra dist files
 EXTRA_DIST += GUID.txt

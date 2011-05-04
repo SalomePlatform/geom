@@ -32,6 +32,8 @@
 #include <list>
 
 class DlgRef_1Sel3Check;
+class QRadioButton;
+class BasicGUI_ParamCurveWidget;
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
@@ -59,6 +61,9 @@ private:
 private:
   DlgRef_1Sel3Check*                 GroupPoints;
   QList<GEOM::GeomObjPtr>            myPoints;
+  QRadioButton*                      myAnaliticalBtn;
+  QRadioButton*                      myBySelectionBtn;
+  BasicGUI_ParamCurveWidget*         myParams; 
 
 private slots:
   void                               ClickOnOk();
@@ -71,6 +76,9 @@ private slots:
   void                               CheckButtonToggled();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               CreationModeChanged();
+  void                               ValueChangedInSpinBox(double/*theValue*/);
+  void                               OnEditingFinished();
 };
 
 #endif // BASICGUI_CURVEDLG_H

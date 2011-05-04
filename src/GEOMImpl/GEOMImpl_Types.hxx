@@ -293,6 +293,10 @@
 
 #define SHAPES_ON_SHAPE 1
 
+//Curve constructor type
+#define POINT_CONSTRUCTOR 0
+#define COORD_CONSTRUCTOR 1
+
 // Blocks
 #define BLOCK_FACE_FOUR_PNT       1
 #define BLOCK_FACE_FOUR_EDGES     2

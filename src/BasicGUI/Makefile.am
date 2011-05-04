@@ -36,7 +36,8 @@ salomeinclude_HEADERS =			\
 	BasicGUI_MarkerDlg.h		\
 	BasicGUI_PlaneDlg.h		\
 	BasicGUI_PointDlg.h		\
-	BasicGUI_VectorDlg.h
+	BasicGUI_VectorDlg.h            \
+	BasicGUI_ParamCurveWidget.h
 #
 # OBSOLETE: BasicGUI_WorkingPlaneDlg.h
 #
@@ -56,7 +57,8 @@ dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI_VectorDlg.cxx		\
 	BasicGUI_PlaneDlg.cxx		\
 	BasicGUI_CurveDlg.cxx		\
-	BasicGUI_MarkerDlg.cxx
+	BasicGUI_MarkerDlg.cxx          \
+	BasicGUI_ParamCurveWidget.cxx
 #
 # OBSOLETE: BasicGUI_WorkingPlaneDlg.cxx
 #
@@ -70,7 +72,8 @@ MOC_FILES =					\
 	BasicGUI_VectorDlg_moc.cxx		\
 	BasicGUI_PlaneDlg_moc.cxx		\
 	BasicGUI_CurveDlg_moc.cxx		\
-	BasicGUI_MarkerDlg_moc.cxx
+	BasicGUI_MarkerDlg_moc.cxx		\
+	BasicGUI_ParamCurveWidget_moc.cxx
 #
 # OBSOLETE: BasicGUI_WorkingPlaneDlg_moc.cxx
 #

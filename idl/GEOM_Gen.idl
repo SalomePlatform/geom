@@ -135,6 +135,21 @@ module GEOM
     FOM_AutoCorrect
   };
 
+  /*!
+   * Kind of the curves.
+   * Used in the function GEOM_Gen.MakeCurveParametric()
+   */
+  enum curve_type {
+    /*! Polyline curve */
+    Polyline,
+    
+    /*! Bezier curve */
+    Bezier,
+
+    /*! Interpolation, curve */
+    Interpolation
+  };
+
 
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
@@ -2594,6 +2609,25 @@ module GEOM
     GEOM_Object MakeSplineInterpolation (in ListOfGO thePoints,
                                          in boolean  theIsClosed,
                                          in boolean  theDoReordering);
+
+    /*!
+     *  Creates a curve using the parametric definition of the basic points.
+     *  \param thexExpr parametric equation of the coordinates X.
+     *  \param theyExpr parametric equation of the coordinates Y.
+     *  \param thezExpr parametric equation of the coordinates Z.
+     *  \param theParamMin the minimal value of the parameter.
+     *  \param theParamMax the maximum value of the parameter.
+     *  \param theParamStep the step of the parameter.
+     *  \param theCurveType the type of the curve.
+     *  \return New GEOM_Object, containing the created curve.
+     */    
+    GEOM_Object MakeCurveParametric(in string thexExpr,
+				    in string theyExpr,
+				    in string thezExpr,
+				    in double theParamMin,
+				    in double theParamMax,
+				    in double theParamStep,
+				    in curve_type theCurveType);
 
     /*!
      *  Create a sketcher (wire or face), following the textual description,

@@ -85,6 +85,10 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
                                                  CORBA::Boolean        theIsClosed,
                                                  CORBA::Boolean        theDoReordering);
 
+  GEOM::GEOM_Object_ptr MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+					    double theParamMin, double theParamMax, double theParamStep, 
+					    GEOM::curve_type theCurveType);
+
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
   
   GEOM::GEOM_Object_ptr Make3DSketcher (const GEOM::ListOfDouble& theCoordinates);

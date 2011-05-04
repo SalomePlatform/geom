@@ -32,7 +32,11 @@ class GEOM_Engine;
 class Handle(GEOM_Object);
 
 class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
+  
  public:
+
+  enum CurveType { Polyline, Bezier, Interpolation };
+  
   Standard_EXPORT GEOMImpl_ICurvesOperations(GEOM_Engine* theEngine, int theDocID);
   Standard_EXPORT ~GEOMImpl_ICurvesOperations();
 
@@ -72,6 +76,10 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeSplineInterpolation (std::list<Handle(GEOM_Object)> thePoints,
                                                                bool theIsClosed = false,
                                                                bool theDoReordering = false);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+							  double theParamMin, double theParamMax, double theParamStep, 
+							  CurveType theCurveType);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
                                                     std::list<double> theWorkingPlane);

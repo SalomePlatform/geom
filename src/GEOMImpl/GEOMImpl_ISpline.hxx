@@ -22,11 +22,15 @@
 //  NOTE: This is an interface to a function for the Spline creation.
 
 #include "GEOM_Function.hxx"
+#include <TColStd_HArray1OfReal.hxx>
 
 #define SPL_ARG_LENG 1
 #define SPL_ARG_CLOS 2
 #define SPL_ARG_REOR 3
 #define SPL_ARG_LAST 2
+
+#define SPL_CONSTRUCTOR 4
+#define SPL_ARG_ARRAY 5
 
 class GEOMImpl_ISpline
 {
@@ -49,6 +53,17 @@ class GEOMImpl_ISpline
   bool GetDoReordering() { return (bool)_func->GetInteger(SPL_ARG_REOR); }
 
   Handle(GEOM_Function) GetPoint(int theId) { return _func->GetReference(SPL_ARG_LAST + theId); }
+
+
+  void SetConstructorType(int theConstructor) {_func->SetInteger(SPL_CONSTRUCTOR,theConstructor); }
+
+  int GetConstructorType() { return _func->GetInteger(SPL_CONSTRUCTOR); }
+
+  void SetCoordinates(const Handle(TColStd_HArray1OfReal)& theValue)
+              { _func->SetRealArray(SPL_ARG_ARRAY, theValue); }
+
+
+  Handle(TColStd_HArray1OfReal) GetCoordinates() { return _func->GetRealArray(SPL_ARG_ARRAY); }
 
  private:
 

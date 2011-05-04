@@ -1166,7 +1166,7 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
       else if(i == aTotalNbParams)
       {
         aStartPos = aCommand.Location(i-1, COMMA, 1, aCommand.Length()) + 2;
-        aEndPos = aCommand.Location(C_BRACKET, 1, aCommand.Length());
+        aEndPos = aCommand.Location(C_BRACKET, aStartPos , aCommand.Length());
       }
       //Replace other parameters (bettwen two ',' characters)
       else if(i != aFirstParam && i != aTotalNbParams )

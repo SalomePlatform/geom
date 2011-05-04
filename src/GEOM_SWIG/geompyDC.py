@@ -954,6 +954,28 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             return anObj
 
+
+        ## Creates a curve using the parametric definition of the basic points.
+        #  @param thexExpr parametric equation of the coordinates X.
+        #  @param theyExpr parametric equation of the coordinates Y.
+        #  @param thezExpr parametric equation of the coordinates Z.
+        #  @param theParamMin the minimal value of the parameter.
+        #  @param theParamMax the maximum value of the parameter.
+        #  @param theParamStep the step of the parameter.
+        #  @param theCurveType the type of the curve.
+        #  @return New GEOM_Object, containing the created curve.
+        #
+        #  @ref tui_creation_curve "Example"
+        def MakeCurveParametric(self, thexExpr, theyExpr, thezExpr,
+                                theParamMin, theParamMax, theParamStep, theCurveType):
+            theParamMin,theParamMax,theParamStep,Parameters = ParseParameters(theParamMin,theParamMax,theParamStep)
+            anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
+            RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+            
+
+
         # end of l4_curves
         ## @}
 
