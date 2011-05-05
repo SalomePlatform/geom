@@ -229,6 +229,17 @@ bezier = geompy.MakeBezier([p0, p1, p2, p3, p4])
 #create a b-spline curve from a list of points
 interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4], False)
 
+#create a polyline using parametric definition of the basic points
+param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 5., geompy.GEOM.Polyline)
+
+# create a bezier curve using parametric definition of the basic points
+param_bezier = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 5., geompy.GEOM.Bezier)
+
+#create a b-spline curve using parametric definition of the basic points
+param_interpol = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 5., geompy.GEOM.Interpolation)
+
+
+
 # add objects in the study
 id_p0       = geompy.addToStudy(p0,       "Point1")
 id_p1       = geompy.addToStudy(p1,       "Point2")
@@ -238,6 +249,11 @@ id_p4       = geompy.addToStudy(p4,       "Point5")
 id_polyline = geompy.addToStudy(polyline, "Polyline")
 id_bezier   = geompy.addToStudy(bezier,   "Bezier")
 id_interpol = geompy.addToStudy(interpol, "Interpol")
+id_param_polyline = geompy.addToStudy(param_polyline, "Polyline Parametric")
+id_param_bezier = geompy.addToStudy(param_bezier, "Bezier Parametric")
+id_param_interpol = geompy.addToStudy(param_interpol, "Interpol Parametric")
+
+
 
 # display the points and the curves
 gg.createAndDisplayGO(id_p0)
@@ -248,6 +264,10 @@ gg.createAndDisplayGO(id_p4)
 gg.createAndDisplayGO(id_polyline)
 gg.createAndDisplayGO(id_bezier)
 gg.createAndDisplayGO(id_interpol) 
+gg.createAndDisplayGO(id_param_polyline)
+gg.createAndDisplayGO(id_param_bezier)
+gg.createAndDisplayGO(id_param_interpol)
+
 \endcode
 
 \anchor tui_creation_vector
