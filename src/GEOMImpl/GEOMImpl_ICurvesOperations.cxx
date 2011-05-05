@@ -22,6 +22,9 @@
 #include <Python.h>
 #include <structmember.h>
 
+#ifdef HAVE_FINITE
+#undef HAVE_FINITE
+#endif
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ICurvesOperations.hxx>
