@@ -416,7 +416,9 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   myWithShape = true;
 
   GroupPoints->ComboBox1->setCurrentIndex(8 - count + SelectedShapeType);
-  ComboTextChanged();
+
+  // to avoid recursion: SelectionIntoArgument->ResetStateOfDialog->ComboTextChanged->SubShapeToggled->activateSelection->(currentSelectionChanged)->SelectionIntoArgument
+  //ComboTextChanged();
 
   updateButtonState();
 }
