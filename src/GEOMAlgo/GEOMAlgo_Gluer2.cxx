@@ -19,8 +19,8 @@
 //
 //  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-// File:	GEOMAlgo_Gluer2.cxx
-// Author:	Peter KURNEV
+// File:        GEOMAlgo_Gluer2.cxx
+// Author:      Peter KURNEV
 
 #include <GEOMAlgo_Gluer2.hxx>
 
@@ -228,22 +228,22 @@ void GEOMAlgo_Gluer2::CheckData()
       const TopTools_ListOfShape& aLSG=aItDMSLS.Value();
       aItLS.Initialize(aLSG);
       for (i=0; aItLS.More(); aItLS.Next(), ++i) {
-	const TopoDS_Shape& aSG=aItLS.Value();
-	aTypeX=aSG.ShapeType();
-	if (!i) {
-	  aType=aTypeX;
-	  if (!(aType==TopAbs_VERTEX || 
-		aType==TopAbs_EDGE || 
-		aType==TopAbs_FACE)) {
-	    myErrorStatus=21;// non-brep shapes
-	    return;
-	  }
-	  continue;
-	}
-	if (aTypeX!=aType) {
-	  myErrorStatus=20;// non-homogeneous shapes
-	  return;
-	}
+        const TopoDS_Shape& aSG=aItLS.Value();
+        aTypeX=aSG.ShapeType();
+        if (!i) {
+          aType=aTypeX;
+          if (!(aType==TopAbs_VERTEX || 
+                aType==TopAbs_EDGE || 
+                aType==TopAbs_FACE)) {
+            myErrorStatus=21;// non-brep shapes
+            return;
+          }
+          continue;
+        }
+        if (aTypeX!=aType) {
+          myErrorStatus=20;// non-homogeneous shapes
+          return;
+        }
       }
     }
   }// if (aNbSG) {
@@ -375,10 +375,10 @@ void GEOMAlgo_Gluer2::FillBRepShapes(const TopAbs_ShapeEnum theType)
       //
       aItLS.Initialize(aLSD);
       for (; aItLS.More(); aItLS.Next()) {
-	const TopoDS_Shape& aEx=aItLS.Value();
-	myOrigins.Bind(aEx, aEnew);
-	//
-	aMFence.Add(aEx);
+        const TopoDS_Shape& aEx=aItLS.Value();
+        myOrigins.Bind(aEx, aEnew);
+        //
+        aMFence.Add(aEx);
       }
     }
     else {
@@ -431,17 +431,17 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
     for (; aItS.More(); aItS.Next()) {
       const TopoDS_Shape& aE=aItS.Value();
       if (myOrigins.IsBound(aE)) {
-	aEnew=myOrigins.Find(aE);
-	//
-	bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aEnew, aE, myContext);
-	if (bToReverse) {
-	  aEnew.Reverse();
-	}
-	//
-	aBB.Add(aWnew, aEnew);
+        aEnew=myOrigins.Find(aE);
+        //
+        bToReverse=GEOMAlgo_Tools3D::IsSplitToReverse(aEnew, aE, myContext);
+        if (bToReverse) {
+          aEnew.Reverse();
+        }
+        //
+        aBB.Add(aWnew, aEnew);
       }
       else {
-	aBB.Add(aWnew, aE);
+        aBB.Add(aWnew, aE);
       }
     }
     //
@@ -543,13 +543,13 @@ Standard_Boolean GEOMAlgo_Gluer2::HasImage(const TopoDS_Shape& aC)
     if (aType==TopAbs_COMPOUND) {
       bRet=HasImage(aCx);
       if (bRet) {
-	return bRet;
+        return bRet;
       }
     }
     else {
       bRet=myOrigins.IsBound(aCx);
       if (bRet) {
-	return bRet;
+        return bRet;
       }
     }
   }
