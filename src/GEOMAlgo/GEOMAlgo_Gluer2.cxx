@@ -423,6 +423,9 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
     }
     //
     GEOMAlgo_Tools3D::MakeContainer(aType, aWnew);
+    //modified by NIZNHY-PKV Tue May 10 13:46:30 2011f
+    aWnew.Orientation(aW.Orientation());
+    //modified by NIZNHY-PKV Tue May 10 13:46:32 2011t
     //
     aItS.Initialize(aW);
     for (; aItS.More(); aItS.Next()) {
@@ -442,7 +445,9 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
       }
     }
     //
-    aWnew.Orientation(aW.Orientation());
+    //modified by NIZNHY-PKV Tue May 10 13:46:19 2011f
+    //aWnew.Orientation(aW.Orientation());
+    //modified by NIZNHY-PKV Tue May 10 13:46:22 2011t
     //
     //myImages / myOrigins
     TopTools_ListOfShape aLSD;
