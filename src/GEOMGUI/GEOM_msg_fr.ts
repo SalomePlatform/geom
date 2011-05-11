@@ -1075,7 +1075,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION_TITLE</source>
-        <translation>Projection sur une Face</translation>
+        <translation>Projection sur une face</translation>
     </message>
     <message>
         <source>GEOM_SOURCE_OBJECT</source>
@@ -4336,11 +4336,11 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>GEOM_CURVE_CRMODE</source>
-        <translation>Mode de Création</translation>
+        <translation>Mode de création</translation>
     </message>
     <message>
         <source>GEOM_CURVE_SELECTION</source>
-        <translation>Par Sélection</translation>
+        <translation>Par sélection</translation>
     </message>
     <message>
         <source>GEOM_CURVE_ANALITICAL</source>
@@ -4733,8 +4733,8 @@ Fermez cette boîte d&apos;alerte et choisissez les faces à recoller</translati
     </message>
     <message>
         <source>EDGES_FOR_GLUING_ARE_DETECTED</source>
-        <translation>Il y a %1 arête(s) à recoller surlignées en couleur rouge.
-Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller</translation>
+        <translation>Il y a %1 arête(s) à recoller surlignées en rouge.
+Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller.</translation>
     </message>
     <message>
         <source>GLUE_FACES</source>
