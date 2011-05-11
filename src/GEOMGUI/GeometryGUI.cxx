@@ -1923,7 +1923,6 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
       appStudy->setObjectPropMap(index, entry, aListOfMap[index]);
 
-      QColor c = aListOfMap[index].value(COLOR_PROP).value<QColor>();
       //Get Visibility property of the current PropMap
       if (aListOfMap[index].value(VISIBILITY_PROP) == 1) {
         SUIT_ViewManager* vman = lst.at(index);
