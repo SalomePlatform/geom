@@ -419,6 +419,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
 
   bool addGroup;
   bool circularFoundAndAdded = false;
+  bool circularFound10 = false;
   bool incidentPipeFound = false;
   bool mainPipeFound = false;
   bool mainPipeFoundAndAdded = false;
@@ -519,6 +520,14 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
           addGroup = true;
           circularFoundAndAdded = true;
           aGroup->SetName("CIRCULAR_QUARTER_PIPE");
+          if (nbEdges == 10) {
+            circularFound10 = true;
+          }
+        }
+        else if (!circularFound10 && nbEdges == 10) {
+          circularFound10 = true;
+          addGroup = true;
+          aGroup->SetName("CIRCULAR_QUARTER_PIPE");
         }
       }
       else if (nbEdges == 8) {
@@ -526,31 +535,39 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
         mainPipeFound = true;
         flangeFound = false;
 
-        TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
+        bool isNearZ0 = false;
+        bool isBelowZ0 = false;
+
+        TopExp_Explorer Ex (aGroupShapeTrsfInv,TopAbs_VERTEX);
         while (Ex.More()) {
-          gp_Pnt aP =  BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
+          gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
           double x=aP.X(), y=aP.Y(), z=aP.Z();
 
           // tuy_princ_long_avant & tuy_princ_long_apres
-          bool isMain = (((z < Precision::Confusion()) || (x < Precision::Confusion())) &&
-                         ((y <= aR1Ext + Precision::Confusion()) ||
-                          (y <= -(aR1Ext + Precision::Confusion())) ||
-                          (y <= theR1 + Precision::Confusion()) ||
-                          (y == -(theR1 + Precision::Confusion()))));
+          //bool isMain = (((z < Precision::Confusion()) || (x < Precision::Confusion())) &&
+          //               ((y <= aR1Ext + Precision::Confusion()) ||
+          //                (y <= -(aR1Ext + Precision::Confusion())) ||
+          //                (y <= theR1 + Precision::Confusion()) ||
+          //                (y == -(theR1 + Precision::Confusion()))));
+          bool isMain = ((z < Precision::Confusion() || x < Precision::Confusion()) &&
+                         (fabs(y) > theR1 - Precision::Confusion() ||
+                          fabs(y) < Precision::Confusion()));
 
           if (!isMain) {
             mainPipeFound = false;
           }
 
           // collerette
-          if (z < Precision::Confusion()) {
-            flangeFound = true;
-            if (!flangeFoundAndAdded) {
-              flangeFoundAndAdded = true;
-              addGroup = true;
-              aGroup->SetName("FLANGE");
-            }
-          }
+          //if (z < Precision::Confusion() && !isMain) {
+          //  flangeFound = true;
+          //  if (!flangeFoundAndAdded) {
+          //    flangeFoundAndAdded = true;
+          //    addGroup = true;
+          //    aGroup->SetName("FLANGE");
+          //  }
+          //}
+          if (fabs(z) < Precision::Confusion()) isNearZ0 = true;
+          if (z < - Precision::Confusion()) isBelowZ0 = true;
 
           // tuyau incident
           if ((Abs(x) > aR2Ext + Precision::Confusion()) ||
@@ -566,6 +583,14 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
         if (incidentPipeFound) {
           addGroup = true;
           aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
+        }
+        if (isNearZ0 && !isBelowZ0) {
+          flangeFound = true;
+          if (!flangeFoundAndAdded) {
+            flangeFoundAndAdded = true;
+            addGroup = true;
+            aGroup->SetName("FLANGE");
+          }
         }
         if (!addGroup && (!incidentPipeFound &&
                           !mainPipeFound &&
