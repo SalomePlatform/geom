@@ -103,6 +103,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_MarkerDriver.hxx		\
 	GEOMImpl_TranslateDriver.hxx		\
 	GEOMImpl_MirrorDriver.hxx		\
+	GEOMImpl_ProjectionDriver.hxx		\
 	GEOMImpl_OffsetDriver.hxx		\
 	GEOMImpl_ScaleDriver.hxx		\
 	GEOMImpl_PositionDriver.hxx		\
@@ -172,6 +173,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_MarkerDriver.cxx		\
 	GEOMImpl_TranslateDriver.cxx		\
 	GEOMImpl_MirrorDriver.cxx		\
+	GEOMImpl_ProjectionDriver.cxx		\
 	GEOMImpl_OffsetDriver.cxx		\
 	GEOMImpl_ScaleDriver.cxx		\
 	GEOMImpl_PositionDriver.cxx		\

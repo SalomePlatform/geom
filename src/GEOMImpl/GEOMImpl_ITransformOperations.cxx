@@ -32,6 +32,7 @@
 
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_MirrorDriver.hxx>
+#include <GEOMImpl_ProjectionDriver.hxx>
 #include <GEOMImpl_OffsetDriver.hxx>
 #include <GEOMImpl_ScaleDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
@@ -1196,10 +1197,10 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
 
   //Add a Projection function
   Handle(GEOM_Function) aFunction =
-    aCopy->AddFunction(GEOMImpl_MirrorDriver::GetID(), PROJECTION_COPY);
+    aCopy->AddFunction(GEOMImpl_ProjectionDriver::GetID(), PROJECTION_COPY);
 
   //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_MirrorDriver::GetID()) return NULL;
+  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) return NULL;
 
   GEOMImpl_IMirror aTI (aFunction);
   aTI.SetPlane(theTarget->GetLastFunction());

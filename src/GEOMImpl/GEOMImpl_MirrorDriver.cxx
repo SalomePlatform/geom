@@ -31,7 +31,6 @@
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepClass_FaceClassifier.hxx>
-#include <BRepOffsetAPI_NormalProjection.hxx>
 #include <BRepTools.hxx>
 
 #include <TopAbs.hxx>
@@ -43,7 +42,6 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 
-#include <GeomAPI_ProjectPointOnSurf.hxx>
 #include <Geom_Plane.hxx>
 
 #include <gp_Trsf.hxx>
@@ -92,120 +90,6 @@ Standard_Integer GEOMImpl_MirrorDriver::Execute(TFunction_Logbook& log) const
 
   TopoDS_Shape anOriginal = anOriginalFunction->GetValue();
   if (anOriginal.IsNull()) return 0;
-
-  // Projection
-  if (aType == PROJECTION_COPY) {
-    // Source shape (point, edge or wire)
-    if (anOriginal.ShapeType() != TopAbs_VERTEX &&
-        anOriginal.ShapeType() != TopAbs_EDGE &&
-        anOriginal.ShapeType() != TopAbs_WIRE) {
-      Standard_ConstructionError::Raise
-        ("Projection aborted : the source shape is neither a vertex, nor an edge or a wire");
-    }
-
-    // Target face
-    Handle(GEOM_Function) aTargetFunction = TI.GetPlane();
-    if (aTargetFunction.IsNull()) return 0;
-    TopoDS_Shape aFaceShape = aTargetFunction->GetValue();
-    //if (aFaceShape.IsNull() || aFaceShape.ShapeType() != TopAbs_FACE) {
-    //  Standard_ConstructionError::Raise
-    //    ("Projection aborted : the target shape is not a face");
-    //}
-
-    Standard_Real tol = 1.e-4;        
-
-    if (anOriginal.ShapeType() == TopAbs_VERTEX) {
-      if (aFaceShape.IsNull() || aFaceShape.ShapeType() != TopAbs_FACE) {
-        Standard_ConstructionError::Raise
-          ("Projection aborted : the target shape is not a face");
-      }
-      TopoDS_Face aFace = TopoDS::Face(aFaceShape);
-      Handle(Geom_Surface) surface = BRep_Tool::Surface(aFace);
-      double U1, U2, V1, V2;
-      //surface->Bounds(U1, U2, V1, V2);
-      BRepTools::UVBounds(aFace, U1, U2, V1, V2);
-
-      // projector
-      GeomAPI_ProjectPointOnSurf proj;
-      proj.Init(surface, U1, U2, V1, V2, tol);
-
-      gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(anOriginal));
-      proj.Perform(aPnt);
-      if (!proj.IsDone()) {
-        Standard_ConstructionError::Raise
-          ("Projection aborted : GeomAPI_ProjectPointOnSurf failed");
-      }
-      int nbPoints = proj.NbPoints();
-      if (nbPoints < 1) {
-        Standard_ConstructionError::Raise("No solution found");
-      }
-
-      Quantity_Parameter U, V;
-      proj.LowerDistanceParameters(U, V);
-      gp_Pnt2d aProjPnt (U, V);
-
-      // classifier
-      BRepClass_FaceClassifier aClsf (aFace, aProjPnt, tol);
-      if (aClsf.State() != TopAbs_IN && aClsf.State() != TopAbs_ON) {
-        bool isSol = false;
-        double minDist = RealLast();
-        for (int i = 1; i <= nbPoints; i++) {
-          Quantity_Parameter Ui, Vi;
-          proj.Parameters(i, Ui, Vi);
-          aProjPnt = gp_Pnt2d(Ui, Vi);
-          aClsf.Perform(aFace, aProjPnt, tol);
-          if (aClsf.State() == TopAbs_IN || aClsf.State() == TopAbs_ON) {
-            isSol = true;
-            double dist = proj.Distance(i);
-            if (dist < minDist) {
-              minDist = dist;
-              U = Ui;
-              V = Vi;
-            }
-          }
-        }
-        if (!isSol) {
-          Standard_ConstructionError::Raise("No solution found");
-        }
-      }
-
-      gp_Pnt surfPnt = surface->Value(U, V);
-
-      aShape = BRepBuilderAPI_MakeVertex(surfPnt).Shape();
-    }
-    else {
-      //see BRepTest_BasicCommands.cxx for example of BRepOffsetAPI_NormalProjection
-      BRepOffsetAPI_NormalProjection OrtProj (aFaceShape);
-      OrtProj.Add(anOriginal);
-
-      //Standard_Real tol = 1.e-4;        
-      //Standard_Real tol2d = Pow(tol, 2./3);
-      //GeomAbs_Shape Continuity = GeomAbs_C2;  
-      //Standard_Integer MaxDeg = 14;           
-      //Standard_Integer MaxSeg = 16;           
-      //OrtProj.SetParams(tol, tol2d, Continuity, MaxDeg, MaxSeg);
-      try {
-        OrtProj.Build();
-      } catch (Standard_Failure) {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-        TCollection_AsciiString aMsg (aFail->GetMessageString());
-        if (!aMsg.Length())
-          aMsg = "Projection aborted : possibly the source shape intersects the cylinder's axis";
-        Standard_ConstructionError::Raise(aMsg.ToCString());
-      }
-      if (!OrtProj.IsDone()) {
-        Standard_ConstructionError::Raise
-          ("Projection aborted : BRepOffsetAPI_NormalProjection failed");
-      }
-
-      aShape = OrtProj.Shape();
-    }
-
-    if (aShape.IsNull()) return 0;
-    aFunction->SetValue(aShape);
-    log.SetTouched(Label()); 
-    return 1;
-  }
 
   // Bug 12158: Check for standalone (not included in faces) degenerated edges
   TopTools_IndexedDataMapOfShapeListOfShape aEFMap;
