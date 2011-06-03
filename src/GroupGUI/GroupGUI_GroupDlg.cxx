@@ -422,10 +422,13 @@ void GroupGUI_GroupDlg::setInPlaceObj(GEOM::GEOM_Object_var theObj, const bool i
     GEOM::ListOfGO_var aSubObjects = aShapesOp->MakeExplode(myInPlaceObj, getShapeType(), false);
     for (int i = 0; i < aSubObjects->length(); i++)
     {
-      CORBA::Long aMainIndex = aLocOp->GetSubShapeIndex(myMainObj, aSubObjects[i]);
-      CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex(myInPlaceObj, aSubObjects[i]);
-      if (aMainIndex >= 0 && aPlaceIndex > 0)
-        myMain2InPlaceIndices.Bind(aMainIndex, aPlaceIndex);
+      GEOM::GEOM_Object_var aSS = aShapesOp->GetSame(myMainObj, aSubObjects[i]);
+      if (!CORBA::is_nil(aSS)) {
+        CORBA::Long aMainIndex = aLocOp->GetSubShapeIndex(myMainObj, aSS);
+        CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex(myInPlaceObj, aSubObjects[i]);
+        if (aMainIndex >= 0 && aPlaceIndex > 0)
+          myMain2InPlaceIndices.Bind(aMainIndex, aPlaceIndex);
+      }
     }
   }
   myInPlaceObjSelectState = subSelectionWay();
@@ -806,29 +809,47 @@ void GroupGUI_GroupDlg::activateSelection()
 
     TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
     TopoDS_Shape aRestrictionShape;
-    if (subSelectionWay() == ALL_SUBSHAPES)
+
+    if (subSelectionWay() == ALL_SUBSHAPES) {
       aRestrictionShape = aMainShape;
-    else if (!myInPlaceObj->_is_nil())
-      aRestrictionShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myInPlaceObj);
-    else ;
 
-    TopTools_IndexedMapOfShape aSubShapesMap;
-    TopExp::MapShapes(aMainShape, aSubShapesMap);
-    CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
-    QString anEntryBase = aMainEntry.in();
+      TopTools_IndexedMapOfShape aSubShapesMap;
+      TopExp::MapShapes(aMainShape, aSubShapesMap);
+      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+      QString anEntryBase = aMainEntry.in();
 
-    TopExp_Explorer anExp (aRestrictionShape, getShapeType());
-    for (; anExp.More(); anExp.Next())
-    {
-      TopoDS_Shape aSubShape = anExp.Current();
-      int index = aSubShapesMap.FindIndex(aSubShape);
-      QString anEntry = anEntryBase + QString("_%1").arg(index);
+      TopExp_Explorer anExp (aRestrictionShape, getShapeType());
+      for (; anExp.More(); anExp.Next()) {
+        TopoDS_Shape aSubShape = anExp.Current();
+        int index = aSubShapesMap.FindIndex(aSubShape);
+        QString anEntry = anEntryBase + QString("_%1").arg(index);
 
-      SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
-      if (aPrs) {
-        displayPreview(aPrs, true, false); // append, do not update
+        SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
+        if (aPrs) {
+          displayPreview(aPrs, true, false); // append, do not update
+        }
       }
     }
+    else if (!myInPlaceObj->_is_nil()) {
+      TopTools_IndexedMapOfShape aSubShapesMap;
+      TopExp::MapShapes(aMainShape, aSubShapesMap);
+      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+      QString anEntryBase = aMainEntry.in();
+
+      TColStd_DataMapIteratorOfDataMapOfIntegerInteger aM2IPit (myMain2InPlaceIndices);
+      for (; aM2IPit.More(); aM2IPit.Next()) {
+        int index = aM2IPit.Key();
+        TopoDS_Shape aSubShape = aSubShapesMap.FindKey(index);
+        QString anEntry = anEntryBase + QString("_%1").arg(index);
+
+        SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
+        if (aPrs) {
+          displayPreview(aPrs, true, false); // append, do not update
+        }
+      }
+    }
+    else ;
+
     aDisplayer->UpdateViewer();
     aDisplayer->SetDisplayMode(prevDisplayMode);
   }

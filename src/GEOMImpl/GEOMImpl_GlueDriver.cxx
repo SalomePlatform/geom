@@ -450,21 +450,23 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueWithWarnings (const TopoDS_Shape& theShape
     return aRes;
   }
 
-  // 3. Fill shapes to glue aMSG
-  TopTools_DataMapOfShapeListOfShape aMSG;
-  const TopTools_DataMapOfShapeListOfShape& aMSD = aGA.ShapesDetected();
-  TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItMSD;
-  aItMSD.Initialize(aMSD);
-  for (; aItMSD.More(); aItMSD.Next()) {
-    const TopoDS_Shape& aSx = aItMSD.Key();
-    const TopTools_ListOfShape& aLSD = aItMSD.Value();
-    if (aSx.ShapeType() == theShapeType) {
-      aMSG.Bind(aSx, aLSD);
+  if (theShapeType != TopAbs_FACE) {
+    // 3. Fill shapes to glue aMSG
+    TopTools_DataMapOfShapeListOfShape aMSG;
+    const TopTools_DataMapOfShapeListOfShape& aMSD = aGA.ShapesDetected();
+    TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItMSD;
+    aItMSD.Initialize(aMSD);
+    for (; aItMSD.More(); aItMSD.Next()) {
+      const TopoDS_Shape& aSx = aItMSD.Key();
+      const TopTools_ListOfShape& aLSD = aItMSD.Value();
+      if (aSx.ShapeType() == theShapeType) {
+        aMSG.Bind(aSx, aLSD);
+      }
     }
-  }
 
-  // 4. Set shapes to glue. If the operator is absent, the whole gluing will be done
-  aGA.SetShapesToGlue(aMSG);
+    // 4. Set shapes to glue. If the operator is absent, the whole gluing will be done
+    aGA.SetShapesToGlue(aMSG);
+  }
 
   // 5. Gluing
   aGA.Perform();
