@@ -1,20 +1,20 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  File   : GEOMImpl_IAdvancedOperations.cxx
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
@@ -419,6 +419,7 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
 
   bool addGroup;
   bool circularFoundAndAdded = false;
+  bool circularFound10 = false;
   bool incidentPipeFound = false;
   bool mainPipeFound = false;
   bool mainPipeFoundAndAdded = false;
@@ -519,6 +520,14 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
           addGroup = true;
           circularFoundAndAdded = true;
           aGroup->SetName("CIRCULAR_QUARTER_PIPE");
+          if (nbEdges == 10) {
+            circularFound10 = true;
+          }
+        }
+        else if (!circularFound10 && nbEdges == 10) {
+          circularFound10 = true;
+          addGroup = true;
+          aGroup->SetName("CIRCULAR_QUARTER_PIPE");
         }
       }
       else if (nbEdges == 8) {
@@ -526,31 +535,39 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
         mainPipeFound = true;
         flangeFound = false;
 
-        TopExp_Explorer Ex(aGroupShapeTrsfInv,TopAbs_VERTEX);
+        bool isNearZ0 = false;
+        bool isBelowZ0 = false;
+
+        TopExp_Explorer Ex (aGroupShapeTrsfInv,TopAbs_VERTEX);
         while (Ex.More()) {
-          gp_Pnt aP =  BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
+          gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(Ex.Current()));
           double x=aP.X(), y=aP.Y(), z=aP.Z();
 
           // tuy_princ_long_avant & tuy_princ_long_apres
-          bool isMain = (((z < Precision::Confusion()) || (x < Precision::Confusion())) &&
-                         ((y <= aR1Ext + Precision::Confusion()) ||
-                          (y <= -(aR1Ext + Precision::Confusion())) ||
-                          (y <= theR1 + Precision::Confusion()) ||
-                          (y == -(theR1 + Precision::Confusion()))));
+          //bool isMain = (((z < Precision::Confusion()) || (x < Precision::Confusion())) &&
+          //               ((y <= aR1Ext + Precision::Confusion()) ||
+          //                (y <= -(aR1Ext + Precision::Confusion())) ||
+          //                (y <= theR1 + Precision::Confusion()) ||
+          //                (y == -(theR1 + Precision::Confusion()))));
+          bool isMain = ((z < Precision::Confusion() || x < Precision::Confusion()) &&
+                         (fabs(y) > theR1 - Precision::Confusion() ||
+                          fabs(y) < Precision::Confusion()));
 
           if (!isMain) {
             mainPipeFound = false;
           }
 
           // collerette
-          if (z < Precision::Confusion()) {
-            flangeFound = true;
-            if (!flangeFoundAndAdded) {
-              flangeFoundAndAdded = true;
-              addGroup = true;
-              aGroup->SetName("FLANGE");
-            }
-          }
+          //if (z < Precision::Confusion() && !isMain) {
+          //  flangeFound = true;
+          //  if (!flangeFoundAndAdded) {
+          //    flangeFoundAndAdded = true;
+          //    addGroup = true;
+          //    aGroup->SetName("FLANGE");
+          //  }
+          //}
+          if (fabs(z) < Precision::Confusion()) isNearZ0 = true;
+          if (z < - Precision::Confusion()) isBelowZ0 = true;
 
           // tuyau incident
           if ((Abs(x) > aR2Ext + Precision::Confusion()) ||
@@ -566,6 +583,14 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
         if (incidentPipeFound) {
           addGroup = true;
           aGroup->SetName("HALF_LENGTH_INCIDENT_PIPE");
+        }
+        if (isNearZ0 && !isBelowZ0) {
+          flangeFound = true;
+          if (!flangeFoundAndAdded) {
+            flangeFoundAndAdded = true;
+            addGroup = true;
+            aGroup->SetName("FLANGE");
+          }
         }
         if (!addGroup && (!incidentPipeFound &&
                           !mainPipeFound &&

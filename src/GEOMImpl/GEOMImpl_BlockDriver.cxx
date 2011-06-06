@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #include <Standard_Stream.hxx>
@@ -37,7 +37,7 @@
 
 #include <ShHealOper_Sewing.hxx>
 #include <ShHealOper_ShapeProcess.hxx>
-#include <GEOMAlgo_Gluer.hxx>
+//#include <GEOMAlgo_Gluer.hxx>
 #include <BlockFix_BlockFixAPI.hxx>
 
 #include "utilities.h"
@@ -436,7 +436,6 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       BRepTools_Quilt Glue;
 
       if (aType == BLOCK_SIX_FACES) {
-
         // Make block (hexahedral solid) from six faces
         for (Standard_Integer ind = 1; ind <= nbshapes; ind++) {
           if (anArgs(ind).ShapeType() != TopAbs_FACE) {
@@ -445,8 +444,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
           Glue.Add(anArgs(ind));
         }
 
-      } else {
-
+      }
+      else {
         // Make block (hexahedral solid) from two opposite faces
         if (anArgs(1).ShapeType() != TopAbs_FACE ||
             anArgs(2).ShapeType() != TopAbs_FACE) {
@@ -530,9 +529,8 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       }
       aShape = Sol;
       BRepLib::SameParameter(aShape, 1.E-5, Standard_True);
-
-    } else if (aType == BLOCK_COMPOUND_GLUE) {
-
+    }
+    else if (aType == BLOCK_COMPOUND_GLUE) {
       // Make blocks compound from a compound
       if (anArgs(1).ShapeType() != TopAbs_COMPOUND &&
           anArgs(2).ShapeType() != TopAbs_COMPSOLID) {
@@ -541,23 +539,15 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
 
       TopoDS_Shape aCompound = anArgs(1);
 
-      // Glue coincident faces and edges (with Partition algorithm).
-      //NMTAlgo_Splitter1 PS;
-      //PS.AddShape(aCompound);
-      //PS.Compute();
-      //PS.SetRemoveWebs(Standard_False);
-      //      PS.Build(aCompound.ShapeType());
-      //PS.Build(TopAbs_SOLID);
-      //aShape = PS.Shape();
-
-      GEOMAlgo_Gluer aGluer;
-      aGluer.SetShape(aCompound);
-      aGluer.SetCheckGeometry(Standard_True);
-      aGluer.Perform();
-      aShape = aGluer.Result();
-
-
-    } else {
+      // Glue coincident faces and edges
+      aShape = GEOMImpl_GlueDriver::GlueFaces(aCompound, Precision::Confusion(), Standard_True);
+      //GEOMAlgo_Gluer aGluer;
+      //aGluer.SetShape(aCompound);
+      //aGluer.SetCheckGeometry(Standard_True);
+      //aGluer.Perform();
+      //aShape = aGluer.Result();
+    }
+    else {
     }
 
   } else { // Multi-transformations and compound improving

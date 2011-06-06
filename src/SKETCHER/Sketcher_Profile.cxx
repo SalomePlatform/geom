@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 //  GEOM SKETCHER : basic sketcher
@@ -67,7 +67,6 @@ Sketcher_Profile::Sketcher_Profile()
 //=======================================================================
 Sketcher_Profile::Sketcher_Profile(const char* aCmd)
 {
-  myErrMsg = "";
   enum {line, circle, point, none} move;
 
   Standard_Integer i = 1;
@@ -91,6 +90,7 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
   Handle(Geom_Surface) Surface;
 
   myOK = Standard_False;
+  myError = 0;
 
   //TCollection_AsciiString aCommand(CORBA::string_dup(aCmd));
   TCollection_AsciiString aCommand ((char*)aCmd);
@@ -252,106 +252,104 @@ Sketcher_Profile::Sketcher_Profile(const char* aCmd)
       case 'A':                                // TAngential arc by end point   
         { 
           if (n1 != 3) goto badargs;
-	  Standard_Real vx = a(1).RealValue();
+          Standard_Real vx = a(1).RealValue();
           Standard_Real vy = a(2).RealValue(); 
-	  if (a(0) == "AA") {
+          if (a(0) == "AA") {
             vx -= x;
             vy -= y;
           }
-	  Standard_Real det = dx * vy - dy * vx;
-	  if ( Abs(det) > Precision::Confusion()) {
-	    Standard_Real c = (dx * vx + dy * vy)                                            
-	                      / Sqrt((dx * dx + dy * dy) * (vx * vx + vy * vy));                 // Cosine of alpha = arc of angle / 2 , alpha in [0,Pi]
+          Standard_Real det = dx * vy - dy * vx;
+          if ( Abs(det) > Precision::Confusion()) {
+            Standard_Real c = (dx * vx + dy * vy)                                            
+                              / Sqrt((dx * dx + dy * dy) * (vx * vx + vy * vy));                 // Cosine of alpha = arc of angle / 2 , alpha in [0,Pi]
             radius = (vx * vx + vy * vy)* Sqrt(dx * dx + dy * dy)                                // radius = distance between start and end point / 2 * sin(alpha)  
-	             / (2.0 * det);	                                                         // radius is > 0 or < 0
-	    if (Abs(radius) > Precision::Confusion()) {
-	      angle = 2.0 * acos(c); 	                                                         // angle in [0,2Pi]  
-	      move = circle;
+                     / (2.0 * det);	                                                             // radius is > 0 or < 0
+            if (Abs(radius) > Precision::Confusion()) {
+              angle = 2.0 * acos(c); 	                                                         // angle in [0,2Pi]  
+              move = circle;
             }
-	    else
-	      move = none;
-	    break;
+            else
+              move = none;
+            break;
           } 
           else
             move = none;
           break;
-        }	 
+        } 
       case 'U':                                // Arc by end point and radiUs
         { 
-	  if (n1 != 5) goto badargs;
-	  Standard_Real vx = a(1).RealValue();
+          if (n1 != 5) goto badargs;
+          Standard_Real vx = a(1).RealValue();
           Standard_Real vy = a(2).RealValue();
-	  radius  = a(3).RealValue();
-	  reversed = a(4).IntegerValue();
-	  if (a(0) == "UU") {                 // Absolute
+          radius  = a(3).RealValue();
+          reversed = a(4).IntegerValue();
+          if (a(0) == "UU") {                 // Absolute
             vx -= x;
             vy -= y;
           }
-	  Standard_Real length = Sqrt(vx * vx + vy * vy);
-	  if ( (4.0 - (vx * vx + vy * vy) / (radius * radius) >= 0.0 ) && (length > Precision::Confusion()) ) {
-	    Standard_Real c = 0.5 * Sqrt(4.0 - (vx * vx + vy * vy) / (radius * radius));        // Cosine of alpha = arc angle / 2 , alpha in [0,Pi/2]
-	    angle = 2.0 * acos(c); 	                                                        // angle in [0,Pi]
-	    if ( reversed == 2 )
-	      angle = angle - 2 * PI; 
-	    dx =    0.5 * (  vy * 1.0/radius 
-			   + vx * Sqrt(4.0  / (vx * vx + vy * vy) - 1.0 / (radius * radius)));    
+          Standard_Real length = Sqrt(vx * vx + vy * vy);
+          if ( (4.0 - (vx * vx + vy * vy) / (radius * radius) >= 0.0 ) && (length > Precision::Confusion()) ) {
+            Standard_Real c = 0.5 * Sqrt(4.0 - (vx * vx + vy * vy) / (radius * radius));        // Cosine of alpha = arc angle / 2 , alpha in [0,Pi/2]
+            angle = 2.0 * acos(c); 	                                                            // angle in [0,Pi]
+            if ( reversed == 2 )
+              angle = angle - 2 * PI; 
+            dx =    0.5 * (  vy * 1.0/radius 
+                           + vx * Sqrt(4.0  / (vx * vx + vy * vy) - 1.0 / (radius * radius)));    
             dy = -  0.5 * (  vx * 1.0/radius 
-			   - vy * Sqrt(4.0  / (vx * vx + vy * vy) - 1.0 / (radius * radius)));    
-	    move = circle;
+                           - vy * Sqrt(4.0  / (vx * vx + vy * vy) - 1.0 / (radius * radius)));    
+            move = circle;
           }
-	  else{
-	    move = none;
-	  }
-	  break;
+          else{
+            move = none;
+          }
+          break;
         }	 
       case 'E':                                // Arc by end point and cEnter
         { 
-	  myErrMsg = "";
-	  if (n1 != 7) goto badargs;
-	  Standard_Real vx = a(1).RealValue();
+          if (n1 != 7) goto badargs;
+          Standard_Real vx = a(1).RealValue();
           Standard_Real vy = a(2).RealValue();
-	  Standard_Real vxc  = a(3).RealValue();
-	  Standard_Real vyc  = a(4).RealValue();
-	  reversed = a(5).IntegerValue();
-	  control_Tolerance = a(6).IntegerValue();
+          Standard_Real vxc  = a(3).RealValue();
+          Standard_Real vyc  = a(4).RealValue();
+          reversed = a(5).IntegerValue();
+          control_Tolerance = a(6).IntegerValue();
 
-	  if (a(0) == "EE") {                 // Absolute
+          if (a(0) == "EE") {                 // Absolute
             vx -= x;
             vy -= y;
-	    vxc -= x;
-	    vyc -= y; 
+            vxc -= x;
+            vyc -= y; 
           }
-	  radius = Sqrt( vxc * vxc + vyc * vyc );
-	  Standard_Real det = vx * vyc - vy * vxc;
-	  Standard_Real length = Sqrt(vx * vx + vy * vy);
-	  Standard_Real length2 = Sqrt((vx-vxc) * (vx-vxc) + (vy-vyc) * (vy-vyc));
-	  Standard_Real length3 = Sqrt(vxc * vxc + vyc * vyc);
-	  Standard_Real error = Abs(length2 - radius);
-	  if ( error > Precision::Confusion() ){
-	    MESSAGE("Warning : The specified end point is not on the Arc, distance = "<<error);
-	    myErrMsg = "GEOM_SKETCHER_WARNING";//"Warning : The specified End Point is not on the Arc";
- 	  }
-          if ( error > Precision::Confusion() &&                                                // Don't create the arc if the end point 
-	       control_Tolerance == 1)								// is too far from it
-	    move = none;
-	  else if ( (length > Precision::Confusion()) && 
-		    (length2 > Precision::Confusion()) && 
-		    (length3 > Precision::Confusion()) ) {
-	    Standard_Real c = ( radius * radius - (vx * vxc + vy * vyc) ) 
-	                      / ( radius * Sqrt((vx-vxc) * (vx-vxc) + (vy-vyc) * (vy-vyc)) ) ;  // Cosine of arc angle 
-	    angle = acos(c); 	                                                                // angle in [0,Pi] 
-	    if ( reversed == 2 )
-	      angle = angle - 2 * PI;
-	    if (det < 0)
-	      angle = -angle; 
-	    dx =  vyc / radius;
-	    dy = -vxc / radius; 
-	    move = circle;
-	  }
-	  else {
-	    move = none;
-	  }
-	  break;
+          radius = Sqrt( vxc * vxc + vyc * vyc );
+          Standard_Real det = vx * vyc - vy * vxc;
+          Standard_Real length = Sqrt(vx * vx + vy * vy);
+          Standard_Real length2 = Sqrt((vx-vxc) * (vx-vxc) + (vy-vyc) * (vy-vyc));
+          Standard_Real length3 = Sqrt(vxc * vxc + vyc * vyc);
+          Standard_Real error = Abs(length2 - radius);
+          myError = error;
+          if ( error > Precision::Confusion() ){
+            MESSAGE("Warning : The specified end point is not on the Arc, distance = "<<error);
+          }
+          if ( error > Precision::Confusion() && control_Tolerance == 1)                      // Don't create the arc if the end point 
+            move = none;                                                                      // is too far from it
+          else if ( (length > Precision::Confusion()) && 
+                    (length2 > Precision::Confusion()) && 
+                    (length3 > Precision::Confusion()) ) {
+            Standard_Real c = ( radius * radius - (vx * vxc + vy * vyc) ) 
+                            / ( radius * Sqrt((vx-vxc) * (vx-vxc) + (vy-vyc) * (vy-vyc)) ) ;  // Cosine of arc angle 
+            angle = acos(c);                                                                  // angle in [0,Pi] 
+            if ( reversed == 2 )
+              angle = angle - 2 * PI;
+            if (det < 0)
+              angle = -angle; 
+            dx =  vyc / radius;
+            dy = -vxc / radius; 
+            move = circle;
+          }
+          else {
+            move = none;
+          }
+          break;
         }	
       case 'I':
         {

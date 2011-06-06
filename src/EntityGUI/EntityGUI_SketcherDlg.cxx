@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 // GEOM GEOMGUI : GUI for Geometry component
@@ -462,6 +462,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
 {
   myConstructorId = constructorId;
   if ( myConstructorId == 0 ) {    // SEGMENT
+    GroupPt2->RB_Point1->setChecked( true );
     GroupPt2->setEnabled( false );
     GroupD2->setEnabled( true );
     MainWidget->RB_Dest1->setEnabled( true );
@@ -470,6 +471,7 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
   }
   else if (  myConstructorId == 1 ) { // ARC
     GroupPt2->setEnabled( true );
+    GroupD2->RB_Dir21->setChecked( true );
     GroupD2->setEnabled( false );
     MainWidget->RB_Dest1->setEnabled( true ); 
     MainWidget->RB_Dest1->setChecked( true );
@@ -518,9 +520,16 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
 {
   MESSAGE("PointClicked")
   myConstructorPntId = constructorId;  
-  GroupPt2->RB_Point1->setChecked( true );
-  GroupPt->RB_Point3->setEnabled( true ); 
-  Point2Clicked( 1 ); 
+  GroupPt->RB_Point3->setEnabled( true );
+  int buttonId = GroupPt2->ButtonGroup->checkedId();
+  MESSAGE("checkedId ="<< buttonId)
+  if (buttonId >= 0){           // = If a button is checked
+    Point2Clicked(buttonId);
+  }
+  else{ 
+    GroupPt2->RB_Point1->setChecked( true );
+    Point2Clicked( 1 ); 
+  }
 }
 
 //=================================================================================
@@ -706,8 +715,15 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
 void EntityGUI_SketcherDlg::Dir1Clicked( int constructorId )
 {
   myConstructorDirId = constructorId;
-  GroupD2->RB_Dir21->setChecked( true );
-  Dir2Clicked( 2 );
+  int dirButtonId = GroupD2->ButtonGroup->checkedId();
+  MESSAGE("checkedId ="<< dirButtonId)
+  if (dirButtonId >= 0){           // = If a button is checked
+    Dir2Clicked(dirButtonId);
+  }
+  else{ 
+    GroupD2->RB_Dir21->setChecked( true );
+    Dir2Clicked( 2 ); 
+  }
 }
 
 
@@ -1948,6 +1964,13 @@ bool EntityGUI_SketcherDlg::isValid( QString& msg )
 //=================================================================================
 bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 {
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
+  int DigNum = qAbs(aPrecision);                   // options for the format of numbers in  myNewCommand
+  char Format = 'f';
+  if ( aPrecision < 0 )                            // f --> DigNum is the number of digits after the decimal point
+    Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 
+    
   QString aParameters;
 
   if ( mySketchState == FIRST_POINT ) {
@@ -1972,16 +1995,25 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     Sketcher_Profile aProfile2( Command2.toAscii() );
 
     //Error Message
-    if ( mySketchType == PT_ABS_CENTER || 
-	 mySketchType == PT_REL_CENTER  ){
-      Group4Spin->label->show();
-      Group4Spin->label->setText( tr( aProfile2.ErrMsg().c_str() ) );
+    if ( mySketchType == PT_ABS_CENTER || mySketchType == PT_REL_CENTER  ){
+      if (aProfile2.Error() > Precision::Confusion()){
+        Group4Spin->label->show();
+        Group4Spin->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( aProfile2.Error(), Format, DigNum));
+      }
+      else{
+        Group4Spin->label->hide();
+      } 
     }
     else 
       Group4Spin->label->hide();
     if ( mySketchType == PT_SEL_CENTER ){
-      Group2Sel->label->show();
-      Group2Sel->label->setText( tr( aProfile2.ErrMsg().c_str() ) );	
+      if (aProfile2.Error() > Precision::Confusion()){
+        Group2Sel->label->show();
+        Group2Sel->label->setText( tr("GEOM_SKETCHER_WARNING") + QString::number( aProfile2.Error(), Format, DigNum));
+      }
+      else{
+        Group2Sel->label->hide();
+      } 
     }
     else 
       Group2Sel->label->hide();

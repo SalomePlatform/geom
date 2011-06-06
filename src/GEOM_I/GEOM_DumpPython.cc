@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifdef WNT
@@ -132,6 +132,35 @@ Engines::TMPFile* GEOM_Gen_i::DumpPython(CORBA::Object_ptr theStudy,
 
   if (isPublished)
   {
+
+    SALOMEDS::AttributeParameter_var ap = aStudy->GetModuleParameters("Interface Applicative", 
+								      ComponentDataType(),
+								      -1);
+    if(!CORBA::is_nil(ap)) {
+      //Add the id parameter of the object
+      std::vector<TObjectData>::iterator it = objectDataVec.begin();
+      for( ;it != objectDataVec.end(); it++ ) {
+      
+	//1. Encode entry
+        if ( (*it)._studyEntry.Length() < 7 ) continue;
+	std::string tail( (*it)._studyEntry.ToCString(), 6, (*it)._studyEntry.Length()-1 );
+	std::string newEntry(ComponentDataType());
+	newEntry+=("_"+tail);
+	
+	CORBA::String_var anEntry = CORBA::string_dup(newEntry.c_str());
+	
+	if( ap->IsSet(anEntry, 6) ) { //6 Means string array, see SALOMEDS_Attributes.idl AttributeParameter interface
+	  std::string idCommand = std::string("geompy.getObjectID(") + GetDumpName((*it)._studyEntry.ToCString()) + std::string(")");
+	  SALOMEDS::StringSeq_var aSeq= ap->GetStrArray(anEntry);
+	  int oldLenght = aSeq->length();	
+	  aSeq->length(oldLenght+2);
+	  aSeq[oldLenght] = CORBA::string_dup("_PT_OBJECT_ID_");
+	  aSeq[oldLenght + 1] = CORBA::string_dup(idCommand.c_str());
+	  ap->SetStrArray( anEntry, aSeq );
+	}	 
+      }
+    }
+  
     //Output the script that sets up the visual parameters.
     char* script = aStudy->GetDefaultScript(ComponentDataType(), "\t");
     if (script && strlen(script) > 0) {

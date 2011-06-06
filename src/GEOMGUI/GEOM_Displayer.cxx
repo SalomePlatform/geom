@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 // GEOM GEOMGUI : GUI for Geometry component
@@ -139,7 +139,7 @@ static inline int getTopAbsMode( const int implType )
   }
 }
 
-static int getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
+int GEOM_Displayer::getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
 {
   if ( shape.IsNull() )
     return TopAbs_SHAPE;
@@ -163,7 +163,7 @@ static int getMinMaxShapeType( const TopoDS_Shape& shape, bool ismin )
   return ret;
 }
 
-static bool isCompoundOfVertices( const TopoDS_Shape& theShape )
+bool GEOM_Displayer::isCompoundOfVertices( const TopoDS_Shape& theShape )
 {
   return theShape.ShapeType() == TopAbs_COMPOUND && getMinMaxShapeType( theShape, false ) == TopAbs_VERTEX;
 }
@@ -615,11 +615,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	
 	if(useStudy){
 	  aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-	  aDefPropMap = getDefaultPropepryMap(SOCC_Viewer::Type());
-	  bool isDiff = MergePropertyMaps(aPropMap, aDefPropMap);
-	  	     
-	  if(isDiff)
-	    aStudy->setObjectPropMap(aMgrId,anEntry,aPropMap);
+	  aDefPropMap = getDefaultPropertyMap(SOCC_Viewer::Type());
+	  MergePropertyMaps(aPropMap, aDefPropMap);
 	}
 
         //Handle(GEOM_AISShape) AISShape = new GEOM_AISShape( myShape, "" );
@@ -984,7 +981,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     theActors->AddItem( aTrh );
   }
   else {
-    PropMap aDefPropMap = getDefaultPropepryMap(SVTK_Viewer::Type());
+    PropMap aDefPropMap = getDefaultPropertyMap(SVTK_Viewer::Type());
 
     QString anEntry;
     if(!myIO.IsNull()) {
@@ -1000,11 +997,9 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     theActors->AddItem(aGeomActor);
     aGeomActor->Delete();
     
-    if(useStudy){
+    if(useStudy) {
       aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-      bool isDiff = MergePropertyMaps(aPropMap, aDefPropMap);
-      if(isDiff)
-	aStudy->setObjectPropMap(aMgrId,anEntry,aPropMap);
+      MergePropertyMaps(aPropMap, aDefPropMap);
     }
   }
 
@@ -1689,7 +1684,7 @@ SALOMEDS::Color GEOM_Displayer::getUniqueColor( const QList<SALOMEDS::Color>& th
 
 
 
-PropMap GEOM_Displayer::getDefaultPropepryMap(const QString& viewer_type){
+PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   PropMap aDefaultMap;
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();    
   //1. Visibility 

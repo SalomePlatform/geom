@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -32,6 +33,7 @@
 
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_MirrorDriver.hxx>
+#include <GEOMImpl_ProjectionDriver.hxx>
 #include <GEOMImpl_OffsetDriver.hxx>
 #include <GEOMImpl_ScaleDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
@@ -1170,6 +1172,60 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::OffsetShapeCopy
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeOffset("
                                << theObject << ", " << theOffset << ")";
+
+  SetErrorCode(OK);
+  return aCopy;
+}
+
+
+//=============================================================================
+/*!
+ *  ProjectShapeCopy
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_ITransformOperations::ProjectShapeCopy
+       (Handle(GEOM_Object) theSource, Handle(GEOM_Object) theTarget)
+{
+  SetErrorCode(KO);
+
+  if (theSource.IsNull() || theTarget.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aLastFunction = theSource->GetLastFunction();
+  if (aLastFunction.IsNull()) return NULL; //There is no function which creates an object to be projected
+
+  //Add a new Projection object
+  Handle(GEOM_Object) aCopy = GetEngine()->AddObject(GetDocID(), GEOM_PROJECTION);
+
+  //Add a Projection function
+  Handle(GEOM_Function) aFunction =
+    aCopy->AddFunction(GEOMImpl_ProjectionDriver::GetID(), PROJECTION_COPY);
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_ProjectionDriver::GetID()) return NULL;
+
+  GEOMImpl_IMirror aTI (aFunction);
+  aTI.SetPlane(theTarget->GetLastFunction());
+  aTI.SetOriginal(aLastFunction);
+
+  //Compute the Projection
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Projection driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeProjection("
+                               << theSource << ", " << theTarget << ")";
 
   SetErrorCode(OK);
   return aCopy;

@@ -1,25 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GeometryGUI.cxx
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
@@ -468,6 +467,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpMirror:           // MENU TRANSFORMATION - MIRROR
   case GEOMOp::OpScale:            // MENU TRANSFORMATION - SCALE
   case GEOMOp::OpOffset:           // MENU TRANSFORMATION - OFFSET
+  case GEOMOp::OpProjection:       // MENU TRANSFORMATION - PROJECTION
   case GEOMOp::OpMultiTranslate:   // MENU TRANSFORMATION - MULTI-TRANSLATION
   case GEOMOp::OpMultiRotate:      // MENU TRANSFORMATION - MULTI-ROTATION
   case GEOMOp::OpReimport:         // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
@@ -495,6 +495,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpFreeFaces:        // MENU MEASURE - FREE FACES
   case GEOMOp::OpOrientation:      // MENU REPAIR - CHANGE ORIENTATION
   case GEOMOp::OpGlueFaces:        // MENU REPAIR - GLUE FACES
+  case GEOMOp::OpGlueEdges:        // MENU REPAIR - GLUE EDGES
   case GEOMOp::OpLimitTolerance:   // MENU REPAIR - LIMIT TOLERANCE
   case GEOMOp::OpRemoveExtraEdges: // MENU REPAIR - REMOVE EXTRA EDGES
     libName = "RepairGUI";
@@ -710,6 +711,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpMirror,         "MIRROR" );
   createGeomAction( GEOMOp::OpScale,          "SCALE" );
   createGeomAction( GEOMOp::OpOffset,         "OFFSET" );
+  createGeomAction( GEOMOp::OpProjection,     "PROJECTION" );
   createGeomAction( GEOMOp::OpMultiTranslate, "MUL_TRANSLATION" );
   createGeomAction( GEOMOp::OpMultiRotate,    "MUL_ROTATION" );
 
@@ -729,6 +731,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpSewing,           "SEWING" );
   createGeomAction( GEOMOp::OpGlueFaces,        "GLUE_FACES" );
+  createGeomAction( GEOMOp::OpGlueEdges,        "GLUE_EDGES" );
   createGeomAction( GEOMOp::OpLimitTolerance,   "LIMIT_TOLERANCE" );
   createGeomAction( GEOMOp::OpSuppressFaces,    "SUPPRESS_FACES" );
   createGeomAction( GEOMOp::OpSuppressHoles,    "SUPPERSS_HOLES" );
@@ -898,6 +901,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpMirror,         transId, -1 );
   createMenu( GEOMOp::OpScale,          transId, -1 );
   createMenu( GEOMOp::OpOffset,         transId, -1 );
+  createMenu( GEOMOp::OpProjection,     transId, -1 );
   createMenu( separator(),              transId, -1 );
   createMenu( GEOMOp::OpMultiTranslate, transId, -1 );
   createMenu( GEOMOp::OpMultiRotate,    transId, -1 );
@@ -930,6 +934,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpSuppressHoles,   repairId, -1 );
   createMenu( GEOMOp::OpSewing,          repairId, -1 );
   createMenu( GEOMOp::OpGlueFaces,       repairId, -1 );
+  createMenu( GEOMOp::OpGlueEdges,       repairId, -1 );
   createMenu( GEOMOp::OpLimitTolerance,  repairId, -1 );
   createMenu( GEOMOp::OpAddPointOnEdge,  repairId, -1 );
   //createMenu( GEOMOp::OpFreeBoundaries,  repairId, -1 );
@@ -1034,6 +1039,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpMirror,         transTbId );
   createTool( GEOMOp::OpScale,          transTbId );
   createTool( GEOMOp::OpOffset,         transTbId );
+  createTool( GEOMOp::OpProjection,     transTbId );
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );
@@ -1216,7 +1222,7 @@ bool GeometryGUI::activateModule( SUIT_Study* study )
 
   // import Python module that manages GEOM plugins (need to be here because SalomePyQt API uses active module)
   PyGILState_STATE gstate = PyGILState_Ensure();
-  PyObject* pluginsmanager=PyImport_ImportModule((char*)"salome_pluginsmanager");
+  PyObject* pluginsmanager=PyImport_ImportModuleNoBlock((char*)"salome_pluginsmanager");
   if(pluginsmanager==NULL)
     PyErr_Print();
   else
@@ -1697,7 +1703,7 @@ const char gDigitsSep = ':'; // character used to separate numeric parameter val
 void GeometryGUI::storeVisualParameters (int savePoint)
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(application()->activeStudy());
-  if (!appStudy || !appStudy->studyDS())
+  if ( !appStudy || !appStudy->studyDS() )
     return;
   _PTR(Study) studyDS = appStudy->studyDS();
 
@@ -1732,7 +1738,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
 
         //Check that object exists in the study
         _PTR(SObject) obj( studyDS->FindObjectID( o_it.key().toLatin1().data() ) );
-        if ( !obj )
+        if ( !obj || !(aProps.count() > 0))
           continue;
         // entry is "encoded" = it does NOT contain component adress, since it is a
         // subject to change on next component loading
@@ -1743,52 +1749,67 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         if( !obj->FindAttribute(anAttr, "AttributeIOR"))
           continue;
 
-        std::string param, occParam = vType.toLatin1().data();
+        std::string param,occParam = vType.toLatin1().data();
         occParam += NAME_SEPARATOR;
         occParam += QString::number(aMgrId).toLatin1().data();
         occParam += NAME_SEPARATOR;
 
-        param = occParam + VISIBILITY_PROP;
-        ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+	if(aProps.contains(VISIBILITY_PROP)) {
+	  param = occParam + VISIBILITY_PROP;
+	  ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
+	}
 
-        param = occParam + DISPLAY_MODE_PROP;
-
-        ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
-
-        QColor c = aProps.value(COLOR_PROP).value<QColor>();
-        QString colorStr = QString::number(c.red()/255.);
-        colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
-        colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
-        param = occParam + COLOR_PROP;
-        ip->setParameter(entry, param, colorStr.toLatin1().data());
+	if(aProps.contains(DISPLAY_MODE_PROP)) {
+	  param = occParam + DISPLAY_MODE_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
+	}
+	
+	if(aProps.contains(COLOR_PROP)) {
+	  QColor c = aProps.value(COLOR_PROP).value<QColor>();
+	  QString colorStr = QString::number(c.red()/255.);
+	  colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
+	  colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
+	  param = occParam + COLOR_PROP;
+	  ip->setParameter(entry, param, colorStr.toLatin1().data());
+	}
 
         if(vType == SVTK_Viewer::Type()) {
-          param = occParam + OPACITY_PROP;
-          ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  if(aProps.contains(OPACITY_PROP)) {
+	    param = occParam + OPACITY_PROP;
+	    ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  }
         } else if (vType == SOCC_Viewer::Type()) {
-          param = occParam + TRANSPARENCY_PROP;
-          ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  if(aProps.contains(TRANSPARENCY_PROP)) {
+	    param = occParam + TRANSPARENCY_PROP;
+	    ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+	  }
         }
 
-        param = occParam + ISOS_PROP;
-        ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+	if(aProps.contains(ISOS_PROP)) {
+	  param = occParam + ISOS_PROP;
+	  ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+	}
 
-        param = occParam + VECTOR_MODE_PROP;
-        ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+	if(aProps.contains(VECTOR_MODE_PROP)) {
+	  param = occParam + VECTOR_MODE_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+	}
 
-        param = occParam + DEFLECTION_COEFF_PROP;
-        ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
-
+	if(aProps.contains(DEFLECTION_COEFF_PROP)) {
+	  param = occParam + DEFLECTION_COEFF_PROP;
+	  ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+	}
+	
         //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
         if(aProps.contains(MARKER_TYPE_PROP)) {
           param = occParam + MARKER_TYPE_PROP;
           ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
-        }
-
+        }	
       } // object iterator
     } // for (views)
   } // for (viewManagers)
 }
+
 /*!
  * \brief Restore visual parameters
  *
@@ -1901,7 +1922,6 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
       appStudy->setObjectPropMap(index, entry, aListOfMap[index]);
 
-      QColor c = aListOfMap[index].value(COLOR_PROP).value<QColor>();
       //Get Visibility property of the current PropMap
       if (aListOfMap[index].value(VISIBILITY_PROP) == 1) {
         SUIT_ViewManager* vman = lst.at(index);

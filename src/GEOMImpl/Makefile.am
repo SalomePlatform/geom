@@ -1,20 +1,20 @@
-#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
 #  GEOM GEOM : implementaion of GEOM_Gen.idl
@@ -103,6 +103,7 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_MarkerDriver.hxx		\
 	GEOMImpl_TranslateDriver.hxx		\
 	GEOMImpl_MirrorDriver.hxx		\
+	GEOMImpl_ProjectionDriver.hxx		\
 	GEOMImpl_OffsetDriver.hxx		\
 	GEOMImpl_ScaleDriver.hxx		\
 	GEOMImpl_PositionDriver.hxx		\
@@ -172,6 +173,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_MarkerDriver.cxx		\
 	GEOMImpl_TranslateDriver.cxx		\
 	GEOMImpl_MirrorDriver.cxx		\
+	GEOMImpl_ProjectionDriver.cxx		\
 	GEOMImpl_OffsetDriver.cxx		\
 	GEOMImpl_ScaleDriver.cxx		\
 	GEOMImpl_PositionDriver.cxx		\
@@ -227,6 +229,7 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(CAS_CPPFLAGS)			\
 	$(KERNEL_CXXFLAGS)		\
 	$(BOOST_CPPFLAGS)		\
+        $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
 	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
@@ -243,7 +246,8 @@ libGEOMimpl_la_LDFLAGS  =			\
 	../SKETCHER/libGEOMSketcher.la		\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
-	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset
+	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset \
+        $(PYTHON_LIBS)
 
 # extra dist files
 EXTRA_DIST += GUID.txt

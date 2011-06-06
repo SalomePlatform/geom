@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BasicGUI_CurveDlg.h
@@ -32,6 +33,8 @@
 #include <list>
 
 class DlgRef_1Sel3Check;
+class QRadioButton;
+class BasicGUI_ParamCurveWidget;
 
 //=================================================================================
 // class    : BasicGUI_CurveDlg
@@ -59,6 +62,9 @@ private:
 private:
   DlgRef_1Sel3Check*                 GroupPoints;
   QList<GEOM::GeomObjPtr>            myPoints;
+  QRadioButton*                      myAnaliticalBtn;
+  QRadioButton*                      myBySelectionBtn;
+  BasicGUI_ParamCurveWidget*         myParams; 
 
 private slots:
   void                               ClickOnOk();
@@ -71,6 +77,9 @@ private slots:
   void                               CheckButtonToggled();
   void                               SelectionIntoArgument();
   void                               SetEditCurrentArgument();
+  void                               CreationModeChanged();
+  void                               ValueChangedInSpinBox(double/*theValue*/);
+  void                               OnEditingFinished();
 };
 
 #endif // BASICGUI_CURVEDLG_H

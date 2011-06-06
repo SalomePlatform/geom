@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //=============================================================================
 // File      : GEOMImpl_IShapesOperations.hxx
@@ -33,18 +34,27 @@
 
 #include "GEOMAlgo_State.hxx"
 
+#include <TopoDS_Shape.hxx>
 #include <TopTools_ListOfShape.hxx>
+#include <NCollection_DataMap.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
-#include <list>
 #include <Handle_Geom_Surface.hxx>
 
 #include <gp_Pnt.hxx>
 
+#include <list>
+#include <functional>
+
 class GEOM_Engine;
 class Handle(GEOM_Object);
 class Handle(TColStd_HArray1OfInteger);
+
+inline Standard_Boolean IsEqual (const TopoDS_Shape& S1, const TopoDS_Shape& S2)
+{
+  return S1.IsSame(S2);
+}
 
 class GEOMImpl_IShapesOperations : public GEOM_IOperations
 {
@@ -81,13 +91,25 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                                      const Standard_Real theTolerance,
                                                      const Standard_Boolean doKeepNonSolids);
 
-  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
-                                                                     const Standard_Real theTolerance);
+  //Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueFaces (Handle(GEOM_Object) theShape,
+  //                                                                   const Standard_Real theTolerance);
 
   Standard_EXPORT Handle(GEOM_Object) MakeGlueFacesByList (Handle(GEOM_Object) theShape,
                                                            const Standard_Real theTolerance,
                                                            std::list<Handle(GEOM_Object)> theFaces,
-                                                           const Standard_Boolean doKeepNonSolids);
+                                                           const Standard_Boolean doKeepNonSolids,
+                                                           const Standard_Boolean doGlueAllEdges);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdges (Handle(GEOM_Object) theShape,
+                                                     const Standard_Real theTolerance);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetGlueShapes (Handle(GEOM_Object) theShape,
+                                                                      const Standard_Real theTolerance,
+                                                                      const TopAbs_ShapeEnum theType);
+
+  Standard_EXPORT Handle(GEOM_Object) MakeGlueEdgesByList (Handle(GEOM_Object) theShape,
+                                                           const Standard_Real theTolerance,
+                                                           std::list<Handle(GEOM_Object)> theEdges);
 
   Standard_EXPORT Handle(TColStd_HSequenceOfTransient) GetExistingSubObjects
     (Handle(GEOM_Object)    theShape,
@@ -113,6 +135,10 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
 
   Standard_EXPORT Handle(GEOM_Object) GetSubShape (Handle(GEOM_Object)    theMainShape,
                                                    const Standard_Integer theID);
+
+  Standard_EXPORT Handle(TColStd_HSequenceOfTransient) MakeSubShapes
+    (Handle(GEOM_Object)              theMainShape,
+     Handle(TColStd_HArray1OfInteger) theIndices);
 
   Standard_EXPORT Standard_Integer GetSubShapeIndex (Handle(GEOM_Object) theMainShape,
                                                      Handle(GEOM_Object) theSubShape);
@@ -342,6 +368,18 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \brief Sort shapes in the list by their coordinates.
    * \param SL The list of shapes to sort.
    */
+  struct CompareShapes : public std::binary_function<TopoDS_Shape, TopoDS_Shape, bool>
+  {
+    CompareShapes (bool isOldSorting)
+      : myIsOldSorting(isOldSorting) {}
+
+    bool operator()(const TopoDS_Shape& lhs, const TopoDS_Shape& rhs);
+
+    typedef NCollection_DataMap<TopoDS_Shape, std::pair<double, double> > NCollection_DataMapOfShapeDouble;
+    NCollection_DataMapOfShapeDouble myMap;
+    bool myIsOldSorting;
+  };
+
   Standard_EXPORT static void SortShapes (TopTools_ListOfShape& SL,
                                           const Standard_Boolean isOldSorting = Standard_True);
 
@@ -361,6 +399,13 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    * \retval bool Returns false if the shape has no faces, i.e. impossible to build triangulation.
    */
   Standard_EXPORT static bool CheckTriangulation (const TopoDS_Shape& theShape);
+
+  /*!
+   * \brief Return type of shape for explode. In case of compound it will be a type of its first sub shape.
+   * \param theShape The shape to get type of.
+   * \retval TopAbs_ShapeEnum Return type of shape for explode.
+   */
+  Standard_EXPORT static TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape);
 
  private:
   Handle(GEOM_Object) MakeShape (std::list<Handle(GEOM_Object)>      theShapes,

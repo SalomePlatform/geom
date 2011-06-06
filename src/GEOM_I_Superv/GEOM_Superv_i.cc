@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
@@ -234,8 +235,12 @@ void GEOM_Superv_i::getBasicOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBasicOperations interface
-  if (CORBA::is_nil(myBasicOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myBasicOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myBasicOp = myGeomEngine->GetIBasicOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -246,8 +251,12 @@ void GEOM_Superv_i::get3DPrimOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_I3DPrimOperations interface
-  if (CORBA::is_nil(my3DPrimOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(my3DPrimOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     my3DPrimOp = myGeomEngine->GetI3DPrimOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -258,8 +267,12 @@ void GEOM_Superv_i::getBoolOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBooleanOperations interface
-  if (CORBA::is_nil(myBoolOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myBoolOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myBoolOp = myGeomEngine->GetIBooleanOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -270,8 +283,12 @@ void GEOM_Superv_i::getInsOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IInsertOperations interface
-  if (CORBA::is_nil(myInsOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myInsOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myInsOp = myGeomEngine->GetIInsertOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -282,8 +299,12 @@ void GEOM_Superv_i::getTransfOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ITransformOperations interface
-  if (CORBA::is_nil(myTransfOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myTransfOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myTransfOp = myGeomEngine->GetITransformOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -294,8 +315,12 @@ void GEOM_Superv_i::getShapesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IShapesOperations interface
-  if (CORBA::is_nil(myShapesOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myShapesOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myShapesOp = myGeomEngine->GetIShapesOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -306,8 +331,12 @@ void GEOM_Superv_i::getBlocksOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IBlocksOperations interface
-  if (CORBA::is_nil(myBlocksOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myBlocksOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myBlocksOp = myGeomEngine->GetIBlocksOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -318,8 +347,12 @@ void GEOM_Superv_i::getCurvesOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ICurvesOperations interface
-  if (CORBA::is_nil(myCurvesOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myCurvesOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myCurvesOp = myGeomEngine->GetICurvesOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -330,8 +363,12 @@ void GEOM_Superv_i::getLocalOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_ILocalOperations interface
-  if (CORBA::is_nil(myLocalOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myLocalOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myLocalOp = myGeomEngine->GetILocalOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -342,8 +379,12 @@ void GEOM_Superv_i::getGroupOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IGroupOperations interface
-  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myGroupOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);
     myGroupOp = myGeomEngine->GetIGroupOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -354,8 +395,12 @@ void GEOM_Superv_i::getAdvancedOp()
   if (CORBA::is_nil(myGeomEngine))
     setGeomEngine();
   // get GEOM_IAdvancedOperations interface
-  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID))
+  if (CORBA::is_nil(myAdvancedOp) || isNewStudy(myLastStudyID,myStudyID)) {
+    //rnv: to fix bug "IPAL22461 6.3.0: Incorrect study storage if study contains shape modified with YACS"
+    //     Try to get id of the study from the SALOME Session
+    if(myStudyID < 0 ) SetStudyID(-1);    
     myAdvancedOp = myGeomEngine->GetIAdvancedOperations(myStudyID);
+  }
 }
 
 //=============================================================================
@@ -2182,13 +2227,15 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::GetGlueFaces (GEOM::GEOM_Object_ptr theShape,
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeGlueFacesByList (GEOM::GEOM_Object_ptr theShape,
                                                           CORBA::Double theTolerance,
                                                           const GEOM::ListOfGO& theFaces,
-                                                          CORBA::Boolean doKeepNonSolids)
+                                                          CORBA::Boolean doKeepNonSolids,
+                                                          CORBA::Boolean doGlueAllEdges)
 {
   beginService( " GEOM_Superv_i::MakeGlueFacesByList" );
   MESSAGE("GEOM_Superv_i::MakeGlueFacesByList");
   getShapesOp();
   GEOM::GEOM_Object_ptr anObj =
-    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids);
+    myShapesOp->MakeGlueFacesByList(theShape, theTolerance, theFaces,
+                                    doKeepNonSolids, doGlueAllEdges);
   endService( " GEOM_Superv_i::MakeGlueFacesByList" );
   return anObj;
 }

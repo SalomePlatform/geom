@@ -754,8 +754,12 @@ Please, select face, shell or solid and try again</translation>
         <translation>Glue</translation>
     </message>
     <message>
-        <source>GEOM_GLUE_TITLE</source>
+        <source>GEOM_GLUE_FACES_TITLE</source>
         <translation>Glue faces</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_EDGES_TITLE</source>
+        <translation>Glue edges</translation>
     </message>
     <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
@@ -1064,6 +1068,22 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_OFFSET_TITLE</source>
         <translation>Offset Surface</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_TITLE</source>
+        <translation>Projection on Face</translation>
+    </message>
+    <message>
+        <source>GEOM_SOURCE_OBJECT</source>
+        <translation>Source vertex, edge or wire</translation>
+    </message>
+    <message>
+        <source>GEOM_TARGET_OBJECT</source>
+        <translation>Target face</translation>
     </message>
     <message>
         <source>GEOM_OPERATIONS</source>
@@ -1543,23 +1563,23 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_WARNING</source>
-        <translation>Warning : The specified End Point is not on the Arc</translation>
+        <translation>Warning: End point not on the arc, distance = </translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
-        <translation>Center X coord. :</translation>
+        <translation>X Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_Y</source>
-        <translation>Center Y coord. :</translation>
+        <translation>Y Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DX</source>
-        <translation>Center DX coord. :</translation>
+        <translation>DX Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DY</source>
-        <translation>Center DY coord. :</translation>
+        <translation>DY Center :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_DEST</source>
@@ -2342,6 +2362,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Glue Faces</translation>
     </message>
     <message>
+        <source>MEN_GLUE_EDGES</source>
+        <translation>Glue Edges</translation>
+    </message>
+    <message>
         <source>MEN_GROUP</source>
         <translation>Group</translation>
     </message>
@@ -2426,6 +2450,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset Surface</translation>
     </message>
     <message>
+        <source>MEN_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>MEN_OPERATIONS</source>
         <translation>Operations</translation>
     </message>
@@ -2480,7 +2508,7 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_POP_PUBLISH_OBJ</source>
         <translation>Publish...</translation>
-    </message>			    			    
+    </message>
     <message>
         <source>MEN_POP_ISOS</source>
         <translation>Isos</translation>
@@ -3006,6 +3034,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Perform glue faces</translation>
     </message>
     <message>
+        <source>STB_GLUE_EDGES</source>
+        <translation>Perform glue edges</translation>
+    </message>
+    <message>
         <source>STB_GROUP_CREATE</source>
         <translation>Create a group</translation>
     </message>
@@ -3078,6 +3110,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset surface</translation>
     </message>
     <message>
+        <source>STB_PROJECTION</source>
+        <translation>Project a point, an edge or a wire on a face</translation>
+    </message>
+    <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
         <translation>Create an origin and base Vectors</translation>
     </message>
@@ -3119,12 +3155,12 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
-	<translation>Unpublish object</translation>
+        <translation>Unpublish object</translation>
    </message>
     <message>
         <source>STB_POP_PUBLISH_OBJ</source>
         <translation>Publish object</translation>
-   </message>		          			    
+   </message>
     <message>
         <source>STB_POP_HIDE_CHILDREN</source>
         <translation>Hide child objects</translation>
@@ -3546,6 +3582,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Perform glue faces</translation>
     </message>
     <message>
+        <source>TOP_GLUE_EDGES</source>
+        <translation>Perform glue edges</translation>
+    </message>
+    <message>
         <source>TOP_GROUP_CREATE</source>
         <translation>Create a group</translation>
     </message>
@@ -3614,6 +3654,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Offset surface</translation>
     </message>
     <message>
+        <source>TOP_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>
         <translation>Create an origin and base Vectors</translation>
     </message>
@@ -3656,11 +3700,11 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
-    </message> 
+    </message>
     <message>
         <source>TOP_POP_PUBLISH_OBJ</source>
-	<translation>Publish object</translation>
-   </message>			    
+        <translation>Publish object</translation>
+   </message>
     <message>
         <source>TOP_POP_HIDE_CHILDREN</source>
         <translation>Hide Children</translation>
@@ -4290,6 +4334,49 @@ Otherwise the dimensions will be kept without modifications.</translation>
         <source>GEOM_IS_REORDER</source>
         <translation>Reorder vertices taking into account distances</translation>
     </message>
+    <message>
+        <source>GEOM_CURVE_CRMODE</source>
+        <translation>Creation Mode</translation>
+    </message>
+    <message>
+        <source>GEOM_CURVE_SELECTION</source>
+        <translation>By Selection</translation>
+    </message>
+    <message>
+        <source>GEOM_CURVE_ANALITICAL</source>
+        <translation>Analitical</translation>
+    </message>        
+</context>
+<context>
+    <name>BasicGUI_ParamCurveWidget</name>
+    <message>
+        <source>GEOM_PCURVE_TITLE</source>
+        <translation>Curve parameters</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_X</source>
+        <translation>X(t) equation</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_Y</source>
+        <translation>Y(t) equation</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_Z</source>
+        <translation>Z(t) equation</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_MIN</source>
+        <translation>Min t</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_MAX</source>
+        <translation>Max t</translation>
+    </message>        
+    <message>
+        <source>GEOM_PCURVE_STEP</source>
+        <translation>Step</translation>
+    </message>        
 </context>
 <context>
     <name>BasicGUI_EllipseDlg</name>
@@ -4642,19 +4729,40 @@ Number of sketch points too small</translation>
     <message>
         <source>FACES_FOR_GLUING_ARE_DETECTED</source>
         <translation>There are %1 face(s) that can be glued. They are coloured on the screen with red colour.
-Please close this message box and select faces for glueing</translation>
+Please close this message box and select faces for gluing</translation>
+    </message>
+    <message>
+        <source>EDGES_FOR_GLUING_ARE_DETECTED</source>
+        <translation>There are %1 edge(s) that can be glued. They are coloured on the screen with red colour.
+Please close this message box and select edges for gluing</translation>
     </message>
     <message>
         <source>GLUE_FACES</source>
         <translation>Glue faces</translation>
     </message>
     <message>
+        <source>GLUE_EDGES</source>
+        <translation>Glue edges</translation>
+    </message>
+    <message>
         <source>SELECT_FACES</source>
         <translation>Select Faces</translation>
     </message>
     <message>
+        <source>SELECT_EDGES</source>
+        <translation>Select Edges</translation>
+    </message>
+    <message>
+        <source>GLUE_ALL_EDGES</source>
+        <translation>Glue all coincident edges</translation>
+    </message>
+    <message>
         <source>THERE_ARE_NO_FACES_FOR_GLUING</source>
         <translation>There are no faces for gluing</translation>
+    </message>
+    <message>
+        <source>THERE_ARE_NO_EDGES_FOR_GLUING</source>
+        <translation>There are no edges for gluing</translation>
     </message>
 </context>
 <context>
@@ -4848,31 +4956,31 @@ Would you like to continue?</translation>
     <name>GEOMToolsGUI_PublishDlg</name>
     <message>
         <source>GEOM_PUBLISH_OBJECTS_TLT</source>
-	<translation>Publish Objects</translation>
-    </message>			            
-    <message>
-	<source>OBJECT_NAME</source>
-	<translation>Name</translation>
+        <translation>Publish Objects</translation>
     </message>
     <message>
-	<source>OBJECT_ENTRY</source>
-	<translation>Entry</translation>
-    </message>    
+      <source>OBJECT_NAME</source>
+      <translation>Name</translation>
+    </message>
+    <message>
+      <source>OBJECT_ENTRY</source>
+      <translation>Entry</translation>
+    </message>
     <message>
         <source>UNSELECT_ALL</source>
         <translation>U&amp;nselect All</translation>
     </message>
-    <message>    
+    <message>
         <source>SELECT_ALL</source>
-	<translation>Select &amp;All</translation>
+        <translation>Select &amp;All</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_BTN</source>
-	<translation>&amp;Publish</translation>
+        <translation>&amp;Publish</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
-	<translation>P&amp;ublish And Close</translation>
-    </message>			        
+        <translation>P&amp;ublish And Close</translation>
+    </message>
 </context>
 </TS>

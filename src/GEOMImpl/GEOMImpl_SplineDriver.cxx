@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -27,6 +28,7 @@
 #include <GEOM_Function.hxx>
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRep_Tool.hxx>
 
 #include <TopAbs.hxx>
@@ -81,30 +83,54 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Shape aShape;
 
   if (aType == SPLINE_BEZIER || aType == SPLINE_INTERPOLATION) {
+
+    bool useCoords = aCI.GetConstructorType() == COORD_CONSTRUCTOR;
+    TColgp_Array1OfPnt points(1, (useCoords ? aCI.GetLength() : 1) );
+    if(useCoords) {
+      Handle(TColStd_HArray1OfReal) aCoordsArray = aCI.GetCoordinates();
+      int anArrayLength = aCoordsArray->Length();
+      for (int i = 0, j = 1; i <= (anArrayLength-3); i += 3) {
+	gp_Pnt aPnt = gp_Pnt(aCoordsArray->Value(i+1), aCoordsArray->Value(i+2), aCoordsArray->Value(i+3));
+	points.SetValue(j,aPnt);
+	j++;
+      } 
+    }
+
+    
     int ind, aLen = aCI.GetLength();
     if (aLen < 2) return 0;
     Standard_Boolean isSeveral = Standard_False;
     gp_Pnt aPrevP;
     int aRealLen = aLen;
     if (aType == SPLINE_BEZIER && aCI.GetIsClosed()) {
-      Handle(GEOM_Function) aFPoint = aCI.GetPoint(1);
-      TopoDS_Shape aFirstPnt = aFPoint->GetValue();
-      TopoDS_Vertex aV1 = TopoDS::Vertex(aFirstPnt);
+      TopoDS_Vertex aV1;
+      if(useCoords) {
+	aV1 = BRepBuilderAPI_MakeVertex(points.Value(1));
+      } else {
+	Handle(GEOM_Function) aFPoint = aCI.GetPoint(1);
+	TopoDS_Shape aFirstPnt = aFPoint->GetValue();
+	aV1 = TopoDS::Vertex(aFirstPnt);
+      }
 
-      Handle(GEOM_Function) aLPoint = aCI.GetPoint(aLen);
-      TopoDS_Shape aLastPnt = aLPoint->GetValue();
-      TopoDS_Vertex aV2 = TopoDS::Vertex(aLastPnt);
-
+      TopoDS_Vertex aV2;
+      if(useCoords) { 
+	aV2 = BRepBuilderAPI_MakeVertex(points.Value(aLen));
+      } else {
+	Handle(GEOM_Function) aLPoint = aCI.GetPoint(aLen);
+	TopoDS_Shape aLastPnt = aLPoint->GetValue();
+	aV2 = TopoDS::Vertex(aLastPnt);
+      }
+      
       if (!aV1.IsNull() && !aV2.IsNull() && !aV1.IsSame(aV2)) {
         aRealLen++;
       }
     }
+    
     TColgp_Array1OfPnt CurvePoints (1, aRealLen);
     for (ind = 1; ind <= aLen; ind++) {
-      Handle(GEOM_Function) aRefPoint = aCI.GetPoint(ind);
-      TopoDS_Shape aShapePnt = aRefPoint->GetValue();
-      if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
-        gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+      gp_Pnt aP;
+      if( useCoords ) { 
+	aP = points.Value(ind);
         if (!isSeveral && ind > 1) {
           if (aP.Distance(aPrevP) > Precision::Confusion()) {
             isSeveral = Standard_True;
@@ -112,6 +138,19 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
         }
         CurvePoints.SetValue(ind, aP);
         aPrevP = aP;
+      } else {      
+	Handle(GEOM_Function) aRefPoint = aCI.GetPoint(ind);
+	TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+	if (aShapePnt.ShapeType() == TopAbs_VERTEX) {
+	  aP = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+	  if (!isSeveral && ind > 1) {
+	    if (aP.Distance(aPrevP) > Precision::Confusion()) {
+	      isSeveral = Standard_True;
+	    }
+	  }
+	  CurvePoints.SetValue(ind, aP);
+	  aPrevP = aP;
+	}
       }
     }
     if (aType == SPLINE_BEZIER) {
@@ -126,7 +165,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
     } else {
       //GeomAPI_PointsToBSpline GBC (CurvePoints);
       //aShape = BRepBuilderAPI_MakeEdge(GBC).Edge();
-
+      
       Handle(TColgp_HArray1OfPnt) aHCurvePoints = new TColgp_HArray1OfPnt(1, aLen);
 
       if (aCI.GetDoReordering()) {
@@ -164,7 +203,7 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
           aHCurvePoints->SetValue(ind, CurvePoints.Value(ind));
         }
       }
-
+      
       bool isClosed = aCI.GetIsClosed();
       GeomAPI_Interpolate GBC (aHCurvePoints, isClosed, gp::Resolution());
       GBC.Perform();
@@ -176,13 +215,13 @@ Standard_Integer GEOMImpl_SplineDriver::Execute(TFunction_Logbook& log) const
   }
   else {
   }
-
+  
   if (aShape.IsNull()) return 0;
-
+  
   aFunction->SetValue(aShape);
-
+  
   log.SetTouched(Label());
-
+  
   return 1;
 }
 

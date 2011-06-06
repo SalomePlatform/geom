@@ -1,23 +1,22 @@
 #  -*- coding: iso-8859-1 -*-
-#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-#  GEOM GEOM_SWIG : binding of C++ omplementaion with Python
 #  File   : geompy.py
 #  Author : Paul RASCLE, EDF
 #  Module : GEOM
@@ -332,6 +331,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             self.GroupOp  = self.GetIGroupOperations    (self.myStudyId)
             self.AdvOp    = self.GetIAdvancedOperations (self.myStudyId)
             pass
+
+        ## Dump component to the Python script
+        #  This method overrides IDL function to allow default values for the parameters.
+        def DumpPython(self, theStudy, theIsPublished=True, theIsMultiFile=True):
+            return GEOM._objref_GEOM_Gen.DumpPython(self, theStudy, theIsPublished, theIsMultiFile)
 
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
@@ -948,6 +952,28 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.CurvesOp.MakeSplineInterpolation(thePoints, theIsClosed, theDoReordering)
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             return anObj
+
+
+        ## Creates a curve using the parametric definition of the basic points.
+        #  @param thexExpr parametric equation of the coordinates X.
+        #  @param theyExpr parametric equation of the coordinates Y.
+        #  @param thezExpr parametric equation of the coordinates Z.
+        #  @param theParamMin the minimal value of the parameter.
+        #  @param theParamMax the maximum value of the parameter.
+        #  @param theParamStep the step of the parameter.
+        #  @param theCurveType the type of the curve.
+        #  @return New GEOM_Object, containing the created curve.
+        #
+        #  @ref tui_creation_curve "Example"
+        def MakeCurveParametric(self, thexExpr, theyExpr, thezExpr,
+                                theParamMin, theParamMax, theParamStep, theCurveType):
+            theParamMin,theParamMax,theParamStep,Parameters = ParseParameters(theParamMin,theParamMax,theParamStep)
+            anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
+            RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+            
+
 
         # end of l4_curves
         ## @}
@@ -2314,6 +2340,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj
 
+        ## Get a set of sub shapes defined by their unique IDs inside <VAR>theMainShape</VAR>
+        #  @param theMainShape Main shape.
+        #  @param theIndices List of unique IDs of sub shapes inside <VAR>theMainShape</VAR>.
+        #  @return List of GEOM_Objects, corresponding to found sub shapes.
+        #
+        #  @ref swig_all_decompose "Example"
+        def SubShapes(self, aShape, anIDs):
+            # Example: see GEOM_TestAll.py
+            ListObj = self.ShapesOp.MakeSubShapes(aShape, anIDs)
+            RaiseIfFailed("SubShapes", self.ShapesOp)
+            return ListObj
+
         # end of l4_decompose
         ## @}
 
@@ -2539,9 +2577,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                      which can be considered as coincident.
         #  @return ListOfGO.
         #
-        #  @ref swig_todo "Example"
+        #  @ref tui_glue_faces "Example"
         def GetGlueFaces(self, theShape, theTolerance):
-            # Example: see GEOM_Spanner.py
             anObj = self.ShapesOp.GetGlueFaces(theShape, theTolerance)
             RaiseIfFailed("GetGlueFaces", self.ShapesOp)
             return anObj
@@ -2554,15 +2591,61 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theFaces List of faces for gluing.
         #  @param doKeepNonSolids If FALSE, only solids will present in the result,
         #                         otherwise all initial shapes.
+        #  @param doGlueAllEdges If TRUE, all coincident edges of <VAR>theShape</VAR>
+        #                        will be glued, otherwise only the edges,
+        #                        belonging to <VAR>theFaces</VAR>.
         #  @return New GEOM_Object, containing a copy of theShape
         #          without some faces.
         #
-        #  @ref swig_todo "Example"
-        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces, doKeepNonSolids=True):
-            # Example: see GEOM_Spanner.py
-            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces, doKeepNonSolids)
+        #  @ref tui_glue_faces "Example"
+        def MakeGlueFacesByList(self, theShape, theTolerance, theFaces,
+                                doKeepNonSolids=True, doGlueAllEdges=True):
+            anObj = self.ShapesOp.MakeGlueFacesByList(theShape, theTolerance, theFaces,
+                                                      doKeepNonSolids, doGlueAllEdges)
             if anObj is None:
                 raise RuntimeError, "MakeGlueFacesByList : " + self.ShapesOp.GetErrorCode()
+            return anObj
+
+        ## Replace coincident edges in theShape by one edge.
+        #  @param theShape Initial shape.
+        #  @param theTolerance Maximum distance between edges, which can be considered as coincident.
+        #  @return New GEOM_Object, containing a copy of theShape without coincident edges.
+        #
+        #  @ref tui_glue_edges "Example"
+        def MakeGlueEdges(self, theShape, theTolerance):
+            theTolerance,Parameters = ParseParameters(theTolerance)
+            anObj = self.ShapesOp.MakeGlueEdges(theShape, theTolerance)
+            if anObj is None:
+                raise RuntimeError, "MakeGlueEdges : " + self.ShapesOp.GetErrorCode()
+            anObj.SetParameters(Parameters)
+            return anObj
+
+        ## Find coincident edges in theShape for possible gluing.
+        #  @param theShape Initial shape.
+        #  @param theTolerance Maximum distance between edges,
+        #                      which can be considered as coincident.
+        #  @return ListOfGO.
+        #
+        #  @ref tui_glue_edges "Example"
+        def GetGlueEdges(self, theShape, theTolerance):
+            anObj = self.ShapesOp.GetGlueEdges(theShape, theTolerance)
+            RaiseIfFailed("GetGlueEdges", self.ShapesOp)
+            return anObj
+
+        ## Replace coincident edges in theShape by one edge
+        #  in compliance with given list of edges
+        #  @param theShape Initial shape.
+        #  @param theTolerance Maximum distance between edges,
+        #                      which can be considered as coincident.
+        #  @param theFaces List of edges for gluing.
+        #  @return New GEOM_Object, containing a copy of theShape
+        #          without some edges.
+        #
+        #  @ref tui_glue_edges "Example"
+        def MakeGlueEdgesByList(self, theShape, theTolerance, theEdges):
+            anObj = self.ShapesOp.MakeGlueEdgesByList(theShape, theTolerance, theEdges)
+            if anObj is None:
+                raise RuntimeError, "MakeGlueEdgesByList : " + self.ShapesOp.GetErrorCode()
             return anObj
 
         # end of l3_healing
@@ -2998,6 +3081,18 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.TrsfOp.OffsetShapeCopy(theObject, theOffset)
             RaiseIfFailed("OffsetShapeCopy", self.TrsfOp)
             anObj.SetParameters(Parameters)
+            return anObj
+
+        ## Create new object as projection of the given one on a 2D surface.
+        #  @param theSource The source object for the projection. It can be a point, edge or wire.
+        #  @param theTarget The target object. It can be planar or cylindrical face.
+        #  @return New GEOM_Object, containing the projection.
+        #
+        #  @ref tui_projection "Example"
+        def MakeProjection(self, theSource, theTarget):
+            # Example: see GEOM_TestAll.py
+            anObj = self.TrsfOp.ProjectShapeCopy(theSource, theTarget)
+            RaiseIfFailed("ProjectShapeCopy", self.TrsfOp)
             return anObj
 
         # -----------------------------------------------------------------------------
@@ -4619,6 +4714,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             ID = self.InsertOp.LoadTexture(Path)
             RaiseIfFailed("LoadTexture", self.InsertOp)
             return ID
+
+        ## Get entry of the object
+        #  @param obj geometry object
+        #  @return unique object identifier
+        #  @ingroup l1_geompy_auxiliary
+        def getObjectID(self, obj):
+            ID = ""
+            entry = salome.ObjectToID(obj)
+            if entry is not None:
+                lst = entry.split(":")
+                if len(lst) > 0:
+                    ID = lst[-1] # -1 means last item in the list            
+                    return "GEOM_" + ID
+            return ID
+                
+            
 
         ## Add marker texture. @a Width and @a Height parameters
         #  specify width and height of the texture in pixels.

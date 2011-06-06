@@ -1,20 +1,21 @@
-#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 #  GEOM NMTTools : partition algorithm
 #  File   : Makefile.in
@@ -159,18 +160,3 @@ CDL_FILES =					\
 	NMTTools_Tools.cdl
 
 EXTRA_DIST += $(CDL_FILES)
-
-########################################
-# Non-used (obsolete?) files
-########################################
-# NMTTools_PCurveMaker.cdl
-# NMTTools_PCurveMaker.cxx
-# NMTTools_PCurveMaker.hxx
-# NMTTools_PCurveMaker.ixx
-# NMTTools_PCurveMaker.jxx
-# NMTTools_PDSFiller.hxx
-# NMTTools_DSFiller.cdl
-# NMTTools_DSFiller.cxx
-# NMTTools_DSFiller.hxx
-# NMTTools_DSFiller.ixx
-# NMTTools_DSFiller.jxx

@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
 #ifdef WNT
@@ -68,6 +68,7 @@
 #include <GEOMImpl_TranslateDriver.hxx>
 #include <GEOMImpl_RotateDriver.hxx>
 #include <GEOMImpl_MirrorDriver.hxx>
+#include <GEOMImpl_ProjectionDriver.hxx>
 #include <GEOMImpl_OffsetDriver.hxx>
 #include <GEOMImpl_ScaleDriver.hxx>
 #include <GEOMImpl_PositionDriver.hxx>
@@ -147,6 +148,7 @@ GEOMImpl_Gen::GEOMImpl_Gen()
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_TranslateDriver::GetID(), new GEOMImpl_TranslateDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_RotateDriver::GetID(), new GEOMImpl_RotateDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_MirrorDriver::GetID(), new GEOMImpl_MirrorDriver());
+   TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ProjectionDriver::GetID(), new GEOMImpl_ProjectionDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_OffsetDriver::GetID(), new GEOMImpl_OffsetDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_ScaleDriver::GetID(), new GEOMImpl_ScaleDriver());
    TFunction_DriverTable::Get()->AddDriver(GEOMImpl_PositionDriver::GetID(), new GEOMImpl_PositionDriver());

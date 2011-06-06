@@ -1,38 +1,68 @@
 /*!
 
-\page glue_faces_operation_page Glue Faces
+\page glue_faces_operation_page Glue Faces / Edges
 
 \n To <b>Glue Faces</b> in the <b>Main Menu</b> select <b>Repair - > Glue Faces</b>.
+\n To <b>Glue Edges</b> in the <b>Main Menu</b> select <b>Repair - > Glue Edges</b>.
 
-\n This operation glues faces that are coincident with respect to the
+\n This operation glues faces/edges that are coincident with respect to the
 given tolerance value.
 
-\n The \b Result will be a \b GEOM_Object.
-
-\n <b>TUI Command:</b>
- <em>geompy.MakeGlueFaces(theShape,theTolerance)</em>,
- where \em theShape is a compound of solids to be glued, \em
- theTolerance is a maximum distance between two faces, which can be
- considered as coincident.
-\n <b>Arguments:</b> Name + Compound of solids + Tolerance value.
+\n <b>Arguments:</b> Name + Compound of shapes + Tolerance value.
 \n <b>Advanced option:</b>
    \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\n The \b Result will be a \b GEOM_Object.
 
 \image html glue1.png
+\n \image html glue4.png
 
-\n It is also possible to manually select the faces that will be 
+\n <b>TUI Commands:</b>
+ <em>geompy.MakeGlueFaces(theShape,theTolerance,doKeepNonSolids)</em> and
+ <em>geompy.MakeGlueEdges(theShape,theTolerance)</em>,
+ where \em theShape is a compound of shapes to be glued, \em
+ theTolerance is a maximum distance between two faces/edges, which can
+ be considered as coincident. The \em doKeepNonSolids flag allows to
+ throw away non-solids from the result, if false. The \b Result will
+ be a new \b GEOM_Object.
+
+\n It is also possible to manually select the faces/edges that will be 
 glued - select the shape, specify the tolerance and press \b Detect button.
 
 \image html glue2.png
+\n \image html glue5.png
 
-\n \b Geometry module detects the faces where gluing can be performed and
-displays a notification.
+\n \b Geometry module detects the faces/edges where gluing can be
+performed and displays a notification.
 
 \image html glue3.png
 
-\n The faces that can be glued are colored in red.  It is possible to
-select the faces for gluing in the 3D viewer. The selected faces will
-be marked in white.
+\n The faces/edges that can be glued are colored in red. It is
+possible to select the faces/edges for gluing in the 3D viewer.
+The selected faces/edges will be marked in white.
+
+\n For faces gluing their edges are also glued. By default, other
+edges are not glued (this concerns only Glue Faces, of course).
+To force all edges gluing, check the "Glue all coincident edges"
+checkbox.
+
+\n <b>TUI Commands:</b>
+ <em>geompy.GetGlueFaces(theShape,theTolerance)</em> and
+ <em>geompy.GetGlueEdges(theShape,theTolerance)</em>,
+ where \em theShape is a compound of shapes to be glued, \em
+ theTolerance is a maximum distance between two faces/edges, which can
+ be considered as coincident. The \b Result will be a list of \b
+ GEOM_Objects, containing one sub shape per each detected set of
+ coincident sub shapes.
+
+\n <em>geompy.MakeGlueFacesByList(theShape,theTolerance,theFaces,doKeepNonSolids,doGlueAllEdges)</em>
+ and <em>geompy.MakeGlueEdgesByList(theShape,theTolerance,theEdges)</em>,
+ where \em theShape is a compound of shapes to be glued, \em
+ theTolerance is a maximum distance between two faces/edges, which can
+ be considered as coincident, \em theFaces/theEdges is a list of
+ subshapes to be glued. The \em doKeepNonSolids flag allows to throw
+ away non-solids from the result, if false. The \em doGlueAllEdges
+ allows to glue all edges, not only owned by glued faces. The \b
+ Result will be a new \b GEOM_Object.
 
 \n <b>Example:</b>
 
@@ -46,6 +76,7 @@ be marked in white.
 <center><em>Manual selection of faces for gluing</em></center>
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
-\ref tui_glue_faces "Repairing Operations".
+<b>Repairing Operations</b> \ref tui_glue_faces "Glue Faces" and \ref
+tui_glue_edges "Glue Edges".
 
 */

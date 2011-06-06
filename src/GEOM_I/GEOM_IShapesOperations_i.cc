@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -91,9 +92,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdge
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeOnCurveByLength
-                  (GEOM::GEOM_Object_ptr theCurve,  
-		   CORBA::Double         theLength,
-		   GEOM::GEOM_Object_ptr theStartPoint)
+                  (GEOM::GEOM_Object_ptr theCurve,
+                   CORBA::Double         theLength,
+                   GEOM::GEOM_Object_ptr theStartPoint)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -126,8 +127,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeOnCurveByLength
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeEdgeWire
                       (GEOM::GEOM_Object_ptr theWire,
-		       const CORBA::Double theLinearTolerance,
-		       const CORBA::Double theAngularTolerance)
+                       const CORBA::Double theLinearTolerance,
+                       const CORBA::Double theAngularTolerance)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -398,7 +399,6 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFaces
   return GetObject(anObject);
 }
 
-
 //=============================================================================
 /*!
  *  GetGlueFaces
@@ -418,7 +418,8 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
   if (aShape.IsNull()) return aSeq._retn();
 
   Handle(TColStd_HSequenceOfTransient) aHSeq =
-    GetOperations()->GetGlueFaces(aShape, theTolerance);
+    //GetOperations()->GetGlueFaces(aShape, theTolerance);
+    GetOperations()->GetGlueShapes(aShape, theTolerance, TopAbs_FACE);
 
   //if (!GetOperations()->IsDone() || aHSeq.IsNull())
   // to allow warning
@@ -433,7 +434,6 @@ GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueFaces
   return aSeq._retn();
 }
 
-
 //=============================================================================
 /*!
  *  MakeGlueFacesByList
@@ -443,7 +443,8 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
                                            (GEOM::GEOM_Object_ptr theShape,
                                             CORBA::Double   theTolerance,
                                             const GEOM::ListOfGO& theFaces,
-                                            CORBA::Boolean  doKeepNonSolids)
+                                            CORBA::Boolean doKeepNonSolids,
+                                            CORBA::Boolean doGlueAllEdges)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -466,7 +467,110 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueFacesByList
 
   //Perform the gluing
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids);
+    GetOperations()->MakeGlueFacesByList(aShape, theTolerance, aFaces, doKeepNonSolids, doGlueAllEdges);
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // to allow warning
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeGlueEdges
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdges
+                                           (GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Double   theTolerance)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  //Perform the gluing
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeGlueEdges(aShape, theTolerance);
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // to allow warning
+  if (anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  GetGlueEdges
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::GetGlueEdges
+                                           (GEOM::GEOM_Object_ptr theShape,
+                                            const CORBA::Double   theTolerance)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq =
+    GetOperations()->GetGlueShapes(aShape, theTolerance, TopAbs_EDGE);
+
+  //if (!GetOperations()->IsDone() || aHSeq.IsNull())
+  // to allow warning
+  if (aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i)));
+
+  return aSeq._retn();
+}
+
+//=============================================================================
+/*!
+ *  MakeGlueEdgesByList
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeGlueEdgesByList
+                                           (GEOM::GEOM_Object_ptr theShape,
+                                            CORBA::Double   theTolerance,
+                                            const GEOM::ListOfGO& theEdges)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShape = GetObjectImpl(theShape);
+  if (aShape.IsNull()) return aGEOMObject._retn();
+
+  int ind, aLen;
+  std::list<Handle(GEOM_Object)> anEdges;
+  //Get the shapes
+  aLen = theEdges.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theEdges[ind]);
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    anEdges.push_back(aSh);
+  }
+
+  //Perform the gluing
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeGlueEdgesByList(aShape, theTolerance, anEdges);
   //if (!GetOperations()->IsDone() || anObject.IsNull())
   // to allow warning
   if (anObject.IsNull())
@@ -663,6 +767,42 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSubShape
     return aGEOMObject._retn();
 
   return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeSubShapes
+ */
+//=============================================================================
+GEOM::ListOfGO* GEOM_IShapesOperations_i::MakeSubShapes (GEOM::GEOM_Object_ptr theMainShape,
+                                                         const GEOM::ListOfLong& theIndices)
+{
+  GEOM::ListOfGO_var aSeq = new GEOM::ListOfGO;
+  Standard_Integer i;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  if (theIndices.length() < 1)
+    return aSeq._retn();
+
+  Handle(GEOM_Object) aShape = GetObjectImpl(theMainShape);
+  if (aShape.IsNull()) return aSeq._retn();
+
+  Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, theIndices.length());
+  for (i = 0; i < theIndices.length(); i++)
+    anArray->SetValue(i+1, theIndices[i]);
+
+  Handle(TColStd_HSequenceOfTransient) aHSeq = GetOperations()->MakeSubShapes(aShape, anArray);
+  if (!GetOperations()->IsDone() || aHSeq.IsNull())
+    return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (i = 0; i < aLength; i++)
+    aSeq[i] = GetObject(Handle(GEOM_Object)::DownCast(aHSeq->Value(i+1)));
+
+  return aSeq._retn();
 }
 
 //=============================================================================

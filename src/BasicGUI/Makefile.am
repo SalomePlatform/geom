@@ -1,20 +1,20 @@
-#  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Lesser General Public
-#  License as published by the Free Software Foundation; either
-#  version 2.1 of the License.
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-#  Lesser General Public License for more details.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
 #
-#  You should have received a copy of the GNU Lesser General Public
-#  License along with this library; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
-#  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+# See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
 # File    : Makefile.am
@@ -36,7 +36,8 @@ salomeinclude_HEADERS =			\
 	BasicGUI_MarkerDlg.h		\
 	BasicGUI_PlaneDlg.h		\
 	BasicGUI_PointDlg.h		\
-	BasicGUI_VectorDlg.h
+	BasicGUI_VectorDlg.h            \
+	BasicGUI_ParamCurveWidget.h
 #
 # OBSOLETE: BasicGUI_WorkingPlaneDlg.h
 #
@@ -56,7 +57,8 @@ dist_libBasicGUI_la_SOURCES =		\
 	BasicGUI_VectorDlg.cxx		\
 	BasicGUI_PlaneDlg.cxx		\
 	BasicGUI_CurveDlg.cxx		\
-	BasicGUI_MarkerDlg.cxx
+	BasicGUI_MarkerDlg.cxx          \
+	BasicGUI_ParamCurveWidget.cxx
 #
 # OBSOLETE: BasicGUI_WorkingPlaneDlg.cxx
 #
@@ -70,7 +72,8 @@ MOC_FILES =					\
 	BasicGUI_VectorDlg_moc.cxx		\
 	BasicGUI_PlaneDlg_moc.cxx		\
 	BasicGUI_CurveDlg_moc.cxx		\
-	BasicGUI_MarkerDlg_moc.cxx
+	BasicGUI_MarkerDlg_moc.cxx		\
+	BasicGUI_ParamCurveWidget_moc.cxx
 #
 # OBSOLETE: BasicGUI_WorkingPlaneDlg_moc.cxx
 #

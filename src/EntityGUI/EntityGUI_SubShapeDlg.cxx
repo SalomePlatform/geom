@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI_SubShapeDlg.cxx
@@ -203,7 +204,29 @@ void EntityGUI_SubShapeDlg::closeEvent(QCloseEvent* e)
 void EntityGUI_SubShapeDlg::ClickOnOk()
 {
   setIsApplyAndClose(true);
-  if (ClickOnApply())
+
+  SUIT_Session::session()->activeApplication()->putInfo("");
+
+  /* Explode all sub shapes */
+  bool isOk = true;
+  if (isAllSubShapes()) {
+    /* More than 30 subshapes : ask confirmation */
+    unsigned int nb = NumberOfSubShapes(myShape, shapeType());
+    if (nb > 30) {
+      const QString caption = tr("GEOM_CONFIRM");
+      const QString text = tr("GEOM_CONFIRM_INFO").arg(nb);
+      const QString button0 = tr("GEOM_BUT_EXPLODE");
+      const QString button1 = tr("GEOM_BUT_CANCEL");
+
+      if (QMessageBox::warning(this, caption, text, button0, button1) != 0)
+        isOk = false;  /* aborted */
+    }
+  }
+
+  if (isOk)
+    isOk = onAccept();
+
+  if (isOk)
     ClickOnCancel();
 }
 
@@ -394,7 +417,9 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   myWithShape = true;
 
   GroupPoints->ComboBox1->setCurrentIndex(8 - count + SelectedShapeType);
-  ComboTextChanged();
+
+  // to avoid recursion: SelectionIntoArgument->ResetStateOfDialog->ComboTextChanged->SubShapeToggled->activateSelection->(currentSelectionChanged)->SelectionIntoArgument
+  //ComboTextChanged();
 
   updateButtonState();
 }
@@ -429,7 +454,7 @@ void EntityGUI_SubShapeDlg::ComboTextChanged()
 // purpose  :
 //=================================================================================
 unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S,
-                                                       const int shapeType) const
+                                                      const int shapeType) const
 {
   if (S.IsNull())
     return 0;
@@ -616,6 +641,8 @@ void EntityGUI_SubShapeDlg::activateSelection()
   if (!myObject->_is_nil() && !isAllSubShapes())
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Erase(myObject, false, false);
+
     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
     SUIT_ViewWindow* aViewWindow = 0;
@@ -702,31 +729,34 @@ bool EntityGUI_SubShapeDlg::isValid (QString& msg)
 bool EntityGUI_SubShapeDlg::execute (ObjectList& objects)
 {
   GEOM::GEOM_IShapesOperations_var anOper = GEOM::GEOM_IShapesOperations::_narrow(getOperation());
-  GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), true);
 
-  if (!aList->length())
-    return false;
-
-  // Throw away sub-shapes not selected by user if not in preview mode
-  // and manual selection is active
   if (!isAllSubShapes()) {
+    // manual selection
     TColStd_IndexedMapOfInteger aMapIndex;
     int nbSel = getSelectedSubshapes(aMapIndex);
 
     if (nbSel > 0) {
-      GEOM::GEOM_ILocalOperations_var aLocOp =
-        getGeomEngine()->GetILocalOperations(getStudyId());
+      int i;
 
-      for (int i = 0, n = aList->length(); i < n; i++)
-        if (aMapIndex.Contains(aLocOp->GetSubShapeIndex(myObject, aList[i])))
-          objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
-        else
-          aList[i]->UnRegister();
+      GEOM::ListOfLong_var anArray = new GEOM::ListOfLong;
+      anArray->length(nbSel);
+
+      for (i = 1; i <= nbSel; i++)
+        anArray[i - 1] = aMapIndex.FindKey(i);
+
+      GEOM::ListOfGO_var aList = anOper->MakeSubShapes(myObject, anArray);
+      int n = aList->length();
+      for (i = 0; i < n; i++)
+        objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
     }
   }
-  else
+  else {
+    GEOM::ListOfGO_var aList = anOper->ExtractSubShapes(myObject, shapeType(), true);
+    if (!aList->length())
+      return false;
     for (int i = 0, n = aList->length(); i < n; i++)
       objects.push_back(GEOM::GEOM_Object::_duplicate(aList[i]));
+  }
 
   return objects.size();
 }

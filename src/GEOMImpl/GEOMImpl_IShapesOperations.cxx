@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //  File      : GEOMImpl_IShapesOperations.cxx
 //  Created   :
@@ -50,7 +51,7 @@
 #include "GEOMAlgo_FinderShapeOn2.hxx"
 #include "GEOMAlgo_ClsfBox.hxx"
 #include "GEOMAlgo_ClsfSolid.hxx"
-#include "GEOMAlgo_Gluer1.hxx"
+#include "GEOMAlgo_GlueDetector.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
 #include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
@@ -82,6 +83,8 @@
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopLoc_Location.hxx>
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Solid.hxx>
@@ -90,13 +93,12 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Iterator.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopLoc_Location.hxx>
+#include <TopTools_Array1OfShape.hxx>
+#include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapOfOrientedShape.hxx>
-#include <TopTools_Array1OfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
 
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
@@ -118,6 +120,8 @@
 #include <gp_Pnt.hxx>
 
 #include <vector>
+#include <algorithm>
+#include <functional>
 
 #include <Standard_NullObject.hxx>
 #include <Standard_Failure.hxx>
@@ -132,6 +136,8 @@
 #include <BRepClass_FaceClassifier.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <Precision.hxx>
+
+#define STD_SORT_ALGO 1
 
 //=============================================================================
 /*!
@@ -721,6 +727,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFaces
  *  GetGlueFaces
  */
 //=============================================================================
+/*
 Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
                                                 (Handle(GEOM_Object) theShape,
                                                  const Standard_Real theTolerance)
@@ -781,7 +788,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
   if( anAsciiList.Length() > 0 ) {
     anAsciiList.Trunc(anAsciiList.Length() - 1);
     Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-    GEOM::TPythonDump pd (aFunction, /*append=*/true);
+    GEOM::TPythonDump pd (aFunction, true);
     pd << "[" << anAsciiList.ToCString();
     pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
   }
@@ -790,6 +797,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueFaces
 
   return aSeq;
 }
+*/
 
 //=============================================================================
 /*!
@@ -800,7 +808,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
                                                 (Handle(GEOM_Object) theShape,
                                                  const Standard_Real theTolerance,
                                                  std::list<Handle(GEOM_Object)> theFaces,
-                                                 const Standard_Boolean doKeepNonSolids)
+                                                 const Standard_Boolean doKeepNonSolids,
+                                                 const Standard_Boolean doGlueAllEdges)
 {
   SetErrorCode(KO);
 
@@ -825,6 +834,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   aCI.SetBase(aRefShape);
   aCI.SetTolerance(theTolerance);
   aCI.SetKeepNonSolids(doKeepNonSolids);
+  aCI.SetGlueAllEdges(doGlueAllEdges);
 
   Handle(TColStd_HSequenceOfTransient) aFaces = new TColStd_HSequenceOfTransient;
   std::list<Handle(GEOM_Object)>::iterator it = theFaces.begin();
@@ -870,6 +880,244 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueFacesByList
   if (it != theFaces.end()) {
     pd << (*it++);
     while (it != theFaces.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "], " << (bool)doKeepNonSolids << ", " << (bool)doGlueAllEdges << ")";
+
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
+  return aGlued;
+}
+
+//=============================================================================
+/*!
+ *  MakeGlueEdges
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdges
+                                                (Handle(GEOM_Object) theShape,
+                                                 const Standard_Real theTolerance)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  //Add a new Glued object
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+
+  //Add a new Glue function
+  Handle(GEOM_Function) aFunction;
+  aFunction = aGlued->AddFunction(GEOMImpl_GlueDriver::GetID(), GLUE_EDGES);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_GlueDriver::GetID()) return NULL;
+
+  GEOMImpl_IGlue aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetBase(aRefShape);
+  aCI.SetTolerance(theTolerance);
+  aCI.SetKeepNonSolids(true);
+
+  //Compute the sub-shape value
+  Standard_Boolean isWarning = Standard_False;
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed to glue edges");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aGlued << " = geompy.MakeGlueEdges("
+    << theShape << ", " << theTolerance << ")";
+
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
+  return aGlued;
+}
+
+//=============================================================================
+/*!
+ *  GetGlueShapes
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
+                                                (Handle(GEOM_Object)    theShape,
+                                                 const Standard_Real    theTolerance,
+                                                 const TopAbs_ShapeEnum theType)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+  TopoDS_Shape aShape = theShape->GetValue();
+  if (aShape.IsNull()) return NULL;
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  GEOMAlgo_GlueDetector aGluer;
+  aGluer.SetArgument(aShape);
+  aGluer.SetTolerance(theTolerance);
+  aGluer.Perform();
+  Standard_Integer iErr = aGluer.ErrorStatus();
+  if (iErr) return NULL;
+
+  TCollection_AsciiString anAsciiList, anEntry;
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+  Handle(TColStd_HArray1OfInteger) anArray;
+  Handle(GEOM_Object) anObj;
+
+  TopTools_ListOfShape listOnePerSet;
+
+  const TopTools_DataMapOfShapeListOfShape& aImages = aGluer.Images();
+  TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS (aImages);
+  for (int index = 1; aItDMSLS.More(); aItDMSLS.Next(), ++index) {
+    // some key shape
+    //const TopoDS_Shape& aSkey = aItDMSLS.Key();  
+
+    // list of shapes of the argument that can be glued
+    const TopTools_ListOfShape& aLSD = aItDMSLS.Value(); 
+
+    //listShape.Append(aLSD.First());
+    TopoDS_Shape aValue = aLSD.First();
+
+    if (aValue.ShapeType() == theType) {
+      listOnePerSet.Append(aValue);
+    }
+  }
+
+  // for stable order of returned entities
+  GEOMImpl_IShapesOperations::SortShapes(listOnePerSet, Standard_False);
+
+  TopTools_ListIteratorOfListOfShape aListIt (listOnePerSet);
+  for (; aListIt.More(); aListIt.Next()) {
+    TopoDS_Shape aValue = aListIt.Value();
+    anArray = new TColStd_HArray1OfInteger(1,1);
+    anArray->SetValue(1, anIndices.FindIndex(aValue));
+    anObj = GetEngine()->AddSubShape(theShape, anArray);
+    if (!anObj.IsNull()) {
+      aSeq->Append(anObj);
+
+      // for python command
+      TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+      anAsciiList += anEntry;
+      anAsciiList += ",";
+    }
+  }
+
+  // Make a Python command
+  if (anAsciiList.Length() > 0) {
+    anAsciiList.Trunc(anAsciiList.Length() - 1);
+    Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+    GEOM::TPythonDump pd (aFunction, /*append=*/true);
+    pd << "[" << anAsciiList.ToCString();
+    if (theType == TopAbs_FACE)
+      pd << "] = geompy.GetGlueFaces(" << theShape << ", " << theTolerance << ")";
+    else if (theType == TopAbs_EDGE)
+      pd << "] = geompy.GetGlueEdges(" << theShape << ", " << theTolerance << ")";
+  }
+
+  SetErrorCode(OK);
+
+  return aSeq;
+}
+
+//=============================================================================
+/*!
+ *  MakeGlueEdgesByList
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeGlueEdgesByList
+                                                (Handle(GEOM_Object) theShape,
+                                                 const Standard_Real theTolerance,
+                                                 std::list<Handle(GEOM_Object)> theEdges)
+{
+  SetErrorCode(KO);
+
+  if (theShape.IsNull()) return NULL;
+
+  //Add a new Glued object
+  Handle(GEOM_Object) aGlued = GetEngine()->AddObject(GetDocID(), GEOM_GLUED);
+
+  //Add a new Glue function
+  Handle(GEOM_Function) aFunction;
+  aFunction = aGlued->AddFunction(GEOMImpl_GlueDriver::GetID(), GLUE_EDGES_BY_LIST);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_GlueDriver::GetID()) return NULL;
+
+  GEOMImpl_IGlue aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+
+  aCI.SetBase(aRefShape);
+  aCI.SetTolerance(theTolerance);
+  aCI.SetKeepNonSolids(true);
+
+  Handle(TColStd_HSequenceOfTransient) anEdges = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::iterator it = theEdges.begin();
+  for (; it != theEdges.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    anEdges->Append(aRefSh);
+  }
+  aCI.SetFaces(anEdges);
+
+  //Compute the sub-shape value
+  Standard_Boolean isWarning = Standard_False;
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Shape driver failed to glue edges");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
+  }
+
+  //Make a Python command
+
+  GEOM::TPythonDump pd (aFunction);
+  pd << aGlued << " = geompy.MakeGlueEdgesByList("
+     << theShape << ", " << theTolerance << ", [";
+  // Edges
+  it = theEdges.begin();
+  if (it != theEdges.end()) {
+    pd << (*it++);
+    while (it != theEdges.end()) {
       pd << ", " << (*it++);
     }
   }
@@ -1190,6 +1438,89 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSubShape
 
   SetErrorCode(OK);
   return anObj;
+}
+
+//=============================================================================
+/*!
+ *  MakeSubShapes
+ */
+//=============================================================================
+Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeSubShapes
+                                (Handle(GEOM_Object)              theMainShape,
+                                 Handle(TColStd_HArray1OfInteger) theIndices)
+{
+  SetErrorCode(KO);
+
+  Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
+
+  if (!theIndices->Length()) {
+    SetErrorCode(NOT_FOUND_ANY);
+    return aSeq;
+  }
+
+  if (theMainShape.IsNull()) return NULL;
+  TopoDS_Shape aShape = theMainShape->GetValue();
+  if (aShape.IsNull()) return NULL;
+
+  Handle(GEOM_Function) aMainShape = theMainShape->GetLastFunction();
+
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aShape, anIndices);
+
+  Handle(TColStd_HArray1OfInteger) anArray;
+  Handle(GEOM_Object) anObj;
+
+  TCollection_AsciiString anAsciiList, anEntry;
+  Standard_Integer i, low = theIndices->Lower(), up = theIndices->Upper();
+  for (i = low; i <= up; i++) {
+    int id = theIndices->Value(i);
+    if (1 <= id && id <= anIndices.Extent()) {
+      TopoDS_Shape aValue = anIndices.FindKey(id);
+      anArray = new TColStd_HArray1OfInteger(1,1);
+      anArray->SetValue(1, id);
+
+      anObj = GetEngine()->AddObject(GetDocID(), GEOM_SUBSHAPE);
+      if (!anObj.IsNull()) {
+        Handle(GEOM_Function) aFunction = anObj->AddFunction(GEOM_Object::GetSubShapeID(), 1);
+        if (aFunction.IsNull()) return aSeq;
+
+        GEOM_ISubShape aSSI (aFunction);
+        aSSI.SetMainShape(aMainShape);
+        aSSI.SetIndices(anArray);
+
+        // Set function value directly, as we know it.
+        // Usage of Solver here would lead to significant loss of time,
+        // because GEOM_SubShapeDriver will build TopTools_IndexedMapOfShape
+        // on the main shape for each being calculated sub-shape separately.
+        aFunction->SetValue(aValue);
+
+        // Put this subshape in the list of subshapes of theMainShape
+        aMainShape->AddSubShapeReference(aFunction);
+
+        aSeq->Append(anObj);
+
+        // for python command
+        TDF_Tool::Entry(anObj->GetEntry(), anEntry);
+        anAsciiList += anEntry;
+        anAsciiList += ",";
+      }
+    }
+  }
+
+  //Make a Python command
+  anAsciiList.Trunc(anAsciiList.Length() - 1);
+
+  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  pd << "[" << anAsciiList.ToCString() << "] = geompy.SubShapes("
+     << theMainShape << ", [" ;
+  for (i = low; i <= up - 1; i++) {
+    pd << theIndices->Value(i) << ", ";
+  }
+  pd << theIndices->Value(up) << "])";
+
+  SetErrorCode(OK);
+
+  return aSeq;
 }
 
 //=============================================================================
@@ -3395,29 +3726,28 @@ namespace {
     }
     return defaultNorm;
   }
+}
 
-  //================================================================================
-  /*!
-   * \brief Return type of shape for explode. In case of compound it will be a type of sub shape.
-   */
-  //================================================================================
-
-  TopAbs_ShapeEnum GetTypeOfSimplePart (const TopoDS_Shape& theShape)
-  {
-    TopAbs_ShapeEnum aType = theShape.ShapeType();
-    if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
-    else if (aType == TopAbs_EDGE  || aType == TopAbs_WIRE)      return TopAbs_EDGE;
-    else if (aType == TopAbs_FACE  || aType == TopAbs_SHELL)     return TopAbs_FACE;
-    else if (aType == TopAbs_SOLID || aType == TopAbs_COMPSOLID) return TopAbs_SOLID;
-    else if (aType == TopAbs_COMPOUND) {
-      // Only the iType of the first shape in the compound is taken into account
-      TopoDS_Iterator It (theShape, Standard_False, Standard_False);
-      if (It.More()) {
-        return GetTypeOfSimplePart(It.Value());
-      }
+//================================================================================
+/*!
+ * \brief Return type of shape for explode. In case of compound it will be a type of sub shape.
+ */
+//================================================================================
+TopAbs_ShapeEnum GEOMImpl_IShapesOperations::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
+{
+  TopAbs_ShapeEnum aType = theShape.ShapeType();
+  if      (aType == TopAbs_VERTEX)                             return TopAbs_VERTEX;
+  else if (aType == TopAbs_EDGE  || aType == TopAbs_WIRE)      return TopAbs_EDGE;
+  else if (aType == TopAbs_FACE  || aType == TopAbs_SHELL)     return TopAbs_FACE;
+  else if (aType == TopAbs_SOLID || aType == TopAbs_COMPSOLID) return TopAbs_SOLID;
+  else if (aType == TopAbs_COMPOUND) {
+    // Only the iType of the first shape in the compound is taken into account
+    TopoDS_Iterator It (theShape, Standard_False, Standard_False);
+    if (It.More()) {
+      return GetTypeOfSimplePart(It.Value());
     }
-    return TopAbs_SHAPE;
   }
+  return TopAbs_SHAPE;
 }
 
 //=============================================================================
@@ -3718,12 +4048,132 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
 }
 
 //=======================================================================
+//function : ShapeToDouble
+//purpose  : used by CompareShapes::operator()
+//=======================================================================
+std::pair<double, double> ShapeToDouble (const TopoDS_Shape& S, bool isOldSorting)
+{
+  // Computing of CentreOfMass
+  gp_Pnt GPoint;
+  double Len;
+
+  if (S.ShapeType() == TopAbs_VERTEX) {
+    GPoint = BRep_Tool::Pnt(TopoDS::Vertex(S));
+    Len = (double)S.Orientation();
+  }
+  else {
+    GProp_GProps GPr;
+    // BEGIN: fix for Mantis issue 0020842
+    if (isOldSorting) {
+      BRepGProp::LinearProperties(S, GPr);
+    }
+    else {
+      if (S.ShapeType() == TopAbs_EDGE || S.ShapeType() == TopAbs_WIRE) {
+        BRepGProp::LinearProperties(S, GPr);
+      }
+      else if (S.ShapeType() == TopAbs_FACE || S.ShapeType() == TopAbs_SHELL) {
+        BRepGProp::SurfaceProperties(S, GPr);
+      }
+      else {
+        BRepGProp::VolumeProperties(S, GPr);
+      }
+    }
+    // END: fix for Mantis issue 0020842
+    GPoint = GPr.CentreOfMass();
+    Len = GPr.Mass();
+  }
+
+  double dMidXYZ = GPoint.X() * 999.0 + GPoint.Y() * 99.0 + GPoint.Z() * 0.9;
+  return std::make_pair(dMidXYZ, Len);
+}
+
+//=======================================================================
+//function : CompareShapes::operator()
+//purpose  : used by std::sort(), called from SortShapes()
+//=======================================================================
+bool GEOMImpl_IShapesOperations::CompareShapes::operator()(const TopoDS_Shape& theShape1,
+                                                           const TopoDS_Shape& theShape2)
+{
+  if (!myMap.IsBound(theShape1)) {
+    myMap.Bind(theShape1, ShapeToDouble(theShape1, myIsOldSorting));
+  }
+
+  if (!myMap.IsBound(theShape2)) {
+    myMap.Bind(theShape2, ShapeToDouble(theShape2, myIsOldSorting));
+  }
+
+  std::pair<double, double> val1 = myMap.Find(theShape1);
+  std::pair<double, double> val2 = myMap.Find(theShape2);
+
+  double tol = Precision::Confusion();
+  bool exchange = Standard_False;
+
+  double dMidXYZ = val1.first - val2.first;
+  if (dMidXYZ >= tol) {
+    exchange = Standard_True;
+  }
+  else if (Abs(dMidXYZ) < tol) {
+    double dLength = val1.second - val2.second;
+    if (dLength >= tol) {
+      exchange = Standard_True;
+    }
+    else if (Abs(dLength) < tol && theShape1.ShapeType() <= TopAbs_FACE) {
+      // PAL17233
+      // equal values possible on shapes such as two halves of a sphere and
+      // a membrane inside the sphere
+      Bnd_Box box1,box2;
+      BRepBndLib::Add(theShape1, box1);
+      if (!box1.IsVoid()) {
+        BRepBndLib::Add(theShape2, box2);
+        Standard_Real dSquareExtent = box1.SquareExtent() - box2.SquareExtent();
+        if (dSquareExtent >= tol) {
+          exchange = Standard_True;
+        }
+        else if (Abs(dSquareExtent) < tol) {
+          Standard_Real aXmin, aYmin, aZmin, aXmax, aYmax, aZmax, val1, val2;
+          box1.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val1 = (aXmin+aXmax)*999.0 + (aYmin+aYmax)*99.0 + (aZmin+aZmax)*0.9;
+          box2.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+          val2 = (aXmin+aXmax)*999.0 + (aYmin+aYmax)*99.0 + (aZmin+aZmax)*0.9;
+          if ((val1 - val2) >= tol) {
+            exchange = Standard_True;
+          }
+        }
+      }
+    }
+  }
+
+  //return val1 < val2;
+  return !exchange;
+}
+
+//=======================================================================
 //function : SortShapes
 //purpose  :
 //=======================================================================
 void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
                                             const Standard_Boolean isOldSorting)
 {
+#ifdef STD_SORT_ALGO
+  std::vector<TopoDS_Shape> aShapesVec;
+  aShapesVec.reserve(SL.Extent());
+
+  TopTools_ListIteratorOfListOfShape it (SL);
+  for (; it.More(); it.Next()) {
+    aShapesVec.push_back(it.Value());
+  }
+  SL.Clear();
+
+  CompareShapes shComp (isOldSorting);
+  std::stable_sort(aShapesVec.begin(), aShapesVec.end(), shComp);
+  //std::sort(aShapesVec.begin(), aShapesVec.end(), shComp);
+
+  std::vector<TopoDS_Shape>::const_iterator anIter = aShapesVec.begin();
+  for (; anIter != aShapesVec.end(); ++anIter) {
+    SL.Append(*anIter);
+  }
+#else
+  // old implementation
   Standard_Integer MaxShapes = SL.Extent();
   TopTools_Array1OfShape  aShapes (1,MaxShapes);
   TColStd_Array1OfInteger OrderInd(1,MaxShapes);
@@ -3765,8 +4215,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
       GPoint = GPr.CentreOfMass();
       Length.SetValue(Index, GPr.Mass());
     }
-    MidXYZ.SetValue(Index,
-                    GPoint.X()*999 + GPoint.Y()*99 + GPoint.Z()*0.9);
+    MidXYZ.SetValue(Index, GPoint.X()*999.0 + GPoint.Y()*99.0 + GPoint.Z()*0.9);
     //cout << Index << " L: " << Length(Index) << "CG: " << MidXYZ(Index) << endl;
   }
 
@@ -3833,6 +4282,7 @@ void GEOMImpl_IShapesOperations::SortShapes(TopTools_ListOfShape& SL,
 
   for (Index=1; Index <= MaxShapes; Index++)
     SL.Append( aShapes( OrderInd(Index) ));
+#endif
 }
 
 //=======================================================================

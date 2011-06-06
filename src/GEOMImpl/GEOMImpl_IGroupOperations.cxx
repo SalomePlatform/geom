@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -297,6 +298,7 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     Handle(GEOM_Object) anObj_i = Handle(GEOM_Object)::DownCast(theSubShapes->Value(i));
 
     TopoDS_Shape aShape_i = anObj_i->GetValue();
+    if ( aShape_i.IsNull() ) continue;
     TopAbs_ShapeEnum aType_i = aShape_i.ShapeType();
 
     // 1. If aShape_i is sub-shape of aMainShape - add it
@@ -396,7 +398,8 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
 
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
-    SetErrorCode("The list is empty");
+    //SetErrorCode("The list is empty");
+    SetErrorCode(OK);
     return;
   }
 
@@ -413,8 +416,9 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
   if (aSeq.IsNull()) return;
   Standard_Integer aLength = aSeq->Length();
 
-  if (aLength == 1 && aSeq->Value(1) == -1) // empty group
-    return;
+  // VSR 28/04/2011 commented to allow operation even for empty group
+  //   if (aLength == 1 && aSeq->Value(1) == -1) // empty group
+  //     return;
 
   TColStd_MapOfInteger mapIDsCurrent;
   Standard_Integer j = 1;
@@ -448,7 +452,7 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
     // 1. If aShape_i is sub-shape of aMainShape - remove it
     if (mapIndices.Contains(aShape_i)) {
       rem_id = mapIndices.FindIndex(aShape_i);
-      if (mapIDsCurrent.Contains(rem_id)) {
+      if (rem_id > 0 && mapIDsCurrent.Contains(rem_id)) {
         mapIDsToRemove.Add(rem_id);
       }
     }
@@ -462,7 +466,7 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
         TopoDS_Shape aSubShape_i = mapIndices_i.FindKey(ii);
         if (mapIndices.Contains(aSubShape_i)) {
           rem_id = mapIndices.FindIndex(aSubShape_i);
-          if (mapIDsCurrent.Contains(rem_id)) {
+          if (rem_id > 0 && mapIDsCurrent.Contains(rem_id)) {
             mapIDsToRemove.Add(rem_id);
           }
         }
@@ -475,7 +479,7 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
         TopoDS_Shape aSubShape_i = aSubShapes_i.Current();
         if (mapIndices.Contains(aSubShape_i)) {
           rem_id = mapIndices.FindIndex(aSubShape_i);
-          if (mapIDsCurrent.Contains(rem_id)) {
+          if (rem_id > 0 && mapIDsCurrent.Contains(rem_id)) {
             mapIDsToRemove.Add(rem_id);
           }
         }
@@ -485,13 +489,19 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
 
   if (mapIDsToRemove.Extent() > 0) {
     Standard_Integer k = 1, aRemLength = mapIDsToRemove.Extent();
-    Handle(TColStd_HArray1OfInteger) aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
-
-    for (j = 1; j <= aLength; j++) {
-      if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
-        aNewSeq->SetValue(k, aSeq->Value(j));
-        k++;
+    Handle(TColStd_HArray1OfInteger) aNewSeq;
+    if ( aLength - aRemLength > 0 ) {
+      aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
+      for (j = 1; j <= aLength; j++) {
+	if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
+	  aNewSeq->SetValue(k, aSeq->Value(j));
+	  k++;
+	}
       }
+    }
+    else {
+      aNewSeq = new TColStd_HArray1OfInteger(1,1);
+      aNewSeq->SetValue(1, -1);
     }
 
     aSSI.SetIndices(aNewSeq);
@@ -530,7 +540,8 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
 
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
-    SetErrorCode("The list is empty");
+    //SetErrorCode("The list is empty");
+    SetErrorCode(OK);
     return;
   }
 
@@ -622,7 +633,8 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
 
   Standard_Integer aLen = theSubShapes->Length();
   if (aLen < 1) {
-    SetErrorCode("The list is empty");
+    //SetErrorCode("The list is empty");
+    SetErrorCode(OK);
     return;
   }
 
@@ -639,8 +651,9 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
   if (aSeq.IsNull()) return;
   Standard_Integer aLength = aSeq->Length();
 
-  if (aLength == 1 && aSeq->Value(1) == -1) // empty group
-    return;
+  // VSR 28/04/2011 commented to allow operation even for empty group
+  //   if (aLength == 1 && aSeq->Value(1) == -1) // empty group
+  //     return;
 
   TColStd_MapOfInteger mapIDsCurrent;
   Standard_Integer j = 1;
@@ -665,20 +678,26 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
   Standard_Integer i, rem_id;
   for (i = 1; i <= aLen; i++) {
     rem_id = theSubShapes->Value(i);
-    if (mapIDsCurrent.Contains(rem_id)) {
+    if (rem_id > 0 && mapIDsCurrent.Contains(rem_id)) {
       mapIDsToRemove.Add(rem_id);
     }
   }
 
   if (mapIDsToRemove.Extent() > 0) {
     Standard_Integer k = 1, aRemLength = mapIDsToRemove.Extent();
-    Handle(TColStd_HArray1OfInteger) aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
-
-    for (j = 1; j <= aLength; j++) {
-      if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
-        aNewSeq->SetValue(k, aSeq->Value(j));
-        k++;
+    Handle(TColStd_HArray1OfInteger) aNewSeq;
+    if ( aLength - aRemLength > 0 ) {
+      aNewSeq = new TColStd_HArray1OfInteger(1, aLength - aRemLength);
+      for (j = 1; j <= aLength; j++) {
+	if (!mapIDsToRemove.Contains(aSeq->Value(j))) {
+	  aNewSeq->SetValue(k, aSeq->Value(j));
+	  k++;
+	}
       }
+    }
+    else {
+      aNewSeq = new TColStd_HArray1OfInteger(1,1);
+      aNewSeq->SetValue(1, -1);
     }
 
     aSSI.SetIndices(aNewSeq);

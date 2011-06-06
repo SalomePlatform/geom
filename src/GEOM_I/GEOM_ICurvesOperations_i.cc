@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -424,6 +425,46 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeSplineInterpolation
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
+ *  MakeCurveParametric
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+								    double theParamMin, double theParamMax, double theParamStep, 
+								    GEOM::curve_type theCurveType) {
+  GEOM::GEOM_Object_var aGEOMObject;
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  
+  GEOMImpl_ICurvesOperations::CurveType aType;
+  switch(theCurveType) {
+  case GEOM::Polyline:
+    aType = GEOMImpl_ICurvesOperations::Polyline;
+    break;
+  case GEOM::Bezier:
+    aType = GEOMImpl_ICurvesOperations::Bezier;
+    break;
+  case GEOM::Interpolation:
+    aType = GEOMImpl_ICurvesOperations::Interpolation;
+    break;
+  default:
+    break;
+  }  
+  
+
+  // Make Polyline
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr, 
+					   theParamMin, theParamMax, 
+					   theParamStep, aType);
+  
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();  
+  
   return GetObject(anObject);
 }
 

@@ -1,23 +1,24 @@
-//  Copyright (C) 2007-2010  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //GEOM_Object types
 
@@ -93,6 +94,8 @@
 
 #define GEOM_3DSKETCHER 44
 
+#define GEOM_PROJECTION 45
+
 //GEOM_Function types
 
 #define COPY_WITH_REF    1
@@ -153,6 +156,8 @@
 
 #define OFFSET_SHAPE      1
 #define OFFSET_SHAPE_COPY 2
+
+#define PROJECTION_COPY 1
 
 #define SCALE_SHAPE      1
 #define SCALE_SHAPE_COPY 2
@@ -275,8 +280,10 @@
 
 #define BASIC_FILLING 1
 
-#define GLUE_FACES 1
+#define GLUE_FACES         1
 #define GLUE_FACES_BY_LIST 2
+#define GLUE_EDGES         3
+#define GLUE_EDGES_BY_LIST 4
 
 #define SKETCHER_NINE_DOUBLS 1
 #define SKETCHER_PLANE 2
@@ -286,6 +293,10 @@
 #define GROUP_FUNCTION 1
 
 #define SHAPES_ON_SHAPE 1
+
+//Curve constructor type
+#define POINT_CONSTRUCTOR 0
+#define COORD_CONSTRUCTOR 1
 
 // Blocks
 #define BLOCK_FACE_FOUR_PNT       1

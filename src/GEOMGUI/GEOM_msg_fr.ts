@@ -235,7 +235,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BUT_CLOSE_SKETCH</source>
-        <translation>Fermer le contour et valider</translation>
+        <translation>Fermer le contour</translation>
     </message>
     <message>
         <source>GEOM_BUT_END_SKETCH</source>
@@ -575,7 +575,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SCALE_PRISM</source>
-        <translation>Appliquer le facteur d'échelle</translation>
+        <translation>Appliquer le facteur d&apos;échelle</translation>
     </message>
     <message>
         <source>GEOM_FACE</source>
@@ -754,8 +754,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Recoller</translation>
     </message>
     <message>
-        <source>GEOM_GLUE_TITLE</source>
-        <translation>Recollement de faces</translation>
+        <source>GEOM_GLUE_FACES_TITLE</source>
+        <translation>Recoller les faces</translation>
+    </message>
+    <message>
+        <source>GEOM_GLUE_EDGES_TITLE</source>
+        <translation>Recoller les arêtes</translation>
     </message>
     <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
@@ -1066,6 +1070,22 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Décaler une surface</translation>
     </message>
     <message>
+        <source>GEOM_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
+        <source>GEOM_PROJECTION_TITLE</source>
+        <translation>Projection sur une face</translation>
+    </message>
+    <message>
+        <source>GEOM_SOURCE_OBJECT</source>
+        <translation>Point, arête ou contour de source</translation>
+    </message>
+    <message>
+        <source>GEOM_TARGET_OBJECT</source>
+        <translation>Face d&apos;objectif</translation>
+    </message>
+    <message>
         <source>GEOM_OPERATIONS</source>
         <translation>Opérations</translation>
     </message>
@@ -1105,7 +1125,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <source>GEOM_COORD_VALUE</source>
         <translation>Par coordonnée</translation>
     </message>
-     <message>
+    <message>
         <source>GEOM_LENGTH_VALUE</source>
         <translation>Par longueur</translation>
     </message>
@@ -1543,23 +1563,23 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_WARNING</source>
-        <translation>Attention : Le point final choisi n'est pas sur l'arc</translation>
+        <translation>Attention : Point final distant de l&apos;arc de : </translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_X</source>
-        <translation>Centre coord. X :</translation>
+        <translation>X Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_Y</source>
-        <translation>Centre coord. Y :</translation>
+        <translation>Y Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DX</source>
-        <translation>Centre coord. DX :</translation>
+        <translation>DX Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_CENTER_DY</source>
-        <translation>Centre coord. DY :</translation>
+        <translation>DY Centre :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_DEST</source>
@@ -1615,7 +1635,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_END_POINT2</source>
-        <translation>Point d'arrivée :</translation>
+        <translation>Point d&apos;arrivée :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_RADIUS</source>
@@ -2099,7 +2119,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>WRN_NULL_OBJECT_OR_SHAPE</source>
-        <translation>La forme %1 pour la création d'un solide est invalide</translation>
+        <translation>La forme %1 pour la création d&apos;un solide est invalide</translation>
     </message>
     <message>
         <source>GEOM_X</source>
@@ -2342,6 +2362,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Recoller les faces</translation>
     </message>
     <message>
+        <source>MEN_GLUE_EDGES</source>
+        <translation>Recoller les arêtes</translation>
+    </message>
+    <message>
         <source>MEN_GROUP</source>
         <translation>Groupe</translation>
     </message>
@@ -2426,6 +2450,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Décaler une surface</translation>
     </message>
     <message>
+        <source>MEN_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>MEN_OPERATIONS</source>
         <translation>Opérations</translation>
     </message>
@@ -2480,7 +2508,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_POP_PUBLISH_OBJ</source>
         <translation>Publier...</translation>
-    </message>	
+    </message>
     <message>
         <source>MEN_POP_ISOS</source>
         <translation>Isos</translation>
@@ -3006,6 +3034,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Recoller les faces</translation>
     </message>
     <message>
+        <source>STB_GLUE_EDGES</source>
+        <translation>Recoller les arêtes</translation>
+    </message>
+    <message>
         <source>STB_GROUP_CREATE</source>
         <translation>Créer un groupe</translation>
     </message>
@@ -3078,6 +3110,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Décaler une surface </translation>
     </message>
     <message>
+        <source>STB_PROJECTION</source>
+        <translation>Projetter un point, une arête ou un contour sur une face</translation>
+    </message>
+    <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
         <translation>Créer les vecterurs de base et l&apos;origine</translation>
     </message>
@@ -3119,12 +3155,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
-	<translation>Dépublier l'objet</translation>
-   </message>
+        <translation>Dépublier l&apos;objet</translation>
+    </message>
     <message>
         <source>STB_POP_PUBLISH_OBJ</source>
-        <translation>Publier l'objet</translation>
-   </message>	
+        <translation>Publier l&apos;objet</translation>
+    </message>
     <message>
         <source>STB_POP_HIDE_CHILDREN</source>
         <translation>Cacher les objets fils</translation>
@@ -3546,6 +3582,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Recoller les faces</translation>
     </message>
     <message>
+        <source>TOP_GLUE_EDGES</source>
+        <translation>Recoller les arêtes</translation>
+    </message>
+    <message>
         <source>TOP_GROUP_CREATE</source>
         <translation>Créer un groupe</translation>
     </message>
@@ -3614,6 +3654,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Décaler une surface </translation>
     </message>
     <message>
+        <source>TOP_PROJECTION</source>
+        <translation>Projection</translation>
+    </message>
+    <message>
         <source>TOP_ORIGIN_AND_VECTORS</source>
         <translation>Créer l&apos;origine et les vecteurs de base</translation>
     </message>
@@ -3655,12 +3699,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_POP_UNPUBLISH_OBJ</source>
-        <translation>Dépublier l'objet</translation>
-    </message> 
+        <translation>Dépublier l&apos;objet</translation>
+    </message>
     <message>
         <source>TOP_POP_PUBLISH_OBJ</source>
-	<translation>Publier l'objet</translation>
-   </message>	
+        <translation>Publier l&apos;objet</translation>
+    </message>
     <message>
         <source>TOP_POP_HIDE_CHILDREN</source>
         <translation>Cacher les enfants</translation>
@@ -4290,6 +4334,49 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_IS_REORDER</source>
         <translation>Réarranger les points en prenant en compte les distances</translation>
     </message>
+    <message>
+        <source>GEOM_CURVE_CRMODE</source>
+        <translation>Mode de création</translation>
+    </message>
+    <message>
+        <source>GEOM_CURVE_SELECTION</source>
+        <translation>Par sélection</translation>
+    </message>
+    <message>
+        <source>GEOM_CURVE_ANALITICAL</source>
+        <translation>Analytique</translation>
+    </message>
+</context>
+<context>
+    <name>BasicGUI_ParamCurveWidget</name>
+    <message>
+        <source>GEOM_PCURVE_TITLE</source>
+        <translation>Paramètres de la courbe</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_X</source>
+        <translation>Equation X(t)</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_Y</source>
+        <translation>Equation Y(t)</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_Z</source>
+        <translation>Equation Z(t)</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_MIN</source>
+        <translation>Min t</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_MAX</source>
+        <translation>Max t</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_STEP</source>
+        <translation>Pas</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_EllipseDlg</name>
@@ -4645,16 +4732,37 @@ Le nombre de points n&apos;est pas suffisant</translation>
 Fermez cette boîte d&apos;alerte et choisissez les faces à recoller</translation>
     </message>
     <message>
+        <source>EDGES_FOR_GLUING_ARE_DETECTED</source>
+        <translation>Il y a %1 arête(s) à recoller surlignées en rouge.
+Fermez cette boîte d&apos;alerte et choisissez les arêtes à recoller.</translation>
+    </message>
+    <message>
         <source>GLUE_FACES</source>
         <translation>Recollement de faces</translation>
+    </message>
+    <message>
+        <source>GLUE_EDGES</source>
+        <translation>Recoller les arêtes</translation>
     </message>
     <message>
         <source>SELECT_FACES</source>
         <translation>Choisir les Faces</translation>
     </message>
     <message>
+        <source>SELECT_EDGES</source>
+        <translation>Choisir les arêtes</translation>
+    </message>
+    <message>
+        <source>GLUE_ALL_EDGES</source>
+        <translation>Recoller toutes les arêtes coïncidentes</translation>
+    </message>
+    <message>
         <source>THERE_ARE_NO_FACES_FOR_GLUING</source>
         <translation>Il n&apos;y a pas de faces à coller</translation>
+    </message>
+    <message>
+        <source>THERE_ARE_NO_EDGES_FOR_GLUING</source>
+        <translation>Il n&apos;y a pas d&apos;arêtes à coller</translation>
     </message>
 </context>
 <context>
@@ -4762,7 +4870,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>MSG_SHARED_SHAPES_TOO_FEW_SHAPES</source>
-        <translation>Pas assez d'éléments sélectionnés</translation>
+        <translation>Pas assez d&apos;éléments sélectionnés</translation>
     </message>
     <message>
         <source>GEOM_SHARED_SHAPE</source>
@@ -4848,31 +4956,31 @@ Voulez-vous continuer?</translation>
     <name>GEOMToolsGUI_PublishDlg</name>
     <message>
         <source>GEOM_PUBLISH_OBJECTS_TLT</source>
-	<translation>Publier les objets</translation>
-    </message>			            
-    <message>
-	<source>OBJECT_NAME</source>
-	<translation>Nom</translation>
+        <translation>Publier les objets</translation>
     </message>
     <message>
-	<source>OBJECT_ENTRY</source>
-	<translation>Entrée</translation>
-    </message>    
+        <source>OBJECT_NAME</source>
+        <translation>Nom</translation>
+    </message>
+    <message>
+        <source>OBJECT_ENTRY</source>
+        <translation>Entrée</translation>
+    </message>
     <message>
         <source>UNSELECT_ALL</source>
         <translation>Tout désélectio&amp;nner</translation>
     </message>
-    <message>    
+    <message>
         <source>SELECT_ALL</source>
-	<translation>&amp;Sélectionner tout</translation>
+        <translation>&amp;Sélectionner tout</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_BTN</source>
-	<translation>&amp;Publier</translation>
+        <translation>&amp;Publier</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_CLOSE_BTN</source>
-	<translation>P&amp;ublier et fermer</translation>
-    </message>			        
+        <translation>P&amp;ublier et fermer</translation>
+    </message>
 </context>
 </TS>
