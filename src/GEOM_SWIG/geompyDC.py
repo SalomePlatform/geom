@@ -2154,9 +2154,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #        @image html get_in_place_lost_part.png
         #
         #  @ref swig_GetInPlace "Example"
-        def GetInPlace(self, theShapeWhere, theShapeWhat):
+        def GetInPlace(self, theShapeWhere, theShapeWhat, isNewImplementation = False):
             # Example: see GEOM_TestOthers.py
-            anObj = self.ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+            anObj = None
+            if isNewImplementation:
+                anObj = self.ShapesOp.GetInPlace(theShapeWhere, theShapeWhat)
+            else:
+                anObj = self.ShapesOp.GetInPlaceOld(theShapeWhere, theShapeWhat)
+                pass
             RaiseIfFailed("GetInPlace", self.ShapesOp)
             return anObj
 

@@ -2005,6 +2005,12 @@ module GEOM
                             in GEOM_Object theShapeWhat);
 
     /*!
+     *  Old implementation of GetInPlace functionality, based on shape properties.
+     */
+    GEOM_Object GetInPlaceOld (in GEOM_Object theShapeWhere,
+                               in GEOM_Object theShapeWhat);
+
+    /*!
      *  Get sub-shape(s) of \a theShapeWhere, which are
      *  coincident with \a theShapeWhat or could be a part of it.
      *

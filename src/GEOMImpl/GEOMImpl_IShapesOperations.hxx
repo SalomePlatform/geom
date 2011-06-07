@@ -290,6 +290,9 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
   Standard_EXPORT Handle(GEOM_Object) GetInPlace (Handle(GEOM_Object) theShapeWhere,
                                                   Handle(GEOM_Object) theShapeWhat);
 
+  Standard_EXPORT Handle(GEOM_Object) GetInPlaceOld (Handle(GEOM_Object) theShapeWhere,
+                                                     Handle(GEOM_Object) theShapeWhat);
+
   Standard_EXPORT Handle(GEOM_Object) GetInPlaceByHistory (Handle(GEOM_Object) theShapeWhere,
                                                            Handle(GEOM_Object) theShapeWhat);
 

@@ -46,14 +46,15 @@
 #include "GEOM_ISubShape.hxx"
 #include "GEOM_PythonDump.hxx"
 
+#include "GEOMAlgo_ClsfBox.hxx"
+#include "GEOMAlgo_ClsfSolid.hxx"
+#include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_FinderShapeOn1.hxx"
 #include "GEOMAlgo_FinderShapeOnQuad.hxx"
 #include "GEOMAlgo_FinderShapeOn2.hxx"
-#include "GEOMAlgo_ClsfBox.hxx"
-#include "GEOMAlgo_ClsfSolid.hxx"
+#include "GEOMAlgo_GetInPlace.hxx"
 #include "GEOMAlgo_GlueDetector.hxx"
 #include "GEOMAlgo_ListIteratorOfListOfCoupleOfShapes.hxx"
-#include "GEOMAlgo_CoupleOfShapes.hxx"
 #include "GEOMAlgo_ListOfCoupleOfShapes.hxx"
 
 #include "utilities.h"
@@ -3782,6 +3783,174 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   TopTools_IndexedMapOfShape aWhereIndices;
   TopExp::MapShapes(aWhere, aWhereIndices);
 
+  TopAbs_ShapeEnum iType = TopAbs_SOLID;
+  Standard_Real    dl_l = 1e-3;
+  Standard_Real    min_l, Tol_0D, Tol_1D, Tol_2D, Tol_3D, Tol_Mass;
+  Standard_Real    aXmin, aYmin, aZmin, aXmax, aYmax, aZmax;
+  Bnd_Box          BoundingBox;
+  gp_Pnt           aPnt, aPnt_aWhat, tab_Pnt[2];
+  GProp_GProps     aProps;
+
+  // Find the iType of the aWhat shape
+  iType = GetTypeOfSimplePart(aWhat);
+  if (iType == TopAbs_SHAPE) {
+    SetErrorCode("Error: An attempt to extract a shape of not supported type.");
+    return NULL;
+  }
+
+  TopExp_Explorer Exp_aWhat  ( aWhat,  iType );
+  TopExp_Explorer Exp_aWhere ( aWhere, iType );
+  TopExp_Explorer Exp_Edge   ( aWhere, TopAbs_EDGE );
+
+  // Find the shortest edge in theShapeWhere shape
+  BRepBndLib::Add(aWhere, BoundingBox);
+  BoundingBox.Get(aXmin, aYmin, aZmin, aXmax, aYmax, aZmax);
+  min_l = fabs(aXmax - aXmin);
+  if( min_l < fabs(aYmax - aYmin) ) min_l = fabs(aYmax - aYmin);
+  if( min_l < fabs(aZmax - aZmin) ) min_l = fabs(aZmax - aZmin);
+  min_l /= dl_l;
+  // Mantis issue 0020908 BEGIN
+  if (!Exp_Edge.More()) {
+    min_l = Precision::Confusion();
+  }
+  // Mantis issue 0020908 END
+  for ( Standard_Integer nbEdge = 0; Exp_Edge.More(); Exp_Edge.Next(), nbEdge++ ) {
+    TopExp_Explorer Exp_Vertex( Exp_Edge.Current(), TopAbs_VERTEX);
+    for ( Standard_Integer nbVertex = 0; Exp_Vertex.More(); Exp_Vertex.Next(), nbVertex++ ) {
+      aPnt = BRep_Tool::Pnt( TopoDS::Vertex( Exp_Vertex.Current() ) );
+      tab_Pnt[nbVertex] = aPnt;
+    }
+    if ( ! tab_Pnt[0].IsEqual(tab_Pnt[1], dl_l) ) {
+      BRepGProp::LinearProperties(Exp_Edge.Current(), aProps);
+      if ( aProps.Mass() < min_l ) min_l = aProps.Mass();
+    }
+  }
+
+  // Compute tolerances
+  Tol_0D = dl_l;
+  Tol_1D = dl_l * min_l;
+  Tol_2D = dl_l * ( min_l * min_l) * ( 2. + dl_l);
+  Tol_3D = dl_l * ( min_l * min_l * min_l ) * ( 3. + (3 * dl_l) + (dl_l * dl_l) );
+
+  if (Tol_0D < Precision::Confusion()) Tol_0D = Precision::Confusion();
+  if (Tol_1D < Precision::Confusion()) Tol_1D = Precision::Confusion();
+  if (Tol_2D < Precision::Confusion()) Tol_2D = Precision::Confusion();
+  if (Tol_3D < Precision::Confusion()) Tol_3D = Precision::Confusion();
+
+  Tol_Mass = Tol_3D;
+  if ( iType == TopAbs_VERTEX )    Tol_Mass = Tol_0D;
+  else if ( iType == TopAbs_EDGE ) Tol_Mass = Tol_1D;
+  else if ( iType == TopAbs_FACE ) Tol_Mass = Tol_2D;
+
+  // Searching for the sub-shapes inside the ShapeWhere shape
+  GEOMAlgo_GetInPlace aGIP;
+  aGIP.SetTolerance(Tol_1D);
+  aGIP.SetTolMass(Tol_Mass);
+  aGIP.SetTolCG(Tol_1D);
+
+  aGIP.SetArgument(aWhat);
+  aGIP.SetShapeWhere(aWhere);
+
+  aGIP.Perform();
+  int iErr = aGIP.ErrorStatus();
+  if (iErr) {
+    SetErrorCode("Error in GEOMAlgo_GetInPlace");
+    return NULL;
+  }
+
+  if (!aGIP.IsFound()) {
+    SetErrorCode(NOT_FOUND_ANY);
+    return NULL;
+  }
+
+  const TopTools_DataMapOfShapeListOfShape& aDMSLS = aGIP.Images();
+  if (!aDMSLS.IsBound(aWhat)) {
+    SetErrorCode(NOT_FOUND_ANY);
+    return NULL;
+  }
+
+  // the list of shapes aLSA contains the shapes 
+  // of the Shape For Search that corresponds 
+  // to the  Argument aWhat
+  const TopTools_ListOfShape& aLSA = aDMSLS.Find(aWhat);
+  if (aLSA.Extent() == 0) {
+    SetErrorCode(NOT_FOUND_ANY); // Not found any Results
+    return NULL;
+  }
+
+  Handle(TColStd_HArray1OfInteger) aModifiedArray = new TColStd_HArray1OfInteger (1, aLSA.Extent());
+  TopTools_ListIteratorOfListOfShape anIterModif (aLSA);
+  for (Standard_Integer imod = 1; anIterModif.More(); anIterModif.Next(), imod++) {
+    if (aWhereIndices.Contains(anIterModif.Value())) {
+      aModifiedArray->SetValue(imod, aWhereIndices.FindIndex(anIterModif.Value()));
+    }
+    else {
+      SetErrorCode("Error: wrong sub shape returned");
+      return NULL;
+    }
+  }
+
+  //Add a new object
+  Handle(GEOM_Object) aResult = GetEngine()->AddSubShape(theShapeWhere, aModifiedArray);
+  if (aResult.IsNull()) {
+    SetErrorCode("Error in algorithm: result found, but cannot be returned.");
+    return NULL;
+  }
+
+  if (aModifiedArray->Length() > 1) {
+    //Set a GROUP type
+    aResult->SetType(GEOM_GROUP);
+
+    //Set a sub shape type
+    TopoDS_Shape aFirstFound = aLSA.First();
+    TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
+
+    TDF_Label aFreeLabel = aResult->GetFreeLabel();
+    TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)aShapeType);
+  }
+
+  //Make a Python command
+  Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
+
+  GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
+    << theShapeWhere << ", " << theShapeWhat << ", True)";
+
+  SetErrorCode(OK);
+  return aResult;
+}
+
+//=============================================================================
+/*!
+ *  case GetInPlaceOld:
+ *  default:
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld (Handle(GEOM_Object) theShapeWhere,
+                                                               Handle(GEOM_Object) theShapeWhat)
+{
+  SetErrorCode(KO);
+
+  if (theShapeWhere.IsNull() || theShapeWhat.IsNull()) return NULL;
+
+  TopoDS_Shape aWhere = theShapeWhere->GetValue();
+  TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+  TopoDS_Shape aPntShape;
+  TopoDS_Vertex aVertex;
+
+  if (aWhere.IsNull() || aWhat.IsNull()) {
+    SetErrorCode("Error: aWhere and aWhat TopoDS_Shape are Null.");
+    return NULL;
+  }
+
+  Handle(GEOM_Function) aWhereFunction = theShapeWhere->GetLastFunction();
+  if (aWhereFunction.IsNull()) {
+    SetErrorCode("Error: aWhereFunction is Null.");
+    return NULL;
+  }
+
+  TopTools_IndexedMapOfShape aWhereIndices;
+  TopExp::MapShapes(aWhere, aWhereIndices);
+
   TColStd_ListOfInteger aModifiedList;
   Standard_Integer aWhereIndex;
   Handle(TColStd_HArray1OfInteger) aModifiedArray;
@@ -3972,7 +4141,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
   Handle(GEOM_Function) aFunction = aResult->GetFunction(1);
 
   GEOM::TPythonDump(aFunction) << aResult << " = geompy.GetInPlace("
-    << theShapeWhere << ", " << theShapeWhat << ")";
+    << theShapeWhere << ", " << theShapeWhat << ", False)";
 
   SetErrorCode(OK);
   return aResult;

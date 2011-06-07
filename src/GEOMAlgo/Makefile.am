@@ -16,11 +16,10 @@
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
-
-#  GEOM GEOMAlgo : tools for Glue Faces algorithm
-#  File   : Makefile.in
-#  Author : Julia DOROVSKIKH
-#  Module : GEOM
+# GEOM GEOMAlgo : tools for Glue Faces algorithm
+# File   : Makefile.am
+# Author : Julia DOROVSKIKH
+# Module : GEOM
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
@@ -56,24 +55,34 @@ dist_libGEOMAlgo_la_SOURCES =			\
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_0.cxx		\
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape_0.cxx	\
 	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape_0.cxx	\
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape_0.cxx	\
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapePnt_0.cxx		\
 	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal_0.cxx		\
 	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_0.cxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_0.cxx		\
+	GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape_0.cxx		\
+	GEOMAlgo_DataMapNodeOfDataMapOfShapePnt_0.cxx			\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_0.cxx			\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet_0.cxx		\
 	GEOMAlgo_DataMapOfOrientedShapeShape_0.cxx	\
 	GEOMAlgo_DataMapOfPassKeyInteger_0.cxx		\
 	GEOMAlgo_DataMapOfPassKeyShapeShape_0.cxx	\
 	GEOMAlgo_DataMapOfRealListOfShape_0.cxx		\
+	GEOMAlgo_DataMapOfShapeMapOfShape_0.cxx		\
+	GEOMAlgo_DataMapOfShapePnt_0.cxx		\
 	GEOMAlgo_DataMapOfShapeReal_0.cxx		\
 	GEOMAlgo_DataMapOfShapeShapeSet_0.cxx		\
 	GEOMAlgo_FinderShapeOn1.cxx		\
 	GEOMAlgo_FinderShapeOn2.cxx		\
 	GEOMAlgo_FinderShapeOn.cxx		\
 	GEOMAlgo_FinderShapeOnQuad.cxx		\
+	GEOMAlgo_GetInPlace.cxx			\
+	GEOMAlgo_GetInPlace_1.cxx		\
+	GEOMAlgo_GetInPlace_2.cxx		\
+	GEOMAlgo_GetInPlace_3.cxx		\
 	GEOMAlgo_GlueAnalyser.cxx		\
 	GEOMAlgo_Gluer.cxx			\
 	GEOMAlgo_GlueDetector.cxx		\
@@ -193,18 +202,24 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx		\
 	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape.hxx	\
 	GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape.hxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape.hxx		\
+	GEOMAlgo_DataMapIteratorOfDataMapOfShapePnt.hxx			\
 	GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal.hxx		\
 	GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet.hxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape.hxx	\
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx	\
 	GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx	\
 	GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx	\
+	GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape.hxx	\
+	GEOMAlgo_DataMapNodeOfDataMapOfShapePnt.hxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx		\
 	GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx	\
 	GEOMAlgo_DataMapOfOrientedShapeShape.hxx	\
 	GEOMAlgo_DataMapOfPassKeyInteger.hxx		\
 	GEOMAlgo_DataMapOfPassKeyShapeShape.hxx		\
 	GEOMAlgo_DataMapOfRealListOfShape.hxx		\
+	GEOMAlgo_DataMapOfShapeMapOfShape.hxx		\
+	GEOMAlgo_DataMapOfShapePnt.hxx			\
 	GEOMAlgo_DataMapOfShapeReal.hxx			\
 	GEOMAlgo_DataMapOfShapeShapeSet.hxx		\
 	GEOMAlgo_FinderShapeOn1.ixx		\
@@ -217,6 +232,7 @@ salomeinclude_HEADERS =					\
 	GEOMAlgo_FinderShapeOn.ixx		\
 	GEOMAlgo_FinderShapeOn.jxx		\
 	GEOMAlgo_FinderShapeOnQuad.hxx		\
+	GEOMAlgo_GetInPlace.hxx			\
 	GEOMAlgo_GlueAnalyser.hxx		\
 	GEOMAlgo_GlueAnalyser.ixx		\
 	GEOMAlgo_GlueAnalyser.jxx		\
@@ -329,6 +345,8 @@ salomeinclude_HEADERS =					\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape.hxx			\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx				\
 	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx				\
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape.hxx			\
+	Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapePnt.hxx				\
 	Handle_GEOMAlgo_HAlgo.hxx							\
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx		\
 	Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfPassKeyListOfShape.hxx	\

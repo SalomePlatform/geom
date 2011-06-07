@@ -1,4 +1,7 @@
--- Copyright (C) 2005-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+-- Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+--
+-- Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+-- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 --
 -- This library is free software; you can redistribute it and/or
 -- modify it under the terms of the GNU Lesser General Public
@@ -19,7 +22,6 @@
 -- File:	GEOMAlgo.cdl
 -- Created:	Sat Dec 04 12:36:22 2004
 -- Author:	Peter KURNEV
---		<peter@PREFEX>
 
 package GEOMAlgo 
 
@@ -124,23 +126,23 @@ is
     class ShapeInfo;
     class ShapeInfoFiller;
     -- 
-    --  gluer    	     
+    --  Gluer / GetInPlace 
+--modified by NIZNHY-PKV Mon Feb 21 10:07:22 2011f    	     
+--    class Gluer1;  
     class Gluer; 
-    class Gluer1;  
- 
---modified by NIZNHY-PKV Mon Feb 21 10:07:22 2011f  
+
     imported Gluer2 from GEOMAlgo;   
     imported GlueDetector from GEOMAlgo; 
-    imported GluerAlgo from GEOMAlgo;  
+    imported GluerAlgo from GEOMAlgo; 
+    imported GetInPlace from GEOMAlgo; 
 --modified by NIZNHY-PKV Mon Feb 21 10:07:27 2011t     
- 
+  
     class GlueAnalyser;  
     
     class CoupleOfShapes; 
     class PassKey;  
     class PassKeyMapHasher; 
     class PassKeyShape;  
-    
     class SurfaceTools; 
     class Tools;  
     --	     
@@ -245,6 +247,17 @@ is
     class DataMapOfOrientedShapeShape instantiates
         DataMap from TCollection (Shape                  from TopoDS,
                                   Shape                  from TopoDS,
-                                  OrientedShapeMapHasher from TopTools);
+                                  OrientedShapeMapHasher from TopTools); 
+ 
+    --modified by NIZNHY-PKV Thu Apr 28 08:25:36 2011f 
+    class DataMapOfShapeMapOfShape instantiates
+        DataMap from TCollection (Shape          from TopoDS,
+                                  MapOfShape     from TopTools,
+                                  ShapeMapHasher from TopTools); 
+    class DataMapOfShapePnt instantiates
+        DataMap from TCollection (Shape          from TopoDS,
+                                  Pnt            from gp,
+                                  ShapeMapHasher from TopTools);			  
+    --modified by NIZNHY-PKV Thu Apr 28 08:25:39 2011t     
     
 end GEOMAlgo;
