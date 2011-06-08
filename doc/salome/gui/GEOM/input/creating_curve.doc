@@ -5,58 +5,93 @@
 To create a \b Curve in the <b>Main Menu</b> select <b>New Entity - >
 Basic - > Curve</b>
 
-\n There are three algorithms to create a \b Curve in the 3D space. Each
-time you define it by a list of \b Points through which the curve
-passes. The three <b>Curve Construction</b> menu choices correspond to three
+There are three <b>Curve Construction</b> menu choices corresponding to three
 possible types of curves: Polyline, Besier or B-spline (Interpolated).
+The curve is defined by a list of \b Points through which it passes.
+
+
+\n There are two ways to define these <b>Points</b>:
+<ul>
+<li> <b>By Selection</b> manual picking of the points in the Object Browser or 3D Viewer.
+<li> <b>Analytical</b> parametric definition of the points through
+python expressions.
+</ul>
+
 \n The \b Result of each operation will be a GEOM_Object (edge).
-\n There are two ways to define <b>Points</b>:
-<ul>
-<li> <b>By Selection</b> choice of the points manually in the Object Browser or 3D Viewer.
-<li> <b>Analitical</b> parametric definition of the points through python expressions.
-</ul>
 
-\n <b>TUI Commands:</b>
-<ul>
-<li><em>geompy.MakePolyline(ListOfShapes,isClosed)</em></li>
-<li><em>geompy.MakeBezier(ListOfShapes,isClosed)</em></li>
-<li><em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em></li>
-<li><em>geompy.MakeCurveParametric(XExpr, YExpt, ZExpt, tMin, tMax, tStep, curveType)</em></li>
-</ul>
-ListOfShape is a list of points through which the curve passes.
-If isClosed is True, MakeBezier and MakeInterpol builds a closed edge,
-MakePolyline builds a closed wire. If doReordering is True,
-MakeInterpol does not follow the order of vertices but searches for the
-closest vertex.
-\n XExpr, YExpr, ZExpr python expressions for the X, Y and Z coordinates of the basic points of the curve.
-\n tMin, tMax minimum and maximun values of the parameter \b t.
-\n tStep step of the parameter \b t
-\n curveType type of the curve Polyline, Bezier or Interpolation.
-
-<b>Arguments:</b>
-<ul>
-<li>Name + at least 2 points which will serve as nodes on the curve, or</li>
-<li>Name + 3 string + 3 values (python expressions for the X, Y and Z coordinates, minimum, 
-maximum and step values of the parameter)</li>
-</ul>
-
-
-\n<b>Advanced options</b> \ref preview_anchor "Preview"
-
-\image html curve.png
-\image html curve1.png
-\image html curve2.png
-
-<b>Examples:</b>
+<b>Polyline</b>
 
 \image html polyline.png
-<center>Polyline</center>
+
+Polyline or polygonal chain is a connected series of line segments. It
+can be defined by the following parameters:
+
+\image html curve2.png
+
+<ul>
+<li><b>Points</b> at least 2 points which will serve as nodes on the curve.</li>
+<li><b>Build a closed wire</b> checkbox allows creating the curve as
+closed wire.</li>
+</ul>
+
+\n <b>TUI Command:</b> <em>geompy.MakePolyline(ListOfShapes,isClosed)</em>
+
+<b>Bezier</b>
 
 \image html bezier.png
-<center>Bezier</center>
+
+Bezier curve is a curve completely contained in a convex hull of its
+control points. It can be defined by the following parameters:
+
+
+\image html curve3.png
+
+<ul>
+<li><b>Points</b> at least 2 points used to approximate the curve.</li>
+<li><b>Build a closed edge</b> checkbox allows creating the curve as
+closed edge.</li>
+</ul>
+
+\n <b>TUI Command:</b> <em>geompy.MakeBezier(ListOfShapes,isClosed)</em>
+
+<b>B-spline</b>
 
 \image html interpol.png
-<center>B-Spline</center>
+
+B-spline is a union of curve segments defined at each node span. It
+can be defined by the following parameters:
+
+\image html curve4.png
+
+<ul>
+<li><b>Points</b> at least 2 points which will serve as nodes on the curve.</li>
+<li><b>Build a closed edge</b> checkbox allows creating the curve as
+closed edge.</li>
+<li> If <b>Reorder vertices taking into account distances</b> is
+checked, the interpolation algorithm does not follow the order of
+vertices but searches for the closest vertex.</li>
+</ul>
+
+\n <b>TUI Command:</b>
+<em>geompy.MakeInterpol(ListOfShapes,isClosed,doReordering)</em>
+
+<b>Analytical Definition</b>
+
+The input parameters for analytical definition are common for all
+types of curves. 
+
+\image html curve1.png
+
+<ul>
+<li><b>X(t)equation, Y(t)equation, Z(t)equation</b> are python
+expressions for X, Y and Z coordinates of the basic points of the curve.</li>
+<li><b>Min t, Max t</b> are minimum and maximun values of the parameter \b t.</li>
+<li><b>Step</b> is the step of the parameter \b t.</li>
+</ul> 
+
+\n <b>TUI Command:</b> <em>geompy.MakeCurveParametric(XExpr, YExpt, ZExpt, tMin, tMax, tStep, curveType)</em>
+
+\n<b>Advanced options</b> \ref preview_anchor "Preview"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
 \ref tui_creation_curve "Basic Geometric Objects".

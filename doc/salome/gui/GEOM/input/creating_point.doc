@@ -33,15 +33,17 @@ point is located in the middle of the edge.
 position of the point on the given edge.
 \image html point3.png
 
-Alternatively, it is possible to define the point by \b Edge and \b Length,
-the given length can exceed the length of the edge or be negative
-(except bezier and b-spline curves). The orientation of the edge can
-be reversed by the \b StartPoint selection.
-\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByLength(Edge,Length,StartPoint=None).</em>
-\n <b>Arguments:</b> Name + 1 edge  + 1 Length defining the position
-of the point on the given edge + 1 Point defining the direction for
-the calculation of the length (if not defined, the first vertex of
+Alternatively, it is possible to define a point by an \b Edge and a \b Length.
+The \b Length defines the position of the point on the given edge. It
+can exceed the length of the edge or be negative. In this case the edge
+is extrapolated along its curve (except for bezier and b-spline
+curves). 
+The <b>Start Point</b> defines the direction for the length
+calculation (if not defined, the first vertex of
 Edge is used, else the vertex of Edge closest to StartPoint is used).
+\n <b>TUI Command:</b> <em>geompy.MakeVertexOnCurveByLength(Edge,Length,StartPoint=None).</em>
+\n <b>Arguments:</b> Name + 1 edge  + 1 Length  + 1 Point.
+
 \image html point3_3.png
 
 It is also possible to define 3D coordinates of the point
