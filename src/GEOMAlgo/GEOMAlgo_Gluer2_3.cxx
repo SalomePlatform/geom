@@ -22,8 +22,7 @@
 // File:	GEOMAlgo_Gluer2_3.cxx
 // Created:	
 // Author:	Peter KURNEV
-//		<peter@PREFEX>
-//
+
 #include <GEOMAlgo_Gluer2.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -332,9 +331,11 @@ void MapShapes1(const TopoDS_Shape& aS,
 	       const TopAbs_ShapeEnum aType,
 	       TopTools_IndexedMapOfShape& aM)
 {
-  TopExp_Explorer aEx (aS, aType);
-  while (aEx.More()) {
-    const TopoDS_Shape aSx=aEx.Current();
+  TopExp_Explorer aExp;
+  
+  aExp.Init (aS, aType);
+  for ( ;aExp.More(); aExp.Next()) {
+    const TopoDS_Shape aSx=aExp.Current();
     if (aType==TopAbs_EDGE) {
       const TopoDS_Edge& aEx=*((TopoDS_Edge*)&aSx);
       if (BRep_Tool::Degenerated(aEx)) {
@@ -342,6 +343,29 @@ void MapShapes1(const TopoDS_Shape& aS,
       }
     }
     aM.Add(aSx);
-    aEx.Next();
   }
 }
+/*
+//=======================================================================
+//function : MapShapes1
+//purpose  : 
+//=======================================================================
+void MapShapes1(const TopoDS_Shape& aS,
+	       const TopAbs_ShapeEnum aType,
+	       TopTools_IndexedMapOfShape& aM)
+{
+  TopExp_Explorer aExp (aS, aType);
+  while (aExp.More()) {
+    const TopoDS_Shape aSx=aExp.Current();
+    if (aType==TopAbs_EDGE) {
+      const TopoDS_Edge& aEx=*((TopoDS_Edge*)&aSx);
+      if (BRep_Tool::Degenerated(aEx)) {
+	aExp.Next();
+	continue;
+      }
+    }
+    aM.Add(aSx);
+    aExp.Next();
+  }
+}
+*/
