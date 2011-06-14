@@ -70,6 +70,7 @@
 
 // External includes
 #include <QMenu>
+#include <QTime>
 #include <QAction>
 #include <QFileInfo>
 #include <QString>
@@ -1200,6 +1201,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpPublishObject ), -1, -1 ); // Publish object
   mgr->setRule( action( GEOMOp::OpPublishObject ), QString("client='ObjectBrowser' and isComponent=true"), QtxPopupMgr::VisibleRule );
 
+  mgr->insert( action(  GEOMOp::OpReimport ), -1, -1 );  // delete
+  mgr->setRule( action( GEOMOp::OpReimport ), QString("$imported in {'true'} and selcount>0"), QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
 }
@@ -1484,8 +1487,9 @@ LightApp_Selection* GeometryGUI::createSelection() const
 
 void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString& title )
 {
-  SalomeApp_Module::contextMenuPopup(client, menu, title);
+  SalomeApp_Module::contextMenuPopup( client, menu, title );
 
+  /*
   SALOME_ListIO lst;
   getApp()->selectionMgr()->selectedObjects(lst);
   if (lst.Extent() < 1)
@@ -1518,6 +1522,7 @@ void GeometryGUI::contextMenuPopup( const QString& client, QMenu* menu, QString&
   if (isImported) {
     menu->addAction(action(GEOMOp::OpReimport)); // Reload imported shape
   }
+  */
 }
 
 void GeometryGUI::createPreferences()

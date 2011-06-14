@@ -43,20 +43,26 @@ public:
   GEOMGUI_Selection();
   virtual ~GEOMGUI_Selection();
 
-  virtual QVariant      parameter( const int, const QString& ) const;
-  virtual QVariant      parameter( const QString& ) const;
-  
+  virtual void          init( const QString&, LightApp_SelectionMgr* );
   virtual bool          processOwner( const LightApp_DataOwner* );
+
+  virtual QVariant      parameter( const QString& ) const;
+  virtual QVariant      parameter( const int, const QString& ) const;
 
   static bool           hasChildren( const _PTR(SObject)& );
   static bool           expandable( const _PTR(SObject)& );
   static bool           isCompoundOfVertices( GEOM::GEOM_Object_ptr );
 
+protected:
+  //  virtual QVariant      contextParameter( const QString& ) const;
+  //  virtual QVariant      objectParameter( const int, const QString& ) const;
+
 private:
   bool                  isVisible( const int ) const;
   bool                  isAutoColor( const int ) const;
-  QString               typeName( const int ) const;  
-  int                   typeId( const int ) const;  
+  bool                  isImported( const int ) const;
+  QString               typeName( const int ) const;
+  int                   typeId( const int ) const;
   QString               displayMode( const int ) const;
   QString               selectionMode() const;
   bool                  isVectorsMode( const int ) const;
@@ -66,6 +72,17 @@ private:
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;
+
+  bool                  hasImported() const;
+  bool                  allImported() const;
+
+  QVariant              visibleProperty( const QString&, const QString& ) const;
+
+private:
+  typedef QVector<GEOM::GEOM_Object_var> GeomObjectVector;
+
+private:
+  GeomObjectVector      myObjects;
 };
 
-#endif // GEOMGUI_SELECTION_H
+#endif
