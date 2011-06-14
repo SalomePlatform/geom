@@ -875,7 +875,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
   aPyScript += thezExpr;
   aPyScript += "\n";
   
-  aPyScript +="def coordCalucator(tmin, tmax, tstep):                      \n";
+  aPyScript +="def coordCalculator(tmin, tmax, tstep):                      \n";
   aPyScript +="   coords = []                                              \n";
   aPyScript +="   while tmin <= tmax :                                     \n";
   aPyScript +="      coords.append([X(tmin), Y(tmin), Z(tmin)])            \n";
@@ -909,7 +909,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
   PyObject* obj = PyRun_String(aPyScript.ToCString(), Py_file_input, main_dict, NULL);
 
   if (obj == NULL) {
-    SetErrorCode("Error during run python script !!!");
+    SetErrorCode("Error during executing of python script !!!");
+    PyErr_Print();
     PyGILState_Release(gstate);
     return NULL;
   } else {
@@ -917,7 +918,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
   }
 
   PyObject * func = NULL;
-  func = PyObject_GetAttrString(main_mod, "coordCalucator");
+  func = PyObject_GetAttrString(main_mod, "coordCalculator");
   
   if (func == NULL){
     SetErrorCode("Can't get function from python module !!!");
@@ -936,7 +937,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
     PyErr_Print();
     PySys_SetObject((char*)"stderr", PySys_GetObject((char*)"__stderr__"));
     Py_DECREF(new_stderr);
-    MESSAGE("Can't evaluate coordCalucator()" << " error is " << err_description);
+    MESSAGE("Can't evaluate coordCalculator()" << " error is " << err_description);
     SetErrorCode("Can't evaluate the expressions, please check them !!!");
     PyGILState_Release(gstate);
     return NULL;
