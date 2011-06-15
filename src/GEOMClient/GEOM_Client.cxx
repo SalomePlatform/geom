@@ -55,7 +55,6 @@
 
 #define HST_CLIENT_LEN 256
 
-
 //=======================================================================
 // function : Load()
 // purpose  :
@@ -105,10 +104,8 @@ GEOM_Client::GEOM_Client()
 //=======================================================================
 GEOM_Client::GEOM_Client(const GEOM_Client& client)
 {
-  myIORs = client.myIORs;
-  myShapes = client.myShapes;
-  _myIndexes = client._myIndexes;
   _mySubShapes = client._mySubShapes;
+  myShapesMap = client.myShapesMap;
   pid_client = client.pid_client;
 }
 
@@ -142,30 +139,29 @@ GEOM_Client GEOM_Client::get_client()
 // function : Find()
 // purpose  :
 //=======================================================================
-Standard_Integer GEOM_Client::Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S )
+Standard_Boolean GEOM_Client::Find (const TCollection_AsciiString& IOR, TopoDS_Shape& S)
 {
-  if (_myIndexes.count(IOR) != 0)
-  {
-    Standard_Integer i = _myIndexes[IOR];
-    S = myShapes.Value(i);
-    return i;
+  if (myShapesMap.count(IOR) != 0) {
+    S = myShapesMap[IOR];
+    return Standard_True;
   }
-  return 0;
+  return Standard_False;
 }
 
 //=======================================================================
 // function : Find()
 // purpose  :
 //=======================================================================
-Standard_Integer GEOM_Client::Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR )
+Standard_Boolean GEOM_Client::Find (const TopoDS_Shape& S, TCollection_AsciiString& IOR)
 {
-  for ( Standard_Integer i = 1; i<= myShapes.Length(); i++ ) {
-    if (myShapes.Value(i) == S) {
-      IOR = myIORs.Value(i);
-      return i;
+  std::map< TCollection_AsciiString, TopoDS_Shape >::const_iterator it;
+  for (it = myShapesMap.begin(); it != myShapesMap.end(); ++it) {
+    if ((*it).second == S) {
+      IOR = (*it).first;
+      return Standard_True;
     }
   }
-  return 0;
+  return Standard_False;
 }
 
 //=======================================================================
@@ -174,9 +170,7 @@ Standard_Integer GEOM_Client::Find( const TopoDS_Shape& S, TCollection_AsciiStri
 //=======================================================================
 void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S )
 {
-  myIORs.Append(IOR);
-  myShapes.Append(S);
-  _myIndexes[IOR] = myIORs.Length();
+  myShapesMap[IOR] = S;
 }
 
 //=======================================================================
@@ -185,15 +179,11 @@ void GEOM_Client::Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& 
 //=======================================================================
 void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 {
-  if( myIORs.IsEmpty() )
+  if (myShapesMap.size() == 0)
     return;
 
-  TopoDS_Shape S;
-  Standard_Integer anIndex = Find( IOR, S );
-  if( anIndex != 0 ) {
-    myIORs.Remove(anIndex);
-    myShapes.Remove(anIndex);
-    _myIndexes.erase(IOR);
+  if (myShapesMap.count(IOR) != 0) {
+    myShapesMap.erase(IOR);
     _mySubShapes.erase(IOR);
   }
 }
@@ -204,13 +194,11 @@ void GEOM_Client::RemoveShapeFromBuffer( const TCollection_AsciiString& IOR)
 //=======================================================================
 void GEOM_Client::ClearClientBuffer()
 {
-  if( myIORs.IsEmpty() )
+  if (myShapesMap.size() == 0)
     return;
-  myIORs.Clear();
-  myShapes.Clear();
-  _myIndexes.clear();
+
   _mySubShapes.clear();
-  return;
+  myShapesMap.clear();
 }
 
 //=======================================================================
@@ -219,7 +207,7 @@ void GEOM_Client::ClearClientBuffer()
 //=======================================================================
 unsigned int GEOM_Client::BufferLength()
 {
-  return myIORs.Length();
+  return myShapesMap.size();
 }
 
 //=======================================================================
@@ -231,9 +219,9 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TopoDS_Shape S;
   CORBA::String_var anIOR = geom->GetStringFromIOR(aShape);
   TCollection_AsciiString IOR = (char*)anIOR.in();
-  Standard_Integer anIndex = Find(IOR, S);
+  Standard_Boolean anIndex = Find(IOR, S);
 
-  if (anIndex != 0) return S;
+  if (anIndex) return S;
 
   /******* in case of a MAIN GEOM::SHAPE ********/
   if (aShape->IsMainShape()) {
@@ -251,7 +239,7 @@ TopoDS_Shape GEOM_Client::GetShape( GEOM::GEOM_Gen_ptr geom, GEOM::GEOM_Object_p
   TCollection_AsciiString mainIOR = (char*)aMainIOR.in();
 
   //find subshapes only one time
-  if(_mySubShapes.count(mainIOR)==0)
+  if (_mySubShapes.count(mainIOR) == 0)
   {
     TopTools_IndexedMapOfShape anIndices;
     TopExp::MapShapes(aMainShape, anIndices);

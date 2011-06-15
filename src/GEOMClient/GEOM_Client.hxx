@@ -111,9 +111,9 @@ class GEOMCLIENT_EXPORT GEOM_Client  {
   //Standard_EXPORT
   GEOM_Client(const GEOM_Client& client);
   //Standard_EXPORT
-  Standard_Integer Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
+  Standard_Boolean Find( const TCollection_AsciiString& IOR, TopoDS_Shape& S ) ;
   //Standard_EXPORT
-  Standard_Integer Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
+  Standard_Boolean Find( const TopoDS_Shape& S, TCollection_AsciiString& IOR ) ;
   //Standard_EXPORT
   void Bind( const TCollection_AsciiString& IOR, const TopoDS_Shape& S ) ;
   //Standard_EXPORT
@@ -134,10 +134,8 @@ class GEOMCLIENT_EXPORT GEOM_Client  {
  private:
   // Fields PRIVATE
   //
-  TColStd_SequenceOfAsciiString myIORs ;
-  TopTools_SequenceOfShape myShapes ;
-  std::map< TCollection_AsciiString , int > _myIndexes;
   std::map< TCollection_AsciiString , std::vector<TopoDS_Shape> > _mySubShapes;
+  std::map< TCollection_AsciiString , TopoDS_Shape > myShapesMap;
   long  pid_client;
 };
 
