@@ -789,7 +789,10 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
           concatcurve->SetValue(concatcurve->Lower(), Concat.BSplineCurve());
         }
-
+        // rnc : prevents the driver from building an edge without C1 continuity
+        if (concatcurve->Value(concatcurve->Lower())->Continuity()==GeomAbs_C0){
+          Standard_ConstructionError::Raise("Construction aborted : The given Wire has sharp bends between some Edges, no valid Edge can be built");
+        }
         ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
                                    FirstVertex, LastVertex);
       }
