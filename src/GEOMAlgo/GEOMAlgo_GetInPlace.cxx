@@ -19,9 +19,9 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_GetInPlace.cxx
-// Created:	
-// Author:	Peter KURNEV
+// File:     GEOMAlgo_GetInPlace.cxx
+// Created:
+// Author:   Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
@@ -63,14 +63,14 @@
 #include <GEOMAlgo_Tools.hxx>
 
 
-static 
+static
   void MapBRepShapes(const TopoDS_Shape& aS,
-		     TopTools_IndexedMapOfShape& aM);
+                     TopTools_IndexedMapOfShape& aM);
 
 
 //=======================================================================
 //function : GEOMAlgo_GetInPlace
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_GetInPlace::GEOMAlgo_GetInPlace()
 :
@@ -85,14 +85,14 @@ GEOMAlgo_GetInPlace::GEOMAlgo_GetInPlace()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_GetInPlace::~GEOMAlgo_GetInPlace()
 {
 }
 //=======================================================================
 //function : SetTolMass
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::SetTolMass(const Standard_Real theTol)
 {
@@ -100,7 +100,7 @@ void GEOMAlgo_GetInPlace::SetTolMass(const Standard_Real theTol)
 }
 //=======================================================================
 //function : TolMass
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Real GEOMAlgo_GetInPlace::TolMass()const
 {
@@ -108,7 +108,7 @@ Standard_Real GEOMAlgo_GetInPlace::TolMass()const
 }
 //=======================================================================
 //function : SetTolCG
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::SetTolCG(const Standard_Real theTol)
 {
@@ -116,7 +116,7 @@ void GEOMAlgo_GetInPlace::SetTolCG(const Standard_Real theTol)
 }
 //=======================================================================
 //function : TolCG
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Real GEOMAlgo_GetInPlace::TolCG()const
 {
@@ -124,7 +124,7 @@ Standard_Real GEOMAlgo_GetInPlace::TolCG()const
 }
 //=======================================================================
 //function : IsFound
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_GetInPlace::IsFound()const
 {
@@ -132,7 +132,7 @@ Standard_Boolean GEOMAlgo_GetInPlace::IsFound()const
 }
 //=======================================================================
 //function : SetShapeWhere
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::SetShapeWhere(const TopoDS_Shape& theShape)
 {
@@ -140,7 +140,7 @@ void GEOMAlgo_GetInPlace::SetShapeWhere(const TopoDS_Shape& theShape)
 }
 //=======================================================================
 //function : ShapeWhere
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_GetInPlace::ShapeWhere()const
 {
@@ -148,7 +148,7 @@ const TopoDS_Shape& GEOMAlgo_GetInPlace::ShapeWhere()const
 }
 //=======================================================================
 //function : ShapesIn
-//purpose  : 
+//purpose  :
 //=======================================================================
 const GEOMAlgo_DataMapOfShapeMapOfShape& GEOMAlgo_GetInPlace::ShapesIn()const
 {
@@ -156,7 +156,7 @@ const GEOMAlgo_DataMapOfShapeMapOfShape& GEOMAlgo_GetInPlace::ShapesIn()const
 }
 //=======================================================================
 //function : ShapesOn
-//purpose  : 
+//purpose  :
 //=======================================================================
 const GEOMAlgo_DataMapOfShapeMapOfShape& GEOMAlgo_GetInPlace::ShapesOn()const
 {
@@ -164,7 +164,7 @@ const GEOMAlgo_DataMapOfShapeMapOfShape& GEOMAlgo_GetInPlace::ShapesOn()const
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::Clear()
 {
@@ -179,7 +179,7 @@ void GEOMAlgo_GetInPlace::Clear()
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::Perform()
 {
@@ -269,7 +269,7 @@ void GEOMAlgo_GetInPlace::Perform()
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::CheckData()
 {
@@ -288,7 +288,7 @@ void GEOMAlgo_GetInPlace::CheckData()
 }
 //=======================================================================
 //function : Intersect
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::Intersect()
 {
@@ -316,7 +316,10 @@ void GEOMAlgo_GetInPlace::Intersect()
     //
     const TopoDS_Shape& aS1=aMS1(i);
     BRepBndLib::Add(aS1, aBox1);
-    aBox1.SetGap(myTolerance);
+    //modified by NIZNHY-PKV Fri Jun 10 08:20:03 2011f
+    //aBox1.SetGap(myTolerance);
+    aBox1.Enlarge(myTolerance);
+    //modified by NIZNHY-PKV Fri Jun 10 08:20:06 2011t
     //
     aTreeFiller.Add(i, aBox1);
   }
@@ -330,13 +333,16 @@ void GEOMAlgo_GetInPlace::Intersect()
     //
     const TopoDS_Shape& aS2=aMS2(j);
     BRepBndLib::Add(aS2, aBox2);
-    aBox2.SetGap(myTolerance);
+    //modified by NIZNHY-PKV Fri Jun 10 08:20:23 2011f
+    //aBox2.SetGap(myTolerance);
+    aBox2.Enlarge(myTolerance);
+    //modified by NIZNHY-PKV Fri Jun 10 08:20:25 2011t
     //
     aSelector.Clear();
     aSelector.SetBox(aBox2);
     aNbSD=aBBTree.Select(aSelector);
     if (!aNbSD) {
-      continue;  // it should not be 
+      continue;  // it should not be
     }
     //
     const TColStd_ListOfInteger& aLI=aSelector.Indices();
@@ -346,14 +352,14 @@ void GEOMAlgo_GetInPlace::Intersect()
       const TopoDS_Shape& aS1=aMS1(i);
       //
       if (aDMSLS.IsBound(aS1)) {
-	TopTools_ListOfShape& aLS=aDMSLS.ChangeFind(aS1);
-	aLS.Append(aS2);
+        TopTools_ListOfShape& aLS=aDMSLS.ChangeFind(aS1);
+        aLS.Append(aS2);
       }
       else {
-	TopTools_ListOfShape aLS;
-	//
-	aLS.Append(aS2);
-	aDMSLS.Bind(aS1, aLS);
+        TopTools_ListOfShape aLS;
+        //
+        aLS.Append(aS2);
+        aDMSLS.Bind(aS1, aLS);
       }
     }
   }// for (j=1; j<=aNbS2; ++j) {
@@ -373,7 +379,7 @@ void GEOMAlgo_GetInPlace::Intersect()
 }
 //=======================================================================
 //function : PerformVV
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformVV()
 {
@@ -391,11 +397,11 @@ void GEOMAlgo_GetInPlace::PerformVV()
 }
 //=======================================================================
 //function : FillEdgesOn
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillEdgesOn()
 {
-  Standard_Integer i, aNbE, aNbSOn;
+  Standard_Integer i, aNbE;
   TopoDS_Iterator aIt;
   TopTools_IndexedMapOfShape aME;
   TopTools_MapIteratorOfMapOfShape aItMS;
@@ -412,20 +418,20 @@ void GEOMAlgo_GetInPlace::FillEdgesOn()
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aV1=aIt.Value();
       if (myShapesOn.IsBound(aV1)) {
-	const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aV1);
-	aNbSOn=aMSOn.Extent();
-	aItMS.Initialize(aMSOn);
-	for (; aItMS.More(); aItMS.Next()) {
-	  const TopoDS_Shape& aV2=aItMS.Key();
-	  FillShapesOn(aE1, aV2);
-	}
+        const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aV1);
+        //aNbSOn=aMSOn.Extent();
+        aItMS.Initialize(aMSOn);
+        for (; aItMS.More(); aItMS.Next()) {
+          const TopoDS_Shape& aV2=aItMS.Key();
+          FillShapesOn(aE1, aV2);
+        }
       }
     }
   }
 }
 //=======================================================================
 //function : PerformVE
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformVE()
 {
@@ -444,7 +450,7 @@ void GEOMAlgo_GetInPlace::PerformVE()
     if (myShapesOn.IsBound(aE1)) {
       const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aE1);
       if (aMSOn.Contains(aV2)) {
-	continue;
+        continue;
       }
     }
     //
@@ -459,7 +465,7 @@ void GEOMAlgo_GetInPlace::PerformVE()
 }
 //=======================================================================
 //function : PerformEE
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformEE()
 {
@@ -486,8 +492,8 @@ void GEOMAlgo_GetInPlace::PerformEE()
     for (; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aV2=aIt.Value();
       if (!(aMSOn.Contains(aV2) || aMSIn.Contains(aV2))) {
-	bFound=!bFound;
-	break;
+        bFound=!bFound;
+        break;
       }
     }
     if (!bFound) {
@@ -505,7 +511,7 @@ void GEOMAlgo_GetInPlace::PerformEE()
 }
 //=======================================================================
 //function : PerformVF
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformVF()
 {
@@ -531,7 +537,7 @@ void GEOMAlgo_GetInPlace::PerformVF()
     for (i=1; i<=aNbE; ++i) {
       const TopoDS_Edge& aE1=*((TopoDS_Edge*)&aME(i));
       if (BRep_Tool::Degenerated(aE1)) {
-	continue;
+        continue;
       }
       //
       bHasOn=myShapesOn.IsBound(aE1);
@@ -540,7 +546,7 @@ void GEOMAlgo_GetInPlace::PerformVF()
       const TopTools_MapOfShape& aMSIn=(bHasIn) ? myShapesIn.Find(aE1) : aMSX;
       bFound= (aMSOn.Contains(aV2) || aMSIn.Contains(aV2));
       if (bFound) {
-	break;
+        break;
       }
     }
     //
@@ -559,11 +565,11 @@ void GEOMAlgo_GetInPlace::PerformVF()
 }
 //=======================================================================
 //function : FillFacesOn
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillFacesOn()
 {
-  Standard_Integer i, j, aNbF, aNbE, aNbSOn;
+  Standard_Integer i, j, aNbF, aNbE;
   TopoDS_Iterator aIt;
   TopTools_IndexedMapOfShape aMF, aME;
   TopTools_MapIteratorOfMapOfShape aItMS;
@@ -579,37 +585,36 @@ void GEOMAlgo_GetInPlace::FillFacesOn()
     for (j=1; j<=aNbE; ++j) {
       const TopoDS_Edge& aE1=*((TopoDS_Edge*)&aME(j));
       if (BRep_Tool::Degenerated(aE1)) {
-	continue;
+        continue;
       }
       //
       if (myShapesOn.IsBound(aE1)) {
-	const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aE1);
-	aItMS.Initialize(aMSOn);
-	for (; aItMS.More(); aItMS.Next()) {
-	  const TopoDS_Shape& aS2=aItMS.Key();
-	  FillShapesOn(aF1, aS2);
-	}
+        const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aE1);
+        aItMS.Initialize(aMSOn);
+        for (; aItMS.More(); aItMS.Next()) {
+          const TopoDS_Shape& aS2=aItMS.Key();
+          FillShapesOn(aF1, aS2);
+        }
       }
       //
       if (myShapesIn.IsBound(aE1)) {
-	const TopTools_MapOfShape& aMSIn=myShapesIn.Find(aE1);
-	aItMS.Initialize(aMSIn);
-	for (; aItMS.More(); aItMS.Next()) {
-	  const TopoDS_Shape& aS2=aItMS.Key();
-	  FillShapesOn(aF1, aS2);
-	}
+        const TopTools_MapOfShape& aMSIn=myShapesIn.Find(aE1);
+        aItMS.Initialize(aMSIn);
+        for (; aItMS.More(); aItMS.Next()) {
+          const TopoDS_Shape& aS2=aItMS.Key();
+          FillShapesOn(aF1, aS2);
+        }
       }
     }//for (j=1; j<=aNbE; ++j) {
   }//for (i=1; i<=aNbF; ++i) {
 }
 //=======================================================================
 //function : PerformEF
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformEF()
 {
   Standard_Boolean  bFound, bHasOnF, bHasInF;
-  Standard_Integer i, aNbE;
   TopoDS_Iterator aIt;
   TopTools_MapOfShape aMSX;
   //
@@ -629,7 +634,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
     if (bFound) {
       continue;
     }
-    // 
+    //
     // 2.
     bHasInF=myShapesIn.IsBound(aF1);
     const TopTools_MapOfShape& aMSInF=(bHasInF) ? myShapesIn.Find(aF1) : aMSX;
@@ -639,7 +644,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
       const TopoDS_Shape& aV2=aIt.Value();
       bFound=(aMSOnF.Contains(aV2) || aMSInF.Contains(aV2));
       if (!bFound) {
-	break;
+        break;
       }
     }
     if (!bFound) {
@@ -657,7 +662,7 @@ void GEOMAlgo_GetInPlace::PerformEF()
 }
 //=======================================================================
 //function : PerformFF
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformFF()
 {
@@ -689,11 +694,11 @@ void GEOMAlgo_GetInPlace::PerformFF()
     for (i=1; i<=aNbS2; ++i) {
       const TopoDS_Shape& aS2=aMS2(i);
       if (aS2.IsSame(aF2)) {
-	continue;
+        continue;
       }
       bFound=(aMSOnF.Contains(aS2) || aMSInF.Contains(aS2));
       if (!bFound) {
-	break;
+        break;
       }
     }
     if (!bFound) {
@@ -711,11 +716,11 @@ void GEOMAlgo_GetInPlace::PerformFF()
 }
 //=======================================================================
 //function : FillSolidsOn
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillSolidsOn()
 {
-  Standard_Integer i, j, aNbS, aNbF, aNbSOn;
+  Standard_Integer i, j, aNbS, aNbF;
   TopTools_IndexedMapOfShape aMS, aMF;
   TopTools_MapIteratorOfMapOfShape aItMS;
   //
@@ -732,33 +737,32 @@ void GEOMAlgo_GetInPlace::FillSolidsOn()
       const TopoDS_Shape& aF1=aMF(j);
       //
       if (myShapesOn.IsBound(aF1)) {
-	const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aF1);
-	aItMS.Initialize(aMSOn);
-	for (; aItMS.More(); aItMS.Next()) {
-	  const TopoDS_Shape& aS2=aItMS.Key();
-	  FillShapesOn(aSD1, aS2);
-	}
+        const TopTools_MapOfShape& aMSOn=myShapesOn.Find(aF1);
+        aItMS.Initialize(aMSOn);
+        for (; aItMS.More(); aItMS.Next()) {
+          const TopoDS_Shape& aS2=aItMS.Key();
+          FillShapesOn(aSD1, aS2);
+        }
       }
       //
       if (myShapesIn.IsBound(aF1)) {
-	const TopTools_MapOfShape& aMSIn=myShapesIn.Find(aF1);
-	aItMS.Initialize(aMSIn);
-	for (; aItMS.More(); aItMS.Next()) {
-	  const TopoDS_Shape& aS2=aItMS.Key();
-	  FillShapesOn(aSD1, aS2);
-	}
+        const TopTools_MapOfShape& aMSIn=myShapesIn.Find(aF1);
+        aItMS.Initialize(aMSIn);
+        for (; aItMS.More(); aItMS.Next()) {
+          const TopoDS_Shape& aS2=aItMS.Key();
+          FillShapesOn(aSD1, aS2);
+        }
       }
     }//for (j=1; j<=aNbF; ++j) {
   }//for (i=1; i<=aNbS; ++i) {
 }
 //=======================================================================
 //function : PerformZF
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformZF()
 {
-  Standard_Boolean  bFound, bHasOnF, bHasInF;
-  Standard_Integer i, aNbE;
+  Standard_Boolean  bFound, bHasOnF;
   TopTools_MapOfShape aMSX;
   //
   myErrorStatus=0;
@@ -788,7 +792,7 @@ void GEOMAlgo_GetInPlace::PerformZF()
 }
 //=======================================================================
 //function : PerformZZ
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::PerformZZ()
 {
@@ -824,17 +828,17 @@ void GEOMAlgo_GetInPlace::PerformZZ()
       const TopoDS_Shape& aF2=aMS2(i);
       //
       if (aMSIn.Contains(aF2)) {
-	++iCntIn;
-	bFound=Standard_True;
-	break;
+        ++iCntIn;
+        bFound=Standard_True;
+        break;
       }
       else if (!aMSOn.Contains(aF2)) {
-	++iCntOut;
-	bFound=Standard_False;// out
-	break;
+        ++iCntOut;
+        bFound=Standard_False;// out
+        break;
       }
       else {
-	++iCntOn; //on
+        ++iCntOn; //on
       }
     }
     //
@@ -845,7 +849,7 @@ void GEOMAlgo_GetInPlace::PerformZZ()
     if (!iCntIn) {
       bFound=CheckCoincidence(aSo1, aSo2);
       if (myErrorStatus) {
-	return;
+        return;
       }
     }
     if (bFound) {
@@ -855,7 +859,7 @@ void GEOMAlgo_GetInPlace::PerformZZ()
 }
 //=======================================================================
 //function : FillImages
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillImages()
 {
@@ -870,7 +874,7 @@ void GEOMAlgo_GetInPlace::FillImages()
   myErrorStatus=0;
   myWarningStatus=0;
   //
-  myImages.Clear();  
+  myImages.Clear();
   //
   // 1. Vertices
   aMS.Clear();
@@ -885,8 +889,8 @@ void GEOMAlgo_GetInPlace::FillImages()
       aLSx.Clear();
       aItMS.Initialize(aMSx);
       for (; aItMS.More(); aItMS.Next()) {
-	const TopoDS_Shape& aVx=aItMS.Key();
-	aLSx.Append(aVx);
+        const TopoDS_Shape& aVx=aItMS.Key();
+        aLSx.Append(aVx);
       }
       //
       myImages.Bind(aV, aLSx);
@@ -906,11 +910,11 @@ void GEOMAlgo_GetInPlace::FillImages()
       aLSx.Clear();
       aItMS.Initialize(aMSx);
       for (; aItMS.More(); aItMS.Next()) {
-	const TopoDS_Shape& aEx=aItMS.Key();
-	aType=aEx.ShapeType();
-	if (aType==TopAbs_EDGE){
-	  aLSx.Append(aEx);
-	}
+        const TopoDS_Shape& aEx=aItMS.Key();
+        aType=aEx.ShapeType();
+        if (aType==TopAbs_EDGE){
+          aLSx.Append(aEx);
+        }
       }
       //
       myImages.Bind(aE, aLSx);
@@ -928,14 +932,14 @@ void GEOMAlgo_GetInPlace::FillImages()
     for(; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aE=aIt.Value();
       if (myImages.IsBound(aE)) {
-	const TopTools_ListOfShape& aLSi=myImages.Find(aE);
-	aNbSi=aLSi.Extent();
-	//
-	aItLS.Initialize(aLSi);
-	for (; aItLS.More(); aItLS.Next()) {
-	  const TopoDS_Shape& aEi=aItLS.Value();
-	  aLSx.Append(aEi);
-	}
+        const TopTools_ListOfShape& aLSi=myImages.Find(aE);
+        aNbSi=aLSi.Extent();
+        //
+        aItLS.Initialize(aLSi);
+        for (; aItLS.More(); aItLS.Next()) {
+          const TopoDS_Shape& aEi=aItLS.Value();
+          aLSx.Append(aEi);
+        }
       }
     }
     myImages.Bind(aW, aLSx);
@@ -954,11 +958,11 @@ void GEOMAlgo_GetInPlace::FillImages()
       aLSx.Clear();
       aItMS.Initialize(aMSx);
       for (; aItMS.More(); aItMS.Next()) {
-	const TopoDS_Shape& aFx=aItMS.Key();
-	aType=aFx.ShapeType();
-	if (aType==TopAbs_FACE){
-	  aLSx.Append(aFx);
-	}
+        const TopoDS_Shape& aFx=aItMS.Key();
+        aType=aFx.ShapeType();
+        if (aType==TopAbs_FACE){
+          aLSx.Append(aFx);
+        }
       }
       //
       myImages.Bind(aF, aLSx);
@@ -976,14 +980,14 @@ void GEOMAlgo_GetInPlace::FillImages()
     for(; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aF=aIt.Value();
       if (myImages.IsBound(aF)) {
-	const TopTools_ListOfShape& aLSi=myImages.Find(aF);
-	aNbSi=aLSi.Extent();
-	//
-	aItLS.Initialize(aLSi);
-	for (; aItLS.More(); aItLS.Next()) {
-	  const TopoDS_Shape& aFi=aItLS.Value();
-	  aLSx.Append(aFi);
-	}
+        const TopTools_ListOfShape& aLSi=myImages.Find(aF);
+        aNbSi=aLSi.Extent();
+        //
+        aItLS.Initialize(aLSi);
+        for (; aItLS.More(); aItLS.Next()) {
+          const TopoDS_Shape& aFi=aItLS.Value();
+          aLSx.Append(aFi);
+        }
       }
     }
     myImages.Bind(aSh, aLSx);
@@ -1002,11 +1006,11 @@ void GEOMAlgo_GetInPlace::FillImages()
       aLSx.Clear();
       aItMS.Initialize(aMSx);
       for (; aItMS.More(); aItMS.Next()) {
-	const TopoDS_Shape& aZx=aItMS.Key();
-	aType=aZx.ShapeType();
-	if (aType==TopAbs_SOLID){
-	  aLSx.Append(aZx);
-	}
+        const TopoDS_Shape& aZx=aItMS.Key();
+        aType=aZx.ShapeType();
+        if (aType==TopAbs_SOLID){
+          aLSx.Append(aZx);
+        }
       }
       //
       myImages.Bind(aZ, aLSx);
@@ -1024,14 +1028,14 @@ void GEOMAlgo_GetInPlace::FillImages()
     for(; aIt.More(); aIt.Next()) {
       const TopoDS_Shape& aZ=aIt.Value();
       if (myImages.IsBound(aZ)) {
-	const TopTools_ListOfShape& aLSi=myImages.Find(aZ);
-	aNbSi=aLSi.Extent();
-	//
-	aItLS.Initialize(aLSi);
-	for (; aItLS.More(); aItLS.Next()) {
-	  const TopoDS_Shape& aZi=aItLS.Value();
-	  aLSx.Append(aZi);
-	}
+        const TopTools_ListOfShape& aLSi=myImages.Find(aZ);
+        aNbSi=aLSi.Extent();
+        //
+        aItLS.Initialize(aLSi);
+        for (; aItLS.More(); aItLS.Next()) {
+          const TopoDS_Shape& aZi=aItLS.Value();
+          aLSx.Append(aZi);
+        }
       }
     }
     myImages.Bind(aCs, aLSx);
@@ -1045,7 +1049,7 @@ void GEOMAlgo_GetInPlace::FillImages()
 }
 //=======================================================================
 //function : FillImagesCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillImagesCompound(const TopoDS_Shape& aS)
 {
@@ -1067,8 +1071,8 @@ void GEOMAlgo_GetInPlace::FillImagesCompound(const TopoDS_Shape& aS)
       const TopTools_ListOfShape& aLSi=myImages.Find(aSx);
       aItLS.Initialize(aLSi);
       for (; aItLS.More(); aItLS.Next()) {
-	const TopoDS_Shape& aSi=aItLS.Value();
-	aLSx.Append(aSi);
+        const TopoDS_Shape& aSi=aItLS.Value();
+        aLSx.Append(aSi);
       }
     }
   }
@@ -1077,10 +1081,10 @@ void GEOMAlgo_GetInPlace::FillImagesCompound(const TopoDS_Shape& aS)
 
 //=======================================================================
 //function : FillShapesIn
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillShapesIn(const TopoDS_Shape& aS1,
-				       const TopoDS_Shape& aS2)
+                                       const TopoDS_Shape& aS2)
 {
   if (myShapesIn.IsBound(aS1)) {
     TopTools_MapOfShape& aMS=myShapesIn.ChangeFind(aS1);
@@ -1095,10 +1099,10 @@ void GEOMAlgo_GetInPlace::FillShapesIn(const TopoDS_Shape& aS1,
 }
 //=======================================================================
 //function : FillShapesOn
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::FillShapesOn(const TopoDS_Shape& aS1,
-				       const TopoDS_Shape& aS2)
+                                       const TopoDS_Shape& aS2)
 {
   if (myShapesOn.IsBound(aS1)) {
     TopTools_MapOfShape& aMS=myShapesOn.ChangeFind(aS1);
@@ -1113,17 +1117,17 @@ void GEOMAlgo_GetInPlace::FillShapesOn(const TopoDS_Shape& aS1,
 }
 //=======================================================================
 //function : MapBRepShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void MapBRepShapes(const TopoDS_Shape& aS,
-		   TopTools_IndexedMapOfShape& aM)
+                   TopTools_IndexedMapOfShape& aM)
 {
-  Standard_Boolean bHasBRep, bDegenerated;
+  Standard_Boolean bDegenerated;
   TopAbs_ShapeEnum aType;
   TopoDS_Iterator aIt;
   //
   aType=aS.ShapeType();
-  if (aType==TopAbs_VERTEX || aType==TopAbs_EDGE || 
+  if (aType==TopAbs_VERTEX || aType==TopAbs_EDGE ||
       aType==TopAbs_FACE   || aType==TopAbs_SOLID) {
     bDegenerated=Standard_False;
     if (aType==TopAbs_EDGE) {

@@ -3858,10 +3858,13 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
-  if (!aGIP.IsFound()) {
-    SetErrorCode(NOT_FOUND_ANY);
-    return NULL;
-  }
+  // aGIP.IsFound() returns true only when the whole theShapeWhat
+  // is found (as one shape or several parts). But we are also interested
+  // in the partial result, that is why this check is commented.
+  //if (!aGIP.IsFound()) {
+  //  SetErrorCode(NOT_FOUND_ANY);
+  //  return NULL;
+  //}
 
   const TopTools_DataMapOfShapeListOfShape& aDMSLS = aGIP.Images();
   if (!aDMSLS.IsBound(aWhat)) {
@@ -3871,7 +3874,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
 
   // the list of shapes aLSA contains the shapes 
   // of the Shape For Search that corresponds 
-  // to the  Argument aWhat
+  // to the Argument aWhat
   const TopTools_ListOfShape& aLSA = aDMSLS.Find(aWhat);
   if (aLSA.Extent() == 0) {
     SetErrorCode(NOT_FOUND_ANY); // Not found any Results
