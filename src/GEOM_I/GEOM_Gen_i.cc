@@ -345,7 +345,7 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::PublishInStudy(SALOMEDS::Study_ptr theStudy,
   aFather->UnRegister();
 
   //Set a name of the GEOM object
-  aShape->SetName(theName);
+  aShape->SetName(aShapeName.ToCString());
 
   return aResultSO._retn();
 }
