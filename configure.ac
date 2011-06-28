@@ -416,6 +416,7 @@ AC_OUTPUT([ \
   doc/salome/gui/GEOM/doxyfile_py \
   doc/salome/gui/GEOM/doxyfile_tui \
   doc/salome/gui/GEOM/static/header.html \
+  doc/salome/gui/GEOM/static/header_py.html \
   doc/salome/tui/Makefile \
   doc/salome/tui/doxyfile \
   doc/salome/tui/static/header.html \
