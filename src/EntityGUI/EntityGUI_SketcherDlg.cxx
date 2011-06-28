@@ -1503,8 +1503,8 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
 {
   QObject* send = (QObject*)sender();
-  Standard_Real vx, vy, vz, vs, minRad;
-  vx = vy = vz = vs = minRad =0.0;
+  Standard_Real vx, vy, vz, vs, minRad, dx, dy;
+  vx = vy = vz = vs = minRad = dx = dy = 0.0;
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
@@ -1534,18 +1534,26 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     vx = newValue;                        vxStr = newValueStr;
     vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
     vz = Group3Spin->SpinBox_DZ->value();
-    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0) ) {  
-      minRad = 0.5 * Sqrt(vx * vx + vy * vy);                             //Computation of the minimum acceptable radius for the arc calculation
+    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0) ) {
+      if (mySketchType == PT_ABS_RADIUS){
+        dx = vx - myLastX1;
+        dy = vy - myLastY1;
+      }
+      else{
+        dx = vx;
+        dy = vy;
+      }
+      minRad = 0.5 * Sqrt(dx * dx + dy * dy);                             //Computation of the minimum acceptable radius for the arc calculation
       if (aPrecision >= 0)    // 'f' format in the QString             
-	LastDecimal = aPrecision;
+        LastDecimal = aPrecision;
       else                    // 'g' format in the Qstring
-	LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
+        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
       minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal);  // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
-	if (vz < 0.0)
-	  Group3Spin->SpinBox_DZ->setValue( - minRad );
-	else 
-	   Group3Spin->SpinBox_DZ->setValue( minRad );
+        if (vz < 0.0)
+          Group3Spin->SpinBox_DZ->setValue( - minRad );
+        else 
+          Group3Spin->SpinBox_DZ->setValue( minRad );
       }
     }
     vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
@@ -1554,18 +1562,26 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     vx = Group3Spin->SpinBox_DX->value(); vxStr = Group3Spin->SpinBox_DX->text();
     vy = newValue;                        vyStr = newValueStr;
     vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
-    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0)){  
-      minRad = 0.5 * Sqrt(vx * vx + vy * vy);                            //Computation of the minimum acceptable radius for the arc calculation
+    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0)){
+      if (mySketchType == PT_ABS_RADIUS){
+        dx = vx - myLastX1;
+        dy = vy - myLastY1;
+      }
+      else{
+        dx = vx;
+        dy = vy;
+      }
+      minRad = 0.5 * Sqrt(dx * dx + dy * dy);                            //Computation of the minimum acceptable radius for the arc calculation
       if (aPrecision >= 0)    // 'f' format in the QString 
-	LastDecimal = aPrecision;
+         LastDecimal = aPrecision;
       else                    // 'g' format in the QString 
-	LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
+        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
       minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal); // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
-	if (vz < 0.0)
-	  Group3Spin->SpinBox_DZ->setValue( - minRad );
-	else 
-	   Group3Spin->SpinBox_DZ->setValue( minRad );
+        if (vz < 0.0)
+          Group3Spin->SpinBox_DZ->setValue( - minRad );
+        else 
+          Group3Spin->SpinBox_DZ->setValue( minRad );
       }
     }
     vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
