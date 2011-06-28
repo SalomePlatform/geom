@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_BooleanDriver.hxx>
 #include <GEOMImpl_IBoolean.hxx>
@@ -115,10 +114,10 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
     // check arguments for Mantis issue 0021019
     BRepCheck_Analyzer ana (aShape1, Standard_True);
     if (!ana.IsValid())
-      StdFail_NotDone::Raise("Common operation will not be performed, because argument shape is not valid");
+      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
     ana.Init(aShape2);
     if (!ana.IsValid())
-      StdFail_NotDone::Raise("Common operation will not be performed, because argument shape is not valid");
+      StdFail_NotDone::Raise("Boolean operation will not be performed, because argument shape is not valid");
 
     // perform COMMON operation
     if (aType == BOOLEAN_COMMON) {
