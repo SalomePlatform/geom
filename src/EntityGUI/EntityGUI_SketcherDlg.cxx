@@ -1352,9 +1352,6 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       }
     }
   }
-
-
-
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
@@ -1473,7 +1470,7 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
      myEditCurrentArgument = Group2Sel->LineEdit2;
      myEditCurrentArgument->setFocus();
    }
-
+   
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
@@ -1502,7 +1499,6 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
   QDialog::closeEvent( e );
 }
 
-//rnc TODO
 //=================================================================================
 // function : OnPointSelected
 // purpose  :
@@ -1513,7 +1509,7 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
   switch (getPnt2ConstructorId()){
     case 1:
       Group2Spin->SpinBox_DX->setValue( thePnt.X() );
-      Group2Spin->SpinBox_DY->setValue( thePnt.Y() ); 
+      Group2Spin->SpinBox_DY->setValue( thePnt.Y() );
       break;
     case 0:
       Group3Spin->SpinBox_DX->setValue( thePnt.X() );
@@ -1819,7 +1815,7 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     }
   }
 
-  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth ); 
 }
 
 
@@ -2139,31 +2135,38 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
     if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled( true );
-      //Group1Sel->buttonApply->setFocus();
+      this->activateWindow();
+      Group1Sel->buttonApply->setFocus();
     }
     if ( Group2Sel->isVisible() ) {
       Group2Sel->buttonApply->setEnabled( true );
-      //Group2Sel->buttonApply->setFocus();
+      this->activateWindow();
+      Group2Sel->buttonApply->setFocus();
     }
     if ( Group1Sel1Spin->isVisible() ) {
       Group1Sel1Spin->buttonApply->setEnabled( true );
-      //Group1Sel1Spin->buttonApply->setFocus();
+      this->activateWindow();
+      Group1Sel1Spin->buttonApply->setFocus();
     }
     if ( Group1Spin->isVisible() ) {
       Group1Spin->buttonApply->setEnabled( true );
-      //Group1Spin->buttonApply->setFocus();
+      this->activateWindow();
+      Group1Spin->buttonApply->setFocus();
     }
     if ( Group2Spin->isVisible() ) {
       Group2Spin->buttonApply->setEnabled( true );
-      //Group2Spin->buttonApply->setFocus();
+      this->activateWindow();
+      Group2Spin->buttonApply->setFocus();
     }
     if ( Group3Spin->isVisible() ) {
       Group3Spin->buttonApply->setEnabled( true );
-      //Group3Spin->buttonApply->setFocus();
+      this->activateWindow();
+      Group3Spin->buttonApply->setFocus();
     }
     if ( Group4Spin->isVisible() ) {
       Group4Spin->buttonApply->setEnabled( true );
-      //Group4Spin->buttonApply->setFocus();
+      this->activateWindow();
+      Group4Spin->buttonApply->setFocus();
     }
   }
 
