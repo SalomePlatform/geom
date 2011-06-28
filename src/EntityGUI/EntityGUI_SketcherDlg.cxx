@@ -1154,6 +1154,7 @@ void EntityGUI_SketcherDlg::setEnabledRedo( bool value )
 //=================================================================================
 void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
+  MESSAGE("EntityGUI_SketcherDlg::SelectionIntoArgument")
   myEditCurrentArgument->setText( "" );
   double tmpX = myX;
   double tmpY = myY;
@@ -1171,6 +1172,11 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
   aSelMgr->selectedObjects(aSelList);
 
   int nbSel = aSelList.Extent();
+  MESSAGE("NbSel = "<<nbSel)
+  if (nbSel == 0){
+    myX=tmpX;
+    myY=tmpY;
+  }
   if (nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1) {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
     if ( !CORBA::is_nil(aSelectedObject) ) {
@@ -1489,12 +1495,42 @@ void EntityGUI_SketcherDlg::enterEvent( QEvent* )
 //=================================================================================
 void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 {
+  MESSAGE("EntityGUI_SketcherDlg::closeEvent")
   //myGeometryGUI->SetState( -1 );
   disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
   myGeometryGUI->getApp()->updateActions();
   QDialog::closeEvent( e );
 }
 
+//rnc TODO
+//=================================================================================
+// function : OnPointSelected
+// purpose  :
+//=================================================================================
+void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, const gp_Pnt& thePnt)
+{
+  MESSAGE("EntityGUI_SketcherDlg::OnPointSelected")
+  switch (getPnt2ConstructorId()){
+    case 1:
+      Group2Spin->SpinBox_DX->setValue( thePnt.X() );
+      Group2Spin->SpinBox_DY->setValue( thePnt.Y() ); 
+      break;
+    case 0:
+      Group3Spin->SpinBox_DX->setValue( thePnt.X() );
+      Group3Spin->SpinBox_DY->setValue( thePnt.Y() );
+      break;
+    case 2:
+      if (modifiers == Qt::MetaModifier){                // Select center with Meta key
+        Group4Spin->SpinBox_DX->setValue( thePnt.X() );
+        Group4Spin->SpinBox_DY->setValue( thePnt.Y() );
+      }
+      else{                                              // The select end point
+        Group4Spin->SpinBox_DZ->setValue( thePnt.X() );
+        Group4Spin->SpinBox_DS->setValue( thePnt.Y() );
+      }
+      break;
+  }
+}
 
 //=================================================================================
 // function : ValueChangedInSpinBox()
@@ -1502,9 +1538,10 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 //=================================================================================
 void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
 {
+  MESSAGE("EntityGUI_SketcherDlg::ValueChangedInSpinBox")
   QObject* send = (QObject*)sender();
-  Standard_Real vx, vy, vz, vs, minRad;
-  vx = vy = vz = vs = minRad =0.0;
+  Standard_Real vx, vy, vz, vs, minRad, dx, dy;
+  vx = vy = vz = vs = minRad = dx = dy = 0.0;
 
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
@@ -1535,17 +1572,25 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     vy = Group3Spin->SpinBox_DY->value(); vyStr = Group3Spin->SpinBox_DY->text();
     vz = Group3Spin->SpinBox_DZ->value();
     if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0) ) {  
-      minRad = 0.5 * Sqrt(vx * vx + vy * vy);                             //Computation of the minimum acceptable radius for the arc calculation
+      if (mySketchType == PT_ABS_RADIUS){
+        dx = vx - myLastX1;
+        dy = vy - myLastY1;
+      }
+      else{
+        dx = vx;
+        dy = vy;
+      }
+      minRad = 0.5 * Sqrt(dx * dx + dy * dy);                             //Computation of the minimum acceptable radius for the arc calculation
       if (aPrecision >= 0)    // 'f' format in the QString             
-	LastDecimal = aPrecision;
+        LastDecimal = aPrecision;
       else                    // 'g' format in the Qstring
-	LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
+        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
       minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal);  // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
-	if (vz < 0.0)
-	  Group3Spin->SpinBox_DZ->setValue( - minRad );
-	else 
-	   Group3Spin->SpinBox_DZ->setValue( minRad );
+        if (vz < 0.0)
+          Group3Spin->SpinBox_DZ->setValue( - minRad );
+        else 
+          Group3Spin->SpinBox_DZ->setValue( minRad );
       }
     }
     vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
@@ -1554,18 +1599,26 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     vx = Group3Spin->SpinBox_DX->value(); vxStr = Group3Spin->SpinBox_DX->text();
     vy = newValue;                        vyStr = newValueStr;
     vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
-    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0)){  
-      minRad = 0.5 * Sqrt(vx * vx + vy * vy);                            //Computation of the minimum acceptable radius for the arc calculation
+    if ( (mySketchType == PT_REL_RADIUS || mySketchType == PT_ABS_RADIUS) && (vx != 0 || vy != 0)){
+      if (mySketchType == PT_ABS_RADIUS){
+        dx = vx - myLastX1;
+        dy = vy - myLastY1;
+      }
+      else{
+        dx = vx;
+        dy = vy;
+      }    
+      minRad = 0.5 * Sqrt(dx * dx + dy * dy);                            //Computation of the minimum acceptable radius for the arc calculation
       if (aPrecision >= 0)    // 'f' format in the QString 
-	LastDecimal = aPrecision;
+        LastDecimal = aPrecision;
       else                    // 'g' format in the QString 
-	LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
-      minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal); // Rounded up at the last allowed decimal place
+        LastDecimal = qAbs( aPrecision ) - ceil( log10(minRad) ); 
+        minRad = ceil(pow(10,LastDecimal) * minRad) / pow(10,LastDecimal); // Rounded up at the last allowed decimal place
       if ( Abs(vz) < minRad){
-	if (vz < 0.0)
-	  Group3Spin->SpinBox_DZ->setValue( - minRad );
-	else 
-	   Group3Spin->SpinBox_DZ->setValue( minRad );
+        if (vz < 0.0)
+          Group3Spin->SpinBox_DZ->setValue( - minRad );
+        else 
+          Group3Spin->SpinBox_DZ->setValue( minRad );
       }
     }
     vz = Group3Spin->SpinBox_DZ->value(); vzStr = Group3Spin->SpinBox_DZ->text();
@@ -2364,6 +2417,29 @@ void EntityGUI_SketcherDlg::FindLocalCS()
       myLCSList.push_back(aLCS);
     }
   }
+}
+
+//rnc TODO
+//=================================================================================
+// function : getPnt1ConstructorId()
+// purpose  :
+//=================================================================================
+int EntityGUI_SketcherDlg::getPnt1ConstructorId() const
+{ 
+  int buttonId = GroupPt->ButtonGroup->checkedId(); 
+  MESSAGE("buttonId = "<<buttonId)
+  return buttonId;
+}
+
+//=================================================================================
+// function : getPnt2ConstructorId()
+// purpose  :
+//=================================================================================
+int EntityGUI_SketcherDlg::getPnt2ConstructorId() const
+{ 
+  int buttonId = GroupPt2->ButtonGroup->checkedId(); 
+  MESSAGE("buttonId = "<<buttonId)
+  return buttonId;
 }
 
 //=================================================================================

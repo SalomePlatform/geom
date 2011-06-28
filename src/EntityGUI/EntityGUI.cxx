@@ -29,14 +29,23 @@
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
 
+#include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
 #include <OCCViewer_ViewModel.h>
 #include <OCCViewer_ViewManager.h>
+#include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewPort3d.h>
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>
 
 #include <TopoDS_Shape.hxx>
+#include <TopoDS.hxx>
+#include <BRep_Tool.hxx>
+#include <ProjLib.hxx>
+#include <ElSLib.hxx>
+
+#include <QMouseEvent>
 
 #include "EntityGUI_SketcherDlg.h" // Sketcher
 #include "EntityGUI_3DSketcherDlg.h" // Sketcher
@@ -94,6 +103,77 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   return true;
 }
 
+//=================================================================================
+// function : 0nMousePress()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+{
+  MESSAGE("EntityGUI::OnMousePress")
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+
+  // Create Point dialog, OCC viewer 
+  if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 ) &&
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
+       pe->modifiers() != Qt::ControlModifier ) {
+    MESSAGE("Premier if ok!")
+    EntityGUI_SketcherDlg* aPntDlg = (EntityGUI_SketcherDlg*) aDlg;
+    if ( aPntDlg->acceptMouseEvent() ) {
+      OCCViewer_Viewer* anOCCViewer =
+        ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
+      Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+
+      gp_Pnt aPnt;    
+
+      ic->InitSelected();
+      if ( pe->modifiers() == Qt::ShiftModifier )
+        ic->ShiftSelect();  // Append selection
+      else
+        ic->Select();       // New selection
+
+      ic->InitSelected();
+      if ( ic->MoreSelected() ) {
+        TopoDS_Shape aShape = ic->SelectedShape();
+        if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+          aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+      }
+      else {
+        OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+        aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+      }
+      
+      Qt::KeyboardModifiers modifiers = pe->modifiers();
+      aPntDlg->OnPointSelected( modifiers, aPnt );  // "feed" the point to point construction dialog
+    } // acceptMouseEvent()
+  }
+  return false;
+}
+
+//=======================================================================
+// function : ConvertClickToPoint()
+// purpose  : Returns the point clicked in 3D view
+//=======================================================================
+gp_Pnt EntityGUI::ConvertClickToPoint( int x, int y, Handle(V3d_View) aView )
+{
+  V3d_Coordinate XEye, YEye, ZEye, XAt, YAt, ZAt;
+  aView->Eye( XEye, YEye, ZEye );
+
+  aView->At( XAt, YAt, ZAt );
+  gp_Pnt EyePoint( XEye, YEye, ZEye );
+  gp_Pnt AtPoint( XAt, YAt, ZAt );
+
+  gp_Vec EyeVector( EyePoint, AtPoint );
+  gp_Dir EyeDir( EyeVector );
+
+  gp_Pln PlaneOfTheView = gp_Pln( AtPoint, EyeDir );
+  Standard_Real X, Y, Z;
+  aView->Convert( x, y, X, Y, Z );
+  gp_Pnt ConvertedPoint( X, Y, Z );
+
+  gp_Pnt2d ConvertedPointOnPlane = ProjLib::Project( PlaneOfTheView, ConvertedPoint );
+  gp_Pnt ResultPoint = ElSLib::Value( ConvertedPointOnPlane.X(), ConvertedPointOnPlane.Y(), PlaneOfTheView );
+  return ResultPoint;
+}
 
 //=====================================================================================
 // function : DisplaySimulationShape() 
@@ -101,6 +181,7 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=====================================================================================
 void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Shape& S2 ) 
 {
+  MESSAGE("EntityGUI::DisplaySimulationShape")
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 
@@ -149,6 +230,7 @@ void EntityGUI::DisplaySimulationShape( const TopoDS_Shape& S1, const TopoDS_Sha
 //==================================================================================
 void EntityGUI::EraseSimulationShape()
 {
+  MESSAGE("EntityGUI::EraseSimulationShape")
   SalomeApp_Application* app = getGeometryGUI()->getApp();
   if ( !app ) return;
 

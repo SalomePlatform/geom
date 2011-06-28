@@ -32,8 +32,10 @@
 #include <SALOMEDSClient.hxx>
 
 #include <AIS_Shape.hxx>
+#include <V3d_View.hxx>
 
 class TopoDS_Shape;
+
 
 //=================================================================================
 // class    : EntityGUI
@@ -46,6 +48,9 @@ public :
   ~EntityGUI();
 
   bool              OnGUIEvent( int, SUIT_Desktop* );
+  bool              OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
+  
+  gp_Pnt            ConvertClickToPoint( int x, int y, Handle(V3d_View) aView );
 
   void              DisplaySimulationShape( const TopoDS_Shape&, const TopoDS_Shape& ); 
   void              EraseSimulationShape();
@@ -57,6 +62,7 @@ public:
   // AIS shape used only during topo/geom simulations
   Handle(AIS_Shape) mySimulationShape1;
   Handle(AIS_Shape) mySimulationShape2;
+  
 };
 
 #endif // ENTITYGUI_H

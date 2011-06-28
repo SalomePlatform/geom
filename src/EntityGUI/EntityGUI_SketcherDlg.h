@@ -72,6 +72,9 @@ public:
   ~EntityGUI_SketcherDlg();
 
   bool eventFilter (QObject* object, QEvent* event);
+  
+  bool                               acceptMouseEvent() const { return ( getPnt1ConstructorId() == 1 );  } //accept mouse event only on absolute selection mode
+  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt& ); // called by EntityGUI::OnMousePress()
 
 protected:
   void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
@@ -106,6 +109,8 @@ private:
   bool                               createShapes( GEOM::GEOM_Object_ptr,
                                                    TopoDS_Shape&,
                                                    TopoDS_Shape& );
+  int                                getPnt1ConstructorId() const;
+  int                                getPnt2ConstructorId() const;
 
 private:
   int                                myConstructorId;
@@ -126,13 +131,13 @@ private:
   QStringList                        myUndoParameters;
 
   Standard_Real                      myX, myY, myDX, myDY;
-  Standard_Real			     myXc, myYc, myDXc, myDYc;
+  Standard_Real                      myXc, myYc, myDXc, myDYc;
   Standard_Real                      myLength, myAngle, myRadius;
   Standard_Real                      myLastX1, myLastY1;
   Standard_Real                      myLastX2, myLastY2;
 
   QString                            myXStr, myYStr, myDXStr, myDYStr;
-  QString			     myXcStr, myYcStr, myDXcStr, myDYcStr;
+  QString                            myXcStr, myYcStr, myDXcStr, myDYcStr;
   QString                            myLengthStr, myAngleStr, myRadiusStr;
   QString                            myLastX1Str, myLastY1Str;
   QString                            myLastX2Str, myLastY2Str;                            
@@ -152,7 +157,7 @@ private:
   EntityGUI_3Spin1Check*             Group3Spin;
   EntityGUI_4Spin1Check*             Group4Spin;
 
-  QLabel*			     myErrLabel;
+  QLabel*                            myErrLabel;
 
   QGroupBox*                         GroupBox1;
   QComboBox*                         ComboBox1;
@@ -166,7 +171,9 @@ private:
 
   QList<gp_Ax3>                      myLCSList;
 
-  int				     myCheckFlag;
+  int                                myCheckFlag;
+  
+  TopAbs_ShapeEnum                   myNeedType;
 
 private:
   enum SketchState { FIRST_POINT, NEXT_POINT };
