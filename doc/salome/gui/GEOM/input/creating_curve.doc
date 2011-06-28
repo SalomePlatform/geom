@@ -85,7 +85,7 @@ types of curves.
 <ul>
 <li><b>X(t)equation, Y(t)equation, Z(t)equation</b> are python
 expressions for X, Y and Z coordinates of the basic points of the curve.</li>
-<li><b>Min t, Max t</b> are minimum and maximun values of the parameter \b t.</li>
+<li><b>Min t, Max t</b> are minimum and maximum values of the parameter \b t.</li>
 <li><b>Step</b> is the step of the parameter \b t.</li>
 </ul> 
 
