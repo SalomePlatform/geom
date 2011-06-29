@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GroupGUI_GroupDlg.cxx
@@ -72,7 +71,8 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   : GEOMBase_Skeleton(theGeometryGUI, parent, false),
     myMode(mode),
     myBusy(false),
-    myIsShapeType(false)
+    myIsShapeType(false),
+    myIsHiddenMain(false)
 {
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 
@@ -184,6 +184,11 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
 
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
 {
+  if (myIsHiddenMain) {
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Display(myMainObj);
+    myIsHiddenMain = false;
+  }
 }
 
 //=================================================================================
@@ -461,6 +466,11 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
         GEOMBase::ConvertIOinGEOMObject(aSelList.First());
 
       if (GEOMBase::IsShape(anObj)) {
+        if (myIsHiddenMain) {
+          GEOM_Displayer* aDisplayer = getDisplayer();
+          aDisplayer->Display(myMainObj);
+          myIsHiddenMain = false;
+        }
         myMainObj = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
         // activate subshapes selection by default
@@ -470,6 +480,11 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
       }
     }
     else {
+      if (myIsHiddenMain) {
+        GEOM_Displayer* aDisplayer = getDisplayer();
+        aDisplayer->Display(myMainObj);
+        myIsHiddenMain = false;
+      }
       myMainObj = GEOM::GEOM_Object::_nil();
     }
   }
@@ -788,7 +803,15 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
-    aDisplayer->Erase(myMainObj, false, false);
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+    if (view) {
+      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+      if (view->isVisible(io)) {
+        aDisplayer->Erase(myMainObj, false, false);
+        myIsHiddenMain = true;
+      }
+    }
 
     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 

@@ -96,6 +96,7 @@ private:
   Mode                                myMode;
   bool                                myBusy;
   bool                                myIsShapeType;
+  bool                                myIsHiddenMain;
   GEOM::GEOM_Object_var               myMainObj;
   GEOM::GEOM_Object_var               myGroup;
   GEOM::GEOM_Object_var               myInPlaceObj;
