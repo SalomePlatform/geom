@@ -932,7 +932,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
       int id = myIdList->item(ii)->text().toInt();
       if (subSelectionWay() != ALL_SUBSHAPES &&
           !myMain2InPlaceIndices.IsBound(id)) {
-        myIdList->item(ii)->setSelected(false);
+        //myIdList->item(ii)->setSelected(false);
       }
       else {
         anIds.Add(id);
