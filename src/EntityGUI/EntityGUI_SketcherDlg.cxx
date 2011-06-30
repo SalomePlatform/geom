@@ -344,29 +344,30 @@ EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 //=================================================================================
 bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
 {
+  MESSAGE("EntityGUI_SketcherDlg::eventFilter")
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* ke = (QKeyEvent*)event;
-    if (ke->key() == Qt::Key_Return) {
+    if ( ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter ) {
       if (object == Group1Spin->SpinBox_DX) {
-        Group1Spin->buttonApply->animateClick();
+        Group1Spin->buttonApply->click();
         return true;
       } else if (object == Group1Sel1Spin->SpinBox_DX) {
-        Group1Sel1Spin->buttonApply->animateClick();
+        Group1Sel1Spin->buttonApply->click();
         return true;
       } else if (object == Group2Spin->SpinBox_DX ||
                  object == Group2Spin->SpinBox_DY) {
-        Group2Spin->buttonApply->animateClick();
+        Group2Spin->buttonApply->click();
         return true;
       } else if (object == Group3Spin->SpinBox_DX ||
                  object == Group3Spin->SpinBox_DY ||
                  object == Group3Spin->SpinBox_DZ) {
-        Group3Spin->buttonApply->animateClick();
+        Group3Spin->buttonApply->click();
         return true;
       } else if (object == Group4Spin->SpinBox_DX ||
                  object == Group4Spin->SpinBox_DY ||
                  object == Group4Spin->SpinBox_DZ ||
                  object == Group4Spin->SpinBox_DS) {
-        Group4Spin->buttonApply->animateClick();
+        Group4Spin->buttonApply->click();
         return true;
       }
     }
@@ -385,6 +386,7 @@ bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
 void EntityGUI_SketcherDlg::Init()
 {
   /* init variables */
+  autoApply = false;
   myEditCurrentArgument = Group1Sel->LineEdit1;
   myCommand.append( "Sketcher" );
   myUndoCommand.append( "Sketcher" );
@@ -1349,13 +1351,19 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       }
     }
   }
-  if (nbSel == 0){
-    myX=tmpX;
-    myY=tmpY;
+  if (nbSel == 0){                 // If no object selected
+    myX=tmpX;                      // Don't change the point coordinates
+    myY=tmpY;                      // and don't redisplay the preview
   }
-  else{
+  else if(!autoApply){
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   }
+  if ( autoApply ){    
+    ClickOnApply();
+    autoApply = false;
+  }
+  this->activateWindow();
+  
 }
 
 
@@ -1444,6 +1452,7 @@ void EntityGUI_SketcherDlg::DeactivateActiveDialog()
 //=================================================================================
 void EntityGUI_SketcherDlg::ActivateThisDialog()
 {
+  MESSAGE("EntityGUI_SketcherDlg::ActivateThisDialog()")
   myGeometryGUI->EmitSignalDeactivateDialog();
   setEnabled( true );
   myGeometryGUI->SetActiveDialogBox( this );
@@ -1512,6 +1521,10 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
   
   double x, y;
   x = y = 0;
+  
+  autoApply = ( getPnt2ConstructorId() == 1 && false );  // If no additional argument needed after selection
+                                                         // -> apply automatically --> disabled for now
+  
   if ( getPnt1ConstructorId() == 0 ){                    // Relative selection mode
     x = thePnt.X() - myLastX1;
     y = thePnt.Y() - myLastY1;
@@ -1524,20 +1537,23 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
     case 1:
       Group2Spin->SpinBox_DX->setValue( x );
       Group2Spin->SpinBox_DY->setValue( y );
+      Group2Spin->buttonApply->setFocus();               // Previous setFocus (during preview) may have been inoperative if it was disabled 
       break;
     case 0:
       Group3Spin->SpinBox_DX->setValue( x );
       Group3Spin->SpinBox_DY->setValue( y );
+      Group3Spin->buttonApply->setFocus(); 
       break;
     case 2:
       if (modifiers == Qt::MetaModifier){                // Select center with Meta key
         Group4Spin->SpinBox_DX->setValue( x );
         Group4Spin->SpinBox_DY->setValue( y );
       }
-      else{                                              // The select end point
+      else{                                              // Select end point
         Group4Spin->SpinBox_DZ->setValue( x );
         Group4Spin->SpinBox_DS->setValue( y );
       }
+      Group4Spin->buttonApply->setFocus(); 
       break;
   }
 }
@@ -1828,8 +1844,9 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       myLengthStr = vsStr;
     }
   }
-
-  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  
+  if (!autoApply) 
+    GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   
   double x, y, xc, yc;
   x = y = xc = yc = 0.0;
@@ -2169,38 +2186,24 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 
     if ( Group1Sel->isVisible() ) {
       Group1Sel->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group1Sel->buttonApply->setFocus();
     }
     if ( Group2Sel->isVisible() ) {
       Group2Sel->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group2Sel->buttonApply->setFocus();
     }
     if ( Group1Sel1Spin->isVisible() ) {
-      Group1Sel1Spin->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group1Sel1Spin->buttonApply->setFocus();
+      Group1Sel1Spin->buttonApply->setEnabled( true );;
     }
     if ( Group1Spin->isVisible() ) {
       Group1Spin->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group1Spin->buttonApply->setFocus();
     }
     if ( Group2Spin->isVisible() ) {
       Group2Spin->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group2Spin->buttonApply->setFocus();
     }
     if ( Group3Spin->isVisible() ) {
       Group3Spin->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group3Spin->buttonApply->setFocus();
     }
     if ( Group4Spin->isVisible() ) {
       Group4Spin->buttonApply->setEnabled( true );
-      this->activateWindow();
-      Group4Spin->buttonApply->setFocus();
     }
   }
 
@@ -2482,7 +2485,6 @@ void EntityGUI_SketcherDlg::FindLocalCS()
   }
 }
 
-//rnc TODO
 //=================================================================================
 // function : getPnt1ConstructorId()
 // purpose  :
@@ -2490,7 +2492,7 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 int EntityGUI_SketcherDlg::getPnt1ConstructorId() const
 { 
   int buttonId = GroupPt->ButtonGroup->checkedId(); 
-  MESSAGE("buttonId = "<<buttonId)
+//   MESSAGE("buttonId = "<<buttonId)
   return buttonId;
 }
 
@@ -2501,7 +2503,7 @@ int EntityGUI_SketcherDlg::getPnt1ConstructorId() const
 int EntityGUI_SketcherDlg::getPnt2ConstructorId() const
 { 
   int buttonId = GroupPt2->ButtonGroup->checkedId(); 
-  MESSAGE("buttonId = "<<buttonId)
+//   MESSAGE("buttonId = "<<buttonId)
   return buttonId;
 }
 

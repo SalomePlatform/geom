@@ -128,6 +128,7 @@ private:
 
   bool                               myIsAllAdded;
   bool                               myIsApply;
+  bool                               autoApply;
 
   QLineEdit*                         myEditCurrentArgument;   /* Current LineEdit */
 
