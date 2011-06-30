@@ -51,6 +51,7 @@
 #include <TopoDS.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_MakeVertex.hxx>
 #include <Sketcher_Profile.hxx>
 
 #include <SalomeApp_Study.h>
@@ -1173,10 +1174,6 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 
   int nbSel = aSelList.Extent();
   MESSAGE("NbSel = "<<nbSel)
-  if (nbSel == 0){
-    myX=tmpX;
-    myY=tmpY;
-  }
   if (nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1) {
     GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
     if ( !CORBA::is_nil(aSelectedObject) ) {
@@ -1352,7 +1349,13 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       }
     }
   }
-  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  if (nbSel == 0){
+    myX=tmpX;
+    myY=tmpY;
+  }
+  else{
+    GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  }
 }
 
 
@@ -1506,23 +1509,34 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, const gp_Pnt& thePnt)
 {
   MESSAGE("EntityGUI_SketcherDlg::OnPointSelected")
+  
+  double x, y;
+  x = y = 0;
+  if ( getPnt1ConstructorId() == 0 ){                    // Relative selection mode
+    x = thePnt.X() - myLastX1;
+    y = thePnt.Y() - myLastY1;
+  }
+  else {
+    x = thePnt.X();
+    y = thePnt.Y();
+  }
   switch (getPnt2ConstructorId()){
     case 1:
-      Group2Spin->SpinBox_DX->setValue( thePnt.X() );
-      Group2Spin->SpinBox_DY->setValue( thePnt.Y() );
+      Group2Spin->SpinBox_DX->setValue( x );
+      Group2Spin->SpinBox_DY->setValue( y );
       break;
     case 0:
-      Group3Spin->SpinBox_DX->setValue( thePnt.X() );
-      Group3Spin->SpinBox_DY->setValue( thePnt.Y() );
+      Group3Spin->SpinBox_DX->setValue( x );
+      Group3Spin->SpinBox_DY->setValue( y );
       break;
     case 2:
       if (modifiers == Qt::MetaModifier){                // Select center with Meta key
-        Group4Spin->SpinBox_DX->setValue( thePnt.X() );
-        Group4Spin->SpinBox_DY->setValue( thePnt.Y() );
+        Group4Spin->SpinBox_DX->setValue( x );
+        Group4Spin->SpinBox_DY->setValue( y );
       }
       else{                                              // The select end point
-        Group4Spin->SpinBox_DZ->setValue( thePnt.X() );
-        Group4Spin->SpinBox_DS->setValue( thePnt.Y() );
+        Group4Spin->SpinBox_DZ->setValue( x );
+        Group4Spin->SpinBox_DS->setValue( y );
       }
       break;
   }
@@ -1815,7 +1829,27 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
     }
   }
 
-  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth ); 
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  
+  double x, y, xc, yc;
+  x = y = xc = yc = 0.0;
+  if ( mySketchType == PT_ABS_CENTER || mySketchType == PT_REL_CENTER )
+  {
+    if ( mySketchType == PT_REL_CENTER ){
+      x  = myDX  + myLastX1;
+      y  = myDY  + myLastY1;
+      xc = myDXc + myLastX1;
+      yc = myDYc + myLastY1;
+    }
+    else {
+      x  = myX ;
+      y  = myY ;
+      xc = myXc;
+      yc = myYc;
+    }
+    displayPntPreview(xc,yc);
+    displayPntPreview(x,y);
+  }
 }
 
 
@@ -2021,7 +2055,7 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     Format = 'g';                                  // g --> DigNum is the maximum number of significant digits 
     
   QString aParameters;
-
+  
   if ( mySketchState == FIRST_POINT ) {
     myLastX2 = myX;
     myLastY2 = myY;
@@ -2246,6 +2280,32 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   getDisplayer()->UnsetName();
 
   // Enable activation of displayed objects
+  getDisplayer()->SetToActivate( true );
+}
+
+//================================================================
+// Function : displayPntPreview
+// Purpose  : creates a TopoDS_VERTEX and display a preview of it
+//================================================================
+void EntityGUI_SketcherDlg::displayPntPreview(const double x,
+                                              const double y,
+                                              bool append,
+                                              bool update
+                                             )
+{
+  gp_Pnt aPnt = gp_Pnt(x,y,0.0);
+  BRepBuilderAPI_MakeVertex mkVertex (aPnt);
+  TopoDS_Shape aVertex = mkVertex.Shape();
+  
+  // Disable activation of selection
+  getDisplayer()->SetToActivate( false );
+  
+  // Build prs
+  SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aVertex );
+  if ( aPrs != 0 && !aPrs->IsNull() )
+    GEOMBase_Helper::displayPreview( aPrs, append, update );
+  
+  // Enable back activation of selection
   getDisplayer()->SetToActivate( true );
 }
 

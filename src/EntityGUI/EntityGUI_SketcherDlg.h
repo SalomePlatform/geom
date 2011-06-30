@@ -73,8 +73,9 @@ public:
 
   bool eventFilter (QObject* object, QEvent* event);
   
-  bool                               acceptMouseEvent() const { return ( getPnt1ConstructorId() == 1 );  } //accept mouse event only on absolute selection mode
-  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt& ); // called by EntityGUI::OnMousePress()
+  bool                               acceptMouseEvent() const { return ( getPnt1ConstructorId() == 1 
+                                                                      || getPnt1ConstructorId() == 0 );  }   //accept mouse event only on absolute and relative selection mode
+  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt& );                // called by EntityGUI::OnMousePress()
 
 protected:
   void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
@@ -105,6 +106,12 @@ private:
                                                      const double = -1,
                                                      const int  = -1,
                                                      const int  = -1);
+  
+  void                               displayPntPreview( const double = 0.0,
+                                                        const double = 0.0,
+                                                        bool /*append*/ = true,
+                                                        bool /*update*/ = true
+                                                      );
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
                                                    TopoDS_Shape&,
