@@ -1522,16 +1522,30 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
   double x, y;
   x = y = 0;
   
+  BRepBuilderAPI_MakeVertex mkVertex (thePnt);
+  TopoDS_Shape aShape = mkVertex.Shape();
+  
+  // Taking into account LocalCS
+  gp_Ax3 aWPlane = GetActiveLocalCS();
+  gp_Trsf aTrans;
+
+  aTrans.SetTransformation(aWPlane);
+  BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
+  aShape = aTransformation.Shape();
+  
+  gp_Pnt aTrsfPnt; 
+  GEOMBase::VertexToPoint( aShape, aTrsfPnt );
+  
   autoApply = ( getPnt2ConstructorId() == 1 && false );  // If no additional argument needed after selection
                                                          // -> apply automatically --> disabled for now
   
   if ( getPnt1ConstructorId() == 0 ){                    // Relative selection mode
-    x = thePnt.X() - myLastX1;
-    y = thePnt.Y() - myLastY1;
+    x = aTrsfPnt.X() - myLastX1;
+    y = aTrsfPnt.Y() - myLastY1;
   }
   else {
-    x = thePnt.X();
-    y = thePnt.Y();
+    x = aTrsfPnt.X();
+    y = aTrsfPnt.Y();
   }
   switch (getPnt2ConstructorId()){
     case 1:
@@ -2296,15 +2310,29 @@ void EntityGUI_SketcherDlg::displayPntPreview(const double x,
                                               bool update
                                              )
 {
+  // Get globalCS and working plane
+  gp_Ax3 globalCS = myLCSList.first(); //gp_Ax3(aOrigin, aDirZ, aDirX);
+  gp_Ax3 aWPlane  = GetActiveLocalCS();
+  
+  // Build point in localCS
   gp_Pnt aPnt = gp_Pnt(x,y,0.0);
+  
+  // Get transfomation from local to global CS
+  gp_Trsf aTrans;
+  aTrans.SetTransformation(aWPlane, globalCS);
+  
   BRepBuilderAPI_MakeVertex mkVertex (aPnt);
-  TopoDS_Shape aVertex = mkVertex.Shape();
+  TopoDS_Shape aLocalVertex = mkVertex.Shape();
+  
+  // Perform transformation
+  BRepBuilderAPI_Transform aTransformation (aLocalVertex, aTrans, Standard_False);
+  TopoDS_Shape aGlobalVertex = aTransformation.Shape();
   
   // Disable activation of selection
   getDisplayer()->SetToActivate( false );
   
-  // Build prs
-  SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aVertex );
+  // Build prs with vertex in globalCS
+  SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aGlobalVertex );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
   
