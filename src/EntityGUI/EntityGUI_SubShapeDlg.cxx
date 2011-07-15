@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : EntityGUI_SubShapeDlg.cxx
@@ -64,7 +63,9 @@
 //=================================================================================
 EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidget* parent,
                                               bool modal, Qt::WindowFlags fl)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl),
+    myWithShape(true),
+    myIsHiddenMain(false)
 {
   QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_SUBSHAPE")));
   QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
@@ -111,6 +112,11 @@ EntityGUI_SubShapeDlg::EntityGUI_SubShapeDlg(GeometryGUI* theGeometryGUI, QWidge
 //=================================================================================
 EntityGUI_SubShapeDlg::~EntityGUI_SubShapeDlg()
 {
+  if (myIsHiddenMain) {
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Display(myObject);
+    myIsHiddenMain = false;
+  }
 }
 
 //=================================================================================
@@ -289,6 +295,12 @@ void EntityGUI_SubShapeDlg::SelectionIntoArgument()
     return;
   }
 
+  if (myIsHiddenMain) {
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Display(myObject);
+    myIsHiddenMain = false;
+  }
+
   TopoDS_Shape S = GEOMBase::GetTopoFromSelection(aSelList);
   if (S.IsNull() || S.ShapeType() == TopAbs_VERTEX) {
     myObject = GEOM::GEOM_Object::_nil();
@@ -393,6 +405,11 @@ void EntityGUI_SubShapeDlg::LineEditReturnPressed()
 //=================================================================================
 void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 {
+  if (myIsHiddenMain) {
+    GEOM_Displayer* aDisplayer = getDisplayer();
+    aDisplayer->Display(myObject);
+    myIsHiddenMain = false;
+  }
   myObject = GEOM::GEOM_Object::_nil();
   myShape.Nullify();
   myEditCurrentArgument->setText("");
@@ -496,7 +513,7 @@ unsigned int EntityGUI_SubShapeDlg::NumberOfSubShapes(const TopoDS_Shape& S,
 void EntityGUI_SubShapeDlg::updateButtonState()
 {
   if (SUIT_Session::session()->activeApplication()->desktop()->activeWindow()->getViewManager()->getType() != OCCViewer_Viewer::Type() ||
-       myObject->_is_nil() || shapeType() == TopAbs_SHAPE || shapeType() == TopAbs_COMPOUND) {
+      myObject->_is_nil() || shapeType() == TopAbs_SHAPE || shapeType() == TopAbs_COMPOUND) {
     GroupPoints->CheckButton1->setChecked(false);
     GroupPoints->CheckButton1->setEnabled(false);
   }
@@ -641,7 +658,15 @@ void EntityGUI_SubShapeDlg::activateSelection()
   if (!myObject->_is_nil() && !isAllSubShapes())
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
-    aDisplayer->Erase(myObject, false, false);
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+    if (view) {
+      CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+      if (view->isVisible(io)) {
+        aDisplayer->Erase(myObject, false, false);
+        myIsHiddenMain = true;
+      }
+    }
 
     int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 

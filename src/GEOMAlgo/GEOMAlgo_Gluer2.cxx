@@ -19,7 +19,6 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:        GEOMAlgo_Gluer2.cxx
 // Author:      Peter KURNEV
 

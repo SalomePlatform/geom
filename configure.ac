@@ -24,7 +24,7 @@
 # Modified by : Alexander BORODIN (OCN) - autotools usage
 # Created from configure.in.base
 #
-AC_INIT([Salome2 Project GEOM module], [6.3.0], [webmaster.salome@opencascade.com], [SalomeGEOM])
+AC_INIT([Salome2 Project GEOM module], [6.3.1], [webmaster.salome@opencascade.com], [SalomeGEOM])
 AC_CONFIG_AUX_DIR(adm_local/unix/config_files)
 AC_CANONICAL_HOST
 AC_CANONICAL_TARGET
@@ -416,6 +416,7 @@ AC_OUTPUT([ \
   doc/salome/gui/GEOM/doxyfile_py \
   doc/salome/gui/GEOM/doxyfile_tui \
   doc/salome/gui/GEOM/static/header.html \
+  doc/salome/gui/GEOM/static/header_py.html \
   doc/salome/tui/Makefile \
   doc/salome/tui/doxyfile \
   doc/salome/tui/static/header.html \

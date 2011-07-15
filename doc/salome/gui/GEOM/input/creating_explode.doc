@@ -16,7 +16,7 @@ obtain from it.
 variety of ways:
 <ul>
 <li><em>geompy.ExtractShapes(Shape, Type, isSorted)</em> explodes a
-Shape on subshapes of a given Type and returns a List of sub-shapes.
+Shape into subshapes of a given Type and returns a List of sub-shapes.
 This method does not return the Shape itself if it matches the
 Type.</li>
 <li><em>geompy.SubShapeAll(Shape, Type)</em> explodes a Shape on

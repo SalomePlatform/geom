@@ -41,17 +41,21 @@ the connection points (sharp bend) is not processed.
 
 \image html edge2.png "Create edge from wire"
 
-The third case allows building edges of desired length on any existing
-curve (selected existing edge). <b>Start Point</b> parameter is optional.
-Any point can be selected for it, the new edge will begin at the end
-of initial edge, close to the selected point. <b>Length</b> can exceed
-the initial edge's length or be negative to extrapolate existing edge
-along its curve (except bezier and b-spline curves).
+Thirdly, it is possible to build an edge of required \b Length on any existing
+\b Edge. 
+
+<b>Start Point</b> parameter is optional:
+- if used, it allows selecting any existing point - in such a case the start point
+of the new edge will be chosen as start or end point of the selected \b Edge 
+whatever is closest to the selected <b>Start Point</b> 
+- if it is missed, the start point of the initial edge is used
+
+<b>Length</b> can exceed the length of the initial edge length or be
+negative. In this case the existing edge is extrapolated
+along its curve (except for bezier and b-spline curves).
 
 <b>TUI Command:</b> <em>geompy.MakeEdgeOnCurveByLength(Edge, Length, StartPoint = None)</em><br>
 <b>Arguments:</b> Name + 1 edge + Length + 1 Vertex
-(StartPoint parameter is optional, it allows switching from one end of
-initial edge to another. Length can exceed the initial edge's length or be negative).
 
 \image html edge3.png "Create edge on curve"
 

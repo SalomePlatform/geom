@@ -88,6 +88,8 @@ private:
 
   bool                                myWithShape;
 
+  bool                                myIsHiddenMain;
+
   DlgRef_1Sel1List1Check3Btn*         GroupPoints;
 };
 

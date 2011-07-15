@@ -4344,7 +4344,7 @@ Otherwise the dimensions will be kept without modifications.</translation>
     </message>
     <message>
         <source>GEOM_CURVE_ANALITICAL</source>
-        <translation>Analitical</translation>
+        <translation>Analytical</translation>
     </message>        
 </context>
 <context>

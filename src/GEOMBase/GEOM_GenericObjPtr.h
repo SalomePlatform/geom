@@ -25,6 +25,8 @@
 #ifndef GEOM_GenericObjPtr_H
 #define GEOM_GenericObjPtr_H
 
+#include "GEOM_GEOMBase.hxx"
+
 #include "SALOMEconfig.h"
 #include CORBA_SERVER_HEADER(GEOM_Gen)
 
@@ -228,7 +230,7 @@ namespace GEOM
   typedef GenericObjPtr<GEOM::GEOM_IGroupOperations>     GroupOpPtr;
   typedef GenericObjPtr<GEOM::GEOM_IAdvancedOperations>  AdvancedOpPtr;
 
-  template<> bool GenericObjPtr<GEOM::GEOM_Object>::isSame( GEOM::GEOM_Object_ptr theLeft, GEOM::GEOM_Object_ptr theRight );
+  template<> bool GEOMBASE_EXPORT GenericObjPtr<GEOM::GEOM_Object>::isSame( GEOM::GEOM_Object_ptr theLeft, GEOM::GEOM_Object_ptr theRight );
 }
 
 #endif // GEOM_GenericObjPtr_H
