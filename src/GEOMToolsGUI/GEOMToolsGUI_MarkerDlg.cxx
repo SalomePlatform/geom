@@ -15,15 +15,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File   : GEOMToolsGUI_MarkerDlg.cxx
 // Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
-//
+
 #include "GEOMToolsGUI_MarkerDlg.h"
 
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <QtxComboBox.h>
 #include <SUIT_ResourceMgr.h>
@@ -212,33 +213,33 @@ void GEOMToolsGUI_MarkerDlg::accept()
     if (window && window->getViewManager()) {
       int mgrId = window->getViewManager()->getGlobalId();
       if ( selMgr ) {
-	SALOME_ListIO selected;
-	selMgr->selectedObjects( selected );
-	if ( !selected.IsEmpty() ) {
-	  _PTR(Study) study = getStudy()->studyDS();
-	  for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
-	    _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
-	    GEOM::GEOM_Object_var anObject =
-	      GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
-	    if ( !anObject->_is_nil() ) {
-	      if ( myWGStack->currentIndex() == 0 ) {
-		anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
-		QString aMarker = "%1%2%3";
-		aMarker = aMarker.arg(getMarkerType());
-		aMarker = aMarker.arg(DIGIT_SEPARATOR);
-		aMarker = aMarker.arg(getStandardMarkerScale());
-		getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, aMarker);
-	      }
-	      else if ( getCustomMarkerID() > 0 ) {
-		anObject->SetMarkerTexture( getCustomMarkerID() );
-		getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, QString::number(getCustomMarkerID()));
-	      }
-	    }
-	  }
-	  GEOM_Displayer displayer( getStudy() );
-	  displayer.Redisplay( selected, true );
-	  selMgr->setSelectedObjects( selected );
-	}
+        SALOME_ListIO selected;
+        selMgr->selectedObjects( selected );
+        if ( !selected.IsEmpty() ) {
+          _PTR(Study) study = getStudy()->studyDS();
+          for ( SALOME_ListIteratorOfListIO it( selected ); it.More(); it.Next() ) {
+            _PTR(SObject) aSObject( study->FindObjectID( it.Value()->getEntry() ) );
+            GEOM::GEOM_Object_var anObject =
+              GEOM::GEOM_Object::_narrow( GeometryGUI::ClientSObjectToObject( aSObject ) );
+            if ( !anObject->_is_nil() ) {
+              if ( myWGStack->currentIndex() == 0 ) {
+                anObject->SetMarkerStd( getMarkerType(), getStandardMarkerScale() );
+                QString aMarker = "%1%2%3";
+                aMarker = aMarker.arg(getMarkerType());
+                aMarker = aMarker.arg(DIGIT_SEPARATOR);
+                aMarker = aMarker.arg(getStandardMarkerScale());
+                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, aMarker);
+              }
+              else if ( getCustomMarkerID() > 0 ) {
+                anObject->SetMarkerTexture( getCustomMarkerID() );
+                getStudy()->setObjectProperty(mgrId ,it.Value()->getEntry(),MARKER_TYPE_PROP, QString::number(getCustomMarkerID()));
+              }
+            }
+          }
+          GEOM_Displayer displayer( getStudy() );
+          displayer.Redisplay( selected, true );
+          selMgr->setSelectedObjects( selected );
+        }
       }
     }
   }
@@ -336,7 +337,13 @@ void GEOMToolsGUI_MarkerDlg::addTexture( int id, bool select ) const
 {
   if ( id > 0 && myCustomTypeCombo->index( id ) == -1 ) {
     int tWidth, tHeight;
-    Handle(Graphic3d_HArray1OfBytes) texture = GeometryGUI::getTexture( getStudy(), id, tWidth, tHeight );
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+    Handle(TColStd_HArray1OfByte) texture = GeometryGUI::getTexture(getStudy(), id, tWidth, tHeight);
+#else
+    Handle(Graphic3d_HArray1OfBytes) texture = GeometryGUI::getTexture(getStudy(), id, tWidth, tHeight);
+#endif
+
     if ( !texture.IsNull() && texture->Length() == tWidth*tHeight/8 ) {
       QImage image( tWidth, tHeight, QImage::Format_Mono );
       image.setColor( 0, qRgba( 0, 0, 0, 0   ) );

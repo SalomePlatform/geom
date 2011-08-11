@@ -15,7 +15,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM NMTTools : partition algorithm
 #  File   : Makefile.in
@@ -139,6 +138,7 @@ dist_libNMTTools_la_SOURCES = \
 libNMTTools_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
+	$(GUI_CXXFLAGS)		\
 	-I$(srcdir)/../NMTDS
 
 libNMTTools_la_LDFLAGS  =		\

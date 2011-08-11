@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapOfShapeShapeSet_HeaderFile
 #define _GEOMAlgo_DataMapOfShapeShapeSet_HeaderFile
@@ -35,6 +34,7 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class TopoDS_Shape;
@@ -43,14 +43,12 @@ class TopTools_ShapeMapHasher;
 class GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet;
 class GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet;
 
-
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
 #ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
 #endif
-
 
 class GEOMAlgo_DataMapOfShapeShapeSet  : public TCollection_BasicMap {
 
@@ -68,91 +66,44 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
- // Methods PUBLIC
- // 
+
+  Standard_EXPORT GEOMAlgo_DataMapOfShapeShapeSet(const Standard_Integer NbBuckets = 1);
 
 
-Standard_EXPORT GEOMAlgo_DataMapOfShapeShapeSet(const Standard_Integer NbBuckets = 1);
-
-
-Standard_EXPORT   GEOMAlgo_DataMapOfShapeShapeSet& Assign(const GEOMAlgo_DataMapOfShapeShapeSet& Other) ;
+  Standard_EXPORT   GEOMAlgo_DataMapOfShapeShapeSet& Assign(const GEOMAlgo_DataMapOfShapeShapeSet& Other) ;
   GEOMAlgo_DataMapOfShapeShapeSet& operator =(const GEOMAlgo_DataMapOfShapeShapeSet& Other) 
-{
-  return Assign(Other);
-}
+  {
+    return Assign(Other);
+  }
 
+  Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
 
+  Standard_EXPORT   void Clear() ;
+  ~GEOMAlgo_DataMapOfShapeShapeSet()
+  {
+    Clear();
+  }
 
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+  Standard_EXPORT   Standard_Boolean Bind(const TopoDS_Shape& K,const GEOMAlgo_ShapeSet& I) ;
 
+  Standard_EXPORT   Standard_Boolean IsBound(const TopoDS_Shape& K) const;
 
-Standard_EXPORT   void Clear() ;
-~GEOMAlgo_DataMapOfShapeShapeSet()
-{
-  Clear();
-}
+  Standard_EXPORT   Standard_Boolean UnBind(const TopoDS_Shape& K) ;
 
+  Standard_EXPORT  const GEOMAlgo_ShapeSet& Find(const TopoDS_Shape& K) const;
+  const GEOMAlgo_ShapeSet& operator()(const TopoDS_Shape& K) const
+  {
+    return Find(K);
+  }
 
-
-Standard_EXPORT   Standard_Boolean Bind(const TopoDS_Shape& K,const GEOMAlgo_ShapeSet& I) ;
-
-
-Standard_EXPORT   Standard_Boolean IsBound(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT   Standard_Boolean UnBind(const TopoDS_Shape& K) ;
-
-
-Standard_EXPORT  const GEOMAlgo_ShapeSet& Find(const TopoDS_Shape& K) const;
- const GEOMAlgo_ShapeSet& operator()(const TopoDS_Shape& K) const
-{
-  return Find(K);
-}
-
-
-
-Standard_EXPORT   GEOMAlgo_ShapeSet& ChangeFind(const TopoDS_Shape& K) ;
+  Standard_EXPORT   GEOMAlgo_ShapeSet& ChangeFind(const TopoDS_Shape& K) ;
   GEOMAlgo_ShapeSet& operator()(const TopoDS_Shape& K) 
-{
-  return ChangeFind(K);
-}
-
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+  {
+    return ChangeFind(K);
+  }
 
 private: 
-
- // Methods PRIVATE
- // 
-
-
-Standard_EXPORT GEOMAlgo_DataMapOfShapeShapeSet(const GEOMAlgo_DataMapOfShapeShapeSet& Other);
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_EXPORT GEOMAlgo_DataMapOfShapeShapeSet(const GEOMAlgo_DataMapOfShapeShapeSet& Other);
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMAlgo_DataMapOfOrientedShapeShape.hxx>
 
@@ -54,4 +53,3 @@
 #define TCollection_DataMap GEOMAlgo_DataMapOfOrientedShapeShape
 #define TCollection_DataMap_hxx <GEOMAlgo_DataMapOfOrientedShapeShape.hxx>
 #include <TCollection_DataMap.gxx>
-

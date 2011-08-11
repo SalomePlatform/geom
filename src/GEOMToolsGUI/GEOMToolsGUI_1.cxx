@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GEOMToolsGUI_1.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
-//
+
 #include <PyConsole_Console.h>
 
 #include "GEOMToolsGUI.h"
@@ -38,6 +37,8 @@
 
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>
@@ -75,7 +76,12 @@
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <Graphic3d_HArray1OfBytes.hxx>
+#endif
 
 // QT Includes
 #include <QColorDialog>
@@ -94,35 +100,37 @@
 
 void GEOMToolsGUI::OnCheckGeometry()
 {
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >(SUIT_Session::session()->activeApplication());
   PyConsole_Console* pyConsole = app->pythonConsole();
 
-  if(pyConsole)
+  if (pyConsole)
     pyConsole->exec("from GEOM_usinggeom import *");
 }
 
 void GEOMToolsGUI::OnAutoColor()
 {
   SALOME_ListIO selected;
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if( !app )
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >(SUIT_Session::session()->activeApplication());
+  if (!app)
     return;
 
   LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
-  if( !aSelMgr || !appStudy )
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
+  if (!aSelMgr || !appStudy)
     return;
 
-  aSelMgr->selectedObjects( selected );
-  if( selected.IsEmpty() )
+  aSelMgr->selectedObjects(selected);
+  if (selected.IsEmpty())
     return;
 
   Handle(SALOME_InteractiveObject) anIObject = selected.First();
 
   _PTR(Study) aStudy = appStudy->studyDS();
-  _PTR(SObject) aMainSObject( aStudy->FindObjectID( anIObject->getEntry() ) );
+  _PTR(SObject) aMainSObject(aStudy->FindObjectID(anIObject->getEntry()));
   GEOM::GEOM_Object_var aMainObject = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aMainSObject));
-  if( CORBA::is_nil( aMainObject ) )
+  if (CORBA::is_nil(aMainObject))
     return;
 
   aMainObject->SetAutoColor( true );
@@ -198,7 +206,13 @@ void GEOMToolsGUI::OnAutoColor()
       else {
         Standard_Integer aWidth, aHeight;
         aCurPointAspect->GetTextureSize( aWidth, aHeight );
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+        Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
         Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
+
         aCurDrawer->SetPointAspect( new Prs3d_PointAspect( aQuanColor, 1, aWidth, aHeight, aTexture ) );
       }
       ic->SetLocalAttributes( io, aCurDrawer );
@@ -255,7 +269,7 @@ void GEOMToolsGUI::OnColor()
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
         bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
-	int mgrId = window->getViewManager()->getGlobalId();
+        int mgrId = window->getViewManager()->getGlobalId();
         if ( isVTK ) {
           SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
           if ( !vtkVW )
@@ -267,8 +281,8 @@ void GEOMToolsGUI::OnColor()
             SUIT_OverrideCursor();
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
               aView->SetColor( It.Value(), c );
-	      appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
-	    }
+              appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+            }
             GeometryGUI::Modified();
           }
         } // if ( isVTK )
@@ -292,7 +306,7 @@ void GEOMToolsGUI::OnColor()
                   
                   if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
                     TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
-		    bool onlyVertex = (theShape.ShapeType() == TopAbs_VERTEX || GEOM_Displayer::isCompoundOfVertices( theShape ));
+                    bool onlyVertex = (theShape.ShapeType() == TopAbs_VERTEX || GEOM_Displayer::isCompoundOfVertices( theShape ));
                     if (onlyVertex) {
                       // Set color for a point
 
@@ -308,7 +322,13 @@ void GEOMToolsGUI::OnColor()
                       else {
                         Standard_Integer aWidth, aHeight;
                         aCurPointAspect->GetTextureSize( aWidth, aHeight );
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+                        Handle(TColStd_HArray1OfByte) aTexture = aCurPointAspect->GetTexture();
+#else
                         Handle(Graphic3d_HArray1OfBytes) aTexture = aCurPointAspect->GetTexture();
+#endif
+
                         aCurDrawer->SetPointAspect(new Prs3d_PointAspect(aColor, 1, aWidth, aHeight, aTexture));
                       }
                       ic->SetLocalAttributes(io, aCurDrawer, Standard_False);
@@ -319,7 +339,7 @@ void GEOMToolsGUI::OnColor()
                   if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
                     Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
 
-		  appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
+                  appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
 
                   io->Redisplay( Standard_True );
 
@@ -475,7 +495,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
           newNbUIso = NbIsosDlg->getU();
           newNbVIso = NbIsosDlg->getV();
         } else //Cancel case
-	  return;
+          return;
       }
       else if ( actionType == INCR || actionType == DECR ) {
         int delta = 1;
@@ -491,9 +511,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
 
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	
-	
-	  
+
         Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
         
         CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbUIso) );
@@ -502,9 +520,9 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         ic->SetLocalAttributes(CurObject, CurDrawer);
         ic->Redisplay(CurObject);
 
-	QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-	int aMgrId = window->getViewManager()->getGlobalId();
-	aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), "Isos", anIsos);
+        QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
+        int aMgrId = window->getViewManager()->getGlobalId();
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), "Isos", anIsos);
       }
     }
     GeometryGUI::Modified();
@@ -575,7 +593,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         newNbUIso = NbIsosDlg->getU();
         newNbVIso = NbIsosDlg->getV();
       } else 
-	return; //Cancel case 
+        return; //Cancel case 
     }
     else if ( actionType == INCR || actionType == DECR ) {
       int delta = 1;
@@ -595,9 +613,9 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         int aIsos[2]={newNbUIso,newNbVIso};
         anActor->SetNbIsos(aIsos);
 
-	QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-	int aMgrId = window->getViewManager()->getGlobalId();
-	aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_PROP, anIsos);
+        QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
+        int aMgrId = window->getViewManager()->getGlobalId();
+        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_PROP, anIsos);
       }
       anAct = aCollection->GetNextActor();
     }
@@ -644,7 +662,7 @@ void GEOMToolsGUI::OnDeflection()
               CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
               ic->SetDeviationCoefficient(CurObject, aNewDC, Standard_True);
               ic->Redisplay(CurObject);
-	      appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aNewDC);
+              appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aNewDC);
             }
           }
         }
@@ -713,7 +731,7 @@ void GEOMToolsGUI::OnDeflection()
         if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
           // There are no casting to needed actor.
           anActor->SetDeflection(aDC);
-	  appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aDC);
+          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), DEFLECTION_COEFF_PROP, aDC);
         }
         anAct = aCollection->GetNextActor();
       }
@@ -768,8 +786,8 @@ void GEOMToolsGUI::OnShowHideChildren( bool show )
           if ( obj ) {
             _PTR(AttributeExpandable) aExp = B->FindOrCreateAttribute( obj, "AttributeExpandable" );
             aExp->SetExpandable( show );
-	    if(!show)
-	      disp->EraseWithChildren(IObject,true);
+            if(!show)
+              disp->EraseWithChildren(IObject,true);
           } // if ( obj )
         } // iterator
       }
@@ -820,7 +838,7 @@ void GEOMToolsGUI::OnUnpublishObject() {
           if ( obj ) {
             _PTR(AttributeDrawable) aDrw = B->FindOrCreateAttribute( obj, "AttributeDrawable" );
             aDrw->SetDrawable( false );
-	    disp->EraseWithChildren(IObject);
+            disp->EraseWithChildren(IObject);
           } // if ( obj )
         } // iterator
         aSelMgr->clearSelected();
@@ -850,8 +868,8 @@ void GEOMToolsGUI::OnPublishObject() {
   bool aLocked = ( _PTR(AttributeStudyProperties)( aStudy->GetProperties() ) )->IsLocked();
   if ( aLocked ) {
     SUIT_MessageBox::warning( app->desktop(),
-			      QObject::tr( "WRN_WARNING" ),
-			      QObject::tr( "WRN_STUDY_LOCKED" ) );
+                              QObject::tr( "WRN_WARNING" ),
+                              QObject::tr( "WRN_STUDY_LOCKED" ) );
     return;
   } 
   

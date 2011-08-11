@@ -68,6 +68,8 @@
 #include <SALOMEDSClient_ClientFactory.hxx>
 #include <SALOMEDSClient_IParameters.hxx>
 
+#include <CASCatch_OCCTVersion.hxx>
+
 // External includes
 #include <QMenu>
 #include <QTime>
@@ -84,7 +86,12 @@
 #include <Aspect_TypeOfMarker.hxx>
 #include <OSD_SharedLibrary.hxx>
 #include <NCollection_DataMap.hxx>
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <Graphic3d_HArray1OfBytes.hxx>
+#endif
 
 #include <utilities.h>
 
@@ -1454,11 +1461,22 @@ QString GeometryGUI::engineIOR() const
   return "";
 }
 
-Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture( SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight )
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+Handle(TColStd_HArray1OfByte) GeometryGUI::getTexture
+#else
+Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture
+#endif
+      (SalomeApp_Study* theStudy, int theId, int& theWidth, int& theHeight)
 {
   theWidth = theHeight = 0;
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(Graphic3d_HArray1OfBytes) aTexture;
-  if ( theStudy ) {
+#endif
+
+  if (theStudy) {
     TextureMap aTextureMap = myTextureMap[ theStudy->studyDS()->StudyId() ];
     aTexture = aTextureMap[ theId ];
     if ( aTexture.IsNull() ) {
@@ -1469,8 +1487,14 @@ Handle(Graphic3d_HArray1OfBytes) GeometryGUI::getTexture( SalomeApp_Study* theSt
         if ( aWidth > 0 && aHeight > 0 && aStream->length() > 0 ) {
           theWidth  = aWidth;
           theHeight = aHeight;
-          aTexture  = new Graphic3d_HArray1OfBytes( 1, aStream->length() );
-          for ( int i = 0; i < aStream->length(); i++ )
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+          aTexture  = new TColStd_HArray1OfByte (1, aStream->length());
+#else
+          aTexture  = new Graphic3d_HArray1OfBytes (1, aStream->length());
+#endif
+
+          for (int i = 0; i < aStream->length(); i++)
             aTexture->SetValue( i+1, (Standard_Byte)aStream[i] );
           aTextureMap[ theId ] = aTexture;
         }
@@ -1663,10 +1687,9 @@ void GeometryGUI::createPreferences()
 
   int operationsGroup = addPreference( tr( "PREF_GROUP_OPERATIONS" ), tabId );
   setPreferenceProperty( operationsGroup, "columns", 2 );
-  
+
   addPreference( tr( "GEOM_PREVIEW" ), operationsGroup,
                  LightApp_Preferences::Bool, "Geometry", "geom_preview" );
-  
 }
 
 void GeometryGUI::preferencesChanged( const QString& section, const QString& param )
@@ -1738,7 +1761,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
     for (int i = 0, iEnd = vman->getViewsCount(); i < iEnd; i++) {
       const ObjMap anObjects = appStudy->getObjectMap(aMgrId);
       ObjMap::ConstIterator o_it = anObjects.begin();
-      for( ;o_it != anObjects.end(); o_it++ ) {
+      for (; o_it != anObjects.end(); o_it++) {
         const PropMap aProps = o_it.value();
 
         //Check that object exists in the study
@@ -1759,57 +1782,57 @@ void GeometryGUI::storeVisualParameters (int savePoint)
         occParam += QString::number(aMgrId).toLatin1().data();
         occParam += NAME_SEPARATOR;
 
-	if(aProps.contains(VISIBILITY_PROP)) {
-	  param = occParam + VISIBILITY_PROP;
-	  ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
-	}
-
-	if(aProps.contains(DISPLAY_MODE_PROP)) {
-	  param = occParam + DISPLAY_MODE_PROP;
-	  ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
-	}
-	
-	if(aProps.contains(COLOR_PROP)) {
-	  QColor c = aProps.value(COLOR_PROP).value<QColor>();
-	  QString colorStr = QString::number(c.red()/255.);
-	  colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
-	  colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
-	  param = occParam + COLOR_PROP;
-	  ip->setParameter(entry, param, colorStr.toLatin1().data());
-	}
-
-        if(vType == SVTK_Viewer::Type()) {
-	  if(aProps.contains(OPACITY_PROP)) {
-	    param = occParam + OPACITY_PROP;
-	    ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
-	  }
-        } else if (vType == SOCC_Viewer::Type()) {
-	  if(aProps.contains(TRANSPARENCY_PROP)) {
-	    param = occParam + TRANSPARENCY_PROP;
-	    ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
-	  }
+        if(aProps.contains(VISIBILITY_PROP)) {
+          param = occParam + VISIBILITY_PROP;
+          ip->setParameter(entry, param, aProps.value(VISIBILITY_PROP).toInt() == 1 ? "On" : "Off");
         }
 
-	if(aProps.contains(ISOS_PROP)) {
-	  param = occParam + ISOS_PROP;
-	  ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
-	}
+        if(aProps.contains(DISPLAY_MODE_PROP)) {
+          param = occParam + DISPLAY_MODE_PROP;
+          ip->setParameter(entry, param, QString::number(aProps.value(DISPLAY_MODE_PROP).toInt()).toLatin1().data());
+        }
 
-	if(aProps.contains(VECTOR_MODE_PROP)) {
-	  param = occParam + VECTOR_MODE_PROP;
-	  ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
-	}
+        if(aProps.contains(COLOR_PROP)) {
+          QColor c = aProps.value(COLOR_PROP).value<QColor>();
+          QString colorStr = QString::number(c.red()/255.);
+          colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.green()/255.);
+          colorStr += DIGIT_SEPARATOR; colorStr += QString::number(c.blue()/255.);
+          param = occParam + COLOR_PROP;
+          ip->setParameter(entry, param, colorStr.toLatin1().data());
+        }
 
-	if(aProps.contains(DEFLECTION_COEFF_PROP)) {
-	  param = occParam + DEFLECTION_COEFF_PROP;
-	  ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
-	}
-	
+        if(vType == SVTK_Viewer::Type()) {
+          if(aProps.contains(OPACITY_PROP)) {
+            param = occParam + OPACITY_PROP;
+            ip->setParameter(entry, param, QString::number(1. - aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+          }
+        } else if (vType == SOCC_Viewer::Type()) {
+          if(aProps.contains(TRANSPARENCY_PROP)) {
+            param = occParam + TRANSPARENCY_PROP;
+            ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
+          }
+        }
+
+        if(aProps.contains(ISOS_PROP)) {
+          param = occParam + ISOS_PROP;
+          ip->setParameter(entry, param, aProps.value(ISOS_PROP).toString().toLatin1().data());
+        }
+
+        if(aProps.contains(VECTOR_MODE_PROP)) {
+          param = occParam + VECTOR_MODE_PROP;
+          ip->setParameter(entry, param, QString::number(aProps.value(VECTOR_MODE_PROP).toInt()).toLatin1().data());
+        }
+
+        if(aProps.contains(DEFLECTION_COEFF_PROP)) {
+          param = occParam + DEFLECTION_COEFF_PROP;
+          ip->setParameter(entry, param, QString::number(aProps.value(DEFLECTION_COEFF_PROP).toDouble()).toLatin1().data());
+        }
+
         //Marker type of the vertex - ONLY for the "Vertex" and "Compound of the Vertex"
         if(aProps.contains(MARKER_TYPE_PROP)) {
           param = occParam + MARKER_TYPE_PROP;
           ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
-        }	
+        }
       } // object iterator
     } // for (views)
   } // for (viewManagers)
@@ -1923,7 +1946,7 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
 
     QList<SUIT_ViewManager*> lst = getApp()->viewManagers();
 
-    for (int index = 0 ; index < aListOfMap.count(); index++) {
+    for (int index = 0; index < aListOfMap.count(); index++) {
 
       appStudy->setObjectPropMap(index, entry, aListOfMap[index]);
 
@@ -1979,15 +2002,15 @@ void GeometryGUI::onViewAboutToShow()
   \brief Return \c true if rename operation finished successfully, \c false otherwise.
 */
 bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
-  
+
   bool appRes = SalomeApp_Module::renameObject(entry,name);
   if( !appRes )
     return false;
-  
+
   bool result = false;
-  
+
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
-  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0; 
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
 
   if(!appStudy)
     return result;
@@ -2002,12 +2025,12 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
   if ( obj ) {
     if ( obj->FindAttribute(anAttr, "AttributeName") ) {
       _PTR(AttributeName) aName (anAttr);
-      
+
       GEOM::GEOM_Object_var anObj = GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(obj));
       if (!CORBA::is_nil(anObj)) {
-	aName->SetValue( name.toLatin1().data() ); // rename the SObject
-	anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
-	result = true;
+        aName->SetValue( name.toLatin1().data() ); // rename the SObject
+        anObj->SetName( name.toLatin1().data() );  // Rename the corresponding GEOM_Object
+        result = true;
       }
     }
   }

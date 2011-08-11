@@ -21,6 +21,8 @@
 
 #include <GEOMAlgo_DataMapNodeOfDataMapOfShapePnt.hxx>
 
+#include <CASCatch_OCCTVersion.hxx>
+
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>
 #endif
@@ -42,15 +44,27 @@
 #endif
 
  
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 
+IMPLEMENT_STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(TCollection_MapNode),
+  STANDARD_TYPE(MMgt_TShared),
+  STANDARD_TYPE(Standard_Transient),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt)
+
+IMPLEMENT_DOWNCAST(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt,Standard_Transient)
+IMPLEMENT_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt)
+
+#else
 
 Standard_EXPORT Handle_Standard_Type& GEOMAlgo_DataMapNodeOfDataMapOfShapePnt_Type_()
 {
-
-    static Handle_Standard_Type aType1 = STANDARD_TYPE(TCollection_MapNode);
+  static Handle_Standard_Type aType1 = STANDARD_TYPE(TCollection_MapNode);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
- 
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMAlgo_DataMapNodeOfDataMapOfShapePnt",
@@ -61,7 +75,6 @@ Standard_EXPORT Handle_Standard_Type& GEOMAlgo_DataMapNodeOfDataMapOfShapePnt_Ty
 
   return _aType;
 }
-
 
 // DownCast method
 //   allow safe downcasting
@@ -76,17 +89,16 @@ const Handle(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt) Handle(GEOMAlgo_DataMapNod
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
+
 const Handle(Standard_Type)& GEOMAlgo_DataMapNodeOfDataMapOfShapePnt::DynamicType() const 
 { 
-  return STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt) ; 
+  return STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt); 
 }
-//Standard_Boolean GEOMAlgo_DataMapNodeOfDataMapOfShapePnt::IsKind(const Handle(Standard_Type)& AType) const 
-//{ 
-//  return (STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapePnt) == AType || TCollection_MapNode::IsKind(AType)); 
-//}
-//Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapePnt::~Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapePnt() {}
+
+#endif
+
 #define TheKey TopoDS_Shape
 #define TheKey_hxx <TopoDS_Shape.hxx>
 #define TheItem gp_Pnt

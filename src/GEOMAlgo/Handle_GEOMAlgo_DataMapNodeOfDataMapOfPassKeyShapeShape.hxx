@@ -15,16 +15,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_HeaderFile
 #define _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_HeaderFile
 
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
+#endif
+#ifndef _Standard_DefineHandle_HeaderFile
+#include <Standard_DefineHandle.hxx>
 #endif
 
 #ifndef _Handle_TCollection_MapNode_HeaderFile
@@ -32,41 +31,10 @@
 #endif
 
 class Standard_Transient;
-class Handle_Standard_Type;
+class Handle(Standard_Type);
 class Handle(TCollection_MapNode);
 class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape;
-Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape);
 
-class Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape) : public Handle(TCollection_MapNode) {
-  public:
-    Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)():Handle(TCollection_MapNode)() {} 
-    Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)(const Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)& aHandle) : Handle(TCollection_MapNode)(aHandle) 
-     {
-     }
+DEFINE_STANDARD_HANDLE(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape,TCollection_MapNode)
 
-    Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)(const GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape* anItem) : Handle(TCollection_MapNode)((TCollection_MapNode *)anItem) 
-     {
-     }
-
-    Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)& operator=(const Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)& aHandle)
-     {
-      Assign(aHandle.Access());
-      return *this;
-     }
-
-    Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)& operator=(const GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape* anItem)
-     {
-      Assign((Standard_Transient *)anItem);
-      return *this;
-     }
-
-    GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape* operator->() const
-     {
-      return (GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape *)ControlAccess();
-     }
-
-//   Standard_EXPORT ~Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape)();
- 
-   Standard_EXPORT static const Handle(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape) DownCast(const Handle(Standard_Transient)& AnObject);
-};
 #endif

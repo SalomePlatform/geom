@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
 #define _GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
@@ -42,56 +41,26 @@
 #ifndef _TCollection_MapNodePtr_HeaderFile
 #include <TCollection_MapNodePtr.hxx>
 #endif
+
 class GEOMAlgo_PassKey;
 class GEOMAlgo_PassKeyMapHasher;
 class GEOMAlgo_DataMapOfPassKeyInteger;
 class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger;
 
-
-
 class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger : public TCollection_MapNode {
 
 public:
- // Methods PUBLIC
- // 
-
-GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger(const GEOMAlgo_PassKey& K,const Standard_Integer& I,const TCollection_MapNodePtr& n);
+  GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger
+  (const GEOMAlgo_PassKey& K, const Standard_Integer& I, const TCollection_MapNodePtr& n);
 
   GEOMAlgo_PassKey& Key() const;
-
   Standard_Integer& Value() const;
-//Standard_EXPORT ~GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger();
 
-
-
-
- // Type management
- //
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+  DEFINE_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger)
 
 private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-GEOMAlgo_PassKey myKey;
-Standard_Integer myValue;
-
-
+  GEOMAlgo_PassKey myKey;
+  Standard_Integer myValue;
 };
 
 #define TheKey GEOMAlgo_PassKey
@@ -125,10 +94,5 @@ Standard_Integer myValue;
 #undef TCollection_DataMapNode_Type_
 #undef TCollection_DataMap
 #undef TCollection_DataMap_hxx
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet_HeaderFile
 #define _GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet_HeaderFile
@@ -29,13 +28,13 @@
 #ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet_HeaderFile
 #include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet.hxx>
 #endif
+
 class Standard_NoSuchObject;
 class TopoDS_Shape;
 class GEOMAlgo_ShapeSet;
 class TopTools_ShapeMapHasher;
 class GEOMAlgo_DataMapOfShapeShapeSet;
 class GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -44,73 +43,32 @@ class GEOMAlgo_DataMapNodeOfDataMapOfShapeShapeSet;
 #include <Standard_Macro.hxx>
 #endif
 
-
-class GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet  : public TCollection_BasicMapIterator {
-
+class GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet  : public TCollection_BasicMapIterator
+{
 public:
+  void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size) 
+  { 
+    return Standard::Allocate(size); 
+  }
+  void  operator delete(void *anAddress) 
+  { 
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet();
 
+  Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet
+  (const GEOMAlgo_DataMapOfShapeShapeSet& aMap);
 
-Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet();
+  Standard_EXPORT   void Initialize(const GEOMAlgo_DataMapOfShapeShapeSet& aMap);
 
+  Standard_EXPORT  const TopoDS_Shape& Key() const;
 
-Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet(const GEOMAlgo_DataMapOfShapeShapeSet& aMap);
-
-
-Standard_EXPORT   void Initialize(const GEOMAlgo_DataMapOfShapeShapeSet& aMap) ;
-
-
-Standard_EXPORT  const TopoDS_Shape& Key() const;
-
-
-Standard_EXPORT  const GEOMAlgo_ShapeSet& Value() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_EXPORT  const GEOMAlgo_ShapeSet& Value() const;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

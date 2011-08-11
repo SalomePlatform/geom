@@ -15,18 +15,19 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
-//  File   : MeasureGUI_AngleDlg.cxx
-//  Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
-//
+// File   : MeasureGUI_AngleDlg.cxx
+// Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
+
 #include "MeasureGUI_AngleDlg.h"
 #include "MeasureGUI_Widgets.h"
 
 #include <DlgRef.h>
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>
@@ -307,7 +308,7 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 
   if (anAngle > Precision::Angular()) {
     try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
       TopoDS_Shape S1, S2;

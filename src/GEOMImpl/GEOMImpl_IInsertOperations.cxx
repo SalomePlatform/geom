@@ -18,11 +18,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_IInsertOperations.hxx>
+
+#include <GEOMImpl_CopyDriver.hxx>
+#include <GEOMImpl_ExportDriver.hxx>
+#include <GEOMImpl_ImportDriver.hxx>
+#include <GEOMImpl_ICopy.hxx>
+#include <GEOMImpl_IImportExport.hxx>
+#include <GEOMImpl_Types.hxx>
+
+#include <GEOM_Function.hxx>
+#include <GEOM_PythonDump.hxx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include "utilities.h"
 #include <OpUtil.hxx>
@@ -33,23 +44,16 @@
 #include <TFunction_Logbook.hxx>
 #include <TDF_Tool.hxx>
 
-#include <GEOM_Function.hxx>
-#include <GEOM_PythonDump.hxx>
-
-#include <GEOMImpl_CopyDriver.hxx>
-#include <GEOMImpl_ExportDriver.hxx>
-#include <GEOMImpl_ImportDriver.hxx>
-
-#include <GEOMImpl_ICopy.hxx>
-#include <GEOMImpl_IImportExport.hxx>
-
-#include <GEOMImpl_Types.hxx>
-
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <BRep_Tool.hxx>
 #include <gp_Pnt.hxx>
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_HArray1OfByte.hxx>
+#else
 #include <TDataStd_HArray1OfByte.hxx>
+#endif
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -108,7 +112,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::MakeCopy(Handle(GEOM_Object) the
 
   //Compute the Copy value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -168,7 +172,7 @@ void GEOMImpl_IInsertOperations::Export
 
   //Perform the Export
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -227,7 +231,7 @@ Handle(GEOM_Object) GEOMImpl_IInsertOperations::Import
 
   //Perform the Import
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -552,7 +556,11 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
 
   if (theTextureFile.IsEmpty()) return 0;
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(TDataStd_HArray1OfByte) aTexture;
+#endif
 
   FILE* fp = fopen(theTextureFile.ToCString(), "r");
   if (!fp) return 0;
@@ -594,7 +602,12 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
   if (bytedata.empty() || bytedata.size() != lines.size()*lenbytes)
     return 0;
 
-  aTexture = new TDataStd_HArray1OfByte(1, lines.size()*lenbytes);
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  aTexture = new TColStd_HArray1OfByte (1, lines.size()*lenbytes);
+#else
+  aTexture = new TDataStd_HArray1OfByte (1, lines.size()*lenbytes);
+#endif
+
   std::list<unsigned char>::iterator bdit;
   int i;
   for (i = 1, bdit = bytedata.begin(); bdit != bytedata.end(); ++bdit, ++i)
@@ -606,7 +619,11 @@ int GEOMImpl_IInsertOperations::LoadTexture(const TCollection_AsciiString& theTe
 }
   
 int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight, 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+                                           const Handle(TColStd_HArray1OfByte)& theTexture)
+#else
                                            const Handle(TDataStd_HArray1OfByte)& theTexture)
+#endif
 {
   SetErrorCode(KO);
   int aTextureId = GetEngine()->addTexture(GetDocID(), theWidth, theHeight, theTexture);
@@ -614,12 +631,21 @@ int GEOMImpl_IInsertOperations::AddTexture(int theWidth, int theHeight,
   return aTextureId;
 }
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+Handle(TColStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theTextureId,
+#else
 Handle(TDataStd_HArray1OfByte) GEOMImpl_IInsertOperations::GetTexture(int theTextureId,
+#endif
                                                                       int& theWidth, int& theHeight)
 {
   SetErrorCode(KO);
   
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  Handle(TColStd_HArray1OfByte) aTexture;
+#else
   Handle(TDataStd_HArray1OfByte) aTexture;
+#endif
+
   theWidth = theHeight = 0;
   TCollection_AsciiString aFileName;
 

@@ -18,9 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>
@@ -38,9 +39,22 @@
 #ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
 #include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
 #endif
-//GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger::~GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger() {}
- 
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+
+IMPLEMENT_STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(TCollection_MapNode),
+  STANDARD_TYPE(MMgt_TShared),
+  STANDARD_TYPE(Standard_Transient),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger)
+
+IMPLEMENT_DOWNCAST(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger,Standard_Transient)
+IMPLEMENT_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger)
+
+#else
 
 Standard_EXPORT Handle_Standard_Type& GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_Type_()
 {
@@ -80,11 +94,9 @@ const Handle(Standard_Type)& GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger::Dyna
 { 
   return STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger) ; 
 }
-//Standard_Boolean GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger::IsKind(const Handle(Standard_Type)& AType) const 
-//{ 
-//  return (STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger) == AType || TCollection_MapNode::IsKind(AType)); 
-//}
-//Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger::~Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger() {}
+
+#endif
+
 #define TheKey GEOMAlgo_PassKey
 #define TheKey_hxx <GEOMAlgo_PassKey.hxx>
 #define TheItem Standard_Integer
@@ -100,4 +112,3 @@ const Handle(Standard_Type)& GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger::Dyna
 #define TCollection_DataMap GEOMAlgo_DataMapOfPassKeyInteger
 #define TCollection_DataMap_hxx <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
 #include <TCollection_DataMapNode.gxx>
-

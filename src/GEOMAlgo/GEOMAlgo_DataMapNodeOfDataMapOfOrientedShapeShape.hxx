@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape_HeaderFile
 #define _GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape_HeaderFile
@@ -36,56 +35,26 @@
 #ifndef _TCollection_MapNodePtr_HeaderFile
 #include <TCollection_MapNodePtr.hxx>
 #endif
+
 class TopoDS_Shape;
 class TopTools_OrientedShapeMapHasher;
 class GEOMAlgo_DataMapOfOrientedShapeShape;
 class GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape;
 
-
-
 class GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape : public TCollection_MapNode {
 
 public:
- // Methods PUBLIC
- // 
-
-GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape(const TopoDS_Shape& K,const TopoDS_Shape& I,const TCollection_MapNodePtr& n);
+  GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape
+  (const TopoDS_Shape& K, const TopoDS_Shape& I, const TCollection_MapNodePtr& n);
 
   TopoDS_Shape& Key() const;
-
   TopoDS_Shape& Value() const;
-//Standard_EXPORT ~GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape();
 
+  DEFINE_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape)
 
-
-
- // Type management
- //
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean	       IsKind(const Handle(Standard_Type)&) const;
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-TopoDS_Shape myKey;
-TopoDS_Shape myValue;
-
-
+private:
+  TopoDS_Shape myKey;
+  TopoDS_Shape myValue;
 };
 
 #define TheKey TopoDS_Shape
@@ -119,10 +88,5 @@ TopoDS_Shape myValue;
 #undef TCollection_DataMapNode_Type_
 #undef TCollection_DataMap
 #undef TCollection_DataMap_hxx
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 #pragma warning( disable:4786 )
@@ -33,6 +32,8 @@
 #include "GEOM_DataMapIteratorOfDataMapOfAsciiStringTransient.hxx"
 #include "GEOM_PythonDump.hxx"
 
+#include <CASCatch_OCCTVersion.hxx>
+
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
@@ -45,7 +46,6 @@
 #include <TDataStd_ChildNodeIterator.hxx>
 #include <TFunction_Driver.hxx>
 #include <TFunction_DriverTable.hxx>
-#include <TDataStd_HArray1OfByte.hxx>
 #include <TDataStd_ByteArray.hxx>
 #include <TDataStd_UAttribute.hxx>
 #include <TDF_ChildIterator.hxx>
@@ -60,7 +60,14 @@
 #include <TColStd_MapOfTransient.hxx>
 #include <TColStd_HSequenceOfInteger.hxx>
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_HArray1OfByte.hxx>
+#include <TColStd_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
+#else
+#include <TDataStd_HArray1OfByte.hxx>
 #include <Interface_DataMapIteratorOfDataMapOfIntegerTransient.hxx>
+#endif
+
 #include <Resource_DataMapIteratorOfDataMapOfAsciiStringAsciiString.hxx>
 
 #include <set>
@@ -230,7 +237,12 @@ GEOM_Engine::~GEOM_Engine()
     RemoveObject(*objit);
 
   //Close all documents not closed
-  for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
+#else
+  Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
+#endif
+  for (; anItr.More(); anItr.Next())
     Close(anItr.Key());
 
   _mapIDDocument.Clear();
@@ -264,12 +276,16 @@ Handle(TDocStd_Document) GEOM_Engine::GetDocument(int theDocID, bool force)
 //=============================================================================
 int GEOM_Engine::GetDocID(Handle(TDocStd_Document) theDocument)
 {
-  if(theDocument.IsNull()) return -1;
-  for(Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr(_mapIDDocument); anItr.More(); anItr.Next())
-    if(anItr.Value() == theDocument) return anItr.Key();
+  if (theDocument.IsNull()) return -1;
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  TColStd_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
+#else
+  Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
+#endif
+  for (; anItr.More(); anItr.Next())
+    if (anItr.Value() == theDocument) return anItr.Key();
 
   return -1;
-
 }
 
 //=============================================================================
@@ -377,7 +393,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   aSSI.SetIndices(theIndices);
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     GEOM_Solver aSolver (GEOM_Engine::GetEngine());
@@ -806,7 +822,11 @@ Handle(TColStd_HSequenceOfAsciiString) GEOM_Engine::GetAllDumpNames() const
 #define TEXTURE_LABEL_DATA     5
 
 int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+                            const Handle(TColStd_HArray1OfByte)& theTexture,
+#else
                             const Handle(TDataStd_HArray1OfByte)& theTexture,
+#endif
                             const TCollection_AsciiString& theFileName)
 {
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
@@ -851,11 +871,19 @@ int GEOM_Engine::addTexture(int theDocID, int theWidth, int theHeight,
   return aTextureID;
 }
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+Handle(TColStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
+#else
 Handle(TDataStd_HArray1OfByte) GEOM_Engine::getTexture(int theDocID, int theTextureID,
-                                                       int& theWidth, int& theHeight,
-                                                       TCollection_AsciiString& theFileName)
+#endif
+                                                      int& theWidth, int& theHeight,
+                                                      TCollection_AsciiString& theFileName)
 {
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  Handle(TColStd_HArray1OfByte) anArray;
+#else
   Handle(TDataStd_HArray1OfByte) anArray;
+#endif
   theWidth = theHeight = 0;
 
   Handle(TDocStd_Document) aDoc = GetDocument(theDocID);
@@ -1455,7 +1483,11 @@ void AddObjectColors (int                      theDocID,
   }
 }
 
-static TCollection_AsciiString pack_data(const Handle(TDataStd_HArray1OfByte)& aData )
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+static TCollection_AsciiString pack_data (const Handle(TColStd_HArray1OfByte)& aData)
+#else
+static TCollection_AsciiString pack_data (const Handle(TDataStd_HArray1OfByte)& aData)
+#endif
 {
   TCollection_AsciiString stream;
   if (!aData.IsNull()) {
@@ -1483,7 +1515,12 @@ void AddTextures (int theDocID, TCollection_AsciiString& theScript)
       if (*it <= 0) continue;
       Standard_Integer aWidth, aHeight;
       TCollection_AsciiString aFileName;
-      Handle(TDataStd_HArray1OfByte) aTexture = engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+      Handle(TColStd_HArray1OfByte) aTexture =
+#else
+      Handle(TDataStd_HArray1OfByte) aTexture =
+#endif
+        engine->getTexture(theDocID, *it, aWidth, aHeight, aFileName);
       if (aWidth > 0 && aHeight > 0 && !aTexture.IsNull() && aTexture->Length() > 0 ) {
         TCollection_AsciiString aCommand = "\n\t";
         aCommand += "texture_map["; aCommand += *it; aCommand += "] = ";

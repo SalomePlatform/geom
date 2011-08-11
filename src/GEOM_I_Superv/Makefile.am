@@ -15,7 +15,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM GEOM : implementaion of GEOM_Superv.idl
 #  File   : Makefile.in
@@ -23,8 +22,8 @@
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
 #  $Header$
+
 # Libraries targets
-#
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -44,6 +43,7 @@ libGEOM_SupervEngine_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)			\
 	$(QT_INCLUDES)			\
 	$(KERNEL_CXXFLAGS)		\
+	$(GUI_CXXFLAGS)		\
 	$(BOOST_CPPFLAGS)		\
 	$(CORBA_CXXFLAGS)		\
 	$(CORBA_INCLUDES)		\

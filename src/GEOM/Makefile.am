@@ -15,14 +15,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  File   : Makefile.in
 #  Author : Damien COQUERET (OCC)
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
 #  $Header: 
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
@@ -67,6 +66,7 @@ libGEOMbasic_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
 	$(BOOST_CPPFLAGS)	\
+	$(GUI_CXXFLAGS)		\
 	-I$(top_builddir)/idl
 
 libGEOMbasic_la_LDFLAGS  =			\

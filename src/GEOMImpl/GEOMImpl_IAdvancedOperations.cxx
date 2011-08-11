@@ -20,6 +20,7 @@
 //  Author : Vadim SANDLER, Open CASCADE S.A.S. (vadim.sandler@opencascade.com)
 
 #include <Standard_Stream.hxx>
+
 #include "GEOMImpl_Types.hxx"
 #include "GEOMImpl_IAdvancedOperations.hxx"
 #include "GEOMImpl_IBasicOperations.hxx"
@@ -32,6 +33,8 @@
 #include "GEOMImpl_IHealingOperations.hxx"
 
 #include "GEOMImpl_Gen.hxx"
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <utilities.h>
 #include <OpUtil.hxx>
@@ -742,7 +745,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     }
     Handle(GEOM_Object) edge_e1, edge_e2;
     try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
       edge_e1 = myBasicOperations->MakeLineTwoPnt(ve1, vi1);
@@ -757,7 +760,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     }
 
     try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
       edge_e2 = myBasicOperations->MakeLineTwoPnt(ve2, vi2);
@@ -1166,7 +1169,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1, double 
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1298,7 +1301,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeWithPosition(double theR1, double th
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1431,7 +1434,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamfer(double theR1, double theW1, 
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1647,7 +1650,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeChamferWithPosition(double theR1, do
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1835,7 +1838,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -2036,7 +2039,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
 
   //Compute the resulting value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {

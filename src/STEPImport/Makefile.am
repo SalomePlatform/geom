@@ -15,14 +15,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  File   : Makefile.in
 #  Author : Pavel TELKOV
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -38,7 +36,8 @@ dist_libSTEPImport_la_SOURCES =	\
 
 libSTEPImport_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
-	$(KERNEL_CXXFLAGS)
+	$(KERNEL_CXXFLAGS)	\
+	$(GUI_CXXFLAGS)
 
 libSTEPImport_la_LDFLAGS  =			\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics \

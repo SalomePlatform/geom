@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_Engine_HXX_
 #define _GEOM_Engine_HXX_
@@ -27,7 +26,14 @@
 #include "GEOM_Object.hxx"
 #include "GEOM_DataMapOfAsciiStringTransient.hxx"
 
-#include <Interface_DataMapOfIntegerTransient.hxx> 
+#include <CASCatch_OCCTVersion.hxx>
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <TColStd_DataMapOfIntegerTransient.hxx>
+#else
+#include <Interface_DataMapOfIntegerTransient.hxx>
+#endif
+
 #include <Resource_DataMapOfAsciiStringAsciiString.hxx>
 #include <TDocStd_Document.hxx>
 #include <TColStd_HArray1OfInteger.hxx>
@@ -51,7 +57,11 @@ struct TObjectData
   bool                    _unpublished;
 };
   
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+class Handle_TColStd_HArray1OfByte;
+#else
 class Handle_TDataStd_HArray1OfByte;
+#endif
 
 struct TVariable{
   TCollection_AsciiString myVariable;
@@ -148,12 +158,20 @@ class GEOM_Engine
   Standard_EXPORT Handle(TColStd_HSequenceOfAsciiString) GetAllDumpNames() const;
 
   Standard_EXPORT int addTexture(int theDocID, int theWidth, int theHeight,
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+                                 const Handle(TColStd_HArray1OfByte)& theTexture,
+#else
                                  const Handle(TDataStd_HArray1OfByte)& theTexture,
+#endif
                                  const TCollection_AsciiString& theFileName = "");
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  Standard_EXPORT Handle(TColStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
+#else
   Standard_EXPORT Handle(TDataStd_HArray1OfByte) getTexture(int theDocID, int theTextureID,
-                                                            int& theWidth, int& theHeight,
-                                                            TCollection_AsciiString& theFileName);
+#endif
+                                                           int& theWidth, int& theHeight,
+                                                           TCollection_AsciiString& theFileName);
 
   Standard_EXPORT std::list<int> getAllTextures(int theDocID);
 
@@ -165,7 +183,11 @@ class GEOM_Engine
  private:
 
   Handle(GEOM_Application)  _OCAFApp;
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+  TColStd_DataMapOfIntegerTransient _mapIDDocument;
+#else
   Interface_DataMapOfIntegerTransient _mapIDDocument;
+#endif
   int _UndoLimit;
   GEOM_DataMapOfAsciiStringTransient _objects;
 

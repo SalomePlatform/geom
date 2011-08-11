@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -34,6 +33,8 @@
 
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <utilities.h>
 #include <OpUtil.hxx>
@@ -837,7 +838,7 @@ void GEOMImpl_IMeasureOperations::GetPosition
   }
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
 
@@ -893,7 +894,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetCentreOfMass
 
   //Compute the CentreOfMass value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -947,7 +948,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetVertexByIndex
 
   //Compute
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1006,7 +1007,7 @@ Handle(GEOM_Object) GEOMImpl_IMeasureOperations::GetNormal
 
   //Compute the Normale value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1058,7 +1059,7 @@ void GEOMImpl_IMeasureOperations::GetBasicProperties (Handle(GEOM_Object) theSha
   //Compute the parameters
   GProp_GProps LProps, SProps;
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     BRepGProp::LinearProperties(aShape, LProps);
@@ -1114,7 +1115,7 @@ void GEOMImpl_IMeasureOperations::GetInertia
   GProp_GProps System;
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (aShape.ShapeType() == TopAbs_VERTEX ||
@@ -1181,7 +1182,7 @@ void GEOMImpl_IMeasureOperations::GetBoundingBox
   Bnd_Box B;
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     BRepBndLib::Add(aShape, B);
@@ -1226,7 +1227,7 @@ void GEOMImpl_IMeasureOperations::GetTolerance
   FaceMax = EdgeMax = VertMax = -RealLast();
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     for (TopExp_Explorer ExF (aShape, TopAbs_FACE); ExF.More(); ExF.Next()) {
@@ -1288,7 +1289,7 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
   //Compute the parameters
   bool isValid = false;
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     BRepCheck_Analyzer ana (aShape, theIsCheckGeom);
@@ -1389,7 +1390,7 @@ TCollection_AsciiString GEOMImpl_IMeasureOperations::WhatIs (Handle(GEOM_Object)
   Astr = Astr + " Number of sub-shapes : \n";
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     int iType, nbTypes [TopAbs_SHAPE];
@@ -1797,7 +1798,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetMinDistance
 
   //Compute the parameters
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
 
@@ -1895,7 +1896,7 @@ void GEOMImpl_IMeasureOperations::PointCoordinates (Handle(GEOM_Object) theShape
   }
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     gp_Pnt aPnt = BRep_Tool::Pnt( TopoDS::Vertex( aShape ) );
@@ -1943,7 +1944,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
   }
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Edge E1 = TopoDS::Edge(aLine1);
@@ -2016,7 +2017,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Objec
   }
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     TopoDS_Edge aE1 = TopoDS::Edge(aVec1);
@@ -2078,7 +2079,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByParam
 
   //Compute curvature
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     GeomLProp_CLProps Prop = GeomLProp_CLProps
@@ -2132,7 +2133,7 @@ Standard_Real GEOMImpl_IMeasureOperations::CurveCurvatureByPoint
 
   //Compute curvature
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     GeomAPI_ProjectPointOnCurve PPCurve(aPoint, aCurve, aFP, aLP);
@@ -2175,7 +2176,7 @@ Standard_Real GEOMImpl_IMeasureOperations::getSurfaceCurvatures
   if (aSurf.IsNull()) return aRes;
 
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     GeomLProp_SLProps Prop = GeomLProp_SLProps

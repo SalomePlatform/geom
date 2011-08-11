@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifdef WNT
 // E.A. : On windows with python 2.6, there is a conflict
@@ -37,13 +36,10 @@
 #include <Standard_Stream.hxx>
 
 #include <GEOMImpl_ICurvesOperations.hxx>
-
-#include <TColStd_HArray1OfReal.hxx>
+#include <GEOMImpl_Types.hxx>
 
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
-
-#include <GEOMImpl_Types.hxx>
 
 #include <GEOMImpl_PolylineDriver.hxx>
 #include <GEOMImpl_CircleDriver.hxx>
@@ -61,9 +57,12 @@
 #include <GEOMImpl_ISketcher.hxx>
 #include <GEOMImpl_I3DSketcher.hxx>
 
+#include <CASCatch_OCCTVersion.hxx>
+
 #include "utilities.h"
 
 #include <TDF_Tool.hxx>
+#include <TColStd_HArray1OfReal.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -233,7 +232,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleThreePnt (Handle(GEOM_
 
   //Compute the Circle value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -293,7 +292,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCircleCenter2Pnt (Handle(GEO
 
   //Compute the Circle value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -358,7 +357,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCirclePntVecR
 
   //Compute the Circle value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -433,7 +432,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeEllipse
 
   //Compute the Ellipse value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -480,10 +479,10 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
 
   //Add a new Circle Arc function
   Handle(GEOM_Function) aFunction =
-      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), CIRC_ARC_THREE_PNT);  
+      anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), CIRC_ARC_THREE_PNT);
 
   if (aFunction.IsNull()) return NULL;
-  
+
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ArcDriver::GetID()) return NULL;
   GEOMImpl_IArc aCI (aFunction);
@@ -491,17 +490,16 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArc (Handle(GEOM_Object) the
   Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
   Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
   Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
-  
 
   if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
 
   aCI.SetPoint1(aRefPnt1);
   aCI.SetPoint2(aRefPnt2);
   aCI.SetPoint3(aRefPnt3);
-  
+
   //Compute the Arc value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -562,7 +560,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcCenter (Handle(GEOM_Objec
 
   //Compute the Arc value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -604,7 +602,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
       anArc->AddFunction(GEOMImpl_ArcDriver::GetID(), ELLIPSE_ARC_CENTER_TWO_PNT);
 
   if (aFunction.IsNull()) return NULL;
-  
+
   //Check if the function is set correctly
   if (aFunction->GetDriverGUID() != GEOMImpl_ArcDriver::GetID()) return NULL;
   GEOMImpl_IArc aCI (aFunction);
@@ -612,17 +610,16 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeArcOfEllipse (Handle(GEOM_Ob
   Handle(GEOM_Function) aRefPnt1 = thePnt1->GetLastFunction();
   Handle(GEOM_Function) aRefPnt2 = thePnt2->GetLastFunction();
   Handle(GEOM_Function) aRefPnt3 = thePnt3->GetLastFunction();
-  
 
   if (aRefPnt1.IsNull() || aRefPnt2.IsNull() || aRefPnt3.IsNull()) return NULL;
 
   aCI.SetPoint1(aRefPnt1);
   aCI.SetPoint2(aRefPnt2);
   aCI.SetPoint3(aRefPnt3);
-  
+
   //Compute the Arc value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -686,7 +683,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakePolyline (std::list<Handle(G
 
   //Compute the Polyline value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -757,7 +754,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineBezier
 
   //Compute the Spline value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -830,7 +827,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 
   //Compute the Spline value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -864,32 +861,34 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
  *  MakeCurveParametric
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
-								    double theParamMin, double theParamMax, double theParamStep, 
-								    CurveType theCurveType) {
+Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
+             (const char* thexExpr, const char* theyExpr, const char* thezExpr,
+              double theParamMin, double theParamMax, double theParamStep,
+              CurveType theCurveType)
+{
   TCollection_AsciiString aPyScript;
   aPyScript +="from math import *                                          \n";
   aPyScript +="def X(t):                                                   \n";
-  aPyScript +="    return "; 
+  aPyScript +="    return ";
   aPyScript += thexExpr;
-  aPyScript += "\n";                                                             
+  aPyScript += "\n";
   aPyScript +="def Y(t):                                                   \n";
   aPyScript +="    return ";
   aPyScript += theyExpr;
   aPyScript += "\n";
-  
+
   aPyScript +="def Z(t):                                                   \n";
   aPyScript +="    return ";
   aPyScript += thezExpr;
   aPyScript += "\n";
-  
+
   aPyScript +="def coordCalculator(tmin, tmax, tstep):                      \n";
   aPyScript +="   coords = []                                              \n";
   aPyScript +="   while tmin <= tmax :                                     \n";
   aPyScript +="      coords.append([X(tmin), Y(tmin), Z(tmin)])            \n";
   aPyScript +="      tmin = tmin + tstep                                   \n";
   aPyScript +="   return coords                                            \n";
-  
+
   SetErrorCode(KO);
 
   if(theParamMin >= theParamMax) {
@@ -901,16 +900,16 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
     SetErrorCode("Value of the step must be positive !!!");
     return NULL;
   }
-  
+
   /* Initialize the Python interpreter */
   if (! Py_IsInitialized()) {
     SetErrorCode("Python interpreter is not initialized !!! ");
     return NULL;
-  } 
+  }
 
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
-  
+
   PyObject* main_mod = PyImport_AddModule("__main__");
   PyObject* main_dict = PyModule_GetDict(main_mod);
 
@@ -927,13 +926,13 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
 
   PyObject * func = NULL;
   func = PyObject_GetAttrString(main_mod, "coordCalculator");
-  
+
   if (func == NULL){
     SetErrorCode("Can't get function from python module !!!");
     PyGILState_Release(gstate);
     return NULL;
   }
-  
+
   PyObject* coords = PyObject_CallFunction(func,(char*)"(d, d, d)", theParamMin, theParamMax, theParamStep );
   PyObject* new_stderr = NULL;
 
@@ -956,39 +955,37 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
   if(PyList_Size( coords ) <= 0) {
     SetErrorCode("Empty list of the points, please check input parameters !!!");
     return NULL;
-  }    
+  }
 
   int k=1;
   for ( Py_ssize_t i = 0; i< PyList_Size( coords ); ++i ) {
     PyObject* coord = PyList_GetItem( coords, i );
     if (coord != NULL) {
       for ( Py_ssize_t j = 0; j < PyList_Size(coord); ++j) {
-	PyObject* item = PyList_GetItem(coord, j);
-	aCoordsArray->SetValue(k, PyFloat_AsDouble(item));
-	k++;
+        PyObject* item = PyList_GetItem(coord, j);
+        aCoordsArray->SetValue(k, PyFloat_AsDouble(item));
+        k++;
       }
     }
   }
 
   Py_DECREF(coords);
 
-  
-  
   PyGILState_Release(gstate);
 
-  Handle(GEOM_Object) aCurve; 
+  Handle(GEOM_Object) aCurve;
   Handle(GEOM_Function) aFunction;
   TCollection_AsciiString aCurveType;
-  
+
   switch(theCurveType) {
   case Polyline: {
     //Add a new Polyline object
     aCurve = GetEngine()->AddObject(GetDocID(), GEOM_POLYLINE);
-    
+
     //Add a new Polyline function for creation a polyline relatively to points set
     aFunction = aCurve->AddFunction(GEOMImpl_PolylineDriver::GetID(), POLYLINE_POINTS);
     if (aFunction.IsNull()) return NULL;
-    
+
     //Check if the function is set correctly
     if (aFunction->GetDriverGUID() != GEOMImpl_PolylineDriver::GetID()) return NULL;
 
@@ -1008,10 +1005,10 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
     aFunction =
       aCurve->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_BEZIER);
     if (aFunction.IsNull()) return NULL;
-    
+
     //Check if the function is set correctly
     if (aFunction->GetDriverGUID() != GEOMImpl_SplineDriver::GetID()) return NULL;
-    
+
     GEOMImpl_ISpline aCI (aFunction);
 
     aCI.SetLength(PyList_Size( coords ));
@@ -1028,7 +1025,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
     //Add a new Spline function for creation a bezier curve relatively to points set
     aFunction = aCurve->AddFunction(GEOMImpl_SplineDriver::GetID(), SPLINE_INTERPOLATION);
     if (aFunction.IsNull()) return NULL;
-    
+
     //Check if the function is set correctly
     if (aFunction->GetDriverGUID() != GEOMImpl_SplineDriver::GetID()) return NULL;
 
@@ -1045,7 +1042,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
 
   //Compute the Curve value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1058,19 +1055,19 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric(const char* 
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
-  
+
   //Make a Python command
   GEOM::TPythonDump pd (aFunction);
   pd << aCurve << " = geompy.MakeCurveParametric(";
   pd << "\"" << thexExpr << "\", ";
   pd << "\"" << theyExpr << "\", ";
   pd << "\"" << thezExpr << "\", ";
-  
+
   pd << theParamMin <<", ";
   pd << theParamMax <<", ";
   pd << theParamStep <<", ";
   pd << aCurveType.ToCString() <<")";
-  
+
   SetErrorCode(OK);
   return aCurve;
 }
@@ -1110,7 +1107,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcher (const char* theCom
 
   //Compute the Sketcher value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1174,10 +1171,10 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::Make3DSketcher (std::list<double
     aCoordsArray->SetValue(ind, *it);
 
   aCI.SetCoordinates(aCoordsArray);
-    
+
   //Compute the Sketcher value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1241,7 +1238,7 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
 
   //Compute the Sketcher value
   try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
     if (!GetSolver()->ComputeFunction(aFunction)) {
@@ -1262,4 +1259,3 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSketcherOnPlane
   SetErrorCode(OK);
   return aSketcher;
 }
-

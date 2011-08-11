@@ -18,13 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File:    BlockFix_UnionFaces.cxx
 //  Created: Tue Dec  7 17:15:42 2004
 //  Author:  Pavel DURANDIN
-//
+
 #include <BlockFix_UnionFaces.ixx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <ShapeAnalysis_WireOrder.hxx>
 #include <ShapeAnalysis_Edge.hxx>
@@ -42,7 +43,11 @@
 #include <ShapeFix_Wire.hxx>
 #include <ShapeFix_Edge.hxx>
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+#include <IntPatch_ImpImpIntersection.hxx>
+#else
 #include <IntPatch_TheIIIntOfIntersection.hxx>
+#endif
 
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
@@ -614,10 +619,15 @@ Standard_Boolean BlockFix_UnionFaces::IsSameDomain(const TopoDS_Face& aFace,
     Handle(BRepTopAdaptor_TopolTool) aTT2 = new BRepTopAdaptor_TopolTool();
 
     try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
+
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+      IntPatch_ImpImpIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
+#else
       IntPatch_TheIIIntOfIntersection anIIInt (aGA1, aTT1, aGA2, aTT2, aPrec, aPrec);
+#endif
       if (!anIIInt.IsDone() || anIIInt.IsEmpty())
         return false;
 

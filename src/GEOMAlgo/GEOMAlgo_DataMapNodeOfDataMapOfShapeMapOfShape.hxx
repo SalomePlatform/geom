@@ -44,42 +44,27 @@
 #ifndef _TCollection_MapNodePtr_HeaderFile
 #include <TCollection_MapNodePtr.hxx>
 #endif
+
 class TopoDS_Shape;
 class TopTools_MapOfShape;
 class TopTools_ShapeMapHasher;
 class GEOMAlgo_DataMapOfShapeMapOfShape;
 class GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape;
 
-
-
 class GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape : public TCollection_MapNode {
 
 public:
+  GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape
+  (const TopoDS_Shape& K, const TopTools_MapOfShape& I, const TCollection_MapNodePtr& n);
 
-  
-      GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape(const TopoDS_Shape& K,const TopTools_MapOfShape& I,const TCollection_MapNodePtr& n);
-  
-        TopoDS_Shape& Key() const;
-  
-        TopTools_MapOfShape& Value() const;
-
-
-
+  TopoDS_Shape& Key() const;
+  TopTools_MapOfShape& Value() const;
 
   DEFINE_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape)
 
-protected:
-
-
-
-
-private: 
-
-
-TopoDS_Shape myKey;
-TopTools_MapOfShape myValue;
-
-
+private:
+  TopoDS_Shape myKey;
+  TopTools_MapOfShape myValue;
 };
 
 #define TheKey TopoDS_Shape
@@ -113,9 +98,5 @@ TopTools_MapOfShape myValue;
 #undef TCollection_DataMapNode_Type_
 #undef TCollection_DataMap
 #undef TCollection_DataMap_hxx
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-
 
 #endif

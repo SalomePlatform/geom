@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_HeaderFile
 #define _GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape_HeaderFile
@@ -42,56 +41,26 @@
 #ifndef _TCollection_MapNodePtr_HeaderFile
 #include <TCollection_MapNodePtr.hxx>
 #endif
+
 class TopTools_ListOfShape;
 class TColStd_MapRealHasher;
 class GEOMAlgo_DataMapOfRealListOfShape;
 class GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape;
 
-
-
-class GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape : public TCollection_MapNode {
-
+class GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape : public TCollection_MapNode
+{
 public:
- // Methods PUBLIC
- // 
-
-GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape(const Standard_Real& K,const TopTools_ListOfShape& I,const TCollection_MapNodePtr& n);
+  GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape
+  (const Standard_Real& K,const TopTools_ListOfShape& I,const TCollection_MapNodePtr& n);
 
   Standard_Real& Key() const;
-
   TopTools_ListOfShape& Value() const;
-//Standard_EXPORT ~GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape();
 
-
-
-
- // Type management
- //
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+  DEFINE_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape)
 
 private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-Standard_Real myKey;
-TopTools_ListOfShape myValue;
-
-
+  Standard_Real myKey;
+  TopTools_ListOfShape myValue;
 };
 
 #define TheKey Standard_Real
@@ -125,10 +94,5 @@ TopTools_ListOfShape myValue;
 #undef TCollection_DataMapNode_Type_
 #undef TCollection_DataMap
 #undef TCollection_DataMap_hxx
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

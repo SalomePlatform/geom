@@ -18,17 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//  File:        NMTTools_PaveFiller_2.cxx
-//  Created:     Mon Dec  8 12:02:56 2003
-//  Author:      Peter KURNEV
-//               <pkv@irinox>
-//
+// File:        NMTTools_PaveFiller_2.cxx
+// Created:     Mon Dec  8 12:02:56 2003
+// Author:      Peter KURNEV
 
 #include <Standard_Version.hxx>
 
 #include <NMTTools_PaveFiller.ixx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <Precision.hxx>
 
@@ -68,13 +67,6 @@ static
                             const TopoDS_Vertex& aV);
 // Contribution of Samtech www.samcef.com END
 
-// In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
-#ifdef OCC_VERSION_SERVICEPACK
-#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8 | OCC_VERSION_SERVICEPACK)
-#else
-#define OCC_VERSION_LARGE (OCC_VERSION_MAJOR << 24 | OCC_VERSION_MINOR << 16 | OCC_VERSION_MAINTENANCE << 8)
-#endif
-
 //=======================================================================
 // function: PerformVE
 // purpose:
@@ -88,6 +80,7 @@ void NMTTools_PaveFiller::PerformVE()
   Standard_Integer aWith, aNbVEs, aBlockLength, iSDV, nV1;
   Standard_Real aT;
 #if OCC_VERSION_LARGE > 0x06030008
+  // In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
   Standard_Boolean bToUpdateVertex;
   Standard_Real aDist;
 #endif
@@ -162,9 +155,10 @@ void NMTTools_PaveFiller::PerformVE()
       //
       //modified by NIZNHY-PKV Mon Dec 28 08:58:05 2009f
 #if OCC_VERSION_LARGE > 0x06030008
-      aFlag=myContext.ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
+      // In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
+      aFlag = myContext.ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
 #else
-      aFlag=myContext.ComputeVE (aV1, aE2, aT);
+      aFlag = myContext.ComputeVE (aV1, aE2, aT);
 #endif
       //modified by NIZNHY-PKV Mon Dec 28 08:58:13 2009t
       //
@@ -194,6 +188,7 @@ void NMTTools_PaveFiller::PerformVE()
         //
         //modified by NIZNHY-PKV Mon Dec 28 09:00:54 2009f
 #if OCC_VERSION_LARGE > 0x06030008
+        // In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
         if (bToUpdateVertex) {
           BRep_Builder aBB;
           //

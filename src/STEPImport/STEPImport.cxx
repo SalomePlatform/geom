@@ -18,7 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 //  File:        STEPImport.cxx
 //  Created:     Wed May 19 14:41:10 2004
 //  Author:      Pavel TELKOV
@@ -26,6 +26,8 @@
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include <BRep_Builder.hxx>
 
@@ -107,7 +109,7 @@ extern "C"
     BRep_Builder B;
     B.MakeCompound(compound);
     try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x06010000
       OCC_CATCH_SIGNALS;
 #endif
       IFSelect_ReturnStatus status = aReader.ReadFile(theFileName.ToCString());

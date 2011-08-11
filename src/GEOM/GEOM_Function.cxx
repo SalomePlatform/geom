@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -26,6 +25,8 @@
 #include <GEOM_Object.hxx>
 #include <GEOM_Solver.hxx>
 #include <GEOM_ISubShape.hxx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #include "utilities.h"
 
@@ -208,7 +209,7 @@ TopoDS_Shape GEOM_Function::GetValue()
 
     if (!isResult) {
       try {
-#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+#if OCC_VERSION_LARGE > 0x060100
         OCC_CATCH_SIGNALS;
 #endif
         GEOM_Solver aSolver(GEOM_Engine::GetEngine());

@@ -18,9 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMAlgo_DataMapNodeOfDataMapOfShapeReal.hxx>
+
+#include <CASCatch_OCCTVersion.hxx>
 
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>
@@ -38,17 +39,28 @@
 #ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal_HeaderFile
 #include <GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal.hxx>
 #endif
-//GEOMAlgo_DataMapNodeOfDataMapOfShapeReal::~GEOMAlgo_DataMapNodeOfDataMapOfShapeReal() {}
- 
 
+#if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
+
+IMPLEMENT_STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal)
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY()
+  STANDARD_TYPE(TCollection_MapNode),
+  STANDARD_TYPE(MMgt_TShared),
+  STANDARD_TYPE(Standard_Transient),
+
+IMPLEMENT_STANDARD_SUPERTYPE_ARRAY_END()
+IMPLEMENT_STANDARD_TYPE_END(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal)
+
+IMPLEMENT_DOWNCAST(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal,Standard_Transient)
+IMPLEMENT_STANDARD_RTTI(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal)
+
+#else
 
 Standard_EXPORT Handle_Standard_Type& GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_Type_()
 {
-
-    static Handle_Standard_Type aType1 = STANDARD_TYPE(TCollection_MapNode);
+  static Handle_Standard_Type aType1 = STANDARD_TYPE(TCollection_MapNode);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
- 
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMAlgo_DataMapNodeOfDataMapOfShapeReal",
@@ -59,7 +71,6 @@ Standard_EXPORT Handle_Standard_Type& GEOMAlgo_DataMapNodeOfDataMapOfShapeReal_T
 
   return _aType;
 }
-
 
 // DownCast method
 //   allow safe downcasting
@@ -76,15 +87,14 @@ const Handle(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal) Handle(GEOMAlgo_DataMapNo
 
   return _anOtherObject ;
 }
+
 const Handle(Standard_Type)& GEOMAlgo_DataMapNodeOfDataMapOfShapeReal::DynamicType() const 
 { 
   return STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal) ; 
 }
-//Standard_Boolean GEOMAlgo_DataMapNodeOfDataMapOfShapeReal::IsKind(const Handle(Standard_Type)& AType) const 
-//{ 
-//  return (STANDARD_TYPE(GEOMAlgo_DataMapNodeOfDataMapOfShapeReal) == AType || TCollection_MapNode::IsKind(AType)); 
-//}
-//Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal::~Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeReal() {}
+
+#endif
+
 #define TheKey TopoDS_Shape
 #define TheKey_hxx <TopoDS_Shape.hxx>
 #define TheItem Standard_Real
