@@ -75,7 +75,6 @@ libGEOMEngine_la_CPPFLAGS =		\
 	$(CAS_CPPFLAGS)			\
 	$(BOOST_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)		\
-	$(GUI_CXXFLAGS)			\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(srcdir)/../GEOMImpl		\

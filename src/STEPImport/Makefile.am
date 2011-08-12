@@ -36,8 +36,7 @@ dist_libSTEPImport_la_SOURCES =	\
 
 libSTEPImport_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
-	$(KERNEL_CXXFLAGS)	\
-	$(GUI_CXXFLAGS)
+	$(KERNEL_CXXFLAGS)
 
 libSTEPImport_la_LDFLAGS  =			\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics \

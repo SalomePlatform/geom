@@ -21,7 +21,7 @@
 
 #include <Standard_Stream.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <GEOMImpl_I3DPrimOperations.hxx>
 

@@ -18,7 +18,7 @@
 
 #include <GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #ifndef _Standard_TypeMismatch_HeaderFile
 #include <Standard_TypeMismatch.hxx>

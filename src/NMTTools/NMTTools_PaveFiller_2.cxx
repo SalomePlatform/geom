@@ -27,7 +27,7 @@
 
 #include <NMTTools_PaveFiller.ixx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <Precision.hxx>
 

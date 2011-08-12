@@ -66,7 +66,6 @@ libGEOMbasic_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
 	$(BOOST_CPPFLAGS)	\
-	$(GUI_CXXFLAGS)		\
 	-I$(top_builddir)/idl
 
 libGEOMbasic_la_LDFLAGS  =			\

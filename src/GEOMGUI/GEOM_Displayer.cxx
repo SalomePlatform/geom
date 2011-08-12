@@ -47,7 +47,7 @@
 #include <SUIT_ViewManager.h>
 #include <SUIT_ResourceMgr.h>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <SalomeApp_Study.h>
 #include <SalomeApp_Application.h>

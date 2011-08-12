@@ -138,7 +138,6 @@ dist_libNMTTools_la_SOURCES = \
 libNMTTools_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
-	$(GUI_CXXFLAGS)		\
 	-I$(srcdir)/../NMTDS
 
 libNMTTools_la_LDFLAGS  =		\

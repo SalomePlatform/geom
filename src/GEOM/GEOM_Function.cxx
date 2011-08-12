@@ -26,7 +26,7 @@
 #include <GEOM_Solver.hxx>
 #include <GEOM_ISubShape.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 

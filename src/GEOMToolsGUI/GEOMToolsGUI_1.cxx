@@ -38,7 +38,7 @@
 #include <GEOMBase.h>
 #include <GEOM_Actor.h>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>

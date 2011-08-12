@@ -44,7 +44,7 @@
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 #include <OpUtil.hxx>

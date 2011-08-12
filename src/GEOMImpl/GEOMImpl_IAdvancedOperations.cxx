@@ -34,7 +34,7 @@
 
 #include "GEOMImpl_Gen.hxx"
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <utilities.h>
 #include <OpUtil.hxx>

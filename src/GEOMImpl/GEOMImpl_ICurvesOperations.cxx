@@ -57,7 +57,7 @@
 #include <GEOMImpl_ISketcher.hxx>
 #include <GEOMImpl_I3DSketcher.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 

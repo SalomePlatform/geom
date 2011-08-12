@@ -27,7 +27,7 @@
 
 #include <Basics_Utils.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <BRep_Builder.hxx>
 

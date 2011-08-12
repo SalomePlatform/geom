@@ -35,7 +35,7 @@
 #include <GEOMImpl_IHealing.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include "utilities.h"
 #include <OpUtil.hxx>

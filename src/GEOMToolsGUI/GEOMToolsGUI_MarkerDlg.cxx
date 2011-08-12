@@ -24,7 +24,7 @@
 #include <GeometryGUI.h>
 #include <GEOM_Displayer.h>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <QtxComboBox.h>
 #include <SUIT_ResourceMgr.h>

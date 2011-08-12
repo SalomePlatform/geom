@@ -360,7 +360,6 @@ salomeinclude_HEADERS =					\
 libGEOMAlgo_la_CPPFLAGS =	\
 	$(CAS_CPPFLAGS)		\
 	$(KERNEL_CXXFLAGS)	\
-	$(GUI_CXXFLAGS)		\
 	-I$(srcdir)/../NMTDS	\
 	-I$(srcdir)/../NMTTools
 

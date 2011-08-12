@@ -227,7 +227,6 @@ libGEOMimpl_la_CPPFLAGS =		\
         $(CORBA_INCLUDES)		\
 	$(CAS_CPPFLAGS)			\
 	$(KERNEL_CXXFLAGS)		\
-	$(GUI_CXXFLAGS)			\
 	$(BOOST_CPPFLAGS)		\
         $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\

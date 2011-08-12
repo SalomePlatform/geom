@@ -34,7 +34,7 @@
 #include <GEOMImpl_PartitionDriver.hxx>
 #include <GEOMImpl_IPartition.hxx>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <TDF_Tool.hxx>
 

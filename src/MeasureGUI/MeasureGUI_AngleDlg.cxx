@@ -27,7 +27,7 @@
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_Desktop.h>

@@ -34,7 +34,7 @@
 #include "GEOM_Engine.hxx"
 #include "GEOM_Object.hxx"
 
-#include <CASCatch_OCCTVersion.hxx>
+#include <Basics_OCCTVersion.hxx>
 
 #include <TColStd_HSequenceOfAsciiString.hxx>
 
