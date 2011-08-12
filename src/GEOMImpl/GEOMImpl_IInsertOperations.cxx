@@ -150,8 +150,11 @@ void GEOMImpl_IInsertOperations::Export
   Handle(GEOM_Function) aRefFunction = theOriginal->GetLastFunction();
   if (aRefFunction.IsNull()) return;  //There is no function which creates an object to be exported
 
+  //Add a new result object
+  Handle(GEOM_Object) result = GetEngine()->AddObject(GetDocID(), GEOM_IMPORT);
+
   //Add an Export function
-  Handle(GEOM_Function) aFunction = theOriginal->AddFunction(GEOMImpl_ExportDriver::GetID(), EXPORT_SHAPE);
+  Handle(GEOM_Function) aFunction = result->AddFunction(GEOMImpl_ExportDriver::GetID(), EXPORT_SHAPE);
   if (aFunction.IsNull()) return;
 
   //Check if the function is set correctly
