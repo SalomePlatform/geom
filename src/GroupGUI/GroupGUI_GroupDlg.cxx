@@ -180,6 +180,7 @@ GroupGUI_GroupDlg::GroupGUI_GroupDlg (Mode mode, GeometryGUI* theGeometryGUI, QW
   setHelpFileName("work_with_groups_page.html");
 
   Init();
+  updateState();
 }
 
 GroupGUI_GroupDlg::~GroupGUI_GroupDlg()
