@@ -74,9 +74,15 @@
 #endif
 
 GEOM_Actor::GEOM_Actor(): 
+  isOnlyVertex(false),
+
+  myDeflection(-1),
+  myIsForced(false),
+
   //  myDisplayMode(eWireframe), 
   myIsSelected(false), 
   myVectorMode(false),
+
   myVertexActor(GEOM_DeviceActor::New(),true), 
   myVertexSource(GEOM_VertexSource::New(),true), 
  
@@ -101,8 +107,7 @@ GEOM_Actor::GEOM_Actor():
 
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
-  myShadingFaceProp(vtkProperty::New()),
-  isOnlyVertex(false)
+  myShadingFaceProp(vtkProperty::New())
 { 
 #ifdef MYDEBUG
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
