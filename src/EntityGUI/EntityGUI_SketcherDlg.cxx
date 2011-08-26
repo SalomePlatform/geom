@@ -344,7 +344,6 @@ EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 //=================================================================================
 bool EntityGUI_SketcherDlg::eventFilter (QObject* object, QEvent* event)
 {
-  MESSAGE("EntityGUI_SketcherDlg::eventFilter")
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* ke = (QKeyEvent*)event;
     if ( ke->key() == Qt::Key_Return || ke->key() == Qt::Key_Enter ) {
@@ -454,6 +453,8 @@ void EntityGUI_SketcherDlg::InitClick()
   Group2Spin->hide();
   Group3Spin->hide();
   Group4Spin->hide();
+  globalSelection(); // close local selection to clear it
+  localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 }
 
 
@@ -1038,7 +1039,7 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
     (Group4Spin->SpinBox_DX)->setFocus();
     (Group4Spin->SpinBox_DX)->selectAll();
   }
-
+  
   return true;
 }
 
@@ -2328,16 +2329,11 @@ void EntityGUI_SketcherDlg::displayPntPreview(const double x,
   BRepBuilderAPI_Transform aTransformation (aLocalVertex, aTrans, Standard_False);
   TopoDS_Shape aGlobalVertex = aTransformation.Shape();
   
-  // Disable activation of selection
-  getDisplayer()->SetToActivate( false );
-  
   // Build prs with vertex in globalCS
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( aGlobalVertex );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
   
-  // Enable back activation of selection
-  getDisplayer()->SetToActivate( true );
 }
 
 //================================================================
