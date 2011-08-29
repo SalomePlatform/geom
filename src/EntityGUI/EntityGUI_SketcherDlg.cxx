@@ -77,6 +77,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
     myGeometryGUI( GUI ),
     myLineWidth( lineWidth )
 {
+  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   setModal( modal );
   setAttribute( Qt::WA_DeleteOnClose );
 
@@ -91,15 +92,19 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   MainWidget->buttonClose->setText( tr( "GEOM_BUT_CLOSE_SKETCH" ) );
   MainWidget->buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
 
-  QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
-  QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO" ) ) );
-  QPixmap image2( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_REDO" ) ) );
+  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT"      ) ) );
+  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO"    ) ) );
+  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_REDO"    ) ) );
+  QPixmap image3( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
+  QPixmap image4( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC"     ) ) );
 
   setWindowTitle( tr( "GEOM_SKETCHER_TITLE" ) );
 
   MainWidget->GroupConstructors->setTitle( tr( "GEOM_SKETCHER_EL" ) );
-  MainWidget->RadioButton1->setText( tr( "GEOM_SKETCHER_SEGMENT" ) );
-  MainWidget->RadioButton2->setText( tr( "GEOM_SKETCHER_ARC" ) );
+  MainWidget->RadioButton1->setText( "" );
+  MainWidget->RadioButton1->setIcon( image3 );
+  MainWidget->RadioButton2->setText( "" );
+  MainWidget->RadioButton2->setIcon( image4 );
   MainWidget->GroupDest->setTitle( tr( "GEOM_SKETCHER_DEST" ) );
   MainWidget->GroupDest1->setTitle( tr( "GEOM_SKETCHER_TYPE" ) );
   MainWidget->RB_Dest1->setText( tr( "GEOM_SKETCHER_POINT" ) );
