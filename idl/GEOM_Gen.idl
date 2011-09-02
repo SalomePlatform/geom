@@ -2635,6 +2635,25 @@ module GEOM
 				    in double theParamStep,
 				    in curve_type theCurveType);
 
+     /*!
+     *  Creates a curve using the parametric definition of the basic points.
+     *  \param thexExpr parametric equation of the coordinates X.
+     *  \param theyExpr parametric equation of the coordinates Y.
+     *  \param thezExpr parametric equation of the coordinates Z.
+     *  \param theParamMin the minimal value of the parameter.
+     *  \param theParamMax the maximum value of the parameter.
+     *  \param theParamStep the number of steps of the parameter discretization.
+     *  \param theCurveType the type of the curve.
+     *  \return New GEOM_Object, containing the created curve.
+     */    
+    GEOM_Object MakeCurveParametricNew(in string thexExpr,
+                    in string theyExpr,
+                    in string thezExpr,
+                    in double theParamMin,
+                    in double theParamMax,
+                    in long   theParamNbStep,
+                    in curve_type theCurveType);
+
     /*!
      *  Create a sketcher (wire or face), following the textual description,
      *  passed through \a theCommand argument. \n

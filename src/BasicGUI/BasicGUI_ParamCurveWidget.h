@@ -30,6 +30,7 @@
 
 class QLineEdit;
 class SalomeApp_DoubleSpinBox;
+class SalomeApp_IntSpinBox;
 
 class BasicGUI_ParamCurveWidget: public QWidget {
   Q_OBJECT
@@ -45,7 +46,7 @@ class BasicGUI_ParamCurveWidget: public QWidget {
 
   SalomeApp_DoubleSpinBox*           myPMin;
   SalomeApp_DoubleSpinBox*           myPMax;
-  SalomeApp_DoubleSpinBox*           myPStep;
+  SalomeApp_IntSpinBox*              myPStep;
   
 };
 

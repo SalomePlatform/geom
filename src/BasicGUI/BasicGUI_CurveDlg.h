@@ -79,6 +79,7 @@ private slots:
   void                               SetEditCurrentArgument();
   void                               CreationModeChanged();
   void                               ValueChangedInSpinBox(double/*theValue*/);
+  void                               ValueChangedInSpinBox(int   /*theValue*/);
   void                               OnEditingFinished();
 };
 

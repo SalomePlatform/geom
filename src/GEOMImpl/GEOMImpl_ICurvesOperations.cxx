@@ -864,7 +864,8 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeSplineInterpolation
 Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
              (const char* thexExpr, const char* theyExpr, const char* thezExpr,
               double theParamMin, double theParamMax, double theParamStep,
-              CurveType theCurveType)
+              CurveType theCurveType, 
+              int theParamNbStep, bool theNewMethod)
 {
   TCollection_AsciiString aPyScript;
   aPyScript +="from math import *                                          \n";
@@ -882,12 +883,27 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
   aPyScript += thezExpr;
   aPyScript += "\n";
 
-  aPyScript +="def coordCalculator(tmin, tmax, tstep):                      \n";
-  aPyScript +="   coords = []                                              \n";
-  aPyScript +="   while tmin <= tmax :                                     \n";
-  aPyScript +="      coords.append([X(tmin), Y(tmin), Z(tmin)])            \n";
-  aPyScript +="      tmin = tmin + tstep                                   \n";
-  aPyScript +="   return coords                                            \n";
+  if (theNewMethod)
+  {
+    aPyScript +="def coordCalculator(tmin, tmax, nstep):                     \n";
+    aPyScript +="   coords = []                                              \n";
+    aPyScript +="   tstep  = (tmax - tmin) / nstep                           \n";
+    aPyScript +="   n = 0                                                    \n";
+    aPyScript +="   while n <= nstep :                                       \n";
+    aPyScript +="      t = tmin + n*tstep                                    \n";
+    aPyScript +="      coords.append([X(t), Y(t), Z(t)])                     \n";
+    aPyScript +="      n = n+1                                               \n";
+    aPyScript +="   return coords                                            \n";
+  }
+  else
+  {
+    aPyScript +="def coordCalculator(tmin, tmax, tstep):                      \n";
+    aPyScript +="   coords = []                                              \n";
+    aPyScript +="   while tmin <= tmax :                                     \n";
+    aPyScript +="      coords.append([X(tmin), Y(tmin), Z(tmin)])            \n";
+    aPyScript +="      tmin = tmin + tstep                                   \n";
+    aPyScript +="   return coords                                            \n";
+  }
 
   SetErrorCode(KO);
 
@@ -896,8 +912,12 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     return NULL;
   }
 
-  if(theParamStep <= 0.0 ) {
+  if(!theNewMethod && theParamStep <= 0.0) {
     SetErrorCode("Value of the step must be positive !!!");
+    return NULL;
+  }
+  else if(theNewMethod && theParamNbStep < 0) {
+    SetErrorCode("The number of steps must be positive !!!");
     return NULL;
   }
 
@@ -933,7 +953,12 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
     return NULL;
   }
 
-  PyObject* coords = PyObject_CallFunction(func,(char*)"(d, d, d)", theParamMin, theParamMax, theParamStep );
+  PyObject* coords;
+  if (theNewMethod)
+    coords = PyObject_CallFunction(func,(char*)"(d, d, i)", theParamMin, theParamMax, theParamNbStep );
+  else
+    coords = PyObject_CallFunction(func,(char*)"(d, d, d)", theParamMin, theParamMax, theParamStep );
+  
   PyObject* new_stderr = NULL;
 
   if (coords == NULL){
@@ -1065,8 +1090,12 @@ Handle(GEOM_Object) GEOMImpl_ICurvesOperations::MakeCurveParametric
 
   pd << theParamMin <<", ";
   pd << theParamMax <<", ";
-  pd << theParamStep <<", ";
-  pd << aCurveType.ToCString() <<")";
+  if (theNewMethod)
+    pd << theParamNbStep <<", ";
+  else
+    pd << theParamStep <<", ";
+  pd << aCurveType.ToCString() <<", ";
+  pd << theNewMethod <<")";
 
   SetErrorCode(OK);
   return aCurve;

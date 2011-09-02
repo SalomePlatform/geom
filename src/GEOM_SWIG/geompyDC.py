@@ -966,9 +966,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_creation_curve "Example"
         def MakeCurveParametric(self, thexExpr, theyExpr, thezExpr,
-                                theParamMin, theParamMax, theParamStep, theCurveType):
+                                theParamMin, theParamMax, theParamStep, theCurveType, theNewMethod=False ):
             theParamMin,theParamMax,theParamStep,Parameters = ParseParameters(theParamMin,theParamMax,theParamStep)
-            anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
+            if theNewMethod:
+              anObj = self.CurvesOp.MakeCurveParametricNew(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)
+            else:
+              anObj = self.CurvesOp.MakeCurveParametric(thexExpr,theyExpr,thezExpr,theParamMin,theParamMax,theParamStep,theCurveType)   
             RaiseIfFailed("MakeSplineInterpolation", self.CurvesOp)
             anObj.SetParameters(Parameters)
             return anObj

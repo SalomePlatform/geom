@@ -4376,6 +4376,10 @@ Otherwise the dimensions will be kept without modifications.</translation>
     <message>
         <source>GEOM_PCURVE_STEP</source>
         <translation>Step</translation>
+    </message>
+    <message>
+        <source>GEOM_PCURVE_NBSTEP</source>
+        <translation>Number of steps</translation>
     </message>        
 </context>
 <context>

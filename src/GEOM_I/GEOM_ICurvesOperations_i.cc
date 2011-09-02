@@ -470,6 +470,46 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric(const char* 
 
 //=============================================================================
 /*!
+ *  MakeCurveParametricNew
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+                                    double theParamMin, double theParamMax, int theParamNbStep, 
+                                    GEOM::curve_type theCurveType) {
+  GEOM::GEOM_Object_var aGEOMObject;
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+  
+  GEOMImpl_ICurvesOperations::CurveType aType;
+  switch(theCurveType) {
+  case GEOM::Polyline:
+    aType = GEOMImpl_ICurvesOperations::Polyline;
+    break;
+  case GEOM::Bezier:
+    aType = GEOMImpl_ICurvesOperations::Bezier;
+    break;
+  case GEOM::Interpolation:
+    aType = GEOMImpl_ICurvesOperations::Interpolation;
+    break;
+  default:
+    break;
+  }  
+  
+
+  // Make Polyline
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeCurveParametric(thexExpr, theyExpr, thezExpr, 
+                       theParamMin, theParamMax, 
+                       0.0, aType, theParamNbStep, true);
+  
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();  
+  
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakeSketcher
  */
 //=============================================================================

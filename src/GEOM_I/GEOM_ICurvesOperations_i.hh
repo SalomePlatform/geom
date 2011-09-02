@@ -89,6 +89,10 @@ class GEOM_I_EXPORT GEOM_ICurvesOperations_i :
   GEOM::GEOM_Object_ptr MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
 					    double theParamMin, double theParamMax, double theParamStep, 
 					    GEOM::curve_type theCurveType);
+  
+  GEOM::GEOM_Object_ptr MakeCurveParametricNew(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
+                        double theParamMin, double theParamMax, int theParamNbStep, 
+                        GEOM::curve_type theCurveType);
 
   GEOM::GEOM_Object_ptr MakeSketcher (const char* theCommand, const GEOM::ListOfDouble& theWorkingPlane);
   

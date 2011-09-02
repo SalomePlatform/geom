@@ -32,6 +32,7 @@
 #include <QGroupBox>
 
 #include <SalomeApp_DoubleSpinBox.h>
+#include <SalomeApp_IntSpinBox.h>
 
 
 BasicGUI_ParamCurveWidget::BasicGUI_ParamCurveWidget(QWidget* parent):
@@ -68,8 +69,8 @@ BasicGUI_ParamCurveWidget::BasicGUI_ParamCurveWidget(QWidget* parent):
   myPMax = new SalomeApp_DoubleSpinBox( groupBox );    
 
   // Step
-  QLabel* textLabel6 = new QLabel( tr("GEOM_PCURVE_STEP"), groupBox );
-  myPStep = new SalomeApp_DoubleSpinBox( groupBox );
+  QLabel* textLabel6 = new QLabel( tr("GEOM_PCURVE_NBSTEP"), groupBox );
+  myPStep = new SalomeApp_IntSpinBox( groupBox );
 
   //Layout
   gridLayout->addWidget(textLabel1, 0, 0, 1, 1);

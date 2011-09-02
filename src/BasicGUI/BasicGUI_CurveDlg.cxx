@@ -154,7 +154,9 @@ void BasicGUI_CurveDlg::Init()
   /* min, max, step and decimals for spin boxes & initial values */
   initSpinBox( myParams->myPMin, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox( myParams->myPMax, COORD_MIN, COORD_MAX, step, "length_precision" );
-  initSpinBox( myParams->myPStep, COORD_MIN, COORD_MAX, step, "length_precision" );
+  myParams->myPStep->setValue( 10 );
+  myParams->myPStep->setMaximum( 999 );
+  myParams->myPStep->setSingleStep( 10 );
   myParams->myPMin->setValue( aMin );
   myParams->myPMax->setValue( aMax );
   myParams->myPStep->setValue( step );
@@ -165,32 +167,32 @@ void BasicGUI_CurveDlg::Init()
   myParams->hide();
 
   /* signals and slots connections */
-  connect( myGeomGUI, SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
-  connect( myGeomGUI, SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
+  connect( myGeomGUI,        SIGNAL( SignalDeactivateActiveDialog() ), this, SLOT( DeactivateActiveDialog( ) ) );
+  connect( myGeomGUI,        SIGNAL( SignalCloseAllDialogs() ),        this, SLOT( ClickOnCancel() ) );
 
-  connect( buttonOk(),    SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
-  connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
+  connect( buttonOk(),       SIGNAL( clicked() ),                      this, SLOT( ClickOnOk() ) );
+  connect( buttonApply(),    SIGNAL( clicked() ),                      this, SLOT( ClickOnApply() ) );
 
-  connect( this,          SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
+  connect( this,             SIGNAL( constructorsClicked( int ) ),     this, SLOT( ConstructorsClicked( int ) ) );
 
-  connect( GroupPoints->PushButton1, SIGNAL( clicked() ),       this, SLOT( SetEditCurrentArgument() ) );
+  connect( GroupPoints->PushButton1,  SIGNAL( clicked() ),             this, SLOT( SetEditCurrentArgument() ) );
 
-  connect( GroupPoints->CheckButton1, SIGNAL( toggled(bool) ),  this, SLOT( CheckButtonToggled() ) );
-  connect( GroupPoints->CheckButton2, SIGNAL( toggled(bool) ),  this, SLOT( CheckButtonToggled() ) );
+  connect( GroupPoints->CheckButton1, SIGNAL( toggled(bool) ),         this, SLOT( CheckButtonToggled() ) );
+  connect( GroupPoints->CheckButton2, SIGNAL( toggled(bool) ),         this, SLOT( CheckButtonToggled() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
-           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+           SIGNAL( currentSelectionChanged() ),                        this, SLOT( SelectionIntoArgument() ) );
 
-  connect( myBySelectionBtn, SIGNAL( clicked() ), this, SLOT( CreationModeChanged() ) );
-  connect( myAnaliticalBtn, SIGNAL( clicked() ), this, SLOT( CreationModeChanged() ) );
+  connect( myBySelectionBtn, SIGNAL( clicked() ),                      this, SLOT( CreationModeChanged() ) );
+  connect( myAnaliticalBtn,  SIGNAL( clicked() ),                      this, SLOT( CreationModeChanged() ) );
 
-  connect(myParams->myPMin, SIGNAL(valueChanged(double)),    this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myParams->myPMax, SIGNAL(valueChanged(double)),    this, SLOT(ValueChangedInSpinBox(double)));
-  connect(myParams->myPStep, SIGNAL(valueChanged(double)),    this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myParams->myPMin,  SIGNAL(valueChanged(double)),             this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myParams->myPMax,  SIGNAL(valueChanged(double)),             this, SLOT(ValueChangedInSpinBox(double)));
+  connect(myParams->myPStep, SIGNAL(valueChanged(int)),                this, SLOT(ValueChangedInSpinBox(int)));
 
-  connect(myParams->myXExpr, SIGNAL(editingFinished()), this, SLOT(OnEditingFinished()));
-  connect(myParams->myYExpr, SIGNAL(editingFinished()), this, SLOT(OnEditingFinished()));
-  connect(myParams->myZExpr, SIGNAL(editingFinished()), this, SLOT(OnEditingFinished()));
+  connect(myParams->myXExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
+  connect(myParams->myYExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
+  connect(myParams->myZExpr, SIGNAL(editingFinished()),                this, SLOT(OnEditingFinished()));
 
   initName( tr( "GEOM_CURVE" ) );
   resize(100,100);
@@ -407,7 +409,7 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
     if( myBySelectionBtn->isChecked() )
       anObj = anOper->MakePolyline( points.in(), GroupPoints->CheckButton1->isChecked() );
     else
-      anObj = anOper->MakeCurveParametric(qPrintable(myParams->myXExpr->text()),
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
 					  qPrintable(myParams->myYExpr->text()),
 					  qPrintable(myParams->myZExpr->text()),
 					  myParams->myPMin->value(),
@@ -420,7 +422,7 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
     if( myBySelectionBtn->isChecked() )
       anObj = anOper->MakeSplineBezier( points.in(), GroupPoints->CheckButton1->isChecked() );
     else
-      anObj = anOper->MakeCurveParametric(qPrintable(myParams->myXExpr->text()),
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
 					  qPrintable(myParams->myYExpr->text()),
 					  qPrintable(myParams->myZExpr->text()),
 					  myParams->myPMin->value(),
@@ -435,7 +437,7 @@ bool BasicGUI_CurveDlg::execute( ObjectList& objects )
       anObj = anOper->MakeSplineInterpolation( points.in(), GroupPoints->CheckButton1->isChecked(),
 					       GroupPoints->CheckButton2->isChecked() );
     else
-      anObj = anOper->MakeCurveParametric(qPrintable(myParams->myXExpr->text()),
+      anObj = anOper->MakeCurveParametricNew(qPrintable(myParams->myXExpr->text()),
 					  qPrintable(myParams->myYExpr->text()),
 					  qPrintable(myParams->myZExpr->text()),
 					  myParams->myPMin->value(),
@@ -487,6 +489,15 @@ void BasicGUI_CurveDlg::CreationModeChanged() {
 // purpose  :
 //=================================================================================
 void BasicGUI_CurveDlg::ValueChangedInSpinBox(double/*theValue*/)
+{
+  processPreview();
+}
+
+//=================================================================================
+// function : ValueChangedInSpinBox()
+// purpose  :
+//=================================================================================
+void BasicGUI_CurveDlg::ValueChangedInSpinBox(int/*theValue*/)
 {
   processPreview();
 }

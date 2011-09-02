@@ -4377,6 +4377,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>GEOM_PCURVE_STEP</source>
         <translation>Pas</translation>
     </message>
+    <message>
+        <source>GEOM_PCURVE_NBSTEP</source>
+        <translation>Nombre de pas</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_EllipseDlg</name>

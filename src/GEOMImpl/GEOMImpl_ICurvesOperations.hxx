@@ -80,7 +80,8 @@ class GEOMImpl_ICurvesOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakeCurveParametric(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
 							  double theParamMin, double theParamMax, double theParamStep, 
-							  CurveType theCurveType);
+							  CurveType theCurveType,
+                              int theParamNbStep=0, bool theNewMethod=false);
 
   Standard_EXPORT Handle(GEOM_Object) MakeSketcher (const char* theCommand,
                                                     std::list<double> theWorkingPlane);
