@@ -960,8 +960,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param thezExpr parametric equation of the coordinates Z.
         #  @param theParamMin the minimal value of the parameter.
         #  @param theParamMax the maximum value of the parameter.
-        #  @param theParamStep the step of the parameter.
+        #  @param theParamStep the number of steps if theNewMethod = True, else step value of the parameter.
         #  @param theCurveType the type of the curve.
+        #  @param theNewMethod flag for switching to the new method if the flag is set to false a deprecated method is used which can lead to a bug.
         #  @return New GEOM_Object, containing the created curve.
         #
         #  @ref tui_creation_curve "Example"
