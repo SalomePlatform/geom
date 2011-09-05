@@ -230,13 +230,13 @@ bezier = geompy.MakeBezier([p0, p1, p2, p3, p4])
 interpol = geompy.MakeInterpol([p0, p1, p2, p3, p4], False)
 
 #create a polyline using parametric definition of the basic points
-param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 5., geompy.GEOM.Polyline)
+param_polyline = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Polyline, theNewMethod=True)
 
 # create a bezier curve using parametric definition of the basic points
-param_bezier = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 5., geompy.GEOM.Bezier)
+param_bezier = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Bezier, theNewMethod=True)
 
 #create a b-spline curve using parametric definition of the basic points
-param_interpol = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 5., geompy.GEOM.Interpolation)
+param_interpol = geompy.MakeCurveParametric("t", "sin(t)", "cos(t)", 0., 100., 100, geompy.GEOM.Interpolation, theNewMethod=True)
 
 
 
