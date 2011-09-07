@@ -474,7 +474,7 @@ GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametric(const char* 
  */
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ICurvesOperations_i::MakeCurveParametricNew(const char* thexExpr, const char* theyExpr, const char* thezExpr, 
-                                    double theParamMin, double theParamMax, int theParamNbStep, 
+                                    double theParamMin, double theParamMax, CORBA::Long theParamNbStep, 
                                     GEOM::curve_type theCurveType) {
   GEOM::GEOM_Object_var aGEOMObject;
   //Set a not done flag
