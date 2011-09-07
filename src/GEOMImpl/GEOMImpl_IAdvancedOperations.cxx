@@ -249,14 +249,14 @@ bool GEOMImpl_IAdvancedOperations::MakeGroups(Handle(GEOM_Object) theShape, int 
 
   gp_Trsf aTrsfInv = aTrsf.Inverted();
 
-  int expectedGroups = 0;
-  if (shapeType == TSHAPE_BASIC)
-    if (Abs(theR2+theW2-theR1-theW1) <= Precision::Approximation())
-      expectedGroups = 10;
-    else
-      expectedGroups = 11;
-  else if (shapeType == TSHAPE_CHAMFER || shapeType == TSHAPE_FILLET)
-    expectedGroups = 12;
+//   int expectedGroups = 0;
+//   if (shapeType == TSHAPE_BASIC)
+//     if (Abs(theR2+theW2-theR1-theW1) <= Precision::Approximation())
+//       expectedGroups = 10;
+//     else
+//       expectedGroups = 11;
+//   else if (shapeType == TSHAPE_CHAMFER || shapeType == TSHAPE_FILLET)
+//     expectedGroups = 12;
 
   double aR1Ext = theR1 + theW1;
   double aR2Ext = theR2 + theW2;
@@ -634,419 +634,412 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
   Handle(GEOM_Object) wire_t, wire_t2, face_t, face_t2;
   Handle(GEOM_Object) chan_racc;
   Handle(GEOM_Object) vi1, vi2;
+  Handle(GEOM_Object) Te3;
 
-  Handle(GEOM_Object) Vector_Z = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
-  Vector_Z->GetLastFunction()->SetDescription("");
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    Handle(GEOM_Object) Vector_Z = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
+    Vector_Z->GetLastFunction()->SetDescription("");
 
-  // Useful values
-  double aSize = 2*(theL1 + theL2);
-  double aR1Ext = theR1 + theW1;
-  double aR2Ext = theR2 + theW2;
-  double theVertCylinderRadius = aR2Ext + theW + theRF;
-  double theHoriCylinderRadius = aR1Ext + theH + theRF;
+    // Useful values
+    double aSize = 2*(theL1 + theL2);
+    double aR1Ext = theR1 + theW1;
+    double aR2Ext = theR2 + theW2;
+    double theVertCylinderRadius = aR2Ext + theW + theRF;
+    double theHoriCylinderRadius = aR1Ext + theH + theRF;
 
-  // Common edges on internal cylinder
-  Handle(GEOM_Object) box_i = my3DPrimOperations->MakeBoxDXDYDZ(theR2, theR2, theR1);
-  box_i->GetLastFunction()->SetDescription("");
-  box_i = myTransformOperations->TranslateDXDYDZ(box_i, -theR2, -theR2, 0);
-  box_i->GetLastFunction()->SetDescription("");
+    // Common edges on internal cylinder
+    Handle(GEOM_Object) box_i = my3DPrimOperations->MakeBoxDXDYDZ(theR2, theR2, theR1);
+    box_i->GetLastFunction()->SetDescription("");
+    box_i = myTransformOperations->TranslateDXDYDZ(box_i, -theR2, -theR2, 0);
+    box_i->GetLastFunction()->SetDescription("");
 
-  Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
-  TCollection_AsciiString theDesc = aFunction->GetDescription();
-  Handle(TColStd_HSequenceOfTransient) edges_i =
-    myShapesOperations->GetShapesOnBox(box_i, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
-  // Recover previous description to get rid of Propagate dump
-  aFunction->SetDescription(theDesc);
-  if (edges_i.IsNull() || edges_i->Length() == 0) {
-    SetErrorCode("Internal edges not found");
-    return false;
-  }
-  for (int i=1; i<=edges_i->Length();i++) {
-    Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_i->Value(i));
-    anObj->GetLastFunction()->SetDescription("");
-  }
-  arete_intersect_int = Handle(GEOM_Object)::DownCast(edges_i->Value(1));
-
-  // search for vertices located on both internal pipes
-  aFunction = theShape->GetLastFunction();
-  theDesc = aFunction->GetDescription();
-  Handle(TColStd_HSequenceOfTransient) vertices_i =
-    myShapesOperations->GetShapesOnBox(box_i, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
-  // Recover previous description to get rid of Propagate dump
-  aFunction->SetDescription(theDesc);
-  if (vertices_i.IsNull() || vertices_i->Length() == 0) {
-    SetErrorCode("Internal vertices not found");
-    return false;
-  }
-
-  for (int i = 1; i <= vertices_i->Length(); i++) {
-    Handle(GEOM_Object) v = Handle(GEOM_Object)::DownCast(vertices_i->Value(i));
-    v->GetLastFunction()->SetDescription("");
-    TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
-    gp_Pnt aP = BRep_Tool::Pnt(aVertex);
-    if (Abs(aP.X()) <= Precision::Confusion()) {
-      if (Abs(aP.Y()) - theR2 <= Precision::Confusion())
-        vi1 = v;
-    } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-      if (Abs(aP.X()) - theR1 <= Precision::Confusion())
-        vi2 = v;
-    }
-  }
-
-  std::list<Handle(GEOM_Object)> theShapes;
-
-  if (isNormal) {
-    Handle(GEOM_Object) ve1, ve2;
-
-    Handle(GEOM_Object) box_e = my3DPrimOperations->MakeBoxDXDYDZ(aR2Ext, aR2Ext, aR1Ext);
-    box_e->GetLastFunction()->SetDescription("");
-    box_e = myTransformOperations->TranslateDXDYDZ(box_e, -aR2Ext, -aR2Ext, 0);
-    box_e->GetLastFunction()->SetDescription("");
-    // Common edges on external cylinder
-    aFunction = theShape->GetLastFunction();
-    theDesc = aFunction->GetDescription();
-    Handle(TColStd_HSequenceOfTransient) edges_e =
-      myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
+    Handle(GEOM_Function) aFunction = theShape->GetLastFunction();
+    TCollection_AsciiString theDesc = aFunction->GetDescription();
+    Handle(TColStd_HSequenceOfTransient) edges_i =
+      myShapesOperations->GetShapesOnBox(box_i, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
-    if (edges_e.IsNull() || edges_e->Length() == 0) {
-      SetErrorCode("External edges not found");
+    if (edges_i.IsNull() || edges_i->Length() == 0) {
+      SetErrorCode("Internal edges not found");
       return false;
     }
-    for (int i=1; i<=edges_e->Length();i++) {
-      Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
+    for (int i=1; i<=edges_i->Length();i++) {
+      Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_i->Value(i));
       anObj->GetLastFunction()->SetDescription("");
     }
+    arete_intersect_int = Handle(GEOM_Object)::DownCast(edges_i->Value(1));
 
-    // search for vertices located on both external pipes
+    // search for vertices located on both internal pipes
     aFunction = theShape->GetLastFunction();
     theDesc = aFunction->GetDescription();
-    Handle(TColStd_HSequenceOfTransient) vertices_e =
-      myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
+    Handle(TColStd_HSequenceOfTransient) vertices_i =
+      myShapesOperations->GetShapesOnBox(box_i, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
     // Recover previous description to get rid of Propagate dump
     aFunction->SetDescription(theDesc);
-    if (vertices_e.IsNull() || vertices_e->Length() == 0) {
-      SetErrorCode("External vertices not found");
+    if (vertices_i.IsNull() || vertices_i->Length() == 0) {
+      SetErrorCode("Internal vertices not found");
       return false;
     }
 
-    for (int i = 1; i <= vertices_e->Length(); i++) {
-      Handle(GEOM_Object) v = Handle(GEOM_Object)::DownCast(vertices_e->Value(i));
+    for (int i = 1; i <= vertices_i->Length(); i++) {
+      Handle(GEOM_Object) v = Handle(GEOM_Object)::DownCast(vertices_i->Value(i));
       v->GetLastFunction()->SetDescription("");
       TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
       gp_Pnt aP = BRep_Tool::Pnt(aVertex);
       if (Abs(aP.X()) <= Precision::Confusion()) {
-        if (Abs(aP.Y()) - theR2 > Precision::Confusion())
-          ve1 = v;
+        if (Abs(aP.Y()) - theR2 <= Precision::Confusion())
+          vi1 = v;
       } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-        if (Abs(aP.X()) - theR2 > Precision::Confusion())
-          ve2 = v;
+        if (Abs(aP.X()) - theR1 <= Precision::Confusion())
+          vi2 = v;
       }
     }
-    Handle(GEOM_Object) edge_e1, edge_e2;
-    try {
-#if OCC_VERSION_LARGE > 0x06010000
-      OCC_CATCH_SIGNALS;
-#endif
+
+    std::list<Handle(GEOM_Object)> theShapes;
+
+    if (isNormal) {
+      Handle(GEOM_Object) ve1, ve2;
+
+      Handle(GEOM_Object) box_e = my3DPrimOperations->MakeBoxDXDYDZ(aR2Ext, aR2Ext, aR1Ext);
+      box_e->GetLastFunction()->SetDescription("");
+      box_e = myTransformOperations->TranslateDXDYDZ(box_e, -aR2Ext, -aR2Ext, 0);
+      box_e->GetLastFunction()->SetDescription("");
+      // Common edges on external cylinder
+      aFunction = theShape->GetLastFunction();
+      theDesc = aFunction->GetDescription();
+      Handle(TColStd_HSequenceOfTransient) edges_e =
+        myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_EDGE, GEOMAlgo_ST_IN);
+      // Recover previous description to get rid of Propagate dump
+      aFunction->SetDescription(theDesc);
+      if (edges_e.IsNull() || edges_e->Length() == 0) {
+        SetErrorCode("External edges not found");
+        return false;
+      }
+      for (int i=1; i<=edges_e->Length();i++) {
+        Handle(GEOM_Object) anObj = Handle(GEOM_Object)::DownCast(edges_e->Value(i));
+        anObj->GetLastFunction()->SetDescription("");
+      }
+
+      // search for vertices located on both external pipes
+      aFunction = theShape->GetLastFunction();
+      theDesc = aFunction->GetDescription();
+      Handle(TColStd_HSequenceOfTransient) vertices_e =
+        myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
+      // Recover previous description to get rid of Propagate dump
+      aFunction->SetDescription(theDesc);
+      if (vertices_e.IsNull() || vertices_e->Length() == 0) {
+        SetErrorCode("External vertices not found");
+        return false;
+      }
+
+      for (int i = 1; i <= vertices_e->Length(); i++) {
+        Handle(GEOM_Object) v = Handle(GEOM_Object)::DownCast(vertices_e->Value(i));
+        v->GetLastFunction()->SetDescription("");
+        TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
+        gp_Pnt aP = BRep_Tool::Pnt(aVertex);
+        if (Abs(aP.X()) <= Precision::Confusion()) {
+          if (Abs(aP.Y()) - theR2 > Precision::Confusion())
+            ve1 = v;
+        } else if (Abs(aP.Y()) <= Precision::Confusion()) {
+          if (Abs(aP.X()) - theR2 > Precision::Confusion())
+            ve2 = v;
+        }
+      }
+      Handle(GEOM_Object) edge_e1, edge_e2;
+      
       edge_e1 = myBasicOperations->MakeLineTwoPnt(ve1, vi1);
       if (edge_e1.IsNull()) {
         SetErrorCode("Edge 1 could not be built");
         return false;
       }
-    } catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
-      return false;
-    }
-
-    try {
-#if OCC_VERSION_LARGE > 0x06010000
-      OCC_CATCH_SIGNALS;
-#endif
+      
       edge_e2 = myBasicOperations->MakeLineTwoPnt(ve2, vi2);
       if (edge_e2.IsNull()) {
         SetErrorCode("Edge 2 could not be built");
         return false;
       }
-    } catch (Standard_Failure) {
-      Handle(Standard_Failure) aFail = Standard_Failure::Caught();
-      SetErrorCode(aFail->GetMessageString());
-      return false;
+
+      edge_e1->GetLastFunction()->SetDescription("");
+      edge_e2->GetLastFunction()->SetDescription("");
+
+      std::list<Handle(GEOM_Object)> edge_e_elist;
+      edge_e_elist.push_back(arete_intersect_int);
+      edge_e_elist.push_back(edge_e1);
+      edge_e_elist.push_back(Handle(GEOM_Object)::DownCast(edges_e->Value(1)));
+      edge_e_elist.push_back(edge_e2);
+      wire_t = myShapesOperations->MakeWire(edge_e_elist, 1e-7);
+      if (wire_t.IsNull()) {
+        SetErrorCode("Impossible to build wire");
+        return false;
+      }
+      wire_t->GetLastFunction()->SetDescription("");
+      face_t = myShapesOperations->MakeFace(wire_t, false);
+      if (face_t.IsNull()) {
+        SetErrorCode("Impossible to build face");
+        return false;
+      }
+      face_t->GetLastFunction()->SetDescription("");
     }
+    else {
+      Handle(GEOM_Object) P1, P2, P3, P4, P5, P6;
+      int idP1, idP2, idP3, idP4;
+      int PZX, PZY;
+      double ZX=0, ZY=0;
+      std::vector<int> LX;
+      std::vector<int> LY;
+      Handle(GEOM_Object) box_e = my3DPrimOperations->MakeBoxDXDYDZ
+        (theVertCylinderRadius, theVertCylinderRadius, theHoriCylinderRadius);
+      box_e->GetLastFunction()->SetDescription("");
+      box_e = myTransformOperations->TranslateDXDYDZ
+        (box_e, -theVertCylinderRadius, -theVertCylinderRadius, 0);
+      box_e->GetLastFunction()->SetDescription("");
 
-    edge_e1->GetLastFunction()->SetDescription("");
-    edge_e2->GetLastFunction()->SetDescription("");
+      aFunction = theShape->GetLastFunction();
+      theDesc = aFunction->GetDescription();
+      Handle(TColStd_HSequenceOfTransient) extremVertices =
+        myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
+      // Recover previous description to get rid of Propagate dump
+      aFunction->SetDescription(theDesc);
 
-    std::list<Handle(GEOM_Object)> edge_e_elist;
-    edge_e_elist.push_back(arete_intersect_int);
-    edge_e_elist.push_back(edge_e1);
-    edge_e_elist.push_back(Handle(GEOM_Object)::DownCast(edges_e->Value(1)));
-    edge_e_elist.push_back(edge_e2);
-    wire_t = myShapesOperations->MakeWire(edge_e_elist, 1e-7);
-    if (wire_t.IsNull()) {
-      SetErrorCode("Impossible to build wire");
-      return false;
-    }
-    wire_t->GetLastFunction()->SetDescription("");
-    face_t = myShapesOperations->MakeFace(wire_t, false);
-    if (face_t.IsNull()) {
-      SetErrorCode("Impossible to build face");
-      return false;
-    }
-    face_t->GetLastFunction()->SetDescription("");
-  }
-  else {
-    Handle(GEOM_Object) P1, P2, P3, P4, P5, P6;
-    int idP1, idP2, idP3, idP4;
-    int PZX, PZY;
-    double ZX=0, ZY=0;
-    std::vector<int> LX;
-    std::vector<int> LY;
-    Handle(GEOM_Object) box_e = my3DPrimOperations->MakeBoxDXDYDZ
-      (theVertCylinderRadius, theVertCylinderRadius, theHoriCylinderRadius);
-    box_e->GetLastFunction()->SetDescription("");
-    box_e = myTransformOperations->TranslateDXDYDZ
-      (box_e, -theVertCylinderRadius, -theVertCylinderRadius, 0);
-    box_e->GetLastFunction()->SetDescription("");
+      if (extremVertices.IsNull() || extremVertices->Length() == 0) {
+        if (theRF == 0)
+          SetErrorCode("Vertices on chamfer not found");
+        else
+          SetErrorCode("Vertices on fillet not found");
+        return false;
+      }
 
-    aFunction = theShape->GetLastFunction();
-    theDesc = aFunction->GetDescription();
-    Handle(TColStd_HSequenceOfTransient) extremVertices =
-      myShapesOperations->GetShapesOnBox(box_e, theShape, TopAbs_VERTEX, GEOMAlgo_ST_ONIN);
-    // Recover previous description to get rid of Propagate dump
-    aFunction->SetDescription(theDesc);
+      theShapes.push_back(theShape);
+      theShapes.push_back(box_e);
+      if (extremVertices->Length() != 6) {
+        //           for (int i=1; i<=extremVertices->Length(); i++){
+        //             theShapes.push_back(Handle(GEOM_Object)::DownCast(extremVertices->Value(i)));
+        //           }
+        //           Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
+        //           TopoDS_Shape aCompoundShape = aCompound->GetValue();
+        //           theShape->GetLastFunction()->SetValue(aCompoundShape);
+        SetErrorCode("Bad number of vertices on chamfer found");
+        return false;
+      }
 
-    if (extremVertices.IsNull() || extremVertices->Length() == 0) {
-      if (theRF == 0)
-        SetErrorCode("Vertices on chamfer not found");
-      else
-        SetErrorCode("Vertices on fillet not found");
-      return false;
-    }
+      for (int i=1; i<=extremVertices->Length(); i++){
+        Handle(GEOM_Object) aV = Handle(GEOM_Object)::DownCast(extremVertices->Value(i));
+        aV->GetLastFunction()->SetDescription("");
+        gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aV->GetValue()));
 
-    theShapes.push_back(theShape);
-    theShapes.push_back(box_e);
-    if (extremVertices->Length() != 6) {
-      //           for (int i=1; i<=extremVertices->Length(); i++){
-      //             theShapes.push_back(Handle(GEOM_Object)::DownCast(extremVertices->Value(i)));
-      //           }
-      //           Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
-      //           TopoDS_Shape aCompoundShape = aCompound->GetValue();
-      //           theShape->GetLastFunction()->SetValue(aCompoundShape);
-      SetErrorCode("Bad number of vertices on chamfer found");
-      return false;
-    }
-
-    for (int i=1; i<=extremVertices->Length(); i++){
-      Handle(GEOM_Object) aV = Handle(GEOM_Object)::DownCast(extremVertices->Value(i));
-      aV->GetLastFunction()->SetDescription("");
-      gp_Pnt aP = BRep_Tool::Pnt(TopoDS::Vertex(aV->GetValue()));
-
-      if (Abs(aP.X()) <= Precision::Confusion()) {
-        if (Abs(aP.Y()) - theR2 > Precision::Confusion()) {
-          LX.push_back(i);
-          if  (aP.Z()-ZX > Precision::Confusion()) {
-            ZX = aP.Z();
-            PZX = i;
+        if (Abs(aP.X()) <= Precision::Confusion()) {
+          if (Abs(aP.Y()) - theR2 > Precision::Confusion()) {
+            LX.push_back(i);
+            if  (aP.Z()-ZX > Precision::Confusion()) {
+              ZX = aP.Z();
+              PZX = i;
+            }
+          }
+        }
+        else {
+          if (Abs(aP.X()) - theR2 > Precision::Confusion()) {
+            LY.push_back(i);
+            if (aP.Z() - ZY > Precision::Confusion()) {
+              ZY = aP.Z();
+              PZY = i;
+            }
           }
         }
       }
-      else {
-        if (Abs(aP.X()) - theR2 > Precision::Confusion()) {
-          LY.push_back(i);
-          if (aP.Z() - ZY > Precision::Confusion()) {
-            ZY = aP.Z();
-            PZY = i;
-          }
-        }
+
+      idP2 = PZX;
+      idP4 = PZY;
+      idP1 = LX.at(0);
+      if (LX.at(0) == PZX)
+        idP1 = LX.at(1);
+      idP3 = LY.at(0);
+      if (LY.at(0) == PZY)
+        idP3 = LY.at(1);
+
+      P1 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP1));
+      P2 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP2));
+      P3 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP3));
+      P4 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP4));
+
+      Handle(GEOM_Object) Cote_1 = myBasicOperations->MakeLineTwoPnt(P1, vi1);
+      if (Cote_1.IsNull()) {
+        SetErrorCode("Impossible to build edge in thickness");
+        return false;
       }
+      Cote_1->GetLastFunction()->SetDescription("");
+
+      Handle(GEOM_Object) Cote_2 = myBasicOperations->MakeLineTwoPnt(vi2, P3);
+      if (Cote_2.IsNull()) {
+        SetErrorCode("Impossible to build edge in thickness");
+        return false;
+      }
+      Cote_2->GetLastFunction()->SetDescription("");
+
+      // edge_chan_princ = arete du chanfrein (ou raccord) sur le tuyau principal
+      // edge_chan_inc = arete du chanfrein (ou raccord) sur le tuyau incident
+      //         std::cerr << "Getting chamfer edge on main pipe" << std::endl;
+      Handle(GEOM_Object) edge_chan_princ = myBlocksOperations->GetEdge(theShape, P1, P3);
+      if (edge_chan_princ.IsNull()) {
+        SetErrorCode("Impossible to find edge on main pipe");
+        return false;
+      }
+      edge_chan_princ->GetLastFunction()->SetDescription("");
+
+      Handle(GEOM_Object) edge_chan_inc = myBlocksOperations->GetEdge(theShape, P2, P4);
+      if (edge_chan_inc.IsNull()) {
+        SetErrorCode("Impossible to find edge on incident pipe");
+        return false;
+      }
+      edge_chan_inc->GetLastFunction()->SetDescription("");
+
+      std::list<Handle(GEOM_Object)> edgeList1;
+      edgeList1.push_back(edge_chan_princ);
+      edgeList1.push_back(Cote_1);
+      edgeList1.push_back(arete_intersect_int);
+      edgeList1.push_back(Cote_2);
+
+      //         std::cerr << "Creating wire 1" << std::endl;
+      wire_t = myShapesOperations->MakeWire(edgeList1, 1e-7);
+      if (wire_t.IsNull()) {
+        SetErrorCode("Impossible to build wire");
+        return false;
+      }
+      wire_t->GetLastFunction()->SetDescription("");
+
+      //         std::cerr << "Creating face 1" << std::endl;
+      face_t = myShapesOperations->MakeFace(wire_t, false);
+      if (face_t.IsNull()) {
+        SetErrorCode("Impossible to build face");
+        return false;
+      }
+      face_t->GetLastFunction()->SetDescription("");
+      theShapes.push_back(face_t);
+
+      gp_Pnt aP2 = BRep_Tool::Pnt(TopoDS::Vertex(P2->GetValue()));
+      gp_Pnt aP5 = BRep_Tool::Pnt(TopoDS::Vertex(vi1->GetValue()));
+      double deltaZ = aP2.Z() - aP5.Z();
+      //         std::cerr << "Creating new point from vi1 with deltaZ = " << deltaZ << std::endl;
+      Handle(GEOM_Object) P5bis = myTransformOperations->TranslateDXDYDZCopy(vi1, 0, 0, deltaZ);
+      if (P5bis.IsNull()) {
+        SetErrorCode("Impossible to translate vertex");
+        return false;
+      }
+      P5bis->GetLastFunction()->SetDescription("");
+
+      gp_Pnt aP4 = BRep_Tool::Pnt(TopoDS::Vertex(P4->GetValue()));
+      gp_Pnt aP6 = BRep_Tool::Pnt(TopoDS::Vertex(vi2->GetValue()));
+      deltaZ = aP4.Z() - aP6.Z();
+      //         std::cerr << "Creating new point from vi2 with deltaZ = " << deltaZ << std::endl;
+      Handle(GEOM_Object) P6bis = myTransformOperations->TranslateDXDYDZCopy(vi2, 0, 0, deltaZ);
+      if (P6bis.IsNull()) {
+        SetErrorCode("Impossible to translate vertex");
+        return false;
+      }
+      P6bis->GetLastFunction()->SetDescription("");
+
+      //         std::cerr << "Creating new line 1 from 2 previous points" << std::endl;
+      Handle(GEOM_Object) Cote_3 = myBasicOperations->MakeLineTwoPnt(P5bis, P2);
+      if (Cote_3.IsNull()) {
+        SetErrorCode("Impossible to build edge in thickness");
+        return false;
+      }
+      Cote_3->GetLastFunction()->SetDescription("");
+
+      //         std::cerr << "Creating new line 2 from 2 previous points" << std::endl;
+      Handle(GEOM_Object) Cote_4 = myBasicOperations->MakeLineTwoPnt(P6bis, P4);
+      if (Cote_4.IsNull()) {
+        SetErrorCode("Impossible to build edge in thickness");
+        return false;
+      }
+      Cote_4->GetLastFunction()->SetDescription("");
+
+      //         std::cerr << "Creating new line 3 from 2 previous points" << std::endl;
+      Handle(GEOM_Object) Cote_5 = myBasicOperations->MakeLineTwoPnt(P5bis, P6bis);
+      if (Cote_4.IsNull()) {
+        SetErrorCode("Impossible to build edge in thickness");
+        return false;
+      }
+      Cote_5->GetLastFunction()->SetDescription("");
+
+      //std::list<Handle(GEOM_Object)> edgeList2;
+      //edgeList2.push_back(edge_chan_inc);
+      //edgeList2.push_back(Cote_3);
+      //edgeList2.push_back(Cote_5);
+      //edgeList2.push_back(Cote_4);
+      //         std::cerr << "Creating wire 2" << std::endl;
+      //wire_t2 = myShapesOperations->MakeWire(edgeList2, 1e-7);
+      //if (wire_t2.IsNull()) {
+      //  SetErrorCode("Impossible to build wire");
+      //  return false;
+      //}
+      //wire_t2->GetLastFunction()->SetDescription("");
+      //         std::cerr << "Creating face 2" << std::endl;
+      //face_t2 = myShapesOperations->MakeFace(wire_t2, false);
+      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - 2.0*theR2);
+      if (face_t2.IsNull()) {
+        SetErrorCode("Impossible to build face");
+        return false;
+      }
+      face_t2->GetLastFunction()->SetDescription("");
+      theShapes.push_back(face_t2);
     }
 
-    idP2 = PZX;
-    idP4 = PZY;
-    idP1 = LX.at(0);
-    if (LX.at(0) == PZX)
-      idP1 = LX.at(1);
-    idP3 = LY.at(0);
-    if (LY.at(0) == PZY)
-      idP3 = LY.at(1);
+    // Planes
+    Handle(GEOM_Object) aP0 = myBasicOperations->MakePointXYZ(0, 0, 0);
+    Handle(GEOM_Object) aVZ = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
+    Handle(GEOM_Object) aVXZ = myBasicOperations->MakeVectorDXDYDZ(aR1Ext, 0, 0.5*(theL1+theVertCylinderRadius));
+    Handle(GEOM_Object) aPlnOZ = myBasicOperations->MakePlanePntVec(aP0, aVZ, aSize);
+    Handle(GEOM_Object) aPlnOXZ = myBasicOperations->MakePlanePntVec(aP0, aVXZ, aSize);
+    aP0->GetLastFunction()->SetDescription("");
+    aVZ->GetLastFunction()->SetDescription("");
+    aVXZ->GetLastFunction()->SetDescription("");
+    aPlnOZ->GetLastFunction()->SetDescription("");
+    aPlnOXZ->GetLastFunction()->SetDescription("");
+    theShapes.push_back(aPlnOZ);
+    theShapes.push_back(aPlnOXZ);
 
-    P1 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP1));
-    P2 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP2));
-    P3 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP3));
-    P4 = Handle(GEOM_Object)::DownCast(extremVertices->Value(idP4));
+    // Partition
+    Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
+    Handle(TColStd_HArray1OfInteger) theMaterials;
+    partitionShapes->Append(theShape);
+    theTools->Append(aPlnOZ);
+    if (Abs(aR1Ext - aR2Ext) > Precision::Confusion() )
+      theTools->Append(aPlnOXZ);
+    theTools->Append(face_t);
+    if (!isNormal)
+      theTools->Append(face_t2);
 
-    Handle(GEOM_Object) Cote_1 = myBasicOperations->MakeLineTwoPnt(P1, vi1);
-    if (Cote_1.IsNull()) {
-      SetErrorCode("Impossible to build edge in thickness");
+    Te3 = myBooleanOperations->MakePartition
+              (partitionShapes, theTools, theKeepInside, theRemoveInside,
+              TopAbs_SOLID, false, theMaterials, 0, false);
+    if (Te3.IsNull()) {
+      SetErrorCode("Impossible to build partition of TShape");
+//       Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
+//       TopoDS_Shape aCompoundShape = aCompound->GetValue();
+//       theShape->GetLastFunction()->SetValue(aCompoundShape);
       return false;
     }
-    Cote_1->GetLastFunction()->SetDescription("");
+    Te3->GetLastFunction()->SetDescription("");
 
-    Handle(GEOM_Object) Cote_2 = myBasicOperations->MakeLineTwoPnt(vi2, P3);
-    if (Cote_2.IsNull()) {
-      SetErrorCode("Impossible to build edge in thickness");
+    // Last verification: result should be a block
+    std::list<GEOMImpl_IBlocksOperations::BCError> errList;
+    if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
+      SetErrorCode("TShape is not a block");
       return false;
     }
-    Cote_2->GetLastFunction()->SetDescription("");
-
-    // edge_chan_princ = arete du chanfrein (ou raccord) sur le tuyau principal
-    // edge_chan_inc = arete du chanfrein (ou raccord) sur le tuyau incident
-    //         std::cerr << "Getting chamfer edge on main pipe" << std::endl;
-    Handle(GEOM_Object) edge_chan_princ = myBlocksOperations->GetEdge(theShape, P1, P3);
-    if (edge_chan_princ.IsNull()) {
-      SetErrorCode("Impossible to find edge on main pipe");
-      return false;
-    }
-    edge_chan_princ->GetLastFunction()->SetDescription("");
-
-    Handle(GEOM_Object) edge_chan_inc = myBlocksOperations->GetEdge(theShape, P2, P4);
-    if (edge_chan_inc.IsNull()) {
-      SetErrorCode("Impossible to find edge on incident pipe");
-      return false;
-    }
-    edge_chan_inc->GetLastFunction()->SetDescription("");
-
-    std::list<Handle(GEOM_Object)> edgeList1;
-    edgeList1.push_back(edge_chan_princ);
-    edgeList1.push_back(Cote_1);
-    edgeList1.push_back(arete_intersect_int);
-    edgeList1.push_back(Cote_2);
-
-    //         std::cerr << "Creating wire 1" << std::endl;
-    wire_t = myShapesOperations->MakeWire(edgeList1, 1e-7);
-    if (wire_t.IsNull()) {
-      SetErrorCode("Impossible to build wire");
-      return false;
-    }
-    wire_t->GetLastFunction()->SetDescription("");
-
-    //         std::cerr << "Creating face 1" << std::endl;
-    face_t = myShapesOperations->MakeFace(wire_t, false);
-    if (face_t.IsNull()) {
-      SetErrorCode("Impossible to build face");
-      return false;
-    }
-    face_t->GetLastFunction()->SetDescription("");
-    theShapes.push_back(face_t);
-
-    gp_Pnt aP2 = BRep_Tool::Pnt(TopoDS::Vertex(P2->GetValue()));
-    gp_Pnt aP5 = BRep_Tool::Pnt(TopoDS::Vertex(vi1->GetValue()));
-    double deltaZ = aP2.Z() - aP5.Z();
-    //         std::cerr << "Creating new point from vi1 with deltaZ = " << deltaZ << std::endl;
-    Handle(GEOM_Object) P5bis = myTransformOperations->TranslateDXDYDZCopy(vi1, 0, 0, deltaZ);
-    if (P5bis.IsNull()) {
-      SetErrorCode("Impossible to translate vertex");
-      return false;
-    }
-    P5bis->GetLastFunction()->SetDescription("");
-
-    gp_Pnt aP4 = BRep_Tool::Pnt(TopoDS::Vertex(P4->GetValue()));
-    gp_Pnt aP6 = BRep_Tool::Pnt(TopoDS::Vertex(vi2->GetValue()));
-    deltaZ = aP4.Z() - aP6.Z();
-    //         std::cerr << "Creating new point from vi2 with deltaZ = " << deltaZ << std::endl;
-    Handle(GEOM_Object) P6bis = myTransformOperations->TranslateDXDYDZCopy(vi2, 0, 0, deltaZ);
-    if (P6bis.IsNull()) {
-      SetErrorCode("Impossible to translate vertex");
-      return false;
-    }
-    P6bis->GetLastFunction()->SetDescription("");
-
-    //         std::cerr << "Creating new line 1 from 2 previous points" << std::endl;
-    Handle(GEOM_Object) Cote_3 = myBasicOperations->MakeLineTwoPnt(P5bis, P2);
-    if (Cote_3.IsNull()) {
-      SetErrorCode("Impossible to build edge in thickness");
-      return false;
-    }
-    Cote_3->GetLastFunction()->SetDescription("");
-
-    //         std::cerr << "Creating new line 2 from 2 previous points" << std::endl;
-    Handle(GEOM_Object) Cote_4 = myBasicOperations->MakeLineTwoPnt(P6bis, P4);
-    if (Cote_4.IsNull()) {
-      SetErrorCode("Impossible to build edge in thickness");
-      return false;
-    }
-    Cote_4->GetLastFunction()->SetDescription("");
-
-    //         std::cerr << "Creating new line 3 from 2 previous points" << std::endl;
-    Handle(GEOM_Object) Cote_5 = myBasicOperations->MakeLineTwoPnt(P5bis, P6bis);
-    if (Cote_4.IsNull()) {
-      SetErrorCode("Impossible to build edge in thickness");
-      return false;
-    }
-    Cote_5->GetLastFunction()->SetDescription("");
-
-    //std::list<Handle(GEOM_Object)> edgeList2;
-    //edgeList2.push_back(edge_chan_inc);
-    //edgeList2.push_back(Cote_3);
-    //edgeList2.push_back(Cote_5);
-    //edgeList2.push_back(Cote_4);
-    //         std::cerr << "Creating wire 2" << std::endl;
-    //wire_t2 = myShapesOperations->MakeWire(edgeList2, 1e-7);
-    //if (wire_t2.IsNull()) {
-    //  SetErrorCode("Impossible to build wire");
-    //  return false;
-    //}
-    //wire_t2->GetLastFunction()->SetDescription("");
-    //         std::cerr << "Creating face 2" << std::endl;
-    //face_t2 = myShapesOperations->MakeFace(wire_t2, false);
-    face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - 2.0*theR2);
-    if (face_t2.IsNull()) {
-      SetErrorCode("Impossible to build face");
-      return false;
-    }
-    face_t2->GetLastFunction()->SetDescription("");
-    theShapes.push_back(face_t2);
-  }
-
-  // Planes
-  Handle(GEOM_Object) aP0 = myBasicOperations->MakePointXYZ(0, 0, 0);
-  Handle(GEOM_Object) aVZ = myBasicOperations->MakeVectorDXDYDZ(0, 0, 1);
-  Handle(GEOM_Object) aVXZ = myBasicOperations->MakeVectorDXDYDZ(aR1Ext, 0, 0.5*(theL1+theVertCylinderRadius));
-  Handle(GEOM_Object) aPlnOZ = myBasicOperations->MakePlanePntVec(aP0, aVZ, aSize);
-  Handle(GEOM_Object) aPlnOXZ = myBasicOperations->MakePlanePntVec(aP0, aVXZ, aSize);
-  aP0->GetLastFunction()->SetDescription("");
-  aVZ->GetLastFunction()->SetDescription("");
-  aVXZ->GetLastFunction()->SetDescription("");
-  aPlnOZ->GetLastFunction()->SetDescription("");
-  aPlnOXZ->GetLastFunction()->SetDescription("");
-  theShapes.push_back(aPlnOZ);
-  theShapes.push_back(aPlnOXZ);
-
-  // Partition
-  Handle(TColStd_HSequenceOfTransient) partitionShapes = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) theTools = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
-  Handle(TColStd_HArray1OfInteger) theMaterials;
-  partitionShapes->Append(theShape);
-  theTools->Append(aPlnOZ);
-  if (Abs(aR1Ext - aR2Ext) > Precision::Confusion() )
-    theTools->Append(aPlnOXZ);
-  theTools->Append(face_t);
-  if (!isNormal)
-    theTools->Append(face_t2);
-
-  Handle(GEOM_Object) Te3 = myBooleanOperations->MakePartition
-    (partitionShapes, theTools, theKeepInside, theRemoveInside,
-     TopAbs_SOLID, false, theMaterials, 0, false);
-  if (Te3.IsNull()) {
-    SetErrorCode("Impossible to build partition of TShape");
-    //         Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
-    //         TopoDS_Shape aCompoundShape = aCompound->GetValue();
-    //         theShape->GetLastFunction()->SetValue(aCompoundShape);
+    TopoDS_Shape aShape = Te3->GetValue();
+    theShape->GetLastFunction()->SetValue(aShape);
+  } catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
     return false;
   }
-  Te3->GetLastFunction()->SetDescription("");
-
-  // Last verification: result should be a block
-  std::list<GEOMImpl_IBlocksOperations::BCError> errList;
-  if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
-    SetErrorCode("TShape is not a block");
-    return false;
-  }
-  TopoDS_Shape aShape = Te3->GetValue();
-  theShape->GetLastFunction()->SetValue(aShape);
 
   SetErrorCode(OK);
   return true;
@@ -1176,18 +1169,18 @@ GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1, double 
       SetErrorCode("TShape driver failed");
       return NULL;
     }
+    if (theHexMesh) {
+      if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        return NULL;
+      if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
+        return NULL;
+    }
   } catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
 
-  if (theHexMesh) {
-    if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
-      return NULL;
-    if (!MakePipeTShapeMirrorAndGlue(aShape, theR1, theW1, theL1, theR2, theW2, theL2))
-      return NULL;
-  }
 
   Handle(TColStd_HSequenceOfTransient) aSeq = new TColStd_HSequenceOfTransient;
   aSeq->Append(aShape);
