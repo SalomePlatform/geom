@@ -98,11 +98,18 @@
 #include <vtkCamera.h>
 #include <vtkRenderer.h>
 
+#include <GEOM_version.h>
+
+
 #include "GEOMImpl_Types.hxx"
 
 extern "C" {
   Standard_EXPORT CAM_Module* createModule() {
     return new GeometryGUI();
+  }
+
+  Standard_EXPORT char* getModuleVersion() {
+    return GEOM_VERSION_STR;
   }
 }
 

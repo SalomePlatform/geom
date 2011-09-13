@@ -28,7 +28,7 @@ dist_salomeres_DATA =		\
 GEOM_en.xml			\
 GEOM_fr.xml			\
 GEOM.config			\
-SalomeApp.xml			\
+$(top_builddir)/resources/SalomeApp.xml			\
 Plugin				\
 GEOMDS_Resources		\
 ImportExport			\

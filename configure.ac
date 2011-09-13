@@ -467,6 +467,7 @@ AC_OUTPUT([ \
   src/VTKExport/Makefile \
   resources/Makefile \
   resources/GEOMCatalog.xml \
+  resources/SalomeApp.xml \
   idl/Makefile \
   Makefile \
 ])

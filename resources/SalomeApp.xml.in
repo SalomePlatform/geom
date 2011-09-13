@@ -27,6 +27,7 @@
     <parameter name="name" value="Geometry"/>
     <parameter name="icon" value="ModuleGeom.png"/>
     <parameter name="documentation" value="geom_help"/>
+    <parameter name="GEOM_VERSION" value="@VERSION@"/>
   </section>
   <section name="geom_help" >
     <parameter name="sub_menu"          value="%1 module"/>
