@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
 #define _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
@@ -35,13 +34,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_OutOfRange;
 class Standard_NoSuchObject;
 class TColStd_IndexedMapOfInteger;
 class TColStd_MapIntegerHasher;
 class NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -50,6 +49,7 @@ class NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class NMTTools_IndexedDataMapOfIndexedMapOfInteger  : public TCollection_BasicMap {
 
@@ -132,9 +132,10 @@ Standard_EXPORT  const TColStd_IndexedMapOfInteger& FindFromKey(const Standard_I
 
 Standard_EXPORT   TColStd_IndexedMapOfInteger& ChangeFromKey(const Standard_Integer& K) ;
 
-
-
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address FindFromKey1 (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Address ChangeFromKey1 (const Standard_Integer& K);
+#endif
 
 protected:
 

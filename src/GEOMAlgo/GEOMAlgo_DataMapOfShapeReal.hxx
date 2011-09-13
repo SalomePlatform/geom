@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapOfShapeReal_HeaderFile
 #define _GEOMAlgo_DataMapOfShapeReal_HeaderFile
@@ -38,13 +37,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class TopoDS_Shape;
 class TopTools_ShapeMapHasher;
 class GEOMAlgo_DataMapNodeOfDataMapOfShapeReal;
 class GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -53,6 +52,7 @@ class GEOMAlgo_DataMapIteratorOfDataMapOfShapeReal;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class GEOMAlgo_DataMapOfShapeReal  : public TCollection_BasicMap {
 
@@ -119,20 +119,10 @@ Standard_EXPORT   Standard_Real& ChangeFind(const TopoDS_Shape& K) ;
   return ChangeFind(K);
 }
 
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const TopoDS_Shape& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const TopoDS_Shape& K);
+#endif
 
 private: 
 
@@ -148,10 +138,6 @@ Standard_EXPORT GEOMAlgo_DataMapOfShapeReal(const GEOMAlgo_DataMapOfShapeReal& O
 
 
 };
-
-
-
-
 
 // other Inline functions and methods (like "C++: function call" methods)
 //

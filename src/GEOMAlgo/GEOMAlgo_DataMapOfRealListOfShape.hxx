@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapOfRealListOfShape_HeaderFile
 #define _GEOMAlgo_DataMapOfRealListOfShape_HeaderFile
@@ -38,13 +37,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class TopTools_ListOfShape;
 class TColStd_MapRealHasher;
 class GEOMAlgo_DataMapNodeOfDataMapOfRealListOfShape;
 class GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -53,6 +52,7 @@ class GEOMAlgo_DataMapIteratorOfDataMapOfRealListOfShape;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class GEOMAlgo_DataMapOfRealListOfShape  : public TCollection_BasicMap {
 
@@ -83,8 +83,6 @@ Standard_EXPORT   GEOMAlgo_DataMapOfRealListOfShape& Assign(const GEOMAlgo_DataM
   return Assign(Other);
 }
 
-
-
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
 
 
@@ -94,16 +92,9 @@ Standard_EXPORT   void Clear() ;
   Clear();
 }
 
-
-
 Standard_EXPORT   Standard_Boolean Bind(const Standard_Real& K,const TopTools_ListOfShape& I) ;
-
-
 Standard_EXPORT   Standard_Boolean IsBound(const Standard_Real& K) const;
-
-
 Standard_EXPORT   Standard_Boolean UnBind(const Standard_Real& K) ;
-
 
 Standard_EXPORT  const TopTools_ListOfShape& Find(const Standard_Real& K) const;
  const TopTools_ListOfShape& operator()(const Standard_Real& K) const
@@ -111,50 +102,26 @@ Standard_EXPORT  const TopTools_ListOfShape& Find(const Standard_Real& K) const;
   return Find(K);
 }
 
-
-
 Standard_EXPORT   TopTools_ListOfShape& ChangeFind(const Standard_Real& K) ;
   TopTools_ListOfShape& operator()(const Standard_Real& K) 
 {
   return ChangeFind(K);
 }
 
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const Standard_Real& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const Standard_Real& K);
+#endif
 
 private: 
 
  // Methods PRIVATE
  // 
-
-
 Standard_EXPORT GEOMAlgo_DataMapOfRealListOfShape(const GEOMAlgo_DataMapOfRealListOfShape& Other);
-
-
- // Fields PRIVATE
- //
-
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

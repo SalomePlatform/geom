@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTDS_IndexedDataMapOfShapeBox_HeaderFile
 #define _NMTDS_IndexedDataMapOfShapeBox_HeaderFile
@@ -35,6 +34,7 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_OutOfRange;
 class Standard_NoSuchObject;
@@ -43,7 +43,6 @@ class Bnd_Box;
 class TopTools_ShapeMapHasher;
 class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox;
 
-
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
@@ -51,6 +50,7 @@ class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class NMTDS_IndexedDataMapOfShapeBox  : public TCollection_BasicMap {
 
@@ -133,9 +133,10 @@ Standard_EXPORT  const Bnd_Box& FindFromKey(const TopoDS_Shape& K) const;
 
 Standard_EXPORT   Bnd_Box& ChangeFromKey(const TopoDS_Shape& K) ;
 
-
-
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address FindFromKey1 (const TopoDS_Shape& K) const;
+  Standard_EXPORT Standard_Address ChangeFromKey1 (const TopoDS_Shape& K);
+#endif
 
 protected:
 

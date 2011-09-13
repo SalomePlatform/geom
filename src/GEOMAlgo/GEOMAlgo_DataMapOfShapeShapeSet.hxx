@@ -50,6 +50,8 @@ class GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
+
 class GEOMAlgo_DataMapOfShapeShapeSet  : public TCollection_BasicMap {
 
 public:
@@ -101,6 +103,11 @@ public:
   {
     return ChangeFind(K);
   }
+
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const TopoDS_Shape& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const TopoDS_Shape& K);
+#endif
 
 private: 
   Standard_EXPORT GEOMAlgo_DataMapOfShapeShapeSet(const GEOMAlgo_DataMapOfShapeShapeSet& Other);

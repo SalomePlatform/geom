@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
 #define _GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
@@ -48,6 +47,7 @@ class GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class GEOMAlgo_IndexedDataMapOfShapeShapeInfo  : public TCollection_BasicMap {
 
@@ -130,9 +130,10 @@ Standard_EXPORT  const GEOMAlgo_ShapeInfo& FindFromKey(const TopoDS_Shape& K) co
 
 Standard_EXPORT   GEOMAlgo_ShapeInfo& ChangeFromKey(const TopoDS_Shape& K) ;
 
-
-
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address FindFromKey1 (const TopoDS_Shape& K) const;
+  Standard_EXPORT Standard_Address ChangeFromKey1 (const TopoDS_Shape& K);
+#endif
 
 protected:
 

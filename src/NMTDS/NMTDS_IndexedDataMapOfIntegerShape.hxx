@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTDS_IndexedDataMapOfIntegerShape_HeaderFile
 #define _NMTDS_IndexedDataMapOfIntegerShape_HeaderFile
@@ -35,13 +34,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_OutOfRange;
 class Standard_NoSuchObject;
 class TopoDS_Shape;
 class TColStd_MapIntegerHasher;
 class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -50,6 +49,7 @@ class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class NMTDS_IndexedDataMapOfIntegerShape  : public TCollection_BasicMap {
 
@@ -132,19 +132,10 @@ Standard_EXPORT  const TopoDS_Shape& FindFromKey(const Standard_Integer& K) cons
 
 Standard_EXPORT   TopoDS_Shape& ChangeFromKey(const Standard_Integer& K) ;
 
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address FindFromKey1 (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Address ChangeFromKey1 (const Standard_Integer& K);
+#endif
 
 private: 
 

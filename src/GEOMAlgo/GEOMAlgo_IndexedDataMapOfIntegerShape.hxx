@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_IndexedDataMapOfIntegerShape_HeaderFile
 #define _GEOMAlgo_IndexedDataMapOfIntegerShape_HeaderFile
@@ -35,13 +34,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_OutOfRange;
 class Standard_NoSuchObject;
 class TopoDS_Shape;
 class TColStd_MapIntegerHasher;
 class GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -50,6 +49,7 @@ class GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class GEOMAlgo_IndexedDataMapOfIntegerShape  : public TCollection_BasicMap {
 
@@ -67,12 +67,11 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
+
  // Methods PUBLIC
  // 
 
-
 Standard_EXPORT GEOMAlgo_IndexedDataMapOfIntegerShape(const Standard_Integer NbBuckets = 1);
-
 
 Standard_EXPORT   GEOMAlgo_IndexedDataMapOfIntegerShape& Assign(const GEOMAlgo_IndexedDataMapOfIntegerShape& Other) ;
   GEOMAlgo_IndexedDataMapOfIntegerShape& operator =(const GEOMAlgo_IndexedDataMapOfIntegerShape& Other) 
@@ -80,10 +79,7 @@ Standard_EXPORT   GEOMAlgo_IndexedDataMapOfIntegerShape& Assign(const GEOMAlgo_I
   return Assign(Other);
 }
 
-
-
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
 
 Standard_EXPORT   void Clear() ;
 ~GEOMAlgo_IndexedDataMapOfIntegerShape()
@@ -91,22 +87,15 @@ Standard_EXPORT   void Clear() ;
   Clear();
 }
 
-
-
 Standard_EXPORT   Standard_Integer Add(const Standard_Integer& K,const TopoDS_Shape& I) ;
-
 
 Standard_EXPORT   void Substitute(const Standard_Integer I,const Standard_Integer& K,const TopoDS_Shape& T) ;
 
-
 Standard_EXPORT   void RemoveLast() ;
-
 
 Standard_EXPORT   Standard_Boolean Contains(const Standard_Integer& K) const;
 
-
 Standard_EXPORT  const Standard_Integer& FindKey(const Standard_Integer I) const;
-
 
 Standard_EXPORT  const TopoDS_Shape& FindFromIndex(const Standard_Integer I) const;
  const TopoDS_Shape& operator ()(const Standard_Integer I) const
@@ -114,59 +103,29 @@ Standard_EXPORT  const TopoDS_Shape& FindFromIndex(const Standard_Integer I) con
   return FindFromIndex(I);
 }
 
-
-
 Standard_EXPORT   TopoDS_Shape& ChangeFromIndex(const Standard_Integer I) ;
   TopoDS_Shape& operator ()(const Standard_Integer I) 
 {
   return ChangeFromIndex(I);
 }
 
-
-
 Standard_EXPORT   Standard_Integer FindIndex(const Standard_Integer& K) const;
 
-
 Standard_EXPORT  const TopoDS_Shape& FindFromKey(const Standard_Integer& K) const;
-
-
 Standard_EXPORT   TopoDS_Shape& ChangeFromKey(const Standard_Integer& K) ;
 
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address FindFromKey1 (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Address ChangeFromKey1 (const Standard_Integer& K);
+#endif
 
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
+private:
  // Methods PRIVATE
- // 
-
-
-Standard_EXPORT GEOMAlgo_IndexedDataMapOfIntegerShape(const GEOMAlgo_IndexedDataMapOfIntegerShape& Other);
-
-
- // Fields PRIVATE
  //
-
-
+Standard_EXPORT GEOMAlgo_IndexedDataMapOfIntegerShape(const GEOMAlgo_IndexedDataMapOfIntegerShape& Other);
 };
-
-
-
-
 
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

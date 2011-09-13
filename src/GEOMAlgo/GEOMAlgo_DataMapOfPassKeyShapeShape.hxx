@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
 #define _GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
@@ -32,6 +31,7 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class GEOMAlgo_PassKeyShape;
@@ -40,7 +40,6 @@ class GEOMAlgo_PassKeyShapeMapHasher;
 class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape;
 class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape;
 
-
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
 #endif
@@ -48,6 +47,7 @@ class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class GEOMAlgo_DataMapOfPassKeyShapeShape  : public TCollection_BasicMap {
 
@@ -65,12 +65,11 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
+
  // Methods PUBLIC
  // 
 
-
 Standard_EXPORT GEOMAlgo_DataMapOfPassKeyShapeShape(const Standard_Integer NbBuckets = 1);
-
 
 Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyShapeShape& Assign(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other) ;
   GEOMAlgo_DataMapOfPassKeyShapeShape& operator =(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other) 
@@ -78,10 +77,7 @@ Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyShapeShape& Assign(const GEOMAlgo_Dat
   return Assign(Other);
 }
 
-
-
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
 
 Standard_EXPORT   void Clear() ;
 ~GEOMAlgo_DataMapOfPassKeyShapeShape()
@@ -89,16 +85,9 @@ Standard_EXPORT   void Clear() ;
   Clear();
 }
 
-
-
 Standard_EXPORT   Standard_Boolean Bind(const GEOMAlgo_PassKeyShape& K,const TopoDS_Shape& I) ;
-
-
 Standard_EXPORT   Standard_Boolean IsBound(const GEOMAlgo_PassKeyShape& K) const;
-
-
 Standard_EXPORT   Standard_Boolean UnBind(const GEOMAlgo_PassKeyShape& K) ;
-
 
 Standard_EXPORT  const TopoDS_Shape& Find(const GEOMAlgo_PassKeyShape& K) const;
  const TopoDS_Shape& operator()(const GEOMAlgo_PassKeyShape& K) const
@@ -106,50 +95,26 @@ Standard_EXPORT  const TopoDS_Shape& Find(const GEOMAlgo_PassKeyShape& K) const;
   return Find(K);
 }
 
-
-
 Standard_EXPORT   TopoDS_Shape& ChangeFind(const GEOMAlgo_PassKeyShape& K) ;
   TopoDS_Shape& operator()(const GEOMAlgo_PassKeyShape& K) 
 {
   return ChangeFind(K);
 }
 
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const GEOMAlgo_PassKeyShape& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const GEOMAlgo_PassKeyShape& K);
+#endif
 
 private: 
 
  // Methods PRIVATE
- // 
-
-
-Standard_EXPORT GEOMAlgo_DataMapOfPassKeyShapeShape(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other);
-
-
- // Fields PRIVATE
  //
-
+Standard_EXPORT GEOMAlgo_DataMapOfPassKeyShapeShape(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other);
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

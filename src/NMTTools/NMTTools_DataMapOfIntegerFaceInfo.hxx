@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTTools_DataMapOfIntegerFaceInfo_HeaderFile
 #define _NMTTools_DataMapOfIntegerFaceInfo_HeaderFile
@@ -35,13 +34,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class NMTTools_FaceInfo;
 class TColStd_MapIntegerHasher;
 class NMTTools_DataMapNodeOfDataMapOfIntegerFaceInfo;
 class NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -50,6 +49,7 @@ class NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class NMTTools_DataMapOfIntegerFaceInfo  : public TCollection_BasicMap {
 
@@ -116,10 +116,10 @@ Standard_EXPORT   NMTTools_FaceInfo& ChangeFind(const Standard_Integer& K) ;
   return ChangeFind(K);
 }
 
-
-
-
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const Standard_Integer& K);
+#endif
 
 protected:
 

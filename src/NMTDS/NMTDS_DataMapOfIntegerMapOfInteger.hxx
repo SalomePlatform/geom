@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
 #define _NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
@@ -32,13 +31,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class TColStd_MapOfInteger;
 class TColStd_MapIntegerHasher;
 class NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger;
 class NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -47,108 +46,69 @@ class NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
-class NMTDS_DataMapOfIntegerMapOfInteger  : public TCollection_BasicMap {
-
+class NMTDS_DataMapOfIntegerMapOfInteger : public TCollection_BasicMap
+{
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  void* operator new(size_t,void* anAddress)
+  { return anAddress; }
+  void* operator new(size_t size)
+  { return Standard::Allocate(size); }
+  void  operator delete(void *anAddress)
+  { if (anAddress) Standard::Free((Standard_Address&)anAddress); }
 
+  // Methods PUBLIC
+  //
 
-Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger(const Standard_Integer NbBuckets = 1);
+  Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger(const Standard_Integer NbBuckets = 1);
 
+  Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger& Assign(const NMTDS_DataMapOfIntegerMapOfInteger& Other);
+  NMTDS_DataMapOfIntegerMapOfInteger& operator =(const NMTDS_DataMapOfIntegerMapOfInteger& Other)
+  {
+    return Assign(Other);
+  }
 
-Standard_EXPORT   NMTDS_DataMapOfIntegerMapOfInteger& Assign(const NMTDS_DataMapOfIntegerMapOfInteger& Other) ;
-  NMTDS_DataMapOfIntegerMapOfInteger& operator =(const NMTDS_DataMapOfIntegerMapOfInteger& Other) 
-{
-  return Assign(Other);
-}
+  Standard_EXPORT void ReSize(const Standard_Integer NbBuckets);
 
+  Standard_EXPORT void Clear();
+  ~NMTDS_DataMapOfIntegerMapOfInteger()
+  {
+    Clear();
+  }
 
+  Standard_EXPORT Standard_Boolean Bind (const Standard_Integer& K,const TColStd_MapOfInteger& I);
+  Standard_EXPORT Standard_Boolean IsBound (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Boolean UnBind (const Standard_Integer& K);
 
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
+  Standard_EXPORT const TColStd_MapOfInteger& Find (const Standard_Integer& K) const;
+  const TColStd_MapOfInteger& operator()(const Standard_Integer& K) const
+  {
+    return Find(K);
+  }
 
+  Standard_EXPORT TColStd_MapOfInteger& ChangeFind(const Standard_Integer& K);
+  TColStd_MapOfInteger& operator()(const Standard_Integer& K)
+  {
+    return ChangeFind(K);
+  }
 
-Standard_EXPORT   void Clear() ;
-~NMTDS_DataMapOfIntegerMapOfInteger()
-{
-  Clear();
-}
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const Standard_Integer& K);
+#endif
 
-
-
-Standard_EXPORT   Standard_Boolean Bind(const Standard_Integer& K,const TColStd_MapOfInteger& I) ;
-
-
-Standard_EXPORT   Standard_Boolean IsBound(const Standard_Integer& K) const;
-
-
-Standard_EXPORT   Standard_Boolean UnBind(const Standard_Integer& K) ;
-
-
-Standard_EXPORT  const TColStd_MapOfInteger& Find(const Standard_Integer& K) const;
- const TColStd_MapOfInteger& operator()(const Standard_Integer& K) const
-{
-  return Find(K);
-}
-
-
-
-Standard_EXPORT   TColStd_MapOfInteger& ChangeFind(const Standard_Integer& K) ;
-  TColStd_MapOfInteger& operator()(const Standard_Integer& K) 
-{
-  return ChangeFind(K);
-}
-
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
+private:
 
  // Methods PRIVATE
- // 
-
-
-Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger(const NMTDS_DataMapOfIntegerMapOfInteger& Other);
-
-
- // Fields PRIVATE
  //
 
+  Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger(const NMTDS_DataMapOfIntegerMapOfInteger& Other);
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
 #define _GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
@@ -35,13 +34,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_NoSuchObject;
 class GEOMAlgo_PassKey;
 class GEOMAlgo_PassKeyMapHasher;
 class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger;
 class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -50,6 +49,7 @@ class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger;
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class GEOMAlgo_DataMapOfPassKeyInteger  : public TCollection_BasicMap {
 
@@ -67,12 +67,11 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
+
  // Methods PUBLIC
  // 
 
-
 Standard_EXPORT GEOMAlgo_DataMapOfPassKeyInteger(const Standard_Integer NbBuckets = 1);
-
 
 Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyInteger& Assign(const GEOMAlgo_DataMapOfPassKeyInteger& Other) ;
   GEOMAlgo_DataMapOfPassKeyInteger& operator =(const GEOMAlgo_DataMapOfPassKeyInteger& Other) 
@@ -80,10 +79,7 @@ Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyInteger& Assign(const GEOMAlgo_DataMa
   return Assign(Other);
 }
 
-
-
 Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
 
 Standard_EXPORT   void Clear() ;
 ~GEOMAlgo_DataMapOfPassKeyInteger()
@@ -91,16 +87,9 @@ Standard_EXPORT   void Clear() ;
   Clear();
 }
 
-
-
 Standard_EXPORT   Standard_Boolean Bind(const GEOMAlgo_PassKey& K,const Standard_Integer& I) ;
-
-
 Standard_EXPORT   Standard_Boolean IsBound(const GEOMAlgo_PassKey& K) const;
-
-
 Standard_EXPORT   Standard_Boolean UnBind(const GEOMAlgo_PassKey& K) ;
-
 
 Standard_EXPORT  const Standard_Integer& Find(const GEOMAlgo_PassKey& K) const;
  const Standard_Integer& operator()(const GEOMAlgo_PassKey& K) const
@@ -108,50 +97,26 @@ Standard_EXPORT  const Standard_Integer& Find(const GEOMAlgo_PassKey& K) const;
   return Find(K);
 }
 
-
-
 Standard_EXPORT   Standard_Integer& ChangeFind(const GEOMAlgo_PassKey& K) ;
   Standard_Integer& operator()(const GEOMAlgo_PassKey& K) 
 {
   return ChangeFind(K);
 }
 
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address Find1 (const GEOMAlgo_PassKey& K) const;
+  Standard_EXPORT Standard_Address ChangeFind1 (const GEOMAlgo_PassKey& K);
+#endif
 
 private: 
 
  // Methods PRIVATE
  // 
-
-
 Standard_EXPORT GEOMAlgo_DataMapOfPassKeyInteger(const GEOMAlgo_DataMapOfPassKeyInteger& Other);
-
-
- // Fields PRIVATE
- //
-
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

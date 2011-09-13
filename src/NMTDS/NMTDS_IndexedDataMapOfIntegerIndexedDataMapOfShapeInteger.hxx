@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_HeaderFile
 #define _NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger_HeaderFile
@@ -35,13 +34,13 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_DomainError;
 class Standard_OutOfRange;
 class Standard_NoSuchObject;
 class BooleanOperations_IndexedDataMapOfShapeInteger;
 class TColStd_MapIntegerHasher;
 class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInteger;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -50,6 +49,7 @@ class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerIndexedDataMapOfShapeInte
 #include <Standard_Macro.hxx>
 #endif
 
+#include <Basics_OCCTVersion.hxx>
 
 class NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger  : public TCollection_BasicMap {
 
@@ -132,41 +132,21 @@ Standard_EXPORT  const BooleanOperations_IndexedDataMapOfShapeInteger& FindFromK
 
 Standard_EXPORT   BooleanOperations_IndexedDataMapOfShapeInteger& ChangeFromKey(const Standard_Integer& K) ;
 
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  Standard_EXPORT Standard_Address FindFromKey1 (const Standard_Integer& K) const;
+  Standard_EXPORT Standard_Address ChangeFromKey1 (const Standard_Integer& K);
+#endif
 
 private: 
 
  // Methods PRIVATE
  // 
 
-
 Standard_EXPORT NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger(const NMTDS_IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger& Other);
-
-
- // Fields PRIVATE
- //
-
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif
