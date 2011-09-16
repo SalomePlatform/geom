@@ -27,16 +27,16 @@
     <parameter name="name" value="Geometry"/>
     <parameter name="icon" value="ModuleGeom.png"/>
     <parameter name="documentation" value="geom_help"/>
-    <parameter name="GEOM_VERSION" value="@VERSION@"/>
+    <parameter name="version" value="@VERSION@"/>
   </section>
   <section name="geom_help" >
     <parameter name="sub_menu"          value="%1 module"/>
-    <parameter name="User's Guide"      value="${GEOM_ROOT_DIR}/share/doc/salome/gui/GEOM/index.html"/>
-    <parameter name="Developer's Guide" value="${GEOM_ROOT_DIR}/share/doc/salome/tui/GEOM/index.html"/>
+    <parameter name="User's Guide"      value="%GEOM_ROOT_DIR%/share/doc/salome/gui/GEOM/index.html"/>
+    <parameter name="Developer's Guide" value="%GEOM_ROOT_DIR%/share/doc/salome/tui/GEOM/index.html"/>
   </section>
   <section name="resources">
     <!-- Module resources -->
-    <parameter name="GEOM" value="${GEOM_ROOT_DIR}/share/salome/resources/geom"/>
+    <parameter name="GEOM" value="%GEOM_ROOT_DIR%/share/salome/resources/geom"/>
   </section>
   <section name="Geometry" >
     <!-- Other module preferences -->

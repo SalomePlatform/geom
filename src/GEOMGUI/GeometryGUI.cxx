@@ -109,7 +109,7 @@ extern "C" {
   }
 
   Standard_EXPORT char* getModuleVersion() {
-    return GEOM_VERSION_STR;
+    return (char*)GEOM_VERSION_STR;
   }
 }
 
