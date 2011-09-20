@@ -522,7 +522,11 @@ bool GEOM_Engine::Save(int theDocID, char* theFileName)
 bool GEOM_Engine::Load(int theDocID, char* theFileName)
 {
   Handle(TDocStd_Document) aDoc;
-  if(_OCAFApp->Open(theFileName, aDoc) != CDF_RS_OK) {
+#if OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+  if (_OCAFApp->Open(theFileName, aDoc) != PCDM_RS_OK) {
+#else
+  if (_OCAFApp->Open(theFileName, aDoc) != CDF_RS_OK) {
+#endif
     return false;
   }
 
