@@ -18,13 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        IGESExport.cxx
 // Created:     Wed May 19 14:49:45 2004
 // Author:      Pavel TELKOV
-//              <ptv@mutex.nnov.opencascade.com>
-//
+
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
@@ -68,7 +66,9 @@ IGESEXPORT_EXPORT
               const TCollection_AsciiString& theFormatName )
   {
     MESSAGE("Export IGES into file " << theFileName.ToCString());
-    try
+    // commented for 0021350: Please don't catch exceptions silently and send an
+    // inappropriate error message instead, it is disturbing for the user and for us
+    //try
     {
       // define, whether to write only faces (5.1 IGES format)
       // or shells and solids also (5.3 IGES format)
@@ -94,15 +94,15 @@ IGESEXPORT_EXPORT
       ICW.AddShape( theShape );
       ICW.ComputeModel();
       bool ok = ICW.Write( theFileName.ToCString() );
-      
+
       // Return previous locale
       if ( ok )
         return 1;
     }
-    catch(Standard_Failure)
-    {
-      //THROW_SALOME_CORBA_EXCEPTION("Exception catched in IGESExport", SALOME::BAD_PARAM);
-    }
+    //catch(Standard_Failure)
+    //{
+    //  //THROW_SALOME_CORBA_EXCEPTION("Exception catched in IGESExport", SALOME::BAD_PARAM);
+    //}
     return 0;
   }
 }
