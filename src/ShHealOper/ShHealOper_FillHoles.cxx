@@ -18,46 +18,50 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:      ShHealOper_FillHoles.cxx
 // Created:   26.04.04 17:35:30
 // Author:    Galina KULIKOVA
-//
+
+#include <Basics_OCCTVersion.hxx>
+
+#include <ShapeFix_Shell.hxx>
+#include <ShapeFix_Face.hxx>
 #include <ShHealOper_FillHoles.hxx>
-#include <TopExp.hxx>
-#include <TopAbs_ShapeEnum.hxx>
 #include <ShapeAnalysis_FreeBounds.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <Geom_Curve.hxx>
+
 #include <BRep_Tool.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopTools_HSequenceOfShape.hxx>
-#include <TopoDS.hxx>
-#include <Geom_BSplineSurface.hxx>
-#include <GeomPlate_BuildPlateSurface.hxx>
-#include <TopoDS_Edge.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_HCurve.hxx>
-#include <GeomPlate_CurveConstraint.hxx>
-#include <GeomPlate_Surface.hxx>
-#include <TColgp_SequenceOfXY.hxx>
-#include <TColgp_SequenceOfXYZ.hxx>
 #include <BRep_Builder.hxx>
-#include <ShapeFix_Face.hxx>
-#include <BRep_Tool.hxx>
-#include <TopLoc_Location.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopoDS_Shell.hxx>
-#include <ShapeFix_Shell.hxx>
-#include <GeomPlate_PlateG0Criterion.hxx>
-#include <GeomPlate_MakeApprox.hxx>
-#include <Precision.hxx>
-#include <TopTools_ListOfShape.hxx>
 #include <BRepFill_CurveConstraint.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Shell.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopLoc_Location.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#include <Geom_Curve.hxx>
+#include <Geom_BSplineSurface.hxx>
+#include <GeomPlate_Surface.hxx>
+#include <GeomPlate_MakeApprox.hxx>
+#include <GeomPlate_CurveConstraint.hxx>
+#include <GeomPlate_PlateG0Criterion.hxx>
+#include <GeomPlate_BuildPlateSurface.hxx>
+
+#include <TColgp_SequenceOfXY.hxx>
+#include <TColgp_SequenceOfXYZ.hxx>
+
+#include <Precision.hxx>
 
 //=======================================================================
 //function : ShHealOper_FillHoles()
@@ -70,33 +74,31 @@ ShHealOper_FillHoles::ShHealOper_FillHoles ()
 
 //=======================================================================
 //function : ShHealOper_FillHoles
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 ShHealOper_FillHoles::ShHealOper_FillHoles (const TopoDS_Shape& theShape)
 {
-  
   Init(theShape);
   InitParameters();
 }
+
 //=======================================================================
 //function : Init
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 void ShHealOper_FillHoles::Init(const TopoDS_Shape& theShape)
 {
   ShHealOper_Tool::Init(theShape);
   TopExp::MapShapesAndAncestors( myInitShape, TopAbs_EDGE,TopAbs_SHELL   , myEdgeShells);
   TopExp::MapShapesAndAncestors ( myInitShape, TopAbs_EDGE,TopAbs_COMPOUND, myEdgeComps );
-  
+
   TopExp::MapShapesAndAncestors ( myInitShape, TopAbs_EDGE,TopAbs_FACE, myEdgeFaces );
 }
+
 //=======================================================================
 //function : InitParameters
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 void ShHealOper_FillHoles::InitParameters(Standard_Integer theDegree,
                                           Standard_Integer theNbPtsOnCur,
                                           Standard_Integer theNbIter,
@@ -119,9 +121,8 @@ void ShHealOper_FillHoles::InitParameters(Standard_Integer theDegree,
 }
 //=======================================================================
 //function : Fill
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 Standard_Boolean ShHealOper_FillHoles::Fill()
 {
   ShapeAnalysis_FreeBounds sab(myInitShape);
@@ -131,17 +132,17 @@ Standard_Boolean ShHealOper_FillHoles::Fill()
   if(!aCompClosed.IsNull()) {
     TopoDS_Iterator aIt(aCompClosed);
 
-    for( ; aIt.More(); aIt.Next()) 
+    for( ; aIt.More(); aIt.Next())
       aFillWires.Append(aIt.Value());
   }
   if(!aCompOpen.IsNull()) {
     TopoDS_Iterator aIt(aCompOpen);
-    for(  ; aIt.More(); aIt.Next()) 
+    for(  ; aIt.More(); aIt.Next())
       aFillWires.Append(aIt.Value());
   }
-  
+
   TopExp_Explorer aExp(myInitShape,TopAbs_EDGE,TopAbs_FACE);
-  
+
   for( ; aExp.More(); aExp.Next())
     aFillWires.Append(aExp.Current());
 
@@ -150,9 +151,8 @@ Standard_Boolean ShHealOper_FillHoles::Fill()
 
 //=======================================================================
 //function : Fill
-//purpose  : 
+//purpose  :
 //=======================================================================
-
 Standard_Boolean ShHealOper_FillHoles::Fill(const TopTools_SequenceOfShape& theFillShapes)
 {
   myDone = Standard_False;
@@ -181,36 +181,36 @@ Standard_Boolean ShHealOper_FillHoles::Fill(const TopTools_SequenceOfShape& theF
     Handle(Geom_Surface) aSurf = buildSurface(aWire,aCurves2d,aOrders,aSenses);
     if(aSurf.IsNull())
       myErrorStatus = ShHealOper_ErrorExecution;
-    else 
+    else
       myDone = (addFace(aSurf,aWire,aCurves2d,aOrders,aSenses) || myDone);
   }
   if(myDone)
     myResultShape = myContext->Apply(myResultShape);
   return myDone;
 }
+
 //=======================================================================
 //function : isCircle
-//purpose  : 
+//purpose  :
 //=======================================================================
 static Standard_Boolean isCircle(const TopoDS_Edge theEdge)
 {
   Standard_Real aFirst, aLast;
   Handle(Geom_Curve) aC3D = BRep_Tool::Curve(theEdge,aFirst, aLast );
   if(aC3D.IsNull()) return Standard_False;
-  Standard_Boolean isCirc = (aC3D->Value(aFirst).Distance(aC3D->Value(aLast)) < 
+  Standard_Boolean isCirc = (aC3D->Value(aFirst).Distance(aC3D->Value(aLast)) <
      aC3D->Value(aFirst).Distance(aC3D->Value((aFirst +aLast)/2)));
   return isCirc;
 }
 //=======================================================================
 //function : prepareWires
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean ShHealOper_FillHoles::prepareWires(const TopTools_SequenceOfShape& theFillShapes,
                                                     Handle(TopTools_HSequenceOfShape)& theSeqWires)
 {
   Handle(TopTools_HSequenceOfShape) aSeqEdges = new TopTools_HSequenceOfShape;
-  BRep_Builder aB;
   Standard_Integer i =1;
   for( ; i <= theFillShapes.Length(); i++) {
     TopExp_Explorer aExp;
@@ -231,7 +231,7 @@ Standard_Boolean ShHealOper_FillHoles::prepareWires(const TopTools_SequenceOfSha
         aSeqEdges->Append(aExp.Current());
     }
   }
-  
+
   if(aSeqEdges->Length())
   {
     Standard_Real aTol = 0.;
@@ -241,23 +241,21 @@ Standard_Boolean ShHealOper_FillHoles::prepareWires(const TopTools_SequenceOfSha
     Handle(TopTools_HSequenceOfShape) anWiresClosed = new TopTools_HSequenceOfShape,
     anWiresOpen   = new TopTools_HSequenceOfShape;
     ShapeAnalysis_FreeBounds::SplitWires(aTmpWires, aTol, aShared, anWiresClosed, anWiresOpen);
-    
+
     for (i = 1; i <= anWiresClosed->Length(); i++)
       theSeqWires->Append (anWiresClosed->Value (i));
     for (i = 1; i <= anWiresOpen->Length(); i++)
       theSeqWires->Append (anWiresOpen->Value (i));
   }
-  
- 
 
   for( i =1; i <= theSeqWires->Length(); i++) {
     TopoDS_Wire aWire = TopoDS::Wire(theSeqWires->Value(i));
-    
+
     TopoDS_Iterator aIt(aWire);
     Standard_Integer ne =0;
     TopoDS_Edge ae;
     for( ; aIt.More(); aIt.Next(), ne++)
-      ae = TopoDS::Edge(aIt.Value()); 
+      ae = TopoDS::Edge(aIt.Value());
     if((ne == 1) && ( !isCircle(ae))) {
       theSeqWires->Remove(i--);
       continue;
@@ -267,7 +265,7 @@ Standard_Boolean ShHealOper_FillHoles::prepareWires(const TopTools_SequenceOfSha
 }
 //=======================================================================
 //function : buildSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWire,
@@ -277,7 +275,6 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
 {
   Handle(Geom_BSplineSurface) aSurf;
   try {
-    
       GeomPlate_BuildPlateSurface aBuilder(myDegree, myNbPtsOnCur, myNbIter,
                                                  myTol2d, myTol3d, myTolAng, myTolCrv);
       TopoDS_Iterator aIter;
@@ -288,7 +285,7 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
         Handle(BRepAdaptor_HCurve) aHAD= new BRepAdaptor_HCurve(adC);
         Handle(BRepFill_CurveConstraint) aConst =
             new BRepFill_CurveConstraint (aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
-        //Handle(GeomPlate_CurveConstraint) aConst = 
+        //Handle(GeomPlate_CurveConstraint) aConst =
          // new GeomPlate_CurveConstraint(aHAD, (Standard_Integer) GeomAbs_C0, myNbPtsOnCur, myTol3d);
         aBuilder.Add (aConst);
       }
@@ -308,17 +305,16 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
       S3d.Clear();
       aBuilder.Disc2dContour(4,S2d);
       aBuilder.Disc3dContour(4,0,S3d);
-      Standard_Real amaxTol = Max( myTol3d, 10* aDist); 
+      Standard_Real amaxTol = Max( myTol3d, 10* aDist);
       GeomPlate_PlateG0Criterion Criterion( S2d, S3d, amaxTol );
       GeomPlate_MakeApprox Approx( aPlSurf, Criterion, myTol3d, myMaxSeg, myMaxDeg );
       aSurf = Approx.Surface();
       if(aSurf.IsNull())
         return aSurf;
-      
+
       theCurves2d = aBuilder.Curves2d();
       theOrders    = aBuilder.Order();
       theSenses    = aBuilder.Sense();
-      
     }
 
   catch (Standard_Failure) {
@@ -330,7 +326,7 @@ Handle(Geom_Surface) ShHealOper_FillHoles::buildSurface(const TopoDS_Wire& theWi
 
 //=======================================================================
 //function : addFace
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSurf,
@@ -339,10 +335,13 @@ Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSu
                                                const Handle(TColStd_HArray1OfInteger)& theOrders,
                                                const Handle(TColStd_HArray1OfInteger)& theSenses)
 {
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  BRepBuilderAPI_MakeFace aMakeFace (theSurf, Precision::Confusion());
+#else
   BRepBuilderAPI_MakeFace aMakeFace (theSurf);
+#endif
   TopoDS_Face aFace = aMakeFace.Face();
   aFace.EmptyCopy();
-  
 
   TopoDS_Wire aWire;
   BRep_Builder aB;
@@ -358,9 +357,9 @@ Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSu
     BRep_Tool::Range (anEdge, aF, aL);
     TopLoc_Location aLoc;
     aB.UpdateEdge (anEdge, theCurves2d->Value (aInd),aFace, 0.);
-    
+
     aB.Range (anEdge, aFace, aF, aL);
-    
+
     // Set orientation of the edge: orientation should be changed
     // if its orientation does not make sence with curve orientation
     // recommended by GeomPlate
@@ -409,7 +408,7 @@ Standard_Boolean ShHealOper_FillHoles::addFace(const Handle(Geom_Surface)& theSu
 
 //=======================================================================
 //function : getResShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void ShHealOper_FillHoles::getResShape(const TopoDS_Shape& theAddShape,
@@ -432,7 +431,6 @@ void ShHealOper_FillHoles::getResShape(const TopoDS_Shape& theAddShape,
   aB.MakeShell(aTmpShell);
   TopTools_SequenceOfShape aseqShells;
   if(anhasShell) {
-    
     aB.Add(aTmpShell,theAddShape);
     Standard_Integer i =1;
     for( ; i <= aMapParent.Extent(); i++) {
@@ -452,9 +450,8 @@ void ShHealOper_FillHoles::getResShape(const TopoDS_Shape& theAddShape,
     TopoDS_Shape anshape = asfs->Shape();
     myContext->Replace(aseqShells.Value(1),anshape);
     Standard_Integer i =2;
-    for( ; i<= aseqShells.Length(); i++) 
+    for( ; i<= aseqShells.Length(); i++)
       myContext->Remove(aseqShells.Value(i));
-    
   }
   else {
     TopoDS_Compound aComp;
@@ -465,6 +462,5 @@ void ShHealOper_FillHoles::getResShape(const TopoDS_Shape& theAddShape,
       aB.Add(aComp,aIt.Value());
     aB.Add(aComp,theAddShape);
     myContext->Replace( oldshape,aComp);
-                        
   }
 }

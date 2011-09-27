@@ -18,9 +18,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // File:	GEOMAlgo_GetInPlace_1.cxx
-// Created:	
 // Author:	Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
@@ -91,9 +90,9 @@ static
 Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
 						       const TopoDS_Shape& aS2)
 {
-  Standard_Boolean bOk, bIsDone;
+  Standard_Boolean bOk;
   Standard_Integer iErr;
-  Standard_Real aTol2, aD2;
+  Standard_Real aTol2;
   TopAbs_ShapeEnum aType1, aType2;
   TopAbs_State aState;
   gp_Pnt aP1, aP2;

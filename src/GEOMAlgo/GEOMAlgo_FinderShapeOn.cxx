@@ -18,14 +18,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_FinderShapeOn.cxx
 // Created:     Tue Jan 11 14:44:31 2005
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_FinderShapeOn.ixx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+#include <Precision.hxx>
+#endif
 
 #include <gp_Pnt.hxx>
 
@@ -383,7 +387,11 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
   //
   // Argument 1
   if (!myIsAnalytic) {
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+    aMF.Init(mySurface, Standard_True, Precision::Confusion());
+#else
     aMF.Init(mySurface, Standard_True);
+#endif
     aFErr=aMF.Error();
     if (aFErr!=BRepLib_FaceDone) {
       myErrorStatus=20; // can not build the face

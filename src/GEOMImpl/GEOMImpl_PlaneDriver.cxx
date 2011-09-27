@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -28,6 +27,8 @@
 #include <GEOM_Function.hxx>
 
 #include <GEOMImpl_IMeasureOperations.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 // OCCT Includes
 #include <BRepBuilderAPI_MakeFace.hxx>
@@ -125,7 +126,12 @@ Standard_Integer GEOMImpl_PlaneDriver::Execute(TFunction_Logbook& log) const
     if (gp_Vec(aP1, aP2).IsParallel(gp_Vec(aP1, aP3), Precision::Angular()))
       Standard_ConstructionError::Raise("Plane creation aborted: points lay on one line");
     GC_MakePlane aMakePlane (aP1, aP2, aP3);
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+    aShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, +aSize, -aSize, +aSize,
+                                     Precision::Confusion()).Shape();
+#else
     aShape = BRepBuilderAPI_MakeFace(aMakePlane, -aSize, +aSize, -aSize, +aSize).Shape();
+#endif
   } else if (aType == PLANE_FACE) {
     Handle(GEOM_Function) aRef = aPI.GetFace();
     TopoDS_Shape aRefShape = aRef->GetValue();

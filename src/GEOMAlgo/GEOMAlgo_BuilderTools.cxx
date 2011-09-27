@@ -18,14 +18,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_BuilderTools.cxx
-// Created:     
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_BuilderTools.ixx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <TColStd_Array1OfReal.hxx>
 
@@ -52,6 +51,11 @@
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopExp_Explorer.hxx>
+
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+#include <TopExp.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#endif
 
 #include <BRep_Tool.hxx>
 #include <BRepBndLib.hxx>
@@ -276,5 +280,12 @@ void BuildTriangulation(const TopoDS_Face& aF)
                                Standard_True,
                                Standard_False,
                                Standard_True);
+
+#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
+  TopTools_IndexedDataMapOfShapeListOfShape anAncestors;
+  TopExp::MapShapesAndAncestors(aF, TopAbs_EDGE, TopAbs_FACE, anAncestors);
+  aMesher.Add(aF, anAncestors);
+#else
   aMesher.Add(aF);
+#endif
 }
