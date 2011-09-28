@@ -40,6 +40,7 @@
 #include <Interface_InterfaceModel.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
+#include <StepShape_TopologicalRepresentationItem.hxx>
 
 #include <Transfer_Binder.hxx>
 #include <TNaming_Builder.hxx>
@@ -175,21 +176,38 @@ extern "C"
         if (!TR.IsNull()) {
           Handle(Transfer_TransientProcess) TP = TR->TransientProcess();
           Handle(Standard_Type) tPD  = STANDARD_TYPE(StepBasic_ProductDefinition);
+          Handle(Standard_Type) tShape  = STANDARD_TYPE(StepShape_TopologicalRepresentationItem);
 
           Standard_Integer nb = Model->NbEntities();
           for (Standard_Integer ie = 1; ie <= nb; ie++) {
             Handle(Standard_Transient) enti = Model->Value(ie);
-            if (enti->DynamicType() != tPD) continue;
+            Handle(TCollection_HAsciiString) aName;
+            if ( enti->IsKind( tShape ))
+            {
+              aName = Handle(StepRepr_RepresentationItem)::DownCast(enti)->Name();
+            }
+            else if (enti->DynamicType() == tPD)
+            {
+              Handle(StepBasic_ProductDefinition) PD =
+                Handle(StepBasic_ProductDefinition)::DownCast(enti);
+              if (PD.IsNull()) continue;
 
-            Handle(StepBasic_ProductDefinition) PD =
-              Handle(StepBasic_ProductDefinition)::DownCast(enti);
-            if (PD.IsNull()) continue;
-
-            Handle(StepBasic_Product) Prod = PD->Formation()->OfProduct();
-            if (Prod->Name()->UsefullLength() <= 0) continue;
-
-            Handle(TCollection_HAsciiString) aName = Prod->Name();
-            TCollection_ExtendedString aNameExt (aName->ToCString());
+              Handle(StepBasic_Product) Prod = PD->Formation()->OfProduct();
+              aName = Prod->Name();
+            }
+            else
+            {
+              continue;
+            }
+            if ( aName->UsefullLength() < 1 )
+              continue;
+            // skip 'N0NE' name
+            if ( aName->UsefullLength() == 4 &&
+                 toupper (aName->Value(1)) == 'N' &&
+                 toupper (aName->Value(2)) == 'O' &&
+                 toupper (aName->Value(3)) == 'N' &&
+                 toupper (aName->Value(4)) == 'E')
+              continue;
 
             // special check to pass names like "Open CASCADE STEP translator 6.3 1"
             TCollection_AsciiString aSkipName ("Open CASCADE STEP translator");
@@ -197,6 +215,7 @@ extern "C"
               if (aName->String().SubString(1, aSkipName.Length()).IsEqual(aSkipName))
                 continue;
             }
+            TCollection_ExtendedString aNameExt (aName->ToCString());
 
             // find target shape
             Handle(Transfer_Binder) binder = TP->Find(enti);
