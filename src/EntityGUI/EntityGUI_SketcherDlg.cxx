@@ -88,7 +88,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   topLayout->setMargin( 9 ); topLayout->setSpacing( 6 );
 
   MainWidget->buttonCancel->setText( tr( "GEOM_BUT_CANCEL" ) );
-  MainWidget->buttonEnd->setText( tr( "GEOM_BUT_END_SKETCH" ) );
+  MainWidget->buttonEnd->setText( tr( "GEOM_BUT_CLOSE" ) );
   MainWidget->buttonClose->setText( tr( "GEOM_BUT_CLOSE_SKETCH" ) );
   MainWidget->buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
 
@@ -975,7 +975,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
       myCommand.append( ":WW" );
   }
   else {
-    // PAL16008 (Sketcher Validation should be equal to Apply&Close)
+    /*// PAL16008 (Sketcher Validation should be equal to Apply&Close)
     if ( ( Group1Spin->buttonApply->isEnabled() && Group1Spin->isVisible() ) ||
          ( Group2Spin->buttonApply->isEnabled() && Group2Spin->isVisible() ) ||
          ( Group3Spin->buttonApply->isEnabled() && Group3Spin->isVisible() ) ||
@@ -984,7 +984,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
          ( Group2Sel->buttonApply->isEnabled()  && Group2Sel->isVisible()  ) ||
          ( Group1Sel1Spin->buttonApply->isEnabled() && Group1Sel1Spin->isVisible() ) )  {     
       ClickOnApply();
-    }
+    }*/
     myIsAllAdded = true;
   }
 
