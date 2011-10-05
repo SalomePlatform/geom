@@ -1,29 +1,31 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+//  Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-// This library is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 2.1 of the License.
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation; either
+//  version 2.1 of the License.
 //
-// This library is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  File:        NMTTools_PaveFiller_6.cxx
 //  Created:     Fri Dec 19 10:27:31 2003
 //  Author:      Peter KURNEV
 
 #include <NMTTools_PaveFiller.ixx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <Precision.hxx>
 
@@ -122,7 +124,7 @@ static
   myIsDone=Standard_False;
   //
   Standard_Boolean bToApproxC3d, bToApproxC2dOnS1, bToApproxC2dOnS2, bIsDone;
-  Standard_Boolean bJustAdd;
+  Standard_Boolean bJustAdd, bToSplit;
   Standard_Integer n1, n2, anIndexIn, nF1, nF2, aBlockLength, aNbFFs;
   Standard_Integer aNbCurves, aNbPoints;
   Standard_Real anApproxTol, aTolR3D, aTolR2D;
@@ -141,6 +143,10 @@ static
   if (aNbFFs > aBlockLength) {
     aFFs.SetBlockLength(aNbFFs);
   }
+  //
+  //modified by NIZNHY-PKV Thu Sep 15 08:02:52 2011f
+  bToSplit=Standard_False;
+  //modified by NIZNHY-PKV Thu Sep 15 08:02:55 2011t
   //
   for (; myDSIt->More(); myDSIt->Next()) {
     myDSIt->Current(n1, n2, bJustAdd);
@@ -186,7 +192,13 @@ static
       aTolR3D=1.e-7;
     }
     //
+    //modified by NIZNHY-PKV Thu Sep 15 08:03:02 2011f
+#if OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+    aFF.PrepareLines3D(bToSplit);
+#else
     aFF.PrepareLines3D();
+#endif // OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+    //modified by NIZNHY-PKV Thu Sep 15 08:03:04 2011t
     //
     const IntTools_SequenceOfCurves& aCvsX=aFF.Lines();
     const IntTools_SequenceOfPntOn2Faces& aPntsX=aFF.Points();
@@ -349,6 +361,16 @@ void NMTTools_PaveFiller::MakeBlocks()
       BOPTools_Curve& aBC=aSCvs(j);
       PutBoundPaveOnCurve (aBC, aFFi);
     }
+    //modified by NIZNHY-PKV Wed Sep 14 13:12:14 2011f
+#if OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+    //
+    // Put closing pave if needded
+    for (j=1; j<=aNbCurves; ++j) {
+      BOPTools_Curve& aBC=aSCvs(j);
+      PutClosingPaveOnCurve (aBC, aFFi);
+    }
+#endif // OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+    //modified by NIZNHY-PKV Wed Sep 14 13:12:17 2011t
     //
     //  Pave Blocks on Curves
     bHasES=Standard_False;
@@ -1260,13 +1282,9 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
       BOPTools_PaveSet& aPS=aBC.Set();
       aPS.Append(aPaveNew);
       //<-B
-      //modified by NIZNHY-PKV Thu Apr 22 10:36:45 2010f
-      //BOPTools_Tools::UpdateVertex (aC, aT, aV);
-      //modified by NIZNHY-PKV Thu Apr 22 10:36:48 2010t
     }
   }
 }
-//modified by NIZNHY-PKV Tue Feb 08 12:24:35 2011f
 //
 //=======================================================================
 //function : FillFaceInfo
@@ -1518,4 +1536,69 @@ void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
     aTolR3D=aTolR;
   }
 }
-//modified by NIZNHY-PKV Tue Feb 08 12:24:56 2011t
+
+//modified by NIZNHY-PKV Wed Sep 14 13:21:13 2011f
+#if OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+//=======================================================================
+// function: PutClosingPaveOnCurve
+// purpose:
+//=======================================================================
+void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
+						BOPTools_SSInterference& aFFi)
+{
+  Standard_Boolean bIsClosed, bHasBounds, bAdded;
+  Standard_Integer nVC, j;
+  Standard_Real aT[2], aTolR3D, aTC, dT, aTx;
+  gp_Pnt aP[2] ; 
+  BOPTools_Pave aPVx;
+  BOPTools_ListIteratorOfListOfPave aItLP;
+  //
+  const IntTools_Curve& aIC=aBC.Curve();
+  const Handle (Geom_Curve)& aC3D=aIC.Curve();
+  if(aC3D.IsNull()) {
+    return;
+  }
+  //
+  bIsClosed=IntTools_Tools::IsClosed(aC3D);
+  if (!bIsClosed) {
+    return;
+  }
+  //
+  bHasBounds=aIC.HasBounds ();
+  if (!bHasBounds){
+    return;
+  }
+  // 
+  bAdded=Standard_False;
+  dT=Precision::PConfusion();
+  aTolR3D=aFFi.TolR3D();
+  aIC.Bounds (aT[0], aT[1], aP[0], aP[1]);
+  //
+  BOPTools_PaveSet& aFFiPS=aFFi.NewPaveSet();
+  BOPTools_PaveSet& aCPS=aBC.Set();
+  //
+  const BOPTools_ListOfPave& aLP=aCPS.Set();
+  aItLP.Initialize(aLP);
+  for (; aItLP.More() && !bAdded; aItLP.Next()) {
+    const BOPTools_Pave& aPC=aItLP.Value();
+    nVC=aPC.Index();
+    const TopoDS_Vertex aVC=TopoDS::Vertex(myDS->Shape(nVC));
+    aTC=aPC.Param();
+    //
+    for (j=0; j<2; ++j) {
+      if (fabs(aTC-aT[j]) < dT) {
+	aTx=(!j) ? aT[1] : aT[0];
+	aPVx.SetIndex(nVC);
+	aPVx.SetParam(aTx);
+	//
+	aCPS.Append(aPVx);
+	aFFiPS.Append(aPVx);
+	//
+	bAdded=Standard_True;
+	break;
+      }
+    }
+  }
+}
+#endif // OCC_VERSION_LARGE > 0x06050100 // For OCCT6.5.2 and higher
+//modified by NIZNHY-PKV Wed Sep 14 13:21:17 2011t
