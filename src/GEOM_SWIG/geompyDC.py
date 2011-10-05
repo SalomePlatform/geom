@@ -3683,7 +3683,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get a vertex subshape by index depended with orientation.
         #  @param theShape Shape to find subshape.
-        #  @param theIndex Index to find vertex by this index.
+        #  @param theIndex Index to find vertex by this index (starting from zero)
         #  @return New GEOM_Object, containing the created vertex.
         #
         #  @ref tui_measurement_tools_page "Example"
