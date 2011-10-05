@@ -1258,6 +1258,12 @@ void ReplaceVariables(TCollection_AsciiString& theCommand,
             else
               aEndParamPos = aSection.Length() + 1;
 
+            if(MYDEBUG)
+              cout<<"aParamIndex: "<<aParamIndex<<" aStartParamPos: " <<aStartParamPos<<" aEndParamPos: "<<aEndParamPos<<endl;
+
+	    if ( aStartParamPos == aEndParamPos)
+	      continue;
+
             aParameter = aSection.SubString(aStartParamPos, aEndParamPos-1);
             if(MYDEBUG)
               cout<<"aParameter: "<<aParameter<<endl;
