@@ -468,6 +468,7 @@ AC_OUTPUT([ \
   resources/Makefile \
   resources/GEOMCatalog.xml \
   resources/SalomeApp.xml \
+  resources/Plugin \
   idl/Makefile \
   Makefile \
 ])

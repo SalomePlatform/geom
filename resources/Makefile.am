@@ -28,7 +28,6 @@ dist_salomeres_DATA =		\
 GEOM_en.xml			\
 GEOM_fr.xml			\
 GEOM.config			\
-Plugin				\
 GEOMDS_Resources		\
 ImportExport			\
 ShHealing			\
@@ -247,4 +246,4 @@ ADVANCED_RESOURCES += dlg_pipetshapefilletrf.png
 dist_salomeres_DATA += $(ADVANCED_RESOURCES)
 
 # VSR: little trick to avoid putting if GEOMCatalog.xml to the distribution archive
-nodist_salomeres_SCRIPTS = GEOMCatalog.xml SalomeApp.xml
+nodist_salomeres_SCRIPTS = GEOMCatalog.xml SalomeApp.xml Plugin
