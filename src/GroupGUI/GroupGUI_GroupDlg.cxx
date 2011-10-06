@@ -617,11 +617,14 @@ void GroupGUI_GroupDlg::showOnlySelected()
   GEOM_Displayer* aDisplayer = getDisplayer();
 
   if (send == myHideSelBtn) {
-    aDisplayer->Erase(aSelList, false, true);
+    aDisplayer->Erase(aSelList, /*forced=*/false, /*updateViewer=*/true);
   }
   else {
-    aDisplayer->EraseAll();
+    aDisplayer->EraseAll(/*forced = false, updateViewer = true*/);
     aDisplayer->Display(aSelList, true);
+
+    // for the case when selected ids were not displayed in the viewer: Mantis issue 0021367
+    highlightSubShapes();
   }
 }
 
@@ -851,6 +854,7 @@ void GroupGUI_GroupDlg::activateSelection()
         SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
         if (aPrs) {
           displayPreview(aPrs, true, false); // append, do not update
+          // TODO: map or delete Prs
         }
       }
     }
@@ -959,16 +963,17 @@ void GroupGUI_GroupDlg::highlightSubShapes()
   SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
   if (aView == 0) return;
 
-  // TODO: use here GEOMBase_Helper::myPreview instead of ic->DisplayedObjects()
+  // TODO??: use here GEOMBase_Helper::myPreview instead of ic->DisplayedObjects()
 
   OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)aViewManager)->getOCCViewer();
   Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
   AIS_ListOfInteractive List;
-  ic->DisplayedObjects(List);
+  //ic->DisplayedObjects(List);
+  ic->ObjectsInside(List); // Mantis issue 0021367
 
   SALOME_ListIO aSelList;
 
-  // To highlight the selected subshape in Object Browser, if it's already pudlished under the main shape
+  // To highlight the selected subshape in Object Browser, if it's already published under the main shape
   GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
   QMap<int, QString> childsMap;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
