@@ -87,6 +87,8 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopoDS.hxx>
 
+#include <BRepMesh_IncrementalMesh.hxx>
+
 // VTK Includes
 #include <vtkActorCollection.h>
 #include <vtkProperty.h>
@@ -318,6 +320,12 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
 
   myToActivate = true;
   // This parameter is used for activisation/deactivisation of objects to be displayed
+  
+  // Activate parallel vizualisation only for testiong purpose  
+  // and if the corresponding env variable is set to 1 
+  char* parallel_visu = getenv("PARALLEL_VISU");
+  if (parallel_visu && atoi(parallel_visu))
+    BRepMesh_IncrementalMesh::SetParallelDefault(Standard_True);
 
   myViewFrame = 0;
 }
