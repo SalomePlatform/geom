@@ -2371,7 +2371,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_GROUP_CREATE</source>
-        <translation>Créer une groupe</translation>
+        <translation>Créer un groupe</translation>
     </message>
     <message>
         <source>MEN_GROUP_EDIT</source>
