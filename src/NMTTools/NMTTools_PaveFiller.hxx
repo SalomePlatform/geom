@@ -199,6 +199,8 @@ Standard_EXPORT virtual ~NMTTools_PaveFiller();
   
   Standard_EXPORT     void RealSplitsInFace(const Standard_Integer nE1,const Standard_Integer nF2,BOPTools_ListOfPaveBlock& aLs) ;
   
+  Standard_EXPORT     void RealSplitsInFace(const Standard_Integer nF1,BOPTools_ListOfPaveBlock& aLPB) ;
+  
   Standard_EXPORT     void RealSplitsOnEdge(const Standard_Integer nE1,const Standard_Integer nE2,BOPTools_ListOfPaveBlock& aLs) ;
   
   Standard_EXPORT     void RealSplitsOnFace(const Standard_Integer nE1,const Standard_Integer nF2,BOPTools_ListOfPaveBlock& aLs) ;

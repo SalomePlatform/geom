@@ -347,7 +347,7 @@ is
     	         nF  :Integer from Standard;  
     	         aLCB:out ListOfCommonBlock from NMTTools) 
     	returns Integer from Standard;   
-	
+ 
     PrepareFace(me:out;  
     	    nF  :  Integer from Standard; 
     	    aF  : out Face from TopoDS); 
@@ -383,8 +383,14 @@ is
     RealSplitsInFace(me:out; 
     	         nE1 :Integer from Standard;  
     	         nF2 :Integer from Standard;  
-    	         aLs :out ListOfPaveBlock from BOPTools); 
-     
+    	         aLs :out ListOfPaveBlock from BOPTools);  
+ 
+--modified by NIZNHY-PKV Mon Oct 17 11:43:23 2011f 
+     RealSplitsInFace(me:out; 
+    	         nF1 :Integer from Standard;  
+    	         aLPB :out ListOfPaveBlock from BOPTools); 
+--modified by NIZNHY-PKV Mon Oct 17 11:43:39 2011t 
+ 
     RealSplitsOnEdge(me:out; 
     	         nE1 :Integer from Standard;  
     	         nE2 :Integer from Standard;  
@@ -413,7 +419,6 @@ is
 		aBC : out Curve from BOPTools);  
 		
 
- 
     PutBoundPaveOnCurve (me:out; 
     	    	    aBC :out Curve from BOPTools;	 
      	    	    aFF :out SSInterference from BOPTools); 
@@ -506,11 +511,9 @@ is
 		aTolR3D:  out Real from Standard) 
     	is protected;  
 	 
---modified by NIZNHY-PKV Thu Sep 15 08:15:08 2011f 
     PutClosingPaveOnCurve (me:out; 
     	    	    aBC :out Curve from BOPTools;	 
      	    	    aFF :out SSInterference from BOPTools); 
- --modified by NIZNHY-PKV Thu Sep 15 08:15:12 2011t 
  
 fields 
     myDS               :  PShapesDataStructure from NMTDS   	is protected;   
@@ -531,7 +534,5 @@ fields
     myDSIt             :  PIterator from NMTDS is protected;  
     myCompositeShape   :  Shape from TopoDS is protected;
     myIP               :  PInterfPool from NMTDS is protected;     
---modified by NIZNHY-PKV Wed Feb 09 10:51:50 2011f 
     myFaceInfo         :  DataMapOfIntegerFaceInfo from NMTTools is protected;
---modified by NIZNHY-PKV Wed Feb 09 10:51:50 2011t
 end PaveFiller;

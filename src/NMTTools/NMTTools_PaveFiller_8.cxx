@@ -687,3 +687,142 @@
   }
   return 0; //Ok
 }
+//modified by NIZNHY-PKV Mon Oct 17 12:07:48 2011f
+static 
+  void SortPaveBlocks(BOPTools_ListOfPaveBlock &);
+static
+  void SortShell(const Standard_Integer, 
+		 BOPTools_PaveBlock *);
+static
+  Standard_Boolean Less(const BOPTools_PaveBlock &, 
+			const BOPTools_PaveBlock &);
+
+//=======================================================================
+// function: RealSplitsInFace
+// purpose:
+//=======================================================================
+  void NMTTools_PaveFiller::RealSplitsInFace(const Standard_Integer nF,
+                                             BOPTools_ListOfPaveBlock& aLPBIn)
+{
+  Standard_Integer j, aNbCBP, nSpIn;
+  TColStd_MapOfInteger aMFence; 
+  BOPTools_ListOfPaveBlock aLPB;
+  BOPTools_ListIteratorOfListOfPaveBlock aItPB;
+  NMTTools_ListIteratorOfListOfCommonBlock aItCB;
+  //
+  NMTTools_CommonBlockPool& aCBP=ChangeCommonBlockPool();
+  //
+  aNbCBP=aCBP.Extent();
+  for (j=1; j<=aNbCBP; ++j) {
+    NMTTools_ListOfCommonBlock& aLCB=aCBP(j);
+    aItCB.Initialize(aLCB);
+    for (; aItCB.More(); aItCB.Next()) {
+      NMTTools_CommonBlock& aCB=aItCB.Value();
+      if (aCB.IsPaveBlockOnFace(nF)) {
+	const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1();
+	nSpIn=aPB1.Edge();
+	if (aMFence.Add(nSpIn)){
+	  aLPB.Append(aPB1);
+	}
+      }
+    }
+  }
+  //
+  SortPaveBlocks(aLPB);
+  //
+  aItPB.Initialize(aLPB);
+  for (; aItPB.More(); aItPB.Next()) {
+    const BOPTools_PaveBlock& aPB=aItPB.Value();
+    aLPBIn.Append(aPB);
+  }
+}
+//=======================================================================
+// function: SortPaveBlocks
+// purpose:
+//=======================================================================
+void SortPaveBlocks(BOPTools_ListOfPaveBlock &aLPBIn)
+{
+  Standard_Integer i, aNbPBIn;
+  BOPTools_ListIteratorOfListOfPaveBlock aItPB;
+  BOPTools_PaveBlock *pPB;
+  //
+  aNbPBIn=aLPBIn.Extent();
+  if (aNbPBIn<2) {
+    return;
+  }
+  //
+  pPB=new BOPTools_PaveBlock[aNbPBIn];
+  //
+  aItPB.Initialize(aLPBIn);
+  for (i=0; aItPB.More(); aItPB.Next(), ++i) {
+    const BOPTools_PaveBlock& aPB=aItPB.Value();
+    pPB[i]=aPB;
+  }
+  //
+  SortShell(aNbPBIn, pPB);
+  //
+  aLPBIn.Clear();
+  for (i=0; i<aNbPBIn; ++i) {
+    aLPBIn.Append(pPB[i]);
+  }
+  //
+  delete [] (BOPTools_PaveBlock*)pPB;
+}
+//=======================================================================
+//function : SortShell
+//purpose  : 
+//=======================================================================
+void SortShell(const Standard_Integer n, 
+	       BOPTools_PaveBlock *a) 
+{
+  Standard_Integer nd, i, j, l, d=1;
+  BOPTools_PaveBlock x;
+  //
+  while(d<=n) {
+    d*=2;
+  }
+  //
+  while (d) {
+    d=(d-1)/2;
+    //
+    nd=n-d;
+    for (i=0; i<nd; ++i) {
+      j=i;
+    m30:;
+      l=j+d;
+      if (Less(a[l], a[j])) {
+      //if (a[l] < a[j]){
+	x=a[j];
+	a[j]=a[l];
+	a[l]=x;
+	j-=d;
+	if (j > -1) goto m30;
+      }//if (a[l] < a[j]){
+    }//for (i=0; i<nd; ++i) 
+  }//while (1)
+}
+
+//=======================================================================
+//function : Less
+//purpose  : 
+//=======================================================================
+Standard_Boolean Less(const BOPTools_PaveBlock &aPB1, 
+		      const BOPTools_PaveBlock &aPB2)
+{
+  Standard_Boolean bRet;
+  Standard_Integer iE1, iE2;
+  Standard_Real aT11, aT12, aT21, aT22;
+  //
+  iE1=aPB1.OriginalEdge();
+  iE2=aPB2.OriginalEdge();
+  if (iE1!=iE2) {
+    bRet=(iE1<iE2);
+    return bRet;
+  }
+  //
+  aPB1.Parameters(aT11, aT12);
+  aPB2.Parameters(aT21, aT22);
+  bRet=(aT11<aT21);
+  return bRet;
+}
+//modified by NIZNHY-PKV Mon Oct 17 11:44:45 2011t

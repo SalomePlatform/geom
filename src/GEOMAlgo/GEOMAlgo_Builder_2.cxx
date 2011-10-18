@@ -95,11 +95,13 @@
 #include <TopTools_DataMapOfIntegerShape.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
 
 static
   void UpdateCandidates(const Standard_Integer ,
                         const Standard_Integer ,
                         NMTTools_IndexedDataMapOfIndexedMapOfInteger& );
+
 
 //=======================================================================
 //function : FillImagesFaces
@@ -153,6 +155,19 @@ static
     aLSpIn.Clear();
     //
     // 1. In Parts
+    //modified by NIZNHY-PKV Fri Oct 14 13:58:00 2011f 
+    BOPTools_ListOfPaveBlock aLPBIn;
+    //
+    pPF->RealSplitsInFace(nF, aLPBIn);
+    //
+    aItPB.Initialize(aLPBIn);
+    for (; aItPB.More(); aItPB.Next()) {
+      const BOPTools_PaveBlock& aPB1=aItPB.Value();
+      nSpIn=aPB1.Edge();
+      const TopoDS_Shape& aSpIn=aDS.Shape(nSpIn);
+      aLSpIn.Append(aSpIn);
+    }
+    /*
     for (j=1; j<=aNbCBP; ++j) {
       NMTTools_ListOfCommonBlock& aLCB=aCBP(j);
       aItCB.Initialize(aLCB);
@@ -168,6 +183,8 @@ static
         }
       }
     }
+    */
+    //modified by NIZNHY-PKV Fri Oct 14 13:58:08 2011t
     //
     // 2. Section Parts
     for (j=1; j<=aNbFFs; ++j) {
@@ -584,19 +601,73 @@ static
   // 2. Find Chains
   NMTTools_IndexedDataMapOfShapeIndexedMapOfShape aMC;
   //
-  NMTTools_Tools::FindChains(aLCS, aMC);
+  NMTTools_Tools::FindChains(aLCS, aMC); 
+  //
+  //modified by NIZNHY-PKV Wed Oct 12 13:33:59 2011f
+  Standard_Boolean bIsImage;
+  Standard_Integer aIx, aIxMin, aNbMSDF, k, aNbMFj;
+  TopoDS_Shape aFOld, aFSDmin;
+  TopTools_IndexedMapOfShape aMFj;
+  TopTools_DataMapOfShapeInteger aDMSI;
+  //
+  aItF1.Initialize(myShapes);
+  for (j=1; aItF1.More(); aItF1.Next(), ++j) {
+    const TopoDS_Shape& aSj=aItF1.Value();
+    aMFj.Clear();
+    TopExp::MapShapes(aSj, TopAbs_FACE, aMFj);
+    aNbMFj=aMFj.Extent();
+    for (k=1; k<=aNbMFj; ++k) {
+      const TopoDS_Shape& aFk=aMFj(k);
+      if (!aDMSI.IsBound(aFk)) {
+	aDMSI.Bind(aFk, j);
+      }
+    }
+  }
+  //
+  //modified by NIZNHY-PKV Wed Oct 12 13:34:01 2011t
   //
   // 3. Fill the map of SDF mySameDomainFaces
   aNbC=aMC.Extent();
   for (i=1; i<=aNbC; ++i) {
-    const TopoDS_Shape& aF=aMC.FindKey(i);
+   // const TopoDS_Shape& aF=aMC.FindKey(i);
     const TopTools_IndexedMapOfShape& aMSDF=aMC(i);
     //
+    //modified by NIZNHY-PKV Wed Oct 12 13:25:16 2011f
+    aNbMSDF=aMSDF.Extent();
+    for (j=1; j<=aNbMSDF; ++j) {
+      const TopoDS_Shape& aFSD=aMSDF(j);
+      bIsImage=mySplitFaces.IsImage(aFSD);
+      aFOld=aFSD;
+      if (bIsImage) {
+	aFOld=mySplitFaces.ImageFrom(aFSD);
+      }
+      //
+      aIx=aDMSI.Find(aFOld);
+      if (j==1) {
+	aIxMin=aIx;
+	aFSDmin=aFSD;
+	continue;
+      }
+      else {
+	if (aIx<aIxMin) {
+	  aIxMin=aIx;
+	  aFSDmin=aFSD;
+	}
+      }
+    }
+    //
+    for (j=1; j<=aNbMSDF; ++j) {
+      const TopoDS_Shape& aFSD=aMSDF(j);
+      mySameDomainShapes.Add(aFSD, aFSDmin);
+    }
+    /*
     aNbFF=aMSDF.Extent();
     for (j=1; j<=aNbFF; ++j) {
       const TopoDS_Shape& aFSD=aMSDF(j);
       mySameDomainShapes.Add(aFSD, aF);
     }
+    */
+    //modified by NIZNHY-PKV Wed Oct 12 13:25:18 2011t
   }
   //
 }
