@@ -373,6 +373,11 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
           // we obtain BSpline curve of degree 1 (C0), which is slowly
           // processed by some algorithms (Partition for example).
           BO.Approximation(Standard_True);
+	  //modified by NIZNHY-PKV Tue Oct 18 14:34:16 2011f
+	  BO.ComputePCurveOn1(Standard_True);
+	  BO.ComputePCurveOn2(Standard_True);
+	  //modified by NIZNHY-PKV Tue Oct 18 14:34:18 2011t
+	  
           BO.Build();
           if (!BO.IsDone()) {
             StdFail_NotDone::Raise("Section operation can not be performed on the given shapes");
