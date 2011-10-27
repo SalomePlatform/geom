@@ -93,9 +93,9 @@ Standard_Integer GEOMImpl_BoxDriver::Execute(TFunction_Logbook& log) const
       gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(aShape1));
       gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(aShape2));
 
-      if (abs(P1.X() - P2.X()) < Precision::Confusion() || 
-          abs(P1.Y() - P2.Y()) < Precision::Confusion() || 
-          abs(P1.Z() - P2.Z()) < Precision::Confusion() ) {
+      if (std::abs(P1.X() - P2.X()) < Precision::Confusion() || 
+          std::abs(P1.Y() - P2.Y()) < Precision::Confusion() || 
+          std::abs(P1.Z() - P2.Z()) < Precision::Confusion() ) {
         StdFail_NotDone::Raise("Box can not be created, the points belong both to one of the OXY, OYZ or OZX planes");
         return 0;
       }
