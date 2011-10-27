@@ -40,6 +40,9 @@
 #include "GEOMImpl_IGlue.hxx"
 
 #include "GEOMImpl_Block6Explorer.hxx"
+#include "GEOMImpl_IHealingOperations.hxx"
+
+#include <GEOMImpl_Gen.hxx>
 
 #include "GEOM_Function.hxx"
 #include "GEOM_ISubShape.hxx"
@@ -1774,6 +1777,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
 
   if (theShape.IsNull()) return NULL;
 
+  /*
   //Add a new reversed object
   Handle(GEOM_Object) aReversed = GetEngine()->AddObject(GetDocID(), theShape->GetType());
 
@@ -1813,6 +1817,21 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
     << " = geompy.ChangeOrientation(" << theShape << ")";
 
   SetErrorCode(OK);
+  */
+
+  Handle(GEOM_Object) aReversed;
+
+  GEOM_Engine* anEngine = GetEngine();
+  //GEOMImpl_Gen* aGen = dynamic_cast<GEOMImpl_Gen*>(anEngine);
+  GEOMImpl_Gen* aGen = (GEOMImpl_Gen*)anEngine;
+
+  if (aGen) {
+    GEOMImpl_IHealingOperations* anIHealingOperations =
+      aGen->GetIHealingOperations(GetDocID());
+    aReversed = anIHealingOperations->ChangeOrientation(theShape);
+    SetErrorCode(anIHealingOperations->GetErrorCode());
+  }
+
   return aReversed;
 }
 

@@ -18,9 +18,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-//GEOM_Object types
+
+// GEOM_Object types
 
 #define GEOM_COPY    0
 #define GEOM_IMPORT  1
@@ -113,11 +113,11 @@
 #define POINT_SURFACE_COORD      7
 #define POINT_CURVE_LENGTH       8 
 
+// Vector
 #define VECTOR_TWO_PNT  1
 #define VECTOR_DX_DY_DZ 2
 #define VECTOR_TANGENT_CURVE_PAR 3
-#define VECTOR_FACE_NORMALE 4
-#define VERTEX_BY_INDEX 5
+#define VECTOR_REVERSE 4
 
 #define PLANE_PNT_VEC      1
 #define PLANE_FACE         2
@@ -222,15 +222,16 @@
 
 #define POLYLINE_POINTS 1
 
+#define SPLINE_BEZIER        1
+#define SPLINE_INTERPOLATION 2
+
 #define CIRCLE_THREE_PNT 1
 #define CIRCLE_PNT_VEC_R 2
 #define CIRCLE_CENTER_TWO_PNT 3
 
-#define SPLINE_BEZIER        1
-#define SPLINE_INTERPOLATION 2
-
 #define ELLIPSE_PNT_VEC_RR 1
 
+// Arc
 #define CIRC_ARC_THREE_PNT         1
 #define CIRC_ARC_CENTER            2
 #define ELLIPSE_ARC_CENTER_TWO_PNT 3
@@ -252,6 +253,7 @@
 #define CHAMFER_SHAPE_FACES_AD 6
 #define CHAMFER_SHAPE_EDGES_AD 7
 
+// Shape creation
 #define WIRE_EDGES          1
 #define FACE_WIRE           2
 #define SHELL_FACES         3
@@ -261,7 +263,7 @@
 #define SUBSHAPE_SORTED     7
 #define SUBSHAPE_NOT_SORTED 8
 #define FACE_WIRES          9
-#define REVERSE_ORIENTATION 10
+//#define REVERSE_ORIENTATION 10
 #define EDGE_WIRE           11
 #define EDGE_CURVE_LENGTH   12
 
@@ -288,13 +290,16 @@
 #define SKETCHER_NINE_DOUBLS 1
 #define SKETCHER_PLANE 2
 
+// Measures
 #define CDG_MEASURE 1
+#define VECTOR_FACE_NORMALE 4
+#define VERTEX_BY_INDEX 5
 
 #define GROUP_FUNCTION 1
 
 #define SHAPES_ON_SHAPE 1
 
-//Curve constructor type
+// Curve constructor type
 #define POINT_CONSTRUCTOR 0
 #define COORD_CONSTRUCTOR 1
 

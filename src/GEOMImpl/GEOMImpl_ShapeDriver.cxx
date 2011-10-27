@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMImpl_ShapeDriver.hxx>
 
@@ -449,6 +448,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     aShape = C;
 
   }
+  /*
   else if (aType == REVERSE_ORIENTATION) {
     Handle(GEOM_Function) aRefShape = aCI.GetBase();
     TopoDS_Shape aShape_i = aRefShape->GetValue();
@@ -471,6 +471,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       aShape = tds;
     }
   }
+  */
   else if (aType == EDGE_WIRE) {
     Handle(GEOM_Function) aRefBase = aCI.GetBase();
     TopoDS_Shape aWire = aRefBase->GetValue();

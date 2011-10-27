@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -31,7 +30,9 @@
 #include <BRepBuilderAPI_MakeEdge.hxx>
 
 #include <TopAbs.hxx>
+#include <TopExp.hxx>
 #include <TopoDS.hxx>
+#include <TopoDS_Edge.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
@@ -72,7 +73,8 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
 
   GEOMImpl_IVector aPI (aFunction);
   Standard_Integer aType = aFunction->GetType();
-  if (aType != VECTOR_DX_DY_DZ && aType != VECTOR_TWO_PNT && aType != VECTOR_TANGENT_CURVE_PAR) return 0;
+  if (aType != VECTOR_DX_DY_DZ && aType != VECTOR_TWO_PNT &&
+      aType != VECTOR_TANGENT_CURVE_PAR && aType != VECTOR_REVERSE) return 0;
 
   TopoDS_Shape aShape;
 
@@ -85,7 +87,8 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise(aMsg.ToCString());
     }
     aShape = BRepBuilderAPI_MakeEdge(P1, P2).Shape();
-  } else if (aType == VECTOR_TWO_PNT) {
+  }
+  else if (aType == VECTOR_TWO_PNT) {
     Handle(GEOM_Function) aRefPnt1 = aPI.GetPoint1();
     Handle(GEOM_Function) aRefPnt2 = aPI.GetPoint2();
     TopoDS_Shape aShape1 = aRefPnt1->GetValue();
@@ -104,7 +107,7 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
     }
     aShape = BRepBuilderAPI_MakeEdge(V1, V2).Shape();
   } 
-  else if(aType == VECTOR_TANGENT_CURVE_PAR) {
+  else if (aType == VECTOR_TANGENT_CURVE_PAR) {
     Handle(GEOM_Function) aRefCurve = aPI.GetCurve();
     TopoDS_Shape aRefShape = aRefCurve->GetValue();
     if (aRefShape.ShapeType() != TopAbs_EDGE) {
@@ -129,6 +132,18 @@ Standard_Integer GEOMImpl_VectorDriver::Execute(TFunction_Logbook& log) const
     BRepBuilderAPI_MakeEdge aBuilder(aPoint1,aPoint2);
     if(aBuilder.IsDone())
       aShape = aBuilder.Shape();
+  }
+  else if (aType == VECTOR_REVERSE) {
+    Handle(GEOM_Function) aRefVec = aPI.GetCurve();
+    TopoDS_Shape aRefShape = aRefVec->GetValue();
+    if (aRefShape.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise
+        ("Reversed vector creation aborted : vector shape is not an edge");
+    }
+    TopoDS_Edge anE = TopoDS::Edge(aRefShape);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(anE, V1, V2, Standard_True);
+    aShape = BRepBuilderAPI_MakeEdge(V2, V1).Shape();
   }
 
   if (aShape.IsNull()) return 0;
@@ -181,5 +196,5 @@ const Handle(GEOMImpl_VectorDriver) Handle(GEOMImpl_VectorDriver)::DownCast
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

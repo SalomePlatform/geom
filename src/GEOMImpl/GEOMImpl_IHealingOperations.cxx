@@ -33,6 +33,8 @@
 #include <GEOMImpl_HealingDriver.hxx>
 #include <GEOMImpl_Types.hxx>
 #include <GEOMImpl_IHealing.hxx>
+#include <GEOMImpl_IVector.hxx>
+#include <GEOMImpl_VectorDriver.hxx>
 #include <GEOMImpl_CopyDriver.hxx>
 
 #include <Basics_OCCTVersion.hxx>
@@ -819,18 +821,30 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
   if (aLastFunction.IsNull())
     return NULL; //There is no function which creates an object to be processed
 
-  //Add the function
-  aFunction = theObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
+  if (theObject->GetType() == GEOM_VECTOR) { // Mantis issue 21066
+    //Add the function
+    aFunction = theObject->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_REVERSE);
 
-  if (aFunction.IsNull())
-    return NULL;
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_VectorDriver::GetID()) return NULL;
 
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+    // prepare "data container" class IVector
+    GEOMImpl_IVector aVI (aFunction);
+    aVI.SetCurve(aLastFunction);
+  }
+  else {
+    //Add the function
+    aFunction = theObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
 
-  // prepare "data container" class IHealing
-  GEOMImpl_IHealing HI(aFunction);
-  HI.SetOriginal( aLastFunction );
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+    // prepare "data container" class IHealing
+    GEOMImpl_IHealing HI (aFunction);
+    HI.SetOriginal(aLastFunction);
+  }
 
   //Compute the translation
   try {
@@ -874,22 +888,34 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientationCopy (Handle(G
     return NULL; //There is no function which creates an object to be processed
 
   // Add a new object
-  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject( GetDocID(), theObject->GetType() );
+  Handle(GEOM_Object) aNewObject = GetEngine()->AddObject(GetDocID(), theObject->GetType());
 
-  //Add the function
-  aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
+  if (theObject->GetType() == GEOM_VECTOR) { // Mantis issue 21066
+    //Add the function
+    aFunction = aNewObject->AddFunction(GEOMImpl_VectorDriver::GetID(), VECTOR_REVERSE);
 
-  if (aFunction.IsNull())
-    return NULL;
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_VectorDriver::GetID()) return NULL;
 
-  //Check if the function is set correctly
-  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+    // prepare "data container" class IVector
+    GEOMImpl_IVector aVI (aFunction);
+    aVI.SetCurve(aLastFunction);
+  }
+  else {
+    //Add the function
+    aFunction = aNewObject->AddFunction(GEOMImpl_HealingDriver::GetID(), CHANGE_ORIENTATION);
 
-  // prepare "data container" class IHealing
-  GEOMImpl_IHealing HI(aFunction);
-  HI.SetOriginal( aLastFunction );
+    //Check if the function is set correctly
+    if (aFunction.IsNull()) return NULL;
+    if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
 
-  //Compute the translation
+    // prepare "data container" class IHealing
+    GEOMImpl_IHealing aHI (aFunction);
+    aHI.SetOriginal(aLastFunction);
+  }
+
+  // Compute the result
   try {
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
