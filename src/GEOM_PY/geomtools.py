@@ -31,7 +31,7 @@ from salome.kernel import termcolor
 logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
 from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
-from salome.gui.helper import getSObjectSelected
+from salome.gui import helper
 from salome.kernel.services import IDToObject
 
 _geompys = {}
@@ -88,7 +88,7 @@ class GeomStudyTools:
         if GEOM is None:
             GEOM = __import__("GEOM")
         if studyEditor is None:
-            studyEditor = getStudyEditor()
+            studyEditor = helper.getStudyEditor()
         self.editor = studyEditor
 
     def displayShapeByName(self, shapeName, color = None):
@@ -124,7 +124,7 @@ class GeomStudyTools:
         '''
         Returns the GEOM object currently selected in the objects browser.
         '''
-        sobject, entry = getSObjectSelected()
+        sobject, entry = helper.getSObjectSelected()
         geomObject = self.getGeomObjectFromEntry(entry)
         return geomObject
 

@@ -22,7 +22,8 @@
 # Date : 30/11/2001
 # Modified by : Alexander BORODIN (OCN) - autotools usage
 #
-SUBDIRS = salome docutils
+#SUBDIRS = salome docutils
+SUBDIRS = salome
 
 usr_docs:
 	(cd salome && $(MAKE) $(AM_MAKEFLAGS) usr_docs)
