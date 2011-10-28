@@ -1828,7 +1828,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::ReverseShape(Handle(GEOM_Object)
   if (aGen) {
     GEOMImpl_IHealingOperations* anIHealingOperations =
       aGen->GetIHealingOperations(GetDocID());
-    aReversed = anIHealingOperations->ChangeOrientation(theShape);
+    aReversed = anIHealingOperations->ChangeOrientationCopy(theShape);
     SetErrorCode(anIHealingOperations->GetErrorCode());
   }
 

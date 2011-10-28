@@ -18,15 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:      ShHealOper_ChangeOrientation.cxx
 // Created:   11.07.06 11:46:45
 // Author:    Sergey KUUL
-//
+
 #include <ShHealOper_ChangeOrientation.hxx>
 
 #include <BRep_Builder.hxx>
+#include <BRepBuilderAPI_Copy.hxx>
+
 #include <TopoDS_Iterator.hxx>
 
 //=======================================================================
@@ -59,7 +60,7 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
   BRep_Builder B;
   if (myInitShape.ShapeType() == TopAbs_SHELL) {
     myResultShape = myInitShape.EmptyCopied();
-    TopoDS_Iterator itr(myInitShape);
+    TopoDS_Iterator itr (myInitShape);
     while (itr.More()) {
       B.Add(myResultShape,itr.Value().Reversed());
       itr.Next();
@@ -67,7 +68,7 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
   }
   else if (myInitShape.ShapeType() == TopAbs_FACE) {
     myResultShape = myInitShape.EmptyCopied();
-    TopoDS_Iterator itr(myInitShape);
+    TopoDS_Iterator itr (myInitShape);
     while (itr.More()) {
       B.Add(myResultShape,itr.Value());
       itr.Next();
@@ -76,7 +77,7 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
   }
   else if ( myInitShape.ShapeType() == TopAbs_WIRE || myInitShape.ShapeType() == TopAbs_EDGE) {
     myResultShape = myInitShape.EmptyCopied();
-    TopoDS_Iterator itr(myInitShape);
+    TopoDS_Iterator itr (myInitShape);
     while (itr.More()) {
       B.Add(myResultShape,itr.Value());
       itr.Next();
@@ -84,9 +85,17 @@ Standard_Boolean ShHealOper_ChangeOrientation::Perform()
     myResultShape.Reverse();
   }
   else {
-    return false;
+    BRepBuilderAPI_Copy Copy (myInitShape);
+    if (!Copy.IsDone()) return false;
+
+    myResultShape = Copy.Shape();
+    if (myResultShape.IsNull()) return false;
+
+    if (myResultShape.Orientation() == TopAbs_FORWARD)
+      myResultShape.Orientation(TopAbs_REVERSED);
+    else
+      myResultShape.Orientation(TopAbs_FORWARD);
   }
 
   return true;
-
 }
