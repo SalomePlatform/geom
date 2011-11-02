@@ -39,7 +39,7 @@ PAPEROPT_a4     = -D latex_paper_size=a4
 ALLSPHINXOPTS   = -d doctrees $(PAPEROPT_a4) $(SPHINXOPTS) $(SOURCEDIR)
 
 if GEOM_ENABLE_GUI
-SPHINX_PYTHONPATH = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(prefix)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(GUI_ROOT_DIR)/lib/salome:$(KERNEL_ROOT_DIR)/bin/salome:$(KERNEL_ROOT_DIR)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(KERNEL_ROOT_DIR)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(OMNIORB_ROOT)/lib/python$(PYTHON_VERSION)/site-packages:$(OMNIORB_ROOT)/lib64/python$(PYTHON_VERSION)/site-packages
+SPHINX_PYTHONPATH = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(prefix)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(GUI_ROOT_DIR)/lib/salome:$(GUI_ROOT_DIR)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(GUI_ROOT_DIR)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(KERNEL_ROOT_DIR)/bin/salome:$(KERNEL_ROOT_DIR)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(KERNEL_ROOT_DIR)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(OMNIORB_ROOT)/lib/python$(PYTHON_VERSION)/site-packages:$(OMNIORB_ROOT)/lib64/python$(PYTHON_VERSION)/site-packages
 else !GEOM_ENABLE_GUI
 SPHINX_PYTHONPATH = $(prefix)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(prefix)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(KERNEL_ROOT_DIR)/bin/salome:$(KERNEL_ROOT_DIR)/lib/python$(PYTHON_VERSION)/site-packages/salome:$(KERNEL_ROOT_DIR)/lib64/python$(PYTHON_VERSION)/site-packages/salome:$(OMNIORB_ROOT)/lib/python$(PYTHON_VERSION)/site-packages:$(OMNIORB_ROOT)/lib64/python$(PYTHON_VERSION)/site-packages
 endif
