@@ -31,8 +31,11 @@ from salome.kernel import termcolor
 logger = Logger("salome.geom.geomtools", color = termcolor.RED)
 
 from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
-from salome.gui import helper
 from salome.kernel.services import IDToObject
+try:
+    from salome.gui import helper
+except ImportError:
+    pass
 
 _geompys = {}
 
