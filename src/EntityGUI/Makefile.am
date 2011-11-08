@@ -33,6 +33,8 @@ if WITH_OPENCV
   PictureImportDlg_moc = EntityGUI_PictureImportDlg_moc.cxx
   Opencv_libs = $(OPENCV_LIBS)
   Opencv_includes = $(OPENCV_INCLUDES)
+  ShapeRec_dir = $(srcdir)/../ShapeRecognition
+  ShapeRec_la = ../ShapeRecognition/libGEOMShapeRec.la  
 endif
 
 # Libraries targets
@@ -106,17 +108,18 @@ libEntityGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../SKETCHER			\
-	-I$(srcdir)/../ShapeRecognition		\
+	-I$(ShapeRec_dir)			\
 	-I$(srcdir)/../GEOM			\
 	-I$(top_builddir)/src/DlgRef		\
 	-I$(top_builddir)/idl
+
 
 libEntityGUI_la_LDFLAGS  =					\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
 	../GEOMBase/libGEOMBase.la				\
 	../SKETCHER/libGEOMSketcher.la				\
 	../GEOMGUI/libGEOM.la 					\
-	../ShapeRecognition/libGEOMShapeRec.la			\
+	$(ShapeRec_la)						\
 	$(QT_MT_LIBS)						\
 	$(CAS_TKTopAlgo) -lTKernel				\
 	$(Opencv_libs)
