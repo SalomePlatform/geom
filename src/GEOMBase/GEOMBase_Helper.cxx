@@ -142,8 +142,10 @@ void GEOMBase_Helper::display( GEOM::GEOM_Object_ptr object, const bool updateVi
 {
   // Unset color of shape ( this color may be set during preview displaying )
   // Default color will be used
-  getDisplayer()->UnsetColor();
+//   getDisplayer()->UnsetColor();
   getDisplayer()->UnsetWidth();
+  
+  MESSAGE("GEOMBase_Helper::display myTexture = "<<getDisplayer()->GetTexture())
 
   // Enable activisation of selection
   getDisplayer()->SetToActivate( true );
@@ -359,7 +361,7 @@ void GEOMBase_Helper::displayPreview( const SALOME_Prs* prs,
 
   if ( myViewWindow == 0 )
     return;
-
+  
   // Display prs
   SUIT_ViewManager* aViewManager = myViewWindow->getViewManager();
   if ( aViewManager->getType() == OCCViewer_Viewer::Type() ||
@@ -700,13 +702,20 @@ bool GEOMBase_Helper::openCommand()
 {
   bool res = false;
   if ( !getStudy() || hasCommand() )
+  {
+    MESSAGE("Getting out from openCommand()")
     return res;
+  }
 
   GEOM::GEOM_IOperations_var anOp = GEOM::GEOM_IOperations::_narrow( getOperation() );
   if ( !anOp->_is_nil() ) {
     myCommand = new GEOM_Operation( SUIT_Session::session()->activeApplication(), anOp.in() );
     myCommand->start();
     res = true;
+  }
+  else
+  {
+    MESSAGE("anOp->_is_nil() = true")
   }
 
   return res;
@@ -750,6 +759,8 @@ bool GEOMBase_Helper::commitCommand( const char* )
 //================================================================
 bool GEOMBase_Helper::hasCommand() const
 {
+  bool res = (bool) myCommand;
+  MESSAGE("hasCommand = "<<res)
   return (bool)myCommand;
 }
 
@@ -795,7 +806,11 @@ bool GEOMBase_Helper::checkViewWindow()
 bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
-  if ( !appStudy ) return false;
+  if ( !appStudy ) 
+  {
+    MESSAGE("appStudy is empty")
+    return false;
+  }
   _PTR(Study) aStudy = appStudy->studyDS();
 
   bool aLocked = (_PTR(AttributeStudyProperties) (aStudy->GetProperties()))->IsLocked();
@@ -889,10 +904,12 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
   catch( const SALOME::SALOME_Exception& e ) {
     SalomeApp_Tools::QtCatchCorbaException( e );
     abortCommand();
+    MESSAGE("Exception catched")
   }
 
   updateViewer();
 
+  MESSAGE("result ="<<result)
   return result;
 }
 

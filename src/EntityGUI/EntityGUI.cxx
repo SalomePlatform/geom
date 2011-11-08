@@ -46,10 +46,13 @@
 #include <ElSLib.hxx>
 
 #include <QMouseEvent>
+#include <QApplication>
 
-#include "EntityGUI_SketcherDlg.h" // Sketcher
-#include "EntityGUI_3DSketcherDlg.h" // Sketcher
-#include "EntityGUI_SubShapeDlg.h" // Method SUBSHAPE
+#include "EntityGUI_SketcherDlg.h"        // Sketcher
+#include "EntityGUI_3DSketcherDlg.h"      // Sketcher
+#include "EntityGUI_SubShapeDlg.h"        // Method SUBSHAPE
+#include "EntityGUI_FeatureDetectorDlg.h" // Feature Detection
+#include "EntityGUI_PictureImportDlg.h"   // Import Picture in viewer
 
 //=======================================================================
 // function : EntityGUI()
@@ -93,6 +96,14 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpExplode:    // EXPLODE
     aDlg = new EntityGUI_SubShapeDlg( getGeometryGUI(), parent );
     break;
+#ifdef WITH_OPENCV
+  case GEOMOp::OpFeatureDetect:    // FEATURE DETECTION
+    aDlg = new EntityGUI_FeatureDetectorDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpPictureImport:    // IMPORT PICTURE IN VIEWER
+    aDlg = new EntityGUI_PictureImportDlg( getGeometryGUI(), parent );
+    break;
+#endif
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );
     break;
@@ -113,38 +124,96 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
-  if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 ) &&
+  if ( aDlg && 
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
        pe->modifiers() != Qt::ControlModifier ) {
-    MESSAGE("Premier if ok!")
-    EntityGUI_SketcherDlg* aPntDlg = (EntityGUI_SketcherDlg*) aDlg;
-    if ( aPntDlg->acceptMouseEvent() ) {
-      OCCViewer_Viewer* anOCCViewer =
-        ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
-      Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+    
+    gp_Pnt aPnt;
+  
+    if ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 ) 
+    { 
+      EntityGUI_SketcherDlg* aSketcherDlg = (EntityGUI_SketcherDlg*) aDlg;
+      if ( aSketcherDlg->acceptMouseEvent() ) {
+        OCCViewer_Viewer* anOCCViewer =
+          ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
+        Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();
+    
+        ic->InitSelected();
+        if ( pe->modifiers() == Qt::ShiftModifier )
+          ic->ShiftSelect();  // Append selection
+        else
+          ic->Select();       // New selection
 
-      gp_Pnt aPnt;    
+        ic->InitSelected();
+        if ( ic->MoreSelected() ) {
+          TopoDS_Shape aShape = ic->SelectedShape();
+          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+            aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+        }
+        else {
+          OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+          aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+        }
+        
+        Qt::KeyboardModifiers modifiers = pe->modifiers();
+        aSketcherDlg->OnPointSelected( modifiers, aPnt );  // "feed" the point to point construction dialog
+      } // acceptMouseEvent()
+    }
+    if (  QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) 
+    {
+      EntityGUI_FeatureDetectorDlg* aCornerDlg = (EntityGUI_FeatureDetectorDlg*) aDlg;
+      if ( aCornerDlg->acceptMouseEvent() ) {
+        OCCViewer_Viewer* anOCCViewer =
+          ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
+        Handle(AIS_InteractiveContext) ic = anOCCViewer->getAISContext();   
 
-      ic->InitSelected();
-      if ( pe->modifiers() == Qt::ShiftModifier )
-        ic->ShiftSelect();  // Append selection
-      else
+        ic->InitSelected();
         ic->Select();       // New selection
 
-      ic->InitSelected();
-      if ( ic->MoreSelected() ) {
-        TopoDS_Shape aShape = ic->SelectedShape();
-        if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
-          aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
-      }
-      else {
-        OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-        aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
-      }
+        ic->InitSelected();
+        if ( ic->MoreSelected() ) {
+          TopoDS_Shape aShape = ic->SelectedShape();
+          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+            aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
+        }
+        else {
+          OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+          aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+        }
+        
+//         aCornerDlg->OnPointSelected( aPnt );  // "feed" the point to corner detection dialog
+        
+        QPoint start = QPoint(pe->x(),pe->y());
+        aCornerDlg->setStartPnt( start );
+      } // acceptMouseEvent()
       
-      Qt::KeyboardModifiers modifiers = pe->modifiers();
-      aPntDlg->OnPointSelected( modifiers, aPnt );  // "feed" the point to point construction dialog
-    } // acceptMouseEvent()
+    }
+  }
+  return false;
+}
+
+//=================================================================================
+// function : 0nMouseMove()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+{
+//   MESSAGE("EntityGUI::OnMouseMove")
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+  if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
+       pe->modifiers() != Qt::ControlModifier ) {
+    
+    EntityGUI_FeatureDetectorDlg* aCornerDlg = (EntityGUI_FeatureDetectorDlg*) aDlg;
+   
+    gp_Pnt aPnt; 
+      
+    if ( QApplication::mouseButtons() == Qt::LeftButton && 
+         aCornerDlg->acceptMouseEvent() )
+    {
+      QPoint end = QPoint(pe->x(),pe->y());
+      aCornerDlg->setEndPnt( end );
+    }    
   }
   return false;
 }

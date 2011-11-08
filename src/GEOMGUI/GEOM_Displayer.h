@@ -123,6 +123,11 @@ public:
   void          UnsetColor();
   int           GetColor  () const;
   bool          HasColor  () const;
+  
+  /* Set texture for shape displaying. */
+  void          SetTexture  ( const std::string& );
+  bool          HasTexture  () const;
+  std::string   GetTexture  () const;
 
   /* Set width for shape displaying. If it is equal -1 then default width is used. */
   void          SetWidth  ( const double );
@@ -202,6 +207,7 @@ protected:
   Handle(SALOME_InteractiveObject) myIO;
   TopoDS_Shape                     myShape;
   std::string                      myName;
+  std::string                      myTexture;
   int                              myType;
   SALOME_View*                     myViewFrame;
 

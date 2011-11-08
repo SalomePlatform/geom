@@ -48,6 +48,7 @@ namespace GEOMOp {
     OpAutoColor         = 1208,   // POPUP MENU - AUTO COLOR
     OpNoAutoColor       = 1209,   // POPUP MENU - DISABLE AUTO COLOR
     OpPointMarker       = 1210,   // POPUP MENU - POINT MARKER
+    OpSetTexture        = 1211,   // POPUP MENU - SETTEXTURE
     OpShowChildren      = 1250,   // POPUP MENU - SHOW CHILDREN
     OpHideChildren      = 1251,   // POPUP MENU - HIDE CHILDREN
     OpUnpublishObject   = 1253,   // POPUP MENU - UNPUBLISH
@@ -64,6 +65,7 @@ namespace GEOMOp {
     OpWireframe         = 2200,   // POPUP MENU - DISPLAY MODE - WIREFRAME
     OpShading           = 2201,   // POPUP MENU - DISPLAY MODE - SHADING
     OpVectors           = 2202,   // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+    OpTexture           = 2203,   // POPUP MENU - DISPLAY MODE - TEXTURE
     // BasicGUI ------------------//--------------------------------
     OpPoint             = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine              = 3001,   // MENU NEW ENTITY - BASIC - LINE
@@ -92,6 +94,10 @@ namespace GEOMOp {
     Op2dSketcher        = 3300,   // MENU NEW ENTITY - SKETCHER
     Op3dSketcher        = 3301,   // MENU NEW ENTITY - 3D SKETCHER
     OpExplode           = 3302,   // MENU NEW ENTITY - EXPLODE
+#ifdef WITH_OPENCV
+    OpFeatureDetect     = 3303,   // MENU NEW ENTITY - FEATURE DETECTION
+    OpPictureImport     = 3304,   // MENU NEW ENTITY - IMPORT PICTURE IN VIEWER
+#endif
     // BuildGUI ------------------//--------------------------------
     OpEdge              = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire              = 3401,   // MENU NEW ENTITY - BUILD - WIRE

@@ -2182,6 +2182,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construire</translation>
     </message>
     <message>
+        <source>MEN_CORNER_DETECTION</source>
+        <translation>Détecter les angles (image ou plan)</translation>
+    </message>
+    <message>
         <source>MEN_CHAMFER</source>
         <translation>Chanfrein</translation>
     </message>
@@ -4550,6 +4554,33 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>CANNOT_CLOSE</source>
         <translation>Il est impossible de fermer le contour
 Le nombre de points n&apos;est pas suffisant</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_CornerDetectionDlg</name>
+    <message>
+        <source>GEOM_DETECT_TITLE</source>
+        <translation>Détecter les angles</translation>
+    </message>
+    <message>
+        <source>GEOM_SCALING</source>
+        <translation>Mise à l&apos;échelle</translation>
+    </message>
+    <message>
+        <source>GEOM_PNT1</source>
+        <translation>Coin supérieur gauche</translation>
+    </message>
+    <message>
+        <source>GEOM_PNT2</source>
+        <translation>Coin supérieur droit</translation>
+    </message>
+    <message>
+        <source>GEOM_CORNER</source>
+        <translation>Angles_détectés</translation>
+    </message>
+    <message>
+        <source>GEOM_CORNERS</source>
+        <translation>Angles</translation>
     </message>
 </context>
 <context>

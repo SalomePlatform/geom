@@ -168,15 +168,15 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
 {  
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
   
-  StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
-
-  switch (d) {
-  case StdSelect_DM_Wireframe: 
+//   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
+  std::cout<<"aMode = "<<aMode<<" ======================= GEOM_AISShape::Compute ========================="<<std::endl;
+  switch (aMode) {
+    case 0://StdSelect_DM_Wireframe: 
     {
       StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
       break;
     }
-  case StdSelect_DM_Shading:
+    case 1://StdSelect_DM_Shading:
     {
       myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
       
@@ -205,6 +205,11 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
       //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
       AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+      break;
+    }
+    case 3: //StdSelect_DM_HLR:
+    {
+      AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
       break;
     }
   }

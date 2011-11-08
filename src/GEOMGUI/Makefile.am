@@ -71,11 +71,12 @@ libGEOM_la_CPPFLAGS =				\
 	$(GUI_CXXFLAGS)				\
 	$(CORBA_CXXFLAGS)			\
 	$(CORBA_INCLUDES)			\
+	$(OPENCV_INCLUDES)			\
 	-I$(srcdir)/../OBJECT			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(srcdir)/../GEOMImpl			\
-	-I$(top_builddir)/idl                   \
+	-I$(top_builddir)/idl			\
 	-I$(top_builddir)
 
 libGEOM_la_LDFLAGS =						\
@@ -84,7 +85,9 @@ libGEOM_la_LDFLAGS =						\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeNS -lSalomeDSClient		\
-	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent -lSalomePrs -lstd
+	$(GUI_LDFLAGS) -lOCCViewer -lVTKViewer -lCAM -lSOCC -lSVTK -lEvent -lSalomePrs -lstd	\
+	$(OPENCV_LIBS)
+
 # -lSalomeApp 
 # -lToolsGUI
 #	$(CORBA_LIBS) \

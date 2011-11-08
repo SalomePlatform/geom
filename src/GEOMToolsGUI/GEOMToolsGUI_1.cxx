@@ -33,6 +33,7 @@
 #include "GEOMToolsGUI_PublishDlg.h"
 
 #include <GeometryGUI.h>
+#include <GeometryGUI_Operations.h>
 #include <GEOM_Displayer.h>
 
 #include <GEOMBase.h>
@@ -86,6 +87,7 @@
 // QT Includes
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QFileDialog>
 #include <QList>
 
 #include <QGridLayout>
@@ -362,6 +364,49 @@ void GEOMToolsGUI::OnColor()
               GeometryGUI::Modified();
             } // if c.isValid()
           } // first IO is not null
+        } // if ( isOCC )
+      } // if ( selection not empty )
+    }
+  }
+
+  app->updateActions(); //SRN: To update a Save button in the toolbar
+}
+
+void GEOMToolsGUI::OnTexture()
+{
+  SALOME_ListIO selected;
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  if ( app && appStudy ) {
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if ( aSelMgr ) {
+      aSelMgr->selectedObjects( selected );
+      if ( !selected.IsEmpty() ) {
+        SUIT_ViewWindow* window = app->desktop()->activeWindow();
+        bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+        int mgrId = window->getViewManager()->getGlobalId();
+        if ( isOCC ) {
+          QString aTexture = QFileDialog::getOpenFileName(window,tr( "SELECT_IMAGE"),QString("/home"), tr("OCC_IMAGE_FILES"));
+          if( !aTexture.isEmpty() )
+          {
+            SUIT_OverrideCursor();
+            OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
+            Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+            Handle(AIS_InteractiveObject) io ;
+            for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+              io = GEOMBase::GetAIS( It.Value(), true );
+              if ( !io.IsNull() ) {   
+                if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
+                  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str())); 
+                
+              io->Redisplay( Standard_True );
+              }
+            } // for
+            ic->UpdateCurrentViewer();
+            GeometryGUI::Modified();
+            GeometryGUI* myGeomGUI = getGeometryGUI();
+            myGeomGUI->OnGUIEvent(GEOMOp::OpTexture);
+          } // if ( !selFile.isEmpty() )
         } // if ( isOCC )
       } // if ( selection not empty )
     }

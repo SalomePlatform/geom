@@ -73,6 +73,7 @@ libOperationGUI_la_CPPFLAGS =		\
 	$(GUI_CXXFLAGS)			\
 	$(CORBA_CXXFLAGS)		\
 	$(CORBA_INCLUDES)		\
+	$(OPENCV_INCLUDES)		\
 	-I$(srcdir)/../GEOMGUI		\
 	-I$(srcdir)/../DlgRef		\
 	-I$(srcdir)/../GEOMBase		\
@@ -83,10 +84,11 @@ libOperationGUI_la_CPPFLAGS =		\
 	-I$(top_builddir)/src/DlgRef	\
 	-I$(top_builddir)/idl
 
+
 libOperationGUI_la_LDFLAGS =		\
 	../GEOMBase/libGEOMBase.la	\
-	$(CAS_LDPATH) -lTKFillet
-
+	$(CAS_LDPATH) -lTKFillet	\
+	$(OPENCV_LIBS)
 ###############################
 # Obsolete files ?
 ###############################

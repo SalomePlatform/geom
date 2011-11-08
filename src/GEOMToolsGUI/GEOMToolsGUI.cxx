@@ -328,6 +328,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpColor:          // POPUP - COLOR
     OnColor();
     break;
+  case GEOMOp::OpSetTexture:        // POPUP - TEXTURE
+    OnTexture();
+    break;
   case GEOMOp::OpTransparency:   // POPUP - TRANSPARENCY
     OnTransparency();
     break;

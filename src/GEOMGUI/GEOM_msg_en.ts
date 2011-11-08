@@ -2182,6 +2182,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Build</translation>
     </message>
     <message>
+        <source>MEN_FEATURE_DETECTION</source>
+        <translation>Feature detection</translation>
+    </message>
+    <message>
+        <source>MEN_PICTURE_IMPORT</source>
+        <translation>Import picture in viewer</translation>
+    </message>
+    <message>
         <source>MEN_CHAMFER</source>
         <translation>Chamfer</translation>
     </message>
@@ -3156,11 +3164,11 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_UNPUBLISH_OBJ</source>
         <translation>Unpublish object</translation>
-   </message>
+    </message>
     <message>
         <source>STB_POP_PUBLISH_OBJ</source>
         <translation>Publish object</translation>
-   </message>
+    </message>
     <message>
         <source>STB_POP_HIDE_CHILDREN</source>
         <translation>Hide child objects</translation>
@@ -3704,7 +3712,7 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_PUBLISH_OBJ</source>
         <translation>Publish object</translation>
-   </message>
+    </message>
     <message>
         <source>TOP_POP_HIDE_CHILDREN</source>
         <translation>Hide Children</translation>
@@ -4345,7 +4353,7 @@ Otherwise the dimensions will be kept without modifications.</translation>
     <message>
         <source>GEOM_CURVE_ANALITICAL</source>
         <translation>Analytical</translation>
-    </message>        
+    </message>
 </context>
 <context>
     <name>BasicGUI_ParamCurveWidget</name>
@@ -4372,7 +4380,7 @@ Otherwise the dimensions will be kept without modifications.</translation>
     <message>
         <source>GEOM_PCURVE_MAX</source>
         <translation>Max t</translation>
-    </message>        
+    </message>
     <message>
         <source>GEOM_PCURVE_STEP</source>
         <translation>Step</translation>
@@ -4550,6 +4558,76 @@ Otherwise the dimensions will be kept without modifications.</translation>
         <source>CANNOT_CLOSE</source>
         <translation>It is impossible to close sketch
 Number of sketch points too small</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_FeatureDetectorDlg</name>
+    <message>
+        <source>GEOM_DETECT_TITLE</source>
+        <translation>Feature Detection</translation>
+    </message>
+    <message>
+        <source>GEOM_SCALING</source>
+        <translation>Scaling</translation>
+    </message>
+    <message>
+        <source>GEOM_PNT1</source>
+        <translation>Top left corner</translation>
+    </message>
+    <message>
+        <source>GEOM_PNT2</source>
+        <translation>Top right corner</translation>
+    </message>
+    <message>
+        <source>GEOM_CORNER</source>
+        <translation>Detected_corners</translation>
+    </message>
+    <message>
+        <source>GEOM_CORNERS</source>
+        <translation>Corners</translation>
+    </message>
+    <message>
+        <source>GEOM_CONTOURS</source>
+        <translation>Contours</translation>
+    </message>
+    <message>
+        <source>GEOM_FEATURES</source>
+        <translation>Features</translation>
+    </message>
+    <message>
+        <source>GEOM_DETECT_ZONE</source>
+        <translation>Select a detection zone (default is whole picture)</translation>
+    </message>
+    <message>
+        <source>GEOM_COLOR_FILTER</source>
+        <translation>Select the color of the zone you want to find the frontier of</translation>
+    </message>
+    <message>
+        <source>GEOM_VIEW</source>
+        <translation>View</translation>
+    </message>
+    <message>
+        <source>GEOM_FRONT</source>
+        <translation>Front (Y-Z)</translation>
+    </message>
+    <message>
+        <source>GEOM_TOP</source>
+        <translation>Top (X-Y)</translation>
+    </message>
+    <message>
+        <source>GEOM_LEFT</source>
+        <translation>Left (X-Z)</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_PictureImportDlg</name>
+    <message>
+        <source>GEOM_PICTURE</source>
+        <translation>Picture</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORT_PICT_TITLE</source>
+        <translation>Import picture in viewer</translation>
     </message>
 </context>
 <context>
@@ -4963,12 +5041,12 @@ Would you like to continue?</translation>
         <translation>Publish Objects</translation>
     </message>
     <message>
-      <source>OBJECT_NAME</source>
-      <translation>Name</translation>
+        <source>OBJECT_NAME</source>
+        <translation>Name</translation>
     </message>
     <message>
-      <source>OBJECT_ENTRY</source>
-      <translation>Entry</translation>
+        <source>OBJECT_ENTRY</source>
+        <translation>Entry</translation>
     </message>
     <message>
         <source>UNSELECT_ALL</source>

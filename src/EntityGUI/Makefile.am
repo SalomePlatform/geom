@@ -24,6 +24,17 @@
 #
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
+if WITH_OPENCV
+  FeatureDetectorDlg_Header = EntityGUI_FeatureDetectorDlg.h
+  FeatureDetectorDlg_Sources = EntityGUI_FeatureDetectorDlg.cxx
+  FeatureDetectorDlg_moc = EntityGUI_FeatureDetectorDlg_moc.cxx
+  PictureImportDlg_Header = EntityGUI_PictureImportDlg.h
+  PictureImportDlg_Sources = EntityGUI_PictureImportDlg.cxx
+  PictureImportDlg_moc = EntityGUI_PictureImportDlg_moc.cxx
+  Opencv_libs = $(OPENCV_LIBS)
+  Opencv_includes = $(OPENCV_INCLUDES)
+endif
+
 # Libraries targets
 lib_LTLIBRARIES = libEntityGUI.la
 
@@ -33,20 +44,26 @@ salomeinclude_HEADERS =			\
 	EntityGUI_Widgets.h		\
 	EntityGUI_SketcherDlg.h		\
 	EntityGUI_3DSketcherDlg.h	\
-	EntityGUI_SubShapeDlg.h	
+	EntityGUI_SubShapeDlg.h		\
+	$(FeatureDetectorDlg_Header)	\
+	$(PictureImportDlg_Header)
 
 dist_libEntityGUI_la_SOURCES = 		\
 	EntityGUI.cxx			\
 	EntityGUI_Widgets.cxx		\
 	EntityGUI_SketcherDlg.cxx	\
 	EntityGUI_3DSketcherDlg.cxx	\
-	EntityGUI_SubShapeDlg.cxx
+	EntityGUI_SubShapeDlg.cxx	\
+	$(FeatureDetectorDlg_Sources)	\
+	$(PictureImportDlg_Sources)
 
 MOC_FILES =				\
 	EntityGUI_Widgets_moc.cxx	\
 	EntityGUI_SketcherDlg_moc.cxx	\
 	EntityGUI_3DSketcherDlg_moc.cxx	\
-	EntityGUI_SubShapeDlg_moc.cxx
+	EntityGUI_SubShapeDlg_moc.cxx	\
+	$(FeatureDetectorDlg_moc)	\
+	$(PictureImportDlg_moc)	
 
 nodist_libEntityGUI_la_SOURCES =	\
 	 $(MOC_FILES)
@@ -80,6 +97,7 @@ libEntityGUI_la_CPPFLAGS =			\
 	$(GUI_CXXFLAGS)				\
 	$(CORBA_CXXFLAGS)			\
 	$(CORBA_INCLUDES)			\
+	$(Opencv_includes)			\
 	-I$(srcdir)/../GEOMGUI			\
 	-I$(srcdir)/../DlgRef			\
 	-I$(srcdir)/../GEOMBase 		\
@@ -88,6 +106,8 @@ libEntityGUI_la_CPPFLAGS =			\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
 	-I$(srcdir)/../SKETCHER			\
+	-I$(srcdir)/../ShapeRecognition		\
+	-I$(srcdir)/../GEOM			\
 	-I$(top_builddir)/src/DlgRef		\
 	-I$(top_builddir)/idl
 
@@ -96,6 +116,7 @@ libEntityGUI_la_LDFLAGS  =					\
 	../GEOMBase/libGEOMBase.la				\
 	../SKETCHER/libGEOMSketcher.la				\
 	../GEOMGUI/libGEOM.la 					\
+	../ShapeRecognition/libGEOMShapeRec.la			\
 	$(QT_MT_LIBS)						\
-	$(CAS_TKTopAlgo) -lTKernel
-
+	$(CAS_TKTopAlgo) -lTKernel				\
+	$(Opencv_libs)

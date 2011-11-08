@@ -93,6 +93,7 @@ libBasicGUI_la_CPPFLAGS =			\
 	$(GUI_CXXFLAGS)				\
 	$(CORBA_CXXFLAGS)			\
 	$(CORBA_INCLUDES)			\
+	$(OPENCV_INCLUDES)			\
 	-I$(srcdir)/../OBJECT			\
 	-I$(srcdir)/../DlgRef			\
 	-I$(srcdir)/../GEOMGUI			\
@@ -109,4 +110,5 @@ libBasicGUI_la_LDFLAGS  =					\
 	../GEOMBase/libGEOMBase.la				\
 	../GEOMGUI/libGEOM.la					\
 	$(CAS_LDFLAGS) -lTKGeomBase                             \
-	$(GUI_LDFLAGS) -lsuit
+	$(GUI_LDFLAGS) -lsuit					\
+	$(OPENCV_LIBS) 

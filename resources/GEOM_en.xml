@@ -293,6 +293,7 @@
    <submenu label-id="Display Mode" item-id="803" pos-id="6">
       <popup-item item-id="80311" pos-id="" label-id="Wireframe" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
       <popup-item item-id="80312" pos-id="" label-id="Shading" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
+      <popup-item item-id="80312" pos-id="" label-id="Texture" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>
    </submenu>
    <endsubmenu />
    <popup-item item-id="8032" pos-id="" label-id="Color" icon-id="" tooltip-id="" accel-id="" toggle-id="" execute-action=""/>

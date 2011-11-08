@@ -17,9 +17,34 @@
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 #
 
+#  GEOM ShapeRecognition : tools for the shape recognition
+#  File   : Makefile.am
+#  Author : Renaud NEDELEC (OCC)
+#  Module : GEOM
+#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
-dist_admlocalm4_DATA =	\
-check_GEOM.m4 \
-check_GUI.m4 \
-check_OpenCV.m4
+# header files 
+salomeinclude_HEADERS =		\
+	ShapeRec_FeatureDetector.hxx
+
+# Libraries targets
+lib_LTLIBRARIES = libGEOMShapeRec.la
+
+dist_libGEOMShapeRec_la_SOURCES =	\
+	ShapeRec_FeatureDetector.cxx
+
+# additional information to compile and link file
+
+libGEOMShapeRec_la_CPPFLAGS =	\
+	$(KERNEL_CXXFLAGS)\
+	$(OPENCV_INCLUDES)\
+	$(QT_INCLUDES)	
+        
+
+libGEOMShapeRec_la_LDFLAGS  =			\
+	$(KERNEL_LDFLAGS) -lSALOMELocalTrace	\
+	$(STDLIB)				\
+	$(OPENCV_LIBS)                          \
+	$(QT_MT_LIBS)						

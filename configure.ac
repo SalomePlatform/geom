@@ -333,6 +333,14 @@ CHECK_SPHINX
 
 echo
 echo ---------------------------------------------
+echo testing Opencv
+echo ---------------------------------------------
+echo
+CHECK_OPENCV
+AC_DEFINE_UNQUOTED(WITH_OPENCV,${WITH_OPENCV})
+
+echo
+echo ---------------------------------------------
 echo Testing Kernel
 echo ---------------------------------------------
 echo
@@ -348,11 +356,11 @@ echo
 echo Configure
 
 if test "${gui_ok}" = "yes"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok Kernel_ok gui_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok opencv_ok Kernel_ok gui_ok"
 elif test "${SalomeGUI_need}" != "no"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok gui_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok opencv_ok Kernel_ok gui_ok"
 else
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok Kernel_ok"
+  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok opencv_ok Kernel_ok"
 fi
 
 for var in $variables
@@ -463,6 +471,7 @@ AC_OUTPUT([ \
   src/STEPImport/Makefile \
   src/STLExport/Makefile \
   src/ShHealOper/Makefile \
+  src/ShapeRecognition/Makefile \
   src/TransformationGUI/Makefile \
   src/VTKExport/Makefile \
   resources/Makefile \

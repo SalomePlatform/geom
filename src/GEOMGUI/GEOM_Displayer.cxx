@@ -73,6 +73,7 @@
 #include <Prs3d_PointAspect.hxx>
 #include <StdSelect_TypeOfEdge.hxx>
 #include <StdSelect_TypeOfFace.hxx>
+#include <StdSelect_DisplayMode.hxx>
 #include <TopoDS_Face.hxx>
 #include <BRep_Tool.hxx>
 #include <Geom_Plane.hxx>
@@ -86,6 +87,8 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopoDS.hxx>
+
+#include <Prs3d_ShadingAspect.hxx>
 
 #include <BRepMesh_IncrementalMesh.hxx>
 
@@ -314,6 +317,7 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myColor = -1;
   // This color is used for shape displaying. If it is equal -1 then
   // default color is used.
+  myTexture = "";
 
   myWidth = -1;
   myType = -1;
@@ -661,6 +665,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           } else
             useObjColor = true;
         }else {
+          MESSAGE("myDisplayMode = "<< myDisplayMode)
           AISShape->SetDisplayMode( myDisplayMode );
           AISShape->SetShadingColor( myShadingColor );
         }
@@ -735,6 +740,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             }
           }
         }
+        
         else
         {
           if ( onlyVertex )
@@ -822,6 +828,14 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
         }
 
+        if ( HasTexture() )
+        {
+          AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
+          AISShape->SetTextureMapOn();
+          AISShape->DisableTextureModulate();
+          AISShape->SetDisplayMode(3);
+        }
+        
         if ( HasWidth() )
           AISShape->SetWidth( GetWidth() );
 
@@ -1529,6 +1543,31 @@ void GEOM_Displayer::UnsetColor()
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   QColor col = resMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
   myShadingColor = SalomeApp_Tools::color( col );
+}
+
+//=================================================================
+/*!
+ *  GEOM_Displayer::SetTexture
+ *  Set color for shape displaying. If it is equal -1 then default color is used.
+ *  Available values are from Quantity_NameOfColor enumeration
+ */
+//=================================================================
+void GEOM_Displayer::SetTexture( const std::string& texureFileName )
+{
+  if(texureFileName!="")
+  {
+    myTexture = texureFileName;
+  }
+}
+
+bool GEOM_Displayer::HasTexture() const
+{
+  return myTexture != "";
+}
+
+std::string GEOM_Displayer::GetTexture() const
+{
+  return myTexture;
 }
 
 //=================================================================

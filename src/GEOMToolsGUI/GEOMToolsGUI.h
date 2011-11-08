@@ -66,6 +66,7 @@ private:
   void         OnAutoColor();
   void         OnDisableAutoColor();
   void         OnColor();
+  void         OnTexture();
   void         OnTransparency();
   void         OnNbIsos( ActionType actionType = SHOWDLG );
   void         OnDeflection();

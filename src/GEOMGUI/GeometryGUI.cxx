@@ -281,8 +281,7 @@ void GeometryGUI::ActiveWorkingPlane()
 
       view3d->SetProj(DZ.X(), DZ.Y(), DZ.Z());
       view3d->SetUp(DY.X(), DY.Y(), DY.Z());
-
-      vw->onViewFitAll();
+      vw->onViewFitAll(); 
     }
   }
   else if( ViewVTK ) {
@@ -404,6 +403,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpCheckGeom:        // MENU TOOLS - CHECK GEOMETRY
   case GEOMOp::OpDeflection:       // POPUP MENU - DEFLECTION COEFFICIENT
   case GEOMOp::OpColor:            // POPUP MENU - COLOR
+  case GEOMOp::OpSetTexture:       // POPUP MENU - SETTEXTURE
   case GEOMOp::OpTransparency:     // POPUP MENU - TRANSPARENCY
   case GEOMOp::OpIncrTransparency: // SHORTCUT   - INCREASE TRANSPARENCY
   case GEOMOp::OpDecrTransparency: // SHORTCUT   - DECREASE TRANSPARENCY
@@ -428,6 +428,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpSwitchVectors:    // MENU VIEW - VECTOR MODE
   case GEOMOp::OpWireframe:        // POPUP MENU - WIREFRAME
   case GEOMOp::OpShading:          // POPUP MENU - SHADING
+  case GEOMOp::OpTexture:          // POPUP MENU - TEXTURE
   case GEOMOp::OpVectors:          // POPUP MENU - VECTORS
     libName = "DisplayGUI";
     break;
@@ -460,6 +461,10 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::Op2dSketcher:       // MENU ENTITY - SKETCHER
   case GEOMOp::Op3dSketcher:       // MENU ENTITY - 3D SKETCHER
   case GEOMOp::OpExplode:          // MENU ENTITY - EXPLODE
+#ifdef WITH_OPENCV
+  case GEOMOp::OpFeatureDetect:    // MENU ENTITY - FEATURE DETECTION
+  case GEOMOp::OpPictureImport:    // MENU ENTITY - IMPORT PICTURE IN VIEWER
+#endif
     libName = "EntityGUI";
     break;
   case GEOMOp::OpEdge:             // MENU BUILD - EDGE
@@ -707,6 +712,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::Op2dSketcher,  "SKETCH" );
   createGeomAction( GEOMOp::Op3dSketcher,  "3DSKETCH" );
   createGeomAction( GEOMOp::OpExplode,     "EXPLODE" );
+#ifdef WITH_OPENCV
+  createGeomAction( GEOMOp::OpFeatureDetect,"FEATURE_DETECTION" );
+  createGeomAction( GEOMOp::OpPictureImport,"PICTURE_IMPORT" );
+#endif
 
   createGeomAction( GEOMOp::OpEdge,        "EDGE" );
   createGeomAction( GEOMOp::OpWire,        "WIRE" );
@@ -795,9 +804,11 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpWireframe,        "POP_WIREFRAME", "", 0, true );
   createGeomAction( GEOMOp::OpShading,          "POP_SHADING", "", 0, true );
+  createGeomAction( GEOMOp::OpTexture,          "POP_TEXTURE", "", 0, true );
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
   createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
   createGeomAction( GEOMOp::OpColor,            "POP_COLOR" );
+  createGeomAction( GEOMOp::OpSetTexture,       "POP_SETTEXTURE" );
   createGeomAction( GEOMOp::OpTransparency,     "POP_TRANSPARENCY" );
   createGeomAction( GEOMOp::OpIsos,             "POP_ISOS" );
   createGeomAction( GEOMOp::OpAutoColor,        "POP_AUTO_COLOR" );
@@ -900,6 +911,13 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpShell,    buildId, -1 );
   createMenu( GEOMOp::OpSolid,    buildId, -1 );
   createMenu( GEOMOp::OpCompound, buildId, -1 );
+  
+  createMenu( separator(),          newEntId, -1 );
+  
+#ifdef WITH_OPENCV
+  createMenu( GEOMOp::OpFeatureDetect, newEntId, -1 );
+  createMenu( GEOMOp::OpPictureImport, newEntId, -1 );
+#endif
 
   int operId = createMenu( tr( "MEN_OPERATIONS" ), -1, -1, 10 );
 
@@ -1065,6 +1083,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( separator(),               operTbId );
   createTool( GEOMOp::OpExplode,         operTbId );
   createTool( separator(),               operTbId );
+#ifdef WITH_OPENCV
+  createTool( GEOMOp::OpFeatureDetect,   operTbId );
+  createTool( GEOMOp::OpPictureImport,   operTbId );
+  createTool( separator(),               operTbId );
+#endif
   createTool( GEOMOp::OpPartition,       operTbId );
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
@@ -1109,10 +1132,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   // ---- create popup menus --------------------------
 
   QString clientOCCorVTK = "(client='OCCViewer' or client='VTKViewer')";
+  QString clientOCC = "(client='OCCViewer')";
   QString clientOCCorVTK_AndSomeVisible = clientOCCorVTK + " and selcount>0 and isVisible";
+  QString clientOCC_AndSomeVisible = clientOCC + " and selcount>0 and isVisible";
 
+  QString clientOCCorOB = "(client='ObjectBrowser' or client='OCCViewer')";
   QString clientOCCorVTKorOB = "(client='ObjectBrowser' or client='OCCViewer' or client='VTKViewer')";
   QString clientOCCorVTKorOB_AndSomeVisible = clientOCCorVTKorOB + " and selcount>0 and isVisible";
+  QString clientOCCorOB_AndSomeVisible = clientOCCorOB + " and selcount>0 and isVisible";
 
   QString autoColorPrefix =
     "(client='ObjectBrowser' or client='OCCViewer') and type='Shape' and selcount=1 and isOCC=true";
@@ -1138,6 +1165,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpShading ), dispmodeId, -1 ); // shading
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
+  mgr->insert( action(  GEOMOp::OpTexture ), dispmodeId, -1 ); // wireframe
+  mgr->setRule( action( GEOMOp::OpTexture ), clientOCC_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpTexture), clientOCC + " and displaymode='Texture'", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), dispmodeId, -1 );
   mgr->insert( action(  GEOMOp::OpVectors ), dispmodeId, -1 ); // vectors
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
@@ -1154,6 +1184,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
   //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 ); // texture
+  mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
