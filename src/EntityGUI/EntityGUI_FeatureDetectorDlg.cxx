@@ -117,10 +117,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_FEATURES"));
   mainFrame()->RadioButton1->setText(tr("GEOM_CONTOURS"));
   mainFrame()->RadioButton2->setText(tr("GEOM_CORNERS"));
-//   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
-//   mainFrame()->RadioButton2->close();
-//   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
-//   mainFrame()->RadioButton3->close();
+  mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+  mainFrame()->RadioButton3->close();
   
 //   myViewGroup = new DlgRef_3Radio(centralWidget());
 //   myViewGroup->GroupBox1->setTitle(tr("GEOM_VIEW"));
@@ -143,14 +141,12 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mySelButton = new QPushButton(mySelectionGroup);
   mySelButton->setIcon(image1);
   myLineEdit = new QLineEdit(mySelectionGroup);
-  myCheckBox = new QCheckBox(mySelectionGroup);
   
   mySnapshotLabel = new QLabel(mySelectionGroup);
   mySelectGrpLayout->addWidget(myLineEdit,      0, 1);
   mySelectGrpLayout->addWidget(mySelButton,     0, 0);
   mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 1);
   mySelectGrpLayout->addWidget(myPushButton,    1, 0);
-  mySelectGrpLayout->addWidget(myCheckBox,      2, 0);
   
   myOutputGroup = new DlgRef_3Radio(centralWidget());
   myOutputGroup->GroupBox1->setTitle(tr("GEOM_DETECT_OUTPUT"));
@@ -370,6 +366,7 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
     case CORNERS:
 //       myViewGroup->show();
 //       mySelectionGroup->show();
+      myOutputGroup->hide();
       mySnapshotLabel->setText(tr("GEOM_DETECT_ZONE"));
       initName(tr("GEOM_CORNERS"));
       break;
@@ -377,6 +374,7 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 //       myViewGroup->hide();
 //       mySelectionGroup->hide();
 //       mySelectionGroup->show();
+      myOutputGroup->show();
       mySnapshotLabel->setText(tr("GEOM_COLOR_FILTER"));
       initName(tr("GEOM_CONTOURS"));
       break;
@@ -384,6 +382,7 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 //       myViewGroup->hide();
 //       mySelectionGroup->hide();
 //       mySelectionGroup->show();
+      myOutputGroup->hide();
       mySnapshotLabel->setText(tr(""));
       initName(tr("GEOM_LINES"));
       break;
@@ -512,9 +511,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   int winHeight         =  vp->height();
   int winWidth          =  vp->width();
   double x_offset, y_offset;
-  int i;
 
-//   NOTE: OLD
   // Recompute of the values computed in OCC OpenGl_view.c 
   // while waiting for a function to retrieve parameters of the displayed backgroun image 
   double hratio = winHeight * 1.0 / height;
@@ -532,15 +529,15 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     imgZoomRatio = wratio;
   }
   
-  // Selection rectangle coordinates in the view
-  double rectLeft  = myStartPnt.x(); 
-  double rectTop   = myStartPnt.y(); 
+//   // Selection rectangle coordinates in the view
+//   double rectLeft  = myStartPnt.x(); 
+//   double rectTop   = myStartPnt.y(); 
   
   // Operations to display the corners properly in the 3D scene
-  double viewLeft  = 0.5 * winWidth  - x_offset;  // X coordinate of the top left  corner of the background image in the view
-  double viewTop   = 0.5 * winHeight - y_offset;  // Y coordinate of both top corners
+  double viewLeft  = -0.5 * width;   // X coordinate of the top left  corner of the background image in the view
+  double viewTop   =  0.5 * height;  // Y coordinate of both top corners
   
-  // Set detection rectangle in the background image coordinates system and detect the corners
+  // Set detection rectangle in the background image coordinates system
   myStartPnt.setX( (myStartPnt.x() -  (0.5 * winWidth  - x_offset)) * 1.0 / imgZoomRatio );
   myStartPnt.setY( (myStartPnt.y() -  (0.5 * winHeight - y_offset)) * 1.0 / imgZoomRatio );
   myEndPnt.setX(   (myEndPnt.x()   -  (0.5 * winWidth  - x_offset)) * 1.0 / imgZoomRatio );
@@ -556,12 +553,13 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     if( !aRect.isEmpty() )
     {
       aDetector->SetROI( aRect );
-      viewLeft  =  rectLeft;                
-      viewTop   =  rectTop;
+//       viewLeft  =  rectLeft;                
+//       viewTop   =  rectTop;
     }
     aDetector->ComputeCorners();
     CvPoint2D32f* corners     = aDetector->GetCorners();
     int cornerCount           = aDetector->GetCornerCount();
+    int i;
     
     // Build the geom objects associated to the detected corners and returned by execute   
     if( !aBasicOperations->_is_nil() && !aShapesOperations->_is_nil() ) 
@@ -579,8 +577,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //         double z = aCornerPnt.Z();
 
         // When using the new way with textures on shapes we just have to do the following
-        double x = -0.5*width  + corners[i].x;
-        double y =  0.5*height - corners[i].y;
+        double x = viewLeft  + corners[i].x;
+        double y = viewTop   - corners[i].y;
         double z =  0;
         
         aGeomCorner = aBasicOperations->MakePointXYZ( x,y,z );
@@ -627,11 +625,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     
     bool insert;
     
-    // TEST for debug only
-//     GEOM::GEOM_Object_var  aRemovedPnt;
-//     GEOM::ListOfGO_var     removedPnts     = new GEOM::ListOfGO();
-//     int r = 0;
-    
     MESSAGE("hierarchy.size() =" << hierarchy.size()) 
     for( ; idx >= 0; idx = hierarchy[idx][0])
     {
@@ -662,7 +655,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
           std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
 
           pnt_it=existing_points.insert(pnt);
-          if (pnt_it.second == true || !myCheckBox->isChecked() )         // To avoid double points in the contours
+          if (pnt_it.second == true)         // To avoid double points in the contours
           {
             insert = true;
             if (it!=contour.begin())         // From the second point on perform some checking to avoid loops in the contours we build
@@ -687,21 +680,7 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
                 
                 if (fabs(u_v_sinus) < Precision::Confusion())
                 { 
-                  // TEST for debug only
-//                   if (myCheckBox->isChecked())
-//                   {
-//                     MESSAGE("correction appliquee : fabs(u_v_sinus) ="<<fabs(u_v_sinus))
-//                     MESSAGE("it->x = "<<it->x)
-//                     MESSAGE("it->y = "<<it->y)
-//                     MESSAGE("it_previous->x = "<<it_previous->x)
-//                     MESSAGE("it_previous->y = "<<it_previous->y)
-//                     MESSAGE("it_next->x = "<<it_next->x)
-//                     MESSAGE("it_next->y = "<<it_next->y)
-//                     MESSAGE("norme_u = "<<norme_u)
-//                     MESSAGE("norme_v = "<<norme_v)
-//                     MESSAGE("u_v_det = "<<u_v_det)
-//                   }
-                  insert = !myCheckBox->isChecked();  // TEST correction appliquee que si la checkbox est cochee
+                  insert = false;
                 }                         
               }
             }
@@ -715,14 +694,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
               geomContourPnts[j] = aGeomContourPnt;
               j++;
             }
-//             TEST for debug only
-//             else
-//             { 
-//               aRemovedPnt   = aBasicOperations->MakePointXYZ( x,y,z );
-//               removedPnts->length( r+1 );
-//               removedPnts[r] = aRemovedPnt;
-//               r++;
-//             }
           }
         }
         
@@ -747,17 +718,10 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 //       }
     }
     GEOM::GEOM_Object_var aContoursCompound = aShapesOperations->MakeCompound(geomContours);
-//   TEST for debu only  GEOM::GEOM_Object_var aRemovedPntsCompound = aShapesOperations->MakeCompound(removedPnts);
     if ( !aContoursCompound->_is_nil() )
     {
       objects.push_back( aContoursCompound._retn() );
     }
-//   TEST for debug only
-//     if ( !aRemovedPntsCompound->_is_nil() )
-//     {
-//       objects.push_back( aRemovedPntsCompound._retn() );
-//     }
-
     res=true;
   }
   

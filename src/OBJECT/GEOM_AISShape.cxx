@@ -169,7 +169,6 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
   
 //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
-  std::cout<<"aMode = "<<aMode<<" ======================= GEOM_AISShape::Compute ========================="<<std::endl;
   switch (aMode) {
     case 0://StdSelect_DM_Wireframe: 
     {

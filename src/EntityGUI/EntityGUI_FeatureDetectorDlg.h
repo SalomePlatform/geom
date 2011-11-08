@@ -93,10 +93,7 @@ private:
   QPushButton*                       mySelButton;
   
   QLineEdit*                         myLineEdit;
-  QCheckBox*                         myCheckBox;
   
-//   DlgRef_3Radio*                     myViewGroup;
-  DlgRef_3Radio*                     myOutputGroup;
-//   QButtonGroup*                      myViewButtonGroup;
+  DlgRef_3Radio*                     myOutputGroup;;
 
 };

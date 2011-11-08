@@ -337,7 +337,10 @@ echo testing Opencv
 echo ---------------------------------------------
 echo
 CHECK_OPENCV
-AC_DEFINE_UNQUOTED(WITH_OPENCV,${WITH_OPENCV})
+if test "${opencv_ok}" = "yes"; then
+  AC_DEFINE_UNQUOTED(WITH_OPENCV,${WITH_OPENCV})
+fi
+
 
 echo
 echo ---------------------------------------------
