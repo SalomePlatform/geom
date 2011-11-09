@@ -33,6 +33,6 @@ face or nothing if it is impossible.
 \image html facesn3.png "Examples of faces"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
-\ref tui_creation_squareface "Primitives".
+\ref tui_creation_face "Advanced Geometric Objects".
 
 */
