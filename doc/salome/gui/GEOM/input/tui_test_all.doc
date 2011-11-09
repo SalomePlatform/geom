@@ -13,21 +13,15 @@
 \anchor swig_MakeMarker
 \until cs3
 
-\until MakePlaneThreePnt
+\until MakePlaneLCS
 
 \anchor swig_MakeArc
-\until MakeArcCenter
+\until MakeArcOfEllipse
 
 \anchor swig_MakeCircle
 \until Circle2
 
-\until MakeVertexOnCurve
-
-\until MakeVertexOnCurveByCoord
-
-\until MakeVertexOnSurface
-
-\until MakeVertexOnSurfaceByCoord
+\until MakeVertexOnCurveByLength
 
 \anchor swig_MakeVertexOnLinesIntersection
 \until p_on_l1l2
