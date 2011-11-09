@@ -434,16 +434,12 @@ GEOM::GEOM_IOperations_ptr EntityGUI_FeatureDetectorDlg::createOperation()
 //=================================================================================
 bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 {
-  MESSAGE("EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )")
-  
   bool res = false;
-  SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   
-  MESSAGE("myFaceEntry = "<< myFaceEntry.toStdString());
+  SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
   SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
   
-  MESSAGE("repere1")
   AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
   if (AISit == soccViewer->entry2aisobjects.end())
     return res;
@@ -476,9 +472,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
   QRect aRect = QRect(topLeft, bottomRight);
   
-  
   GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
   GEOM::GEOM_IShapesOperations_var aShapesOperations = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
+  
   if (myConstructorId == CORNERS)
   {
     if( !aRect.isEmpty() )

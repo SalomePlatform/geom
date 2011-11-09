@@ -915,8 +915,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),          newEntId, -1 );
   
 #ifdef WITH_OPENCV
-  createMenu( GEOMOp::OpFeatureDetect, newEntId, -1 );
   createMenu( GEOMOp::OpPictureImport, newEntId, -1 );
+  createMenu( GEOMOp::OpFeatureDetect, newEntId, -1 );
 #endif
 
   int operId = createMenu( tr( "MEN_OPERATIONS" ), -1, -1, 10 );
