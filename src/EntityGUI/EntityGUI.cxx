@@ -171,20 +171,21 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
         ic->Select();       // New selection
 
         ic->InitSelected();
-        if ( ic->MoreSelected() ) {
-          TopoDS_Shape aShape = ic->SelectedShape();
-          if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
+        TopoDS_Shape aShape;
+        if ( ic->MoreSelected() ) 
+          aShape = ic->SelectedShape();
+        if ( !aShape.IsNull() && aShape.ShapeType() == TopAbs_VERTEX )
             aPnt = BRep_Tool::Pnt( TopoDS::Vertex( ic->SelectedShape() ) );
-        }
-        else {
+        else 
+        {
           OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
           aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
         }
         
 //         aCornerDlg->OnPointSelected( aPnt );  // "feed" the point to corner detection dialog
         
-        QPoint start = QPoint(pe->x(),pe->y());
-        aCornerDlg->setStartPnt( start );
+//         QPoint start = QPoint(pe->x(),pe->y());
+        aCornerDlg->setStartPnt( aPnt );
       } // acceptMouseEvent()
       
     }
@@ -202,8 +203,8 @@ bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
   if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
-       pe->modifiers() != Qt::ControlModifier ) {
-    
+       pe->modifiers() != Qt::ControlModifier ) 
+  {   
     EntityGUI_FeatureDetectorDlg* aCornerDlg = (EntityGUI_FeatureDetectorDlg*) aDlg;
    
     gp_Pnt aPnt; 
@@ -211,8 +212,10 @@ bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
     if ( QApplication::mouseButtons() == Qt::LeftButton && 
          aCornerDlg->acceptMouseEvent() )
     {
-      QPoint end = QPoint(pe->x(),pe->y());
-      aCornerDlg->setEndPnt( end );
+//       QPoint end = QPoint(pe->x(),pe->y());
+      OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+      aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+      aCornerDlg->setEndPnt( aPnt );
     }    
   }
   return false;

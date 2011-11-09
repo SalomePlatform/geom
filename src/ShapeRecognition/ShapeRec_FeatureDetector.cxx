@@ -38,12 +38,12 @@ using namespace cv;
   Constructor
   \param theFilename - image to process
 */
-ShapeRec_FeatureDetector::ShapeRec_FeatureDetector(const QString& theFilename): 
+ShapeRec_FeatureDetector::ShapeRec_FeatureDetector(const std::string& theFilename): 
   corners()
 {
   cornerCount = 2000;
   rect=cvRect(0,0,0,0);
-  imagePath = theFilename.toStdString();
+  imagePath = theFilename;
   // Store the dimensions of the picture
   IplImage* bg_img = cvLoadImage (imagePath.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
   imgHeight = bg_img->height;

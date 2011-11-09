@@ -29,7 +29,6 @@
 #include "opencv2/highgui/highgui.hpp"
 
 // Qt
-#include <QString>
 #include <QRect>
 
 enum              // Method used for contour detection
@@ -46,7 +45,7 @@ public:
   typedef std::vector<cv::Point>               CvContour;
   typedef std::vector<std::vector<cv::Point> > CvContoursArray;
   
-  ShapeRec_FeatureDetector( const QString& );                           // Constructor
+  ShapeRec_FeatureDetector( const std::string& );                        // Constructor
   
   void                    ComputeCorners();                              // Detects the corners from the image located at imagePath
   bool                    ComputeLines();                                // Detects the lines from the image located at imagePath

@@ -48,8 +48,8 @@ public:
   
   bool                               acceptMouseEvent() const;
 //   void                               OnPointSelected( const gp_Pnt& );
-  void                               setStartPnt    ( const QPoint& );
-  void                               setEndPnt      ( const QPoint& );
+  void                               setStartPnt    ( const gp_Pnt& );
+  void                               setEndPnt      ( const gp_Pnt& );
   int                                getConstructorId() {return myConstructorId;};
   
 protected:
@@ -83,8 +83,8 @@ private:
   
   DlgRef_1Sel*                       mySelWidget;
   
-  QPoint                             myStartPnt;
-  QPoint                             myEndPnt;
+  gp_Pnt                             myStartPnt;
+  gp_Pnt                             myEndPnt;
   
   gp_Ax3                             myWPlane;
   gp_Ax3                             aGlobalCS;

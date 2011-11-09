@@ -26,7 +26,6 @@
 
 #include "EntityGUI_FeatureDetectorDlg.h"
 
-#include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
 
@@ -216,7 +215,7 @@ void EntityGUI_FeatureDetectorDlg::Init()
   
   aGlobalCS = gp_Ax3(aOrigin, aDirZ, aDirX);
   
-  myStartPnt = QPoint(0,0);
+  myStartPnt = gp_Pnt(0,0,0);
   myEndPnt = myStartPnt;
   
   myGeomGUI->SetWorkingPlane( aGlobalCS );
@@ -278,46 +277,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
       myFace = aSelectedObject;
     } 
   }
-  
 }
-
-
-// //=================================================================================
-// // function : OnPointSelected
-// // purpose  :
-// //=================================================================================
-// void EntityGUI_FeatureDetectorDlg::OnPointSelected(const gp_Pnt& thePnt)
-// {
-//   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
-//   int aPrecision = resMgr->integerValue("Geometry", "length_precision", 6);
-//   if (myPushButton1->isDown())
-//   {
-// //     myX->setValue(thePnt.X());
-// //     myY->setValue(thePnt.Y());
-// //     myZ->setValue(thePnt.Z());
-//     myX->setText(DlgRef::PrintDoubleValue(thePnt.X(), aPrecision));
-//     myY->setText(DlgRef::PrintDoubleValue(thePnt.Y(), aPrecision));
-//     myZ->setText(DlgRef::PrintDoubleValue(thePnt.Z(), aPrecision));
-//     x1 = thePnt.X(); 
-//     y1 = thePnt.Y();
-//     z1 = thePnt.Z();
-//   
-//     myPushButton2->click();
-//   }
-//   else
-//   {
-// //     myX2->setValue(thePnt.X());
-// //     myY2->setValue(thePnt.Y());
-// //     myZ2->setValue(thePnt.Z());
-//     myX2->setText(DlgRef::PrintDoubleValue(thePnt.X(), aPrecision));
-//     myY2->setText(DlgRef::PrintDoubleValue(thePnt.Y(), aPrecision));
-//     myZ2->setText(DlgRef::PrintDoubleValue(thePnt.Z(), aPrecision));
-//     x2 = thePnt.X(); 
-//     y2 = thePnt.Y();
-//     z2 = thePnt.Z();
-//    
-//   }
-// }
 
 //=================================================================================
 // function : acceptMouseEvent()
@@ -429,7 +389,7 @@ void EntityGUI_FeatureDetectorDlg::onButtonToggled( bool checked)
 {
   if (!checked)
   {
-    myStartPnt = QPoint(0,0);
+    myStartPnt = gp_Pnt(0,0,0);
     myEndPnt = myStartPnt;
     myLineEdit->setEnabled(true);
   }
@@ -443,18 +403,20 @@ void EntityGUI_FeatureDetectorDlg::onButtonToggled( bool checked)
 // function : setStartPnt( const QPoint& )
 // purpose  :
 //=================================================================================
-void EntityGUI_FeatureDetectorDlg::setStartPnt(const QPoint& theStartPnt)
+void EntityGUI_FeatureDetectorDlg::setStartPnt(const gp_Pnt& theStartPnt)
 {
   myStartPnt = theStartPnt;
+  MESSAGE("myStartPnt = ("<<theStartPnt.X()<<", "<<theStartPnt.Y()<<")")
 }
 
 //=================================================================================
 // function : setEndPnt( const QPoint& )
 // purpose  :
 //=================================================================================
-void EntityGUI_FeatureDetectorDlg::setEndPnt(const QPoint& theEndPnt)
+void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
+  MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
 }
 
 //=================================================================================
@@ -476,7 +438,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   
   bool res = false;
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-  OCCViewer_ViewPort3d*  vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
   
   MESSAGE("myFaceEntry = "<< myFaceEntry.toStdString());
   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
@@ -495,10 +456,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   else
     return res;
   
-  QString theImgFileName = QString::fromStdString( myAISShape->TextureFile() );
-   
-  
-  if ( theImgFileName.isEmpty() )
+  std::string theImgFileName = myAISShape->TextureFile();
+    
+  if ( theImgFileName == "" )
     return res;
   
   // Build an instance of detection used to perform image processing operations
@@ -507,43 +467,14 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   int height            =  aDetector->GetImgHeight();
   int width             =  aDetector->GetImgWidth();
   
-//   NOTE: OLD
-  int winHeight         =  vp->height();
-  int winWidth          =  vp->width();
-  double x_offset, y_offset;
-
-  // Recompute of the values computed in OCC OpenGl_view.c 
-  // while waiting for a function to retrieve parameters of the displayed backgroun image 
-  double hratio = winHeight * 1.0 / height;
-  double wratio = winWidth  * 1.0 / width ;
-  double imgZoomRatio = 1.0;
-  
-  if (hratio < wratio){ 
-    x_offset = 0.5 * width * hratio;
-    y_offset = 0.5 * winHeight;
-    imgZoomRatio = hratio;
-  }
-  else {
-    y_offset = 0.5 * height * wratio;
-    x_offset = 0.5 * winWidth;
-    imgZoomRatio = wratio;
-  }
-  
-//   // Selection rectangle coordinates in the view
-//   double rectLeft  = myStartPnt.x(); 
-//   double rectTop   = myStartPnt.y(); 
-  
   // Operations to display the corners properly in the 3D scene
-  double viewLeft  = -0.5 * width;   // X coordinate of the top left  corner of the background image in the view
-  double viewTop   =  0.5 * height;  // Y coordinate of both top corners
+  double pictureLeft  = -0.5 * width;   // X coordinate of the top left  corner of the background image in the view
+  double pictureTop   =  0.5 * height;  // Y coordinate of both top corners
   
   // Set detection rectangle in the background image coordinates system
-  myStartPnt.setX( (myStartPnt.x() -  (0.5 * winWidth  - x_offset)) * 1.0 / imgZoomRatio );
-  myStartPnt.setY( (myStartPnt.y() -  (0.5 * winHeight - y_offset)) * 1.0 / imgZoomRatio );
-  myEndPnt.setX(   (myEndPnt.x()   -  (0.5 * winWidth  - x_offset)) * 1.0 / imgZoomRatio );
-  myEndPnt.setY(   (myEndPnt.y()   -  (0.5 * winHeight - y_offset)) * 1.0 / imgZoomRatio );
-  
-  QRect aRect = QRect(myStartPnt, myEndPnt);
+  QPoint topLeft     = QPoint(myStartPnt.X() - pictureLeft, pictureTop - myStartPnt.Y());
+  QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
+  QRect aRect = QRect(topLeft, bottomRight);
   
   
   GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
@@ -553,8 +484,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     if( !aRect.isEmpty() )
     {
       aDetector->SetROI( aRect );
-//       viewLeft  =  rectLeft;                
-//       viewTop   =  rectTop;
+      pictureLeft  =  myStartPnt.X();                
+      pictureTop   =  myStartPnt.Y();
     }
     aDetector->ComputeCorners();
     CvPoint2D32f* corners     = aDetector->GetCorners();
@@ -569,16 +500,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       geomCorners->length( cornerCount );
       for (i = 0; i < cornerCount; i++)
       {
-//         gp_Pnt aCornerPnt = EntityGUI::ConvertClickToPoint( viewLeft + corners[i].x*imgZoomRatio,
-//                                                             viewTop  + corners[i].y*imgZoomRatio, vp->getView() );
-//         
-//         double x = aCornerPnt.X();
-//         double y = aCornerPnt.Y();
-//         double z = aCornerPnt.Z();
-
-        // When using the new way with textures on shapes we just have to do the following
-        double x = viewLeft  + corners[i].x;
-        double y = viewTop   - corners[i].y;
+        double x = pictureLeft + corners[i].x;
+        double y = pictureTop  - corners[i].y;
         double z =  0;
         
         aGeomCorner = aBasicOperations->MakePointXYZ( x,y,z );
@@ -611,7 +534,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     }
     
     GEOM::GEOM_ICurvesOperations_var aCurveOperations = myGeomGUI->GetGeomGen()->GetICurvesOperations( getStudyId() );
-//     GEOM::GEOM_ICurvesOperations::_narrow( getOperation() );
     
     aDetector->ComputeContours( method );
     std::vector< std::vector<cv::Point> >   contours  = aDetector->GetContours();
@@ -645,12 +567,6 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
         std::pair< std::set< std::vector<int> >::iterator,bool > pnt_it;
         for ( it=contour.begin() ; it < contour.end(); it++ )
         {
-  //         gp_Pnt  aContourPnt = EntityGUI::ConvertClickToPoint(viewLeft + it->x*imgZoomRatio, viewTop + it->y*imgZoomRatio, vp->getView());
-  //         double x = aContourPnt.X();
-  //         double y = aContourPnt.Y();
-  //         double z = aContourPnt.Z();
-          
-          // When using the new way with textures on shapes we just have to do the following
           int pnt_array[] = {it->x,it->y};     
           std::vector<int> pnt (pnt_array, pnt_array + sizeof(pnt_array) / sizeof(int) );
 
