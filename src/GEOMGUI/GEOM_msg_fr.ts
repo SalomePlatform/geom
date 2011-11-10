@@ -490,6 +490,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Dimensions</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_DIST</source>
+        <translation>Distance</translation>
+    </message>
+    <message>
         <source>GEOM_DISTANCE</source>
         <translation>Distance</translation>
     </message>
@@ -1703,7 +1707,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_X3</source>
-        <translation>Abs. X :</translation>
+        <translation>DX :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_Y</source>
@@ -1715,7 +1719,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_Y3</source>
-        <translation>Abs. Y :</translation>
+        <translation>DY :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_Z2</source>

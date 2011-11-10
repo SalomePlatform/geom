@@ -1590,6 +1590,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Direction</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_DIST</source>
+        <translation>Distance</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_DX2</source>
         <translation>DX :</translation>
     </message>
@@ -1703,7 +1707,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_X3</source>
-        <translation>Abs. X :</translation>
+        <translation>DX :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_Y</source>
@@ -1715,7 +1719,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_Y3</source>
-        <translation>Abs. Y :</translation>
+        <translation>DY :</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_Z2</source>
