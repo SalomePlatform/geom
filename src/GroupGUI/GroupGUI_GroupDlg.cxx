@@ -620,8 +620,22 @@ void GroupGUI_GroupDlg::showOnlySelected()
     aDisplayer->Erase(aSelList, /*forced=*/false, /*updateViewer=*/true);
   }
   else {
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+    if (view) {
+      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+      Handle(SALOME_InteractiveObject) io =
+        new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+      if (view->isVisible(io)) myIsHiddenMain = true;
+    }
+
     aDisplayer->EraseAll(/*forced = false, updateViewer = true*/);
     aDisplayer->Display(aSelList, true);
+
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    if (getShapeType() == TopAbs_VERTEX && myIsHiddenMain) {
+      aDisplayer->Display(myMainObj);
+    }
 
     // for the case when selected ids were not displayed in the viewer: Mantis issue 0021367
     highlightSubShapes();
@@ -807,13 +821,22 @@ void GroupGUI_GroupDlg::activateSelection()
       myIsShapeType) // check if shape type is already choosen by user
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
-    SALOME_View* view = GEOM_Displayer::GetActiveView();
-    if (view) {
-      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
-      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
-      if (view->isVisible(io)) {
-        aDisplayer->Erase(myMainObj, false, false);
-        myIsHiddenMain = true;
+
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    if (getShapeType() == TopAbs_VERTEX) {
+      if (myIsHiddenMain)
+        aDisplayer->Display(myMainObj);
+    }
+    else {
+      SALOME_View* view = GEOM_Displayer::GetActiveView();
+      if (view) {
+        CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+        Handle(SALOME_InteractiveObject) io =
+          new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+        if (view->isVisible(io)) {
+          aDisplayer->Erase(myMainObj, false, false);
+          myIsHiddenMain = true;
+        }
       }
     }
 
