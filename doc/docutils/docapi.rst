@@ -10,34 +10,37 @@ code documentation included in source python files.
 :mod:`salome.geom` -- Package containing the GEOM python utilities
 ==================================================================
 
-:mod:`geomtools` -- Tools to access GEOM engine and objects
------------------------------------------------------------
+.. text below is (temporary?) commented since importing geomtools
+.. requires SALOME to be running
 
-.. automodule:: salome.geom.geomtools
+.. %%%:mod:`geomtools` -- Tools to access GEOM engine and objects
+.. %%%-----------------------------------------------------------
+
+.. %%%%automodule:: salome.geom.geomtools
+   .. %%%%:members:
+
+.. %%%:mod:`structelem` -- Structural elements package
+.. %%%------------------------------------------------
+
+.. %%%.. automodule:: salome.geom.structelem
+
+.. %%%.. autoclass:: StructuralElementManager
    :members:
 
-:mod:`structelem` -- Structural elements package
-------------------------------------------------
-
-.. automodule:: salome.geom.structelem
-
-.. autoclass:: StructuralElementManager
+.. %%%.. autoclass:: StructuralElement
    :members:
 
-.. autoclass:: StructuralElement
-   :members:
+.. %%%:mod:`structelem.parts` -- Structural element parts
+.. %%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:mod:`structelem.parts` -- Structural element parts
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: salome.geom.structelem.parts
+.. %%%.. automodule:: salome.geom.structelem.parts
    :members:
    :undoc-members:
    :show-inheritance:
 
-:mod:`structelem.orientation` -- Structural element orientation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. %%%:mod:`structelem.orientation` -- Structural element orientation
+.. %%%^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: salome.geom.structelem.orientation
+.. %%%.. automodule:: salome.geom.structelem.orientation
    :members:
    :undoc-members:
