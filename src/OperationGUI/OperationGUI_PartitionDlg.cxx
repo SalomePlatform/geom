@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_PartitionDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "OperationGUI_PartitionDlg.h"
 
 #include <DlgRef.h>
@@ -44,7 +43,7 @@
 
 //=================================================================================
 // class    : OperationGUI_PartitionDlg()
-// purpose  : Constructs a OperationGUI_PartitionDlg which is a child of 'parent', with the 
+// purpose  : Constructs a OperationGUI_PartitionDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
@@ -88,7 +87,7 @@ OperationGUI_PartitionDlg::OperationGUI_PartitionDlg( GeometryGUI* theGeometryGU
   /***************************************************************/
 
   setHelpFileName( "partition_page.html" );
- 
+
   Init();
 }
 
@@ -104,12 +103,12 @@ OperationGUI_PartitionDlg::~OperationGUI_PartitionDlg()
 
 void OperationGUI_PartitionDlg::SetListMaterials( GEOM::ListOfLong ListMaterials )
 {
-  myListMaterials = ListMaterials; 
+  myListMaterials = ListMaterials;
 }
-  
+
 GEOM::ListOfLong OperationGUI_PartitionDlg::GetListMaterials()
-{ 
-  return myListMaterials; 
+{
+  return myListMaterials;
 }
 
 //=================================================================================
@@ -132,7 +131,7 @@ void OperationGUI_PartitionDlg::Init()
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_VERTEX" ) );
   GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::VERTEX);
   GroupPoints->CheckButton1->setChecked( false );
-  
+
   mainFrame()->GroupBoxPublish->show();
 
   /* signals and slots connections */
@@ -140,13 +139,13 @@ void OperationGUI_PartitionDlg::Init()
   connect( buttonApply(), SIGNAL( clicked() ), this, SLOT( ClickOnApply() ) );
 
   connect( this, SIGNAL( constructorsClicked( int ) ), this, SLOT( ConstructorsClicked( int ) ) );
-  
+
   connect( GroupPoints->PushButton1, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
   connect( GroupPoints->PushButton2, SIGNAL( clicked() ), this, SLOT( SetEditCurrentArgument() ) );
-  
+
   connect( GroupPoints->LineEdit1, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
   connect( GroupPoints->LineEdit2, SIGNAL( returnPressed() ), this, SLOT( LineEditReturnPressed() ) );
-  
+
   connect( GroupPoints->ComboBox1, SIGNAL( activated( int ) ), this, SLOT( ComboTextChanged() ) );
 
   connect( myGeomGUI->getApp()->selectionMgr(),
@@ -154,7 +153,7 @@ void OperationGUI_PartitionDlg::Init()
 
   connect( GroupPoints->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
   connect( GroupPoints->CheckButton2, SIGNAL(toggled(bool)), this, SLOT(processPreview()) );
-  
+
   initName( tr( "GEOM_PARTITION" ) );
 
   ConstructorsClicked( 0 );
@@ -170,13 +169,13 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
 {
   disconnect( myGeomGUI->getApp()->selectionMgr(), 0, this, 0 );
   globalSelection();
-  
+
   //myListShapes.length( 0 );
-  //myListTools.length( 0 );  
+  //myListTools.length( 0 );
   //myListKeepInside.length( 0 );   // obsolete
   //myListRemoveInside.length( 0 ); // obsolete
   //myListMaterials.length( 0 );    // obsolete
-  
+
   switch ( constructorId ) {
   case 0: /*Full partition */
     GroupPoints->GroupBox1->setTitle( tr( "GEOM_PARTITION" ) );
@@ -203,7 +202,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
     GroupPoints->PushButton1->setDown( true );
     GroupPoints->LineEdit1->setEnabled(true);
     break;
-  } 
+  }
 
   myEditCurrentArgument = GroupPoints->LineEdit1;
   GroupPoints->LineEdit1->clear();
@@ -214,7 +213,7 @@ void OperationGUI_PartitionDlg::ConstructorsClicked( int constructorId )
   resize( minimumSizeHint() );
 
   myEditCurrentArgument->setFocus();
-  connect( myGeomGUI->getApp()->selectionMgr(), 
+  connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   SelectionIntoArgument();
 }
@@ -240,10 +239,9 @@ bool OperationGUI_PartitionDlg::ClickOnApply()
 {
   if ( !onAccept() )
     return false;
-  
 
   initName();
-  //  0020854: EDF 1398 GEOM: Ergonomy of Partition GUI window 
+  //  0020854: EDF 1398 GEOM: Ergonomy of Partition GUI window
   //  ConstructorsClicked( getConstructorId() );
   return true;
 }
@@ -257,13 +255,13 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 {
   myEditCurrentArgument->setText( "" );
   QString aString = "";
-  
+
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
 
   int nbSel = GEOMBase::GetNameOfSelectedIObjects(aSelList, aString, true);
-    
+
   if ( getConstructorId() == 1 ) {
     // for half-selection, only one shape can be selected as an object
     // and only one plane as a tool
@@ -292,11 +290,11 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
       }
     }
   }
-  
+
   if ( myEditCurrentArgument == GroupPoints->LineEdit1 ) {
     GEOMBase::ConvertListOfIOInListOfGO(aSelList, myListShapes, true);
     //myListMaterials.length( 0 ); // obsolete
-    
+
     GEOM::shape_type type = GEOM::SHAPE;
     for (int i = 0; i < myListShapes.length(); i++)
       type = qMin( type, myListShapes[i]->GetMaxShapeType() );
@@ -322,7 +320,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
       }
     }
   }
-  
+
   myEditCurrentArgument->setText( aString );
   processPreview();
 }
@@ -335,7 +333,7 @@ void OperationGUI_PartitionDlg::SelectionIntoArgument()
 void OperationGUI_PartitionDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-  
+
   if ( send == GroupPoints->PushButton1 ) {
     myEditCurrentArgument = GroupPoints->LineEdit1;
     GroupPoints->PushButton2->setDown(false);
@@ -351,9 +349,9 @@ void OperationGUI_PartitionDlg::SetEditCurrentArgument()
     if ( getConstructorId() == 1 )
       globalSelection( GEOM_PLANE  );
   }
- 
+
   globalSelection( GEOM_ALLSHAPES );
-      
+
   myEditCurrentArgument->setFocus();
   SelectionIntoArgument();
   send->setDown(true);
@@ -369,7 +367,7 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
 
-  if ( send == GroupPoints->LineEdit1 || 
+  if ( send == GroupPoints->LineEdit1 ||
        send == GroupPoints->LineEdit2 ) {
       myEditCurrentArgument = send;
       GEOMBase_Skeleton::LineEditReturnPressed();
@@ -384,10 +382,10 @@ void OperationGUI_PartitionDlg::LineEditReturnPressed()
 void OperationGUI_PartitionDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  connect( myGeomGUI->getApp()->selectionMgr(), 
+  connect( myGeomGUI->getApp()->selectionMgr(),
            SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-  ConstructorsClicked( getConstructorId() ); 
+  ConstructorsClicked( getConstructorId() );
   processPreview();
 }
 
@@ -417,9 +415,11 @@ GEOM::GEOM_IOperations_ptr OperationGUI_PartitionDlg::createOperation()
 // function : isValid
 // purpose  :
 //=================================================================================
-bool OperationGUI_PartitionDlg::isValid( QString& )
+bool OperationGUI_PartitionDlg::isValid (QString& )
 {
-  return ( myListShapes.length() || myListTools.length() ); // || myListKeepInside.length() || myListRemoveInside.length()  // obsolete
+  return (getConstructorId() == 0 ?
+          myListShapes.length() :
+          myListShapes.length() && myListTools.length());
 }
 
 
@@ -427,31 +427,35 @@ bool OperationGUI_PartitionDlg::isValid( QString& )
 // function : execute
 // purpose  :
 //=================================================================================
-bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
+bool OperationGUI_PartitionDlg::execute (ObjectList& objects)
 {
   bool res = false;
   GEOM::GEOM_Object_var anObj;
 
-  int aLimit               = GetLimit();
-  int aKeepNonlimitShapes  = GroupPoints->CheckButton1->isChecked();
-  bool aNoSelfIntersection = GroupPoints->CheckButton2->isChecked();
-
-  GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow( getOperation() );
+  GEOM::GEOM_IBooleanOperations_var anOper = GEOM::GEOM_IBooleanOperations::_narrow(getOperation());
 
   switch ( getConstructorId() ) {
   case 0:
-    anObj = aNoSelfIntersection ?
-      anOper->MakePartitionNonSelfIntersectedShape( myListShapes, myListTools,
-                                                    myListKeepInside, myListRemoveInside,
-                                                    aLimit, false, myListMaterials, aKeepNonlimitShapes ) :
-      anOper->MakePartition( myListShapes, myListTools,
-                             myListKeepInside, myListRemoveInside,
-                             aLimit, false, myListMaterials, aKeepNonlimitShapes );
-    res = true;
+    {
+      int aLimit               = GetLimit();
+      int aKeepNonlimitShapes  = GroupPoints->CheckButton1->isChecked();
+      bool aNoSelfIntersection = GroupPoints->CheckButton2->isChecked();
+
+      anObj = aNoSelfIntersection ?
+        anOper->MakePartitionNonSelfIntersectedShape(myListShapes, myListTools,
+                                                     myListKeepInside, myListRemoveInside,
+                                                     aLimit, false, myListMaterials, aKeepNonlimitShapes) :
+        anOper->MakePartition(myListShapes, myListTools,
+                              myListKeepInside, myListRemoveInside,
+                              aLimit, false, myListMaterials, aKeepNonlimitShapes);
+      res = true;
+    }
     break;
   case 1:
-    anObj = anOper->MakeHalfPartition( myListShapes[0].in(), myListTools[0].in() );
-    res = true;
+    {
+      anObj = anOper->MakeHalfPartition( myListShapes[0].in(), myListTools[0].in() );
+      res = true;
+    }
     break;
   }
 
@@ -460,7 +464,7 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
     GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE );
     TopoDS_Iterator It( aShape, Standard_True, Standard_True );
     int nbSubshapes = 0;
-    for ( ; It.More(); It.Next() )
+    for (; It.More(); It.Next())
       nbSubshapes++;
 
     if ( nbSubshapes )
@@ -470,7 +474,7 @@ bool OperationGUI_PartitionDlg::execute( ObjectList& objects )
                                 QObject::tr( "GEOM_ERROR" ),
                                 QObject::tr( "GEOM_WRN_PARTITION_RESULT_EMPTY" ) );
   }
-  
+
   return res;
 }
 
@@ -492,7 +496,7 @@ void OperationGUI_PartitionDlg::restoreSubShapes( SALOMEDS::Study_ptr   theStudy
 
 //=======================================================================
 //function : ComboTextChanged
-//purpose  : 
+//purpose  :
 //=======================================================================
 void OperationGUI_PartitionDlg::ComboTextChanged()
 {
@@ -508,7 +512,7 @@ void OperationGUI_PartitionDlg::ComboTextChanged()
 
 //=================================================================================
 // function : GetLimit()
-// purpose  : 
+// purpose  :
 //=================================================================================
 int OperationGUI_PartitionDlg::GetLimit() const
 {
