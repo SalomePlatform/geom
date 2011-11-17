@@ -68,4 +68,4 @@ libShHealOper_la_LDFLAGS  =	\
 	$(CAS_KERNEL)		\
 	$(CAS_MATH)		\
 	$(CAS_TKTopAlgo)	\
-	$(CAS_LDPATH) -lTKBool -lTKShHealing -lTKLCAF
+	$(CAS_LDPATH) -lTKBool -lTKShHealing -lTKCAF -lTKLCAF
