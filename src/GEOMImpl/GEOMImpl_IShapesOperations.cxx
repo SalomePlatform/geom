@@ -83,7 +83,6 @@
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepBndLib.hxx>
-#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepMesh_IncrementalMesh.hxx>
 
 #include <TopAbs.hxx>
@@ -458,6 +457,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   aCI.SetIsPlanar(isPlanarWanted);
 
   //Compute the Face value
+  Standard_Boolean isWarning = Standard_False;
   try {
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
@@ -470,14 +470,20 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFace (Handle(GEOM_Object) th
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
-    return NULL;
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
   }
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aFace << " = geompy.MakeFace("
     << theWire << ", " << (int)isPlanarWanted << ")";
 
-  SetErrorCode(OK);
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
   return aFace;
 }
 
@@ -522,6 +528,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   aCI.SetIsPlanar(isPlanarWanted);
 
   //Compute the shape
+  Standard_Boolean isWarning = Standard_False;
   try {
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
@@ -534,7 +541,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   catch (Standard_Failure) {
     Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
-    return NULL;
+    // to provide warning
+    if (!aFunction->GetValue().IsNull()) {
+      isWarning = Standard_True;
+    } else {
+      return NULL;
+    }
   }
 
   //Make a Python command
@@ -551,7 +563,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::MakeFaceWires
   }
   pd << "], " << (int)isPlanarWanted << ")";
 
-  SetErrorCode(OK);
+  // to provide warning
+  if (!isWarning) SetErrorCode(OK);
   return aShape;
 }
 

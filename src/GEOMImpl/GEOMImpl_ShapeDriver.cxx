@@ -121,6 +121,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
+  TCollection_AsciiString aWarning;
+
   BRep_Builder B;
 
   if (aType == WIRE_EDGES) {
@@ -214,7 +216,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       Standard_NullObject::Raise
         ("Shape for face construction is neither a wire nor a closed edge");
     }
-    GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
+    aWarning = GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
     if (aShape.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
@@ -270,7 +272,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     // 4.a. Basic face
     TopoDS_Shape aFFace;
     TopoDS_Wire aW1 = TopoDS::Wire(aSeqClosedWires->Value(1));
-    GEOMImpl_Block6Explorer::MakeFace(aW1, aCI.GetIsPlanar(), aFFace);
+    aWarning = GEOMImpl_Block6Explorer::MakeFace(aW1, aCI.GetIsPlanar(), aFFace);
     if (aFFace.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
@@ -913,6 +915,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
+
+  if (!aWarning.IsEmpty())
+    Standard_Failure::Raise(aWarning.ToCString());
 
   return 1;
 }

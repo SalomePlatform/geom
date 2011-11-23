@@ -18,11 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_Block6Explorer.hxx
 //  Module : GEOMImpl
-//
+
 #ifndef GEOMImpl_Block6Explorer_HeaderFile
 #define GEOMImpl_Block6Explorer_HeaderFile
 
@@ -30,6 +29,7 @@
 #include <TopoDS_Wire.hxx>
 #include <TopTools_Array1OfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TCollection_AsciiString.hxx>
 #include <gp_Trsf.hxx>
 
   //  Class GEOMImpl_Block6Explorer gives easy and fast access to a certain sub-elements of hexahedral solid
@@ -214,9 +214,9 @@ class GEOMImpl_Block6Explorer
                                     const Standard_Boolean findAll = Standard_False);
   // returns number of found faces
 
-  static void MakeFace (const TopoDS_Wire&     theWire,
-                        const Standard_Boolean isPlanarWanted,
-                        TopoDS_Shape&          theResult);
+  static TCollection_AsciiString MakeFace (const TopoDS_Wire&     theWire,
+                                           const Standard_Boolean isPlanarWanted,
+                                           TopoDS_Shape&          theResult);
 
  private:
   // ---------- PRIVATE FIELDS ----------

@@ -606,6 +606,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Try to create a planar face</translation>
     </message>
     <message>
+        <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
+        <translation>Tolerance of resulting face is too big</translation>
+    </message>
+    <message>
         <source>GEOM_FACE_OR_LCS</source>
         <translation>Face or LCS</translation>
     </message>
