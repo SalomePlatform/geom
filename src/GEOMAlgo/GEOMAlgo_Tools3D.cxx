@@ -33,10 +33,19 @@
 #include <gp_Pnt2d.hxx>
 #include <gp_Pln.hxx>
 #include <gp_XYZ.hxx>
+#include <gp_Dir2d.hxx>
 
 #include <Geom_Curve.hxx>
 #include <Geom_Surface.hxx>
+
 #include <Geom2d_Curve.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
+#include <Geom2d_Line.hxx>
+
+#include <Geom2dHatch_Intersector.hxx>
+#include <Geom2dHatch_Hatcher.hxx>
+#include <HatchGen_Domain.hxx>
+
 #include <GeomAPI_ProjectPointOnSurf.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -69,6 +78,7 @@
 #include <TopTools_MapOfShape.hxx>
 
 #include <BRepClass3d_SolidClassifier.hxx>
+#include <BRepTools.hxx>
 
 #include <IntTools_Context.hxx>
 #include <IntTools_Tools.hxx>
@@ -113,11 +123,11 @@ static
 //function : IsInternalFace
 //purpose  :
 //=======================================================================
-  Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
-                                                   const TopoDS_Solid& theSolid,
-                                                   const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,
-                                                   const Standard_Real theTol,
-                                                   IntTools_Context& theContext)
+Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
+                                                  const TopoDS_Solid& theSolid,
+                                                  const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,
+                                                  const Standard_Real theTol,
+                                                  IntTools_Context& theContext)
 {
   Standard_Boolean bRet;
   Standard_Integer aNbF;
@@ -267,9 +277,6 @@ static
   //
   GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1, theContext);
   GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2, theContext);
-
-  //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1);
-  //BOPTools_Tools3D::GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2);
   //
   aTwoPI=2.*PI;
   gp_Vec aVBF (aPx, aPF );
@@ -635,13 +642,39 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
       }
     }
   }
+  //
+  //modified by NIZNHY-PKV Tue Nov 22 10:50:30 2011f
+  if (!bFound) {
+    Standard_Boolean bFlag;
+    Standard_Integer iErr;
+    gp_Pnt2d aP2DFSp;
+    //
+    iErr=GEOMAlgo_Tools3D::PntInFace(theFSp, aPFSp, aP2DFSp);
+    if (iErr) {
+      return bRet;
+    }
+    //
+    aP2DFSp.Coord(aU, aV);
+    bFlag=BOPTools_Tools3D::GetNormalToSurface(aSp, aU, aV, aDNFSp);
+    if (!bFlag) {
+      return bRet;
+    }
+  }
+  else {
+    BRep_Tool::Range(aESp, aT1, aT2);
+    aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
+    BOPTools_Tools3D::GetApproxNormalToFaceOnEdge(aESp, theFSp, aT, aPFSp, aDNFSp);
+  }
+  //
+  /*
   if (!bFound) {
     return bRet;
   }
-  //
   BRep_Tool::Range(aESp, aT1, aT2);
   aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
   BOPTools_Tools3D::GetApproxNormalToFaceOnEdge(aESp, theFSp, aT, aPFSp, aDNFSp);
+  */
+  //modified by NIZNHY-PKV Tue Nov 22 10:50:37 2011t
   //
   // Parts of theContext.ComputeVS(..)
   GeomAPI_ProjectPointOnSurf& aProjector=theContext.ProjPS(theFSr);
@@ -1111,7 +1144,6 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
         dT=dR;
       }
     }
-    //modified by NIZNHY-PKV Thu Dec 02 10:39:09 2010f
     else if (GeomAbs_Torus ||
              aTS==GeomAbs_Cylinder){
       Standard_Real aTolEx, aTolFx, aTol;
@@ -1123,7 +1155,6 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
         dT=aTol;
       }
     }
-    //modified by NIZNHY-PKV Thu Dec 02 10:39:13 2010t
   }
   //----------------------------------------------
   //
@@ -1147,3 +1178,124 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
     }
   }
 }
+
+//modified by NIZNHY-PKV Tue Nov 22 10:36:59 2011f
+//=======================================================================
+//function : PntInFace
+//purpose  : 
+//=======================================================================
+Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF, 
+					     gp_Pnt& theP,
+					     gp_Pnt2d& theP2D)
+{
+  Standard_Boolean bIsDone, bHasFirstPoint, bHasSecondPoint;
+  Standard_Integer iErr, aIx, aNbDomains, i;
+  Standard_Real aUMin, aUMax, aVMin, aVMax;
+  Standard_Real aVx, aUx, aV1, aV2, aU1, aU2, aEpsT;
+  Standard_Real aTotArcIntr, aTolTangfIntr, aTolHatch2D, aTolHatch3D;
+  gp_Dir2d aD2D (0., 1.);
+  gp_Pnt2d aP2D;
+  gp_Pnt aPx;
+  Handle(Geom2d_Curve) aC2D;
+  Handle(Geom2d_TrimmedCurve) aCT2D;
+  Handle(Geom2d_Line) aL2D;
+  Handle(Geom_Surface) aS;
+  TopAbs_Orientation aOrE;
+  TopoDS_Face aFF;
+  TopExp_Explorer aExp;
+  //
+  aTolHatch2D=1.e-8;
+  aTolHatch3D=1.e-8;
+  aTotArcIntr=1.e-10;
+  aTolTangfIntr=1.e-10;
+  //
+  Geom2dHatch_Intersector aIntr(aTotArcIntr, aTolTangfIntr);
+  Geom2dHatch_Hatcher aHatcher(aIntr, 
+			       aTolHatch2D, aTolHatch3D, 
+			       Standard_True, Standard_False);
+  //
+  iErr=0;
+  aEpsT=1.e-12;
+  //
+  aFF=aF;
+  aFF.Orientation (TopAbs_FORWARD);
+  // 
+  aS=BRep_Tool::Surface(aFF);
+  BRepTools::UVBounds(aFF, aUMin, aUMax, aVMin, aVMax);
+  //
+  // 1
+  aExp.Init (aFF, TopAbs_EDGE);
+  for (; aExp.More() ; aExp.Next()) {
+    const TopoDS_Edge& aE=*((TopoDS_Edge*)&aExp.Current());
+    aOrE=aE.Orientation();
+    //
+    aC2D=BRep_Tool::CurveOnSurface (aE, aFF, aU1, aU2);
+    if (aC2D.IsNull() ) {
+      iErr=1;
+      return iErr;
+    }
+    if (fabs(aU1-aU2) < aEpsT) {
+      iErr=2;
+      return iErr;
+    }
+    //
+    aCT2D=new Geom2d_TrimmedCurve(aC2D, aU1, aU2);
+    aHatcher.AddElement(aCT2D, aOrE);
+  }// for (; aExp.More() ; aExp.Next()) {
+  //
+  // 2
+  aUx=IntTools_Tools::IntermediatePoint(aUMin, aUMax);
+  aP2D.SetCoord(aUx, 0.);
+  aL2D=new Geom2d_Line (aP2D, aD2D);
+  Geom2dAdaptor_Curve aHCur(aL2D);
+  //
+  aIx=aHatcher.AddHatching(aHCur) ;
+  //
+  // 3.
+  aHatcher.Trim();
+  bIsDone=aHatcher.TrimDone(aIx);
+  if (!bIsDone) {
+    iErr=3;
+    return iErr;
+  }
+  //
+  aHatcher.ComputeDomains(aIx);
+  bIsDone=aHatcher.IsDone(aIx);
+  if (!bIsDone) {
+    iErr=4;
+    return iErr;
+  }
+  //
+  // 4.
+  aNbDomains=aHatcher.NbDomains(aIx);
+  for (i=1; i<=aNbDomains; ++i) {
+    const HatchGen_Domain& aDomain=aHatcher.Domain (aIx, i) ;
+    bHasFirstPoint=aDomain.HasFirstPoint();
+    if (!bHasFirstPoint) {
+      iErr=5;
+      return iErr;
+    }
+    //
+    aV1=aDomain.FirstPoint().Parameter();
+    //
+    bHasSecondPoint=aDomain.HasSecondPoint();
+    if (!bHasSecondPoint) {
+      iErr=6;
+      return iErr;
+    }
+    //
+    aV2=aDomain.SecondPoint().Parameter();
+    //
+    aVx=IntTools_Tools::IntermediatePoint(aV1, aV2);
+    //
+    break;
+  }
+  //
+  aS->D0(aUx, aVx, aPx);
+  //
+  theP2D.SetCoord(aUx, aVx);
+  theP=aPx;
+  //
+  return iErr;
+}
+//modified by NIZNHY-PKV Tue Nov 22 10:37:01 2011t

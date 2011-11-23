@@ -46,6 +46,7 @@ class TopTools_ListOfShape;
 class TopTools_IndexedMapOfShape;
 class TopoDS_Solid;
 class gp_Pnt;
+class gp_Pnt2d;
 class TopoDS_Vertex;
 class TopTools_IndexedDataMapOfShapeListOfShape;
 class NMTTools_ListOfCoupleOfShape;
@@ -188,6 +189,11 @@ Standard_EXPORT static  Standard_Boolean GetEdgeOnFace(const TopoDS_Edge& theEdg
 //!          edge founded <br>
 Standard_EXPORT static  Standard_Boolean GetEdgeOff(const TopoDS_Edge& theEdge,const TopoDS_Face& theFace,TopoDS_Edge& theEdgeOff) ;
 
+//! Computes a point <theP> inside the face <theF>. <br>
+//!          <theP2D> -  2D  representation of <theP> <br>
+//!          on the surface of <theF> <br>
+//!          Returns 0 in case of success. <br>
+Standard_EXPORT   static  Standard_Integer PntInFace(const TopoDS_Face& theF,gp_Pnt& theP,gp_Pnt2d& theP2D) ;
 
 
 
