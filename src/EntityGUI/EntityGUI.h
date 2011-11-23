@@ -49,7 +49,8 @@ public :
 
   bool              OnGUIEvent( int, SUIT_Desktop* );
   bool              OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
-  bool              OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
+//   bool              OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
+  bool              OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow );
   
   static gp_Pnt     ConvertClickToPoint( int x, int y, Handle(V3d_View) aView );
 

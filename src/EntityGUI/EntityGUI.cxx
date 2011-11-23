@@ -194,12 +194,12 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
 }
 
 //=================================================================================
-// function : 0nMouseMove()
+// function : 0nMouseRelease()
 // purpose  : [static] manage mouse events
 //=================================================================================
-bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
 {
-//   MESSAGE("EntityGUI::OnMouseMove")
+  MESSAGE("EntityGUI::OnMouseRelease")
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
   if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
@@ -209,8 +209,7 @@ bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWin
    
     gp_Pnt aPnt; 
       
-    if ( QApplication::mouseButtons() == Qt::LeftButton && 
-         aCornerDlg->acceptMouseEvent() )
+    if ( aCornerDlg->acceptMouseEvent() )
     {
 //       QPoint end = QPoint(pe->x(),pe->y());
       OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();

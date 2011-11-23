@@ -22,6 +22,8 @@
 
 #include <GEOMBase_Skeleton.h>
 #include <gp_Ax3.hxx>
+#include <ShapeRec_FeatureDetector.hxx>
+#include <QBitmap>
 
 class QLineEdit;
 class QCheckBox;
@@ -59,6 +61,7 @@ protected:
   
 private:
   void                               Init();
+  void                               showImageSample();
 
   
 private slots:
@@ -72,6 +75,8 @@ private slots:
   
   
 private:
+  ShapeRec_FeatureDetector*          aDetector;
+  
   GEOM::GeomObjPtr                   myFace;
   QString                            myFaceEntry;
   
@@ -80,6 +85,7 @@ private:
   QGroupBox*                         mySelectionGroup;
   
   QLabel*                            mySnapshotLabel;
+  QLabel*                            myImgSampleLabel;
   
   DlgRef_1Sel*                       mySelWidget;
   

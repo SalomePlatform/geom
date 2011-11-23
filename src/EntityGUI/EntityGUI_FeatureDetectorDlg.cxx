@@ -36,7 +36,6 @@
 #include <EntityGUI.h>
 #include <GEOMBase.h>
 #include <GEOM_Object.hxx>
-#include <ShapeRec_FeatureDetector.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ResourceMgr.h>
@@ -141,11 +140,23 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   mySelButton->setIcon(image1);
   myLineEdit = new QLineEdit(mySelectionGroup);
   
-  mySnapshotLabel = new QLabel(mySelectionGroup);
-  mySelectGrpLayout->addWidget(myLineEdit,      0, 1);
-  mySelectGrpLayout->addWidget(mySelButton,     0, 0);
-  mySelectGrpLayout->addWidget(mySnapshotLabel, 1, 1);
-  mySelectGrpLayout->addWidget(myPushButton,    1, 0);
+  mySnapshotLabel          = new QLabel(mySelectionGroup);
+  QFrame* myImgSampleFrame = new QFrame(mySelectionGroup);
+//   myImgSampleFrame->setFrameRect(QRect(0,0,10,10));
+  myImgSampleFrame->setFrameStyle(QFrame::Box);
+  QLabel* myPictureLabel   = new QLabel(tr( "GEOM_PICTURE" ),mySelectionGroup);
+  mySelectGrpLayout->addWidget(myPictureLabel,   0, 0);
+  mySelectGrpLayout->addWidget(mySelButton,      0, 1);
+  mySelectGrpLayout->addWidget(myLineEdit,       0, 2);// 1, 2);
+  
+  mySelectGrpLayout->addWidget(mySnapshotLabel,  1, 0);
+  mySelectGrpLayout->addWidget(myPushButton,     1, 1);
+  mySelectGrpLayout->addWidget(myImgSampleFrame, 1, 2);
+//   mySelectGrpLayout->setColumnStretch(3, 1);
+  
+  QGridLayout* myFrameLayout = new QGridLayout(myImgSampleFrame);
+  myImgSampleLabel           = new QLabel(myImgSampleFrame);
+  myFrameLayout->addWidget(myImgSampleLabel,     0, 0);
   
   myOutputGroup = new DlgRef_3Radio(centralWidget());
   myOutputGroup->GroupBox1->setTitle(tr("GEOM_DETECT_OUTPUT"));
@@ -162,6 +173,9 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   layout->addWidget( myOutputGroup);
   
 //   mainFrame()->GroupBoxName->hide();
+  
+  // Build an instance of detection used to perform image processing operations
+  aDetector = new ShapeRec_FeatureDetector();
   
   Init();
   
@@ -246,6 +260,11 @@ void EntityGUI_FeatureDetectorDlg::SetEditCurrentArgument()
 //=================================================================================
 void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 {
+  
+  SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
+  std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
+  SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
+
   if (!myEditCurrentArgument->isEnabled())
     return;
   
@@ -255,6 +274,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
   SALOME_ListIteratorOfListIO anIt( aSelList );
+  
   for( ; anIt.More(); anIt.Next() )
     if( !anIt.Value().IsNull() )
     {
@@ -273,10 +293,29 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
   if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ) {
     QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
+    
     if ( myEditCurrentArgument == myLineEdit ) {
       myFace = aSelectedObject;
+      AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
+      if (AISit == soccViewer->entry2aisobjects.end())
+        return;
+      
+      Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
+      Handle(GEOM_AISShape) myAISShape;
+      if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
+        myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
+      }
+      else
+        return ;
+      
+      std::string theImgFileName = myAISShape->TextureFile();      
+      if ( theImgFileName == "" )
+        return ;
+
+      aDetector->SetPath( theImgFileName );   
     } 
   }
+  
 }
 
 //=================================================================================
@@ -417,7 +456,39 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
   MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
+  showImageSample();
 }
+
+//=================================================================================
+// function : showImageSample()
+// purpose  :
+//=================================================================================
+void EntityGUI_FeatureDetectorDlg::showImageSample()
+{  
+  int height            =  aDetector->GetImgHeight();
+  int width             =  aDetector->GetImgWidth();
+  
+  // Operations to display the corners properly in the 3D scene
+  double pictureLeft  = -0.5 * width;   // X coordinate of the top left  corner of the background image in the view
+  double pictureTop   =  0.5 * height;  // Y coordinate of both top corners
+  
+  // Set detection rectangle in the background image coordinates system
+  QPoint topLeft     = QPoint(myStartPnt.X() - pictureLeft, pictureTop - myStartPnt.Y());
+  QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
+  QRect aRect = QRect(topLeft, bottomRight);
+  
+  if( !aRect.isEmpty() && aRect.width() > 1 )
+  {
+    aDetector->SetROI( aRect );
+    std::string samplePicturePath = aDetector->CroppImage();
+    MESSAGE("samplePicturePath = "<<samplePicturePath)
+    QPixmap pixmap(QString(samplePicturePath.c_str()));
+    myImgSampleLabel->setPixmap(pixmap);
+    myImgSampleLabel->setMask(pixmap.mask());
+  }
+}
+
+
 
 //=================================================================================
 // function : createOperation
@@ -436,29 +507,28 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 {
   bool res = false;
   
-  SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-  std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
-  SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
+//   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
+//   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
+//   SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
   
-  AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
-  if (AISit == soccViewer->entry2aisobjects.end())
-    return res;
-  
-  Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
-  Handle(GEOM_AISShape) myAISShape;
-  if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-    myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
-  }
-  else
-    return res;
-  
-  std::string theImgFileName = myAISShape->TextureFile();
-    
-  if ( theImgFileName == "" )
-    return res;
-  
-  // Build an instance of detection used to perform image processing operations
-  ShapeRec_FeatureDetector* aDetector = new ShapeRec_FeatureDetector( theImgFileName );
+//   AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
+//   if (AISit == soccViewer->entry2aisobjects.end())
+//     return res;
+//   
+//   Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
+//   Handle(GEOM_AISShape) myAISShape;
+//   if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
+//     myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
+//   }
+//   else
+//     return res;
+//   
+//   std::string theImgFileName = myAISShape->TextureFile();
+//     
+//   if ( theImgFileName == "" )
+//     return res;
+//   
+//   aDetector->SetPath( theImgFileName );
     
   int height            =  aDetector->GetImgHeight();
   int width             =  aDetector->GetImgWidth();

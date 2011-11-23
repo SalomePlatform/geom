@@ -182,7 +182,8 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   if ( theImgFileName.isEmpty() )
     return res;
   
-  ShapeRec_FeatureDetector* aDetector = new ShapeRec_FeatureDetector( theImgFileName.toStdString() );
+  ShapeRec_FeatureDetector* aDetector = new ShapeRec_FeatureDetector();
+  aDetector->SetPath( theImgFileName.toStdString() );
     
   int height            =  aDetector->GetImgHeight();
   int width             =  aDetector->GetImgWidth();
