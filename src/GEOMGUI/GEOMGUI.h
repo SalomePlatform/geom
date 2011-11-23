@@ -54,6 +54,7 @@ public :
 
   virtual bool OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
   virtual bool OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
+  virtual bool OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
   virtual bool OnKeyPress( QKeyEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* );
 
   virtual void activate( SUIT_Desktop* parent );

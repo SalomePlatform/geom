@@ -4599,8 +4599,12 @@ Number of sketch points too small</translation>
         <translation>Select a detection zone (default is whole picture)</translation>
     </message>
     <message>
+        <source>GEOM_PICTURE</source>
+        <translation>Picture</translation>
+    </message>   
+    <message>
         <source>GEOM_COLOR_FILTER</source>
-        <translation>Select the color of the zone you want to find the frontier of</translation>
+        <translation>Filtering sample</translation>
     </message>
     <message>
         <source>GEOM_VIEW</source>

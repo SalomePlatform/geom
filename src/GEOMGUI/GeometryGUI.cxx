@@ -598,6 +598,18 @@ void GeometryGUI::OnMouseMove( SUIT_ViewWindow* w, QMouseEvent* e )
 }
 
 //=================================================================================
+// function : GeometryGUI::OnMouseRelease()
+// purpose  : Manages mouse release events [static]
+//=================================================================================
+void GeometryGUI::OnMouseRelease( SUIT_ViewWindow* w, QMouseEvent* e )
+{
+  if ( !application() )
+    return;
+  foreach ( GEOMGUI* lib, myGUIMap )
+    lib->OnMouseRelease( e, application()->desktop(), w );
+}
+
+//=================================================================================
 // function : GeometryGUI::OnMousePress()
 // purpose  : Manage mouse press events [static]
 //=================================================================================
@@ -1441,7 +1453,9 @@ void GeometryGUI::onViewManagerAdded( SUIT_ViewManager* vm )
              this, SLOT( OnMousePress( SUIT_ViewWindow*, QMouseEvent* ) ) );
     connect( vm, SIGNAL( mouseMove ( SUIT_ViewWindow*, QMouseEvent* ) ),
              this, SLOT( OnMouseMove( SUIT_ViewWindow*, QMouseEvent* ) ) );
-
+    connect( vm, SIGNAL( mouseRelease ( SUIT_ViewWindow*, QMouseEvent* ) ),
+             this, SLOT( OnMouseRelease( SUIT_ViewWindow*, QMouseEvent* ) ) );
+    
     LightApp_SelectionMgr* sm = getApp()->selectionMgr();
     myOCCSelectors.append( new GEOMGUI_OCCSelector( ((OCCViewer_ViewManager*)vm)->getOCCViewer(), sm ) );
 

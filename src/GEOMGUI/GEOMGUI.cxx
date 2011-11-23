@@ -77,6 +77,15 @@ bool GEOMGUI::OnMouseMove( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_V
 }
 
 //=================================================================================
+// class    : GEOMGUI::OnMouseMove
+// purpose  : Mouse move event processing
+//=================================================================================
+bool GEOMGUI::OnMouseRelease( QMouseEvent* /*pe*/, SUIT_Desktop* /*parent*/, SUIT_ViewWindow* /*studyFrame*/ )
+{
+  return TRUE;
+}
+
+//=================================================================================
 // class    : GEOMGUI::OnKeyPress
 // purpose  : Key press event processing
 //=================================================================================

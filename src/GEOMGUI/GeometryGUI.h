@@ -154,6 +154,7 @@ public slots:
   virtual void                OnKeyPress  ( SUIT_ViewWindow*, QKeyEvent*   );
   virtual void                OnMousePress( SUIT_ViewWindow*, QMouseEvent* );
   virtual void                OnMouseMove ( SUIT_ViewWindow*, QMouseEvent* );
+  virtual void                OnMouseRelease ( SUIT_ViewWindow*, QMouseEvent* );
 
 protected slots:
   virtual void                onViewManagerAdded( SUIT_ViewManager* );
