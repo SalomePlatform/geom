@@ -45,12 +45,9 @@ public:
   typedef std::vector<cv::Point>               CvContour;
   typedef std::vector<std::vector<cv::Point> > CvContoursArray;
   
-  ShapeRec_FeatureDetector( const std::string& );                        // Constructor
+  ShapeRec_FeatureDetector();                                            // Constructor
   
-  void                    ComputeCorners();                              // Detects the corners from the image located at imagePath
-  bool                    ComputeLines();                                // Detects the lines from the image located at imagePath
-  bool                    ComputeContours( int method );                 // Detects the contours from the image located at imagePath
-  
+  void                    SetPath( const std::string& );                 // Sets the image path
   void                    SetROI( const QRect& );                        // Sets a Region Of Interest in the image
   CvPoint2D32f*           GetCorners()           { return corners;     };
   CvContoursArray         GetContours()          { return contours;    };
@@ -59,6 +56,11 @@ public:
   int                     GetCornerCount()       { return cornerCount; };
   int                     GetImgHeight()         { return imgHeight;   };
   int                     GetImgWidth()          { return imgWidth;    };
+  
+  std::string             CroppImage();
+  void                    ComputeCorners();                              // Detects the corners from the image located at imagePath
+  bool                    ComputeLines();                                // Detects the lines from the image located at imagePath
+  bool                    ComputeContours( int method );                 // Detects the contours from the image located at imagePath
   
   
 private:

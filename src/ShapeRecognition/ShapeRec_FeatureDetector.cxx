@@ -38,16 +38,30 @@ using namespace cv;
   Constructor
   \param theFilename - image to process
 */
-ShapeRec_FeatureDetector::ShapeRec_FeatureDetector(const std::string& theFilename): 
+ShapeRec_FeatureDetector::ShapeRec_FeatureDetector(): 
   corners()
 {
   cornerCount = 2000;
   rect=cvRect(0,0,0,0);
-  imagePath = theFilename;
+  imagePath = ""; //theFilename;
   // Store the dimensions of the picture
-  IplImage* bg_img = cvLoadImage (imagePath.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-  imgHeight = bg_img->height;
-  imgWidth  = bg_img->width; 
+  imgHeight = 0;
+  imgWidth  = 0;
+}
+
+/*!
+  Sets the path of the image file to be proccesed
+  \param thePath - Location of the image file 
+*/
+void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
+{
+  imagePath = thePath; 
+  if (imagePath != "")
+  {
+    IplImage* src = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
+    imgHeight = src->height;
+    imgWidth = src->width; 
+  }
 }
 
 /*!
@@ -168,6 +182,28 @@ void ShapeRec_FeatureDetector::SetROI( const QRect& theRect )
 }
 
 /*!
+  Crops the image located at imagePath to the region of interest given by the user via SetROI
+  and stores the result in /tmp
+  \param theRect - Region Of Interest of the image located at imagePath 
+*/
+std::string ShapeRec_FeatureDetector::CroppImage()
+{
+  IplImage* src = cvLoadImage(imagePath.c_str(),CV_LOAD_IMAGE_COLOR);
+ 
+  cvSetImageROI(src, rect);
+  IplImage* cropped_image = cvCreateImage(cvGetSize(src),
+                                          src->depth,
+                                          src->nChannels);
+  cvCopy(src, cropped_image, NULL);
+  cvResetImageROI(src);
+  
+  cvSaveImage ("/tmp/cropped_image.bmp", cropped_image);
+  
+  return "/tmp/cropped_image.bmp";
+}
+
+
+/*!
   Performs contours detection and store them in contours 
   \param src - src image to find contours of 
 */
@@ -198,8 +234,8 @@ Mat ShapeRec_FeatureDetector::_colorFiltering()
   // Crop the image to build an histogram from the selected part
   cvSetImageROI(find_image, rect);
   IplImage* test_image = cvCreateImage(cvGetSize(find_image),
-                                      find_image->depth,
-                                      find_image->nChannels);
+                                       find_image->depth,
+                                       find_image->nChannels);
   cvCopy(find_image, test_image, NULL);
   cvResetImageROI(find_image);
   
