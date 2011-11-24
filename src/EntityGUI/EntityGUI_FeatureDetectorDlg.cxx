@@ -25,6 +25,7 @@
 // Author : Renaud NEDELEC, Open CASCADE S.A.S.
 
 #include "EntityGUI_FeatureDetectorDlg.h"
+#include <ShapeRec_FeatureDetector.hxx>
 
 #include <OCCViewer_ViewWindow.h>
 #include <OCCViewer_ViewManager.h>
@@ -130,20 +131,26 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
 //   
 //   myViewGroup->hide();
   
-  mySelectionGroup = new QGroupBox(tr("GEOM_DETECT"), centralWidget());
+  // Widgets for the selection of the picture and the Region Of Interest 
+  mySelectionGroup = new QGroupBox(tr("GEOM_ARGUMENTS"), centralWidget());
   QGridLayout* mySelectGrpLayout = new QGridLayout(mySelectionGroup);
+  
   myPushButton = new QPushButton(mySelectionGroup);
   myPushButton->setIcon(image0);
   myPushButton->setCheckable(true);
+  myPushButton->setAutoExclusive(true);
   
   mySelButton = new QPushButton(mySelectionGroup);
   mySelButton->setIcon(image1);
+  mySelButton->setCheckable(true);
+  mySelButton->setAutoExclusive(true);
+  
   myLineEdit = new QLineEdit(mySelectionGroup);
   
   mySnapshotLabel          = new QLabel(mySelectionGroup);
   QFrame* myImgSampleFrame = new QFrame(mySelectionGroup);
-//   myImgSampleFrame->setFrameRect(QRect(0,0,10,10));
-  myImgSampleFrame->setFrameStyle(QFrame::Box);
+  myImgSampleFrame->setFrameRect(QRect(0,0,40,10));
+  myImgSampleFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
   QLabel* myPictureLabel   = new QLabel(tr( "GEOM_PICTURE" ),mySelectionGroup);
   mySelectGrpLayout->addWidget(myPictureLabel,   0, 0);
   mySelectGrpLayout->addWidget(mySelButton,      0, 1);
@@ -151,8 +158,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   
   mySelectGrpLayout->addWidget(mySnapshotLabel,  1, 0);
   mySelectGrpLayout->addWidget(myPushButton,     1, 1);
-  mySelectGrpLayout->addWidget(myImgSampleFrame, 1, 2);
-//   mySelectGrpLayout->setColumnStretch(3, 1);
+  mySelectGrpLayout->addWidget(myImgSampleFrame, 1, 2, 2, 1);
+  mySelectGrpLayout->setRowStretch(3, 1);
   
   QGridLayout* myFrameLayout = new QGridLayout(myImgSampleFrame);
   myImgSampleLabel           = new QLabel(myImgSampleFrame);
@@ -199,20 +206,14 @@ void EntityGUI_FeatureDetectorDlg::Init()
   connect( myGeomGUI,         SIGNAL( SignalCloseAllDialogs() ), this, SLOT( ClickOnCancel() ) );
   connect( buttonOk(),        SIGNAL( clicked() ),               this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),     SIGNAL( clicked() ),               this, SLOT( ClickOnApply() ) );
- 
-  connect( this,              SIGNAL(constructorsClicked(int)),  this, SLOT(ConstructorsClicked(int)));
-  
-  connect( myPushButton,      SIGNAL( toggled( bool ) ),         this, SLOT( onButtonToggled( bool ) ) );
-  connect( mySelButton,       SIGNAL( clicked() ),               this, SLOT( SetEditCurrentArgument() ) );
-  
+  connect( this,              SIGNAL(constructorsClicked(int)),  this, SLOT(ConstructorsClicked(int))); 
+  connect( myPushButton,      SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );
+  connect( mySelButton,       SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );  
 //   connect( myViewButtonGroup, SIGNAL( buttonClicked( int ) ),    this, SLOT( onViewClicked( int ) ) );
-  
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),this, SLOT( SelectionIntoArgument() ) );
   
   myConstructorId = 0;
-  
   mySelButton->click();
-  mySelButton->setDown(true);
   
 //   SetEditCurrentArgument();
   SelectionIntoArgument();
@@ -239,28 +240,13 @@ void EntityGUI_FeatureDetectorDlg::Init()
 }
 
 //=================================================================================
-// function : SetEditCurrentArgument()
-// purpose  :
-//=================================================================================
-void EntityGUI_FeatureDetectorDlg::SetEditCurrentArgument()
-{
-  QPushButton* send = (QPushButton*)sender();
-  if ( send == mySelButton ) { 
-    myEditCurrentArgument = myLineEdit;
-    myLineEdit->setEnabled(true);
-  }
-  else 
-    myLineEdit->setEnabled(false);
-  send->setDown(true);
-}
-
-//=================================================================================
 // function : SelectionIntoArgument()
 // purpose  : Called when selection as changed or other case
 //=================================================================================
 void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 {
   
+  // TODO supprimer les lignes qui ne servent à rien le cas échéant
   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
   SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
@@ -312,7 +298,13 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
       if ( theImgFileName == "" )
         return ;
 
-      aDetector->SetPath( theImgFileName );   
+      // Setting the image caracteristics
+      aDetector->SetPath( theImgFileName );
+      height            =  aDetector->GetImgHeight();
+      width             =  aDetector->GetImgWidth();
+      pictureLeft       = -0.5 * width;              // X coordinate of the top left  corner of the background image in the view
+      pictureTop        =  0.5 * height;             // Y coordinate of both top corners
+      
     } 
   }
   
@@ -421,20 +413,22 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 // }
 
 //=================================================================================
-// function : onButtonToggled()
+// function : onButtonClicked()
 // purpose  :
 //=================================================================================
-void EntityGUI_FeatureDetectorDlg::onButtonToggled( bool checked)
+void EntityGUI_FeatureDetectorDlg::onButtonClicked()
 {
-  if (!checked)
-  {
-    myStartPnt = gp_Pnt(0,0,0);
-    myEndPnt = myStartPnt;
-    myLineEdit->setEnabled(true);
-  }
-  else
+  QPushButton* send = (QPushButton*)sender();
+  if (send == myPushButton)
   {
     myLineEdit->setEnabled(false);
+  }
+  else if (send == mySelButton)
+  {
+    myStartPnt = gp_Pnt(0,0,0);
+    myEndPnt   = myStartPnt;
+    myEditCurrentArgument = myLineEdit;
+    myLineEdit->setEnabled(true);   
   }
 }
 
@@ -456,39 +450,39 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
   MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
-  showImageSample();
+  if (setSelectionRect())
+    showImageSample();
+}
+
+//=================================================================================
+// function : setSelectionRect()
+// purpose  :
+//=================================================================================
+bool EntityGUI_FeatureDetectorDlg::setSelectionRect()
+{ 
+  // Set detection rectangle in the background image coordinates system
+  QPoint topLeft     = QPoint(myStartPnt.X() - pictureLeft, pictureTop - myStartPnt.Y());
+  QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
+  myRect = QRect(topLeft, bottomRight);
+  
+  return (!myRect.isEmpty() && myRect.width() > 1);
 }
 
 //=================================================================================
 // function : showImageSample()
-// purpose  :
+// purpose  : Display a preview of the image sample selected by the user
 //=================================================================================
 void EntityGUI_FeatureDetectorDlg::showImageSample()
-{  
-  int height            =  aDetector->GetImgHeight();
-  int width             =  aDetector->GetImgWidth();
+{ 
+  // Cropp the image to the selection rectangle given by the user
+  aDetector->SetROI( myRect ); 
+  std::string samplePicturePath = aDetector->CroppImage();
   
-  // Operations to display the corners properly in the 3D scene
-  double pictureLeft  = -0.5 * width;   // X coordinate of the top left  corner of the background image in the view
-  double pictureTop   =  0.5 * height;  // Y coordinate of both top corners
-  
-  // Set detection rectangle in the background image coordinates system
-  QPoint topLeft     = QPoint(myStartPnt.X() - pictureLeft, pictureTop - myStartPnt.Y());
-  QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
-  QRect aRect = QRect(topLeft, bottomRight);
-  
-  if( !aRect.isEmpty() && aRect.width() > 1 )
-  {
-    aDetector->SetROI( aRect );
-    std::string samplePicturePath = aDetector->CroppImage();
-    MESSAGE("samplePicturePath = "<<samplePicturePath)
-    QPixmap pixmap(QString(samplePicturePath.c_str()));
-    myImgSampleLabel->setPixmap(pixmap);
-    myImgSampleLabel->setMask(pixmap.mask());
-  }
+  // Display the result
+  QPixmap pixmap(QString(samplePicturePath.c_str()));
+  myImgSampleLabel->setPixmap(pixmap);
+  myImgSampleLabel->setMask(pixmap.mask());
 }
-
-
 
 //=================================================================================
 // function : createOperation
@@ -507,51 +501,23 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
 {
   bool res = false;
   
-//   SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-//   std::map< std::string , std::vector<Handle(AIS_InteractiveObject)> >::iterator AISit;
-//   SOCC_Viewer* soccViewer = (SOCC_Viewer*)(theViewWindow->getViewManager()->getViewModel());
-  
-//   AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
-//   if (AISit == soccViewer->entry2aisobjects.end())
-//     return res;
-//   
-//   Handle(AIS_InteractiveObject) myAIS = (*AISit).second[0];
-//   Handle(GEOM_AISShape) myAISShape;
-//   if( myAIS->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-//     myAISShape = Handle(GEOM_AISShape)::DownCast( myAIS );
-//   }
-//   else
-//     return res;
-//   
-//   std::string theImgFileName = myAISShape->TextureFile();
-//     
-//   if ( theImgFileName == "" )
-//     return res;
-//   
-//   aDetector->SetPath( theImgFileName );
-    
-  int height            =  aDetector->GetImgHeight();
-  int width             =  aDetector->GetImgWidth();
-  
-  // Operations to display the corners properly in the 3D scene
-  double pictureLeft  = -0.5 * width;   // X coordinate of the top left  corner of the background image in the view
-  double pictureTop   =  0.5 * height;  // Y coordinate of both top corners
-  
-  // Set detection rectangle in the background image coordinates system
-  QPoint topLeft     = QPoint(myStartPnt.X() - pictureLeft, pictureTop - myStartPnt.Y());
-  QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
-  QRect aRect = QRect(topLeft, bottomRight);
-  
   GEOM::GEOM_IBasicOperations_var  aBasicOperations  = myGeomGUI->GetGeomGen()->GetIBasicOperations( getStudyId() );
   GEOM::GEOM_IShapesOperations_var aShapesOperations = GEOM::GEOM_IShapesOperations::_narrow( getOperation() );
   
   if (myConstructorId == CORNERS)
   {
-    if( !aRect.isEmpty() )
+    double subPictureLeft;
+    double subPictureTop;
+    if( !myRect.isEmpty() )
     {
-      aDetector->SetROI( aRect );
-      pictureLeft  =  myStartPnt.X();                
-      pictureTop   =  myStartPnt.Y();
+      aDetector->SetROI( myRect );
+      subPictureLeft    = myStartPnt.X();                
+      subPictureTop     = myStartPnt.Y();
+    }
+    else
+    {
+      subPictureLeft    = pictureLeft;
+      subPictureTop     = pictureTop;
     }
     aDetector->ComputeCorners();
     CvPoint2D32f* corners     = aDetector->GetCorners();
@@ -566,8 +532,8 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
       geomCorners->length( cornerCount );
       for (i = 0; i < cornerCount; i++)
       {
-        double x = pictureLeft + corners[i].x;
-        double y = pictureTop  - corners[i].y;
+        double x = subPictureLeft + corners[i].x;
+        double y = subPictureTop  - corners[i].y;
         double z =  0;
         
         aGeomCorner = aBasicOperations->MakePointXYZ( x,y,z );
@@ -593,9 +559,9 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
   else if (myConstructorId == CONTOURS)
   {
     int method = 0 ; //CANNY
-    if( !aRect.isEmpty() && aRect.width() > 1 )
+    if( !myRect.isEmpty() && myRect.width() > 1 )
     {
-      aDetector->SetROI( aRect );
+      aDetector->SetROI( myRect );
       method = 1 ; //COLORFILTER    
     }
     
@@ -707,36 +673,38 @@ bool EntityGUI_FeatureDetectorDlg::execute( ObjectList& objects )
     res=true;
   }
   
-  else if(myConstructorId ==LINES)
-  {
-    aDetector->ComputeLines();
-    std::vector<cv::Vec4i>  lines = aDetector->GetLines();
-    GEOM::GEOM_Object_var  Pnt1;
-    GEOM::GEOM_Object_var  Pnt2;
-    GEOM::GEOM_Object_var  aLine;
-    
-    GEOM::ListOfGO_var     geomLines = new GEOM::ListOfGO();
-    int linesCount=0;
-    for( int i = 0; i < lines.size(); i++ )
-    {
-      Pnt1 = aBasicOperations->MakePointXYZ( -0.5 *width + lines[i][0], 0.5 *height - lines[i][1], 0 );
-      Pnt2 = aBasicOperations->MakePointXYZ( -0.5 *width + lines[i][2], 0.5 *height - lines[i][3], 0 );
-      aLine = aBasicOperations->MakeLineTwoPnt( Pnt1, Pnt2 );
-      if ( !aLine->_is_nil() )
-      {
-        geomLines->length(linesCount + 1);
-        geomLines[linesCount] = aLine;
-        linesCount++;
-      }
-    }
-    GEOM::GEOM_Object_var aLinesCompound = aShapesOperations->MakeCompound(geomLines);
-    if ( !aLinesCompound->_is_nil() )
-    {
-      objects.push_back( aLinesCompound._retn() );
-    }
-
-    res=true;
-  }
+  // TEST not very conclusive
+  
+//   else if(myConstructorId ==LINES)
+//   {
+//     aDetector->ComputeLines();
+//     std::vector<cv::Vec4i>  lines = aDetector->GetLines();
+//     GEOM::GEOM_Object_var  Pnt1;
+//     GEOM::GEOM_Object_var  Pnt2;
+//     GEOM::GEOM_Object_var  aLine;
+//     
+//     GEOM::ListOfGO_var     geomLines = new GEOM::ListOfGO();
+//     int linesCount=0;
+//     for( int i = 0; i < lines.size(); i++ )
+//     {
+//       Pnt1 = aBasicOperations->MakePointXYZ( -0.5 *width + lines[i][0], 0.5 *height - lines[i][1], 0 );
+//       Pnt2 = aBasicOperations->MakePointXYZ( -0.5 *width + lines[i][2], 0.5 *height - lines[i][3], 0 );
+//       aLine = aBasicOperations->MakeLineTwoPnt( Pnt1, Pnt2 );
+//       if ( !aLine->_is_nil() )
+//       {
+//         geomLines->length(linesCount + 1);
+//         geomLines[linesCount] = aLine;
+//         linesCount++;
+//       }
+//     }
+//     GEOM::GEOM_Object_var aLinesCompound = aShapesOperations->MakeCompound(geomLines);
+//     if ( !aLinesCompound->_is_nil() )
+//     {
+//       objects.push_back( aLinesCompound._retn() );
+//     }
+// 
+//     res=true;
+//   }
   
   return res;
 }

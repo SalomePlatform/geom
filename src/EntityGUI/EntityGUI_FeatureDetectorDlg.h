@@ -22,7 +22,6 @@
 
 #include <GEOMBase_Skeleton.h>
 #include <gp_Ax3.hxx>
-#include <ShapeRec_FeatureDetector.hxx>
 #include <QBitmap>
 
 class QLineEdit;
@@ -35,6 +34,7 @@ class DlgRef_3Radio;
 class DlgRef_1Sel;
 
 class gp_Pnt;
+class ShapeRec_FeatureDetector;
 
 //=================================================================================
 // class    : EntityGUI_Dlg
@@ -49,9 +49,8 @@ public:
   ~EntityGUI_FeatureDetectorDlg();
   
   bool                               acceptMouseEvent() const;
-//   void                               OnPointSelected( const gp_Pnt& );
-  void                               setStartPnt    ( const gp_Pnt& );
-  void                               setEndPnt      ( const gp_Pnt& );
+  void                               setStartPnt     ( const gp_Pnt& );
+  void                               setEndPnt       ( const gp_Pnt& );
   int                                getConstructorId() {return myConstructorId;};
   
 protected:
@@ -61,21 +60,24 @@ protected:
   
 private:
   void                               Init();
+  bool                               setSelectionRect();
   void                               showImageSample();
 
   
 private slots:
-  void                               SetEditCurrentArgument();
   void                               SelectionIntoArgument();
   void                               ConstructorsClicked( int );
 //   void                               onViewClicked( int );
-  void                               onButtonToggled( bool ); 
+  void                               onButtonClicked(); 
   void                               ClickOnOk();
   bool                               ClickOnApply();
   
   
 private:
   ShapeRec_FeatureDetector*          aDetector;
+  
+  gp_Ax3                             myWPlane;
+  gp_Ax3                             aGlobalCS;
   
   GEOM::GeomObjPtr                   myFace;
   QString                            myFaceEntry;
@@ -91,15 +93,19 @@ private:
   
   gp_Pnt                             myStartPnt;
   gp_Pnt                             myEndPnt;
+  QRect                              myRect;
   
-  gp_Ax3                             myWPlane;
-  gp_Ax3                             aGlobalCS;
-  
-  QPushButton*                       myPushButton;
   QPushButton*                       mySelButton;
-  
   QLineEdit*                         myLineEdit;
+  QPushButton*                       myPushButton; 
   
+  // Picture dimensions and position
+  int                                height;
+  int                                width;
+  double                             pictureLeft;
+  double                             pictureTop;
+  
+  // Output slection widget
   DlgRef_3Radio*                     myOutputGroup;;
 
 };
