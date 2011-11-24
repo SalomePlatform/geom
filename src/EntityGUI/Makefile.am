@@ -28,14 +28,15 @@ if WITH_OPENCV
   FeatureDetectorDlg_Header = EntityGUI_FeatureDetectorDlg.h
   FeatureDetectorDlg_Sources = EntityGUI_FeatureDetectorDlg.cxx
   FeatureDetectorDlg_moc = EntityGUI_FeatureDetectorDlg_moc.cxx
-  PictureImportDlg_Header = EntityGUI_PictureImportDlg.h
-  PictureImportDlg_Sources = EntityGUI_PictureImportDlg.cxx
-  PictureImportDlg_moc = EntityGUI_PictureImportDlg_moc.cxx
   Opencv_libs = $(OPENCV_LIBS)
   Opencv_includes = $(OPENCV_INCLUDES)
   ShapeRec_dir = $(srcdir)/../ShapeRecognition
   ShapeRec_la = ../ShapeRecognition/libGEOMShapeRec.la  
 endif
+
+PictureImportDlg_Header = EntityGUI_PictureImportDlg.h
+PictureImportDlg_Sources = EntityGUI_PictureImportDlg.cxx
+PictureImportDlg_moc = EntityGUI_PictureImportDlg_moc.cxx
 
 # Libraries targets
 lib_LTLIBRARIES = libEntityGUI.la

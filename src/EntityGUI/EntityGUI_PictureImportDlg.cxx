@@ -39,8 +39,7 @@
 #include <TopoDS.hxx>
 
 #include <GEOMImpl_Types.hxx>
-
-#include <ShapeRec_FeatureDetector.hxx>
+// #include <ShapeRec_FeatureDetector.hxx>
 
 #include <QFileDialog>
 
@@ -55,11 +54,8 @@ EntityGUI_PictureImportDlg::EntityGUI_PictureImportDlg( GeometryGUI* theGeometry
                                     bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
-//   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
   setWindowTitle( tr( "GEOM_IMPORT_PICT_TITLE" ) );
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PICTURE" ) );
-//   mainFrame()->RadioButton1->setIcon( image0 );
-//   mainFrame()->RadioButton2->setIcon( image2 );
 
   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton2->close();
@@ -182,12 +178,9 @@ bool EntityGUI_PictureImportDlg::execute( ObjectList& objects )
   if ( theImgFileName.isEmpty() )
     return res;
   
-  ShapeRec_FeatureDetector* aDetector = new ShapeRec_FeatureDetector();
-  aDetector->SetPath( theImgFileName.toStdString() );
-    
-  int height            =  aDetector->GetImgHeight();
-  int width             =  aDetector->GetImgWidth();
-  
+  QPixmap* pixmap = new QPixmap(theImgFileName); 
+  int height            =  pixmap->height();
+  int width             =  pixmap->width();
   
   GEOM::GEOM_Object_var P1 = aBasicOperations->MakePointXYZ( -0.5*width, -0.5*height, 0 );
   GEOM::GEOM_Object_var P2 = aBasicOperations->MakePointXYZ( -0.5*width,  0.5*height, 0 );

@@ -96,8 +96,9 @@ namespace GEOMOp {
     OpExplode           = 3302,   // MENU NEW ENTITY - EXPLODE
 #ifdef WITH_OPENCV
     OpFeatureDetect     = 3303,   // MENU NEW ENTITY - FEATURE DETECTION
-    OpPictureImport     = 3304,   // MENU NEW ENTITY - IMPORT PICTURE IN VIEWER
 #endif
+    OpPictureImport     = 3304,   // MENU NEW ENTITY - IMPORT PICTURE IN VIEWER
+
     // BuildGUI ------------------//--------------------------------
     OpEdge              = 3400,   // MENU NEW ENTITY - BUILD - EDGE
     OpWire              = 3401,   // MENU NEW ENTITY - BUILD - WIRE

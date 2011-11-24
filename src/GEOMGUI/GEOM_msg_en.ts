@@ -4596,7 +4596,12 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>GEOM_DETECT_ZONE</source>
-        <translation>Select a detection zone (default is whole picture)</translation>
+        <translation>Select a detection zone
+(default is whole picture)</translation>
+    </message>
+    <message>
+        <source>GEOM_DETECT_OUTPUT</source>
+        <translation>Output type</translation>
     </message>
     <message>
         <source>GEOM_PICTURE</source>
@@ -4628,6 +4633,10 @@ Number of sketch points too small</translation>
     <message>
         <source>GEOM_PICTURE</source>
         <translation>Picture</translation>
+    </message>
+    <message>
+        <source>GEOM_FILE</source>
+        <translation>File name</translation>
     </message>
     <message>
         <source>GEOM_IMPORT_PICT_TITLE</source>
