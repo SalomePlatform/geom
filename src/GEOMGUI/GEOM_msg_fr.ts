@@ -610,6 +610,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Privilégier la création d&apos;une face plane</translation>
     </message>
     <message>
+        <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
+        <translation>La face créée a une tolérance élevée</translation>
+    </message>
+    <message>
         <source>GEOM_FACE_OR_LCS</source>
         <translation>Face ou SCL</translation>
     </message>
