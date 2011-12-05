@@ -17,6 +17,8 @@ placement of the wires. If some resulting wires remain open, they will
 be added in the resulting compound "as is".
 \n Check <b>Try to create a planar face</b> to create a planar
 face or nothing if it is impossible.
+\note Please note, that the resulting face can have a huge tolerance, if the initial wire has a big deviation from the plane. If the final tolerance exceeds 1e-06, a warning will be shown, but the face will be created and published in the study in a normal way. Using such faces can lead to failures or unpredictable results in most operations.
+
 \n The \b Result will be a \b GEOM_Object (FACE).
 
 \n <b>TUI Command:</b> <em>geompy.MakeFaceWires([list of Shapes], isPlanarWanted)</em>
@@ -33,6 +35,6 @@ face or nothing if it is impossible.
 \image html facesn3.png "Examples of faces"
 
 Our <b>TUI Scripts</b> provide you with useful examples of creation of 
-\ref tui_creation_squareface "Primitives".
+\ref tui_creation_face "Advanced Geometric Objects".
 
 */

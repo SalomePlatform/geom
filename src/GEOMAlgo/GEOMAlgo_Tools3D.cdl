@@ -32,6 +32,7 @@ uses
     State     from TopAbs,
     ShapeEnum from TopAbs, 
     Pnt from gp, 
+    Pnt2d from gp, 
     Shape  from TopoDS, 
     Vertex from TopoDS,
     Edge   from TopoDS, 
@@ -235,6 +236,18 @@ is
         --          If the method  returns True theEdgeOff is the 
         --          edge founded 	 
 	returns Boolean from Standard; 
+	
+--modified by NIZNHY-PKV Tue Nov 22 12:18:30 2011f
+    PntInFace(myclass;  
+		theF  :  Face from TopoDS; 
+		theP  :out  Pnt from gp; 
+		theP2D:out  Pnt2d from gp) 
+    	---Purpose: Computes a point <theP> inside the face <theF>. 
+        --          <theP2D> -  2D  representation of <theP>   
+        --          on the surface of <theF>  	 
+    	--          Returns 0 in case of success.  
+    	returns Integer from Standard;  
+--modified by NIZNHY-PKV Tue Nov 22 12:18:36 2011t 
 
 --fields
 end Tools3D; 

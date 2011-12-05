@@ -53,6 +53,9 @@
 #ifndef _NMTTools_ListOfCoupleOfShape_HeaderFile
 #include <NMTTools_ListOfCoupleOfShape.hxx>
 #endif
+#ifndef _gp_Pnt2d_HeaderFile
+#include <gp_Pnt2d.hxx>
+#endif
 #ifndef _GEOMAlgo_Tools3D_HeaderFile
 #include <GEOMAlgo_Tools3D.hxx>
 #endif

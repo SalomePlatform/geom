@@ -1731,7 +1731,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeFace(self,theWire, isPlanarWanted):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
-            RaiseIfFailed("MakeFace", self.ShapesOp)
+            if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
+                print "WARNING: Tolerance of resulting face is too big."
+            else:
+                RaiseIfFailed("MakeFace", self.ShapesOp)
             return anObj
 
         ## Create a face on the given wires set.
@@ -1744,7 +1747,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         def MakeFaceWires(self,theWires, isPlanarWanted):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
-            RaiseIfFailed("MakeFaceWires", self.ShapesOp)
+            if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
+                print "WARNING: Tolerance of resulting face is too big."
+            else:
+                RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             return anObj
 
         ## Shortcut to MakeFaceWires()

@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : BuildGUI_FaceDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "BuildGUI_FaceDlg.h"
 
 #include <GEOMImpl_Types.hxx>
@@ -33,10 +32,13 @@
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
 
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+
+#include <SUIT_ResourceMgr.h>
+#include <SUIT_Session.h>
+#include <SUIT_MessageBox.h>
+#include <SUIT_OverrideCursor.h>
 
 //=================================================================================
 // class    : BuildGUI_FaceDlg()
@@ -247,9 +249,17 @@ bool BuildGUI_FaceDlg::execute( ObjectList& objects )
 
   GEOM::GEOM_Object_var anObj = anOper->MakeFaceWires( objlist.in(), GroupWire->CheckButton1->isChecked() );
 
-  if ( !anObj->_is_nil() )
-    objects.push_back( anObj._retn() );
+  if (!anObj->_is_nil()) {
+    objects.push_back(anObj._retn());
+
+    if (!anOper->IsDone() && QString(anOper->GetErrorCode()) == "MAKE_FACE_TOLERANCE_TOO_BIG") {
+      SUIT_OverrideCursor wc;
+      wc.suspend();
+      QString msgw = QObject::tr(anOper->GetErrorCode());
+      SUIT_MessageBox::warning(this, tr("WRN_WARNING"), msgw, tr("BUT_OK"));
+      anOper->SetErrorCode("PAL_NO_ERROR");
+    }
+  }
 
   return true;
 }
-

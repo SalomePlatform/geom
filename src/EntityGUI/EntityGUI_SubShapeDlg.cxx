@@ -544,7 +544,7 @@ int EntityGUI_SubShapeDlg::shapeType() const
   // Solving PAL5590
   type += myShape.ShapeType() + 1;
   if (myShape.ShapeType() == TopAbs_COMPOUND &&
-       NumberOfSubShapes(myShape, TopAbs_COMPOUND) > 0) {
+      NumberOfSubShapes(myShape, TopAbs_COMPOUND) > 0) {
     type--;
   }
 
@@ -573,11 +573,25 @@ void EntityGUI_SubShapeDlg::showOnlySelected()
   GEOM_Displayer* aDisplayer = getDisplayer();
 
   if (send == GroupPoints->PushButton3) {
-    aDisplayer->Erase(aSelList, false, true);
+    aDisplayer->Erase(aSelList, /*forced=*/false, /*updateViewer=*/true);
   }
   else {
-    aDisplayer->EraseAll();
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+    if (view) {
+      CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+      Handle(SALOME_InteractiveObject) io =
+        new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+      if (view->isVisible(io)) myIsHiddenMain = true;
+    }
+
+    aDisplayer->EraseAll(/*forced = false, updateViewer = true*/);
     aDisplayer->Display(aSelList, true);
+
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    if ((TopAbs_ShapeEnum)shapeType() == TopAbs_VERTEX && myIsHiddenMain) {
+      aDisplayer->Display(myObject);
+    }
   }
 }
 
@@ -658,13 +672,22 @@ void EntityGUI_SubShapeDlg::activateSelection()
   if (!myObject->_is_nil() && !isAllSubShapes())
   {
     GEOM_Displayer* aDisplayer = getDisplayer();
-    SALOME_View* view = GEOM_Displayer::GetActiveView();
-    if (view) {
-      CORBA::String_var aMainEntry = myObject->GetStudyEntry();
-      Handle(SALOME_InteractiveObject) io = new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
-      if (view->isVisible(io)) {
-        aDisplayer->Erase(myObject, false, false);
-        myIsHiddenMain = true;
+
+    // Mantis issue 0021421: do not hide main shape, if explode on VERTEX
+    if ((TopAbs_ShapeEnum)shapeType() == TopAbs_VERTEX) {
+      if (myIsHiddenMain)
+        aDisplayer->Display(myObject);
+    }
+    else {
+      SALOME_View* view = GEOM_Displayer::GetActiveView();
+      if (view) {
+        CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+        Handle(SALOME_InteractiveObject) io =
+          new SALOME_InteractiveObject (aMainEntry.in(), "GEOM", "TEMP_IO");
+        if (view->isVisible(io)) {
+          aDisplayer->Erase(myObject, false, false);
+          myIsHiddenMain = true;
+        }
       }
     }
 

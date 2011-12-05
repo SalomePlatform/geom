@@ -157,7 +157,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 
   GroupD2 = new EntityGUI_Dir2( MainWidget->DestCnt );
 
-  GroupD2->GroupDir2->setTitle( tr( "GEOM_SKETCHER_DIR" ) );
+  GroupD2->GroupDir2->setTitle( tr( "GEOM_SKETCHER_DIST" ) );
   GroupD2->RB_Dir21->setText( tr( "GEOM_SKETCHER_LENGTH" ) );
   GroupD2->RB_Dir22->setText( tr( "GEOM_SKETCHER_X" ) );
   GroupD2->RB_Dir23->setText( tr( "GEOM_SKETCHER_Y" ) );

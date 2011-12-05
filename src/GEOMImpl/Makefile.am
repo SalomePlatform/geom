@@ -104,6 +104,12 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_MirrorDriver.hxx		\
 	GEOMImpl_ProjectionDriver.hxx		\
 	GEOMImpl_OffsetDriver.hxx		\
+	BRepBuilderAPI_GTransform_21423.hxx		\
+	BRepBuilderAPI_ModifyShape_21423.hxx		\
+	BRepBuilderAPI_NurbsConvert_21423.hxx		\
+	BRepTools_Modifier_21423.hxx			\
+	BRepTools_NurbsConvertModification_21423.hxx	\
+	Handle_BRepTools_NurbsConvertModification_21423.hxx	\
 	GEOMImpl_ScaleDriver.hxx		\
 	GEOMImpl_PositionDriver.hxx		\
 	GEOMImpl_BoxDriver.hxx			\
@@ -174,6 +180,11 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_MirrorDriver.cxx		\
 	GEOMImpl_ProjectionDriver.cxx		\
 	GEOMImpl_OffsetDriver.cxx		\
+	BRepBuilderAPI_GTransform_21423.cxx		\
+	BRepBuilderAPI_ModifyShape_21423.cxx		\
+	BRepBuilderAPI_NurbsConvert_21423.cxx		\
+	BRepTools_Modifier_21423.cxx			\
+	BRepTools_NurbsConvertModification_21423.cxx	\
 	GEOMImpl_ScaleDriver.cxx		\
 	GEOMImpl_PositionDriver.cxx		\
 	GEOMImpl_BoxDriver.cxx			\

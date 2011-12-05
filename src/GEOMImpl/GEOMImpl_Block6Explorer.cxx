@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -78,6 +77,8 @@
 #define NBFACES 6
 #define NBEDGES 12
 #define NBVERTS 8
+
+#define PLANAR_FACE_MAX_TOLERANCE 1e-06
 
 static Standard_Integer mod4 (Standard_Integer nb)
 {
@@ -1197,10 +1198,12 @@ Standard_Integer GEOMImpl_Block6Explorer::FindFace
 //function : MakeFace
 //purpose  :
 //=======================================================================
-void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
-                                        const Standard_Boolean isPlanarWanted,
-                                        TopoDS_Shape&          theResult)
+TCollection_AsciiString GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
+                                                           const Standard_Boolean isPlanarWanted,
+                                                           TopoDS_Shape&          theResult)
 {
+  TCollection_AsciiString aWarning;
+
   // Workaround for Mantis issue 0020956
   if (isPlanarWanted) {
     // Count the number of points in the wire.
@@ -1247,14 +1250,14 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
       BRepBuilderAPI_MakeFace MK (plane, theWire, isPlanarWanted);
       if (MK.IsDone()) {
         theResult = MK.Shape();
-        return;
+        return aWarning;
       }
     }
     else {
       BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
       if (MK.IsDone()) {
         theResult = MK.Shape();
-        return;
+        return aWarning;
       }
     }
   }
@@ -1263,7 +1266,7 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     BRepBuilderAPI_MakeFace MK (theWire, isPlanarWanted);
     if (MK.IsDone()) {
       theResult = MK.Shape();
-      return;
+      return aWarning;
     }
   }
 
@@ -1346,7 +1349,7 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
 
     if (!aFS.Found()) {
       aFS.Init(theWire, aToleranceReached, isPlanarWanted);
-      if (!aFS.Found()) return;
+      if (!aFS.Found()) return aWarning;
       aToleranceReached = aFS.ToleranceReached();
       aTol = aFS.Tolerance();
     }
@@ -1354,7 +1357,7 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
 
     // Copy the wire, bacause it can be updated with very-very big tolerance here
     BRepBuilderAPI_Copy aMC (theWire);
-    if (!aMC.IsDone()) return;
+    if (!aMC.IsDone()) return aWarning;
     TopoDS_Wire aWire = TopoDS::Wire(aMC.Shape());
     // Update tolerances to <aTol>
     BRep_Builder B;
@@ -1371,7 +1374,9 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     BRepBuilderAPI_MakeFace MK1 (aWire, isPlanarWanted);
     if (MK1.IsDone()) {
       theResult = MK1.Shape();
-      return;
+      if (aTol > PLANAR_FACE_MAX_TOLERANCE)
+        aWarning = "MAKE_FACE_TOLERANCE_TOO_BIG";
+      return aWarning;
     }
 
 #else // After migration on OCCT version, containing PKV's fix. See bug 8293
@@ -1379,8 +1384,10 @@ void GEOMImpl_Block6Explorer::MakeFace (const TopoDS_Wire&     theWire,
     aBMF.Init(theWire, isPlanarWanted, Standard_True);
     if (aBMF.Error() == BRepLib_FaceDone) {
       theResult = aBMF.Shape();
-      return;
+      return aWarning;
     }
 #endif
   }
+
+  return aWarning;
 }

@@ -202,7 +202,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFace
 
   //Create the Face
   Handle(GEOM_Object) anObject = GetOperations()->MakeFace(aWire, isPlanarWanted);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // enable warning status
+  if (anObject.IsNull())
     return aGEOMObject._retn();
 
   return GetObject(anObject);
@@ -236,7 +238,9 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::MakeFaceWires
   // Make Face
   Handle(GEOM_Object) anObject =
     GetOperations()->MakeFaceWires(aShapes, isPlanarWanted);
-  if (!GetOperations()->IsDone() || anObject.IsNull())
+  //if (!GetOperations()->IsDone() || anObject.IsNull())
+  // enable warning status
+  if (anObject.IsNull())
     return aGEOMObject._retn();
 
   return GetObject(anObject);

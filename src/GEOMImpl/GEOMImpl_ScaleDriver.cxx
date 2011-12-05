@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -31,7 +30,7 @@
 #include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRepBuilderAPI_Transform.hxx>
-#include <BRepBuilderAPI_GTransform.hxx>
+#include <BRepBuilderAPI_GTransform_21423.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
 #include <BRepCheck_Analyzer.hxx>
@@ -165,7 +164,7 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
       }
     }
 
-    BRepBuilderAPI_GTransform aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
+    BRepBuilderAPI_GTransform_21423 aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
     if (!aBRepGTrsf.IsDone())
       Standard_ConstructionError::Raise("Scaling not done");
     aShape = aBRepGTrsf.Shape();
@@ -236,5 +235,5 @@ const Handle(GEOMImpl_ScaleDriver) Handle(GEOMImpl_ScaleDriver)::DownCast(const 
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

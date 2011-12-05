@@ -254,10 +254,11 @@ class Beam(StructuralElementPart):
         orientation is different than the orientation of the underlying OCC
         object.
         """
+        length = self.geom.BasicProperties(path)[0]
         p1 = self.geom.MakeVertexOnCurve(path, 0.0)
         p2 = self.geom.GetFirstVertex(path)
         dist = self.geom.MinDistance(p1, p2)
-        return dist != 0.0
+        return dist > length / 2
 
     def _getVertexAndTangentOnOrientedWire(self, path, param):
         """

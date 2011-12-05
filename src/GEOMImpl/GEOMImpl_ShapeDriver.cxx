@@ -121,6 +121,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   Standard_Integer aType = aFunction->GetType();
 
   TopoDS_Shape aShape;
+  TCollection_AsciiString aWarning;
+
   BRep_Builder B;
 
   if (aType == WIRE_EDGES) {
@@ -214,7 +216,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       Standard_NullObject::Raise
         ("Shape for face construction is neither a wire nor a closed edge");
     }
-    GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
+    aWarning = GEOMImpl_Block6Explorer::MakeFace(W, aCI.GetIsPlanar(), aShape);
     if (aShape.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
@@ -270,7 +272,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     // 4.a. Basic face
     TopoDS_Shape aFFace;
     TopoDS_Wire aW1 = TopoDS::Wire(aSeqClosedWires->Value(1));
-    GEOMImpl_Block6Explorer::MakeFace(aW1, aCI.GetIsPlanar(), aFFace);
+    aWarning = GEOMImpl_Block6Explorer::MakeFace(aW1, aCI.GetIsPlanar(), aFFace);
     if (aFFace.IsNull()) {
       Standard_ConstructionError::Raise("Face construction failed");
     }
@@ -495,6 +497,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     TColStd_SequenceOfReal TolSeq;
     GeomAbs_CurveType CurType;
     TopoDS_Vertex FirstVertex, LastVertex;
+    Standard_Boolean FinalReverse = Standard_False;
 
     BRepTools_WireExplorer wexp(theWire) ;
     for (; wexp.More(); wexp.Next())
@@ -526,6 +529,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
         LparSeq.Append(lpar);
         CurType = aType;
         FirstVertex = wexp.CurrentVertex();
+        if (anEdge.Orientation() == TopAbs_REVERSED)
+          FinalReverse = Standard_True;
       }
       else
       {
@@ -728,6 +733,11 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     LastVertex = wexp.CurrentVertex();
     TolSeq.Append(BRep_Tool::Tolerance(LastVertex));
 
+    TopoDS_Vertex FirstVtx_final = (FinalReverse)? LastVertex : FirstVertex;
+    FirstVtx_final.Orientation(TopAbs_FORWARD);
+    TopoDS_Vertex LastVtx_final = (FinalReverse)? FirstVertex : LastVertex;
+    LastVtx_final.Orientation(TopAbs_REVERSED);
+
     if (!CurveSeq.IsEmpty())
     {
       Standard_Integer nb_curve = CurveSeq.Length();   //number of curves
@@ -795,19 +805,24 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
           Standard_ConstructionError::Raise("Construction aborted : The given Wire has sharp bends between some Edges, no valid Edge can be built");
         }
         ResEdge = BRepLib_MakeEdge(concatcurve->Value(concatcurve->Lower()),
-                                   FirstVertex, LastVertex);
+                                   FirstVtx_final, LastVtx_final,
+                                   concatcurve->Value(concatcurve->Lower())->FirstParameter(),
+                                   concatcurve->Value(concatcurve->Lower())->LastParameter());
       }
       else
       {
         if (CurveSeq(1)->IsInstance(STANDARD_TYPE(Geom_TrimmedCurve)))
-          CurveSeq(1) = (*((Handle(Geom_TrimmedCurve)*)&(CurveSeq(i))))->BasisCurve();
+          CurveSeq(1) = (*((Handle(Geom_TrimmedCurve)*)&(CurveSeq(1))))->BasisCurve();
 
         CurveSeq(1)->Transform(LocSeq(1).Location().Transformation());
         ResEdge = BRepLib_MakeEdge(CurveSeq(1),
-                                   FirstVertex, LastVertex,
+                                   FirstVtx_final, LastVtx_final,
                                    FparSeq(1), LparSeq(1));
       }
     }
+
+    if (FinalReverse)
+      ResEdge.Reverse();
 
     aShape = ResEdge;
   }
@@ -873,7 +888,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
 
     // Get the point by length
     GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
-    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst); 
+    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst);
     Standard_Real aParam = anAbsPnt.Parameter();
 
     if (AdapCurve.IsClosed() && aLength < 0.0) {
@@ -900,6 +915,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
   aFunction->SetValue(aShape);
 
   log.SetTouched(Label());
+
+  if (!aWarning.IsEmpty())
+    Standard_Failure::Raise(aWarning.ToCString());
 
   return 1;
 }
