@@ -3409,6 +3409,9 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition
 //=====================================================================================
 extern "C"
 {
+#ifdef WIN32
+  __declspec( dllexport )
+#endif
   PortableServer::ObjectId * GEOM_SupervEngine_factory(CORBA::ORB_ptr orb,
                                                        PortableServer::POA_ptr poa,
                                                        PortableServer::ObjectId * contId,
