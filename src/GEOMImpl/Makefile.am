@@ -241,6 +241,7 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(BOOST_CPPFLAGS)		\
         $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
+	-I$(srcdir)/../NMTDS		\
 	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
 	-I$(srcdir)/../GEOMAlgo		\

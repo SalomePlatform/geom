@@ -19,7 +19,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 def TestMeasureOperations (geompy, math):
 
@@ -46,6 +45,14 @@ def TestMeasureOperations (geompy, math):
     raise RuntimeError, "Invalid box created"
   else:
     print "\nBox is valid"
+
+  ####### Detect Self-intersections #######
+
+  [Face_1,Face_2] = geompy.SubShapes(box, [33, 23])
+  Translation_1 = geompy.MakeTranslation(Face_1, 5, -15, -40)
+  Compound_1 = geompy.MakeCompound([Face_2, Translation_1])
+  if geompy.CheckSelfIntersections(Compound_1) == True:
+    raise RuntimeError, "Existing self-intersection is not detected"
 
   ####### WhatIs #######
 

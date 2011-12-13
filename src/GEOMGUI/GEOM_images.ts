@@ -160,6 +160,10 @@
             <translation>check_blocks_compound.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_CHECK_SELF_INTERSECTIONS</source>
+            <translation>check_self_intersections.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CIRCLE_PNTS</source>
             <translation>circle3points.png</translation>
         </message>
@@ -718,6 +722,10 @@
         <message>
             <source>ICO_CHECK_COMPOUND</source>
             <translation>check_blocks_compound.png</translation>
+        </message>
+        <message>
+            <source>ICO_CHECK_SELF_INTERSECTIONS</source>
+            <translation>check_self_intersections.png</translation>
         </message>
         <message>
             <source>ICO_CHECK_FREE_BNDS</source>

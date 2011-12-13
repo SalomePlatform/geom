@@ -3755,6 +3755,17 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 print Status
             return IsValid
 
+        ## Detect self-intersections in the given shape.
+        #  @param theShape Shape to check.
+        #  @return TRUE, if the shape contains no self-intersections.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def CheckSelfIntersections (self, theShape):
+            # Example: see GEOM_TestMeasures.py
+            (IsValid, Pairs) = self.MeasuOp.CheckSelfIntersections(theShape)
+            RaiseIfFailed("CheckSelfIntersections", self.MeasuOp)
+            return IsValid
+
         ## Get position (LCS) of theShape.
         #
         #  Origin of the LCS is situated at the shape's center of mass.

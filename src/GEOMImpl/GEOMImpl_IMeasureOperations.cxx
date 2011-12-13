@@ -34,6 +34,15 @@
 #include <GEOM_Function.hxx>
 #include <GEOM_PythonDump.hxx>
 
+#include <NMTTools_CheckerSI.hxx>
+
+#include <NMTDS_Tools.hxx>
+#include <NMTDS_InterfPool.hxx>
+#include <NMTDS_PInterfPool.hxx>
+#include <NMTDS_PassKeyBoolean.hxx>
+#include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx>
+
 #include <Basics_OCCTVersion.hxx>
 
 #include <utilities.h>
@@ -1308,6 +1317,88 @@ bool GEOMImpl_IMeasureOperations::CheckShape (Handle(GEOM_Object)      theShape,
 
   SetErrorCode(OK);
   return isValid;
+}
+
+//=============================================================================
+/*!
+ *  CheckSelfIntersections
+ */
+//=============================================================================
+bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
+                         (Handle(GEOM_Object)                 theShape,
+                          Handle(TColStd_HSequenceOfInteger)& theIntersections)
+{
+  SetErrorCode(KO);
+  bool isGood = false;
+
+  if (theIntersections.IsNull())
+    theIntersections = new TColStd_HSequenceOfInteger;
+  else
+    theIntersections->Clear();
+
+  if (theShape.IsNull())
+    return isGood;
+
+  Handle(GEOM_Function) aRefShape = theShape->GetLastFunction();
+  if (aRefShape.IsNull()) return isGood;
+
+  TopoDS_Shape aShape = aRefShape->GetValue();
+  if (aShape.IsNull()) return isGood;
+
+  // 0. Prepare data
+  BRep_Builder aBB;
+  TopoDS_Compound aCS;
+  TopoDS_Shape aScopy;
+  NMTDS_Tools::CopyShape(aShape, aScopy);
+
+  // Map sub-shapes and their indices
+  TopTools_IndexedMapOfShape anIndices;
+  TopExp::MapShapes(aScopy, anIndices);
+
+  aBB.MakeCompound(aCS);
+  aBB.Add(aCS, aScopy);
+
+  NMTTools_CheckerSI aCSI; // checker of self-interferences
+  aCSI.SetCompositeShape(aCS);
+
+  // 1. Launch the checker
+  aCSI.Perform();
+  Standard_Integer iErr = aCSI.StopStatus();
+  if (iErr) {
+    return false; // Error
+  }
+
+  isGood = true;
+
+  // 2. Take the shapes from DS
+  const NMTDS_ShapesDataStructure& aDS = *(aCSI.DS());
+  Standard_Integer aNbS = aDS.NumberOfShapesOfTheObject();
+
+  // 3. Get the pairs of interfered shapes 
+  NMTDS_PInterfPool pIP = aCSI.IP();
+  const NMTDS_ListOfPassKeyBoolean& aLPKB = pIP->Get();
+
+  Standard_Integer n1, n2;
+  NMTDS_ListIteratorOfListOfPassKeyBoolean aIt;
+
+  aIt.Initialize(aLPKB);
+  for (; aIt.More(); aIt.Next()) {
+    const NMTDS_PassKeyBoolean& aPKB = aIt.Value();
+    aPKB.Ids(n1, n2);
+
+    if (n1 > aNbS || n2 > aNbS)
+      return false; // Error
+
+    const TopoDS_Shape& aS1 = aDS.Shape(n1);
+    const TopoDS_Shape& aS2 = aDS.Shape(n2);
+
+    theIntersections->Append(anIndices.FindIndex(aS1));
+    theIntersections->Append(anIndices.FindIndex(aS2));
+    isGood = false;
+  }
+
+  SetErrorCode(OK);
+  return isGood;
 }
 
 //=============================================================================

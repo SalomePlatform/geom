@@ -358,6 +358,22 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check Shape Information</translation>
     </message>
     <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Detect Self-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+        <translation>Detection of self-intersections failed</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTIONS</source>
+        <translation>There are no self-intersections in the shape</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+        <translation>Some self-intersections detected</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>
@@ -2214,6 +2230,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check Compound of Blocks</translation>
     </message>
     <message>
+        <source>MEN_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Detect Self-intersections</translation>
+    </message>
+    <message>
         <source>MEN_CHECK_FREE_BNDS</source>
         <translation>Check Free Boundaries</translation>
     </message>
@@ -2906,6 +2926,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Check compound of blocks</translation>
     </message>
     <message>
+        <source>STB_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Detect Self-intersections</translation>
+    </message>
+    <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Check free boundaries</translation>
     </message>
@@ -3464,6 +3488,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_CHECK_COMPOUND</source>
         <translation>Check compound of blocks</translation>
+    </message>
+    <message>
+        <source>TOP_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Detect Self-intersections</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>

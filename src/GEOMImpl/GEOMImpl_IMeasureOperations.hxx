@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IMeasureOperations_HXX_
 #define _GEOMImpl_IMeasureOperations_HXX_
@@ -126,6 +125,9 @@ class GEOMImpl_IMeasureOperations : public GEOM_IOperations {
   Standard_EXPORT bool CheckShape (Handle(GEOM_Object)      theShape,
                                    const Standard_Boolean   theIsCheckGeom,
                                    TCollection_AsciiString& theDump);
+
+  Standard_EXPORT bool CheckSelfIntersections (Handle(GEOM_Object) theShape,
+                                               Handle(TColStd_HSequenceOfInteger)& theIntersections);
 
   Standard_EXPORT TCollection_AsciiString IsGoodForSolid (Handle(GEOM_Object) theShape);
 

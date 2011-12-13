@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_IMeasureOperations_i_HeaderFile
 #define _GEOM_IMeasureOperations_i_HeaderFile
@@ -85,6 +84,9 @@ class GEOM_I_EXPORT GEOM_IMeasureOperations_i :
 
   CORBA::Boolean CheckShapeWithGeometry (GEOM::GEOM_Object_ptr theShape,
                                          CORBA::String_out     theDescription);
+
+  CORBA::Boolean CheckSelfIntersections (GEOM::GEOM_Object_ptr theShape,
+                                         GEOM::ListOfLong_out  theIntersections);
 
   char* IsGoodForSolid (GEOM::GEOM_Object_ptr theShape);
 

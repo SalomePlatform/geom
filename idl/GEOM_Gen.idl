@@ -3288,6 +3288,15 @@ module GEOM
                                     out string     theDescription);
 
     /*!
+     *  Check a topology of the given shape on self-intersections presence.
+     *  \param theShape Shape to check validity of.
+     *  \param theIntersections Output. List of intersected sub shapes IDs, it contains pairs of IDs.
+     *  \return TRUE, if the shape does not have any self-intersections.
+     */
+    boolean CheckSelfIntersections (in GEOM_Object theShape,
+                                    out ListOfLong theIntersections);
+
+    /*!
      *  Check if the given shape can be an argument for MakeSolid operation
      *  \param theShape Shape to be described.
      *  \return Empty string if a solid can be made on this shape, error code otherwise.

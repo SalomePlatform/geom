@@ -15,13 +15,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 # GEOM MEASUREGUI : 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : MeasureGUI
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -40,6 +39,7 @@ salomeinclude_HEADERS =				\
 	MeasureGUI_WhatisDlg.h			\
 	MeasureGUI_CheckShapeDlg.h		\
 	MeasureGUI_CheckCompoundOfBlocksDlg.h	\
+	MeasureGUI_CheckSelfIntersectionsDlg.h	\
 	MeasureGUI_PointDlg.h
 
 # Libraries targets
@@ -59,7 +59,8 @@ dist_libMeasureGUI_la_SOURCES =			\
 	MeasureGUI_MaxToleranceDlg.cxx		\
 	MeasureGUI_WhatisDlg.cxx		\
 	MeasureGUI_CheckShapeDlg.cxx		\
-	MeasureGUI_CheckCompoundOfBlocksDlg.cxx \
+	MeasureGUI_CheckCompoundOfBlocksDlg.cxx	\
+	MeasureGUI_CheckSelfIntersectionsDlg.cxx \
 	MeasureGUI_PointDlg.cxx
 
 MOC_FILES = 						\
@@ -76,6 +77,7 @@ MOC_FILES = 						\
 	MeasureGUI_WhatisDlg_moc.cxx			\
 	MeasureGUI_CheckShapeDlg_moc.cxx		\
 	MeasureGUI_CheckCompoundOfBlocksDlg_moc.cxx	\
+	MeasureGUI_CheckSelfIntersectionsDlg_moc.cxx	\
 	MeasureGUI_PointDlg_moc.cxx
 
 nodist_libMeasureGUI_la_SOURCES =			\

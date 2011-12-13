@@ -535,6 +535,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpCheckShape:       // MENU MEASURE - CHECK
   case GEOMOp::OpCheckCompound:    // MENU MEASURE - CHECK COMPOUND OF BLOCKS
   case GEOMOp::OpPointCoordinates: // MENU MEASURE - POINT COORDINATES
+  case GEOMOp::OpCheckSelfInters:  // MENU MEASURE - CHECK SELF INTERSECTIONS
     libName = "MeasureGUI";
     break;
   case GEOMOp::OpGroupCreate:      // MENU GROUP - CREATE
@@ -796,6 +797,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpWhatIs,           "WHAT_IS" );
   createGeomAction( GEOMOp::OpCheckShape,       "CHECK" );
   createGeomAction( GEOMOp::OpCheckCompound,    "CHECK_COMPOUND" );
+  createGeomAction( GEOMOp::OpCheckSelfInters,  "CHECK_SELF_INTERSECTIONS" );
 
 #ifdef _DEBUG_ // PAL16821
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
@@ -1007,12 +1009,13 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpMinDistance, dimId, -1 );
   createMenu( GEOMOp::OpAngle,       dimId, -1 );
 
-  createMenu( separator(),             measurId, -1 );
-  createMenu( GEOMOp::OpTolerance,     measurId, -1 );
-  createMenu( separator(),             measurId, -1 );
-  createMenu( GEOMOp::OpWhatIs,        measurId, -1 );
-  createMenu( GEOMOp::OpCheckShape,    measurId, -1 );
-  createMenu( GEOMOp::OpCheckCompound, measurId, -1 );
+  createMenu( separator(),               measurId, -1 );
+  createMenu( GEOMOp::OpTolerance,       measurId, -1 );
+  createMenu( separator(),               measurId, -1 );
+  createMenu( GEOMOp::OpWhatIs,          measurId, -1 );
+  createMenu( GEOMOp::OpCheckShape,      measurId, -1 );
+  createMenu( GEOMOp::OpCheckCompound,   measurId, -1 );
+  createMenu( GEOMOp::OpCheckSelfInters, measurId, -1 );
 
 #ifdef _DEBUG_ // PAL16821
   int toolsId = createMenu( tr( "MEN_TOOLS" ), -1, -1, 50 );
@@ -1140,6 +1143,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpWhatIs,           measureTbId );
   createTool( GEOMOp::OpCheckShape,       measureTbId );
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
+  createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
 
   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   createTool( GEOMOp::OpPipeTShape, advancedTbId );

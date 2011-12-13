@@ -160,6 +160,7 @@ namespace GEOMOp {
     OpCheckShape        = 5009,   // MENU MEASURES - CHECK
     OpCheckCompound     = 5010,   // MENU MEASURES - CHECK COMPOUND OF BLOCKS
     OpPointCoordinates  = 5011,   // MENU MEASURES - POINT COORDINATES
+    OpCheckSelfInters   = 5012,   // MENU MEASURES - CHECK SELF INTERSECTIONS
     // GroupGUI ------------------//--------------------------------
     OpGroupCreate       = 6000,   // MENU GROUP - CREATE
     OpGroupEdit         = 6001,   // MENU GROUP - EDIT

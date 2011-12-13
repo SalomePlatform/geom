@@ -15,13 +15,12 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 # -* Makefile *- 
 # Author : Patrick GOLDBRONN (CEA)
 # Date : 28/06/2001
 # Modified by : Alexander BORODIN (OCN) - autotools usage
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 dist_salomeres_DATA =		\
@@ -221,6 +220,7 @@ group_new.png			\
 group_edit.png			\
 glue.png			\
 check_blocks_compound.png	\
+check_self_intersections.png	\
 free_faces.png			\
 propagate.png			\
 redo.png			\
