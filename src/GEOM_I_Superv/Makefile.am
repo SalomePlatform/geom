@@ -29,7 +29,8 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # header files 
 salomeinclude_HEADERS = \
 	GEOM_Superv_i.hh \
-	GEOM_List_i.hh
+	GEOM_List_i.hh \
+	GEOM_I_Superv.hxx
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOM_SupervEngine.la

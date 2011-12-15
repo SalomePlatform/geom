@@ -23,6 +23,8 @@
 #ifndef __GEOM_SUPERV_I_H__
 #define __GEOM_SUPERV_I_H__
 
+#include "GEOM_I_Superv.hxx"
+
 // IDL headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Superv)
@@ -30,8 +32,8 @@
 #include "GEOM_Gen_i.hh"
 #include "GEOM_List_i.hh"
 
-class GEOM_Superv_i : public virtual POA_GEOM::GEOM_Superv,
-                      public Engines_Component_i
+class GEOM_I_SUPERV_EXPORT GEOM_Superv_i : public virtual POA_GEOM::GEOM_Superv,
+                                           public Engines_Component_i
 {
 public:
   GEOM_Superv_i(CORBA::ORB_ptr orb,

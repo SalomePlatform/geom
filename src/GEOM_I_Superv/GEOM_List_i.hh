@@ -23,6 +23,8 @@
 #ifndef __GEOM_LIST_I_H__
 #define __GEOM_LIST_I_H__
 
+#include "GEOM_I_Superv.hxx"
+
 // IDL headers
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Superv)
@@ -31,7 +33,7 @@
 #include "utilities.h"
 
 template <class Type>
-class GEOM_List_i : 
+class GEOM_I_SUPERV_EXPORT GEOM_List_i : 
   public virtual POA_GEOM::GEOM_List,
   public virtual PortableServer::RefCountServantBase
 {
