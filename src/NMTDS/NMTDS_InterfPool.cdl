@@ -18,7 +18,7 @@
 --
 
 --  File:	NMTDS_InterfPool.cdl
---  Created:	Wed Feb 21 10:10:58 2007
+--  Created:
 --  Author:	Peter KURNEV
 --
 class InterfPool from NMTDS 
@@ -26,9 +26,9 @@ class InterfPool from NMTDS
 	---Purpose: 
 
 uses
-    MapOfPassKeyBoolean  from NMTDS, 
-    ListOfPassKeyBoolean from NMTDS, 
-    PassKeyBoolean       from NMTDS,
+    MapOfPairBoolean  from NMTDS, 
+    ListOfPairBoolean from NMTDS, 
+    PairBoolean       from NMTDS,
     InterfType           from NMTDS, 
     --     
     CArray1OfSSInterference from BOPTools,
@@ -47,7 +47,7 @@ is
 
  
     Add (me:out;   
-    	    aPKB : PassKeyBoolean from NMTDS;
+    	    aPKB : PairBoolean from NMTDS;
             aType: InterfType from NMTDS) 
     	returns Boolean from Standard; 
 	
@@ -65,7 +65,7 @@ is
     	returns Boolean from Standard;
 
     Contains(me; 
-    	    aPKB : PassKeyBoolean from NMTDS)
+    	    aPKB : PairBoolean from NMTDS)
     	returns Boolean from Standard; 
      
     Contains(me; 
@@ -74,23 +74,23 @@ is
     	returns Boolean from Standard; 
      
     Get(me) 
-	returns ListOfPassKeyBoolean from NMTDS; 
+	returns ListOfPairBoolean from NMTDS; 
     ---C++: return const & 	  
 
     Get(me; 
     	    aType : InterfType from NMTDS) 
-	returns ListOfPassKeyBoolean from NMTDS; 
+	returns ListOfPairBoolean from NMTDS; 
     ---C++: return const &  	 
 
     Get(me; 
     	    aInd : Integer from Standard) 
-	returns ListOfPassKeyBoolean from NMTDS; 
+	returns ListOfPairBoolean from NMTDS; 
     ---C++: return const & 
       
     Get(me; 
     	    aInd : Integer from Standard; 
     	    aType: InterfType from NMTDS) 
-	returns ListOfPassKeyBoolean from NMTDS; 
+	returns ListOfPairBoolean from NMTDS; 
     ---C++: return const &  
     
     -- 
@@ -132,10 +132,12 @@ is
     	---Purpose: 
     	--- Returns the reference to arrray Of  V/V interferences 
     	---
-
+    --modified by NIZNHY-PKV Mon Dec 12 09:07:13 2011f
+    Purge(me:out) ; 
+    --modified by NIZNHY-PKV Mon Dec 12 09:07:16 2011t	
 fields 
-    myTable : MapOfPassKeyBoolean from NMTDS [6] is protected; 
-    myList  : ListOfPassKeyBoolean from NMTDS is protected;
+    myTable : MapOfPairBoolean from NMTDS [6] is protected; 
+    myList  : ListOfPairBoolean from NMTDS is protected;
     myMaxInd: Integer from Standard is protected; 
     -- 
     mySSInterferences  :  CArray1OfSSInterference from BOPTools is protected;

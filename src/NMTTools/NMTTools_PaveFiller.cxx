@@ -266,6 +266,10 @@
     myPavePoolNew.Destroy();
     myPavePoolNew.Resize (myNbEdges);
     //
+    //modified by NIZNHY-PKV Mon Dec 12 09:13:53 2011f
+    UpdateCommonBlocks(0);
+    //modified by NIZNHY-PKV Mon Dec 12 09:13:56 2011t
+    //
     // 5.EF
     PreparePaveBlocks(TopAbs_EDGE, TopAbs_FACE);
     PerformEF();
@@ -293,6 +297,9 @@
     //
     MakeAloneVertices();
     //
+    //modified by NIZNHY-PKV Mon Dec 12 09:14:23 2011f
+    myIP->Purge();
+    //modified by NIZNHY-PKV Mon Dec 12 09:14:27 2011t
     myIsDone=Standard_True;
   }
   catch (BOPTColStd_Failure& ) {

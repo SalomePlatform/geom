@@ -64,9 +64,12 @@ is
     class IteratorCheckerSI; 
     class Tools; 
     class InterfPool; 
-    --modified by NIZNHY-PKV Thu Jan 21 09:46:48 2010f 
-    class BndSphere;
-    --modified by NIZNHY-PKV Thu Jan 21 09:46:53 2010t 
+    class BndSphere; 
+    --modified by NIZNHY-PKV Mon Dec 12 08:39:27 2011f 
+    class Pair; 
+    class PairBoolean;  
+    class PairMapHasher;
+    --modified by NIZNHY-PKV Mon Dec 12 08:39:30 2011t
     --     
     pointer PShapesDataStructure to ShapesDataStructure from NMTDS;
     pointer PIterator to Iterator from NMTDS;
@@ -78,11 +81,6 @@ is
     class ListOfIndexedDataMapOfShapeAncestorsSuccessors instantiates 
 	List from TCollection(IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations); 
 	 
-    class IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger instantiates 
-    	IndexedDataMap from TCollection(Integer        from Standard, 
-	    	    	    	    	IndexedDataMapOfShapeInteger from BooleanOperations, 
-					MapIntegerHasher from TColStd); 
-    
     class ListOfPassKey  instantiates 
 	List from TCollection(PassKey from NMTDS);  
      
@@ -111,11 +109,28 @@ is
 	    	    	    	    	    	    	 MapOfInteger from TColStd, 
 							 MapIntegerHasher from TColStd); 
     
-    --modified by NIZNHY-PKV Thu Jan 21 09:47:13 2010f 
+   
     class IndexedDataMapOfShapeBndSphere  
     	instantiates IndexedDataMap from TCollection(Shape from TopoDS,
 	    		    		             BndSphere from NMTDS,
     	    		    		             ShapeMapHasher from TopTools);
-    --modified by NIZNHY-PKV Thu Jan 21 09:47:26 2010 
-    
+ 
+     
+    --modified by NIZNHY-PKV Mon Dec 12 08:41:50 2011f
+    class ListOfPair  instantiates 
+	List from TCollection(Pair from NMTDS);   
+	 
+    class ListOfPairBoolean  instantiates 
+	List from TCollection(PairBoolean from NMTDS);  
+     
+    class MapOfPairBoolean instantiates
+    	Map from TCollection(PairBoolean from NMTDS, 
+    	    	    	     PairMapHasher from NMTDS); 
+--    class IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger instantiates 
+--    	IndexedDataMap from TCollection(Integer        from Standard, 
+--	    	    	    	    	IndexedDataMapOfShapeInteger from BooleanOperations, 
+--					MapIntegerHasher from TColStd);  
+    --modified by NIZNHY-PKV Mon Dec 12 08:41:54 2011t
+  
+
 end NMTDS;

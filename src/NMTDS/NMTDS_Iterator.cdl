@@ -21,7 +21,7 @@
 --
 
 --  File:	NMTDS_Iterator.cdl
---  Created:	Sun May 07 14:58:16 2006
+--  Created:	
 --  Author:	Peter KURNEV
 --
 class Iterator from NMTDS 
@@ -33,8 +33,8 @@ uses
     ShapeEnum from TopAbs, 
     ShapesDataStructure  from NMTDS,
     PShapesDataStructure from NMTDS,
-    ListOfPassKeyBoolean from NMTDS,
-    ListIteratorOfListOfPassKeyBoolean from NMTDS,
+    ListOfPairBoolean from NMTDS,  
+    ListIteratorOfListOfPairBoolean from NMTDS, 
     PassKeyBoolean from NMTDS 
     
 --raises
@@ -85,10 +85,10 @@ is
     	aMVSD2:out DataMapOfIntegerListOfInteger from TColStd); 
  
 fields
-    myDS       :PShapesDataStructure from NMTDS     is protected; 
-    myLists    :ListOfPassKeyBoolean from NMTDS [6] is protected;  
-    myIterator :ListIteratorOfListOfPassKeyBoolean from NMTDS is protected; 
-    myEmptyList:ListOfPassKeyBoolean from NMTDS is protected; 
+    myDS       :PShapesDataStructure from NMTDS     is protected;  
+    myLists    :ListOfPairBoolean from NMTDS [6] is protected;  
+    myIterator :ListIteratorOfListOfPairBoolean from NMTDS is protected; 
+    myEmptyList:ListOfPairBoolean from NMTDS is protected;  
     myLength   :Integer from Standard is protected; 
     --
     myMVSD     :DataMapOfIntegerListOfInteger from TColStd is protected;     

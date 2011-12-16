@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTTools_PaveFiller_HeaderFile
 #define _NMTTools_PaveFiller_HeaderFile
@@ -305,9 +304,11 @@ protected:
   Standard_EXPORT     void EFNewVertices(const TopoDS_Vertex& aV,const BooleanOperations_IndexedDataMapOfShapeInteger& aM) ;
   
   Standard_EXPORT     void UpdateCommonBlocks() ;
-  
+
+  Standard_EXPORT     void UpdateCommonBlocks (const Standard_Integer aI);
+
   Standard_EXPORT     void UpdatePaveBlocks() ;
-  
+
   Standard_EXPORT     Standard_Integer SplitIndex(const BOPTools_PaveBlock& aPB) const;
   
   Standard_EXPORT     void MakeBlocks() ;
@@ -347,11 +348,6 @@ private:
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
-
 
 #endif

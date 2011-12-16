@@ -21,7 +21,7 @@
 --
 
 --  File:	NMTDS_ShapesDataStructure.cdl
---  Created:	Mon Dec  1 10:17:05 2003
+--  Created:	
 --  Author:	Peter KURNEV
 --
 class ShapesDataStructure from NMTDS  
@@ -34,8 +34,11 @@ uses
     IndexedMapOfInteger from TColStd,
     Shape from TopoDS, 
     IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations,
-    CArray1OfIndexRange from NMTDS, 
-    IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS
+    CArray1OfIndexRange from NMTDS,  
+    --modified by NIZNHY-PKV Mon Dec 12 08:57:18 2011f	
+    DataMapOfShapeInteger from TopTools 
+    --IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS  
+    --modified by NIZNHY-PKV Mon Dec 12 08:57:22 2011t
 --raises
 
 is 
@@ -70,8 +73,6 @@ is
     	returns Integer from Standard  
     	is redefined;   
 
--- Modified to Add new methods Thu Sep 14 14:35:18 2006 
--- Contribution of Samtech www.samcef.com BEGIN 
     FillMap (me;  
     	    aS  :Shape from TopoDS; 
     	    aMSA: out IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations;  
@@ -81,7 +82,6 @@ is
     	    aS  :Shape from TopoDS; 
     	    aMSA:out IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations;  
     	    aMS :out IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations); 
--- Contribution of Samtech www.samcef.com END 
 
     GetAllSuccessors(me; 
     	anIndex:Integer from Standard; 
@@ -93,8 +93,10 @@ is
 
 fields
     myCompositeShape:  Shape from TopoDS is protected; 
-    myRanges        :  CArray1OfIndexRange from NMTDS is protected; 
-    myShapeIndexMap :  IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS is protected;  
-     
+    myRanges        :  CArray1OfIndexRange from NMTDS is protected;  
+    --modified by NIZNHY-PKV Mon Dec 12 08:58:07 2011f 
+    myShapeIndexMap : DataMapOfShapeInteger from TopTools is protected;  
+    --myShapeIndexMap :  IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger from NMTDS is protected;  
+    --modified by NIZNHY-PKV Mon Dec 12 08:58:21 2011t 
 end ShapesDataStructure;
     

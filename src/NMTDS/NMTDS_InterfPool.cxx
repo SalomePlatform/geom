@@ -15,18 +15,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
-// File:        NMTDS_.InterfPoolcxx
-// Created:     Wed Feb 21 10:35:35 2007
+// File:        NMTDS_InterfPool.cxx
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <NMTDS_InterfPool.ixx>
-#include <NMTDS_PassKeyBoolean.hxx>
-#include <NMTDS_ListOfPassKeyBoolean.hxx>
-#include <NMTDS_MapIteratorOfMapOfPassKeyBoolean.hxx>
-#include <NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx>
+
+#include <NMTDS_PairBoolean.hxx>
+#include <NMTDS_ListOfPairBoolean.hxx>
+#include <NMTDS_MapIteratorOfMapOfPairBoolean.hxx>
+#include <NMTDS_ListIteratorOfListOfPairBoolean.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 static
   Standard_Integer TypeToInteger(const NMTDS_InterfType aType);
@@ -35,7 +35,7 @@ static
 //function : 
 //purpose  : 
 //=======================================================================
-  NMTDS_InterfPool::NMTDS_InterfPool()
+NMTDS_InterfPool::NMTDS_InterfPool()
 {
   myMaxInd=6;
 }
@@ -50,8 +50,8 @@ static
 //function : Add
 //purpose  : 
 //=======================================================================
-  Standard_Boolean NMTDS_InterfPool::Add (const NMTDS_PassKeyBoolean& aPKB,
-                                          const NMTDS_InterfType aType)
+Standard_Boolean NMTDS_InterfPool::Add (const NMTDS_PairBoolean& aPKB,
+					const NMTDS_InterfType aType)
 {
   Standard_Boolean bRet;
   Standard_Integer iType;
@@ -68,11 +68,11 @@ static
 //function : Add
 //purpose  : 
 //=======================================================================
-  Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
-                                          const Standard_Integer aInd2,
-                                          const NMTDS_InterfType aType)
+Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
+					const Standard_Integer aInd2,
+					const NMTDS_InterfType aType)
 {
-  NMTDS_PassKeyBoolean aPKB;
+  NMTDS_PairBoolean aPKB;
   //
   aPKB.SetIds(aInd1, aInd2);
   return Add(aPKB, aType);
@@ -81,12 +81,12 @@ static
 //function : Add
 //purpose  : 
 //=======================================================================
-  Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
-                                          const Standard_Integer aInd2,
-                                          const Standard_Boolean bFlag,
-                                          const NMTDS_InterfType aType)
+Standard_Boolean NMTDS_InterfPool::Add (const Standard_Integer aInd1,
+					const Standard_Integer aInd2,
+					const Standard_Boolean bFlag,
+					const NMTDS_InterfType aType)
 {
-  NMTDS_PassKeyBoolean aPKB;
+  NMTDS_PairBoolean aPKB;
   //
   aPKB.SetIds(aInd1, aInd2);
   aPKB.SetFlag(bFlag);
@@ -96,7 +96,7 @@ static
 //function : Contains 
 //purpose  : 
 //=======================================================================
-  Standard_Boolean NMTDS_InterfPool::Contains(const NMTDS_PassKeyBoolean& aPKB)const
+Standard_Boolean NMTDS_InterfPool::Contains(const NMTDS_PairBoolean& aPKB)const
 {
   Standard_Boolean bRet;
   Standard_Integer i;
@@ -116,7 +116,7 @@ static
   Standard_Boolean NMTDS_InterfPool::Contains(const Standard_Integer aInd1,
                                               const Standard_Integer aInd2)const
 {
-  NMTDS_PassKeyBoolean aPKB;
+  NMTDS_PairBoolean aPKB;
   //
   aPKB.SetIds(aInd1, aInd2);
   return Contains(aPKB);
@@ -125,20 +125,20 @@ static
 //function :  Get
 //purpose  : 
 //=======================================================================
-  const NMTDS_ListOfPassKeyBoolean& NMTDS_InterfPool::Get()const
+const NMTDS_ListOfPairBoolean& NMTDS_InterfPool::Get()const
 {
   Standard_Integer i;
-  NMTDS_ListOfPassKeyBoolean* pL;
+  NMTDS_ListOfPairBoolean* pL;
   //
-  pL=(NMTDS_ListOfPassKeyBoolean*)&myList;
+  pL=(NMTDS_ListOfPairBoolean*)&myList;
   pL->Clear();
   //
   for (i=0; i<myMaxInd; ++i) {
-    NMTDS_MapIteratorOfMapOfPassKeyBoolean aIt;
+    NMTDS_MapIteratorOfMapOfPairBoolean aIt;
     //
     aIt.Initialize(myTable[i]);
     for(; aIt.More(); aIt.Next()) {
-      const NMTDS_PassKeyBoolean& aPKB=aIt.Key();
+      const NMTDS_PairBoolean& aPKB=aIt.Key();
       pL->Append(aPKB);
     }
   }
@@ -148,20 +148,21 @@ static
 //function :  Get
 //purpose  : 
 //=======================================================================
-  const NMTDS_ListOfPassKeyBoolean& NMTDS_InterfPool::Get(const Standard_Integer aInd)const
+const NMTDS_ListOfPairBoolean& NMTDS_InterfPool::Get
+  (const Standard_Integer aInd)const
 {
   Standard_Integer i, n1, n2;
-  NMTDS_ListOfPassKeyBoolean* pL;
+  NMTDS_ListOfPairBoolean* pL;
   //
-  pL=(NMTDS_ListOfPassKeyBoolean*)&myList;
+  pL=(NMTDS_ListOfPairBoolean*)&myList;
   pL->Clear();
   //
   for (i=0; i<myMaxInd; ++i) {
-    NMTDS_MapIteratorOfMapOfPassKeyBoolean aIt;
+    NMTDS_MapIteratorOfMapOfPairBoolean aIt;
     //
     aIt.Initialize(myTable[i]);
     for(; aIt.More(); aIt.Next()) {
-      const NMTDS_PassKeyBoolean& aPKB=aIt.Key();
+      const NMTDS_PairBoolean& aPKB=aIt.Key();
       aPKB.Ids(n1, n2);
       if(n1==aInd || n2==aInd) {
         pL->Append(aPKB);
@@ -174,21 +175,22 @@ static
 //function :  Get
 //purpose  : 
 //=======================================================================
-  const NMTDS_ListOfPassKeyBoolean& NMTDS_InterfPool::Get(const NMTDS_InterfType aType)const
+const NMTDS_ListOfPairBoolean& NMTDS_InterfPool::Get
+  (const NMTDS_InterfType aType)const
 {
   Standard_Integer iType;
-  NMTDS_ListOfPassKeyBoolean* pL;
+  NMTDS_ListOfPairBoolean* pL;
   //
-  pL=(NMTDS_ListOfPassKeyBoolean*)&myList;
+  pL=(NMTDS_ListOfPairBoolean*)&myList;
   pL->Clear();
   //
   iType=TypeToInteger(aType);
   if (iType>-1 && iType<myMaxInd) {
-    NMTDS_MapIteratorOfMapOfPassKeyBoolean aIt;
+    NMTDS_MapIteratorOfMapOfPairBoolean aIt;
     //
     aIt.Initialize(myTable[iType]);
     for(; aIt.More(); aIt.Next()) {
-      const NMTDS_PassKeyBoolean& aPKB=aIt.Key();
+      const NMTDS_PairBoolean& aPKB=aIt.Key();
       pL->Append(aPKB);
     }
   }
@@ -198,21 +200,22 @@ static
 //function :  Get
 //purpose  : 
 //=======================================================================
-  const NMTDS_ListOfPassKeyBoolean& NMTDS_InterfPool::Get(const Standard_Integer aInd,
-                                                          const NMTDS_InterfType aType)const
+const NMTDS_ListOfPairBoolean& NMTDS_InterfPool::Get
+  (const Standard_Integer aInd,
+   const NMTDS_InterfType aType)const
 {
   Standard_Integer n1, n2;
-  NMTDS_ListOfPassKeyBoolean *pL, aLPKB;
-  NMTDS_ListIteratorOfListOfPassKeyBoolean aIt;
+  NMTDS_ListOfPairBoolean *pL, aLPKB;
+  NMTDS_ListIteratorOfListOfPairBoolean aIt;
   //
   aLPKB=Get(aType);
   //
-  pL=(NMTDS_ListOfPassKeyBoolean*)&myList;
+  pL=(NMTDS_ListOfPairBoolean*)&myList;
   pL->Clear();
   //
   aIt.Initialize (aLPKB);
   for (; aIt.More(); aIt.Next()) {
-    const NMTDS_PassKeyBoolean& aPKB=aIt.Value();
+    const NMTDS_PairBoolean& aPKB=aIt.Value();
     aPKB.Ids(n1, n2);
     if(n1==aInd || n2==aInd) {
       pL->Append(aPKB);
@@ -225,7 +228,7 @@ static
 //function : SSInterferences
 //purpose  : 
 //===========================================================================
-  BOPTools_CArray1OfSSInterference&  NMTDS_InterfPool::SSInterferences()
+BOPTools_CArray1OfSSInterference&  NMTDS_InterfPool::SSInterferences()
 {
   return mySSInterferences;
 }
@@ -233,7 +236,7 @@ static
 //function : ESInterferences
 //purpose  : 
 //===========================================================================
-  BOPTools_CArray1OfESInterference&  NMTDS_InterfPool::ESInterferences()
+BOPTools_CArray1OfESInterference&  NMTDS_InterfPool::ESInterferences()
 {
   return myESInterferences;
 }
@@ -241,7 +244,7 @@ static
 //function : VSInterferences
 //purpose  : 
 //===========================================================================
-  BOPTools_CArray1OfVSInterference&  NMTDS_InterfPool::VSInterferences()
+BOPTools_CArray1OfVSInterference&  NMTDS_InterfPool::VSInterferences()
 {
   return myVSInterferences;
 }
@@ -249,7 +252,7 @@ static
 //function : EEInterferences
 //purpose  : 
 //===========================================================================
-  BOPTools_CArray1OfEEInterference&  NMTDS_InterfPool::EEInterferences()
+BOPTools_CArray1OfEEInterference&  NMTDS_InterfPool::EEInterferences()
 {
   return myEEInterferences;
 }
@@ -257,7 +260,7 @@ static
 //function : VEInterferences
 //purpose  : 
 //===========================================================================
-  BOPTools_CArray1OfVEInterference&  NMTDS_InterfPool::VEInterferences()
+BOPTools_CArray1OfVEInterference&  NMTDS_InterfPool::VEInterferences()
 {
   return myVEInterferences;
 }
@@ -265,11 +268,29 @@ static
 //function : VVInterferences
 //purpose  : 
 //===========================================================================
-  BOPTools_CArray1OfVVInterference&  NMTDS_InterfPool::VVInterferences()
+BOPTools_CArray1OfVVInterference&  NMTDS_InterfPool::VVInterferences()
 {
   return myVVInterferences;
 }
-////////////////////
+
+//modified by NIZNHY-PKV Mon Dec 12 09:07:54 2011f
+//=======================================================================
+//function : Purge
+//purpose  : 
+//=======================================================================
+void NMTDS_InterfPool::Purge()
+{
+#if OCC_VERSION_LARGE > 0x06050200
+  myVVInterferences.Purge();
+  myVEInterferences.Purge();
+  myEEInterferences.Purge();
+  myVSInterferences.Purge();
+  myESInterferences.Purge();
+  mySSInterferences.Purge();
+#endif
+}
+//modified by NIZNHY-PKV Mon Dec 12 09:07:58 2011t
+
 //=======================================================================
 //function : TypeToInteger
 //purpose  : 

@@ -18,12 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        NMTDS_Iterator.cxx
-// Created:     Sun May 07 15:04:41 2006
 // Author:      Peter KURNEV
-//
+
 #include <NMTDS_Iterator.ixx>
 //
 #include <Bnd_Box.hxx>
@@ -47,8 +45,8 @@
 #include <NCollection_UBTreeFiller.hxx>
 #include <NMTDS_CArray1OfIndexRange.hxx>
 #include <NMTDS_IndexRange.hxx>
-#include <NMTDS_PassKeyBoolean.hxx>
-#include <NMTDS_MapOfPassKeyBoolean.hxx>
+#include <NMTDS_PairBoolean.hxx>
+#include <NMTDS_MapOfPairBoolean.hxx>
 #include <NMTDS_IndexedDataMapOfShapeBox.hxx>
 #include <NMTDS_IndexedDataMapOfIntegerShape.hxx>
 #include <NMTDS_Tools.hxx>
@@ -59,7 +57,7 @@
 //function : NMTDS_Iterator
 //purpose  : 
 //=======================================================================
-  NMTDS_Iterator::NMTDS_Iterator()
+NMTDS_Iterator::NMTDS_Iterator()
 {
   myDS=NULL; 
   myLength=0;
@@ -68,14 +66,14 @@
 //function : ~NMTDS_Iterator
 //purpose  : 
 //=======================================================================
-  NMTDS_Iterator::~NMTDS_Iterator()
+NMTDS_Iterator::~NMTDS_Iterator()
 {
 }
 //=======================================================================
 // function: SetDS
 // purpose: 
 //=======================================================================
-  void NMTDS_Iterator::SetDS(const NMTDS_PShapesDataStructure& aDS)
+void NMTDS_Iterator::SetDS(const NMTDS_PShapesDataStructure& aDS)
 {
   myDS=aDS;
 }
@@ -83,7 +81,7 @@
 // function: DS
 // purpose: 
 //=======================================================================
-  const NMTDS_ShapesDataStructure&  NMTDS_Iterator::DS()const
+const NMTDS_ShapesDataStructure&  NMTDS_Iterator::DS()const
 {
   return *myDS;
 }
@@ -91,7 +89,7 @@
 // function: ExpectedLength
 // purpose: 
 //=======================================================================
-  Standard_Integer NMTDS_Iterator::ExpectedLength() const
+Standard_Integer NMTDS_Iterator::ExpectedLength() const
 {
   return myLength;
 }
@@ -99,9 +97,9 @@
 // function: BlockLength
 // purpose: 
 //=======================================================================
-  Standard_Integer NMTDS_Iterator::BlockLength() const
+Standard_Integer NMTDS_Iterator::BlockLength() const
 {
-  Standard_Integer aNbIIs;
+  Standard_Integer aNbIIs, iTresh;
   Standard_Real aCfPredict=.5;
   
   aNbIIs=ExpectedLength();
@@ -109,6 +107,13 @@
   if (aNbIIs<=1) {
     return 1;
   }
+  //modified by NIZNHY-PKV Mon Dec 12 08:50:50 2011f
+  iTresh=1000;
+  if (aNbIIs>iTresh) {
+    aNbIIs=iTresh;
+    return aNbIIs;
+  }
+  //modified by NIZNHY-PKV Mon Dec 12 08:50:54 2011t
   //
   aNbIIs=(Standard_Integer) (aCfPredict*(Standard_Real)aNbIIs);
   return aNbIIs;
@@ -117,8 +122,8 @@
 // function: Initialize
 // purpose: 
 //=======================================================================
-  void NMTDS_Iterator::Initialize(const TopAbs_ShapeEnum aType1,
-                                  const TopAbs_ShapeEnum aType2)
+void NMTDS_Iterator::Initialize(const TopAbs_ShapeEnum aType1,
+				const TopAbs_ShapeEnum aType2)
 {
   Standard_Integer iX;
   //
@@ -136,7 +141,7 @@
 // function: More
 // purpose: 
 //=======================================================================
-  Standard_Boolean NMTDS_Iterator::More()const
+Standard_Boolean NMTDS_Iterator::More()const
 {
   return myIterator.More();
 }
@@ -144,7 +149,7 @@
 // function: Next
 // purpose: 
 //=======================================================================
-  void NMTDS_Iterator::Next()
+void NMTDS_Iterator::Next()
 {
   myIterator.Next();
 }
@@ -152,11 +157,11 @@
 // function: Current
 // purpose: 
 //=======================================================================
-  void NMTDS_Iterator::Current(Standard_Integer& aIndex1,
-                               Standard_Integer& aIndex2,
-                               Standard_Boolean& aWithSubShape) const
+void NMTDS_Iterator::Current(Standard_Integer& aIndex1,
+			     Standard_Integer& aIndex2,
+			     Standard_Boolean& aWithSubShape) const
 {
-  const NMTDS_PassKeyBoolean& aPKB=myIterator.Value();
+  const NMTDS_PairBoolean& aPKB=myIterator.Value();
   aPKB.Ids(aIndex1, aIndex2);
   aWithSubShape=aPKB.Flag();
 }
@@ -164,7 +169,7 @@
 // function: SDVertices
 // purpose: 
 //=======================================================================
-  const TColStd_DataMapOfIntegerListOfInteger& NMTDS_Iterator::SDVertices()const
+const TColStd_DataMapOfIntegerListOfInteger& NMTDS_Iterator::SDVertices()const
 {
   return myMVSD;
 }
@@ -172,7 +177,7 @@
 // function: Prepare
 // purpose: 
 //=======================================================================
-  void NMTDS_Iterator::Prepare()
+void NMTDS_Iterator::Prepare()
 {
   Standard_Integer i;
   //
@@ -191,7 +196,7 @@
 // function: Intersect
 // purpose: 
 //=======================================================================
-  void NMTDS_Iterator::Intersect()
+void NMTDS_Iterator::Intersect()
 {
   Standard_Boolean bFlag;
   Standard_Integer aNb, i, aNbB, aNbR, iFlag;
@@ -202,8 +207,8 @@
   TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItVSD;
   TopTools_DataMapOfShapeInteger aMSI;
   TopAbs_ShapeEnum aTi, aTj;
-  NMTDS_PassKeyBoolean aPKXB; 
-  NMTDS_MapOfPassKeyBoolean aMPKXB;
+  NMTDS_PairBoolean aPKXB; 
+  NMTDS_MapOfPairBoolean aMPKXB;
   NMTDS_IndexedDataMapOfShapeBox aMSB;
   //
   NMTDS_BoxBndTreeSelector aSelector;
@@ -317,13 +322,10 @@
           }
         }
 	//
-	//modified by NIZNHY-PKV Mon Sep 27 08:31:04 2010f
 	aNbLV1=aLV1.Extent();
 	if (aNbLV1) {
 	  aMVSD.Bind(i, aLV1);
 	}
-	//aMVSD.Bind(i, aLV1);
-	//modified by NIZNHY-PKV Mon Sep 27 08:31:21 2010t
       }
     }//for (i=i1; i<=i2; ++i) {
   }//for (iR=1; iR<aNbR; ++iR) {
@@ -333,13 +335,18 @@
   //=================
   myMVSD.Clear();
   NMTDS_Iterator::FillMVSD(aMVSD, myMVSD);
+  
+  //modified by NIZNHY-PKV Mon Dec 12 09:51:29 2011f
+  aMPKXB.Clear();
+  Standard::Purge();
+  //modified by NIZNHY-PKV Mon Dec 12 09:51:33 2011t
 }
 //=======================================================================
 //function : FillMVSD
 //purpose  : 
 //=======================================================================
-  void NMTDS_Iterator::FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD,
-                                TColStd_DataMapOfIntegerListOfInteger& bMVSD)
+void NMTDS_Iterator::FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD,
+			      TColStd_DataMapOfIntegerListOfInteger& bMVSD)
 {
   Standard_Boolean bFound;
   Standard_Integer aNbVSD, iCnt, i, j, k;

@@ -15,15 +15,13 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM NMTAlgo : partition algorithm
 #  File   : Makefile.in
 #  Author : Julia DOROVSKIKH
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header$
-#
+
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # header files 
@@ -33,6 +31,9 @@ salomeinclude_HEADERS = \
 	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx \
 	Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfShapeBox.hxx \
 	Handle_NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
+	Handle_NMTDS_ListNodeOfListOfPair.hxx \
+	Handle_NMTDS_ListNodeOfListOfPairBoolean.hxx \
+	Handle_NMTDS_StdMapNodeOfMapOfPairBoolean.hxx \
 	Handle_NMTDS_ListNodeOfListOfPassKeyBoolean.hxx \
 	Handle_NMTDS_ListNodeOfListOfPassKey.hxx \
 	Handle_NMTDS_StdMapNodeOfMapOfPassKeyBoolean.hxx \
@@ -64,6 +65,24 @@ salomeinclude_HEADERS = \
 	NMTDS_IteratorCheckerSI.ixx \
 	NMTDS_IteratorCheckerSI.jxx \
 	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
+	NMTDS_ListIteratorOfListOfPair.hxx \
+	NMTDS_ListIteratorOfListOfPairBoolean.hxx \
+	NMTDS_ListNodeOfListOfPair.hxx \
+	NMTDS_ListNodeOfListOfPairBoolean.hxx \
+	NMTDS_ListOfPair.hxx \
+	NMTDS_ListOfPairBoolean.hxx \
+	NMTDS_MapIteratorOfMapOfPairBoolean.hxx \
+	NMTDS_MapOfPairBoolean.hxx \
+	NMTDS_Pair.hxx \
+	NMTDS_Pair.ixx \
+	NMTDS_Pair.jxx \
+	NMTDS_PairBoolean.hxx \
+	NMTDS_PairBoolean.ixx \
+	NMTDS_PairBoolean.jxx \
+	NMTDS_PairMapHasher.hxx \
+	NMTDS_PairMapHasher.ixx \
+	NMTDS_PairMapHasher.jxx \
+	NMTDS_StdMapNodeOfMapOfPairBoolean.hxx \
 	NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx \
 	NMTDS_ListIteratorOfListOfPassKey.hxx \
 	NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors.hxx \
@@ -130,6 +149,18 @@ dist_libNMTDS_la_SOURCES = \
 	NMTDS_Iterator.cxx \
 	NMTDS_IteratorCheckerSI.cxx \
 	NMTDS_ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors_0.cxx  \
+	NMTDS_ListIteratorOfListOfPairBoolean_0.cxx \
+	NMTDS_ListIteratorOfListOfPair_0.cxx \
+	NMTDS_ListNodeOfListOfPairBoolean_0.cxx \
+	NMTDS_ListNodeOfListOfPair_0.cxx \
+	NMTDS_ListOfPairBoolean_0.cxx \
+	NMTDS_ListOfPair_0.cxx \
+	NMTDS_MapIteratorOfMapOfPairBoolean_0.cxx \
+	NMTDS_MapOfPairBoolean_0.cxx \
+	NMTDS_Pair.cxx \
+	NMTDS_PairBoolean.cxx \
+	NMTDS_PairMapHasher.cxx \
+	NMTDS_StdMapNodeOfMapOfPairBoolean_0.cxx \
 	NMTDS_ListIteratorOfListOfPassKey_0.cxx  \
 	NMTDS_ListIteratorOfListOfPassKeyBoolean_0.cxx \
 	NMTDS_ListNodeOfListOfIndexedDataMapOfShapeAncestorsSuccessors_0.cxx \
@@ -173,6 +204,9 @@ CDL_FILES =				\
 	NMTDS_InterfPool.cdl		\
 	NMTDS_Iterator.cdl		\
 	NMTDS_IteratorCheckerSI.cdl	\
+	NMTDS_Pair.cdl			\
+	NMTDS_PairBoolean.cdl		\
+	NMTDS_PairMapHasher.cdl		\
 	NMTDS_PassKey.cdl		\
 	NMTDS_PassKeyBoolean.cdl	\
 	NMTDS_PassKeyMapHasher.cdl	\

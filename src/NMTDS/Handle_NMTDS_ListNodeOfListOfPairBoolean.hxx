@@ -1,5 +1,8 @@
 // Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -16,30 +19,25 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-#ifndef _NMTDS_PairBoolean_HeaderFile
-#include <NMTDS_PairBoolean.hxx>
+#ifndef _Handle_NMTDS_ListNodeOfListOfPairBoolean_HeaderFile
+#define _Handle_NMTDS_ListNodeOfListOfPairBoolean_HeaderFile
+
+#ifndef _Standard_HeaderFile
+#include <Standard.hxx>
 #endif
-#ifndef _NMTDS_ListOfPairBoolean_HeaderFile
-#include <NMTDS_ListOfPairBoolean.hxx>
+#ifndef _Standard_DefineHandle_HeaderFile
+#include <Standard_DefineHandle.hxx>
 #endif
-#ifndef _BOPTools_CArray1OfSSInterference_HeaderFile
-#include <BOPTools_CArray1OfSSInterference.hxx>
+
+#ifndef _Handle_TCollection_MapNode_HeaderFile
+#include <Handle_TCollection_MapNode.hxx>
 #endif
-#ifndef _BOPTools_CArray1OfESInterference_HeaderFile
-#include <BOPTools_CArray1OfESInterference.hxx>
-#endif
-#ifndef _BOPTools_CArray1OfVSInterference_HeaderFile
-#include <BOPTools_CArray1OfVSInterference.hxx>
-#endif
-#ifndef _BOPTools_CArray1OfEEInterference_HeaderFile
-#include <BOPTools_CArray1OfEEInterference.hxx>
-#endif
-#ifndef _BOPTools_CArray1OfVEInterference_HeaderFile
-#include <BOPTools_CArray1OfVEInterference.hxx>
-#endif
-#ifndef _BOPTools_CArray1OfVVInterference_HeaderFile
-#include <BOPTools_CArray1OfVVInterference.hxx>
-#endif
-#ifndef _NMTDS_InterfPool_HeaderFile
-#include <NMTDS_InterfPool.hxx>
+
+class Standard_Transient;
+class Handle(Standard_Type);
+class Handle(TCollection_MapNode);
+class NMTDS_ListNodeOfListOfPairBoolean;
+
+DEFINE_STANDARD_HANDLE(NMTDS_ListNodeOfListOfPairBoolean,TCollection_MapNode)
+
 #endif

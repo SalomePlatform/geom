@@ -20,7 +20,7 @@
 --  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 --
 -- File:	NMTTools_PaveFiller.cdl
--- Created:	Fri Dec  5 14:35:00 2003
+-- Created:	
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
 --
@@ -252,7 +252,13 @@ is
     	is protected;   
 	 
     UpdateCommonBlocks(me:out) 
+    	is protected;   
+	
+    --modified by NIZNHY-PKV Mon Dec 12 09:12:15 2011f  
+    UpdateCommonBlocks(me:out; 
+    	    aI:Integer from Standard) 
     	is protected;  
+    --modified by NIZNHY-PKV Mon Dec 12 09:12:21 2011t 
      
     UpdatePaveBlocks(me:out) 
     	is protected; 
@@ -385,11 +391,9 @@ is
     	         nF2 :Integer from Standard;  
     	         aLs :out ListOfPaveBlock from BOPTools);  
  
---modified by NIZNHY-PKV Mon Oct 17 11:43:23 2011f 
-     RealSplitsInFace(me:out; 
+    RealSplitsInFace(me:out; 
     	         nF1 :Integer from Standard;  
     	         aLPB :out ListOfPaveBlock from BOPTools); 
---modified by NIZNHY-PKV Mon Oct 17 11:43:39 2011t 
  
     RealSplitsOnEdge(me:out; 
     	         nE1 :Integer from Standard;  

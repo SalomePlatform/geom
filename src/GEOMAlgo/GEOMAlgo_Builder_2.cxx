@@ -19,7 +19,6 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:        GEOMAlgo_Builder_2.cxx
 // Author:      Peter KURNEV
 
@@ -107,7 +106,7 @@ static
 //function : FillImagesFaces
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_Builder::FillImagesFaces()
+void GEOMAlgo_Builder::FillImagesFaces()
 {
   myErrorStatus=0;
   //
@@ -122,7 +121,7 @@ static
 // function: FillIn2DParts
 // purpose:
 //=======================================================================
-  void GEOMAlgo_Builder::FillIn2DParts()
+void GEOMAlgo_Builder::FillIn2DParts()
 {
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
@@ -155,7 +154,6 @@ static
     aLSpIn.Clear();
     //
     // 1. In Parts
-    //modified by NIZNHY-PKV Fri Oct 14 13:58:00 2011f 
     BOPTools_ListOfPaveBlock aLPBIn;
     //
     pPF->RealSplitsInFace(nF, aLPBIn);
@@ -167,24 +165,6 @@ static
       const TopoDS_Shape& aSpIn=aDS.Shape(nSpIn);
       aLSpIn.Append(aSpIn);
     }
-    /*
-    for (j=1; j<=aNbCBP; ++j) {
-      NMTTools_ListOfCommonBlock& aLCB=aCBP(j);
-      aItCB.Initialize(aLCB);
-      for (; aItCB.More(); aItCB.Next()) {
-        NMTTools_CommonBlock& aCB=aItCB.Value();
-        if (aCB.IsPaveBlockOnFace(nF)) {
-          const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1();
-          nSpIn=aPB1.Edge();
-          const TopoDS_Shape& aSpIn=aDS.Shape(nSpIn);
-          if (aMFence.Add(aSpIn)){
-            aLSpIn.Append(aSpIn);
-          }
-        }
-      }
-    }
-    */
-    //modified by NIZNHY-PKV Fri Oct 14 13:58:08 2011t
     //
     // 2. Section Parts
     for (j=1; j<=aNbFFs; ++j) {
@@ -222,7 +202,7 @@ static
 // function: BuildSplitFaces
 // purpose:
 //=======================================================================
-  void GEOMAlgo_Builder::BuildSplitFaces()
+void GEOMAlgo_Builder::BuildSplitFaces()
 {
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
@@ -426,7 +406,7 @@ static
 // function: FillSameDomainFaces
 // purpose:
 //=======================================================================
-  void GEOMAlgo_Builder::FillSameDomainFaces()
+void GEOMAlgo_Builder::FillSameDomainFaces()
 {
   Standard_Boolean bIsSDF, bHasImage1, bHasImage2, bForward;
   Standard_Integer i, j, aNbFF, nF1, nF2, aNbPBInOn, aNbC, aNbSE;
@@ -603,7 +583,6 @@ static
   //
   NMTTools_Tools::FindChains(aLCS, aMC); 
   //
-  //modified by NIZNHY-PKV Wed Oct 12 13:33:59 2011f
   Standard_Boolean bIsImage;
   Standard_Integer aIx, aIxMin, aNbMSDF, k, aNbMFj;
   TopoDS_Shape aFOld, aFSDmin;
@@ -624,15 +603,12 @@ static
     }
   }
   //
-  //modified by NIZNHY-PKV Wed Oct 12 13:34:01 2011t
-  //
   // 3. Fill the map of SDF mySameDomainFaces
   aNbC=aMC.Extent();
   for (i=1; i<=aNbC; ++i) {
    // const TopoDS_Shape& aF=aMC.FindKey(i);
     const TopTools_IndexedMapOfShape& aMSDF=aMC(i);
     //
-    //modified by NIZNHY-PKV Wed Oct 12 13:25:16 2011f
     aNbMSDF=aMSDF.Extent();
     for (j=1; j<=aNbMSDF; ++j) {
       const TopoDS_Shape& aFSD=aMSDF(j);
@@ -660,14 +636,6 @@ static
       const TopoDS_Shape& aFSD=aMSDF(j);
       mySameDomainShapes.Add(aFSD, aFSDmin);
     }
-    /*
-    aNbFF=aMSDF.Extent();
-    for (j=1; j<=aNbFF; ++j) {
-      const TopoDS_Shape& aFSD=aMSDF(j);
-      mySameDomainShapes.Add(aFSD, aF);
-    }
-    */
-    //modified by NIZNHY-PKV Wed Oct 12 13:25:18 2011t
   }
   //
 }
@@ -676,7 +644,7 @@ static
 // function: FillImagesFaces1
 // purpose:
 //=======================================================================
-  void GEOMAlgo_Builder::FillImagesFaces1()
+void GEOMAlgo_Builder::FillImagesFaces1()
 {
   Standard_Integer i, aNb, iSense, aNbLFx;
   TopoDS_Face aF, aFSp, aFSD;
@@ -734,14 +702,13 @@ static
 // function: FillInternalVertices
 // purpose:
 //=======================================================================
-  void GEOMAlgo_Builder::FillInternalVertices()
+void GEOMAlgo_Builder::FillInternalVertices()
 {
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   NMTDS_InterfPool* pIP=pPF->IP();
   IntTools_Context& aCtx= pPF->ChangeContext();
   //
-  /*BOPTools_CArray1OfSSInterference& aFFs=*/pIP->SSInterferences();
   BOPTools_CArray1OfVSInterference& aVFs=pIP->VSInterferences();
   BOPTools_CArray1OfESInterference& aEFs=pIP->ESInterferences();
   const NMTTools_IndexedDataMapOfIndexedMapOfInteger& aMAV=pPF->AloneVertices();

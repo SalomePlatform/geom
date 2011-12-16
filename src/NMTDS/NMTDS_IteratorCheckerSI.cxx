@@ -15,12 +15,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        NMTDS_IteratorChecker.cxx
-// Created:     Tue Feb  6 10:37:59 2007
 // Author:      Peter KURNEV
-//
+
 #include <NMTDS_IteratorCheckerSI.ixx>
 
 #include <TopAbs_ShapeEnum.hxx>
@@ -48,8 +46,8 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_CArray1OfIndexRange.hxx>
 #include <NMTDS_IndexRange.hxx>
-#include <NMTDS_PassKeyBoolean.hxx>
-#include <NMTDS_MapOfPassKeyBoolean.hxx>
+#include <NMTDS_PairBoolean.hxx>
+#include <NMTDS_MapOfPairBoolean.hxx>
 #include <NMTDS_IndexedDataMapOfShapeBox.hxx>
 #include <NMTDS_Tools.hxx>
 
@@ -57,7 +55,7 @@
 //function : 
 //purpose  : 
 //=======================================================================
-  NMTDS_IteratorCheckerSI::NMTDS_IteratorCheckerSI()
+NMTDS_IteratorCheckerSI::NMTDS_IteratorCheckerSI()
 :
   NMTDS_Iterator()
 {
@@ -66,14 +64,14 @@
 //function : ~
 //purpose  : 
 //=======================================================================
-  NMTDS_IteratorCheckerSI::~NMTDS_IteratorCheckerSI()
+NMTDS_IteratorCheckerSI::~NMTDS_IteratorCheckerSI()
 {
 }
 //=======================================================================
 // function: Intersect
 // purpose: 
 //=======================================================================
-  void NMTDS_IteratorCheckerSI::Intersect()
+void NMTDS_IteratorCheckerSI::Intersect()
 {
   Standard_Boolean bFlag;
   Standard_Integer aNbS, i, aNbA, aNbB, iFlag;
@@ -84,10 +82,10 @@
   TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger aItVSD;
   TopTools_DataMapOfShapeInteger aMSI;
   TopAbs_ShapeEnum aTi, aTj;
-  NMTDS_PassKeyBoolean aPKXB; 
-  NMTDS_MapOfPassKeyBoolean aMPKXB;
+  NMTDS_PairBoolean aPKXB; 
+  NMTDS_MapOfPairBoolean aMPKXB;
   NMTDS_IndexedDataMapOfShapeBox aMSB;
-  NMTDS_MapOfPassKeyBoolean aMPA;//myPairsAvoid
+  NMTDS_MapOfPairBoolean aMPA;//myPairsAvoid
   //
   NMTDS_BoxBndTreeSelector aSelector;
   NMTDS_BoxBndTree aBBTree;

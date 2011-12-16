@@ -39,9 +39,11 @@
 #include <NMTDS_Tools.hxx>
 #include <NMTDS_InterfPool.hxx>
 #include <NMTDS_PInterfPool.hxx>
-#include <NMTDS_PassKeyBoolean.hxx>
+//#include <NMTDS_PassKeyBoolean.hxx>
+#include <NMTDS_PairBoolean.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx>
+//#include <NMTDS_ListIteratorOfListOfPassKeyBoolean.hxx>
+#include <NMTDS_ListIteratorOfListOfPairBoolean.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -1376,14 +1378,17 @@ bool GEOMImpl_IMeasureOperations::CheckSelfIntersections
 
   // 3. Get the pairs of interfered shapes 
   NMTDS_PInterfPool pIP = aCSI.IP();
-  const NMTDS_ListOfPassKeyBoolean& aLPKB = pIP->Get();
+  //const NMTDS_ListOfPassKeyBoolean& aLPKB = pIP->Get();
+  const NMTDS_ListOfPairBoolean& aLPKB = pIP->Get();
 
   Standard_Integer n1, n2;
-  NMTDS_ListIteratorOfListOfPassKeyBoolean aIt;
+  //NMTDS_ListIteratorOfListOfPassKeyBoolean aIt;
+  NMTDS_ListIteratorOfListOfPairBoolean aIt;
 
   aIt.Initialize(aLPKB);
   for (; aIt.More(); aIt.Next()) {
-    const NMTDS_PassKeyBoolean& aPKB = aIt.Value();
+    //const NMTDS_PassKeyBoolean& aPKB = aIt.Value();
+    const NMTDS_PairBoolean& aPKB = aIt.Value();
     aPKB.Ids(n1, n2);
 
     if (n1 > aNbS || n2 > aNbS)

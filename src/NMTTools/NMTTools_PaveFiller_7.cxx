@@ -21,7 +21,7 @@
 //
 
 // File:        NMTTools_PaveFiller_7.cxx
-// Created:     Thu Dec 18 15:14:55 2003
+// Created:     
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
@@ -37,6 +37,8 @@
 #include <TopTools_DataMapOfShapeListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
+
+#include <GeomAPI_ProjectPointOnCurve.hxx>
 
 #include <TopAbs_Orientation.hxx>
 
@@ -82,18 +84,14 @@
 #include <NMTDS_InterfPool.hxx>
 
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
-// static 
-//   void FuseVertices(const TopoDS_Shape& aCompound,
-//                     TopTools_DataMapOfShapeShape& aDMVV);
-// Contribution of Samtech www.samcef.com END
+#include <NMTTools_MapOfPaveBlock.hxx>
+
 
 //=======================================================================
 // function: MakeSplitEdges
 // purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::MakeSplitEdges()
+void NMTTools_PaveFiller::MakeSplitEdges()
 {
   myIsDone=Standard_False;
   //
@@ -177,11 +175,146 @@
   } 
   myIsDone=Standard_True;
 }
+//modified by NIZNHY-PKV Mon Dec 12 09:16:37 2011f
 //=======================================================================
 // function: UpdateCommonBlocks
 // purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::UpdateCommonBlocks()
+void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
+{
+ 
+  Standard_Integer nE, aNbS,  nEx, nEMax, j, aNbPoints; 
+  Standard_Real aTolEx, aTolExMax, aTSRMax[2], aTx[2], aTmp;
+  gp_Pnt aPMax[2];
+  TopoDS_Edge aEMax;
+  BOPTools_ListIteratorOfListOfPaveBlock aItLPB, aItLPBS;
+  NMTTools_ListIteratorOfListOfCommonBlock aItLCB;
+  NMTTools_MapOfPaveBlock aMPB;
+  //
+  myIsDone=Standard_False;
+  //
+  aNbS=myDS->NumberOfShapesOfTheObject();
+  for (nE=1; nE<=aNbS; ++nE) {
+    if (myDS->GetShapeType(nE)!=TopAbs_EDGE){
+      continue;
+    }
+    //
+    const TopoDS_Edge& aE=*((TopoDS_Edge*)&myDS->Shape(nE));
+    if (BRep_Tool::Degenerated(aE)){
+      continue;
+    }
+    //
+    NMTTools_ListOfCommonBlock& aLCB=myCommonBlockPool(myDS->RefEdge(nE));
+    
+    // 1
+    aItLCB.Initialize(aLCB);
+    for (; aItLCB.More(); aItLCB.Next()) {
+      NMTTools_CommonBlock& aCB=aItLCB.Value();
+      //
+      BOPTools_PaveBlock aPBMax;
+      aTolExMax=-1.;
+      const BOPTools_ListOfPaveBlock &aLPB=aCB.PaveBlocks();
+      aItLPB.Initialize(aLPB);
+      for (; aItLPB.More(); aItLPB.Next()) {
+	const BOPTools_PaveBlock& aPBx=aItLPB.Value();
+	nEx=aPBx.OriginalEdge();
+	const TopoDS_Edge& aEx=*((TopoDS_Edge*)&myDS->Shape(nEx));
+	aTolEx=BRep_Tool::Tolerance(aEx);
+	if (aTolEx>aTolExMax) {
+	  aTolExMax=aTolEx;
+	  aEMax=aEx;
+	  aPBMax=aPBx;
+	}
+      }
+      //
+      // 2
+      if (aMPB.Contains(aPBMax)) {
+	continue;
+      }
+      aMPB.Add(aPBMax);
+      //
+      nEMax=aPBMax.OriginalEdge();
+      const IntTools_ShrunkRange& aISRMax=aPBMax.ShrunkRange();
+      const IntTools_Range& aSRMax=aISRMax.ShrunkRange();
+      const Bnd_Box& aBoxMax=aISRMax.BndBox();
+      aSRMax.Range(aTSRMax[0], aTSRMax[1]);
+      for (j=0; j<2; ++j) {
+	BOPTools_Tools::PointOnEdge(aEMax, aTSRMax[j], aPMax[j]);
+      }
+      //
+      // 3
+      aItLPB.Initialize(aLPB);
+      for (; aItLPB.More(); aItLPB.Next()) {
+	const BOPTools_PaveBlock& aPBx=aItLPB.Value();
+	nEx=aPBx.OriginalEdge();
+	if (nEx==nEMax) {
+	  continue;
+	}
+	//
+	const TopoDS_Edge& aEx=*((TopoDS_Edge*)&myDS->Shape(nEx));
+	GeomAPI_ProjectPointOnCurve& aPPCx=myContext.ProjPC(aEx);
+	//
+	for (j=0; j<2; ++j) {
+	  aPPCx.Perform(aPMax[j]);
+	  aNbPoints=aPPCx.NbPoints();
+	  if (!aNbPoints) {
+	    break;
+	  }
+	  aTx[j]=aPPCx.LowerDistanceParameter();
+	}
+	if (!aNbPoints) {
+	  // correction the range is impossible due to 
+	  // a projection problem
+	  continue;
+	}
+	//
+	if (aTx[0]>aTx[1]){
+	  aTmp=aTx[0];
+	  aTx[0]=aTx[1];
+	  aTx[1]=aTmp;
+	}
+	//
+	// 4 Correction
+	// 4.1 aPBx
+	{
+	  const IntTools_ShrunkRange& aISRx=aPBx.ShrunkRange();
+	  IntTools_Range *pSRx=(IntTools_Range *)(&aISRx.ShrunkRange());
+	  Bnd_Box *pBoxx=(Bnd_Box *)(&aISRx.BndBox());
+	  //
+	  pSRx->SetFirst(aTx[0]);
+	  pSRx->SetLast(aTx[1]);
+	  *pBoxx=aBoxMax;
+	}
+	//
+	// 4.2 aPBSx
+	BOPTools_ListOfPaveBlock& aLPBSx=mySplitShapesPool(myDS->RefEdge(nEx));
+	aItLPBS.Initialize(aLPBSx);
+	for (; aItLPBS.More(); aItLPBS.Next()) {
+	  const BOPTools_PaveBlock& aPBSx=aItLPBS.Value();
+	  if (!aPBSx.IsEqual(aPBx)) {
+	    continue;
+	  }
+	  //
+	  const IntTools_ShrunkRange& aISRx=aPBSx.ShrunkRange();
+	  IntTools_Range *pSRx=(IntTools_Range *)(&aISRx.ShrunkRange());
+	  Bnd_Box *pBoxx=(Bnd_Box *)(&aISRx.BndBox());
+	  //
+	  pSRx->SetFirst(aTx[0]);
+	  pSRx->SetLast(aTx[1]);
+	  *pBoxx=aBoxMax;
+	}
+	//
+	//
+      }//for (; aItLPB.More(); aItLPB.Next()) {
+    }//for (; aItLCB.More(); aItLCB.Next()) {
+  }//for (nE=1; nE<=aNbS; ++nE) { 
+}
+//modified by NIZNHY-PKV Mon Dec 12 09:16:44 2011t
+//=======================================================================
+// function: UpdateCommonBlocks
+// purpose: 
+//=======================================================================
+void NMTTools_PaveFiller::UpdateCommonBlocks()
 {
   myIsDone=Standard_False;
   //
@@ -206,7 +339,6 @@
     for (; aCBIt.More(); aCBIt.Next()) {
       NMTTools_CommonBlock& aCB=aCBIt.Value();
       //
-      //modified by NIZNHY-PKV Wed Nov  8 15:59:46 2006f
       // Among all PBs of aCB the first PB will be one
       // that have max tolerance value 
       {
@@ -233,7 +365,6 @@
         pLPB->Clear();
         *pLPB=aLPBx;
       }
-      //modified by NIZNHY-PKV Wed Nov  8 15:59:50 2006t
       //
       BOPTools_PaveBlock& aPB=aCB.PaveBlock1(nE);
       nSp=SplitIndex(aPB);
@@ -259,7 +390,8 @@
 // function: SplitIndex
 // purpose: 
 //=======================================================================
-  Standard_Integer NMTTools_PaveFiller::SplitIndex(const BOPTools_PaveBlock& aPBx)const 
+Standard_Integer NMTTools_PaveFiller::SplitIndex
+  (const BOPTools_PaveBlock& aPBx)const 
 {
   Standard_Integer anOriginalEdge, anEdgeIndex=0;
 
@@ -281,7 +413,7 @@
 // function: UpdatePaveBlocks
 // purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::UpdatePaveBlocks()
+void NMTTools_PaveFiller::UpdatePaveBlocks()
 {
   myIsDone=Standard_False;
   //
@@ -351,15 +483,11 @@
     }
   }
 } 
-// Modified 
-// to treat Alone Vertices between faces
-// Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 // function: MakeAloneVertices
 // purpose: 
 //=======================================================================
-  void NMTTools_PaveFiller::MakeAloneVertices()
+void NMTTools_PaveFiller::MakeAloneVertices()
 {
   Standard_Integer i, aNbFFs, nF1, nF2, j, aNbPnts, nFx, aNbV;
   Standard_Real aTolF1, aTolF2, aTolSum, aTolV;
@@ -603,7 +731,8 @@
 // function: AloneVertices
 // purpose: 
 //=======================================================================
-  const NMTTools_IndexedDataMapOfIndexedMapOfInteger& NMTTools_PaveFiller::AloneVertices()const
+const NMTTools_IndexedDataMapOfIndexedMapOfInteger& 
+  NMTTools_PaveFiller::AloneVertices()const
 {
   return myAloneVertices;
 }
@@ -611,8 +740,9 @@
 // function: FuseVertices
 // purpose: 
 //=======================================================================
- void NMTTools_PaveFiller::FuseVertices(const TopoDS_Shape& aCompound,
-                                         TopTools_DataMapOfShapeShape& aDMVV)const
+void NMTTools_PaveFiller::FuseVertices
+  (const TopoDS_Shape& aCompound,
+   TopTools_DataMapOfShapeShape& aDMVV)const
 {
   Standard_Integer i, aNbVV, n1, n2, nX;
   NMTTools_PaveFiller tPF;
@@ -642,4 +772,3 @@
     }
   }
 }
-// Contribution of Samtech www.samcef.com END
