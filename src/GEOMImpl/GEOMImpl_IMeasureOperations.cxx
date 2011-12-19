@@ -2017,6 +2017,10 @@ void GEOMImpl_IMeasureOperations::PointCoordinates (Handle(GEOM_Object) theShape
 Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine1,
                                                      Handle(GEOM_Object) theLine2)
 {
+  if (theLine1->GetType() == GEOM_VECTOR &&
+      theLine2->GetType() == GEOM_VECTOR)
+    return GetAngleBtwVectors(theLine1, theLine2);
+
   SetErrorCode(KO);
 
   Standard_Real anAngle = -1.0;
