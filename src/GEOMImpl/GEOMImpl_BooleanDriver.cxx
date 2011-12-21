@@ -25,6 +25,8 @@
 #include <GEOMImpl_GlueDriver.hxx>
 #include <GEOM_Function.hxx>
 
+#include <TNaming_CopyShape.hxx>
+
 #include <ShapeFix_ShapeTolerance.hxx>
 #include <ShapeFix_Shape.hxx>
 
@@ -43,6 +45,8 @@
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+
+#include <TColStd_IndexedDataMapOfTransientTransient.hxx>
 
 #include <Precision.hxx>
 
@@ -109,8 +113,8 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
   Handle(GEOM_Function) aRefShape2 = aCI.GetShape2();
   TopoDS_Shape aShape1 = aRefShape1->GetValue();
   TopoDS_Shape aShape2 = aRefShape2->GetValue();
-  if (!aShape1.IsNull() && !aShape2.IsNull()) {
 
+  if (!aShape1.IsNull() && !aShape2.IsNull()) {
     // check arguments for Mantis issue 0021019
     BRepCheck_Analyzer ana (aShape1, Standard_True);
     if (!ana.IsValid())
@@ -426,7 +430,7 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
   if (aShape.IsNull()) return 0;
 
   // as boolean operations always produce compound, lets simplify it
-  // for the case, if it contans only one sub-shape
+  // for the case, if it contains only one sub-shape
   TopTools_ListOfShape listShapeRes;
   AddSimpleShapes(aShape, listShapeRes);
   if (listShapeRes.Extent() == 1) {
@@ -452,6 +456,78 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
   //  Standard_ConstructionError::Raise("Boolean operation aborted : non valid shape result");
   //}
 
+  // BEGIN: Mantis issue 0021060: always limit tolerance of BOP result
+  // 1. Get shape parameters for comparison
+  int nbTypes [TopAbs_SHAPE];
+  {
+    for (int iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypes[iType] = 0;
+    nbTypes[aShape.ShapeType()]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add(aShape);
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append(aShape);
+
+    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+    for (; itL.More(); itL.Next()) {
+      TopoDS_Iterator it (itL.Value());
+      for (; it.More(); it.Next()) {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add(s)) {
+          aListOfShape.Append(s);
+          nbTypes[s.ShapeType()]++;
+        }
+      }
+    }
+  }
+
+  // 2. Limit tolerance
+  TopoDS_Shape aShapeCopy;
+  TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+  TNaming_CopyShape::CopyTool(aShape, aMapTShapes, aShapeCopy);
+  ShapeFix_ShapeTolerance aSFT;
+  aSFT.LimitTolerance(aShapeCopy, Precision::Confusion(), Precision::Confusion(), TopAbs_SHAPE);
+  Handle(ShapeFix_Shape) aSfs = new ShapeFix_Shape (aShapeCopy);
+  aSfs->Perform();
+  aShapeCopy = aSfs->Shape();
+
+  // 3. Check parameters
+  ana.Init(aShapeCopy);
+  if (ana.IsValid()) {
+    int iType, nbTypesCopy [TopAbs_SHAPE];
+
+    for (iType = 0; iType < TopAbs_SHAPE; ++iType)
+      nbTypesCopy[iType] = 0;
+    nbTypesCopy[aShapeCopy.ShapeType()]++;
+
+    TopTools_MapOfShape aMapOfShape;
+    aMapOfShape.Add(aShapeCopy);
+    TopTools_ListOfShape aListOfShape;
+    aListOfShape.Append(aShapeCopy);
+
+    TopTools_ListIteratorOfListOfShape itL (aListOfShape);
+    for (; itL.More(); itL.Next()) {
+      TopoDS_Iterator it (itL.Value());
+      for (; it.More(); it.Next()) {
+        TopoDS_Shape s = it.Value();
+        if (aMapOfShape.Add(s)) {
+          aListOfShape.Append(s);
+          nbTypesCopy[s.ShapeType()]++;
+        }
+      }
+    }
+
+    bool isEqual = true;
+    for (iType = 0; iType < TopAbs_SHAPE && isEqual; ++iType) {
+      if (nbTypes[iType] != nbTypesCopy[iType])
+        isEqual = false;
+    }
+    if (isEqual)
+      aShape = aShapeCopy;
+  }
+  // END: Mantis issue 0021060
+
   //Alternative case to check shape result Mantis 0020604: EDF 1172
 /*  TopoDS_Iterator It (aShape, Standard_True, Standard_True);
   int nbSubshapes=0;
@@ -476,14 +552,12 @@ Standard_Integer GEOMImpl_BooleanDriver::Execute (TFunction_Logbook& log) const
 //=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_BooleanDriver_Type_()
 {
-
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
-
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_BooleanDriver",
@@ -504,10 +578,10 @@ const Handle(GEOMImpl_BooleanDriver) Handle(GEOMImpl_BooleanDriver)::DownCast(co
   Handle(GEOMImpl_BooleanDriver) _anOtherObject;
 
   if (!AnObject.IsNull()) {
-     if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BooleanDriver))) {
-       _anOtherObject = Handle(GEOMImpl_BooleanDriver)((Handle(GEOMImpl_BooleanDriver)&)AnObject);
-     }
+    if (AnObject->IsKind(STANDARD_TYPE(GEOMImpl_BooleanDriver))) {
+      _anOtherObject = Handle(GEOMImpl_BooleanDriver)((Handle(GEOMImpl_BooleanDriver)&)AnObject);
+    }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }
