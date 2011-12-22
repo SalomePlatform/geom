@@ -45,4 +45,4 @@ DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM BREPExpor
                GEOMToolsGUI DisplayGUI BasicGUI PrimitiveGUI GenerationGUI	\
                EntityGUI BuildGUI BooleanGUI TransformationGUI OperationGUI	\
                RepairGUI MeasureGUI GroupGUI BlocksGUI AdvancedGUI 		\
-               GEOM_SWIG_WITHIHM GEOM_PY
+               GEOM_SWIG_WITHIHM GEOM_PY ShapeRecognition
