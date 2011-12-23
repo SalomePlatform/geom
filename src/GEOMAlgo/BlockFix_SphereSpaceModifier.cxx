@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        BlockFix.cxx
 // Created:     Tue Dec  7 11:59:05 2004
 // Author:      Pavel DURANDIN
-//
+
 #include <BlockFix_SphereSpaceModifier.ixx>
 
 #include <TopLoc_Location.hxx>
@@ -84,7 +83,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
   if(S->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
     Standard_Real Umin, Umax, Vmin, Vmax;
     ShapeAnalysis::GetFaceUVBounds(aFace,Umin, Umax, Vmin, Vmax);
-    Standard_Real PI2 = PI/2.;
+    Standard_Real PI2 = M_PI/2.;
     if(Vmax > PI2 - Precision::PConfusion() || Vmin < -PI2+::Precision::PConfusion()) {
       Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(S);
       gp_Sphere sp = aSphere->Sphere();

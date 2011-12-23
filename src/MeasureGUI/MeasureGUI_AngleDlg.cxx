@@ -349,8 +349,8 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
         aLabel.sprintf("%.1f", anAngle);
 
         Handle(AIS_AngleDimension) anIO = new AIS_AngleDimension
-          (anEdge1, anEdge2, aPlane, anAngle * PI180,
-            TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().data()));
+          (anEdge1, anEdge2, aPlane, anAngle * M_PI / 180.,
+           TCollection_ExtendedString((Standard_CString)aLabel.toLatin1().data()));
         Handle(Geom_Line) geom_lin1,geom_lin2;
         gp_Pnt ptat11,ptat12,ptat21,ptat22;
         Standard_Boolean isInfinite1,isInfinite2;

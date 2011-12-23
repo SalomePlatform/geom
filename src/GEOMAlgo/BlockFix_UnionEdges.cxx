@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:      BlockFix_UnionEdges.cxx
 // Created:   07.12.04 15:27:30
 // Author:    Sergey KUUL
-//
+
 #include <BlockFix_UnionEdges.ixx>
 
 #include <Approx_Curve3d.hxx>
@@ -214,7 +213,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
             lpar = -lpar;
           }
         }
-        if(lpar<fpar) lpar += 2*PI;
+        if (lpar < fpar) lpar += 2*M_PI;
         Handle(Geom_TrimmedCurve) tc = new Geom_TrimmedCurve(C,fpar,lpar);
         B.MakeEdge (E,tc,Precision::Confusion());
         B.Add(E,V1);

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -100,7 +99,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Dir aDir(gp_Vec(aP1, aP2));
     gp_Ax1 anAx1(aP1, aDir);
     Standard_Real anAngle = RI.GetAngle();
-    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665,19769
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2.*M_PI; // NPAL19665,19769
     aTrsf.SetRotation(anAx1, anAngle);
 
     //NPAL18620: performance problem: multiple locations are accumulated
@@ -135,7 +134,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
     gp_Dir aDir (aVec1 ^ aVec2);
     gp_Ax1 anAx1 (aCP, aDir);
     Standard_Real anAngle = aVec1.Angle(aVec2);
-    if (fabs(anAngle) < Precision::Angular()) anAngle += 2*PI; // NPAL19665
+    if (fabs(anAngle) < Precision::Angular()) anAngle += 2.*M_PI; // NPAL19665
     aTrsf.SetRotation(anAx1, anAngle);
     //NPAL18620: performance problem: multiple locations are accumulated
     //           in shape and need a great time to process
@@ -177,7 +176,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
         B.Add(aCompound, anOriginal);
       }
       else {
-        aTrsf.SetRotation(AX1, i*angle*PI180);
+        aTrsf.SetRotation(AX1, i*angle*M_PI/180.);
         //TopLoc_Location aLocRes (aTrsf * aTrsfOrig); // gp_Trsf::Multiply() has a bug
         gp_Trsf aTrsfNew (aTrsfOrig);
         aTrsfNew.PreMultiply(aTrsf);
@@ -274,7 +273,7 @@ Standard_Integer GEOMImpl_RotateDriver::Execute(TFunction_Logbook& log) const
           B.Add(aCompound, anOriginal.Located(aLocRes));
         }
         else {
-          aTrsf2.SetRotation(AX1, j*ang*PI180);
+          aTrsf2.SetRotation(AX1, j*ang*M_PI/180.);
           //TopLoc_Location aLocRes (aTrsf2 * aTrsf1 * aTrsfOrig); // gp_Trsf::Multiply() has a bug
           gp_Trsf aTrsfNew (aTrsfOrig);
           aTrsfNew.PreMultiply(aTrsf1);

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -600,7 +599,7 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
 
   gp_Vec aDir(P1,P2);
   int i=1;
-  double MinAng = PI;
+  double MinAng = M_PI;
   int numface = 0;
   for (; i<=Fs.Length(); i++) {
     gp_Vec tmpDir(PM1,Ps(i));
@@ -833,7 +832,7 @@ TopoDS_Shape GEOMImpl_PipeDriver::CreatePipeWithDifferentSections
       C->D1(lp,P2,Vec2);
       double ang = fabs(Vec1.Angle(Vec2));
       SumAng += ang;
-      if (SumAng>4*PI) {
+      if (SumAng>4*M_PI) {
         SumAng = ang;
         SplitEdgeNums.Append(i-1);
         int j;
@@ -1543,7 +1542,7 @@ static TopoDS_Shape CreatePipeForShellSections(const TopoDS_Wire& aWirePath,
         // main direction for comparing
         gp_Vec VM(PLocs.Value(i),PLocs.Value(i+1));
         // find corresponding edge from next section
-        double minang = PI;
+        double minang = M_PI;
         gp_Pnt P11 = BRep_Tool::Pnt(V11);
         gp_Pnt P21 = BRep_Tool::Pnt(V21);
         TopoDS_Shape E2;
@@ -1892,9 +1891,9 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       gp_Pnt P1 = BRep_Tool::Pnt(TopoDS::Vertex(SecVs(i)));
       gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(SecVs(i+1)));
       gp_Vec aDir(P1,P2);
-      if (fabs(aDir.Angle(aDir1))>PI/2.)
+      if (fabs(aDir.Angle(aDir1)) > M_PI/2.)
         aDir1.Reverse();
-      if (fabs(aDir.Angle(aDir2))>PI/2.)
+      if (fabs(aDir.Angle(aDir2)) > M_PI/2.)
         aDir2.Reverse();
 
       TopExp_Explorer anExpE(F1,TopAbs_EDGE);
@@ -2457,7 +2456,6 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_PipeDriver_Type_()
 {
-
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if (aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);

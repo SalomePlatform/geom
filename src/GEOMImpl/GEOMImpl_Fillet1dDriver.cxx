@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -92,7 +91,7 @@ static TopoDS_Vertex anotherVertex( const TopoDS_Edge& theE,
   }
   return aV;
 }
-           
+
 //=======================================================================
 //function : takePlane
 //purpose  : local function returns plane of given edges
@@ -116,8 +115,8 @@ static Standard_Boolean takePlane( const TopoDS_Edge& theE1,
     gp_Dir aDir1( aXYZ - aXYZ1 );
     gp_Dir aDir2( aXYZ2 - aXYZ );
     Standard_Real anAngle = aDir1.Angle(aDir2);
-    if ( fabs(anAngle) <= gp::Resolution() || 
-         fabs(anAngle - PI) <= gp::Resolution() )
+    if ( fabs(anAngle) <= gp::Resolution() ||
+         fabs(anAngle - M_PI) <= gp::Resolution() )
       return false;
     thePlane = gp_Pln( gp_Pnt(aXYZ), aDir1^ aDir2);
   }
@@ -214,25 +213,25 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     if ( anEdgeToEdgeMap.IsBound( anEdge2 ) ) anEdge2 = TopoDS::Edge(anEdgeToEdgeMap.Find( anEdge2 ));
     if ( anEdge1.IsNull() || anEdge2.IsNull() || anEdge1.IsSame( anEdge2 ) )
       continue; //no input data to make fillet
-    
+
     // create plane on 2 edges
     gp_Pln aPlane;
     if ( !takePlane(anEdge1, anEdge2, aV, aPlane) )
       continue; // seems edges does not belong to same plane or parallel (fillet can not be build)
-    
+
     GEOMImpl_Fillet1d aFilletAlgo(anEdge1, anEdge2, aPlane);
     if ( !aFilletAlgo.Perform(rad) )
       continue; // can not create fillet with given radius
-    
+
     // take fillet result in given vertex
     TopoDS_Edge aModifE1, aModifE2;
     TopoDS_Edge aNewE = aFilletAlgo.Result(BRep_Tool::Pnt(aV), aModifE1, aModifE2);
     if (aNewE.IsNull())
       continue; // no result found
-    
+
     // add  new created edges and take modified edges
     aListOfNewEdge.Append( aNewE );
-    
+
     // check if face edges modified,
     // if yes, than map to original edges (from vertex-edges list), because edges can be modified before
     if (aModifE1.IsNull() || !anEdge1.IsSame( aModifE1 ))
@@ -245,10 +244,10 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
     StdFail_NotDone::Raise("1D Fillet can't be computed on the given shape with the given radius");
     return 0;
   }
-  
+
   // create new wire instead of original
   for ( TopExp_Explorer anExp( aWire, TopAbs_EDGE ); anExp.More(); anExp.Next() ) {
-    TopoDS_Shape anEdge = anExp.Current(); 
+    TopoDS_Shape anEdge = anExp.Current();
     if ( !anEdgeToEdgeMap.IsBound( anEdge ) )
       aListOfNewEdge.Append( anEdge );
     else if (!anEdgeToEdgeMap.Find( anEdge ).IsNull())
@@ -266,7 +265,7 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
   aWire = aWireTool.Wire();
   aFunction->SetValue(aWire);
   log.SetTouched(Label());
-  
+
   return 1;
 }
 
@@ -277,14 +276,12 @@ Standard_Integer GEOMImpl_Fillet1dDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_Fillet1dDriver_Type_()
 {
-
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
-
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_Fillet1dDriver",
@@ -310,5 +307,5 @@ const Handle(GEOMImpl_Fillet1dDriver) Handle(GEOMImpl_Fillet1dDriver)::DownCast(
      }
   }
 
-  return _anOtherObject ;
+  return _anOtherObject;
 }

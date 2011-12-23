@@ -18,14 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM OBJECT : interactive object for Geometry entities visualization
 //  File   : GEOM_AISShape.cxx
 //  Author : Nicolas REJNERI
 //  Module : GEOM
-//  $Header$
-//
+
 /*!
   \class GEOM_AISShape GEOM_AISShape.hxx
   \brief ....
@@ -254,7 +252,7 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
         else
           aDir = -aDirVec;
 
-        Prs3d_Arrow::Draw(aPrs, aP2, aDir, PI/180.*5., aDist/10.);
+        Prs3d_Arrow::Draw(aPrs, aP2, aDir, M_PI/180.*5., aDist/10.);
       }
     }
   }

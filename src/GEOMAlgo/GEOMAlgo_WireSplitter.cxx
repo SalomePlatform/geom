@@ -18,13 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_WireSplitter.cxx
-// Created:     
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_WireSplitter.ixx>
 
 #include <TColStd_SequenceOfReal.hxx>
@@ -728,7 +725,7 @@ static
  Standard_Real ClockWiseAngle(const Standard_Real aAngleIn,
                               const Standard_Real aAngleOut)
 {
-  Standard_Real aTwoPi=Standard_PI+Standard_PI;
+  Standard_Real aTwoPi = M_PI+M_PI;
   Standard_Real dA, A1, A2, AIn, AOut ;
 
   AIn=aAngleIn;
@@ -741,7 +738,7 @@ static
     AOut=AOut-aTwoPi;
   }
 
-  A1=AIn+Standard_PI;
+  A1 = AIn + M_PI;
   
   if (A1 >= aTwoPi) {
     A1=A1-aTwoPi;
@@ -850,7 +847,7 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
   Standard_Real anAngle = aRefDir.Angle(aDir2D);
 
   if (anAngle < 0.)
-    anAngle += Standard_PI + Standard_PI;
+    anAngle += M_PI + M_PI;
 
   return anAngle;
 }

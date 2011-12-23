@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_ShapeProcessDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "RepairGUI_ShapeProcessDlg.h"
 
 #include <DlgRef.h>
@@ -450,7 +449,7 @@ void RepairGUI_ShapeProcessDlg::reset()
 const char* get_convert( const char* theParam, const QString& theValue )
 {
   if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
-    double doubleValue = theValue.toDouble() * PI / 180;
+    double doubleValue = theValue.toDouble() * M_PI / 180.;
     return CORBA::string_dup( QString::number( doubleValue ).toLatin1().constData() );
   }
   return CORBA::string_dup( theValue.toLatin1().constData() );
@@ -463,7 +462,7 @@ const char* get_convert( const char* theParam, const QString& theValue )
 const char* set_convert( const char* theParam, const char* theValue )
 {
   if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
-    double doubleValue = atof( theValue ) * 180 / PI;
+    double doubleValue = atof( theValue ) * 180. / M_PI;
     TCollection_AsciiString str( doubleValue );
     return CORBA::string_dup( str.ToCString() );
   }

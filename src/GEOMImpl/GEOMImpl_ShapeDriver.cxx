@@ -608,14 +608,14 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
                 NewFpar = ElCLib::Parameter(PrevCircle, P1);
                 NewLpar = ElCLib::Parameter(PrevCircle, P2);
                 if (NewLpar < NewFpar)
-                  NewLpar += 2.*PI;
+                  NewLpar += 2.*M_PI;
                 //Standard_Real MemNewFpar = NewFpar, MemNewLpar =  NewLpar;
                 if (ConnectByOrigin == TopAbs_FORWARD)
                   ElCLib::AdjustPeriodic(FparSeq.Last(),
-                                         FparSeq.Last() + 2.*PI,
+                                         FparSeq.Last() + 2.*M_PI,
                                          Precision::PConfusion(), NewFpar, NewLpar);
                 else
-                  ElCLib::AdjustPeriodic(FparSeq.Last() - 2.*PI,
+                  ElCLib::AdjustPeriodic(FparSeq.Last() - 2.*M_PI,
                                          FparSeq.Last(),
                                          Precision::PConfusion(), NewFpar, NewLpar);
                 Done = Standard_True;
@@ -644,13 +644,13 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
                 NewFpar = ElCLib::Parameter(PrevEllipse, P1);
                 NewLpar = ElCLib::Parameter(PrevEllipse, P2);
                 if (NewLpar < NewFpar)
-                  NewLpar += 2.*PI;
+                  NewLpar += 2.*M_PI;
                 if (ConnectByOrigin == TopAbs_FORWARD)
                   ElCLib::AdjustPeriodic(FparSeq.Last(),
-                                         FparSeq.Last() + 2.*PI,
+                                         FparSeq.Last() + 2.*M_PI,
                                          Precision::PConfusion(), NewFpar, NewLpar);
                 else
-                  ElCLib::AdjustPeriodic(FparSeq.Last() - 2.*PI,
+                  ElCLib::AdjustPeriodic(FparSeq.Last() - 2.*M_PI,
                                          FparSeq.Last(),
                                          Precision::PConfusion(), NewFpar, NewLpar);
                 Done = Standard_True;

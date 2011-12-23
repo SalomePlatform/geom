@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -173,7 +172,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
             {
               double aD = aCI.GetD();
               double anAngle = aCI.GetAngle();
-              if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
+              if ( (anAngle > 0) && (anAngle < (M_PI/2.)) )
                 fill.AddDA(aD, anAngle, E, F);
             }
           }
@@ -215,7 +214,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
               {
                 double aD = aCI.GetD();
                 double anAngle = aCI.GetAngle();
-                if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
+                if ( (anAngle > 0) && (anAngle < (M_PI/2.)) )
                   fill.AddDA(aD, anAngle, E, F);
               }
             }
@@ -251,7 +250,7 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
         {
           double aD = aCI.GetD();
           double anAngle = aCI.GetAngle();
-          if ( (anAngle > 0) && (anAngle < (Standard_PI/2)) )
+          if ( (anAngle > 0) && (anAngle < (M_PI/2.)) )
             fill.AddDA(aD, anAngle, E, F);
         }
       }
@@ -293,14 +292,12 @@ Standard_Integer GEOMImpl_ChamferDriver::Execute(TFunction_Logbook& log) const
 //=======================================================================
 Standard_EXPORT Handle_Standard_Type& GEOMImpl_ChamferDriver_Type_()
 {
-
   static Handle_Standard_Type aType1 = STANDARD_TYPE(TFunction_Driver);
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(TFunction_Driver);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(MMgt_TShared);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
-
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("GEOMImpl_ChamferDriver",

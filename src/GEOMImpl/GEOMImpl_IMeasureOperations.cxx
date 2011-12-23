@@ -2069,7 +2069,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngle (Handle(GEOM_Object) theLine
     gp_Lin aLin2 = L2->Lin();
 
     anAngle = aLin1.Angle(aLin2);
-    anAngle /= PI180; // convert radians into degrees
+    anAngle *= 180. / M_PI; // convert radians into degrees
 
     if (anAngle > 90.0) {
       anAngle = 180.0 - anAngle;
@@ -2135,7 +2135,7 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Objec
     gp_Vec aV2 (BRep_Tool::Pnt(aP21), BRep_Tool::Pnt(aP22)) ;
 
     anAngle = aV1.Angle(aV2);
-    anAngle /= PI180; // convert radians into degrees
+    anAngle *= 180. / M_PI; // convert radians into degrees
 
     SetErrorCode(OK);
   }

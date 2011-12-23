@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:      BlockFix_PeriodicSurfaceModifier.cxx
 // Created:   15.12.04 10:08:50
 // Author:    Sergey KUUL
-//
+
 #include <BlockFix_PeriodicSurfaceModifier.ixx>
 
 #include <BRep_Builder.hxx>
@@ -74,7 +73,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
       Handle(Geom_CylindricalSurface)::DownCast(S);
     Standard_Real Umin, Umax, Vmin, Vmax;
     BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
-    if( Umin<-Precision::PConfusion() || Umax>2*PI+Precision::PConfusion() ) {
+    if (Umin < -Precision::PConfusion() || Umax > 2*M_PI + Precision::PConfusion()) {
       gp_Ax3 ax3 = aCyl->Position();
       gp_Ax1 NDir = ax3.Axis();
       gp_Ax3 newax3 = ax3.Rotated(NDir,Umin-Precision::PConfusion());
@@ -89,7 +88,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
     Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(S);
     Standard_Real Umin, Umax, Vmin, Vmax;
     BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
-    if( Umin<-Precision::PConfusion() || Umax>2*PI+Precision::PConfusion() ) {
+    if (Umin < -Precision::PConfusion() || Umax > 2*M_PI + Precision::PConfusion()) {
       gp_Ax3 ax3 = aSphere->Position();
       gp_Ax1 NDir = ax3.Axis();
       gp_Ax3 newax3 = ax3.Rotated(NDir,Umin-Precision::PConfusion());

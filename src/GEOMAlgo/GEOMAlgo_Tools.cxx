@@ -18,13 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_Tools.cxx
 // Created:     Mon Dec  6 11:35:29 2004
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_Tools.ixx>
 
 #include <gp_Pnt.hxx>
@@ -432,13 +430,11 @@ void GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
                                                const Standard_Real aUMin, 
                                                const Standard_Real aUMax) 
 {
-  Standard_Real aT1, aT2, aTx, aUx, aTol, aTwoPI;
+  Standard_Real aT1, aT2, aTx, aUx, aTol;
   gp_Pnt2d aP2D;
   Handle(Geom_Surface) aS;
   Handle(Geom2d_Curve) aC2D;
   BRep_Builder aBB;
-  //
-  aTwoPI=PI+PI;
   //
   aC2D=BRep_Tool::CurveOnSurface(aE, aF, aT1, aT2);
   if (!aC2D.IsNull()) {

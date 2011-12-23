@@ -1404,7 +1404,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle (Handle(
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution("
-    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return aRevolution;
@@ -1462,7 +1462,7 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeRevolutionAxisAngle2Ways
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aRevolution << " = geompy.MakeRevolution2Ways("
-    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+    << theBase << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return aRevolution;

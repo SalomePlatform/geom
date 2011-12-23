@@ -18,10 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTDS_CArray1OfIndexRange_HeaderFile
 #define _NMTDS_CArray1OfIndexRange_HeaderFile
+
+#include <Basics_OCCTVersion.hxx>
 
 #ifndef _Standard_Address_HeaderFile
 #include <Standard_Address.hxx>
@@ -32,10 +33,10 @@
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
 #endif
+
 class Standard_OutOfRange;
 class Standard_OutOfMemory;
 class NMTDS_IndexRange;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -108,33 +109,25 @@ Standard_EXPORT   NMTDS_IndexRange& ChangeValue(const Standard_Integer Index) ;
   return ChangeValue(Index);
 }
 
-
-
 Standard_EXPORT   void SetBlockLength(const Standard_Integer aBL) ;
-
-
 Standard_EXPORT   Standard_Integer BlockLength() const;
 
-
-
-
+#if OCC_VERSION_LARGE > 0x06050200
+Standard_EXPORT   void Purge();
+#endif
 
 protected:
 
  // Methods PROTECTED
  // 
 
-
  // Fields PROTECTED
  //
-
 
 private: 
 
  // Methods PRIVATE
  // 
-
-
 Standard_EXPORT NMTDS_CArray1OfIndexRange(const NMTDS_CArray1OfIndexRange& AnArray);
 
 
@@ -144,10 +137,7 @@ Standard_EXPORT   NMTDS_CArray1OfIndexRange& Assign(const NMTDS_CArray1OfIndexRa
   return Assign(Other);
 }
 
-
-
 Standard_EXPORT   Standard_Boolean IsInvalidIndex(const Standard_Integer Index) const;
-
 
  // Fields PRIVATE
  //
@@ -156,16 +146,9 @@ Standard_Integer myLength;
 Standard_Integer myFactLength;
 Standard_Integer myBlockLength;
 Standard_Boolean myIsAllocated;
-
-
 };
-
-
-
-
 
 // other Inline functions and methods (like "C++: function call" methods)
 //
-
 
 #endif

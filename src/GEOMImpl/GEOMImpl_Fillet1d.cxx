@@ -15,11 +15,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_Fillet1d.cxx
 //  Module : GEOMImpl
-//
+
 #include "GEOMImpl_Fillet1d.hxx"
 
 #include <BRep_Tool.hxx>
@@ -41,10 +40,9 @@
  * class GEOMImpl_Fillet1d
  */
 
-
 //=======================================================================
 //function : Constructor
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMImpl_Fillet1d::GEOMImpl_Fillet1d(const TopoDS_Edge& theEdge1,
                                      const TopoDS_Edge& theEdge2,
@@ -55,12 +53,12 @@ GEOMImpl_Fillet1d::GEOMImpl_Fillet1d(const TopoDS_Edge& theEdge1,
 
   BRepAdaptor_Curve aBAC1(theEdge1);
   BRepAdaptor_Curve aBAC2(theEdge2);
-  if (aBAC1.GetType() < aBAC2.GetType()) 
+  if (aBAC1.GetType() < aBAC2.GetType())
   { // first curve must be more complicated
     myEdge1 = theEdge2;
     myEdge2 = theEdge1;
     myEdgesExchnged = Standard_True;
-  }   
+  }
   else
   {
     myEdge1 = theEdge1;
@@ -77,10 +75,10 @@ GEOMImpl_Fillet1d::GEOMImpl_Fillet1d(const TopoDS_Edge& theEdge1,
     myEnd1 += myCurve1->Period();
   while (myCurve2->IsPeriodic() && myStart2 >= myEnd2)
     myEnd2 += myCurve2->Period();
- 
-  if (aBAC1.GetType() == aBAC2.GetType()) 
+
+  if (aBAC1.GetType() == aBAC2.GetType())
   {
-    if (myEnd2 - myStart2 < myEnd1 - myStart1) 
+    if (myEnd2 - myStart2 < myEnd1 - myStart1)
     { // first curve must be parametrically shorter
       TopoDS_Edge anEdge = myEdge1;
       myEdge1 = myEdge2;
@@ -106,7 +104,7 @@ GEOMImpl_Fillet1d::GEOMImpl_Fillet1d(const TopoDS_Edge& theEdge1,
 static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve,
                                             const gp_Pnt2d theStart,
                                             const gp_Pnt2d theEnd,
-                                            const Standard_Boolean theStartConnected) 
+                                            const Standard_Boolean theStartConnected)
 {
   const Standard_Real aTol = Precision::Confusion();
   const Standard_Real anAngTol = Precision::Angular();
@@ -114,35 +112,35 @@ static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve
     gp_Dir2d(gp_Vec2d(theStart, theEnd))), aTol);
   Standard_Integer a;
   gp_Pnt2d aPoint;
-  for(a = anInter.NbPoints(); a > 0; a--) 
+  for(a = anInter.NbPoints(); a > 0; a--)
   {
     aPoint = anInter.Point(a);
     if ( aPoint.Distance(theStart) < aTol && !theStartConnected )
       return Standard_True;
     if (aPoint.Distance(theEnd) < aTol * 200)
       return Standard_True;
-    if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol)) 
+    if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol))
       return Standard_True;
   }
   Handle(Geom2d_Curve) aCurve;
-  for(a = anInter.NbSegments(); a > 0; a--) 
+  for(a = anInter.NbSegments(); a > 0; a--)
   {
     anInter.Segment(a, aCurve);
     aPoint = aCurve->Value(aCurve->FirstParameter());
-    if (aPoint.Distance(theStart) < aTol) 
-      if (!theStartConnected) 
+    if (aPoint.Distance(theStart) < aTol)
+      if (!theStartConnected)
         return Standard_True;
-    if (aPoint.Distance(theEnd) < aTol) 
+    if (aPoint.Distance(theEnd) < aTol)
       return Standard_True;
-    if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol)) 
+    if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol))
       return Standard_True;
     aPoint = aCurve->Value(aCurve->LastParameter());
-    if (aPoint.Distance(theStart) < aTol) 
-      if (!theStartConnected) 
+    if (aPoint.Distance(theStart) < aTol)
+      if (!theStartConnected)
         return Standard_True;
-    if (aPoint.Distance(theEnd) < aTol) 
+    if (aPoint.Distance(theEnd) < aTol)
       return Standard_True;
-    if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol)) 
+    if (gp_Vec2d(aPoint, theStart).IsOpposite(gp_Vec2d(aPoint, theEnd), anAngTol))
       return Standard_True;
   }
   return Standard_False;
@@ -151,17 +149,17 @@ static Standard_Boolean isRadiusIntersected(const Handle(Geom2d_Curve)& theCurve
 
 //=======================================================================
 //function : fillPoint
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMImpl_Fillet1d::fillPoint(GEOMImpl_Fillet1dPoint* thePoint) 
+void GEOMImpl_Fillet1d::fillPoint(GEOMImpl_Fillet1dPoint* thePoint)
 {
   gp_Pnt2d aPoint;
   gp_Vec2d aVec;
   const Standard_Real aTol = Precision::Confusion();
   myCurve1->D1(thePoint->GetParam(), aPoint, aVec);
-  if (aVec.SquareMagnitude() < aTol) 
+  if (aVec.SquareMagnitude() < aTol)
     return;
-  
+
   gp_Vec2d aPerp(((myStartSide)?-1:1) * aVec.Y(), ((myStartSide)?1:-1) * aVec.X());
   aPerp.Normalize();
   aPerp.Multiply(myRadius);
@@ -171,20 +169,20 @@ void GEOMImpl_Fillet1d::fillPoint(GEOMImpl_Fillet1dPoint* thePoint)
   // on the intersection point
   Standard_Boolean aValid = Standard_True;
   Geom2dAPI_ProjectPointOnCurve aProjInt(aPoint, myCurve2);
-  if (aProjInt.NbPoints() && aPoint.Distance(aProjInt.NearestPoint()) < aTol) 
+  if (aProjInt.NbPoints() && aPoint.Distance(aProjInt.NearestPoint()) < aTol)
     aValid = Standard_False;
-  else 
+  else
     aValid = !isRadiusIntersected(myCurve2, aPoint, aCenter, Standard_True);
-  
+
   Geom2dAPI_ProjectPointOnCurve aProj(aCenter, myCurve2);
   Standard_Integer a, aNB = aProj.NbPoints();
-  for(a = aNB; a > 0; a--) 
+  for(a = aNB; a > 0; a--)
   {
-    if (aPoint.Distance(aProj.Point(a)) < aTol) 
+    if (aPoint.Distance(aProj.Point(a)) < aTol)
       continue;
-    
+
     Standard_Boolean aValid2 = aValid;
-    if (aValid2) 
+    if (aValid2)
       aValid2 = !isRadiusIntersected(myCurve1, aCenter, aProj.Point(a), Standard_False);
 
     // checking the right parameter
@@ -201,9 +199,9 @@ void GEOMImpl_Fillet1d::fillPoint(GEOMImpl_Fillet1dPoint* thePoint)
 
 //=======================================================================
 //function : fillDiff
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMImpl_Fillet1d::fillDiff(GEOMImpl_Fillet1dPoint* thePoint, Standard_Real theDiffStep, Standard_Boolean theFront) 
+void GEOMImpl_Fillet1d::fillDiff(GEOMImpl_Fillet1dPoint* thePoint, Standard_Real theDiffStep, Standard_Boolean theFront)
 {
   GEOMImpl_Fillet1dPoint* aDiff =
     new GEOMImpl_Fillet1dPoint(thePoint->GetParam() + (theFront?(theDiffStep):(-theDiffStep)));
@@ -219,9 +217,9 @@ void GEOMImpl_Fillet1d::fillDiff(GEOMImpl_Fillet1dPoint* thePoint, Standard_Real
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius) 
+Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
 {
   myDegreeOfRecursion = 0;
   myResultParams.Clear();
@@ -229,7 +227,7 @@ Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
 
   Standard_Real aNBSteps = 100;
   Geom2dAdaptor_Curve aGAC(myCurve1);
-  switch (aGAC.GetType()) 
+  switch (aGAC.GetType())
   {
     case GeomAbs_Line:
       aNBSteps = 2;
@@ -254,50 +252,50 @@ Standard_Boolean GEOMImpl_Fillet1d::Perform(const Standard_Real theRadius)
   aDStep = aStep/1000.;
 
   Standard_Integer aCycle;
-  for(aCycle = 2, myStartSide = Standard_False; aCycle; myStartSide = !myStartSide, aCycle--) 
+  for(aCycle = 2, myStartSide = Standard_False; aCycle; myStartSide = !myStartSide, aCycle--)
   {
     GEOMImpl_Fillet1dPoint *aLeft = NULL, *aRight = NULL;
-    
-    for(aParam = myStart1 + aStep; aParam < myEnd1 || fabs(myEnd1 - aParam) < Precision::Confusion(); aParam += aStep) 
+
+    for(aParam = myStart1 + aStep; aParam < myEnd1 || fabs(myEnd1 - aParam) < Precision::Confusion(); aParam += aStep)
     {
-      if (!aLeft) 
+      if (!aLeft)
       {
         aLeft = new GEOMImpl_Fillet1dPoint(aParam - aStep);
         fillPoint(aLeft);
         fillDiff(aLeft, aDStep, Standard_True);
       }
-      
+
       aRight = new GEOMImpl_Fillet1dPoint(aParam);
       fillPoint(aRight);
       fillDiff(aRight, aDStep, Standard_False);
-      
+
       aLeft->FilterPoints(aRight);
       performNewton(aLeft, aRight);
-      
+
       delete aLeft;
       aLeft = aRight;
     }
     delete aLeft;
   }
 
-  if (myResultParams.Extent()) 
+  if (myResultParams.Extent())
     return Standard_True;
-  
+
   return Standard_False;
 }
 
 //=======================================================================
 //function : processPoint
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMImpl_Fillet1d::processPoint(GEOMImpl_Fillet1dPoint* theLeft,
                                                  GEOMImpl_Fillet1dPoint* theRight,
-                                                 Standard_Real           theParameter) 
+                                                 Standard_Real           theParameter)
 {
-  if (theParameter >= theLeft->GetParam() && theParameter < theRight->GetParam()) 
+  if (theParameter >= theLeft->GetParam() && theParameter < theRight->GetParam())
   {
     Standard_Real aDX = theRight->GetParam() - theLeft->GetParam();
-    if (theParameter - theLeft->GetParam() < aDX / 100.) 
+    if (theParameter - theLeft->GetParam() < aDX / 100.)
     {
       theParameter = theLeft->GetParam() + aDX / 100.;
     }
@@ -326,7 +324,7 @@ Standard_Boolean GEOMImpl_Fillet1d::processPoint(GEOMImpl_Fillet1dPoint* theLeft
     GEOMImpl_Fillet1dPoint* aPoint2 = new GEOMImpl_Fillet1dPoint(theParameter);
     fillPoint(aPoint2);
     fillDiff(aPoint2, diffx, Standard_True);
-    
+
     aPoint1->FilterPoints(aPoint2);
     performNewton(aPoint1, aPoint2);
     aPoint2->FilterPoints(theRight);
@@ -342,7 +340,7 @@ Standard_Boolean GEOMImpl_Fillet1d::processPoint(GEOMImpl_Fillet1dPoint* theLeft
 
 //=======================================================================
 //function : performNewton
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
                                       GEOMImpl_Fillet1dPoint* theRight)
@@ -350,9 +348,9 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
   Standard_Integer a;
   // check the left: if this is solution store it and remove it from the list of researching points of theLeft
   a = theLeft->HasSolution(myRadius);
-  if (a) 
+  if (a)
   {
-    if (theLeft->IsValid(a)) 
+    if (theLeft->IsValid(a))
     {
       myResultParams.Append(theLeft->GetParam());
       myResultOrientation.Append(myStartSide);
@@ -361,11 +359,11 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
   }
 
   Standard_Real aDX = theRight->GetParam() - theLeft->GetParam();
-  if ( aDX < Precision::Confusion() / 1000000.) 
+  if ( aDX < Precision::Confusion() / 1000000.)
   {
     a = theRight->HasSolution(myRadius);
     if (a)
-      if (theRight->IsValid(a)) 
+      if (theRight->IsValid(a))
       {
         myResultParams.Append(theRight->GetParam());
         myResultOrientation.Append(myStartSide);
@@ -373,55 +371,55 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
     return;
   }
 
-  for(a = 1; a <= theLeft->GetNBValues(); a++) 
+  for(a = 1; a <= theLeft->GetNBValues(); a++)
   {
     Standard_Integer aNear = theLeft->GetNear(a);
-    
+
     Standard_Real aA = (theRight->GetDiff(aNear) - theLeft->GetDiff(a)) / aDX;
     Standard_Real aB = theLeft->GetDiff(a) - aA * theLeft->GetParam();
-    Standard_Real aC = theLeft->GetValue(a) - theLeft->GetDiff(a) * theLeft->GetParam() + 
+    Standard_Real aC = theLeft->GetValue(a) - theLeft->GetDiff(a) * theLeft->GetParam() +
                        aA * theLeft->GetParam() * theLeft->GetParam() / 2.0;
     Standard_Real aDet = aB * aB - 2.0 * aA * aC;
 
     if ( fabs(aDet) < gp::Resolution() )
       continue;
-    
-    if (fabs(aA) < Precision::Confusion()) 
+
+    if (fabs(aA) < Precision::Confusion())
     { // linear case
-      if (fabs(aB) > 10e-20) 
+      if (fabs(aB) > 10e-20)
       {
         Standard_Real aX0 = - aC / aB; // use extremum
         if (aX0 > theLeft->GetParam() && aX0 < theRight->GetParam())
           processPoint(theLeft, theRight, aX0);
       }
-      else 
+      else
       {
         processPoint(theLeft, theRight, theLeft->GetParam() + aDX / 2.0); // linear division otherwise
       }
-    } 
+    }
     else
     {
-      if (fabs(aB) > fabs(aDet * 1000000.)) 
+      if (fabs(aB) > fabs(aDet * 1000000.))
       {  // possible floating point operations accurancy errors
         processPoint(theLeft, theRight, theLeft->GetParam() + aDX / 2.0); // linear division otherwise
-      } 
+      }
       else
       {
-        if (aDet > 0) 
+        if (aDet > 0)
         { // two solutions
           aDet = sqrt(aDet);
           Standard_Boolean aRes = processPoint(theLeft, theRight, (- aB + aDet) / aA);
-          if (!aRes) 
+          if (!aRes)
             aRes = processPoint(theLeft, theRight, (- aB - aDet) / aA);
-          if (!aRes) 
+          if (!aRes)
             processPoint(theLeft, theRight, theLeft->GetParam() + aDX / 2.0); // linear division otherwise
-        } 
-        else 
+        }
+        else
         {
           Standard_Real aX0 = - aB / aA; // use extremum
           if (aX0 > theLeft->GetParam() && aX0 < theRight->GetParam())
             processPoint(theLeft, theRight, aX0);
-          else 
+          else
             processPoint(theLeft, theRight, theLeft->GetParam() + aDX / 2.0); // linear division otherwise
         }
       }
@@ -431,45 +429,45 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
 
 //=======================================================================
 //function : Result
-//purpose  : 
+//purpose  :
 //=======================================================================
 TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
                                       TopoDS_Edge& theEdge1,
-                                      TopoDS_Edge& theEdge2) 
+                                      TopoDS_Edge& theEdge2)
 {
   TopoDS_Edge aResult;
   gp_Pnt2d aTargetPoint2d;
   Standard_Real aX, aY;
   ElSLib::PlaneParameters(myPlane->Pln().Position(), thePoint, aX, aY);
   aTargetPoint2d.SetCoord(aX, aY);
-   
+
   // choose the nearest circle
   Standard_Real aDistance, aP;
   GEOMImpl_Fillet1dPoint *aNearest;
   Standard_Integer a;
   TColStd_ListIteratorOfListOfReal anIter(myResultParams);
-  for(aNearest = NULL, a = 1; anIter.More(); anIter.Next(), a++) 
+  for(aNearest = NULL, a = 1; anIter.More(); anIter.Next(), a++)
   {
     myStartSide = (myResultOrientation.Value(a)) ? Standard_True : Standard_False;
     GEOMImpl_Fillet1dPoint *aPoint = new GEOMImpl_Fillet1dPoint(anIter.Value());
     fillPoint(aPoint);
-    if (!aPoint->HasSolution(myRadius)) 
+    if (!aPoint->HasSolution(myRadius))
       continue;
     aP = fabs(aPoint->GetCenter().Distance(aTargetPoint2d) - myRadius);
-    if (!aNearest || aP < aDistance) 
+    if (!aNearest || aP < aDistance)
     {
       aNearest = aPoint;
       aDistance = aP;
-    } 
-    else 
+    }
+    else
     {
       delete aPoint;
     }
    }
-   
-  if (!aNearest) 
+
+  if (!aNearest)
      return aResult;
-   
+
   // create circle edge
   gp_Pnt aCenter = ElSLib::PlaneValue(aNearest->GetCenter().X(),
                                       aNearest->GetCenter().Y(),
@@ -499,9 +497,9 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   Standard_Real aParam1 = aProj.LowerDistanceParameter();
     aProj.Perform(aPoint2);
   Standard_Real aParam2 = aProj.LowerDistanceParameter();
-  Standard_Boolean aIsOut = ((aParam1 < aTarGetParam && aParam2 < aTarGetParam) || 
+  Standard_Boolean aIsOut = ((aParam1 < aTarGetParam && aParam2 < aTarGetParam) ||
                              (aParam1 > aTarGetParam && aParam2 > aTarGetParam));
-  if (aParam1 > aParam2) 
+  if (aParam1 > aParam2)
     aIsOut = !aIsOut;
   BRepBuilderAPI_MakeEdge aBuilder(aCircle->Circ(),
                                    aIsOut ? aParam2 : aParam1,
@@ -516,7 +514,7 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
 
   gp_Vec aCircleDir;
   aCircle->D1(aParam1, aPoint1, aCircleDir);
-  if ((aCircleDir.Angle(aDir) > PI / 2.0) ^ aIsOut)
+  if ((aCircleDir.Angle(aDir) > M_PI / 2.0) ^ aIsOut)
     aStart = aNearest->GetParam();
   else
     anEnd = aNearest->GetParam();
@@ -525,17 +523,17 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   {
       //Divide edge
       BRepBuilderAPI_MakeEdge aDivider1(aCurve, aStart, anEnd);
-      if (myEdgesExchnged) 
+      if (myEdgesExchnged)
         theEdge2 = aDivider1.Edge();
-      else 
+      else
         theEdge1 = aDivider1.Edge();
   }
 
   aCurve = BRep_Tool::Curve(myEdge2, aStart, anEnd);
   aCurve->D1(aNearest->GetParam2(), aPoint2, aDir);
-   
+
   aCircle->D1(aParam2, aPoint2, aCircleDir);
-  if ((aCircleDir.Angle(aDir) > PI / 2.0) ^ (!aIsOut))
+  if ((aCircleDir.Angle(aDir) > M_PI / 2.0) ^ (!aIsOut))
     aStart = aNearest->GetParam2();
   else
     anEnd = aNearest->GetParam2();
@@ -543,9 +541,9 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
   if (fabs(aStart - anEnd) > Precision::Confusion())
   {
       BRepBuilderAPI_MakeEdge aDivider2(aCurve, aStart, anEnd);
-      if (myEdgesExchnged) 
+      if (myEdgesExchnged)
         theEdge1 = aDivider2.Edge();
-      else 
+      else
         theEdge2 = aDivider2.Edge();
   }
 
@@ -555,14 +553,14 @@ TopoDS_Edge GEOMImpl_Fillet1d::Result(const gp_Pnt& thePoint,
 
 //=======================================================================
 //function : AddValue
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMImpl_Fillet1dPoint::AddValue(Standard_Real theValue, Standard_Boolean theValid) 
+void GEOMImpl_Fillet1dPoint::AddValue(Standard_Real theValue, Standard_Boolean theValid)
 {
   Standard_Integer a;
-  for(a = 1; a <= myV.Length(); a++) 
+  for(a = 1; a <= myV.Length(); a++)
   {
-    if (theValue < myV.Value(a)) 
+    if (theValue < myV.Value(a))
     {
       myV.InsertBefore(a, theValue);
       myValid.InsertBefore(a, (Standard_Integer)theValid);
@@ -575,19 +573,19 @@ void GEOMImpl_Fillet1dPoint::AddValue(Standard_Real theValue, Standard_Boolean t
 
 //=======================================================================
 //function : ComputeDifference
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoint* thePoint) 
+Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoint* thePoint)
 {
   Standard_Integer a;
   Standard_Boolean aDiffsSet = (myD.Length() != 0);
   Standard_Real aDX = thePoint->GetParam() - myParam, aDY;
-  if (thePoint->myV.Length() == myV.Length()) 
+  if (thePoint->myV.Length() == myV.Length())
   { // absolutely the same points
-    for(a = 1; a <= myV.Length(); a++) 
+    for(a = 1; a <= myV.Length(); a++)
     {
       aDY = thePoint->myV.Value(a) - myV.Value(a);
-      if ( aDiffsSet ) 
+      if ( aDiffsSet )
         myD.SetValue(a, fabs(aDX) > gp::Resolution() ? (aDY/aDX) : 0);
       else
         myD.Append( fabs(aDX) > gp::Resolution() ? (aDY/aDX) : 0);
@@ -596,65 +594,65 @@ Standard_Boolean GEOMImpl_Fillet1dPoint::ComputeDifference(GEOMImpl_Fillet1dPoin
   }
   // between the diffeerent points searching for nearest analogs
   Standard_Integer b;
-  for(a = 1; a <= myV.Length(); a++) 
+  for(a = 1; a <= myV.Length(); a++)
   {
-    for(b = 1; b <= thePoint->myV.Length(); b++) 
+    for(b = 1; b <= thePoint->myV.Length(); b++)
     {
       if (b == 1 || fabs(thePoint->myV.Value(b) - myV.Value(a)) < fabs(aDY))
         aDY = thePoint->myV.Value(b) - myV.Value(a);
     }
-    if (aDiffsSet) 
+    if (aDiffsSet)
     {
       if ( fabs(aDX) > gp::Resolution() && fabs(aDY / aDX) < fabs(myD.Value(a)))
         myD.SetValue(a, aDY / aDX);
       else
         myD.SetValue(a, 0);
-    } 
-    else 
+    }
+    else
     {
       myD.Append( fabs(aDX) > gp::Resolution() ? aDY/aDX : 0);
     }
   }
-  
+
   return Standard_False;
 }
 
 //=======================================================================
 //function : FilterPoints
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint) 
+void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
 {
   Standard_Integer a, b;
   TColStd_SequenceOfReal aDiffs;
   Standard_Real aY, aY2, aDX = thePoint->GetParam() - myParam;
-  for(a = 1; a <= myV.Length(); a++) 
+  for(a = 1; a <= myV.Length(); a++)
   {
     // searching for near point from thePoint
     Standard_Integer aNear = 0;
     Standard_Real aDiff = aDX * 10000.;
     aY = myV.Value(a) + myD.Value(a) * aDX;
-    for(b = 1; b <= thePoint->myV.Length(); b++) 
+    for(b = 1; b <= thePoint->myV.Length(); b++)
     {
       // calculate hypothesis value of the Y2 with the constant first and second derivative
       aY2 = aY + aDX * (thePoint->myD.Value(b) - myD.Value(a)) / 2.0;
-      if (aNear == 0 || fabs(aY2 - thePoint->myV.Value(b)) < fabs(aDiff)) 
+      if (aNear == 0 || fabs(aY2 - thePoint->myV.Value(b)) < fabs(aDiff))
       {
         aNear = b;
         aDiff = aY2 - thePoint->myV.Value(b);
       }
     }//for b...
 
-    if (aNear) 
+    if (aNear)
     {
-      if (myV.Value(a) * thePoint->myV.Value(aNear) > 0) 
+      if (myV.Value(a) * thePoint->myV.Value(aNear) > 0)
       {// the same sign at the same sides of the interval
-        if (myV.Value(a) * myD.Value(a) > 0) 
+        if (myV.Value(a) * myD.Value(a) > 0)
         {
-          if (fabs(myD.Value(a)) > Precision::Confusion()) 
+          if (fabs(myD.Value(a)) > Precision::Confusion())
             aNear = 0;
-        } 
-        else 
+        }
+        else
         {
           if (fabs(myV.Value(a)) > fabs(thePoint->myV.Value(aNear)))
             if (thePoint->myV.Value(aNear) * thePoint->myD.Value(aNear) < 0 &&
@@ -666,9 +664,9 @@ void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
       }
     }
 
-    if (aNear) 
+    if (aNear)
     {
-      if (myV.Value(a) * thePoint->myV.Value(aNear) > 0) 
+      if (myV.Value(a) * thePoint->myV.Value(aNear) > 0)
       {
         if ((myV.Value(a) + myD.Value(a) * aDX) * myV.Value(a) > Precision::Confusion() &&
         (thePoint->myV.Value(aNear) + thePoint->myD.Value(aNear) * aDX) * thePoint->myV.Value(aNear) > Precision::Confusion())
@@ -677,30 +675,30 @@ void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
         }
       }
     }
-    
+
     if (aNear)
     {
-      if (  fabs(aDX) < gp::Resolution() || fabs(aDiff / aDX) > 1.e+7) 
+      if (  fabs(aDX) < gp::Resolution() || fabs(aDiff / aDX) > 1.e+7)
       {
         aNear = 0;
       }
     }
 
-    if (aNear == 0) 
+    if (aNear == 0)
     {  // there is no near: remove it from the list
       myV.Remove(a);
       myD.Remove(a);
       myValid.Remove(a);
       a--;
-    } 
-    else 
+    }
+    else
     {
       Standard_Boolean aFound = Standard_False;
-      for(b = 1; b <= myNear.Length(); b++) 
+      for(b = 1; b <= myNear.Length(); b++)
       {
-        if (myNear.Value(b) == aNear) 
+        if (myNear.Value(b) == aNear)
         {
-          if (fabs(aDiffs.Value(b)) < fabs(aDiff)) 
+          if (fabs(aDiffs.Value(b)) < fabs(aDiff))
           { // return this 'near'
             aFound = Standard_True;
             myV.Remove(a);
@@ -708,8 +706,8 @@ void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
             myValid.Remove(a);
             a--;
             break;
-          } 
-          else 
+          }
+          else
           { // remove the old 'near'
             myV.Remove(b);
             myD.Remove(b);
@@ -721,7 +719,7 @@ void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
           }
         }
       }//for b...
-      if (!aFound) 
+      if (!aFound)
       {
         myNear.Append(aNear);
         aDiffs.Append(aDiff);
@@ -732,13 +730,13 @@ void GEOMImpl_Fillet1dPoint::FilterPoints(GEOMImpl_Fillet1dPoint* thePoint)
 
 //=======================================================================
 //function : Copy
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMImpl_Fillet1dPoint* GEOMImpl_Fillet1dPoint::Copy() 
+GEOMImpl_Fillet1dPoint* GEOMImpl_Fillet1dPoint::Copy()
 {
   GEOMImpl_Fillet1dPoint* aCopy = new GEOMImpl_Fillet1dPoint(myParam);
   Standard_Integer a;
-  for(a = 1; a <= myV.Length(); a++) 
+  for(a = 1; a <= myV.Length(); a++)
   {
     aCopy->myV.Append(myV.Value(a));
     aCopy->myD.Append(myD.Value(a));
@@ -749,14 +747,14 @@ GEOMImpl_Fillet1dPoint* GEOMImpl_Fillet1dPoint::Copy()
 
 //=======================================================================
 //function : HasSolution
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Integer GEOMImpl_Fillet1dPoint::HasSolution(const Standard_Real theRadius) 
+Standard_Integer GEOMImpl_Fillet1dPoint::HasSolution(const Standard_Real theRadius)
 {
   Standard_Integer a;
-  for(a = 1; a <= myV.Length(); a++) 
+  for(a = 1; a <= myV.Length(); a++)
   {
-    if (fabs(sqrt(fabs(fabs(myV.Value(a)) + theRadius * theRadius)) - theRadius) < Precision::Confusion() / 10.) 
+    if (fabs(sqrt(fabs(fabs(myV.Value(a)) + theRadius * theRadius)) - theRadius) < Precision::Confusion() / 10.)
       return a;
   }
   return 0;
@@ -764,7 +762,7 @@ Standard_Integer GEOMImpl_Fillet1dPoint::HasSolution(const Standard_Real theRadi
 
 //=======================================================================
 //function : RemoveSolution
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMImpl_Fillet1dPoint::RemoveSolution(Standard_Integer theIndex)
 {

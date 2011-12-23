@@ -1511,8 +1511,8 @@ void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
   //
   aA=aDN[0].Angle(aDN[1]);
   aA=fabs(aA);
-  if (aA>0.5*PI) {
-    aA=PI-aA;
+  if (aA > 0.5*M_PI) {
+    aA = M_PI - aA;
   }
   //
   if (aA<aAmin || aA>aAmax) {

@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : TransformationGUI_RotationDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "TransformationGUI_RotationDlg.h"
 
 #include <DlgRef.h>
@@ -494,7 +493,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
       if (toCreateCopy) {
         for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->RotateCopy(myObjects[i].get(), myAxis.get(), GetAngle() * PI180);
+          anObj = anOper->RotateCopy(myObjects[i].get(), myAxis.get(), GetAngle() * M_PI / 180.);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
               anObj->SetParameters(aParameters.join(":").toLatin1().constData());
@@ -506,7 +505,7 @@ bool TransformationGUI_RotationDlg::execute (ObjectList& objects)
       else {
         for (int i = 0; i < myObjects.count(); i++) {
           myCurrObject = myObjects[i];
-          anObj = anOper->Rotate(myObjects[i].get(), myAxis.get(), GetAngle() * PI180);
+          anObj = anOper->Rotate(myObjects[i].get(), myAxis.get(), GetAngle() * M_PI / 180.);
           if (!anObj->_is_nil()) {
             if(!IsPreview()) {
               anObj->SetParameters(aParameters.join(":").toLatin1().constData());

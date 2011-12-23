@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ChamferDlg.cxx
 // Author : Damien COQUERET, Open CASCADE S.A.S.
-//
+
 #include "OperationGUI_ChamferDlg.h"
 #include <SalomeApp_DoubleSpinBox.h>
 
@@ -839,7 +838,7 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
     else {
       anObj = anOper->MakeChamferEdgeAD(myShape,
                                         mySpinBox[ SpinBox23 ]->value(),
-                                        mySpinBox[ SpinBox24 ]->value() * PI180,
+                                        mySpinBox[ SpinBox24 ]->value() * M_PI / 180.,
                                         myFace[ Face1 ],
                                         myFace[ Face2 ]);
       if (!anObj->_is_nil())
@@ -871,7 +870,7 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
     else {
       anObj = anOper->MakeChamferFacesAD(myShape,
                                          mySpinBox[ SpinBox33 ]->value(),
-                                         mySpinBox[ SpinBox34 ]->value() * PI180,
+                                         mySpinBox[ SpinBox34 ]->value() * M_PI / 180.,
                                          anArray);
       if (!anObj->_is_nil())
       {
@@ -899,7 +898,7 @@ bool OperationGUI_ChamferDlg::execute (ObjectList& objects)
     else {
       anObj = anOper->MakeChamferEdgesAD(myShape,
                                          mySpinBox[ SpinBox43 ]->value(),
-                                         mySpinBox[ SpinBox44 ]->value() * PI180,
+                                         mySpinBox[ SpinBox44 ]->value() * M_PI / 180.,
                                          anArray);
       if (!anObj->_is_nil())
       {

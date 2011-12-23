@@ -18,14 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  GEOM OBJECT : interactive object for Geometry entities visualization
 //  File   : GEOM_OCCReader.h
 //  Author : Christophe ATTANASIO
 //  Module : GEOM
-//  $Header$
-//
+
 #include "GEOM_OCCReader.h"
 
 // VTK Includes
@@ -810,7 +808,7 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     if (aDist < gp::Resolution()) return;
     gp_Dir aDirection (aDirVec);
 
-    Standard_Real anAngle = PI/180.*5.;
+    Standard_Real anAngle = M_PI/180. * 5.;
     Standard_Real aLength = aDist/10.;
 
     Standard_Real dx,dy,dz;
@@ -848,8 +846,8 @@ void GEOM_OCCReader::TransferEdgeWData(const TopoDS_Edge& aEdge,
     int NbPoints = 15;
     for (int i = 1; i <= NbPoints; i++, ptPrev = ptCur)
     {
-      cosinus = cos(2. * PI / NbPoints * (i-1));   
-      sinus   = sin(2. * PI / NbPoints * (i-1));
+      cosinus = cos(2. * M_PI / NbPoints * (i-1));   
+      sinus   = sin(2. * M_PI / NbPoints * (i-1));
 
       gp_XYZ aP = aPc + (aDirI.XYZ() * cosinus + aDirJ.XYZ() * sinus) * aLength * Tg;
       coord[0] = aP.X();
@@ -1069,5 +1067,3 @@ const TopoDS_Shape& GEOM_OCCReader::getTopo() {
 int GEOM_OCCReader::getDisplayMode() {
   return amode;
 }
-
-

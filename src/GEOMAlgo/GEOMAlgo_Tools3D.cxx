@@ -278,7 +278,7 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
   GetApproxNormalToFaceOnEdge (aE1, theFace1, aT, aPF1, aDNF1, theContext);
   GetApproxNormalToFaceOnEdge (aE2, theFace2, aT, aPF2, aDNF2, theContext);
   //
-  aTwoPI=2.*PI;
+  aTwoPI = 2.*M_PI;
   gp_Vec aVBF (aPx, aPF );
   gp_Vec aVBF1(aPx, aPF1);
   gp_Vec aVBF2(aPx, aPF2);
@@ -321,7 +321,7 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
   NMTTools_ListIteratorOfListOfCoupleOfShape aIt;
   //
   aAngleMin=100.;
-  aTwoPI=PI+PI;
+  aTwoPI = M_PI+M_PI;
   BRep_Tool::Range(theE1, aT1, aT2);
   aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
   // Ref
@@ -338,7 +338,7 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
     const TopoDS_Face& aF2=TopoDS::Face(aCS.Shape2());
     //
     if (aF2==theF1) {
-      aAngle=PI;
+      aAngle=M_PI;
     }
     else if (aF2.IsSame(theF1)) {
       aAngle=aTwoPI;
@@ -1055,7 +1055,7 @@ Standard_Real AngleWithRef(const gp_Dir& theD1,
   Standard_Real aCosinus, aSinus, aBeta, aHalfPI, aScPr;
   gp_XYZ aXYZ;
   //
-  aHalfPI=0.5*PI;
+  aHalfPI=0.5*M_PI;
   //
   const gp_XYZ& aXYZ1=theD1.XYZ();
   const gp_XYZ& aXYZ2=theD2.XYZ();
@@ -1068,7 +1068,7 @@ Standard_Real AngleWithRef(const gp_Dir& theD1,
     aBeta=aHalfPI*(1.-aCosinus);
   }
   else {
-    aBeta=2.*PI-aHalfPI*(3.+aCosinus);
+    aBeta=2.*M_PI-aHalfPI*(3.+aCosinus);
   }
   //
   aScPr=aXYZ.Dot(theDRef.XYZ());

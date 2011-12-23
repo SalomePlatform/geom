@@ -4122,7 +4122,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld (Handle(GEOM_Objec
             if ( isFound && iType == TopAbs_FACE )
             {
               // check normals at pOnWhat and pOnWhere
-              const double angleTol = PI/180.;
+              const double angleTol = M_PI/180.;
               gp_Vec normToWhat  = GetNormal( TopoDS::Face(Exp_aWhat.Current()), aWhatDistance);
               gp_Vec normToWhere = GetNormal( TopoDS::Face(Exp_aWhere.Current()), aWhereDistance);
               if ( normToWhat * normToWhere < 0 )

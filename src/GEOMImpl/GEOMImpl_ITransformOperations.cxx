@@ -1666,7 +1666,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::Rotate (Handle(GEOM_Object) t
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << "geompy.Rotate(" << theObject
-    << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+    << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return theObject;
@@ -1719,7 +1719,7 @@ Handle(GEOM_Object) GEOMImpl_ITransformOperations::RotateCopy (Handle(GEOM_Objec
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aCopy << " = geompy.MakeRotation(" << theObject
-    << ", " << theAxis << ", " << theAngle * 180.0 / PI << "*math.pi/180.0)";
+    << ", " << theAxis << ", " << theAngle * 180.0 / M_PI << "*math.pi/180.0)";
 
   SetErrorCode(OK);
   return aCopy;

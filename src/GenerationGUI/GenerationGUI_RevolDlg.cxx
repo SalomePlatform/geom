@@ -18,12 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : GenerationGUI_RevolDlg.cxx
 // Author : Lucien PIGNOLONI, Open CASCADE S.A.S.
-//
+
 #include "GenerationGUI_RevolDlg.h"
 
 #include <DlgRef.h>
@@ -319,9 +318,11 @@ bool GenerationGUI_RevolDlg::execute (ObjectList& objects)
 
   for (int i = 0; i < myBaseObjects.count(); i++) {
     if (!GroupPoints->CheckButton1->isChecked())
-      anObj = anOper->MakeRevolutionAxisAngle(myBaseObjects[i].get(), myAxis.get(), getAngle() * PI180);
+      anObj = anOper->MakeRevolutionAxisAngle(myBaseObjects[i].get(), myAxis.get(),
+                                              getAngle() * M_PI / 180.);
     else
-      anObj = anOper->MakeRevolutionAxisAngle2Ways(myBaseObjects[i].get(), myAxis.get(), getAngle() * PI180);
+      anObj = anOper->MakeRevolutionAxisAngle2Ways(myBaseObjects[i].get(), myAxis.get(),
+                                                   getAngle() * M_PI / 180.);
     
     if (!anObj->_is_nil()) {
       if (!IsPreview()) {
