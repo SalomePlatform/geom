@@ -159,6 +159,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
         aSketcherDlg->OnPointSelected( modifiers, aPnt );  // "feed" the point to point construction dialog
       } // acceptMouseEvent()
     }
+#ifdef WITH_OPENCV
     if (  QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) 
     {
       EntityGUI_FeatureDetectorDlg* aCornerDlg = (EntityGUI_FeatureDetectorDlg*) aDlg;
@@ -189,7 +190,9 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
       } // acceptMouseEvent()
       
     }
+#endif
   }
+
   return false;
 }
 
@@ -201,6 +204,7 @@ bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_View
 {
   MESSAGE("EntityGUI::OnMouseRelease")
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+#ifdef WITH_OPENCV
   if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
        theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() &&
        pe->modifiers() != Qt::ControlModifier ) 
@@ -217,8 +221,10 @@ bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_View
       aCornerDlg->setEndPnt( aPnt );
     }    
   }
+#endif
   return false;
 }
+
 
 //=======================================================================
 // function : ConvertClickToPoint()
