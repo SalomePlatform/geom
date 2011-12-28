@@ -88,7 +88,8 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
       TopoDS_Edge E = TopoDS::Edge(Exp.Current());
       fill.Add(E);
     }
-  } else if (aType == FILLET_SHAPE_EDGES || aType == FILLET_SHAPE_EDGES_2R) {
+  }
+  else if (aType == FILLET_SHAPE_EDGES || aType == FILLET_SHAPE_EDGES_2R) {
     int aLen = aCI.GetLength();
     int ind = 1;
     for (; ind <= aLen; ind++) {
@@ -98,7 +99,8 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
           fill.Add(TopoDS::Edge(aShapeEdge));
       }
     }
-  } else if (aType == FILLET_SHAPE_FACES || aType == FILLET_SHAPE_FACES_2R) {
+  }
+  else if (aType == FILLET_SHAPE_FACES || aType == FILLET_SHAPE_FACES_2R) {
     int aLen = aCI.GetLength();
     int ind = 1;
     for (; ind <= aLen; ind++) {
@@ -111,16 +113,19 @@ Standard_Integer GEOMImpl_FilletDriver::Execute(TFunction_Logbook& log) const
         }
       }
     }
-  } else {
   }
-  if (aType == FILLET_SHAPE_FACES || aType == FILLET_SHAPE_EDGES || aType == FILLET_SHAPE_ALL)
+  else {
+  }
+
+  if (aType == FILLET_SHAPE_FACES || aType == FILLET_SHAPE_EDGES || aType == FILLET_SHAPE_ALL) {
     for (int i = 1; i <= fill.NbContours(); i++)
       fill.SetRadius(aCI.GetR(), i, 1);
-    else if (aType == FILLET_SHAPE_FACES_2R || aType == FILLET_SHAPE_EDGES_2R)
-      for (int i = 1; i <= fill.NbContours(); i++)
-        {
-        fill.SetRadius(aCI.GetR1(), aCI.GetR2(), i, 1);
-        }
+  }
+  else if (aType == FILLET_SHAPE_FACES_2R || aType == FILLET_SHAPE_EDGES_2R) {
+    for (int i = 1; i <= fill.NbContours(); i++) {
+      fill.SetRadius(aCI.GetR1(), aCI.GetR2(), i, 1);
+    }
+  }
 
   fill.Build();
   if (!fill.IsDone()) {

@@ -2762,7 +2762,7 @@ module GEOM
                                      in ListOfLong  theFaces);
 
     /*!
-     *  Perform a fillet on face of the specified vertexes of the given shape.
+     *  Perform a fillet on a face or a shell at the specified vertexes.
      *  \param theShape Shape, to perform fillet on.
      *  \param theR Fillet radius.
      *  \param theVertexes Global indices of vertexes to perform fillet on.

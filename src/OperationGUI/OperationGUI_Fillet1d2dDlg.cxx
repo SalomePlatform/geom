@@ -15,12 +15,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_Fillet1d2dDlg.cxx
 // Author : DMV, OCN.
-//
+
 #include "OperationGUI_Fillet1d2dDlg.h"
 
 #include <DlgRef.h>
@@ -215,7 +214,8 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
               anObj = aFindedObject; // get Object from study
           }
           else { // Global Selection
-            if ( aShape.ShapeType() != (myIs1D ? TopAbs_WIRE : TopAbs_FACE) ) {
+            if ((myIs1D && aShape.ShapeType() != TopAbs_WIRE) ||
+                (!myIs1D && aShape.ShapeType() != TopAbs_FACE && aShape.ShapeType() != TopAbs_SHELL)) {
               anObj = GEOM::GEOM_Object::_nil();
               aName = "";
             }
@@ -349,8 +349,15 @@ void OperationGUI_Fillet1d2dDlg::activateSelection()
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection();
   if (myEditCurrentArgument == GroupVertexes->LineEdit1)
-    globalSelection( myIs1D ? GEOM_WIRE : GEOM_FACE );  // localSelection(myShape, myIs1D ? TopAbs_WIRE 
-                                                                                       // : TopAbs_FACE);
+    //localSelection(myShape, myIs1D ? TopAbs_WIRE : TopAbs_FACE);
+    if (myIs1D)
+      globalSelection(GEOM_WIRE);
+    else {
+      TColStd_MapOfInteger aMap;
+      aMap.Add(GEOM_FACE);
+      aMap.Add(GEOM_SHELL);
+      globalSelection(aMap);
+    }
   else if (!myShape->_is_nil() && myEditCurrentArgument == GroupVertexes->LineEdit2)
     localSelection(myShape, TopAbs_VERTEX);
 

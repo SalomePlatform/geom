@@ -3283,15 +3283,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
-        ## Perform a fillet on the specified edges/faces of the given shape
-        #  @param theShape - Face Shape to perform fillet on.
+        ## Perform a fillet at the specified vertices of the given face/shell.
+        #  @param theShape - Face or Shell shape to perform fillet on.
         #  @param theR - Fillet radius.
         #  @param theListOfVertexes Global indices of vertexes to perform fillet on.
         #    \note Global index of sub-shape can be obtained, using method geompy.GetSubShapeID().
         #  @return New GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet2d "Example"
-        def MakeFillet2D(self,theShape, theR, theListOfVertexes):
+        def MakeFillet2D(self, theShape, theR, theListOfVertexes):
             # Example: see GEOM_TestAll.py
             theR,Parameters = ParseParameters(theR)
             anObj = self.LocalOp.MakeFillet2D(theShape, theR, theListOfVertexes)
