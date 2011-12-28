@@ -493,7 +493,8 @@ bool RepairGUI_GlueDlg::execute(ObjectList& objects)
       GEOM::GEOM_Object_var anObj;
       if (myGlueMode == TopAbs_FACE) {
         bool doGlueAllEdges = myGlueAllEdgesChk->isChecked();
-        anObj = anOper->MakeGlueFacesByList(myObject, myTolEdt2->value(), aListForGlue.in(), true, false);
+        anObj = anOper->MakeGlueFacesByList(myObject, myTolEdt2->value(), aListForGlue.in(),
+                                            true, doGlueAllEdges);
       }
       else if (myGlueMode == TopAbs_EDGE)
         anObj = anOper->MakeGlueEdgesByList(myObject, myTolEdt2->value(), aListForGlue.in());
