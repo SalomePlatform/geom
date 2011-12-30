@@ -89,6 +89,12 @@
 #include <Standard_TypeMismatch.hxx>
 #include <Standard_ConstructionError.hxx>
 
+//modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
+static
+  void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
+		      const Handle(TopTools_HSequenceOfShape)& aWires);
+//modified by NIZNHY-PKV Wed Dec 28 13:48:23 2011t
+
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -251,6 +257,9 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     Handle(TopTools_HSequenceOfShape) aSeqWiresOut;
     ShapeAnalysis_FreeBounds::ConnectEdgesToWires(aSeqEdgesIn, Precision::Confusion(),
                                                   /*shared*/Standard_False, aSeqWiresOut);
+    //modified by NIZNHY-PKV Wed Dec 28 13:46:55 2011f
+    KeepEdgesOrder(aSeqEdgesIn, aSeqWiresOut);
+    //modified by NIZNHY-PKV Wed Dec 28 13:46:59 2011t
 
     // 3. Separate closed wires
     Handle(TopTools_HSequenceOfShape) aSeqClosedWires = new TopTools_HSequenceOfShape;
@@ -964,3 +973,71 @@ const Handle(GEOMImpl_ShapeDriver) Handle(GEOMImpl_ShapeDriver)::DownCast(const 
 
   return _anOtherObject;
 }
+
+//modified by NIZNHY-PKV Wed Dec 28 13:48:31 2011f
+#include <TopoDS_Iterator.hxx>
+#include <TopTools_HSequenceOfShape.hxx>
+#include <ShapeAnalysis_FreeBounds.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapOfOrientedShape.hxx>
+#include <BRep_Builder.hxx>
+#include <TopoDS_Wire.hxx>
+
+//=======================================================================
+//function : KeepEdgesOrder
+//purpose  : 
+//=======================================================================
+void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
+		    const Handle(TopTools_HSequenceOfShape)& aWires)
+{
+  Standard_Integer aNbWires, aNbEdges;
+  // 
+  if (aEdges.IsNull()) {
+    return;
+  }
+  //
+  if (aWires.IsNull()) {
+    return;
+  }
+  //
+  aNbEdges=aEdges->Length();
+  aNbWires=aWires->Length();
+  if (!aNbEdges || !aNbWires) {
+    return;
+  }
+  //-----
+  Standard_Boolean bClosed;
+  Standard_Integer i, j;
+  TopoDS_Wire aWy;
+  TopoDS_Iterator aIt;
+  BRep_Builder aBB;
+  TopTools_MapOfOrientedShape aMEx;
+  //
+  for (i=1; i<=aNbWires; ++i) {
+    const TopoDS_Shape& aWx=aWires->Value(i);
+    //
+    aMEx.Clear();
+    aIt.Initialize (aWx);
+    for (; aIt.More(); aIt.Next()) {
+      const TopoDS_Shape& aEx=aIt.Value();
+      aMEx.Add(aEx);
+    }
+    // aWy
+    aBB.MakeWire (aWy);
+    for (j=1; j<=aNbEdges; ++j) {
+      const TopoDS_Shape& aE=aEdges->Value(j);
+      if (aMEx.Contains(aE)) {
+	aBB.Add(aWy, aE);
+      }
+    }
+    //
+    bClosed=aWx.Closed();
+    aWy.Closed(bClosed);
+    //
+    aWires->Append(aWy);
+  }// for (i=1; i<=aNbWires; ++i) {
+  //
+  aWires->Remove(1, aNbWires);
+}
+
+//modified by NIZNHY-PKV Wed Dec 28 13:48:34 2011t
