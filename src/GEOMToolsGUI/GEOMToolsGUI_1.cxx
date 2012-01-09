@@ -386,7 +386,7 @@ void GEOMToolsGUI::OnTexture()
         bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
         int mgrId = window->getViewManager()->getGlobalId();
         if ( isOCC ) {
-          QString aTexture = QFileDialog::getOpenFileName(window,tr( "SELECT_IMAGE"),QString("/home"), tr("OCC_IMAGE_FILES"));
+          QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_IMAGE_FILES"));
           if( !aTexture.isEmpty() )
           {
             SUIT_OverrideCursor();
@@ -395,12 +395,11 @@ void GEOMToolsGUI::OnTexture()
             Handle(AIS_InteractiveObject) io ;
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
               io = GEOMBase::GetAIS( It.Value(), true );
-              if ( !io.IsNull() ) {   
+              if ( !io.IsNull() ) {
                 if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-                  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str())); 
-                
-              io->Redisplay( Standard_True );
-              }
+                  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str()));
+                io->Redisplay( Standard_True );
+              } // if ( !io.IsNull() )
             } // for
             ic->UpdateCurrentViewer();
             GeometryGUI::Modified();

@@ -506,6 +506,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Dimensions</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_DIST</source>
+        <translation>Distance</translation>
+    </message>
+    <message>
         <source>GEOM_DISTANCE</source>
         <translation>Distance</translation>
     </message>
@@ -1610,10 +1614,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>Direction</translation>
     </message>
     <message>
-        <source>GEOM_SKETCHER_DIST</source>
-        <translation>Distance</translation>
-    </message>
-    <message>
         <source>GEOM_SKETCHER_DX2</source>
         <translation>DX :</translation>
     </message>
@@ -2562,6 +2562,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>MEN_POP_SETTEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
         <source>MEN_POP_TRANSPARENCY</source>
         <translation>Transparency</translation>
     </message>
@@ -3222,6 +3226,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>STB_POP_SETTEXTURE</source>
+        <translation>Add a texture</translation>
+    </message>
+    <message>
         <source>STB_POP_TRANSPARENCY</source>
         <translation>Transparency</translation>
     </message>
@@ -3768,6 +3776,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_SHADING</source>
         <translation>Shading</translation>
+    </message>
+    <message>
+        <source>TOP_POP_SETTEXTURE</source>
+        <translation>Texture</translation>
     </message>
     <message>
         <source>TOP_POP_TRANSPARENCY</source>
@@ -4362,6 +4374,10 @@ Otherwise the dimensions will be kept without modifications.</translation>
     <message>
         <source>SHOW_ALL_SUB_SHAPES</source>
         <translation>Show all sub-shapes</translation>
+    </message>
+    <message>
+        <source>GEOM_SELECT_IMAGE</source>
+        <translation>Select image...</translation>
     </message>
 </context>
 <context>

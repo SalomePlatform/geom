@@ -358,6 +358,22 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Contrôler la validité de l&apos;objet</translation>
     </message>
     <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Détecter les auto-intersections</translation>
+    </message>
+    <message>
+        <source>GEOM_CHECK_SELF_INTERSECTIONS_FAILED</source>
+        <translation>La détection d&apos;auto-intersections a échoué</translation>
+    </message>
+    <message>
+        <source>GEOM_NO_SELF_INTERSECTIONS</source>
+        <translation>Il n&apos;y a pas d&apos;auto-intersections dans la géométrie</translation>
+    </message>
+    <message>
+        <source>GEOM_SELF_INTERSECTIONS_FOUND</source>
+        <translation>Des auto-intersections ont été détectées</translation>
+    </message>
+    <message>
         <source>GEOM_CIRCLE</source>
         <translation>Circle</translation>
     </message>
@@ -2190,8 +2206,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construire</translation>
     </message>
     <message>
-        <source>MEN_CORNER_DETECTION</source>
-        <translation>Détecter les angles (image ou plan)</translation>
+        <source>MEN_FEATURE_DETECTION</source>
+        <translation>Détection de contours</translation>
+    </message>
+    <message>
+        <source>MEN_PICTURE_IMPORT</source>
+        <translation>Importer une image dans la vue</translation>
     </message>
     <message>
         <source>MEN_CHAMFER</source>
@@ -2208,6 +2228,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_CHECK_COMPOUND</source>
         <translation>Contrôler un assemblage de blocs</translation>
+    </message>
+    <message>
+        <source>MEN_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Détections des auto-intersections</translation>
     </message>
     <message>
         <source>MEN_CHECK_FREE_BNDS</source>
@@ -2536,6 +2560,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_POP_SHADING</source>
         <translation>Ombrage</translation>
+    </message>
+    <message>
+        <source>MEN_POP_SETTEXTURE</source>
+        <translation>Texture</translation>
     </message>
     <message>
         <source>MEN_POP_TRANSPARENCY</source>
@@ -2902,6 +2930,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Contrôler un assemlage de blocs</translation>
     </message>
     <message>
+        <source>STB_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Détecte les auto-intersections</translation>
+    </message>
+    <message>
         <source>STB_CHECK_FREE_BNDS</source>
         <translation>Vérifier les contours libres</translation>
     </message>
@@ -3194,6 +3226,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage</translation>
     </message>
     <message>
+        <source>STB_POP_SETTEXTURE</source>
+        <translation>Ajoute une texture</translation>
+    </message>
+    <message>
         <source>STB_POP_TRANSPARENCY</source>
         <translation>Transparence</translation>
     </message>
@@ -3460,6 +3496,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_CHECK_COMPOUND</source>
         <translation>Valider l&apos;assemblage de blocs</translation>
+    </message>
+    <message>
+        <source>TOP_CHECK_SELF_INTERSECTIONS</source>
+        <translation>Détecttion des  auto-intersections</translation>
     </message>
     <message>
         <source>TOP_CHECK_FREE_BNDS</source>
@@ -3736,6 +3776,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_POP_SHADING</source>
         <translation>Ombrage</translation>
+    </message>
+    <message>
+        <source>TOP_POP_SETTEXTURE</source>
+        <translation>Texture</translation>
     </message>
     <message>
         <source>TOP_POP_TRANSPARENCY</source>
@@ -4331,6 +4375,10 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
         <source>SHOW_ALL_SUB_SHAPES</source>
         <translation>Afficher tous les sous-objets</translation>
     </message>
+    <message>
+        <source>GEOM_SELECT_IMAGE</source>
+        <translation>Sélectionner une image...</translation>
+    </message>
 </context>
 <context>
     <name>BasicGUI_CurveDlg</name>
@@ -4589,6 +4637,62 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>GEOM_CORNERS</source>
         <translation>Angles</translation>
+    </message>
+    <message>
+        <source>GEOM_CONTOURS</source>
+        <translation>Contours</translation>
+    </message>
+    <message>
+        <source>GEOM_FEATURES</source>
+        <translation>Caractéristiques</translation>
+    </message>
+    <message>
+        <source>GEOM_DETECT_ZONE</source>
+        <translation>Sélectionner une zone de détection
+(toute l'image par défaut)</translation>
+    </message>
+    <message>
+        <source>GEOM_DETECT_OUTPUT</source>
+        <translation>Type de sortie</translation>
+    </message>
+    <message>
+        <source>GEOM_PICTURE</source>
+        <translation>Image</translation>
+    </message>   
+    <message>
+        <source>GEOM_COLOR_FILTER</source>
+        <translation>Filtre</translation>
+    </message>
+    <message>
+        <source>GEOM_VIEW</source>
+        <translation>Vue</translation>
+    </message>
+    <message>
+        <source>GEOM_FRONT</source>
+        <translation>Face (Y-Z)</translation>
+    </message>
+    <message>
+        <source>GEOM_TOP</source>
+        <translation>Dessus (X-Y)</translation>
+    </message>
+    <message>
+        <source>GEOM_LEFT</source>
+        <translation>Gauche (X-Z)</translation>
+    </message>
+</context>
+<context>
+    <name>EntityGUI_PictureImportDlg</name>
+    <message>
+        <source>GEOM_PICTURE</source>
+        <translation>Image</translation>
+    </message>
+    <message>
+        <source>GEOM_FILE</source>
+        <translation>Nom du ficheir</translation>
+    </message>
+    <message>
+        <source>GEOM_IMPORT_PICT_TITLE</source>
+        <translation>Importer l&apos;image dans le viewer</translation>
     </message>
 </context>
 <context>

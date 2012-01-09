@@ -121,7 +121,7 @@ void EntityGUI_PictureImportDlg::Init()
 // =================================================================================
 void EntityGUI_PictureImportDlg::FileSelectionClicked()
 {
-  QString selFile = QFileDialog::getOpenFileName(this,tr( "SELECT_IMAGE"),"/home", tr("OCC_IMAGE_FILES"));
+  QString selFile = QFileDialog::getOpenFileName(this,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_IMAGE_FILES"));
   if ( ! selFile.isEmpty() )
     myLineEdit->setText(selFile);
 }
