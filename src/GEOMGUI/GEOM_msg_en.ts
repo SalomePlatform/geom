@@ -2562,6 +2562,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>MEN_POP_TEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
         <source>MEN_POP_SETTEXTURE</source>
         <translation>Texture</translation>
     </message>

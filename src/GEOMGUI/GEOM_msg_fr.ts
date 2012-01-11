@@ -2562,6 +2562,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage</translation>
     </message>
     <message>
+        <source>MEN_POP_TEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
         <source>MEN_POP_SETTEXTURE</source>
         <translation>Texture</translation>
     </message>
