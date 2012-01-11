@@ -262,6 +262,11 @@ is returned, and encountered errors are printed in the python console.
  Returns True if there are no self-intersections. Reports pairs of
  intersected sub shapes, if there are any.
 
+\note This tool is useful for detection of shapes, not suitable for
+arguments of Boolean operations and Partition algorithm.
+For more information about Partition and Boolean Operations Algorithms
+and their limitations refer to <a href="SALOME_BOA_PA.pdf">this document</a>.
+
 \n <b>Result:</b> Boolean.
 \n <b>TUI Command:</b> <em>geompy.CheckSelfIntersections(theShape),</em>
 where \em theShape is the shape checked for validity.
