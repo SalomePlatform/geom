@@ -169,7 +169,12 @@ distance is computed.
 \anchor angle_anchor
 <br><h2>Angle</h2>
 
-\n Returns the angle between two lines or linear edges in degrees
+\n Returns the angle between two lines or linear edges in degrees.
+
+\note If both arguments are <b>vectors</b>, the angle is computed in
+      accordance with their orientations, otherwise the minimum angle
+      is computed.
+
 \n <b>TUI Command:</b> <em>geompy.GetAngle(shape1, shape2),</em> where
 Shape1 and Shape2 are shapes between which the angle is computed. 
 Another TUI command is <em>geompy.GetAngleRadians(shape1,shape2),</em> 

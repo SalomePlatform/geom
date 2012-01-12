@@ -3539,6 +3539,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get angle between the given shapes in degrees.
         #  @param theShape1,theShape2 Lines or linear edges to find angle between.
+        #  @note If both arguments are vectors, the angle is computed in accordance
+        #        with their orientations, otherwise the minimum angle is computed.
         #  @return Value of the angle between the given shapes in degrees.
         #
         #  @ref tui_measurement_tools_page "Example"
@@ -3547,8 +3549,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anAngle = self.MeasuOp.GetAngle(theShape1, theShape2)
             RaiseIfFailed("GetAngle", self.MeasuOp)
             return anAngle
+
         ## Get angle between the given shapes in radians.
         #  @param theShape1,theShape2 Lines or linear edges to find angle between.
+        #  @note If both arguments are vectors, the angle is computed in accordance
+        #        with their orientations, otherwise the minimum angle is computed.
         #  @return Value of the angle between the given shapes in radians.
         #
         #  @ref tui_measurement_tools_page "Example"
