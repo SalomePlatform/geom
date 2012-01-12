@@ -1,0 +1,56 @@
+/*!
+
+\page material_page Material
+
+\n You can change the material properties of the selected shape(s) by
+- choosing one of predefined global materials,
+- choosing one of predefined user materials,
+- creating a new user material and applying it to the selected shape(s)
+
+in the following dialog box.
+
+\image html material_front.png
+<center><em><b>Set Material Properties</b> dialog: <b>Front material</b> tab</em></center>
+
+\image html material_back.png
+<center><em><b>Set Material Properties</b> dialog: <b>Back material</b> tab</em></center>
+
+This functionality is available in both OCC and VTK viewers.
+
+User can changed the following material properties
+
+- ambient color and coefficient
+- diffuse color and coefficient
+- specular color and coefficient
+- emission color and coefficient (available only in OCC viewer)
+- shininess
+
+With help of <b>Front material</b> and <b>Back material</b> tabs of
+<b>Set Material Properties</b> dialog it is possible to set front and
+back materials of the selected shape(s). To make <b>Back material</b>
+tab visible it is needed to check <b>Enable back material</b> check
+box. If back material is not defined, front material specified for the
+selected shape(s) is used as both front and back materials.
+
+All currently available materials are shown in the left-side list box
+of the <b>Set Material Properties</b> dialog.
+
+- <b>[Current]</b> item in the list corresponds to
+  the front/back (depending on what tab is currently active) material
+  currently used for the selected shape(s)
+- <b>[Default]</b> item in the list corresponds to the front/back material
+  specified in Geometry module preferences
+- <b>Global</b> materials are shown in blue color in the list
+- <b>User</b> materials are shown in black color in the list 
+
+
+<b>Examples:</b>
+
+\image html material_OCC.png
+<center><em>Different materials in OCC viewer</em></center>
+
+\image html material_VTK.png
+<center><em>Different materials in VTK viewer</em></center>
+
+*/
+

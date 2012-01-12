@@ -45,9 +45,11 @@
 #include <gp_Dir.hxx>
 #include <gp_Vec.hxx>
 #include <Graphic3d_AspectFillArea3d.hxx>
+#include <Graphic3d_AspectLine3d.hxx>
 
 #include <Prs3d_ShadingAspect.hxx>
 #include <Prs3d_Arrow.hxx>
+#include <Prs3d_IsoAspect.hxx>
 
 #include <SelectBasics_SensitiveEntity.hxx>
 #include <SelectMgr_EntityOwner.hxx>
@@ -130,6 +132,13 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   : SALOME_AISShape(shape), myName(aName), myDisplayVectors(false)
 {
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
+
+  storeBoundaryColors();
+
+  myEdgesInShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
+
+  myUIsoNumber = -1;
+  myVIsoNumber = -1;
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -170,38 +179,19 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   switch (aMode) {
     case 0://StdSelect_DM_Wireframe: 
     {
+      restoreIsoNumbers();
+
+      // Restore wireframe edges colors
+      restoreBoundaryColors();
+
       StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
       break;
     }
     case 1://StdSelect_DM_Shading:
     {
-      myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
-      
-      Graphic3d_MaterialAspect aMatAspect;
-      aMatAspect.SetAmbient( 0.5 );
-      aMatAspect.SetDiffuse( 0.5 );
-      aMatAspect.SetEmissive( 0.5 );
-      aMatAspect.SetShininess(0.5 );
-      aMatAspect.SetSpecular( 0.5 );
-      
-      myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
-      myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(Graphic3d_NOM_JADE);
-      
-      Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
-      Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
-      FMat.SetTransparency(myTransparency); BMat.SetTransparency(myTransparency);
-      myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(FMat);
-      myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(BMat);
+      restoreIsoNumbers();
 
-      //Handle(Graphic3d_AspectFillArea3d) a4bis = myDrawer->ShadingAspect()->Aspect();
-      //       P->SetPrimitivesAspect(a4bis);
-      //        G->SetGroupPrimitivesAspect(a4bis);
-      //a4bis->SetInteriorColor(myShadingColor);
-      myDrawer->ShadingAspect()->SetColor(myShadingColor);
-
-      // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
-      //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
-      AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+      shadingMode(aPresentationManager, aPrs, aMode);
       break;
     }
     case 3: //StdSelect_DM_HLR:
@@ -209,6 +199,34 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
       break;
     }
+  }
+
+  if ( aMode == ShadingWithEdges ) {
+    // Temporary store number of iso lines in order to recover its later 
+    // when display mode is achnged to 'Wirefame' or 'Shading'.
+    // Iso lines are not displayed in 'Shading with edges' mode.
+    storeIsoNumbers();
+
+    // Reset number of iso lines to 0
+    resetIsoNumbers();
+
+    //Shaded faces
+    shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+
+    // Store wireframe edges colors
+    storeBoundaryColors();
+
+    // Coloring edges
+    Handle(Prs3d_LineAspect) anAspect = myDrawer->UnFreeBoundaryAspect();
+    anAspect->SetColor( myEdgesInShadingColor );
+    myDrawer->SetUnFreeBoundaryAspect( anAspect );
+    
+    anAspect = myDrawer->FreeBoundaryAspect();
+    anAspect->SetColor( myEdgesInShadingColor );
+    myDrawer->SetFreeBoundaryAspect( anAspect );
+
+    // Add edges to presentation
+    StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
   }
 
   if (isShowVectors())
@@ -282,6 +300,11 @@ void GEOM_AISShape::SetShadingColor(const Quantity_Color &aCol)
   myShadingColor = aCol;
 }
 
+void GEOM_AISShape::SetEdgesInShadingColor(const Quantity_Color &aCol)
+{
+  myEdgesInShadingColor = aCol;
+}
+
 void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, 
                                        const Standard_Boolean aHighlight )
 {
@@ -316,4 +339,93 @@ void GEOM_AISShape::highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndex
 void GEOM_AISShape::SetDisplayVectors(bool isDisplayed)
 {
   myDisplayVectors = isDisplayed;
+}
+
+void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+				const Handle(Prs3d_Presentation)& aPrs,
+				const Standard_Integer aMode)
+{
+  myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
+
+      Graphic3d_MaterialAspect aMatAspect;
+      if ( !HasMaterial() ) {
+	aMatAspect.SetAmbient( 0.5 );
+	aMatAspect.SetDiffuse( 0.5 );
+	aMatAspect.SetEmissive( 0.5 );
+	aMatAspect.SetShininess(0.5 );
+	aMatAspect.SetSpecular( 0.5 );
+	
+	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
+	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(Graphic3d_NOM_JADE);
+      }
+      
+      Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
+      Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
+      FMat.SetTransparency(myTransparency); BMat.SetTransparency(myTransparency);
+      myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(FMat);
+      myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(BMat);
+
+      //Handle(Graphic3d_AspectFillArea3d) a4bis = myDrawer->ShadingAspect()->Aspect();
+      //       P->SetPrimitivesAspect(a4bis);
+      //        G->SetGroupPrimitivesAspect(a4bis);
+      //a4bis->SetInteriorColor(myShadingColor);
+      myDrawer->ShadingAspect()->SetColor(myShadingColor);
+
+      // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
+      //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
+      AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+}
+
+void GEOM_AISShape::storeIsoNumbers()
+{
+  myUIsoNumber = myDrawer->UIsoAspect()->Number();
+  myVIsoNumber = myDrawer->VIsoAspect()->Number();
+}
+
+void GEOM_AISShape::restoreIsoNumbers()
+{
+  if ( myUIsoNumber > 0 ) {
+    // Restore number of U iso lines
+    Handle(Prs3d_IsoAspect) anAspect = myDrawer->UIsoAspect();
+    anAspect->SetNumber( myUIsoNumber );
+    myDrawer->SetUIsoAspect( anAspect );
+  }
+  
+  if ( myVIsoNumber > 0 ) {
+    // Restore number of V iso lines
+    Handle(Prs3d_IsoAspect) anAspect = myDrawer->VIsoAspect();
+    anAspect->SetNumber( myVIsoNumber );
+    myDrawer->SetVIsoAspect( anAspect );
+  }
+}
+
+void GEOM_AISShape::resetIsoNumbers()
+{
+  Handle(Prs3d_IsoAspect) anAspect = myDrawer->UIsoAspect();
+  anAspect->SetNumber( 0 );
+  myDrawer->SetUIsoAspect( anAspect );
+  
+  anAspect = myDrawer->VIsoAspect();
+  anAspect->SetNumber( 0 );
+  myDrawer->SetVIsoAspect( anAspect );
+}
+
+void GEOM_AISShape::storeBoundaryColors()
+{
+  Aspect_TypeOfLine aLT;
+  Standard_Real aW;
+
+  myDrawer->FreeBoundaryAspect()->Aspect()->Values( myFreeBoundaryColor, aLT, aW);
+  myDrawer->UnFreeBoundaryAspect()->Aspect()->Values( myUnFreeBoundaryColor, aLT, aW);
+}
+ 
+void GEOM_AISShape::restoreBoundaryColors()
+{
+  Handle(Prs3d_LineAspect) anAspect = myDrawer->FreeBoundaryAspect();
+  anAspect->SetColor( myFreeBoundaryColor );
+  myDrawer->SetFreeBoundaryAspect( anAspect );
+
+  anAspect = myDrawer->UnFreeBoundaryAspect();
+  anAspect->SetColor( myUnFreeBoundaryColor );
+  myDrawer->SetUnFreeBoundaryAspect( anAspect );
 }

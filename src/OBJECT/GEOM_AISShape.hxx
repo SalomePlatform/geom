@@ -57,6 +57,8 @@
 
 #include <TCollection_AsciiString.hxx>
 
+#include <AIS_DisplayMode.hxx>
+
 class PrsMgr_PresentationManager3d;
 class Prs3d_Presentation;
 class SALOME_InteractiveObject;
@@ -65,6 +67,14 @@ class TopoDS_Shape;
 class GEOM_OBJECT_EXPORT GEOM_AISShape : public SALOME_AISShape {
 
 public:
+
+    //! Enumeration of display modes
+    typedef enum {
+      //WireFrame,       //!< the same as AIS_WireFrame
+      //Shading,         //!< the same as AIS_Shaded
+      ShadingWithEdges = AIS_Shaded+1, //!< shading with edges
+      TexturedShape = ShadingWithEdges+1 //!< the same as AIS_ExactHLR
+    } DispMode;
 
     inline void* operator new(size_t,void* anAddress) 
       {
@@ -95,6 +105,7 @@ public:
 
         void SetTransparency(const Standard_Real aValue);
         void SetShadingColor(const Quantity_Color &aCol);
+        void SetEdgesInShadingColor(const Quantity_Color &aCol);
         void SetDisplayVectors(bool isShow);
 
         virtual  void Compute(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
@@ -109,8 +120,27 @@ public:
         const Handle(Standard_Type)& DynamicType() const;
         Standard_Boolean             IsKind(const Handle(Standard_Type)&) const;
 
+        void storeIsoNumbers();
+        void restoreIsoNumbers();
+        void resetIsoNumbers();
+
 protected: 
+  void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
+		   const Handle(Prs3d_Presentation)& aPrs,
+		   const Standard_Integer aMode);
+
+  void storeBoundaryColors();
+  void restoreBoundaryColors();
+
   Quantity_Color myShadingColor;
+
+  Quantity_Color myFreeBoundaryColor;
+  Quantity_Color myUnFreeBoundaryColor;
+
+  Quantity_Color myEdgesInShadingColor;
+
+  int            myUIsoNumber;
+  int            myVIsoNumber;
 
 private: 
   TCollection_AsciiString myName;

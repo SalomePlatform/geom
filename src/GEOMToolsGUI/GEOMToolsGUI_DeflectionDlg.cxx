@@ -23,6 +23,7 @@
 //
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include <GeometryGUI.h>
+#include <GEOM_Constants.h>
 #include <LightApp_Application.h>
 #include <SalomeApp_DoubleSpinBox.h>
 

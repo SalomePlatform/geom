@@ -41,12 +41,14 @@ public:
   T* Get() const { return this->GetPointer();} 
 }; 
  
- 
 class GEOM_DeviceActor; 
 typedef GEOM_SmartPtr<GEOM_DeviceActor> PDeviceActor; 
  
 class vtkPolyDataMapper; 
-typedef GEOM_SmartPtr<vtkPolyDataMapper> PPolyDataMapper; 
+typedef GEOM_SmartPtr<vtkPolyDataMapper> PPolyDataMapper;
+
+class GEOM_PainterPolyDataMapper;
+typedef GEOM_SmartPtr<GEOM_PainterPolyDataMapper> PPolyGeomPainterDataMapper;
  
  
 #endif //GEOM_SMARTPTR_H 

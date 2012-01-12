@@ -448,6 +448,7 @@ AC_OUTPUT([ \
   src/GEOMBase/Makefile \
   src/GEOMClient/Makefile \
   src/GEOMFiltersSelection/Makefile \
+  src/Material/Makefile \
   src/GEOMGUI/Makefile \
   src/GEOMImpl/Makefile \
   src/GEOMToolsGUI/Makefile \

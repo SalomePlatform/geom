@@ -946,6 +946,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage</translation>
     </message>
     <message>
+        <source>GEOM_MEN_SHADING_WITH_EDGES</source>
+        <translation>Ombrage Avec Arêtes</translation>
+    </message>
+    <message>
         <source>GEOM_MEN_SKETCHER_X</source>
         <translation>Indiquez la distance selon l&apos;axe X</translation>
     </message>
@@ -2562,6 +2566,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage</translation>
     </message>
     <message>
+        <source>MEN_POP_SHADING_WITH_EDGES</source>
+        <translation>Ombrage Avec Arêtes</translation>
+    </message>
+    <message>
         <source>MEN_POP_TEXTURE</source>
         <translation>Texture</translation>
     </message>
@@ -2636,6 +2644,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_SHADING</source>
         <translation>Ombrage</translation>
+    </message>
+    <message>
+        <source>MEN_SHADING_WITH_EDGES</source>
+        <translation>Ombrage Avec Arêtes</translation>
     </message>
     <message>
         <source>MEN_SHADING_COLOR</source>
@@ -2754,6 +2766,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Marqueur de point</translation>
     </message>
     <message>
+        <source>MEN_POP_MATERIAL_PROPERTIES</source>
+        <translation>Propriétés des matériaux</translation>
+    </message>
+    <message>
         <source>NAME_LBL</source>
         <translation>Nom : </translation>
     </message>
@@ -2858,6 +2874,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Couleur d&apos;ombrage par défaut</translation>
     </message>
     <message>
+        <source>PREF_EDGES_IN_SHADING</source>
+        <translation>Bords de l&apos;ombrage</translation>
+    </message>
+    <message>
         <source>PREF_STEP_VALUE</source>
         <translation>Valeur du pas pour les boîtes d&apos;incrément</translation>
     </message>
@@ -2876,6 +2896,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>PREF_WIREFRAME_COLOR</source>
         <translation>Couleur des contours par défaut</translation>
+    </message>
+    <message>
+        <source>PREF_FRONT_MATERIAL</source>
+        <translation>Devant du matériel par défaut</translation>
+    </message>
+    <message>
+        <source>PREF_BACK_MATERIAL</source>
+        <translation>Retour du matériel par défaut</translation>
     </message>
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
@@ -3230,6 +3258,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage</translation>
     </message>
     <message>
+        <source>STB_POP_SHADING_WITH_EDGES</source>
+        <translation>Ombrage Avec Arêtes</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Ajoute une texture</translation>
     </message>
@@ -3368,6 +3400,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_POP_POINT_MARKER</source>
         <translation>Définir un marqueur de point</translation>
+    </message>
+    <message>
+        <source>STB_POP_MATERIAL_PROPERTIES</source>
+        <translation>Définir un propriétés des matériaux</translation>
     </message>
     <message>
         <source>SUPPRESS_RESULT</source>
@@ -3782,6 +3818,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage</translation>
     </message>
     <message>
+        <source>TOP_POP_SHADING_WITH_EDGES</source>
+        <translation>Ombrage Avec Arêtes</translation>
+    </message>
+    <message>
         <source>TOP_POP_SETTEXTURE</source>
         <translation>Texture</translation>
     </message>
@@ -3900,6 +3940,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_POP_POINT_MARKER</source>
         <translation>Marqueur de point</translation>
+    </message>
+    <message>
+        <source>TOP_POP_MATERIAL_PROPERTIES</source>
+        <translation>Propriétés des matériaux</translation>
     </message>
     <message>
         <source>WRN_NOT_IMPLEMENTED</source>
@@ -5003,6 +5047,61 @@ Voulez-vous continuer?</translation>
     <message>
         <source>LOAD_TEXTURE_TLT</source>
         <translation>Ouvrir une Texture</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
+    <message>
+        <source>MATERIAL_PROPERTIES_TLT</source>
+        <translation>Définir un Propriétés des Matériaux</translation>
+    </message>
+    <message>
+        <source>MATERIAL_BACK_CHK</source>
+        <translation>Activer retour du matériel</translation>
+    </message>
+    <message>
+        <source>AMBIENT_GRP</source>
+        <translation>Ambiante</translation>
+    </message>
+    <message>
+        <source>DIFFUSE_GRP</source>
+        <translation>Diffuse</translation>
+    </message>
+    <message>
+        <source>SPECULAR_GRP</source>
+        <translation>Spéculaire</translation>
+    </message>
+    <message>
+        <source>EMISSION_GRP</source>
+        <translation>Démission</translation>
+    </message>
+    <message>
+        <source>COLOR</source>
+        <translation>Couleurs:</translation>
+    </message>
+    <message>
+        <source>COEFFICIENT</source>
+        <translation>Coefficient:</translation>
+    </message>
+    <message>
+        <source>SHININESS</source>
+        <translation>Shininess:</translation>
+    </message>
+    <message>
+        <source>CUSTOM_MATERIAL</source>
+        <translation>Matériau personnalisé</translation>
+    </message>
+    <message>
+        <source>OK_BTN</source>
+        <translation>&amp;OK</translation>
+    </message>
+    <message>
+        <source>CANCEL_BTN</source>
+        <translation>A&amp;nnuler</translation>
+    </message>
+    <message>
+        <source>HELP_BTN</source>
+        <translation>&amp;Aide</translation>
     </message>
 </context>
 <context>

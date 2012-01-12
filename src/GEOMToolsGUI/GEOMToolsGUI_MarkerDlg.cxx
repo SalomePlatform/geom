@@ -22,6 +22,7 @@
 #include "GEOMToolsGUI_MarkerDlg.h"
 
 #include <GeometryGUI.h>
+#include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
 
 #include <Basics_OCCTVersion.hxx>

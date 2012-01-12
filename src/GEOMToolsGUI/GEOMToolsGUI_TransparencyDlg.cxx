@@ -28,6 +28,7 @@
 #include <GEOMBase.h>
 #include <GEOM_AISShape.hxx>
 #include <GeometryGUI.h>
+#include <GEOM_Constants.h>
 
 #include <SALOME_ListIO.hxx>
 #include <SALOME_ListIteratorOfListIO.hxx>

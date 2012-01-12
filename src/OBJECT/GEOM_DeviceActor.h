@@ -52,6 +52,9 @@ public:
 
   void SetProperty(vtkProperty* theProperty);
   vtkProperty* GetProperty();
+
+  void SetBackfaceProperty(vtkProperty* theProperty);
+  vtkProperty* GetBackfaceProperty();
  
   void SetVisibility(int theVisibility); 
   int GetVisibility(); 

@@ -28,6 +28,8 @@
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
+#include <GEOM_Constants.h>
+
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
 
@@ -66,6 +68,10 @@
       str = QString( "Wireframe" ); \
     else if ( dm == AIS_Shaded )    \
       str = QString( "Shading" ); \
+    else if ( dm == GEOM_AISShape::ShadingWithEdges )    \
+      str = QString( "ShadingWithEdges" ); \
+    else if ( dm == GEOM_AISShape::TexturedShape )    \
+      str = QString( "Texture" ); \
     else \
       str = QString(); }
 
@@ -74,6 +80,8 @@
       str = QString( "Wireframe" ); \
     else if ( dm == 1 )    \
       str = QString( "Shading" ); \
+    else if ( dm == 3 )    \
+      str = QString( "ShadingWithEdges" ); \
     else \
       str = QString(); }
 

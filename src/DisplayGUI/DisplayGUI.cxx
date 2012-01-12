@@ -27,6 +27,7 @@
 #include "DisplayGUI.h"
 #include <GeometryGUI.h>
 #include "GeometryGUI_Operations.h"
+#include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
 #include <GEOM_AISShape.hxx>
 #include <GEOM_Actor.h>
@@ -91,11 +92,28 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
 
+  QString aDispModeName;
+  int aDispMode;
+  if ( theCommandID == GEOMOp::OpDisplayMode )
+    aDispMode = GetDisplayMode();
+
   switch ( theCommandID ) {
-  case GEOMOp::OpDisplayMode:    // MENU VIEW - DISPLAY MODE - WIREFRAME/SHADING
-    InvertDisplayMode();
-    getGeometryGUI()->action( GEOMOp::OpDisplayMode )->setText
-      ( GetDisplayMode() == 1 ? tr( "GEOM_MEN_WIREFRAME" ) : tr("GEOM_MEN_SHADING") );
+  case GEOMOp::OpDisplayMode:    // MENU VIEW - DISPLAY MODE - WIREFRAME/SHADING/SHADING WITH EDGES
+    //InvertDisplayMode();
+    switch ( aDispMode) {
+    case 0:
+      aDispModeName = tr( "GEOM_MEN_WIREFRAME" );
+      break;
+    case 1:
+      aDispModeName = tr("GEOM_MEN_SHADING");
+      break;
+    case 2:
+      aDispModeName = tr("GEOM_MEN_SHADING_WITH_EDGES");
+      break;
+    default:
+      break;
+    }
+    getGeometryGUI()->action( GEOMOp::OpDisplayMode )->setText( aDispModeName );
     getGeometryGUI()->menuMgr()->update();
     break;
   case GEOMOp::OpShowAll:        // MENU VIEW - SHOW ALL
@@ -128,11 +146,14 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpShading:        // POPUP MENU - DISPLAY MODE - SHADING
     ChangeDisplayMode( 1 );
     break;
+  case GEOMOp::OpShadingWithEdges: // POPUP MENU - DISPLAY MODE - SHADING WITH EDGES
+    ChangeDisplayMode( 2 );
+    break;
   case GEOMOp::OpTexture:        // POPUP MENU - DISPLAY MODE - TEXTURE
     ChangeDisplayMode( 3 );
     break;
-  case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
-    ChangeDisplayMode( 2 );
+    case GEOMOp::OpVectors:        // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
+    ChangeDisplayMode( 4 );
     break;
   default:
     app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
@@ -350,23 +371,42 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
     Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    AIS_DisplayMode newmode = (mode == 1 ? AIS_Shaded : AIS_WireFrame);
+
+    AIS_DisplayMode newmode;
+    switch (mode) {
+    case 0:
+      newmode = AIS_WireFrame;
+      break;
+    case 1:
+      newmode = AIS_Shaded;
+      break;
+    case 2:
+      newmode = AIS_DisplayMode( GEOM_AISShape::ShadingWithEdges );
+      break;
+    case 3:
+      newmode = AIS_DisplayMode( GEOM_AISShape::TexturedShape );
+      break;
+    default:
+      break;
+    }
+
     AIS_ListOfInteractive List;
     ic->DisplayedObjects( List );
     AIS_ListOfInteractive List1;
     ic->ObjectsInCollector( List1 );
     List.Append( List1 );
-
+    
     AIS_ListIteratorOfListOfInteractive ite( List );
     while( ite.More() ) {
       if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
-        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-        ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
+	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
+	ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
       }
       ite.Next();
     }
-
+      
     ic->SetDisplayMode( newmode, Standard_False );
+
     GeometryGUI::Modified();
   }
 }
@@ -386,9 +426,8 @@ int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
   } 
   else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
     OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();
-    AIS_DisplayMode mode = (AIS_DisplayMode)ic->DisplayMode();
-    dispMode = (mode == AIS_WireFrame ? 0 : 1 );
+    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();    
+    dispMode = ic->DisplayMode();
   }
   return dispMode;
 }
@@ -456,7 +495,7 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
 
 //=====================================================================================
 // function : DisplayGUI::InvertDisplayMode()
-// purpose  : Invert display mode ( shadin <-> wireframe ) for the viewer 
+// purpose  : Invert display mode ( shading <-> wireframe ) for the viewer 
 //            (current viewer if <viewWindow> = 0 )
 //=====================================================================================
 void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
@@ -503,11 +542,13 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
       SVTK_Prs* vtkPrs =
         stvkViewer ? dynamic_cast<SVTK_Prs*>( stvkViewer->CreatePrs( It.Value()->getEntry() ) ) : 0;
       if ( vtkPrs && !vtkPrs->IsNull() ) {
-        if ( mode == 0 )
+	if (mode == 0 )
           aView->ChangeRepresentationToWireframe( vtkPrs->GetObjects() );
-        else if ( mode == 1 )
+	else if ( mode == 1 )
           aView->ChangeRepresentationToSurface( vtkPrs->GetObjects() );
-        else if ( mode == 2 ) {
+	else if ( mode == 2 )
+	  aView->ChangeRepresentationToSurfaceWithEdges( vtkPrs->GetObjects() );
+	else if ( mode == 4 ) {
           vtkActorCollection* anActors = vtkPrs->GetObjects();
           anActors->InitTraversal();
           while (vtkActor* anAct = anActors->GetNextActor()) {
@@ -516,12 +557,12 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
             aGeomActor->SetVectorMode(vectorMode);
           }
         }
-        if(mode == 0 || mode == 1) {
-          aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
-        } 
-        else if (mode == 3) {
-          aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP , vectorMode);
-        }
+	if(mode == 0 || mode == 1 || mode == 2) {
+	  aStudy->setObjectProperty(mgrId,It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	}
+	else if (mode == 4) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);	
+	}
       }
     }
     aView->Repaint();
@@ -543,14 +584,16 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
         AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
         AIS_ListIteratorOfListOfInteractive interIter( shapes );
         for ( ; interIter.More(); interIter.Next() ) {
-          if ( mode == 0 )
+	  if ( mode == 0 )
             ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
-          else if ( mode == 1 )
+	  else if ( mode == 1 )
             ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
-          else if ( mode == 3 )
+	  else if ( mode == 2 )
+	    ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::ShadingWithEdges, false );
+	  else if ( mode == 3 )
             ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
-          else if (mode == 2 ) {
-            Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+	  else if (mode == 4 ) {
+	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
             if ( !aSh.IsNull() ) {
               vectorMode = !aSh->isShowVectors();      
               aSh->SetDisplayVectors(vectorMode);
@@ -558,11 +601,12 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
             }
           }
         }
-        if(mode == 0 || mode == 1) {
-          aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
-        } else if (mode == 2) {
-          aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
-        }
+	if(mode == 0 || mode == 1 || mode == 2 || mode == 3) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),DISPLAY_MODE_PROP, mode);
+	}
+	else if (mode == 4) {
+	  aStudy->setObjectProperty(mgrId, It.Value()->getEntry(),VECTOR_MODE_PROP, vectorMode);
+	}
       }
     }
     ic->UpdateCurrentViewer();

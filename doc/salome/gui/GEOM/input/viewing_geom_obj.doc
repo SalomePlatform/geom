@@ -29,6 +29,8 @@ transparency of geometrical objects.</li>
 isolines displayed within a shape.</li>
 <li>\subpage deflection_page "Deflection" - allows to change the
 deflection coefficient of a shape.</li>
+<li>\subpage material_page "Material" - allows to change the
+material properties of a shape.</li>
 <li>\subpage point_marker_page "Point Marker" - allows to change the
 representation of geometrical vertices.</li>
 <li><b>Auto color</b> / <b>Disable auto color</b> - activates the auto color

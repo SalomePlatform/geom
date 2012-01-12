@@ -31,9 +31,11 @@
 #include "GEOMToolsGUI_DeflectionDlg.h"
 #include "GEOMToolsGUI_MarkerDlg.h"
 #include "GEOMToolsGUI_PublishDlg.h"
+#include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 
 #include <GeometryGUI.h>
 #include <GeometryGUI_Operations.h>
+#include <GEOM_Constants.h>
 #include <GEOM_Displayer.h>
 
 #include <GEOMBase.h>
@@ -518,6 +520,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
     ic->InitCurrent();
     if ( ic->MoreCurrent() ) {
       Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+      CurObject->restoreIsoNumbers();
       Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
 
       int UIso = CurDrawer->UIsoAspect()->Number();
@@ -557,16 +560,18 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
 
         Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
-        
+
         CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbUIso) );
         CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbVIso) );
+
+	CurObject->storeIsoNumbers();
         
         ic->SetLocalAttributes(CurObject, CurDrawer);
         ic->Redisplay(CurObject);
 
         QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
         int aMgrId = window->getViewManager()->getGlobalId();
-        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), "Isos", anIsos);
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_PROP, anIsos);
       }
     }
     GeometryGUI::Modified();
@@ -616,8 +621,10 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
     int VIso = 0;
 
     vtkActor* anAct = aCollection->GetNextActor();
-    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct))
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+      anActor->RestoreIsoNumbers();
       anActor->GetNbIsos(UIso,VIso);
+    }
     else
       return;
     
@@ -656,6 +663,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         // There are no casting to needed actor.
         int aIsos[2]={newNbUIso,newNbVIso};
         anActor->SetNbIsos(aIsos);
+	anActor->StoreIsoNumbers();
 
         QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
         int aMgrId = window->getViewManager()->getGlobalId();
@@ -847,6 +855,11 @@ void GEOMToolsGUI::OnPointMarker()
   dlg.exec();
 }
 
+void GEOMToolsGUI::OnMaterialProperties()
+{
+  GEOMToolsGUI_MaterialPropertiesDlg dlg( SUIT_Session::session()->activeApplication()->desktop() );
+  dlg.exec();
+}
 
 void GEOMToolsGUI::OnUnpublishObject() {
   SALOME_ListIO selected;

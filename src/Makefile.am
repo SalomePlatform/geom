@@ -32,7 +32,7 @@ if WITH_OPENCV
 endif
 
 if GEOM_ENABLE_GUI
-  SUBDIRS += OBJECT DlgRef GEOMFiltersSelection GEOMGUI GEOMBase GEOMToolsGUI	\
+  SUBDIRS += OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI GEOMBase GEOMToolsGUI	\
              DisplayGUI BasicGUI PrimitiveGUI GenerationGUI EntityGUI BuildGUI	\
              BooleanGUI TransformationGUI OperationGUI RepairGUI MeasureGUI	\
              GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM

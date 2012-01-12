@@ -54,24 +54,6 @@
 #include "SALOMEconfig.h"
 #include CORBA_CLIENT_HEADER(SALOMEDS)
 
-// minimum allowed value for deflection coefficient
-#define DEFLECTION_MIN 1e-06
-
-//Define separators
-#define NAME_SEPARATOR  '_' // character used to separate parameter names
-#define DIGIT_SEPARATOR ':' // character used to separate numeric parameter values (color = r:g:b)
-
-#define VISIBILITY_PROP       "Visibility"      //Object visibility property
-#define OPACITY_PROP          "Opacity"         //Object opacity property
-#define TRANSPARENCY_PROP     "Transparency"    //Object transparency property
-#define DISPLAY_MODE_PROP     "DisplayMode"     //Object display mode property
-#define ISOS_PROP             "Isos"            //Number of the Isos property of the object
-#define COLOR_PROP            "Color"           //Color of the object 
-#define VECTOR_MODE_PROP      "VectorMode"      //Vector mode property
-#define DEFLECTION_COEFF_PROP "DeflectionCoeff" //Deflection coeff property
-#define MARKER_TYPE_PROP      "MarkerType"      // Marker type property
-
-
 class QDialog;
 class QMenu;
 class GEOMGUI_OCCSelector;

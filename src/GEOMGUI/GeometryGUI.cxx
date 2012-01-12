@@ -31,10 +31,13 @@
 #include "GeometryGUI_Operations.h"
 #include "GEOMGUI_OCCSelector.h"
 #include "GEOMGUI_Selection.h"
+#include "GEOM_Constants.h"
 #include "GEOM_Displayer.h"
 #include "GEOM_AISShape.hxx"
 
 #include "GEOM_Actor.h"
+
+#include <Material_ResourceMgr.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
@@ -389,169 +392,171 @@ void GeometryGUI::OnGUIEvent( int id )
   QString libName;
   // find corresponding GUI library
   switch ( id ) {
-  case GEOMOp::OpOriginAndVectors: // MENU BASIC - ORIGIN AND BASE VECTORS
+  case GEOMOp::OpOriginAndVectors:   // MENU BASIC - ORIGIN AND BASE VECTORS
     createOriginAndBaseVectors(); // internal operation
     return;
-  case GEOMOp::OpImport:           // MENU FILE - IMPORT
-  case GEOMOp::OpExport:           // MENU FILE - EXPORT
-  case GEOMOp::OpSelectVertex:     // POPUP MENU - SELECT ONLY - VERTEX
-  case GEOMOp::OpSelectEdge:       // POPUP MENU - SELECT ONLY - EDGE
-  case GEOMOp::OpSelectWire:       // POPUP MENU - SELECT ONLY - WIRE
-  case GEOMOp::OpSelectFace:       // POPUP MENU - SELECT ONLY - FACE
-  case GEOMOp::OpSelectShell:      // POPUP MENU - SELECT ONLY - SHELL
-  case GEOMOp::OpSelectSolid:      // POPUP MENU - SELECT ONLY - SOLID
-  case GEOMOp::OpSelectCompound:   // POPUP MENU - SELECT ONLY - COMPOUND
-  case GEOMOp::OpSelectAll:        // POPUP MENU - SELECT ONLY - SELECT ALL
-  case GEOMOp::OpDelete:           // MENU EDIT - DELETE
-  case GEOMOp::OpCheckGeom:        // MENU TOOLS - CHECK GEOMETRY
-  case GEOMOp::OpDeflection:       // POPUP MENU - DEFLECTION COEFFICIENT
-  case GEOMOp::OpColor:            // POPUP MENU - COLOR
-  case GEOMOp::OpSetTexture:       // POPUP MENU - SETTEXTURE
-  case GEOMOp::OpTransparency:     // POPUP MENU - TRANSPARENCY
-  case GEOMOp::OpIncrTransparency: // SHORTCUT   - INCREASE TRANSPARENCY
-  case GEOMOp::OpDecrTransparency: // SHORTCUT   - DECREASE TRANSPARENCY
-  case GEOMOp::OpIsos:             // POPUP MENU - ISOS
-  case GEOMOp::OpIncrNbIsos:       // SHORTCUT   - INCREASE NB ISOS
-  case GEOMOp::OpDecrNbIsos:       // SHORTCUT   - DECREASE NB ISOS
-  case GEOMOp::OpAutoColor:        // POPUP MENU - AUTO COLOR
-  case GEOMOp::OpNoAutoColor:      // POPUP MENU - DISABLE AUTO COLOR
-  case GEOMOp::OpShowChildren:     // POPUP MENU - SHOW CHILDREN
-  case GEOMOp::OpHideChildren:     // POPUP MENU - HIDE CHILDREN
-  case GEOMOp::OpUnpublishObject:  // POPUP MENU - UNPUBLISH
-  case GEOMOp::OpPublishObject:    // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
-  case GEOMOp::OpPointMarker:      // POPUP MENU - POINT MARKER
+  case GEOMOp::OpImport:             // MENU FILE - IMPORT
+  case GEOMOp::OpExport:             // MENU FILE - EXPORT
+  case GEOMOp::OpSelectVertex:       // POPUP MENU - SELECT ONLY - VERTEX
+  case GEOMOp::OpSelectEdge:         // POPUP MENU - SELECT ONLY - EDGE
+  case GEOMOp::OpSelectWire:         // POPUP MENU - SELECT ONLY - WIRE
+  case GEOMOp::OpSelectFace:         // POPUP MENU - SELECT ONLY - FACE
+  case GEOMOp::OpSelectShell:        // POPUP MENU - SELECT ONLY - SHELL
+  case GEOMOp::OpSelectSolid:        // POPUP MENU - SELECT ONLY - SOLID
+  case GEOMOp::OpSelectCompound:     // POPUP MENU - SELECT ONLY - COMPOUND
+  case GEOMOp::OpSelectAll:          // POPUP MENU - SELECT ONLY - SELECT ALL
+  case GEOMOp::OpDelete:             // MENU EDIT - DELETE
+  case GEOMOp::OpCheckGeom:          // MENU TOOLS - CHECK GEOMETRY
+  case GEOMOp::OpDeflection:         // POPUP MENU - DEFLECTION COEFFICIENT
+  case GEOMOp::OpColor:              // POPUP MENU - COLOR
+  case GEOMOp::OpSetTexture:         // POPUP MENU - SETTEXTURE
+  case GEOMOp::OpTransparency:       // POPUP MENU - TRANSPARENCY
+  case GEOMOp::OpIncrTransparency:   // SHORTCUT   - INCREASE TRANSPARENCY
+  case GEOMOp::OpDecrTransparency:   // SHORTCUT   - DECREASE TRANSPARENCY
+  case GEOMOp::OpIsos:               // POPUP MENU - ISOS
+  case GEOMOp::OpIncrNbIsos:         // SHORTCUT   - INCREASE NB ISOS
+  case GEOMOp::OpDecrNbIsos:         // SHORTCUT   - DECREASE NB ISOS
+  case GEOMOp::OpAutoColor:          // POPUP MENU - AUTO COLOR
+  case GEOMOp::OpNoAutoColor:        // POPUP MENU - DISABLE AUTO COLOR
+  case GEOMOp::OpShowChildren:       // POPUP MENU - SHOW CHILDREN
+  case GEOMOp::OpHideChildren:       // POPUP MENU - HIDE CHILDREN
+  case GEOMOp::OpUnpublishObject:    // POPUP MENU - UNPUBLISH
+  case GEOMOp::OpPublishObject:      // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
+  case GEOMOp::OpPointMarker:        // POPUP MENU - POINT MARKER
+  case GEOMOp::OpMaterialProperties: // POPUP MENU - MATERIAL PROPERTIES
     libName = "GEOMToolsGUI";
     break;
-  case GEOMOp::OpDisplayMode:      // MENU VIEW - WIREFRAME/SHADING
-  case GEOMOp::OpShowAll:          // MENU VIEW - SHOW ALL
-  case GEOMOp::OpShowOnly:         // MENU VIEW - DISPLAY ONLY
-  case GEOMOp::OpHideAll:          // MENU VIEW - ERASE ALL
-  case GEOMOp::OpHide:             // MENU VIEW - ERASE
-  case GEOMOp::OpShow:             // MENU VIEW - DISPLAY
-  case GEOMOp::OpSwitchVectors:    // MENU VIEW - VECTOR MODE
-  case GEOMOp::OpWireframe:        // POPUP MENU - WIREFRAME
-  case GEOMOp::OpShading:          // POPUP MENU - SHADING
-  case GEOMOp::OpTexture:          // POPUP MENU - TEXTURE
-  case GEOMOp::OpVectors:          // POPUP MENU - VECTORS
+  case GEOMOp::OpDisplayMode:        // MENU VIEW - WIREFRAME/SHADING
+  case GEOMOp::OpShowAll:            // MENU VIEW - SHOW ALL
+  case GEOMOp::OpShowOnly:           // MENU VIEW - DISPLAY ONLY
+  case GEOMOp::OpHideAll:            // MENU VIEW - ERASE ALL
+  case GEOMOp::OpHide:               // MENU VIEW - ERASE
+  case GEOMOp::OpShow:               // MENU VIEW - DISPLAY
+  case GEOMOp::OpSwitchVectors:      // MENU VIEW - VECTOR MODE
+  case GEOMOp::OpWireframe:          // POPUP MENU - WIREFRAME
+  case GEOMOp::OpShading:            // POPUP MENU - SHADING
+  case GEOMOp::OpShadingWithEdges:   // POPUP MENU - SHADING WITH EDGES
+  case GEOMOp::OpTexture:            // POPUP MENU - TEXTURE
+  case GEOMOp::OpVectors:            // POPUP MENU - VECTORS
     libName = "DisplayGUI";
     break;
-  case GEOMOp::OpPoint:            // MENU BASIC - POINT
-  case GEOMOp::OpLine:             // MENU BASIC - LINE
-  case GEOMOp::OpCircle:           // MENU BASIC - CIRCLE
-  case GEOMOp::OpEllipse:          // MENU BASIC - ELLIPSE
-  case GEOMOp::OpArc:              // MENU BASIC - ARC
-  case GEOMOp::OpVector:           // MENU BASIC - VECTOR
-  case GEOMOp::OpPlane:            // MENU BASIC - PLANE
-  case GEOMOp::OpCurve:            // MENU BASIC - CURVE
-  case GEOMOp::OpLCS:              // MENU BASIC - LOCAL COORDINATE SYSTEM
+  case GEOMOp::OpPoint:              // MENU BASIC - POINT
+  case GEOMOp::OpLine:               // MENU BASIC - LINE
+  case GEOMOp::OpCircle:             // MENU BASIC - CIRCLE
+  case GEOMOp::OpEllipse:            // MENU BASIC - ELLIPSE
+  case GEOMOp::OpArc:                // MENU BASIC - ARC
+  case GEOMOp::OpVector:             // MENU BASIC - VECTOR
+  case GEOMOp::OpPlane:              // MENU BASIC - PLANE
+  case GEOMOp::OpCurve:              // MENU BASIC - CURVE
+  case GEOMOp::OpLCS:                // MENU BASIC - LOCAL COORDINATE SYSTEM
     libName = "BasicGUI";
     break;
-  case GEOMOp::OpBox:              // MENU PRIMITIVE - BOX
-  case GEOMOp::OpCylinder:         // MENU PRIMITIVE - CYLINDER
-  case GEOMOp::OpSphere:           // MENU PRIMITIVE - SPHERE
-  case GEOMOp::OpTorus:            // MENU PRIMITIVE - TORUS
-  case GEOMOp::OpCone:             // MENU PRIMITIVE - CONE
-  case GEOMOp::OpRectangle:        // MENU PRIMITIVE - FACE
-  case GEOMOp::OpDisk:             // MENU PRIMITIVE - DISK
+  case GEOMOp::OpBox:                // MENU PRIMITIVE - BOX
+  case GEOMOp::OpCylinder:           // MENU PRIMITIVE - CYLINDER
+  case GEOMOp::OpSphere:             // MENU PRIMITIVE - SPHERE
+  case GEOMOp::OpTorus:              // MENU PRIMITIVE - TORUS
+  case GEOMOp::OpCone:               // MENU PRIMITIVE - CONE
+  case GEOMOp::OpRectangle:          // MENU PRIMITIVE - FACE
+  case GEOMOp::OpDisk:               // MENU PRIMITIVE - DISK
     libName = "PrimitiveGUI";
     break;
-  case GEOMOp::OpPrism:            // MENU GENERATION - PRISM
-  case GEOMOp::OpRevolution:       // MENU GENERATION - REVOLUTION
-  case GEOMOp::OpFilling:          // MENU GENERATION - FILLING
-  case GEOMOp::OpPipe:             // MENU GENERATION - PIPE
+  case GEOMOp::OpPrism:              // MENU GENERATION - PRISM
+  case GEOMOp::OpRevolution:         // MENU GENERATION - REVOLUTION
+  case GEOMOp::OpFilling:            // MENU GENERATION - FILLING
+  case GEOMOp::OpPipe:               // MENU GENERATION - PIPE
     libName = "GenerationGUI";
     break;
-  case GEOMOp::Op2dSketcher:       // MENU ENTITY - SKETCHER
-  case GEOMOp::Op3dSketcher:       // MENU ENTITY - 3D SKETCHER
-  case GEOMOp::OpExplode:          // MENU ENTITY - EXPLODE
+  case GEOMOp::Op2dSketcher:         // MENU ENTITY - SKETCHER
+  case GEOMOp::Op3dSketcher:         // MENU ENTITY - 3D SKETCHER
+  case GEOMOp::OpExplode:            // MENU ENTITY - EXPLODE
 #ifdef WITH_OPENCV
-  case GEOMOp::OpFeatureDetect:    // MENU ENTITY - FEATURE DETECTION
+  case GEOMOp::OpFeatureDetect:      // MENU ENTITY - FEATURE DETECTION
 #endif
-  case GEOMOp::OpPictureImport:    // MENU ENTITY - IMPORT PICTURE IN VIEWER
+  case GEOMOp::OpPictureImport:      // MENU ENTITY - IMPORT PICTURE IN VIEWER
     libName = "EntityGUI";
     break;
-  case GEOMOp::OpEdge:             // MENU BUILD - EDGE
-  case GEOMOp::OpWire:             // MENU BUILD - WIRE
-  case GEOMOp::OpFace:             // MENU BUILD - FACE
-  case GEOMOp::OpShell:            // MENU BUILD - SHELL
-  case GEOMOp::OpSolid:            // MENU BUILD - SOLID
-  case GEOMOp::OpCompound:         // MENU BUILD - COMPUND
+  case GEOMOp::OpEdge:               // MENU BUILD - EDGE
+  case GEOMOp::OpWire:               // MENU BUILD - WIRE
+  case GEOMOp::OpFace:               // MENU BUILD - FACE
+  case GEOMOp::OpShell:              // MENU BUILD - SHELL
+  case GEOMOp::OpSolid:              // MENU BUILD - SOLID
+  case GEOMOp::OpCompound:           // MENU BUILD - COMPUND
     libName = "BuildGUI";
     break;
-  case GEOMOp::OpFuse:             // MENU BOOLEAN - FUSE
-  case GEOMOp::OpCommon:           // MENU BOOLEAN - COMMON
-  case GEOMOp::OpCut:              // MENU BOOLEAN - CUT
-  case GEOMOp::OpSection:          // MENU BOOLEAN - SECTION
+  case GEOMOp::OpFuse:               // MENU BOOLEAN - FUSE
+  case GEOMOp::OpCommon:             // MENU BOOLEAN - COMMON
+  case GEOMOp::OpCut:                // MENU BOOLEAN - CUT
+  case GEOMOp::OpSection:            // MENU BOOLEAN - SECTION
     libName = "BooleanGUI";
     break;
-  case GEOMOp::OpTranslate:        // MENU TRANSFORMATION - TRANSLATION
-  case GEOMOp::OpRotate:           // MENU TRANSFORMATION - ROTATION
-  case GEOMOp::OpChangeLoc:        // MENU TRANSFORMATION - LOCATION
-  case GEOMOp::OpMirror:           // MENU TRANSFORMATION - MIRROR
-  case GEOMOp::OpScale:            // MENU TRANSFORMATION - SCALE
-  case GEOMOp::OpOffset:           // MENU TRANSFORMATION - OFFSET
-  case GEOMOp::OpProjection:       // MENU TRANSFORMATION - PROJECTION
-  case GEOMOp::OpMultiTranslate:   // MENU TRANSFORMATION - MULTI-TRANSLATION
-  case GEOMOp::OpMultiRotate:      // MENU TRANSFORMATION - MULTI-ROTATION
-  case GEOMOp::OpReimport:         // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
+  case GEOMOp::OpTranslate:          // MENU TRANSFORMATION - TRANSLATION
+  case GEOMOp::OpRotate:             // MENU TRANSFORMATION - ROTATION
+  case GEOMOp::OpChangeLoc:          // MENU TRANSFORMATION - LOCATION
+  case GEOMOp::OpMirror:             // MENU TRANSFORMATION - MIRROR
+  case GEOMOp::OpScale:              // MENU TRANSFORMATION - SCALE
+  case GEOMOp::OpOffset:             // MENU TRANSFORMATION - OFFSET
+  case GEOMOp::OpProjection:         // MENU TRANSFORMATION - PROJECTION
+  case GEOMOp::OpMultiTranslate:     // MENU TRANSFORMATION - MULTI-TRANSLATION
+  case GEOMOp::OpMultiRotate:        // MENU TRANSFORMATION - MULTI-ROTATION
+  case GEOMOp::OpReimport:           // CONTEXT(POPUP) MENU - RELOAD_IMPORTED
     libName = "TransformationGUI";
     break;
-  case GEOMOp::OpPartition:        // MENU OPERATION - PARTITION
-  case GEOMOp::OpArchimede:        // MENU OPERATION - ARCHIMEDE
-  case GEOMOp::OpFillet3d:         // MENU OPERATION - FILLET
-  case GEOMOp::OpChamfer:          // MENU OPERATION - CHAMFER
-  case GEOMOp::OpClipping:         // MENU OPERATION - CLIPPING RANGE
-  case GEOMOp::OpShapesOnShape:    // MENU OPERATION - GET SHAPES ON SHAPE
-  case GEOMOp::OpFillet2d:         // MENU OPERATION - FILLET 2D
-  case GEOMOp::OpFillet1d:         // MENU OPERATION - FILLET 1D
-  case GEOMOp::OpSharedShapes:     // MENU OPERATION - GET SHARED SHAPES
+  case GEOMOp::OpPartition:          // MENU OPERATION - PARTITION
+  case GEOMOp::OpArchimede:          // MENU OPERATION - ARCHIMEDE
+  case GEOMOp::OpFillet3d:           // MENU OPERATION - FILLET
+  case GEOMOp::OpChamfer:            // MENU OPERATION - CHAMFER
+  case GEOMOp::OpClipping:           // MENU OPERATION - CLIPPING RANGE
+  case GEOMOp::OpShapesOnShape:      // MENU OPERATION - GET SHAPES ON SHAPE
+  case GEOMOp::OpFillet2d:           // MENU OPERATION - FILLET 2D
+  case GEOMOp::OpFillet1d:           // MENU OPERATION - FILLET 1D
+  case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
     libName = "OperationGUI";
     break;
-  case GEOMOp::OpSewing:           // MENU REPAIR - SEWING
-  case GEOMOp::OpSuppressFaces:    // MENU REPAIR - SUPPRESS FACES
-  case GEOMOp::OpSuppressHoles:    // MENU REPAIR - SUPPRESS HOLE
-  case GEOMOp::OpShapeProcess:     // MENU REPAIR - SHAPE PROCESSING
-  case GEOMOp::OpCloseContour:     // MENU REPAIR - CLOSE CONTOUR
-  case GEOMOp::OpRemoveIntWires:   // MENU REPAIR - REMOVE INTERNAL WIRES
-  case GEOMOp::OpAddPointOnEdge:   // MENU REPAIR - ADD POINT ON EDGE
-  case GEOMOp::OpFreeBoundaries:   // MENU MEASURE - FREE BOUNDARIES
-  case GEOMOp::OpFreeFaces:        // MENU MEASURE - FREE FACES
-  case GEOMOp::OpOrientation:      // MENU REPAIR - CHANGE ORIENTATION
-  case GEOMOp::OpGlueFaces:        // MENU REPAIR - GLUE FACES
-  case GEOMOp::OpGlueEdges:        // MENU REPAIR - GLUE EDGES
-  case GEOMOp::OpLimitTolerance:   // MENU REPAIR - LIMIT TOLERANCE
-  case GEOMOp::OpRemoveExtraEdges: // MENU REPAIR - REMOVE EXTRA EDGES
+  case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
+  case GEOMOp::OpSuppressFaces:      // MENU REPAIR - SUPPRESS FACES
+  case GEOMOp::OpSuppressHoles:      // MENU REPAIR - SUPPRESS HOLE
+  case GEOMOp::OpShapeProcess:       // MENU REPAIR - SHAPE PROCESSING
+  case GEOMOp::OpCloseContour:       // MENU REPAIR - CLOSE CONTOUR
+  case GEOMOp::OpRemoveIntWires:     // MENU REPAIR - REMOVE INTERNAL WIRES
+  case GEOMOp::OpAddPointOnEdge:     // MENU REPAIR - ADD POINT ON EDGE
+  case GEOMOp::OpFreeBoundaries:     // MENU MEASURE - FREE BOUNDARIES
+  case GEOMOp::OpFreeFaces:          // MENU MEASURE - FREE FACES
+  case GEOMOp::OpOrientation:        // MENU REPAIR - CHANGE ORIENTATION
+  case GEOMOp::OpGlueFaces:          // MENU REPAIR - GLUE FACES
+  case GEOMOp::OpGlueEdges:          // MENU REPAIR - GLUE EDGES
+  case GEOMOp::OpLimitTolerance:     // MENU REPAIR - LIMIT TOLERANCE
+  case GEOMOp::OpRemoveExtraEdges:   // MENU REPAIR - REMOVE EXTRA EDGES
     libName = "RepairGUI";
     break;
-  case GEOMOp::OpProperties:       // MENU MEASURE - PROPERTIES
-  case GEOMOp::OpCenterMass:       // MENU MEASURE - CDG
-  case GEOMOp::OpInertia:          // MENU MEASURE - INERTIA
-  case GEOMOp::OpNormale:          // MENU MEASURE - NORMALE
-  case GEOMOp::OpBoundingBox:      // MENU MEASURE - BOUNDING BOX
-  case GEOMOp::OpMinDistance:      // MENU MEASURE - MIN DISTANCE
-  case GEOMOp::OpAngle:            // MENU MEASURE - ANGLE
-  case GEOMOp::OpTolerance:        // MENU MEASURE - TOLERANCE
-  case GEOMOp::OpWhatIs:           // MENU MEASURE - WHATIS
-  case GEOMOp::OpCheckShape:       // MENU MEASURE - CHECK
-  case GEOMOp::OpCheckCompound:    // MENU MEASURE - CHECK COMPOUND OF BLOCKS
-  case GEOMOp::OpPointCoordinates: // MENU MEASURE - POINT COORDINATES
-  case GEOMOp::OpCheckSelfInters:  // MENU MEASURE - CHECK SELF INTERSECTIONS
+  case GEOMOp::OpProperties:         // MENU MEASURE - PROPERTIES
+  case GEOMOp::OpCenterMass:         // MENU MEASURE - CDG
+  case GEOMOp::OpInertia:            // MENU MEASURE - INERTIA
+  case GEOMOp::OpNormale:            // MENU MEASURE - NORMALE
+  case GEOMOp::OpBoundingBox:        // MENU MEASURE - BOUNDING BOX
+  case GEOMOp::OpMinDistance:        // MENU MEASURE - MIN DISTANCE
+  case GEOMOp::OpAngle:              // MENU MEASURE - ANGLE
+  case GEOMOp::OpTolerance:          // MENU MEASURE - TOLERANCE
+  case GEOMOp::OpWhatIs:             // MENU MEASURE - WHATIS
+  case GEOMOp::OpCheckShape:         // MENU MEASURE - CHECK
+  case GEOMOp::OpCheckCompound:      // MENU MEASURE - CHECK COMPOUND OF BLOCKS
+  case GEOMOp::OpPointCoordinates:   // MENU MEASURE - POINT COORDINATES
+  case GEOMOp::OpCheckSelfInters:    // MENU MEASURE - CHECK SELF INTERSECTIONS
     libName = "MeasureGUI";
     break;
-  case GEOMOp::OpGroupCreate:      // MENU GROUP - CREATE
-  case GEOMOp::OpGroupCreatePopup: // POPUP MENU - CREATE GROUP
-  case GEOMOp::OpGroupEdit:        // MENU GROUP - EDIT
+  case GEOMOp::OpGroupCreate:        // MENU GROUP - CREATE
+  case GEOMOp::OpGroupCreatePopup:   // POPUP MENU - CREATE GROUP
+  case GEOMOp::OpGroupEdit:          // MENU GROUP - EDIT
     libName = "GroupGUI";
     break;
-  case GEOMOp::OpHexaSolid:        // MENU BLOCKS - HEXAHEDRAL SOLID
-  case GEOMOp::OpMultiTransform:   // MENU BLOCKS - MULTI-TRANSFORMATION
-  case GEOMOp::OpQuadFace:         // MENU BLOCKS - QUADRANGLE FACE
-  case GEOMOp::OpPropagate:        // MENU BLOCKS - PROPAGATE
-  case GEOMOp::OpExplodeBlock:     // MENU BLOCKS - EXPLODE ON BLOCKS
+  case GEOMOp::OpHexaSolid:          // MENU BLOCKS - HEXAHEDRAL SOLID
+  case GEOMOp::OpMultiTransform:     // MENU BLOCKS - MULTI-TRANSFORMATION
+  case GEOMOp::OpQuadFace:           // MENU BLOCKS - QUADRANGLE FACE
+  case GEOMOp::OpPropagate:          // MENU BLOCKS - PROPAGATE
+  case GEOMOp::OpExplodeBlock:       // MENU BLOCKS - EXPLODE ON BLOCKS
     libName = "BlocksGUI";
     break;
-  case GEOMOp::OpAdvancedNoOp:     // NO OPERATION (advanced operations base)
-  case GEOMOp::OpPipeTShape:       // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
+  case GEOMOp::OpAdvancedNoOp:       // NO OPERATION (advanced operations base)
+  case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
 //   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
     //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
     libName = "AdvancedGUI";
@@ -571,8 +576,24 @@ void GeometryGUI::OnGUIEvent( int id )
   }
 
   // call method of corresponding GUI library
-  if ( library )
+  if ( library ) {
     library->OnGUIEvent( id, desk );
+    
+    // Update a list of materials for "Preferences" dialog
+    if ( id == GEOMOp::OpMaterialProperties ) {
+      LightApp_Preferences* pref = preferences();
+      if ( pref ) {
+	Material_ResourceMgr aMatResMgr;
+	QStringList aPerfMatNames = aMatResMgr.getPreferenceMaterialsNames();
+	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_FRONT_MATERIAL" ), true )->id(),
+			       "strings",
+			       aPerfMatNames );
+	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_BACK_MATERIAL" ), true )->id(),
+			       "strings",
+			       aPerfMatNames );
+      }
+    }
+  }
   else
     SUIT_MessageBox::critical( desk, tr( "GEOM_ERROR" ), tr( "GEOM_ERR_LIB_NOT_FOUND" ), tr( "GEOM_BUT_OK" ) );
 }
@@ -821,6 +842,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
   createGeomAction( GEOMOp::OpWireframe,        "POP_WIREFRAME", "", 0, true );
   createGeomAction( GEOMOp::OpShading,          "POP_SHADING", "", 0, true );
+  createGeomAction( GEOMOp::OpShadingWithEdges, "POP_SHADING_WITH_EDGES", "", 0, true );
   createGeomAction( GEOMOp::OpTexture,          "POP_TEXTURE", "", 0, true );
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
   createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
@@ -836,6 +858,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpUnpublishObject,  "POP_UNPUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPublishObject,    "POP_PUBLISH_OBJ" );
   createGeomAction( GEOMOp::OpPointMarker,      "POP_POINT_MARKER" );
+  createGeomAction( GEOMOp::OpMaterialProperties, "POP_MATERIAL_PROPERTIES" );
 
   createGeomAction( GEOMOp::OpPipeTShape, "PIPETSHAPE" );
 
@@ -1185,6 +1208,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpShading ), dispmodeId, -1 ); // shading
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpShading ), clientOCCorVTK + " and displaymode='Shading'", QtxPopupMgr::ToggleRule );
+  mgr->insert( action(  GEOMOp::OpShadingWithEdges ), dispmodeId, -1 ); // shading with edges
+  mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpShadingWithEdges ), clientOCCorVTK + " and displaymode='ShadingWithEdges'", QtxPopupMgr::ToggleRule );
   mgr->insert( action(  GEOMOp::OpTexture ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( GEOMOp::OpTexture ), clientOCC_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpTexture), clientOCC + " and displaymode='Texture'", QtxPopupMgr::ToggleRule );
@@ -1204,6 +1230,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpPointMarker ), -1, -1 ); // point marker
   //mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and $typeid in {%1}" ).arg(GEOM_POINT ), QtxPopupMgr::VisibleRule );
   mgr->setRule( action( GEOMOp::OpPointMarker ), QString( "selcount>0 and ( $typeid in {%1} or compoundOfVertices=true ) " ).arg(GEOM::VERTEX).arg(GEOM::COMPOUND), QtxPopupMgr::VisibleRule );
+  mgr->insert( action(  GEOMOp::OpMaterialProperties ), -1, -1 ); // material properties  
+  mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 ); // texture
   mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
@@ -1624,6 +1652,9 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_SHADING_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "shading_color" );
 
+  addPreference( tr( "PREF_EDGES_IN_SHADING" ), genGroup,
+                 LightApp_Preferences::Color, "Geometry", "edges_in_shading_color" );
+
   addPreference( tr( "PREF_WIREFRAME_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "wireframe_color" );
 
@@ -1644,6 +1675,14 @@ void GeometryGUI::createPreferences()
 
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
+
+  int front_material = addPreference( tr( "PREF_FRONT_MATERIAL" ), genGroup,
+				      LightApp_Preferences::Selector,
+				      "Geometry", "front_material" );
+
+  int back_material = addPreference( tr( "PREF_BACK_MATERIAL" ), genGroup,
+				     LightApp_Preferences::Selector,
+				     "Geometry", "back_material" );
 
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
@@ -1688,10 +1727,12 @@ void GeometryGUI::createPreferences()
   QStringList aModesList;
   aModesList.append( tr("MEN_WIREFRAME") );
   aModesList.append( tr("MEN_SHADING") );
+  aModesList.append( tr("MEN_SHADING_WITH_EDGES") );
 
   QList<QVariant> anIndexesList;
   anIndexesList.append(0);
   anIndexesList.append(1);
+  anIndexesList.append(2);
 
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
@@ -1706,6 +1747,12 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( defl, "max", 1.0 );
   setPreferenceProperty( defl, "step", 1.0e-04 );
   setPreferenceProperty( defl, "precision", 6 );
+
+  // Set property for default material
+  Material_ResourceMgr aMatResMgr;
+  QStringList aPrefMatNames = aMatResMgr.getPreferenceMaterialsNames();
+  setPreferenceProperty( front_material, "strings", aPrefMatNames );
+  setPreferenceProperty( back_material, "strings", aPrefMatNames );
 
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
@@ -1787,7 +1834,7 @@ const char gDigitsSep = ':'; // character used to separate numeric parameter val
  * \brief Store visual parameters
  *
  * This method is called just before the study document is saved.
- * Store visual parameters in AttributeParameter attribue(s)
+ * Store visual parameters in AttributeParameter attribute(s)
  */
 void GeometryGUI::storeVisualParameters (int savePoint)
 {
@@ -1894,6 +1941,16 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           param = occParam + MARKER_TYPE_PROP;
           ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
         }
+
+	if(aProps.contains(FRONT_MATERIAL_PROP)) {
+          param = occParam + FRONT_MATERIAL_PROP;
+          ip->setParameter(entry, param, aProps.value(FRONT_MATERIAL_PROP).toString().toLatin1().data());
+        }
+
+	if(aProps.contains(BACK_MATERIAL_PROP)) {
+          param = occParam + BACK_MATERIAL_PROP;
+          ip->setParameter(entry, param, aProps.value(BACK_MATERIAL_PROP).toString().toLatin1().data());
+        }
       } // object iterator
     } // for (views)
   } // for (viewManagers)
@@ -1903,7 +1960,7 @@ void GeometryGUI::storeVisualParameters (int savePoint)
  * \brief Restore visual parameters
  *
  * This method is called after the study document is opened.
- * Restore visual parameters from AttributeParameter attribue(s)
+ * Restore visual parameters from AttributeParameter attribute(s)
  */
 void GeometryGUI::restoreVisualParameters (int savePoint)
 {
@@ -2001,6 +2058,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
       }  else if(paramNameStr == MARKER_TYPE_PROP) {
         aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
+      } else if(paramNameStr == FRONT_MATERIAL_PROP) {
+        aListOfMap[viewIndex].insert( FRONT_MATERIAL_PROP, val);
+      } else if(paramNameStr == BACK_MATERIAL_PROP) {
+        aListOfMap[viewIndex].insert( BACK_MATERIAL_PROP, val);
       }
 
     } // for names/parameters iterator

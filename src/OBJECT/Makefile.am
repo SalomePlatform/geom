@@ -42,6 +42,7 @@ salomeinclude_HEADERS =				\
 	GEOM_OBJECT_defs.hxx			\
 	GEOM_OCCReader.h			\
 	GEOM_SmartPtr.h				\
+	GEOM_PainterPolyDataMapper.h		\
 	GEOM_DeviceActor.h
 
 # Libraries targets
@@ -55,6 +56,7 @@ dist_libGEOMObject_la_SOURCES =		\
 	GEOM_AISTrihedron.cxx		\
 	GEOM_VTKTrihedron.cxx		\
 	GEOM_AISVector.cxx		\
+	GEOM_PainterPolyDataMapper.cxx	\
 	GEOM_DeviceActor.cxx
 
 

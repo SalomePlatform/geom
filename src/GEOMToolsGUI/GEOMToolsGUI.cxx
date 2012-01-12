@@ -349,6 +349,9 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpDecrNbIsos:     // SHORTCUT   - DECREASE NB ISOLINES
     OnNbIsos( DECR );
     break;
+  case GEOMOp::OpMaterialProperties: // POPUP - MATERIAL PROPERTIES
+    OnMaterialProperties();
+    break;
   case GEOMOp::OpAutoColor:      // POPUP - AUTO COLOR
     OnAutoColor();
     break;

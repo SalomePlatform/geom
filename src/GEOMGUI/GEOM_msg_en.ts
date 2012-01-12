@@ -946,6 +946,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>GEOM_MEN_SHADING_WITH_EDGES</source>
+        <translation>Shading With Edges</translation>
+    </message>
+    <message>
         <source>GEOM_MEN_SKETCHER_X</source>
         <translation>Enter a Length to Set X</translation>
     </message>
@@ -2562,6 +2566,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>MEN_POP_SHADING_WITH_EDGES</source>
+        <translation>Shading With Edges</translation>
+    </message>
+    <message>
         <source>MEN_POP_TEXTURE</source>
         <translation>Texture</translation>
     </message>
@@ -2636,6 +2644,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_SHADING</source>
         <translation>Shading</translation>
+    </message>
+    <message>
+        <source>MEN_SHADING_WITH_EDGES</source>
+        <translation>Shading With Edges</translation>
     </message>
     <message>
         <source>MEN_SHADING_COLOR</source>
@@ -2754,6 +2766,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Point Marker</translation>
     </message>
     <message>
+        <source>MEN_POP_MATERIAL_PROPERTIES</source>
+        <translation>Material Properties</translation>
+    </message>
+    <message>
         <source>NAME_LBL</source>
         <translation>Name: </translation>
     </message>
@@ -2858,6 +2874,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Default shading color</translation>
     </message>
     <message>
+        <source>PREF_EDGES_IN_SHADING</source>
+        <translation>Edges in shading</translation>
+    </message>
+    <message>
         <source>PREF_STEP_VALUE</source>
         <translation>Step value for spin boxes</translation>
     </message>
@@ -2876,6 +2896,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PREF_WIREFRAME_COLOR</source>
         <translation>Default wireframe color</translation>
+    </message>
+    <message>
+        <source>PREF_FRONT_MATERIAL</source>
+        <translation>Default front material</translation>
+    </message>
+    <message>
+        <source>PREF_BACK_MATERIAL</source>
+        <translation>Default back material</translation>
     </message>
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
@@ -3230,6 +3258,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>STB_POP_SHADING_WITH_EDGES</source>
+        <translation>Shading With Edges</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Add a texture</translation>
     </message>
@@ -3368,6 +3400,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_POP_POINT_MARKER</source>
         <translation>Set Point Marker</translation>
+    </message>
+    <message>
+        <source>STB_POP_MATERIAL_PROPERTIES</source>
+        <translation>Set Material Properties</translation>
     </message>
     <message>
         <source>SUPPRESS_RESULT</source>
@@ -3782,6 +3818,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading</translation>
     </message>
     <message>
+        <source>TOP_POP_SHADING_WITH_EDGES</source>
+        <translation>Shading With Edges</translation>
+    </message>
+    <message>
         <source>TOP_POP_SETTEXTURE</source>
         <translation>Texture</translation>
     </message>
@@ -3900,6 +3940,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_POP_POINT_MARKER</source>
         <translation>Point Marker</translation>
+    </message>
+    <message>
+        <source>TOP_POP_MATERIAL_PROPERTIES</source>
+        <translation>Material Properties</translation>
     </message>
     <message>
         <source>WRN_NOT_IMPLEMENTED</source>
@@ -5003,6 +5047,61 @@ Would you like to continue?</translation>
     <message>
         <source>LOAD_TEXTURE_TLT</source>
         <translation>Load Texture</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
+    <message>
+        <source>MATERIAL_PROPERTIES_TLT</source>
+        <translation>Set Material Properties</translation>
+    </message>
+    <message>
+        <source>MATERIAL_BACK_CHK</source>
+        <translation>Enable back material</translation>
+    </message>
+    <message>
+        <source>AMBIENT_GRP</source>
+        <translation>Ambient</translation>
+    </message>
+    <message>
+        <source>DIFFUSE_GRP</source>
+        <translation>Diffuse</translation>
+    </message>
+    <message>
+        <source>SPECULAR_GRP</source>
+        <translation>Specular</translation>
+    </message>
+    <message>
+        <source>EMISSION_GRP</source>
+        <translation>Emission</translation>
+    </message>
+    <message>
+        <source>COLOR</source>
+        <translation>Color:</translation>
+    </message>
+    <message>
+        <source>COEFFICIENT</source>
+        <translation>Coefficient:</translation>
+    </message>
+    <message>
+        <source>SHININESS</source>
+        <translation>Shininess:</translation>
+    </message>
+    <message>
+        <source>CUSTOM_MATERIAL</source>
+        <translation>Custom material</translation>
+    </message>
+    <message>
+        <source>OK_BTN</source>
+        <translation>&amp;OK</translation>
+    </message>
+    <message>
+        <source>CANCEL_BTN</source>
+        <translation>&amp;Cancel</translation>
+    </message>
+    <message>
+        <source>HELP_BTN</source>
+        <translation>&amp;Help</translation>
     </message>
 </context>
 <context>

@@ -72,7 +72,7 @@ public:
   void AddToRender(vtkRenderer* theRenderer);
   void RemoveFromRender(vtkRenderer* theRenderer);
 
-  enum EDisplayMode{ eWireframe, eShading};
+  enum EDisplayMode{ eWireframe, eShading, eShadingWithEdges = eShading + 2 };
 
 /*   void SetDisplayMode(EDisplayMode theMode);  */
 /*   EDisplayMode GetDisplayMode() const { return myDisplayMode;}  */
@@ -122,6 +122,11 @@ public:
   void SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
   void GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b);
 
+  // Material
+  void SetMaterial(std::vector<vtkProperty*> theProps);
+  vtkProperty* GetFrontMaterial();
+  vtkProperty* GetBackMaterial();
+
   virtual bool IsInfinitive();
 
   // overloaded functions
@@ -169,11 +174,26 @@ public:
   virtual
   bool
   GetVectorMode();
+  
+  //! Edges in shading color management
+  void SetEdgesInShadingColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloatingPointType b);
+
+  void
+  StoreIsoNumbers();
+
+  void
+  RestoreIsoNumbers();
+  
+  void
+  ResetIsoNumbers();
 
 protected:
   void SetModified();
 
   void GetMatrix(vtkCamera* theCam, vtkMatrix4x4 *result);
+
+  void StoreBoundaryColors();
+  void RestoreBoundaryColors();
 
   GEOM_Actor();
   ~GEOM_Actor();
@@ -212,14 +232,18 @@ private:
   vtkSmartPointer<vtkProperty>  myHighlightProp;
   vtkSmartPointer<vtkProperty>  myPreHighlightProp;
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;
+  vtkSmartPointer<vtkProperty>  myShadingBackFaceProp;
 
   PAppendFilter myAppendFilter;
-  PPolyDataMapper myPolyDataMapper;
+  PPolyGeomPainterDataMapper myPolyDataMapper;
 
   virtual void SetMapper(vtkMapper*);
 
   GEOM_Actor(const GEOM_Actor&);
   void operator=(const GEOM_Actor&);
+
+  vtkFloatingPointType myEdgesInWireframeColor[3];
+  vtkFloatingPointType myEdgesInShadingColor[3];
 };
 
 #endif //GEOM_ACTOR_H

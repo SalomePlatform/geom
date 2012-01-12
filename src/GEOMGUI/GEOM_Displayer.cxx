@@ -27,6 +27,7 @@
 
 #include "GeometryGUI.h"
 
+#include <GEOM_Constants.h>
 #include <GEOM_TypeFilter.h>
 #include <GEOM_EdgeFilter.h>
 #include <GEOM_FaceFilter.h>
@@ -40,6 +41,8 @@
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
+
+#include <Material_Model.h>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_ViewWindow.h>
@@ -78,6 +81,7 @@
 #include <BRep_Tool.hxx>
 #include <Geom_Plane.hxx>
 #include <Geom_Axis2Placement.hxx>
+#include <Graphic3d_AspectFillArea3d.hxx>
 #include <gp_Pln.hxx>
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
@@ -810,6 +814,11 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             anAspect->SetColor( aColor );
             AISShape->Attributes()->SetWireAspect( anAspect );
 
+	    // Set color for edges in shading
+	    col = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
+	    aColor = SalomeApp_Tools::color( col );
+	    AISShape->SetEdgesInShadingColor( aColor );
+	    
             // bug [SALOME platform 0019868]
             // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
             //AISShape->SetOwnDeviationAngle( 10*PI/180 );
@@ -934,6 +943,68 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             }
           }
         }
+
+	// get material properties, set material
+	Material_Model* aModelF = 0;
+	Material_Model* aModelB = 0;
+        if ( useStudy ) {
+	  // Get front material property from study and construct front material model
+          QString aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();
+          QStringList aProps =  aMaterialF.split(DIGIT_SEPARATOR);
+	  aModelF = Material_Model::getMaterialModel( aProps );
+
+	  // Get back material property from study and construct back material model
+          QString aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
+	  if ( !aMaterialB.isEmpty() ) {
+	    QStringList aPropsB =  aMaterialB.split(DIGIT_SEPARATOR);
+	    aModelB = Material_Model::getMaterialModel( aPropsB );
+	  }
+	  else
+	    aModelB = aModelF;
+
+	} else {
+	  // Get front material property from study and construct front material model
+	  aModelF = new Material_Model();
+	  aModelF->fromResources( aResMgr, "Geometry", true );
+	  
+	  // Get back material property from study and construct back material model
+	  aModelB = new Material_Model();
+	  aModelB->fromResources( aResMgr, "Geometry", false );	  
+        }
+
+	// Set front material property
+	QString aMaterialPropF = aModelF->getMaterialProperty();
+	aStudy->setObjectProperty( aMgrId, anIO->getEntry(), FRONT_MATERIAL_PROP, aMaterialPropF );
+
+	// Set back material property
+	QString aMaterialPropB = aModelB->getMaterialProperty();
+	aStudy->setObjectProperty( aMgrId, anIO->getEntry(), BACK_MATERIAL_PROP, aMaterialPropB );
+
+	// Get front material properties from the model
+        Graphic3d_MaterialAspect aMatF = aModelF->getMaterialOCCAspect();
+
+	// Get back material properties from the model
+        Graphic3d_MaterialAspect aMatB = aModelB->getMaterialOCCAspect();
+
+	printf(">> GEOM_Displayer::Update() : SetMaterial\n");
+	// Set front material for the selected shape
+	AISShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
+	AISShape->SetMaterial(aMatF);	
+
+	// Set back material for the selected shape
+	AISShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
+	AISShape->SetMaterial(aMatB);
+
+	// Return to the default facing mode
+	AISShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
+
+	// Release memory
+	if ( aModelF )
+	  delete aModelF;
+	if ( aModelB )
+	  delete aModelB;
+
+
         // AISShape->SetName(???); ??? necessary to set name ???
         occPrs->AddObject( AISShape );
 
@@ -993,6 +1064,11 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
   vtkActorCollection* theActors = 0;
 
+  QString anEntry;
+  if(!myIO.IsNull()) {
+    anEntry = myIO->getEntry();
+  }
+
   if ( myType == GEOM_MARKER && myShape.ShapeType() == TopAbs_FACE ) {
     //myToActivate = false; // ouv: commented to make the trihedron pickable (see IPAL18657)
     GEOM_VTKTrihedron* aTrh = GEOM_VTKTrihedron::New();
@@ -1021,10 +1097,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
   else {
     PropMap aDefPropMap = getDefaultPropertyMap(SVTK_Viewer::Type());
 
-    QString anEntry;
     if(!myIO.IsNull()) {
       aMgrId = getViewManagerId(myViewFrame);
-      anEntry = myIO->getEntry();
     }
     useStudy = !anEntry.isEmpty() && aMgrId != -1;
 
@@ -1083,6 +1157,14 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
           aGeomGActor->SetShadingProperty( aProp );
           aGeomGActor->SetWireframeProperty( aProp );
         }
+
+	// Set color for edges in shading
+	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+	if(aResMgr) {
+	  QColor c = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
+	  aGeomGActor->SetEdgesInShadingColor( c.red()/255., c.green()/255., c.blue()/255. );
+	}
+
         int aIsos[2]= { 1, 1 };
         if(useStudy) {
           QString anIsos = aPropMap.value(ISOS_PROP).toString();
@@ -1091,8 +1173,60 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
           aGeomGActor->SetNbIsos(aIsos);
           aGeomGActor->SetOpacity(1.0 - aPropMap.value(TRANSPARENCY_PROP).toDouble());
           aGeomGActor->SetVectorMode(aPropMap.value(VECTOR_MODE_PROP).toInt());
-          aGeomGActor->setDisplayMode(aPropMap.value(DISPLAY_MODE_PROP).toInt());
+	  int aDispModeId = aPropMap.value(DISPLAY_MODE_PROP).toInt();
+	  // Specially processing of 'Shading with edges' mode from preferences,
+	  // because there is the following enum in VTK viewer:
+	  // Points - 0, Wireframe - 1, Surface - 2, Insideframe - 3, SurfaceWithEdges - 4
+	  // (see VTKViewer::Representation enum) and the following enum in GEOM_Actor:
+	  // eWireframe - 0, eShading - 1, eShadingWithEdges - 3
+	  if ( aDispModeId == 2 )
+	    // this is 'Shading with edges' mode => do the correct mapping to EDisplayMode
+	    // enum in GEOM_Actor (and further to VTKViewer::Representation enum)
+	    aDispModeId++;
+          aGeomGActor->setDisplayMode(aDispModeId);
           aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble());
+
+	  // Get front material property of the object stored in the study
+	  QString aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();
+	  QStringList aPropsF =  aMaterialF.split(DIGIT_SEPARATOR);
+	  // Create front material model
+	  Material_Model* aModelF = Material_Model::getMaterialModel( aPropsF );	  
+	  // Set front material properties for the object
+	  QString aMaterialPropF = aModelF->getMaterialProperty();
+	  aStudy->setObjectProperty( aMgrId, anEntry, FRONT_MATERIAL_PROP, aMaterialPropF );	  
+	  // Get material properties from the front model
+	  vtkProperty* aMatPropF = aModelF->getMaterialVTKProperty();
+	  
+	  // Get back material property of the object stored in the study
+	  QString aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
+	  if ( !aMaterialB.isEmpty() ) {
+	    QStringList aPropsB =  aMaterialB.split(DIGIT_SEPARATOR);	    
+	    // Create back material model
+	    Material_Model* aModelB = Material_Model::getMaterialModel( aPropsB );
+	    // Set back material properties for the object
+	    QString aMaterialPropB = aModelB->getMaterialProperty();
+	    aStudy->setObjectProperty( aMgrId, anEntry, BACK_MATERIAL_PROP, aMaterialPropB );
+	    // Get material properties from the back model
+	    vtkProperty* aMatPropB = aModelB->getMaterialVTKProperty();
+
+	    // Set front and back materials for the selected shape
+	    std::vector<vtkProperty*> aProps;
+	    aProps.push_back(aMatPropF);
+	    aProps.push_back(aMatPropB);
+	    aGeomGActor->SetMaterial(aProps);
+
+	    // Release memory
+	    delete aModelB;
+	  }
+	  else {
+	    // Set the same front and back materials for the selected shape
+	    std::vector<vtkProperty*> aProps;
+	    aProps.push_back(aMatPropF);
+	    aGeomGActor->SetMaterial(aProps);
+	  }
+
+	  // Release memory
+	  delete aModelF;
 
           vtkFloatingPointType aColor[3] = {1.,0.,0.};
           if(aPropMap.contains(COLOR_PROP)) {
@@ -1126,6 +1260,36 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
           }
           aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
         }
+	else {
+	  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+	  if ( aResMgr ) {
+	    // Create front material model
+	    Material_Model aModelF;
+	    // Get front material name from resources
+	    aModelF.fromResources( aResMgr, "Geometry", true );
+	    // Set front material properties for the object
+	    QString aMaterialPropF = aModelF.getMaterialProperty();
+	    aStudy->setObjectProperty( aMgrId, anEntry, FRONT_MATERIAL_PROP, aMaterialPropF );	    
+	    // Get material properties from the front model
+	    vtkProperty* aMatPropF = aModelF.getMaterialVTKProperty();
+
+	    // Create back material model
+	    Material_Model aModelB;
+	    // Get back material name from resources
+	    aModelB.fromResources( aResMgr, "Geometry", false );
+	    // Set back material properties for the object
+	    QString aMaterialPropB = aModelB.getMaterialProperty();
+	    aStudy->setObjectProperty( aMgrId, anEntry, BACK_MATERIAL_PROP, aMaterialPropB );
+	    // Get material properties from the back model
+	    vtkProperty* aMatPropB = aModelB.getMaterialVTKProperty();
+
+	    // Set material for the selected shape
+	    std::vector<vtkProperty*> aProps;
+	    aProps.push_back(aMatPropF);
+	    aProps.push_back(aMatPropB);
+	    aGeomGActor->SetMaterial(aProps);
+	  }
+	}
       }
 
     if ( myToActivate )
@@ -1791,6 +1955,19 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
 
   aDefaultMap.insert( DEFLECTION_COEFF_PROP , aDC);
 
+  //8. Material
+  //   Front material
+  Material_Model aModelF;
+  aModelF.fromResources( aResMgr, "Geometry", true );
+  QString aMaterialF = aModelF.getMaterialProperty();
+  aDefaultMap.insert( FRONT_MATERIAL_PROP , aMaterialF );  
+
+  //  Back material
+  Material_Model aModelB;
+  aModelB.fromResources( aResMgr, "Geometry", false );
+  QString aMaterialB = aModelB.getMaterialProperty();
+  aDefaultMap.insert( BACK_MATERIAL_PROP , aMaterialB );
+
   return aDefaultMap;
 }
 
@@ -1818,6 +1995,14 @@ bool GEOM_Displayer::MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault) 
   }
   if(!theOrigin.contains(DEFLECTION_COEFF_PROP)) {
     theOrigin.insert(DEFLECTION_COEFF_PROP, theDefault.value(DEFLECTION_COEFF_PROP));
+    nbInserted++;
+  }
+  if(!theOrigin.contains(FRONT_MATERIAL_PROP)) {
+    theOrigin.insert(FRONT_MATERIAL_PROP, theDefault.value(FRONT_MATERIAL_PROP));
+    nbInserted++;
+  }
+  if(!theOrigin.contains(BACK_MATERIAL_PROP)) {
+    theOrigin.insert(BACK_MATERIAL_PROP, theDefault.value(BACK_MATERIAL_PROP));
     nbInserted++;
   }
   return (nbInserted > 0);

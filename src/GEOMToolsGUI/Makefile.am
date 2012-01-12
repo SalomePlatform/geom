@@ -35,7 +35,8 @@ salomeinclude_HEADERS =				\
 	GEOMToolsGUI_TransparencyDlg.h		\
 	GEOMToolsGUI_DeleteDlg.h		\
 	GEOMToolsGUI_MarkerDlg.h                \
-	GEOMToolsGUI_PublishDlg.h
+	GEOMToolsGUI_PublishDlg.h		\
+	GEOMToolsGUI_MaterialPropertiesDlg.h
 
 dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI.cxx			\
@@ -45,7 +46,8 @@ dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI_DeflectionDlg.cxx		\
 	GEOMToolsGUI_DeleteDlg.cxx		\
 	GEOMToolsGUI_MarkerDlg.cxx              \
-	GEOMToolsGUI_PublishDlg.cxx
+	GEOMToolsGUI_PublishDlg.cxx		\
+	GEOMToolsGUI_MaterialPropertiesDlg.cxx
 
 MOC_FILES = 					\
 	GEOMToolsGUI_TransparencyDlg_moc.cxx	\
@@ -53,7 +55,8 @@ MOC_FILES = 					\
 	GEOMToolsGUI_DeflectionDlg_moc.cxx	\
 	GEOMToolsGUI_DeleteDlg_moc.cxx		\
 	GEOMToolsGUI_MarkerDlg_moc.cxx          \
-	GEOMToolsGUI_PublishDlg_moc.cxx
+	GEOMToolsGUI_PublishDlg_moc.cxx		\
+	GEOMToolsGUI_MaterialPropertiesDlg_moc.cxx
 
 nodist_libGEOMToolsGUI_la_SOURCES =		\
 	$(MOC_FILES)
@@ -72,6 +75,7 @@ libGEOMToolsGUI_la_CPPFLAGS =		\
 	$(CORBA_INCLUDES)		\
 	-I$(srcdir)/../OBJECT		\
 	-I$(srcdir)/../GEOMBase		\
+	-I$(srcdir)/../Material		\
 	-I$(srcdir)/../GEOMGUI		\
 	-I$(srcdir)/../GEOMClient	\
 	-I$(srcdir)/../GEOMImpl		\
@@ -79,5 +83,6 @@ libGEOMToolsGUI_la_CPPFLAGS =		\
 
 libGEOMToolsGUI_la_LDFLAGS  = 		\
 	../GEOMBase/libGEOMBase.la 	\
+	../Material/libMaterial.la 	\
 	../GEOMGUI/libGEOM.la 		\
 	$(GUI_LDFLAGS) -lVTKViewer -lOCCViewer -lsuit -lSalomeApp -lPyConsole

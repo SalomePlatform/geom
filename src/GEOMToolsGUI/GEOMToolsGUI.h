@@ -75,6 +75,7 @@ private:
   void         OnUnpublishObject();
   void         OnPublishObject() ;
   void         OnPointMarker();
+  void         OnMaterialProperties();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

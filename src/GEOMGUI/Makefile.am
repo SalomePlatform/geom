@@ -74,6 +74,7 @@ libGEOM_la_CPPFLAGS =				\
 	$(OPENCV_INCLUDES)			\
 	-I$(srcdir)/../OBJECT			\
 	-I$(srcdir)/../GEOMFiltersSelection	\
+	-I$(srcdir)/../Material			\
 	-I$(srcdir)/../GEOMClient		\
 	-I$(srcdir)/../GEOMImpl			\
 	-I$(top_builddir)/idl			\
@@ -82,6 +83,7 @@ libGEOM_la_CPPFLAGS =				\
 libGEOM_la_LDFLAGS =						\
 	$(PYTHON_LIBS)						\
 	../GEOMFiltersSelection/libGEOMFiltersSelection.la	\
+	../Material/libMaterial.la				\
 	../GEOMClient/libGEOMClient.la				\
 	../OBJECT/libGEOMObject.la				\
 	$(KERNEL_LDFLAGS) -lSalomeLifeCycleCORBA -lSalomeNS -lSalomeDSClient		\
