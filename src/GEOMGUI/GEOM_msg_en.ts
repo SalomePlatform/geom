@@ -39,7 +39,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source> iErr : 12</source>
-        <translation>Unallowed Type of Subshape</translation>
+        <translation>Unallowed Type of Sub-shape</translation>
     </message>
     <message>
         <source> iErr : 13</source>
@@ -343,7 +343,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_SUBSHAPES</source>
-        <translation>Incriminated Sub-Shapes</translation>
+        <translation>Incriminated Sub-shapes</translation>
     </message>
     <message>
         <source>GEOM_CHECK_INFOS</source>
@@ -427,7 +427,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CONFIRM_INFO</source>
-        <translation>Shape contains %1 sub shapes !</translation>
+        <translation>Shape contains %1 sub-shapes !</translation>
     </message>
     <message>
         <source>GEOM_COOR</source>
@@ -1351,7 +1351,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_PRP_SELECT_SUBSHAPES</source>
-        <translation>Select Sub Shapes</translation>
+        <translation>Select Sub-shapes</translation>
     </message>
     <message>
         <source>GEOM_PRP_SHAPE_IN_STUDY</source>
@@ -1819,19 +1819,19 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_SUBSHAPE_SELECT</source>
-        <translation>Select Sub Shapes</translation>
+        <translation>Select Sub-shapes</translation>
     </message>
     <message>
         <source>GEOM_SUBSHAPE_TITLE</source>
-        <translation>Sub Shapes Selection</translation>
+        <translation>Sub-shapes Selection</translation>
     </message>
     <message>
         <source>GEOM_SUBSHAPE_TYPE</source>
-        <translation>Sub Shapes Type</translation>
+        <translation>Sub-shapes Type</translation>
     </message>
     <message>
         <source>GEOM_SUB_SHAPE</source>
-        <translation>Sub Shapes</translation>
+        <translation>Sub-shapes</translation>
     </message>
     <message>
         <source>GEOM_SUPPRESSHOLE_FACE_SHELL</source>
@@ -4303,11 +4303,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_RESTORE_SUB_SHAPES</source>
-        <translation>Set presentation parameters and subshapes from arguments</translation>
+        <translation>Set presentation parameters and sub-shapes from arguments</translation>
     </message>
     <message>
         <source>GEOM_RSS_ADD_FREFIX</source>
-        <translation>Add prefix to names of restored subshapes</translation>
+        <translation>Add prefix to names of restored sub-shapes</translation>
     </message>
     <message>
         <source>GEOM_PREVIEW</source>
@@ -4793,7 +4793,7 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>MAIN_SUB_SHAPES</source>
-        <translation>Main Shape And Sub-Shapes</translation>
+        <translation>Main Shape And Sub-shapes</translation>
     </message>
     <message>
         <source>NO_GROUP</source>
@@ -4829,7 +4829,7 @@ Number of sketch points too small</translation>
     </message>
     <message>
         <source>SUBSHAPES_OF_SHAPE2</source>
-        <translation>Only Sub-Shapes of the Second Shape</translation>
+        <translation>Only Sub-shapes of the Second Shape</translation>
     </message>
     <message>
         <source>SECOND_SHAPE</source>

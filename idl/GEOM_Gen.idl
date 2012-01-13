@@ -90,7 +90,7 @@ module GEOM
   };
 
   /*!
-   *  Kind of method to find inside one main shape some subshapes,
+   *  Kind of method to find inside one main shape some sub-shapes,
    *  corresponding to other given shape (its argument)
    *  Is used in functions GEOM_Gen.RestoreSubShapes<xxx>()
    */
@@ -99,12 +99,12 @@ module GEOM
     /*! Use GetInPlace functionality. Suits all cases, except transformations */
     FSM_GetInPlace,
 
-    /*! To be used only for transformation result, to find subshapes of argument.
+    /*! To be used only for transformation result, to find sub-shapes of argument.
      *  Only this method can be used after transformation.
      */
     FSM_Transformed,
 
-    /*! To find only shared subshapes, not modified by the operation */
+    /*! To find only shared sub-shapes, not modified by the operation */
     FSM_GetSame,
 
     /*! Use GetShapesOnShape method (can work only on solids) */
@@ -309,7 +309,7 @@ module GEOM
 
     /*!
      ######################################################################
-     *  Internal methods (For sub shape identification)
+     *  Internal methods (For sub-shape identification)
      ######################################################################
      */
 
@@ -319,18 +319,18 @@ module GEOM
     SALOMEDS::TMPFile GetShapeStream();
 
     /*
-     *  Returns True if this object is not a sub shape of another object.
+     *  Returns True if this object is not a sub-shape of another object.
      */
     boolean IsMainShape();
 
     /*
-     *  Get a list of ID's of sub shapes in the main shape.
+     *  Get a list of ID's of sub-shapes in the main shape.
      *  \note Internal method, suppopsed to be used only by GEOM_Client
      */
     ListOfLong GetSubShapeIndices();
 
     /*
-     *  Get a main shape object to which this object is a sub shape
+     *  Get a main shape object to which this object is a sub-shape
      *  \note Internal method, suppopsed to be used only by GEOM_Client
      */
     GEOM_Object GetMainShape();
@@ -1345,7 +1345,7 @@ module GEOM
      *  the path shape. The path shape can be a shell or a face.
      *  the several profiles can be specified in the several locations of path.
      *  \param theSeqBases - list of  Bases shape to be extruded.
-     *  \param theSeqSubBases - list of corresponding subshapes of section shapes.
+     *  \param theSeqSubBases - list of corresponding sub-shapes of section shapes.
      *  \param theLocations - list of locations on the path corresponding
      *                        specified list of the Bases shapes. Number of locations
      *                        should be equal to number of bases.
@@ -1565,7 +1565,7 @@ module GEOM
                           in boolean     isSorted);
 
     /*!
-     *  Explode a shape on subshapes of a given type. If the
+     *  Explode a shape on sub-shapes of a given type. If the
      *  shape itself has the given type, it is also returned.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.
@@ -1578,7 +1578,7 @@ module GEOM
                                in boolean     isSorted);
 
     /*!
-     *  Extract all subshapes of the given type from
+     *  Extract all sub-shapes of the given type from
      *  the given shape, excluding the shape itself.
      *  \param theShape Shape to be exploded.
      *  \param theShapeType Type of sub-shapes to be retrieved.
@@ -1598,7 +1598,7 @@ module GEOM
                                in boolean     isSorted);
 
     /*!
-     *  Explode a shape on subshapes of a given type.
+     *  Explode a shape on sub-shapes of a given type.
      *  Does the same, as MakeAllSubShapes, but returns IDs of
      *  sub-shapes, not GEOM_Objects. It works faster.
      *  \param theShape Shape to be exploded.
@@ -1612,22 +1612,22 @@ module GEOM
                                    in boolean     isSorted);
 
     /*!
-     *  Get a sub shape defined by its unique ID inside \a theMainShape
+     *  Get a sub-shape defined by its unique ID inside \a theMainShape
      *  \param theMainShape Main shape.
-     *  \param theID Unique ID of sub shape inside \a theMainShape.
-     *  \return GEOM_Object, corresponding to found sub shape.
-     *  \note The sub shape GEOM_Objects can has ONLY ONE function.
+     *  \param theID Unique ID of sub-shape inside \a theMainShape.
+     *  \return GEOM_Object, corresponding to found sub-shape.
+     *  \note The sub-shape GEOM_Objects can has ONLY ONE function.
      *        Don't try to apply modification operations (without copy) on them.
      */
     GEOM_Object GetSubShape (in GEOM_Object theMainShape,
                              in long        theID);
 
     /*!
-     *  Get a set of sub shapes defined by their unique IDs inside \a theMainShape
+     *  Get a set of sub-shapes defined by their unique IDs inside \a theMainShape
      *  \param theMainShape Main shape.
-     *  \param theIndices List of unique IDs of sub shapes inside \a theMainShape.
-     *  \return List of GEOM_Objects, corresponding to found sub shapes.
-     *  \note The sub shape GEOM_Objects can has ONLY ONE function.
+     *  \param theIndices List of unique IDs of sub-shapes inside \a theMainShape.
+     *  \return List of GEOM_Objects, corresponding to found sub-shapes.
+     *  \note The sub-shape GEOM_Objects can has ONLY ONE function.
      *        Don't try to apply modification operations (without copy) on them.
      */
     ListOfGO MakeSubShapes (in GEOM_Object theMainShape,
@@ -1677,10 +1677,10 @@ module GEOM
     long NumberOfEdges (in GEOM_Object theShape);
 
     /*!
-     *  Count number of subshapes of type \a theShapeType in the given shape.
-     *  \param theShape Shape to count subshapes in.
-     *  \param theShapeType The type of subshapes to count.
-     *  \return Number of subshapes of type \a theShapeType in \a theShape.
+     *  Count number of sub-shapes of type \a theShapeType in the given shape.
+     *  \param theShape Shape to count sub-shapes in.
+     *  \param theShapeType The type of sub-shapes to count.
+     *  \return Number of sub-shapes of type \a theShapeType in \a theShape.
      */
     long NumberOfSubShapes (in GEOM_Object theShape,
                             in long        theShapeType);
@@ -1727,7 +1727,7 @@ module GEOM
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theAx1 Vector (or line, or linear edge), specifying normal
      *                direction and location of the plane to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnPlane (in GEOM_Object theShape,
@@ -1742,7 +1742,7 @@ module GEOM
      *  \param theAx1 Vector (or line, or linear edge), specifying normal
      *                direction of the plane to find shapes on.
      *  \param thePnt Point specifying location of the plane to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnPlaneWithLocation (in GEOM_Object theShape,
@@ -1761,7 +1761,7 @@ module GEOM
      *  \param theAxis Vector (or line, or linear edge), specifying
      *                 axis of the cylinder to find shapes on.
      *  \param theRadius Radius of the cylinder to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnCylinder (in GEOM_Object theShape,
@@ -1779,7 +1779,7 @@ module GEOM
      *                 axis of the cylinder to find shapes on.
      *  \param thePnt Point specifying location of the bottom of the cylinder.
      *  \param theRadius Radius of the cylinder to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnCylinderWithLocation (in GEOM_Object theShape,
@@ -1796,7 +1796,7 @@ module GEOM
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theCenter Point, specifying center of the sphere to find shapes on.
      *  \param theRadius Radius of the sphere to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnSphere (in GEOM_Object theShape,
@@ -1814,7 +1814,7 @@ module GEOM
      *  \param theTopRigthPoint Top right quadrangle corner
      *  \param theBottomLeftPoint Bottom left quadrangle corner
      *  \param theBottomRigthPoint Bottom right quadrangle corner
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of all found sub-shapes.
      */
     ListOfGO GetShapesOnQuadrangle (in GEOM_Object theShape,
@@ -1832,7 +1832,7 @@ module GEOM
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theAx1 Vector (or line, or linear edge), specifying normal
      *                direction and location of the plane to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnPlaneIDs (in GEOM_Object theShape,
@@ -1848,7 +1848,7 @@ module GEOM
      *  \param theAx1 Vector (or line, or linear edge), specifying normal
      *                direction of the plane to find shapes on.
      *  \param thePnt Point specifying location of the plane to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnPlaneWithLocationIDs (in GEOM_Object theShape,
@@ -1865,7 +1865,7 @@ module GEOM
      *  \param theAxis Vector (or line, or linear edge), specifying
      *                 axis of the cylinder to find shapes on.
      *  \param theRadius Radius of the cylinder to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnCylinderIDs (in GEOM_Object theShape,
@@ -1883,7 +1883,7 @@ module GEOM
      *                 axis of the cylinder to find shapes on.
      *  \param thePnt Point specifying location of the bottom of the cylinder.
      *  \param theRadius Radius of the cylinder to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs all found sub-shapes.
      */
     ListOfLong GetShapesOnCylinderWithLocationIDs (in GEOM_Object theShape,
@@ -1900,7 +1900,7 @@ module GEOM
      *  \param theShapeType Type of sub-shapes to be retrieved.
      *  \param theCenter Point, specifying center of the sphere to find shapes on.
      *  \param theRadius Radius of the sphere to find shapes on.
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnSphereIDs (in GEOM_Object theShape,
@@ -1918,7 +1918,7 @@ module GEOM
      *  \param theTopRigthPoint Top right quadrangle corner
      *  \param theBottomLeftPoint Bottom left quadrangle corner
      *  \param theBottomRigthPoint Bottom right quadrangle corner
-     *  \param theState The state of the subshapes to find.
+     *  \param theState The state of the sub-shapes to find.
      *  \return List of IDs of all found sub-shapes.
      */
     ListOfLong GetShapesOnQuadrangleIDs (in GEOM_Object theShape,
@@ -1930,10 +1930,10 @@ module GEOM
                                          in shape_state theState);
 
     /*!
-     * \brief Find subshapes complying with given status
-     * \param theBox - the box to check state of subshapes against
+     * \brief Find sub-shapes complying with given status
+     * \param theBox - the box to check state of sub-shapes against
      * \param theShape - the shape to explore
-     * \param theShapeType - type of subshape of theShape
+     * \param theShapeType - type of sub-shape of theShape
      * \param theState - required state
      * \return List of IDs of all found sub-shapes.
      */
@@ -1943,10 +1943,10 @@ module GEOM
                                   in shape_state theState);
 
     /*!
-     * \brief Find subshapes complying with given status
-     * \param theBox - the box to check state of subshapes against
+     * \brief Find sub-shapes complying with given status
+     * \param theBox - the box to check state of sub-shapes against
      * \param theShape - the shape to explore
-     * \param theShapeType - type of subshape of theShape
+     * \param theShapeType - type of sub-shape of theShape
      * \param theState - required state
      * \return List of all found sub-shapes.
      */
@@ -1956,10 +1956,10 @@ module GEOM
                              in shape_state theState);
 
     /*!
-     * \brief Find subshapes complying with given status
-     * \param theCheckShape - the shape to check state of subshapes against. It must be a solid.
+     * \brief Find sub-shapes complying with given status
+     * \param theCheckShape - the shape to check state of sub-shapes against. It must be a solid.
      * \param theShape - the shape to explore
-     * \param theShapeType - type of subshape of theShape
+     * \param theShapeType - type of sub-shape of theShape
      * \param theState - required state
      * \return List of IDs of all found sub-shapes.
      */
@@ -1969,10 +1969,10 @@ module GEOM
                                     in shape_state theState);
 
     /*!
-     * \brief Find subshapes complying with given status
-     * \param theCheckShape - the shape to check state of subshapes against. It must be a solid.
+     * \brief Find sub-shapes complying with given status
+     * \param theCheckShape - the shape to check state of sub-shapes against. It must be a solid.
      * \param theShape - the shape to explore
-     * \param theShapeType - type of subshape of theShape
+     * \param theShapeType - type of sub-shape of theShape
      * \param theState - required state
      * \return List of all found sub-shapes.
      */
@@ -1982,10 +1982,10 @@ module GEOM
                                in shape_state theState);
 
     /*!
-     * \brief Find subshapes complying with given status
-     * \param theCheckShape - the shape to check state of subshapes against. It must be a solid.
+     * \brief Find sub-shapes complying with given status
+     * \param theCheckShape - the shape to check state of sub-shapes against. It must be a solid.
      * \param theShape - the shape to explore
-     * \param theShapeType - type of subshape of theShape
+     * \param theShapeType - type of sub-shape of theShape
      * \param theState - required state
      * \return compound includes all found sub-shapes.
      */
@@ -2198,11 +2198,11 @@ module GEOM
                                   in GEOM_Object theVector);
 
     /*!
-     *  Find all subshapes of type \a theShapeType of the given shape,
+     *  Find all sub-shapes of type \a theShapeType of the given shape,
      *  which have minimal distance to the given point.
      *  \param theShape Any shape.
      *  \param thePoint Point, close to the desired shape.
-     *  \param theShapeType Defines what kind of subshapes is searched.
+     *  \param theShapeType Defines what kind of sub-shapes is searched.
      *  \param theTolerance The tolerance for distances comparison. All shapes
      *                      with distances to the given point in interval
      *                      [minimal_distance, minimal_distance + theTolerance] will be gathered.
@@ -3214,7 +3214,7 @@ module GEOM
     /*
      *  Get the vertex by index for 1D objects depends the edge/wire orientation
      *  \param theShape Shape (wire or edge) to find the vertex on it
-     *  \param theIndex Index of vertex subshape
+     *  \param theIndex Index of vertex sub-shape
      *  \return New GEOM_Object, vertex.
      */
     GEOM_Object GetVertexByIndex( in GEOM_Object theShape, in long index );
@@ -3290,7 +3290,7 @@ module GEOM
     /*!
      *  Check a topology of the given shape on self-intersections presence.
      *  \param theShape Shape to check validity of.
-     *  \param theIntersections Output. List of intersected sub shapes IDs, it contains pairs of IDs.
+     *  \param theIntersections Output. List of intersected sub-shapes IDs, it contains pairs of IDs.
      *  \return TRUE, if the shape does not have any self-intersections.
      */
     boolean CheckSelfIntersections (in GEOM_Object theShape,
@@ -3411,7 +3411,7 @@ module GEOM
   interface GEOM_IGroupOperations : GEOM_IOperations
   {
     /*!
-     *  Creates a new group which will store  sub shapes of theMainShape
+     *  Creates a new group which will store  sub-shapes of theMainShape
      *  \param theMainShape is a GEOM object on which the group is selected
      *  \param theShapeType defines a shape type of the group
      *  \return a newly created GEOM group
@@ -3419,25 +3419,25 @@ module GEOM
     GEOM_Object CreateGroup (in GEOM_Object theMainShape, in long theShapeType);
 
     /*!
-     *  Adds a sub object with ID theSubShapeId to the group
-     *  \param theGroup is a GEOM group to which the new sub shape is added
-     *  \param theSubShapeId is a sub shape ID in the main object.
-     *  \note Use method <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR> to get an ID by the sub shape
+     *  Adds a sub-object with ID theSubShapeId to the group
+     *  \param theGroup is a GEOM group to which the new sub-shape is added
+     *  \param theSubShapeId is a sub-shape ID in the main object.
+     *  \note Use method <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR> to get an ID by the sub-shape
      */
     void AddObject (in GEOM_Object theGroup, in long theSubShapeId);
 
     /*!
-     *  Removes a sub object with ID \a theSubShapeId from the group
-     *  \param theGroup is a GEOM group from which the sub shape is removed.
-     *  \param theSubShapeId is a sub shape ID in the main object.
-     *  \note Use method <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR> to get an ID by the sub shape
+     *  Removes a sub-object with ID \a theSubShapeId from the group
+     *  \param theGroup is a GEOM group from which the sub-shape is removed.
+     *  \param theSubShapeId is a sub-shape ID in the main object.
+     *  \note Use method <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR> to get an ID by the sub-shape
      */
     void RemoveObject (in GEOM_Object theGroup, in long theSubShapeId);
 
     /*!
      *  Adds to the group all the given shapes. No errors, if some shapes are alredy included.
-     *  \param theGroup is a GEOM group to which the new sub shapes are added.
-     *  \param theSubShapes is a list of sub shapes to be added.
+     *  \param theGroup is a GEOM group to which the new sub-shapes are added.
+     *  \param theSubShapes is a list of sub-shapes to be added.
      */
     void UnionList (in GEOM_Object theGroup, in ListOfGO theSubShapes);
 
@@ -3450,8 +3450,8 @@ module GEOM
 
     /*!
      *  Adds to the group all the given shapes. No errors, if some shapes are alredy included.
-     *  \param theGroup is a GEOM group to which the new sub shapes are added.
-     *  \param theSubShapes is a list of IDs of sub shapes to be added.
+     *  \param theGroup is a GEOM group to which the new sub-shapes are added.
+     *  \param theSubShapes is a list of IDs of sub-shapes to be added.
      */
     void UnionIDs (in GEOM_Object theGroup, in ListOfLong theSubShapes);
 
@@ -3463,7 +3463,7 @@ module GEOM
     void DifferenceIDs (in GEOM_Object theGroup, in ListOfLong theSubShapes);
 
     /*!
-     *  Returns a type of sub objects stored in the group
+     *  Returns a type of sub-objects stored in the group
      *  \param theGroup is a GEOM group which type is returned.
      */
     long GetType (in GEOM_Object theGroup);
@@ -3476,7 +3476,7 @@ module GEOM
     GEOM_Object GetMainShape (in GEOM_Object theGroup);
 
     /*!
-     *  Returns a list of sub objects ID stored in the group
+     *  Returns a list of sub-objects ID stored in the group
      *  \param theGroup is a GEOM group for which a list of IDs is requested
      */
     ListOfLong GetObjects (in GEOM_Object theGroup);
@@ -3645,11 +3645,11 @@ module GEOM
      *  \param theObject published GEOM object, arguments of which will be published
      *  \param theArgs   list of GEOM_Object, operation arguments to be published.
      *                   If this list is empty, all operation arguments will be published
-     *  \param theFindMethod method to search subshapes, corresponding to arguments and
-     *                       their subshapes. Value from enumeration GEOM::find_shape_method.
+     *  \param theFindMethod method to search sub-shapes, corresponding to arguments and
+     *                       their sub-shapes. Value from enumeration GEOM::find_shape_method.
      *  \param theInheritFirstArg set properties of the first argument for \a theObject.
-     *                            Do not publish subshapes in place of arguments, but only
-     *                            in place of subshapes of the first argument,
+     *                            Do not publish sub-shapes in place of arguments, but only
+     *                            in place of sub-shapes of the first argument,
      *                            because the whole shape corresponds to the first argument.
      *                            Mainly to be used after transformations, but it also can be
      *                            usefull after partition with one object shape, and some other
@@ -3657,7 +3657,7 @@ module GEOM
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
      *  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
-     *                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
+     *                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
      *  \return list of published sub-shapes
      */
     ListOfGO RestoreSubShapesO (in SALOMEDS::Study   theStudy,
@@ -3675,11 +3675,11 @@ module GEOM
      *  \param theObject published GEOM object, arguments of which will be published
      *  \param theArgs   list of GEOM_Object, operation arguments to be published.
      *                   If this list is empty, all operation arguments will be published
-     *  \param theFindMethod method to search subshapes, corresponding to arguments and
-     *                       their subshapes. Value from enumeration GEOM::find_shape_method.
+     *  \param theFindMethod method to search sub-shapes, corresponding to arguments and
+     *                       their sub-shapes. Value from enumeration GEOM::find_shape_method.
      *  \param theInheritFirstArg set properties of the first argument for \a theObject.
-     *                            Do not publish subshapes in place of arguments, but only
-     *                            in place of subshapes of the first argument,
+     *                            Do not publish sub-shapes in place of arguments, but only
+     *                            in place of sub-shapes of the first argument,
      *                            because the whole shape corresponds to the first argument.
      *                            Mainly to be used after transformations, but it also can be
      *                            usefull after partition with one object shape, and some other
@@ -3687,7 +3687,7 @@ module GEOM
      *                            If theObject has only one argument shape, this flag is automatically
      *                            considered as True, not regarding really passed value.
      *  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
-     *                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
+     *                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
      *  \return list of published sub-shapes
      */
     ListOfGO RestoreGivenSubShapesO (in SALOMEDS::Study   theStudy,
@@ -3746,9 +3746,9 @@ module GEOM
     GEOM_Object GetObject (in long theStudyID, in string theEntry);
 
     /*!
-     *  Add a sub shape defined by indices in \a theIndices
-     *  (contains unique IDs of sub shapes inside \a theMainShape)
-     *  \note The sub shape GEOM_Objects can has ONLY ONE function.
+     *  Add a sub-shape defined by indices in \a theIndices
+     *  (contains unique IDs of sub-shapes inside \a theMainShape)
+     *  \note The sub-shape GEOM_Objects can has ONLY ONE function.
      *        Don't try to apply modification operations on them.
      *  \note Internal method
      */
@@ -3783,9 +3783,9 @@ module GEOM
     string_array GetAllDumpNames();
 
     /*!
-     *  Publishes the named subshapes of given object in the study.
+     *  Publishes the named sub-shapes of given object in the study.
      *  \param theStudy    The study in which the object is published
-     *  \param theObject   The object which named subshapes are published
+     *  \param theObject   The object which named sub-shapes are published
      */
     ListOfGO PublishNamedShapesInStudy(in SALOMEDS::Study theStudy,
                                        //in SObject theSObject,
