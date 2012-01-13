@@ -14,15 +14,15 @@ Shared Shapes.</b> The following dialog box will appear.
 
 <ul>
 <li> <b>Name</b> is the base name of the resulting shapes; </li>
-<li> <b>Shapes</b> are the shapes to fing shared sub shapes of; </li>
-<li> <b>Sub Shapes Type</b> is the type of required sub shapes; </li>
+<li> <b>Shapes</b> are the shapes to fing shared sub-shapes of; </li>
+<li> <b>Sub-shapes Type</b> is the type of required sub-shapes; </li>
 </ul>
 
 \n <b>Advanced options</b> \ref preview_anchor "Preview"
 
 \n <b>TUI Command:</b> <em> geompy.GetSharedShapesMulti(Shapes,
-Type),</em> where \em Shapes is a list of shapes to fing shared sub
-shapes of and \em Type is the type of required sub shapes.
+Type),</em> where \em Shapes is a list of shapes to fing shared sub-
+shapes of and \em Type is the type of required sub-shapes.
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref swig_GetSharedShapes "Get Shared Shapes" functionality.

@@ -10,7 +10,7 @@ given tolerance value.
 
 \n <b>Arguments:</b> Name + Compound of shapes + Tolerance value.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 \n The \b Result will be a \b GEOM_Object.
 
 \image html glue1.png
@@ -47,14 +47,14 @@ checkbox.
 \n where \em theShape is a compound of shapes to be glued, \em
  theTolerance is a maximum distance between two faces, which can
  be considered as coincident. The \b Result will be a list of \b
- GEOM_Objects, containing one sub shape per each detected set of
- coincident sub shapes.
+ GEOM_Objects, containing one sub-shape per each detected set of
+ coincident sub-shapes.
 
 \n <em>geompy.MakeGlueFacesByList(theShape,theTolerance,theFaces,doKeepNonSolids,doGlueAllEdges)</em>,
 \n where \em theShape is a compound of shapes to be glued, \em
  theTolerance is a maximum distance between two faces, which can
  be considered as coincident, \em theFaces is a list of
- subshapes to be glued. The \em doKeepNonSolids flag allows to throw
+ sub-shapes to be glued. The \em doKeepNonSolids flag allows to throw
  away non-solids from the result, if false. The \em doGlueAllEdges
  allows to glue all edges, not only owned by glued faces. The \b
  Result will be a new \b GEOM_Object.

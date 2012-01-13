@@ -16,7 +16,7 @@ The \b Result will be any \b GEOM_Object.
 <b>TUI Command:</b> <em>geompy.MakeCommon(s1, s2)</em>
 <b>Arguments:</b> Name + 2 shapes.
 <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html bool2.png
 

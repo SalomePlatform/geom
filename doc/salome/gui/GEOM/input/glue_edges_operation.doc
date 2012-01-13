@@ -9,7 +9,7 @@ given tolerance value.
 
 \n <b>Arguments:</b> Name + Compound of shapes + Tolerance value.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 \n The \b Result will be a \b GEOM_Object.
 
 
@@ -40,14 +40,14 @@ The selected edges will be marked in white.
 \n where \em theShape is a compound of shapes to be glued, \em
  theTolerance is a maximum distance between two edges, which can
  be considered as coincident. The \b Result will be a list of \b
- GEOM_Objects, containing one sub shape per each detected set of
- coincident sub shapes.
+ GEOM_Objects, containing one sub-shape per each detected set of
+ coincident sub-shapes.
 
 \n <em>geompy.MakeGlueEdgesByList(theShape,theTolerance,theEdges)</em>,
 \n where \em theShape is a compound of shapes to be glued, \em
  theTolerance is a maximum distance between two edges, which can
  be considered as coincident, \em theEdges is a list of
- subshapes to be glued. 
+ sub-shapes to be glued. 
 
 \n <b>Example:</b>
 

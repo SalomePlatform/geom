@@ -8,7 +8,7 @@
 selecting them in the object browser or in the viewer holding Shift
 button.
 
-It is possible to select wires or edges from objects. To specify subshape type, use
+It is possible to select wires or edges from objects. To specify sub-shape type, use
 the <b>Object Type</b> radio buttons.
 
 Select \b Tolerance which will be used to check the

@@ -16,7 +16,7 @@ and <em>doUnionFaces</em> is a boolean parameter, that regulates,
 whether the faces, sharing a common surface, should be united.
 \n <b>Arguments:</b> Name + one shape + a flag.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html remove_extra_edges.png
 

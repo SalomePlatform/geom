@@ -26,7 +26,7 @@ special case of \b Explode operation. </li>
 
 <li>\subpage restore_presentation_parameters_page "Restore presentation parameters". 
 This cross-operation functionality allows the resulting shape to
-inherit colors and subshapes from its parent shapes.</li>
+inherit colors and sub-shapes from its parent shapes.</li>
 </ul>
 
 

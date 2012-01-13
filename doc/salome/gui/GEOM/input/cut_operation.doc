@@ -14,7 +14,7 @@ This operation cuts a shape with another one.
 The \b Result will be any \b GEOM_Object.
 <b>Arguments:</b> Name + 2 shapes.
 <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 <b>Dialog Box:</b>
 

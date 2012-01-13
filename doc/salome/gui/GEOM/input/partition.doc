@@ -51,7 +51,7 @@ sub-shapes will not be performed. In this case the Partition algorithm
 will work faster, but the result might differ from the default behavior.
 
  <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \note Partition is a complex operation, so its result of it depends
       on the quality of the initial shapes. Sometimes, if partition fails,
@@ -88,7 +88,7 @@ previous versions of SALOME.
 <b>Arguments:</b> Name + 1 shape to be intersected + 1 cutting plane.
 
 <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 <b>TUI Command:</b>
 

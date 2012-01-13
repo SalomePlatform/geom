@@ -18,7 +18,7 @@ DZ),</em> where Shape is a shape to be translated, DX, DY, DZ are
 components of translation vector.
 \n <b>Arguments:</b> Name + one or several objects + 3 values (coordinates).
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation1.png
 
@@ -27,7 +27,7 @@ of the vector.
 \n <b>TUI Command:</b> <em>geompy.MakeTranslationTwoPoints(Object, Point1, Point2)</em>
 \n <b>Arguments:</b> Name + one or several objects + 2 vertices
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation2.png
 
@@ -39,7 +39,7 @@ and the dialog preview will display the vector along which the object will be tr
 \n <b>TUI Command </b> for translation by vector and custom distance: <em>geompy.MakeTranslationVectorDistance(Object, Vector, Distance)</em> 
 \n <b>Arguments:</b> Name + one or several objects + 1 vector.
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation3.png
 

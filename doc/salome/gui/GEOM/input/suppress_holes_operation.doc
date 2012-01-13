@@ -11,7 +11,7 @@ shell or face. This operation is available in <b>OCC Viewer</b> only.
 
 \n <b>TUI Command:</b> <em>geompy.SuppressHoles(Shape,
 ListOfWireID),</em> where \em Shape is a shell or face, where holes
-with free boundaries must be removed, \em ListOfWireID is a list of wire sub shapes ID's. If it is
+with free boundaries must be removed, \em ListOfWireID is a list of wire sub-shapes ID's. If it is
 empty, then all holes are removed.
 
 \image html repair5.png

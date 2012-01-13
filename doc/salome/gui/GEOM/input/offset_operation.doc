@@ -16,7 +16,7 @@ the offset.
 \n <b>Arguments:</b> Name + Object (face(s), shell(s), solid(s)) +
 Offset value
 \n <b>Advanced option:</b>
-   \ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+   \ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation11.png
 

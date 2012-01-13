@@ -13,7 +13,7 @@ with the origin of the Local Coordinate System.
 will be removed.
 \n <b>Arguments:</b> Name + one or several objects + End Coordinate System.
 \n <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation5.png
 
@@ -34,7 +34,7 @@ otherwise it will be removed.
 \n <b>Arguments:</b> Name + one or several objects + Start Coordinate System + End
 Coordinate System.
 \n <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
 
 \image html transformation6.png
 
@@ -58,13 +58,13 @@ The third algorithm modifies the location of an object using the Path object (Wi
 and the Distance parameter (ranging from 0 to 1) defining  how far the object will move along the path.
 \n <b>Create a copy</b> checkbox allows to keep the initial object,
 otherwise it will be removed.
-\n <b>Select Unpublished edges</b> checkbox allows to select subshape edges on
+\n <b>Select Unpublished edges</b> checkbox allows to select sub-shape edges on
 the other objects.
 \n <b>Reverse Direction</b> checkbox allows to REVERSE the direction of the object movement along its path.
 
 <b>Arguments:</b> Name + one or several objects + Translation path.
 \n <b>Advanced option:</b>
-\ref restore_presentation_parameters_page "Set presentation parameters and subshapes from arguments".
+\ref restore_presentation_parameters_page "Set presentation parameters and sub-shapes from arguments".
    
 \image html transformation13.png
 

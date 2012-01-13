@@ -265,7 +265,7 @@ is returned, and encountered errors are printed in the python console.
 
 \n Checks the topology of the selected shape to detect self-intersections.
  Returns True if there are no self-intersections. Reports pairs of
- intersected sub shapes, if there are any.
+ intersected sub-shapes, if there are any.
 
 \note This tool is useful for detection of shapes, not suitable for
 arguments of Boolean operations and Partition algorithm.

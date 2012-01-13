@@ -2,15 +2,15 @@
 
 \page work_with_groups_page Working with groups
 
-Creation and editing groups of subshapes of a geometrical object makes
-handling subshapes much easier. This functionality is available in OCC
+Creation and editing groups of sub-shapes of a geometrical object makes
+handling sub-shapes much easier. This functionality is available in OCC
 viewer only.
 
 <br><h2>Create a group</h2>
 
 \image html image56.png
 
-To create a group of subshapes of a geometrical object in the main
+To create a group of sub-shapes of a geometrical object in the main
 menu select <b>New entity > Group > Create</b>
 \n The following menu will appear:
 
@@ -32,7 +32,7 @@ Shape.</li>
 <li><b>Geometrical parts of the Second Shape</b> restricts the range of accessible
 elements to the sub-shapes of the Main Shape that geometrically
 coincide with the <b>Second Shape</b>.</li>
-<li><b>Only Sub-Shapes of the Second Shape</b> restricts the range of
+<li><b>Only Sub-shapes of the Second Shape</b> restricts the range of
 accessible elements to the sub-shapes of the Main Shape that 
 are sub-shapes of the <b>Second Shape</b>. This is useful because 
 sometimes purely geometrical coincidence is not enough and it 
@@ -41,9 +41,9 @@ to the main and the second shape.</li>
 </ul>
 <li>You can selectively display the selected elements using the following buttons:</li>
 <ul>
-<li><b>Show only selected</b> - displays only the subshapes selected in the list box.</li>
-<li><b>Hide selected</b> - hides the subshapes selected in the list box.</li>
-<li><b>Show all sub-shapes</b> - displays only the subshapes of the Main Shape.</li>
+<li><b>Show only selected</b> - displays only the sub-shapes selected in the list box.</li>
+<li><b>Hide selected</b> - hides the sub-shapes selected in the list box.</li>
+<li><b>Show all sub-shapes</b> - displays only the sub-shapes of the Main Shape.</li>
 </ul>
 <li> You can select the elements of your group in two ways:
 <ul>
@@ -70,7 +70,7 @@ creation of other groups), or skip it by clicking \b Close button.
 \n <b>TUI Command:</b> <em>geompy.CreateGroup(MainShape,
 ShapeType),</em> where MainShape is a shape for which the group is
 created, ShapeType is a type of shapes in the created group.
-\n <b>Arguments:</b> 1 Shape + Type of subshape.
+\n <b>Arguments:</b> 1 Shape + Type of sub-shape.
 
 <b>Example:</b>
 
@@ -90,16 +90,16 @@ Group > Edit</b>. This menu is designed in the same way as the
 \n <b>TUI Command:</b>
 <ul>
 <li><em>geompy.AddObject(Group, SubShapeID),</em> where Group is a
-group to which a sub shape has to be added, SubShapeID is an ID of the
-sub shape to be added to the group.</li>
+group to which a sub-shape has to be added, SubShapeID is an ID of the
+sub-shape to be added to the group.</li>
 <li><em>geompy.RemoveObject(Group, SubShapeID),</em> where Group is a
-group from which a sub shape has to be removed, SubShapeID is an ID of
-the sub shape to be removed from the group.</li>
+group from which a sub-shape has to be removed, SubShapeID is an ID of
+the sub-shape to be removed from the group.</li>
 <li><em>geompy.GetObjectIDs(Group),</em> where Group is a group for which its object's are returned.
 \n Returns: List of IDs.</li>
 </ul>
 
-\n <b>Arguments:</b> 1 Shape + its subshapes.
+\n <b>Arguments:</b> 1 Shape + its sub-shapes.
 
 \n <b>Dialog Box:</b> 
 
