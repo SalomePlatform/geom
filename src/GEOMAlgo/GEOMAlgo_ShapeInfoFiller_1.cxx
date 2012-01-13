@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMAlgo_ShapeInfoFiller.ixx>
 
@@ -53,7 +52,7 @@
 
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
 {
@@ -97,7 +96,7 @@
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aF=aMF(i);
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aF);
-    aKNF=aInfoF.KindOfName(); 
+    aKNF=aInfoF.KindOfName();
     if (aKNF==GEOMAlgo_KN_CYLINDER) {
       aFCyl=aF;
       ++aNbCyl;
@@ -113,8 +112,7 @@
             aKNF==GEOMAlgo_KN_TRIANGLE ||
             aKNF==GEOMAlgo_KN_QUADRANGLE) {
       ++aNbPgn;
-      
-    } 
+    }
     else if (aKNF==GEOMAlgo_KN_RECTANGLE) {
       ++aNbPgn;
       ++aNbRct;
@@ -125,7 +123,7 @@
   if (aNbCyl==1 && aNbCrc==2 && aNbX==aNbF) {
     // cylinder (as they understand it)
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aFCyl);
-    aKNF=aInfoF.KindOfName(); 
+    aKNF=aInfoF.KindOfName();
     aInfo.SetKindOfName(aKNF);
     aInfo.SetLocation(aInfoF.Location());
     aInfo.SetPosition(aInfoF.Position());
@@ -138,7 +136,7 @@
   if (aNbCon==1 && (aNbCrc==1 || aNbCrc==2) && aNbX==aNbF) {
     // cone
     GEOMAlgo_ShapeInfo& aInfoF=myMapInfo.ChangeFromKey(aFCon);
-    aKNF=aInfoF.KindOfName(); 
+    aKNF=aInfoF.KindOfName();
     aInfo.SetKindOfName(aKNF);
     aInfo.SetLocation(aInfoF.Location());
     aInfo.SetPosition(aInfoF.Position());
@@ -148,10 +146,16 @@
     return;
   }
   //
+  //modified by NIZNHY-PKV Wed Jan 11 11:04:31 2012f
+  if (aNbF!=aNbPgn) {
+    return;// -> GEOMAlgo_KN_UNKNOWN
+  }
+  //modified by NIZNHY-PKV Wed Jan 11 11:04:37 2012t
   if (aNbPgn!=6) {
     aInfo.SetKindOfName(GEOMAlgo_KN_POLYHEDRON);
     return;
   }
+  // aNbPgn==6
   if (aNbPgn!=aNbRct) {
     aInfo.SetKindOfName(GEOMAlgo_KN_POLYHEDRON);
     return;
@@ -262,7 +266,7 @@
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                              const gp_Pln& aPln)
@@ -397,7 +401,7 @@
       }
     }
     //
-    // rectangle 
+    // rectangle
     aInfo.SetKindOfName(GEOMAlgo_KN_RECTANGLE);
     //
     // shift location to the center and calc. sizes
@@ -444,20 +448,20 @@
     gp_Ax3 aAx3(aAx2);
     aInfo.SetPosition(aAx3);
   }
-  
+
   return;
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                              const gp_Sphere& )
 {
   Standard_Integer aNbV, aNbE, aNbSE, aNbDE;
-  TopoDS_Edge aE; 
+  TopoDS_Edge aE;
   TopExp_Explorer aExp;
-  TopTools_MapOfShape aM; 
+  TopTools_MapOfShape aM;
   GEOMAlgo_KindOfShape aKS, aKSE;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
@@ -499,7 +503,7 @@
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                              const gp_Cone& )//aCone)
@@ -628,7 +632,7 @@
 }
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                              const gp_Cylinder& aCyl)
@@ -642,7 +646,7 @@
   GEOMAlgo_KindOfShape aKS;
   GEOMAlgo_KindOfName aKN, aKNE;
   GEOMAlgo_KindOfClosed aKCE;
-  // 
+  //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
   aKN=GEOMAlgo_KN_UNKNOWN;
   aInfo.SetKindOfName(aKN);
@@ -713,15 +717,15 @@
 
 //=======================================================================
 //function : FillDetails
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
                                              const gp_Torus& )
 {
   Standard_Integer aNbV, aNbE, aNbSE;
-  TopoDS_Edge aE; 
+  TopoDS_Edge aE;
   TopExp_Explorer aExp;
-  TopTools_MapOfShape aM; 
+  TopTools_MapOfShape aM;
   GEOMAlgo_KindOfShape aKS;
   //
   GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aF);
