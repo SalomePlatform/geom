@@ -1298,7 +1298,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeExplode
       // on the main shape for each being calculated sub-shape separately.
       aFunction->SetValue(aValue);
 
-      // Put this subshape in the list of subshapes of theMainShape
+      // Put this subshape in the list of sub-shapes of theMainShape
       aMainShape->AddSubShapeReference(aFunction);
     }
 
@@ -1512,7 +1512,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::MakeSubShapes
         // on the main shape for each being calculated sub-shape separately.
         aFunction->SetValue(aValue);
 
-        // Put this subshape in the list of subshapes of theMainShape
+        // Put this sub-shape in the list of sub-shapes of theMainShape
         aMainShape->AddSubShapeReference(aFunction);
 
         aSeq->Append(anObj);
@@ -2183,12 +2183,12 @@ Handle(Geom_Surface) GEOMImpl_IShapesOperations::makeCylinder(const TopoDS_Shape
 //=======================================================================
 //function : getShapesOnBoxIDs
   /*!
-   * \brief Find IDs of subshapes complying with given status about surface
-    * \param theBox - the box to check state of subshapes against
+   * \brief Find IDs of sub-shapes complying with given status about surface
+    * \param theBox - the box to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -2264,12 +2264,12 @@ Handle(TColStd_HSequenceOfInteger)
 //=======================================================================
 //function : GetShapesOnBoxIDs
 /*!
-   * \brief Find subshapes complying with given status about surface
-    * \param theBox - the box to check state of subshapes against
+   * \brief Find sub-shapes complying with given status about surface
+    * \param theBox - the box to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
  */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -2278,7 +2278,7 @@ Handle(TColStd_HSequenceOfInteger)
                                                   const Standard_Integer theShapeType,
                                                   GEOMAlgo_State theState)
 {
-  // Find subshapes ids
+  // Find sub-shapes ids
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
     getShapesOnBoxIDs (theBox, theShape, theShapeType, theState);
   if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
@@ -2302,12 +2302,12 @@ Handle(TColStd_HSequenceOfInteger)
 //=======================================================================
 //function : GetShapesOnBox
 /*!
-   * \brief Find subshapes complying with given status about surface
-    * \param theBox - the box to check state of subshapes against
+   * \brief Find sub-shapes complying with given status about surface
+    * \param theBox - the box to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
+    * \retval Handle(TColStd_HSequenceOfTransient) - found sub-shapes
  */
 //=======================================================================
 Handle(TColStd_HSequenceOfTransient)
@@ -2316,7 +2316,7 @@ Handle(TColStd_HSequenceOfTransient)
                                                const Standard_Integer theShapeType,
                                                GEOMAlgo_State theState)
 {
-  // Find subshapes ids
+  // Find sub-shapes ids
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
     getShapesOnBoxIDs (theBox, theShape, theShapeType, theState);
   if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
@@ -2348,12 +2348,12 @@ Handle(TColStd_HSequenceOfTransient)
 //=======================================================================
 //function : getShapesOnShapeIDs
 /*!
- * \brief Find IDs of subshapes complying with given status about surface
- * \param theCheckShape - the shape to check state of subshapes against
+ * \brief Find IDs of sub-shapes complying with given status about surface
+ * \param theCheckShape - the shape to check state of sub-shapes against
  * \param theShape - the shape to explore
- * \param theShapeType - type of subshape of theShape
+ * \param theShapeType - type of sub-shape of theShape
  * \param theState - required state
- * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+ * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
  */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -2435,12 +2435,12 @@ Handle(TColStd_HSequenceOfInteger)
 //=======================================================================
 //function : GetShapesOnShapeIDs
 /*!
- * \brief Find subshapes complying with given status about surface
- * \param theCheckShape - the shape to check state of subshapes against
+ * \brief Find sub-shapes complying with given status about surface
+ * \param theCheckShape - the shape to check state of sub-shapes against
  * \param theShape - the shape to explore
- * \param theShapeType - type of subshape of theShape
+ * \param theShapeType - type of sub-shape of theShape
  * \param theState - required state
- * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+ * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
  */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -2475,12 +2475,12 @@ Handle(TColStd_HSequenceOfInteger)
 //=======================================================================
 //function : GetShapesOnShape
 /*!
- * \brief Find subshapes complying with given status about surface
- * \param theCheckShape - the shape to check state of subshapes against
+ * \brief Find sub-shapes complying with given status about surface
+ * \param theCheckShape - the shape to check state of sub-shapes against
  * \param theShape - the shape to explore
- * \param theShapeType - type of subshape of theShape
+ * \param theShapeType - type of sub-shape of theShape
  * \param theState - required state
- * \retval Handle(TColStd_HSequenceOfTransient) - found subshapes
+ * \retval Handle(TColStd_HSequenceOfTransient) - found sub-shapes
  */
 //=======================================================================
 Handle(TColStd_HSequenceOfTransient)
@@ -2573,12 +2573,12 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetShapesOnShapeAsCompound
 //=======================================================================
 //function : getShapesOnSurfaceIDs
   /*!
-   * \brief Find IDs of subshapes complying with given status about surface
-    * \param theSurface - the surface to check state of subshapes against
+   * \brief Find IDs of sub-shapes complying with given status about surface
+    * \param theSurface - the surface to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -2716,13 +2716,13 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::
 //=======================================================================
 //function : getShapesOnSurface
 /*!
-   * \brief Find subshapes complying with given status about surface
-    * \param theSurface - the surface to check state of subshapes against
+   * \brief Find sub-shapes complying with given status about surface
+    * \param theSurface - the surface to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
     * \param theShapeEntries - outgoing entries like "entry1, entry2, ..."
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
  */
 //=======================================================================
 Handle(TColStd_HSequenceOfTransient)
@@ -2732,7 +2732,7 @@ Handle(TColStd_HSequenceOfTransient)
                                                    GEOMAlgo_State              theState,
                                                    TCollection_AsciiString &   theShapeEntries)
 {
-  // Find subshapes ids
+  // Find sub-shapes ids
   Handle(TColStd_HSequenceOfInteger) aSeqOfIDs =
     getShapesOnSurfaceIDs (theSurface, theShape->GetValue(), theShapeType, theState);
   if ( aSeqOfIDs.IsNull()  || aSeqOfIDs->Length() == 0 )
@@ -3318,15 +3318,15 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetShapesOnSphere
 //=======================================================================
 //function : getShapesOnQuadrangleIDs
   /*!
-   * \brief Find IDs of subshapes complying with given status about quadrangle
+   * \brief Find IDs of sub-shapes complying with given status about quadrangle
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
     * \param theTopRigthPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
     * \param theBottomRigthPoint - bottom right quadrangle corner
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -3444,15 +3444,15 @@ Handle(TColStd_HSequenceOfInteger)
 //=======================================================================
 //function : GetShapesOnQuadrangle
   /*!
-   * \brief Find subshapes complying with given status about quadrangle
+   * \brief Find sub-shapes complying with given status about quadrangle
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
     * \param theTopRigthPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
     * \param theBottomRigthPoint - bottom right quadrangle corner
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfTransient)
@@ -3505,15 +3505,15 @@ Handle(TColStd_HSequenceOfTransient)
 //=======================================================================
 //function : GetShapesOnQuadrangleIDs
   /*!
-   * \brief Find IDs of subshapes complying with given status about quadrangle
+   * \brief Find IDs of sub-shapes complying with given status about quadrangle
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theTopLeftPoint - top left quadrangle corner
     * \param theTopRigthPoint - top right quadrangle corner
     * \param theBottomLeftPoint - bottom left quadrangle corner
     * \param theBottomRigthPoint - bottom right quadrangle corner
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -3764,7 +3764,7 @@ namespace {
 
 //================================================================================
 /*!
- * \brief Return type of shape for explode. In case of compound it will be a type of sub shape.
+ * \brief Return type of shape for explode. In case of compound it will be a type of sub-shape.
  */
 //================================================================================
 TopAbs_ShapeEnum GEOMImpl_IShapesOperations::GetTypeOfSimplePart (const TopoDS_Shape& theShape)
@@ -3921,7 +3921,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
       aModifiedArray->SetValue(imod, aWhereIndices.FindIndex(anIterModif.Value()));
     }
     else {
-      SetErrorCode("Error: wrong sub shape returned");
+      SetErrorCode("Error: wrong sub-shape returned");
       return NULL;
     }
   }
@@ -3937,7 +3937,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
-    //Set a sub shape type
+    //Set a sub-shape type
     TopoDS_Shape aFirstFound = aLSA.First();
     TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
 
@@ -4165,7 +4165,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld (Handle(GEOM_Objec
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
-    //Set a sub shape type
+    //Set a sub-shape type
     TopoDS_Shape aFirstFound = aWhereIndices.FindKey(aModifiedArray->Value(1));
     TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
 
@@ -4234,7 +4234,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceByHistory
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
-    //Set a sub shape type
+    //Set a sub-shape type
     TopoDS_Shape aFirstFound = aWhereIndices.FindKey(aModifiedArray->Value(1));
     TopAbs_ShapeEnum aShapeType = aFirstFound.ShapeType();
 

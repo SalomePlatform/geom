@@ -131,7 +131,7 @@ void EntityGUI_SubShapeDlg::Init()
 
   myWithShape = true;
 
-  /* type for sub shape selection */
+  /* type for sub-shape selection */
   GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
   GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
   GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Solid");
@@ -213,10 +213,10 @@ void EntityGUI_SubShapeDlg::ClickOnOk()
 
   SUIT_Session::session()->activeApplication()->putInfo("");
 
-  /* Explode all sub shapes */
+  /* Explode all sub-shapes */
   bool isOk = true;
   if (isAllSubShapes()) {
-    /* More than 30 subshapes : ask confirmation */
+    /* More than 30 sub-shapes : ask confirmation */
     unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if (nb > 30) {
       const QString caption = tr("GEOM_CONFIRM");
@@ -244,9 +244,9 @@ bool EntityGUI_SubShapeDlg::ClickOnApply()
 {
   SUIT_Session::session()->activeApplication()->putInfo("");
 
-  /* Explode all sub shapes */
+  /* Explode all sub-shapes */
   if (isAllSubShapes()) {
-    /* More than 30 subshapes : ask confirmation */
+    /* More than 30 sub-shapes : ask confirmation */
     unsigned int nb = NumberOfSubShapes(myShape, shapeType());
     if (nb > 30) {
       const QString caption = tr("GEOM_CONFIRM");
@@ -419,7 +419,7 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
   if (myWithShape)
     count = count - 1;
 
-  /* type for sub shape selection */
+  /* type for sub-shape selection */
   GroupPoints->ComboBox1->clear();
   GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compound");
   GroupPoints->ComboBox1->insertItem(GroupPoints->ComboBox1->count(), "Compsolid");
@@ -443,7 +443,7 @@ void EntityGUI_SubShapeDlg::ResetStateOfDialog()
 
 //=================================================================================
 // function : SubShapeToggled()
-// purpose  : Allow user selection of all or only selected sub shapes
+// purpose  : Allow user selection of all or only selected sub-shapes
 //          : Called when 'CheckButton1' state change
 //=================================================================================
 void EntityGUI_SubShapeDlg::SubShapeToggled()
@@ -461,7 +461,7 @@ void EntityGUI_SubShapeDlg::SubShapeToggled()
 //=================================================================================
 void EntityGUI_SubShapeDlg::ComboTextChanged()
 {
-  /* Select sub shapes mode not checked */
+  /* Select sub-shapes mode not checked */
   updateButtonState();
   SubShapeToggled();
 }

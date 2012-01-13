@@ -67,10 +67,10 @@ public:
 //!          <S>. <br>
   Standard_EXPORT   virtual const TopTools_ListOfShape& Modified(const TopoDS_Shape& S) ;
   //! Returns the modified shape corresponding to <S>. <br>
-//! S can correspond to the entire initial shape or to its subshape. <br>
+//! S can correspond to the entire initial shape or to its sub-shape. <br>
 //! Exceptions <br>
 //! Standard_NoSuchObject if S is not the initial shape or <br>
-//! a subshape of the initial shape to which the <br>
+//! a sub-shape of the initial shape to which the <br>
 //! transformation has been applied. Raises NoSuchObject from Standard <br>
 //! if S is not the initial shape or a sub-shape <br>
 //! of the initial shape. <br>

@@ -453,7 +453,7 @@ GEOM::ListOfLong* GEOM_Object_i::GetSubShapeIndices()
   GEOM::ListOfLong_var anIndices = new GEOM::ListOfLong;
 
   if(!_impl->IsMainShape()) {
-    Handle(GEOM_Function) aFunction = _impl->GetFunction(1); //Get SubShape function (always the first (and last)  one)
+    Handle(GEOM_Function) aFunction = _impl->GetFunction(1); //Get Sub-shape function (always the first (and last)  one)
     if(aFunction.IsNull()) return anIndices._retn();
     GEOM_ISubShape ISS(aFunction);
     Handle(TColStd_HArray1OfInteger) anArray = ISS.GetIndices();
@@ -478,7 +478,7 @@ GEOM::GEOM_Object_ptr GEOM_Object_i::GetMainShape()
 {
   GEOM::GEOM_Object_var obj;
   if(!_impl->IsMainShape()) {
-    Handle(GEOM_Function) aFunction = _impl->GetFunction(1); //Get SubShape function (always the first (and last)  one)
+    Handle(GEOM_Function) aFunction = _impl->GetFunction(1); //Get Sub-shape function (always the first (and last)  one)
     if(aFunction.IsNull()) return obj._retn();
     GEOM_ISubShape ISS(aFunction);
 

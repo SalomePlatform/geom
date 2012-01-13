@@ -289,7 +289,7 @@
         myShapeType==TopAbs_EDGE ||
         myShapeType==TopAbs_FACE ||
         myShapeType==TopAbs_SOLID)) {
-    myErrorStatus=12; // unallowed subshape type
+    myErrorStatus=12; // unallowed sub-shape type
     return;
   }
   //
@@ -833,7 +833,7 @@
 //
 // 10 -myClsf=NULL
 // 11 -myShape=NULL
-// 12 -unallowed type of subshapes 
+// 12 -unallowed type of sub-shapes 
 // 13 -unallowed state  
 // 15 -unallowed surface type
 // 20- no triangulation found

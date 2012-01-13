@@ -89,7 +89,7 @@ Handle(GEOM_Object) GEOMImpl_IGroupOperations::CreateGroup
   //Set a GROUP type
   aGroup->SetType(GEOM_GROUP);
 
-  //Set a sub shape type
+  //Set a sub-shape type
   TDF_Label aFreeLabel = aGroup->GetFreeLabel();
   TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)theShapeType);
 

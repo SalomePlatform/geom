@@ -230,7 +230,7 @@ void GEOMAlgo_FinderShapeOn::FindVertices()
   TopExp::MapShapes(myShape, myShapeType, aM);
   aNb=aM.Extent();
   if (!aNb) {
-    myWarningStatus=10; // No found subshapes of type myShapeType
+    myWarningStatus=10; // No found sub-shapes of type myShapeType
     return;
   }
   //
@@ -259,7 +259,7 @@ void GEOMAlgo_FinderShapeOn::Find()
   //
   aNb=aM.Extent();
   if (!aNb) {
-    myWarningStatus=10; // No found subshapes of type myShapeType
+    myWarningStatus=10; // No found sub-shapes of type myShapeType
     return;
   }
   //
@@ -339,7 +339,7 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
       pSS=&aSLS;
       break;
     default:
-      myErrorStatus=12; // unallowed subshape type
+      myErrorStatus=12; // unallowed sub-shape type
       return;
   }
   //
@@ -480,7 +480,7 @@ void GEOMAlgo_FinderShapeOn::CheckData()
         myShapeType==TopAbs_EDGE ||
         myShapeType==TopAbs_FACE ||
         myShapeType==TopAbs_SOLID)) {
-    myErrorStatus=12; // unallowed subshape type
+    myErrorStatus=12; // unallowed sub-shape type
     return;
   }
   //
@@ -599,7 +599,7 @@ bool GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape& theShape)
 //
 // 10 -mySurface=NULL
 // 11 -myShape=NULL
-// 12 -unallowed type of subshapes 
+// 12 -unallowed type of sub-shapes 
 // 13 -unallowed state  
 // 20 -can not build the face
 // 30 -wrong args are used for DSFiller
@@ -609,4 +609,4 @@ bool GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape& theShape)
 //
 // myWarningStatus
 //
-// 10 -subshapes of type myShapeType can not be fond in myShape
+// 10 - sub-shapes of type myShapeType can not be fond in myShape

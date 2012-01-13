@@ -85,7 +85,7 @@ TopoDS_Shape GEOMBase::GetShapeFromIOR( const QString& IOR )
 
 //=====================================================================================
 // function : GetIndex()
-// purpose  : Get the index of a sub shape in a main shape : index start at 1
+// purpose  : Get the index of a sub-shape in a main shape : index start at 1
 //=====================================================================================
 int GEOMBase::GetIndex( const TopoDS_Shape& subshape, const TopoDS_Shape& shape )
 {

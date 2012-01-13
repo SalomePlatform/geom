@@ -261,7 +261,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
             (SalomeApp_Application*)(SUIT_Session::session()->activeApplication());
           anApp->selectionMgr()->GetIndexes( anIO, aMap );
 
-          if ( !aMap.IsEmpty() ) // subshape selection
+          if ( !aMap.IsEmpty() ) // sub-shape selection
           {
             myIndex = aMap( 1 );
             myObject = aSelectedObj;
@@ -273,7 +273,7 @@ void RepairGUI_DivideEdgeDlg::SelectionIntoArgument()
             myObject = aSelectedObj;
             myEditCurrentArgument->setText( GEOMBase::GetName( myObject ) );
           }
-          else // face, shell, solid or compound was selected, and NOT its subshape.
+          else // face, shell, solid or compound was selected, and NOT its sub-shape.
           {
             myIndex = -1;
             myObject = GEOM::GEOM_Object::_nil();

@@ -2629,7 +2629,7 @@ void GEOMImpl_IMeasureOperations::StructuralDump (const BRepCheck_Analyzer& theA
   }
   count = NbProblems->Value((Standard_Integer)BRepCheck_SubshapeNotInShape);
   if (count > 0) {
-    theDump += "  Subshape not in Shape .................... ";
+    theDump += "  Sub-shape not in Shape .................... ";
     theDump += TCollection_AsciiString(count) + "\n";
   }
   count = NbProblems->Value((Standard_Integer)BRepCheck_BadOrientation);
@@ -2639,7 +2639,7 @@ void GEOMImpl_IMeasureOperations::StructuralDump (const BRepCheck_Analyzer& theA
   }
   count = NbProblems->Value((Standard_Integer)BRepCheck_BadOrientationOfSubshape);
   if (count > 0) {
-    theDump += "  Bad Orientation of Subshape .............. ";
+    theDump += "  Bad Orientation of Sub-shape .............. ";
     theDump += TCollection_AsciiString(count) + "\n";
   }
   count = NbProblems->Value((Standard_Integer)BRepCheck_CheckFail);

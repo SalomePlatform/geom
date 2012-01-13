@@ -654,7 +654,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
     //
     bHasNewSubShape=Standard_True;
     // prevent creation of a new shape if there are not
-    // new subshapes of aSS among the originals
+    // new sub-shapes of aSS among the originals
     if (aNbSDF==1) {
       bHasNewSubShape=HasNewSubShape(aS1);
       if (!bHasNewSubShape) {

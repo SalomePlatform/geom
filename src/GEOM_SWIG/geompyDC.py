@@ -52,7 +52,7 @@
 ##       @defgroup l4_decompose     Decompose objects
 ##       @defgroup l4_decompose_d   Decompose objects deprecated methods
 ##       @defgroup l4_access        Access to sub-shapes by their unique IDs inside the main shape
-##       @defgroup l4_obtain        Access to subshapes by a criteria
+##       @defgroup l4_obtain        Access to sub-shapes by a criteria
 ##       @defgroup l4_advanced      Advanced objects creation functions
 
 ##     @}
@@ -66,7 +66,7 @@
 ##     @defgroup l3_local         Local Operations (Fillet and Chamfer)
 ##     @defgroup l3_blocks_op     Blocks Operations
 ##     @defgroup l3_healing       Repairing Operations
-##     @defgroup l3_restore_ss    Restore presentation parameters and a tree of subshapes
+##     @defgroup l3_restore_ss    Restore presentation parameters and a tree of sub-shapes
 
 ##   @}
 ##   @defgroup l2_measure       Using measurement tools
@@ -410,11 +410,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \param theObject published GEOM object, arguments of which will be published
         #  \param theArgs   list of GEOM_Object, operation arguments to be published.
         #                   If this list is empty, all operation arguments will be published
-        #  \param theFindMethod method to search subshapes, corresponding to arguments and
-        #                       their subshapes. Value from enumeration GEOM::find_shape_method.
+        #  \param theFindMethod method to search sub-shapes, corresponding to arguments and
+        #                       their sub-shapes. Value from enumeration GEOM::find_shape_method.
         #  \param theInheritFirstArg set properties of the first argument for <VAR>theObject</VAR>.
-        #                            Do not publish subshapes in place of arguments, but only
-        #                            in place of subshapes of the first argument,
+        #                            Do not publish sub-shapes in place of arguments, but only
+        #                            in place of sub-shapes of the first argument,
         #                            because the whole shape corresponds to the first argument.
         #                            Mainly to be used after transformations, but it also can be
         #                            usefull after partition with one object shape, and some other
@@ -422,7 +422,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
         #  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
-        #                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
+        #                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
         #  \return list of published sub-shapes
         #
         #  @ref tui_restore_prs_params "Example"
@@ -437,11 +437,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \param theObject published GEOM object, arguments of which will be published
         #  \param theArgs   list of GEOM_Object, operation arguments to be published.
         #                   If this list is empty, all operation arguments will be published
-        #  \param theFindMethod method to search subshapes, corresponding to arguments and
-        #                       their subshapes. Value from enumeration GEOM::find_shape_method.
+        #  \param theFindMethod method to search sub-shapes, corresponding to arguments and
+        #                       their sub-shapes. Value from enumeration GEOM::find_shape_method.
         #  \param theInheritFirstArg set properties of the first argument for <VAR>theObject</VAR>.
-        #                            Do not publish subshapes in place of arguments, but only
-        #                            in place of subshapes of the first argument,
+        #                            Do not publish sub-shapes in place of arguments, but only
+        #                            in place of sub-shapes of the first argument,
         #                            because the whole shape corresponds to the first argument.
         #                            Mainly to be used after transformations, but it also can be
         #                            usefull after partition with one object shape, and some other
@@ -449,7 +449,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                            If theObject has only one argument shape, this flag is automatically
         #                            considered as True, not regarding really passed value.
         #  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
-        #                      and prefix "from_subshapes_of_" to names of partially restored subshapes.
+        #                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
         #  \return list of published sub-shapes
         #
         #  @ref tui_restore_prs_params "Example"
@@ -1569,7 +1569,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                       shell or face. If number of faces in neighbour sections
         #                       aren't coincided result solid between such sections will
         #                       be created using external boundaries of this shells.
-        #  @param theSeqSubBases - list of corresponding subshapes of section shapes.
+        #  @param theSeqSubBases - list of corresponding sub-shapes of section shapes.
         #                          This list is used for searching correspondences between
         #                          faces in the sections. Size of this list must be equal
         #                          to size of list of base shapes.
@@ -1823,10 +1823,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("NumberOfEdges", self.ShapesOp)
             return nb_edges
 
-        ## Gives quantity of subshapes of type theShapeType in the given shape.
-        #  @param theShape Shape to count subshapes of.
-        #  @param theShapeType Type of subshapes to count.
-        #  @return Quantity of subshapes of given type.
+        ## Gives quantity of sub-shapes of type theShapeType in the given shape.
+        #  @param theShape Shape to count sub-shapes of.
+        #  @param theShapeType Type of sub-shapes to count.
+        #  @return Quantity of sub-shapes of given type.
         #
         #  @ref swig_NumberOf "Example"
         def NumberOfSubShapes(self, theShape, theShapeType):
@@ -1921,7 +1921,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeType Type of sub-shapes to be retrieved.
         #  @param theAx1 Vector (or line, or linear edge), specifying normal
         #                direction and location of the plane to find shapes on.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -1949,7 +1949,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theAx1 Vector (or line, or linear edge), specifying normal
         #                direction of the plane to find shapes on.
         #  @param thePnt Point specifying location of the plane to find shapes on.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -1978,7 +1978,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theAxis Vector (or line, or linear edge), specifying
         #                 axis of the cylinder to find shapes on.
         #  @param theRadius Radius of the cylinder to find shapes on.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -2006,7 +2006,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                 axis of the cylinder to find shapes on.
         #  @param thePnt Point specifying location of the bottom of the cylinder.
         #  @param theRadius Radius of the cylinder to find shapes on.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -2032,7 +2032,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShapeType Type of sub-shapes to be retrieved.
         #  @param theCenter Point, specifying center of the sphere to find shapes on.
         #  @param theRadius Radius of the sphere to find shapes on.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #   ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -2060,7 +2060,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theTopRigthPoint Point, specifying top right corner of a quadrangle
         #  @param theBottomLeftPoint Point, specifying bottom left corner of a quadrangle
         #  @param theBottomRigthPoint Point, specifying bottom right corner of a quadrangle
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -2093,7 +2093,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theBox Shape for relative comparing.
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -2119,7 +2119,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCheckShape Shape for relative comparing. It must be a solid.
         #  @param theShape Shape to find sub-shapes of.
         #  @param theShapeType Type of sub-shapes to be retrieved.
-        #  @param theState The state of the subshapes to find. It can be one of
+        #  @param theState The state of the sub-shapes to find. It can be one of
         #                  ST_ON, ST_OUT, ST_ONOUT, ST_IN, ST_ONIN.
         #  @return List of all found sub-shapes.
         #
@@ -2264,7 +2264,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetExistingSubObjects", self.ShapesOp)
             return ListObj
 
-        ## Explode a shape on subshapes of a given type.
+        ## Explode a shape on sub-shapes of a given type.
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
@@ -2277,7 +2277,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("SubShapeAll", self.ShapesOp)
             return ListObj
 
-        ## Explode a shape on subshapes of a given type.
+        ## Explode a shape on sub-shapes of a given type.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
         #  @return List of IDs of sub-shapes.
@@ -2302,7 +2302,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.GetSubShape(aShape, ListOfIDs)
             return anObj
 
-        ## Explode a shape on subshapes of a given type.
+        ## Explode a shape on sub-shapes of a given type.
         #  Sub-shapes will be sorted by coordinates of their gravity centers.
         #  If the shape itself matches the type, it is also returned.
         #  @param aShape Shape to be exploded.
@@ -2316,7 +2316,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("SubShapeAllSortedCentres", self.ShapesOp)
             return ListObj
 
-        ## Explode a shape on subshapes of a given type.
+        ## Explode a shape on sub-shapes of a given type.
         #  Sub-shapes will be sorted by coordinates of their gravity centers.
         #  @param aShape Shape to be exploded.
         #  @param aType Type of sub-shapes to be retrieved.
@@ -2355,10 +2355,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj
 
-        ## Get a set of sub shapes defined by their unique IDs inside <VAR>theMainShape</VAR>
+        ## Get a set of sub-shapes defined by their unique IDs inside <VAR>theMainShape</VAR>
         #  @param theMainShape Main shape.
-        #  @param theIndices List of unique IDs of sub shapes inside <VAR>theMainShape</VAR>.
-        #  @return List of GEOM_Objects, corresponding to found sub shapes.
+        #  @param theIndices List of unique IDs of sub-shapes inside <VAR>theMainShape</VAR>.
+        #  @return List of GEOM_Objects, corresponding to found sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
         def SubShapes(self, aShape, anIDs):
@@ -3692,8 +3692,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetCentreOfMass", self.MeasuOp)
             return anObj
 
-        ## Get a vertex subshape by index depended with orientation.
-        #  @param theShape Shape to find subshape.
+        ## Get a vertex sub-shape by index depended with orientation.
+        #  @param theShape Shape to find sub-shape.
         #  @param theIndex Index to find vertex by this index (starting from zero)
         #  @return New GEOM_Object, containing the created vertex.
         #
@@ -4151,11 +4151,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetFaceByNormale", self.BlocksOp)
             return anObj
 
-        ## Find all subshapes of type \a theShapeType of the given shape,
+        ## Find all sub-shapes of type \a theShapeType of the given shape,
         #  which have minimal distance to the given point.
         #  @param theShape Any shape.
         #  @param thePoint Point, close to the desired shape.
-        #  @param theShapeType Defines what kind of subshapes is searched.
+        #  @param theShapeType Defines what kind of sub-shapes is searched.
         #  @param theTolerance The tolerance for distances comparison. All shapes
         #                      with distances to the given point in interval
         #                      [minimal_distance, minimal_distance + theTolerance] will be gathered.
@@ -4345,7 +4345,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## @addtogroup l3_groups
         ## @{
 
-        ## Creates a new group which will store sub shapes of theMainShape
+        ## Creates a new group which will store sub-shapes of theMainShape
         #  @param theMainShape is a GEOM object on which the group is selected
         #  @param theShapeType defines a shape type of the group
         #  @return a newly created GEOM group
@@ -4358,10 +4358,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("CreateGroup", self.GroupOp)
             return anObj
 
-        ## Adds a sub object with ID theSubShapeId to the group
-        #  @param theGroup is a GEOM group to which the new sub shape is added
-        #  @param theSubShapeID is a sub shape ID in the main object.
-        #  \note Use method GetSubShapeID() to get an unique ID of the sub shape
+        ## Adds a sub-object with ID theSubShapeId to the group
+        #  @param theGroup is a GEOM group to which the new sub-shape is added
+        #  @param theSubShapeID is a sub-shape ID in the main object.
+        #  \note Use method GetSubShapeID() to get an unique ID of the sub-shape
         #
         #  @ref tui_working_with_groups_page "Example"
         def AddObject(self,theGroup, theSubShapeID):
@@ -4372,10 +4372,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 pass
             pass
 
-        ## Removes a sub object with ID \a theSubShapeId from the group
-        #  @param theGroup is a GEOM group from which the new sub shape is removed
-        #  @param theSubShapeID is a sub shape ID in the main object.
-        #  \note Use method GetSubShapeID() to get an unique ID of the sub shape
+        ## Removes a sub-object with ID \a theSubShapeId from the group
+        #  @param theGroup is a GEOM group from which the new sub-shape is removed
+        #  @param theSubShapeID is a sub-shape ID in the main object.
+        #  \note Use method GetSubShapeID() to get an unique ID of the sub-shape
         #
         #  @ref tui_working_with_groups_page "Example"
         def RemoveObject(self,theGroup, theSubShapeID):
@@ -4385,8 +4385,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             pass
 
         ## Adds to the group all the given shapes. No errors, if some shapes are alredy included.
-        #  @param theGroup is a GEOM group to which the new sub shapes are added.
-        #  @param theSubShapes is a list of sub shapes to be added.
+        #  @param theGroup is a GEOM group to which the new sub-shapes are added.
+        #  @param theSubShapes is a list of sub-shapes to be added.
         #
         #  @ref tui_working_with_groups_page "Example"
         def UnionList (self,theGroup, theSubShapes):
@@ -4426,7 +4426,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("DifferenceIDs", self.GroupOp)
             pass
 
-        ## Returns a list of sub objects ID stored in the group
+        ## Returns a list of sub-objects ID stored in the group
         #  @param theGroup is a GEOM group for which a list of IDs is requested
         #
         #  @ref swig_GetObjectIDs "Example"
@@ -4436,7 +4436,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetObjects", self.GroupOp)
             return ListIDs
 
-        ## Returns a type of sub objects stored in the group
+        ## Returns a type of sub-objects stored in the group
         #  @param theGroup is a GEOM group which type is returned.
         #
         #  @ref swig_GetType "Example"

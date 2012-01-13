@@ -502,7 +502,7 @@ static void FindFirstPairFaces(const TopoDS_Shape& S1, const TopoDS_Shape& S2,
 {
   //cout<<"FindFirstPairFaces"<<endl;
 
-  // check if vertexes are subshapes of sections
+  // check if vertexes are sub-shapes of sections
   gp_Pnt P1 = BRep_Tool::Pnt(V1);
   gp_Pnt P2 = BRep_Tool::Pnt(V2);
   TopoDS_Vertex V1new,V2new;
@@ -1822,7 +1822,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
     TopTools_IndexedDataMapOfShapeListOfShape aMapEdgeFaces2;
     TopExp::MapShapesAndAncestors(aShBase2, TopAbs_EDGE, TopAbs_FACE, aMapEdgeFaces2);
 
-    // constuct map face->face (and subshapes)
+    // constuct map face->face (and sub-shapes)
     TopTools_IndexedDataMapOfShapeShape FF;
     //TopoDS_Shape FS1 = SecFs.Value(i), FS2 = SecFs.Value(i+1);
     TopoDS_Shape FS1, FS2;
@@ -1839,7 +1839,7 @@ static TopoDS_Shape CreatePipeShellsWithoutPath(GEOMImpl_IPipe* aCI)
       if (aCI) delete aCI;
       Standard_ConstructionError::Raise("Can not create correct pipe");
     }
-    MESSAGE ("  correspondences for subshapes of first pair of faces is found");
+    MESSAGE ("  correspondences for sub-shapes of first pair of faces is found");
 
     FindNextPairOfFaces(FS1, aMapEdgeFaces1, aMapEdgeFaces2, FF, aCI);
     MESSAGE ("  other correspondences is found, make pipe for all pairs of faces");

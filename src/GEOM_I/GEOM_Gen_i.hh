@@ -241,7 +241,7 @@ class GEOM_I_EXPORT GEOM_Gen_i: virtual public POA_GEOM::GEOM_Gen, virtual publi
   virtual GEOM::GEOM_IAdvancedOperations_ptr GetIAdvancedOperations (CORBA::Long theStudyID)
     throw (SALOME::SALOME_Exception);
 
-  //Adds a new sub shape
+  //Adds a new sub-shape
   virtual GEOM::GEOM_Object_ptr AddSubShape (GEOM::GEOM_Object_ptr theMainShape,
                                              const GEOM::ListOfLong& theIndices);
 

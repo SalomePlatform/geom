@@ -413,7 +413,7 @@ Handle(GEOM_Object) GEOM_Engine::AddSubShape(Handle(GEOM_Object) theMainShape,
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
   _objects.Bind(anID, anObject);
 
-  // Put this subshape in the list of subshapes of theMainShape
+  // Put this sub-shape in the list of sub-shapes of theMainShape
   aMainShape->AddSubShapeReference(aFunction);
 
   GEOM::TPythonDump pd (aFunction);
@@ -449,7 +449,7 @@ bool GEOM_Engine::RemoveObject(Handle(GEOM_Object) theObject)
   TCollection_AsciiString anID = BuildIDFromObject(theObject);
   if (_objects.IsBound(anID)) _objects.UnBind(anID);
 
-  // If subshape, remove it from the list of subshapes of its main shape
+  // If sub-shape, remove it from the list of sub-shapes of its main shape
   if (!theObject->IsMainShape()) {
     Handle(GEOM_Function) aFunction = theObject->GetFunction(1);
     GEOM_ISubShape aSSI (aFunction);

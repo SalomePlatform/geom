@@ -813,7 +813,7 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::ChangeOrientation (Handle(GEOM_
     return NULL;
 
   if (!theObject->IsMainShape()) {
-    SetErrorCode("Sub shape cannot be transformed - need to create a copy");
+    SetErrorCode("Sub-shape cannot be transformed - need to create a copy");
     return NULL;
   }
 

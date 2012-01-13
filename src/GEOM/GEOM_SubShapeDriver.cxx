@@ -70,7 +70,7 @@ Standard_Integer GEOM_SubShapeDriver::Execute(TFunction_Logbook& log) const
   TopoDS_Compound aCompound;
   TopoDS_Shape aShape;
 
-  if (anIndices->Length() == 1 && anIndices->Value(1) == -1) { //The empty subshape
+  if (anIndices->Length() == 1 && anIndices->Value(1) == -1) { //The empty sub-shape
     B.MakeCompound(aCompound);
     aShape = aCompound;
   }

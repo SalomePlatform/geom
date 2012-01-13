@@ -176,9 +176,9 @@ bool BlocksGUI_ExplodeDlg::ClickOnApply()
 {
   SUIT_Session::session()->activeApplication()->putInfo( tr( "" ) );
 
-  // Explode all sub shapes
+  // Explode all sub-shapes
   if ( isAllSubShapes() ) {
-    // More than 30 subshapes : ask confirmation
+    // More than 30 sub-shapes : ask confirmation
     if ( myNbBlocks > 30 ) {
       if ( SUIT_MessageBox::warning( this, 
                                      tr( "GEOM_CONFIRM" ),
@@ -279,7 +279,7 @@ void BlocksGUI_ExplodeDlg::ValueChangedInSpinBox()
 
 //=================================================================================
 // function : SubShapeToggled()
-// purpose  : Allow user selection of all or only selected sub shapes
+// purpose  : Allow user selection of all or only selected sub-shapes
 //          : Called when 'myGrp1->CheckBox1' state change
 //=================================================================================
 void BlocksGUI_ExplodeDlg::SubShapeToggled()

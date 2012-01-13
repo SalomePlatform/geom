@@ -790,7 +790,7 @@ void GEOMAlgo_FinderShapeOn1::CheckData()
         myShapeType==TopAbs_EDGE ||
         myShapeType==TopAbs_FACE ||
         myShapeType==TopAbs_SOLID)) {
-    myErrorStatus=12; // unallowed subshape type
+    myErrorStatus=12; // unallowed sub-shape type
     return;
   }
   //
@@ -829,7 +829,7 @@ TopAbs_State GEOMAlgo_FinderShapeOn1::GetPointState(const gp_Pnt& aP)
 //
 // 10 -mySurface=NULL
 // 11 -myShape=NULL
-// 12 -unallowed type of subshapes 
+// 12 -unallowed type of sub-shapes 
 // 13 -unallowed state  
 // 14 -unallowed surface type
 // 15 -unallowed surface type

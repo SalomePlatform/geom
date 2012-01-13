@@ -87,15 +87,15 @@ Standard_EXPORT virtual const TopTools_ListOfShape& Modified(const TopoDS_Shape&
 //! Returns true if the shape theS has been deleted. <br>
 Standard_EXPORT virtual  Standard_Boolean IsDeleted(const TopoDS_Shape& theS) ;
 
-//! Returns true if the at least one shape(or subshape) <br>
+//! Returns true if the at least one shape(or sub-shape) <br>
 //!          of arguments has been deleted. <br>
 Standard_EXPORT   Standard_Boolean HasDeleted() const;
 
-//! Returns true if the at least one shape(or subshape) <br>
+//! Returns true if the at least one shape(or sub-shape) <br>
 //!          of arguments has generated shapes. <br>
 Standard_EXPORT   Standard_Boolean HasGenerated() const;
 
-//! Returns true if the at least one shape(or subshape) <br>
+//! Returns true if the at least one shape(or sub-shape) <br>
 //!          of arguments has modified shapes. <br>
 Standard_EXPORT   Standard_Boolean HasModified() const;
 

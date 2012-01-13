@@ -178,7 +178,7 @@ class GEOM_Object : public MMgt_TShared
   //Returns a GEOM_Object common GUID
   Standard_EXPORT static const Standard_GUID& GetObjectID();
 
-  //Returns a GUID associated with a sub shape object
+  //Returns a GUID associated with a sub-shape object
   Standard_EXPORT static const Standard_GUID& GetSubShapeID();
 
   //###########################################################
@@ -257,10 +257,10 @@ class GEOM_Object : public MMgt_TShared
   Standard_EXPORT TCollection_AsciiString GetParameters() const;
 
   //###########################################################
-  // Sub shape methods
+  // Sub-shape methods
   //###########################################################
 
-  //Returns false if the object is a sub shape of another object
+  //Returns false if the object is a sub-shape of another object
   Standard_EXPORT bool IsMainShape();
 
   //###########################################################

@@ -474,7 +474,7 @@ void GroupGUI_GroupDlg::SelectionIntoArgument()
         }
         myMainObj = anObj;
         myEditCurrentArgument->setText(GEOMBase::GetName(anObj));
-        // activate subshapes selection by default
+        // activate sub-shapes selection by default
         myEditCurrentArgument = 0;
         activateSelection();
         updateState();
@@ -996,7 +996,7 @@ void GroupGUI_GroupDlg::highlightSubShapes()
 
   SALOME_ListIO aSelList;
 
-  // To highlight the selected subshape in Object Browser, if it's already published under the main shape
+  // To highlight the selected sub-shape in Object Browser, if it's already published under the main shape
   GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
   QMap<int, QString> childsMap;
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());

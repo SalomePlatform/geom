@@ -57,7 +57,7 @@ public :
   void              DisplaySimulationShape( const TopoDS_Shape&, const TopoDS_Shape& ); 
   void              EraseSimulationShape();
 
-  // Methods for sub shapes explode
+  // Methods for sub-shapes explode
   bool              SObjectExist( const _PTR(SObject)&, const char* );
 
 public:

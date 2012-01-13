@@ -141,7 +141,7 @@ class GEOM_Engine
   //Applies an Redo to document with ID = theDocID
   Standard_EXPORT void Redo(int theDocID);
 
-  //Adds a new sub shape object of the MainShape object
+  //Adds a new sub-shape object of the MainShape object
   Standard_EXPORT Handle(GEOM_Object) AddSubShape(Handle(GEOM_Object) theMainShape, 
                                   Handle(TColStd_HArray1OfInteger) theIndices,
                                   bool isStandaloneOperation = false);

@@ -117,7 +117,7 @@ GEOM::ListOfLong OperationGUI_PartitionDlg::GetListMaterials()
 //=================================================================================
 void OperationGUI_PartitionDlg::Init()
 {
-  /* type for sub shape selection */
+  /* type for sub-shape selection */
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_SOLID" ) );
   GroupPoints->ComboBox1->setItemData(GroupPoints->ComboBox1->count()-1, GEOM::SOLID);
   GroupPoints->ComboBox1->addItem( tr( "GEOM_RECONSTRUCTION_LIMIT_SHELL" ) );

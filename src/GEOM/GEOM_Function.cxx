@@ -214,7 +214,7 @@ TopoDS_Shape GEOM_Function::GetValue()
 #endif
         GEOM_Solver aSolver(GEOM_Engine::GetEngine());
         if (!aSolver.ComputeFunction(this)) {
-          MESSAGE("GEOM_Object::GetValue Error : Can't build a sub shape");
+          MESSAGE("GEOM_Object::GetValue Error : Can't build a sub-shape");
           return aShape;
         }
       }

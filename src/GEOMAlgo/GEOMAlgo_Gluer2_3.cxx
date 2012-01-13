@@ -235,7 +235,7 @@ void GEOMAlgo_Gluer2::TreatPair(const NMTTools_CoupleOfShape& aCS,
   // 2. Append the pair to the aLCS
   aLCS.Append(aCS);
   //
-  // 3. Treatment the subshapes of the pair
+  // 3. Treatment the sub-shapes of the pair
   aType=aS1.ShapeType();
   if (aType==TopAbs_VERTEX) {
     return;

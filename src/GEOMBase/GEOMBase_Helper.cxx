@@ -448,7 +448,7 @@ void GEOMBase_Helper::activate( const int theType )
 
 //================================================================
 // Function : localSelection
-// Purpose  : Activate selection of subshapes in accordance with mode
+// Purpose  : Activate selection of sub-shapes in accordance with mode
 //            theMode is from TopAbs_ShapeEnum
 //================================================================
 void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMode )
@@ -472,7 +472,7 @@ void GEOMBase_Helper::localSelection( const ObjectList& theObjs, const int theMo
 
 //================================================================
 // Function : localSelection
-// Purpose  : Activate selection of subshapes in accordance with mode
+// Purpose  : Activate selection of sub-shapes in accordance with mode
 //            theMode is from TopAbs_ShapeEnum
 //================================================================
 void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode )
@@ -491,7 +491,7 @@ void GEOMBase_Helper::localSelection( GEOM::GEOM_Object_ptr obj, const int mode 
 
 //================================================================
 // Function : globalSelection
-// Purpose  : Activate selection of subshapes. Set selection filters
+// Purpose  : Activate selection of sub-shapes. Set selection filters
 //            in accordance with mode. theMode is from GEOMImpl_Types
 //================================================================
 void GEOMBase_Helper::globalSelection( const int theMode, const bool update )
@@ -501,7 +501,7 @@ void GEOMBase_Helper::globalSelection( const int theMode, const bool update )
 
 //================================================================
 // Function : globalSelection
-// Purpose  : Activate selection of subshapes. Set selection filters
+// Purpose  : Activate selection of sub-shapes. Set selection filters
 //            in accordance with mode. theMode is from GEOMImpl_Types
 //================================================================
 void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
@@ -512,7 +512,7 @@ void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
 
 //================================================================
 // Function : globalSelection
-// Purpose  : Activate selection of subshapes. Set selection filters
+// Purpose  : Activate selection of sub-shapes. Set selection filters
 //            in accordance with mode. theMode is from GEOMImpl_Types
 //================================================================
 void GEOMBase_Helper::globalSelection( const TColStd_MapOfInteger& theModes,
@@ -844,7 +844,7 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
         showError();
       }
       else {
-        addSubshapesToStudy(); // add Subshapes if local selection
+        addSubshapesToStudy(); // add Sub-shapes if local selection
         const int nbObjs = objects.size();
         QStringList anEntryList;
         int aNumber = 1;
@@ -1145,7 +1145,7 @@ GEOM::GEOM_Object_ptr GEOMBase_Helper::findObjectInFather( GEOM::GEOM_Object_ptr
 
 //================================================================
 // Function : addSubshapesToStudy
-// Purpose  : Virtual method to add subshapes if needs
+// Purpose  : Virtual method to add sub-shapes if needs
 //================================================================
 void GEOMBase_Helper::addSubshapesToStudy()
 {

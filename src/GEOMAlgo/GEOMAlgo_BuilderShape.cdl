@@ -77,17 +77,17 @@ is
     	is virtual; 
 	 
     HasDeleted (me)  
-    	---Purpose: Returns true if the at least one shape(or subshape) 
+    	---Purpose: Returns true if the at least one shape(or sub-shape) 
     	--          of arguments has been deleted.
     	returns Boolean from Standard;  
 	 
     HasGenerated (me)  
-    	---Purpose: Returns true if the at least one shape(or subshape) 
+    	---Purpose: Returns true if the at least one shape(or sub-shape) 
     	--          of arguments has generated shapes.
     	returns Boolean from Standard;    
 
     HasModified (me)  
-    	---Purpose: Returns true if the at least one shape(or subshape) 
+    	---Purpose: Returns true if the at least one shape(or sub-shape) 
     	--          of arguments has modified shapes.
     	returns Boolean from Standard;  
 

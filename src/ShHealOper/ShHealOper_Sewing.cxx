@@ -119,7 +119,7 @@ Standard_Boolean ShHealOper_Sewing::sewing(const TopTools_SequenceOfShape& theSe
   //analysis either sewing was made by changing number of shells
   myDone = isSewed(aSewShape);
 
-  //keep modification of the subshapes in the Context.
+  //keep modification of the sub-shapes in the Context.
   TopExp_Explorer aExp(myInitShape,TopAbs_FACE);
   for( ; aExp.More(); aExp.Next())
     myDone = (getModifications( aExp.Current(),aSewing) || myDone);

@@ -64,8 +64,8 @@ class InvalidParameterError(Exception):
 
 class SubShapeID:
     """
-    This class enables the use of subshapes in sets or as dictionary keys.
-    It implements __eq__ and __hash__ methods so that subshapes with the same
+    This class enables the use of sub-shapes in sets or as dictionary keys.
+    It implements __eq__ and __hash__ methods so that sub-shapes with the same
     CORBA object `mainShape` and the same `id` are considered equal.
     """
 
@@ -75,7 +75,7 @@ class SubShapeID:
 
     def getObj(self, geom):
         """
-        Return the subshape (GEOM object). `geom` is a pseudo-geompy object
+        Return the sub-shape (GEOM object). `geom` is a pseudo-geompy object
         used to find the geometrical object.
         """
         return geom.GetSubShape(self._mainShape, [self._id])
@@ -217,7 +217,7 @@ class StructuralElementPart:
 
     def _getSubShapes(self, minDim = MIN_LENGTH_FOR_EXTRUSION):
         """
-        Find and return the base subshapes in the structural element part.
+        Find and return the base sub-shapes in the structural element part.
         """
         subShapes = []
         for subShapeID in self.baseShapesSet:
@@ -296,7 +296,7 @@ class Beam(StructuralElementPart):
         """
         Build the structural element part.
         """
-        # Get all the subshapes in the group (normally only edges and wires)
+        # Get all the sub-shapes in the group (normally only edges and wires)
         paths = self._getSubShapes()
         listPipes = []
         withContact = False

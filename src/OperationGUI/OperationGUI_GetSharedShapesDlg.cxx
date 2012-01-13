@@ -103,7 +103,7 @@ OperationGUI_GetSharedShapesDlg::~OperationGUI_GetSharedShapesDlg()
 //=================================================================================
 void OperationGUI_GetSharedShapesDlg::Init()
 {
-  /* type for sub shape selection */
+  /* type for sub-shape selection */
   GroupPoints->ComboBox1->addItem(tr("GEOM_SOLID"));
   GroupPoints->ComboBox1->addItem(tr("GEOM_SHELL"));
   GroupPoints->ComboBox1->addItem(tr("GEOM_FACE"));

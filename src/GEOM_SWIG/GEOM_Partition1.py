@@ -85,7 +85,7 @@ geompy.addToStudy(alveole, "alveole before explode")
 
 subshapes = geompy.SubShapeAll(alveole, geompy.ShapeType["SHAPE"])
 
-## there are 9 subshapes
+## there are 9 sub-shapes
 
 comp1 = geompy.MakeCompound([subshapes[0], subshapes[1]]);
 comp2 = geompy.MakeCompound([subshapes[2], subshapes[3]]);

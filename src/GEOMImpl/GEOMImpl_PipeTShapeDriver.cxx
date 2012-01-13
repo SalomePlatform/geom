@@ -89,12 +89,12 @@ GEOMImpl_PipeTShapeDriver::GEOMImpl_PipeTShapeDriver()
 //=======================================================================
 //function : getShapesOnBoxIDs
   /*!
-   * \brief Find IDs of subshapes complying with given status about surface
-    * \param theBox - the box to check state of subshapes against
+   * \brief Find IDs of sub-shapes complying with given status about surface
+    * \param theBox - the box to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)
@@ -162,12 +162,12 @@ GEOMImpl_PipeTShapeDriver::GetShapesOnBoxIDs(const TopoDS_Shape& aBox,
 //=======================================================================
 //function : GetShapesOnSurfaceIDs
   /*!
-   * \brief Find IDs of subshapes complying with given status about surface
-    * \param theSurface - the surface to check state of subshapes against
+   * \brief Find IDs of sub-shapes complying with given status about surface
+    * \param theSurface - the surface to check state of sub-shapes against
     * \param theShape - the shape to explore
-    * \param theShapeType - type of subshape of theShape
+    * \param theShapeType - type of sub-shape of theShape
     * \param theState - required state
-    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found subshapes
+    * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
    */
 //=======================================================================
 Handle(TColStd_HSequenceOfInteger)

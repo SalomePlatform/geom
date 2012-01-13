@@ -1597,7 +1597,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
     }
 
     if (nbEdges == 0) {
-      SetErrorCode("Given shape contains no subshapes of requested type");
+      SetErrorCode("Given shape contains no sub-shapes of requested type");
       return NULL;
     }
 
@@ -1614,7 +1614,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
 
         BRepExtrema_DistShapeShape aDistTool (aVert, anEdges(ind));
         if (!aDistTool.IsDone()) {
-          SetErrorCode("Can not find a distance from the given point to one of subshapes");
+          SetErrorCode("Can not find a distance from the given point to one of sub-shapes");
           return NULL;
         }
         aDistances(ind) = aDistTool.Value();
@@ -1626,7 +1626,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
     }
 
     if (aMinDist < RealLast()) {
-      // Collect subshapes with distance < (aMinDist + theTolerance)
+      // Collect sub-shapes with distance < (aMinDist + theTolerance)
       int nbSubShapes = 0;
       TopTools_Array1OfShape aNearShapes (1, nbEdges);
       for (ind = 1; ind <= nbEdges; ind++) {
@@ -1636,7 +1636,7 @@ Handle(GEOM_Object) GEOMImpl_IBlocksOperations::GetShapesNearPoint
         }
       }
 
-      // Add subshape
+      // Add sub-shape
       TopTools_IndexedMapOfShape anIndices;
       TopExp::MapShapes(aBlockOrComp, anIndices);
       Handle(TColStd_HArray1OfInteger) anArray = new TColStd_HArray1OfInteger (1, nbSubShapes);
@@ -3381,7 +3381,7 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IBlocksOperations::Propagate
     // Set a GROUP type
     aChain->SetType(GEOM_GROUP);
 
-    // Set a sub shape type
+    // Set a sub-shape type
     TDF_Label aFreeLabel = aChain->GetFreeLabel();
     TDataStd_Integer::Set(aFreeLabel, (Standard_Integer)TopAbs_EDGE);
 

@@ -93,7 +93,7 @@ OperationGUI_GetShapesOnShapeDlg::~OperationGUI_GetShapesOnShapeDlg()
 //=================================================================================
 void OperationGUI_GetShapesOnShapeDlg::Init()
 {
-  // type for sub shape selection
+  // type for sub-shape selection
   GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_SOLID"));
   // commented by skl for IPAL19949 - finder isn't allowed such type
   //GroupPoints->ComboBox1->addItem(tr("GEOM_RECONSTRUCTION_LIMIT_SHELL"));

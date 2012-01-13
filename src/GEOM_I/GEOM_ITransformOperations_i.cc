@@ -78,7 +78,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateTwoPoints
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -155,7 +155,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateDXDYDZ
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -215,7 +215,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVector
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -283,7 +283,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::TranslateVectorDistance
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theCopy && !theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -329,7 +329,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::Rotate (GEOM::GEOM_Object_ptr
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -397,7 +397,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPlane
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -463,7 +463,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorAxis
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -529,7 +529,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::MirrorPoint
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -595,7 +595,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::OffsetShape
 
   if (CORBA::is_nil(theObject)) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -681,7 +681,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShape
 
   if (theObject->_is_nil()) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -758,7 +758,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::ScaleShapeAlongAxes
 
   if (theObject->_is_nil()) return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -837,7 +837,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::PositionShape
   if (CORBA::is_nil(theObject) || CORBA::is_nil(theEndLCS))
     return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
@@ -1086,7 +1086,7 @@ GEOM::GEOM_Object_ptr GEOM_ITransformOperations_i::RotateThreePoints
   if (CORBA::is_nil(theObject))
     return aGEOMObject._retn();
 
-  //check if the object is a subshape
+  //check if the object is a sub-shape
   if (!theObject->IsMainShape()) {
     GetOperations()->SetErrorCode(SUBSHAPE_ERROR);
     return aGEOMObject._retn();
