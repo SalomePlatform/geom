@@ -986,7 +986,6 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 	// Get back material properties from the model
         Graphic3d_MaterialAspect aMatB = aModelB->getMaterialOCCAspect();
 
-	printf(">> GEOM_Displayer::Update() : SetMaterial\n");
 	// Set front material for the selected shape
 	AISShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
 	AISShape->SetMaterial(aMatF);	
