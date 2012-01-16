@@ -270,7 +270,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
 
   // Shininess layout
   QHBoxLayout* shLayout1 = new QHBoxLayout( w1 );
-  shLayout1->setMargin( MARGIN ); frLayout->setSpacing( SPACING );
+  shLayout1->setMargin( MARGIN ); shLayout1->setSpacing( SPACING );
   shLayout1->addWidget( shininessLab1 );
   shLayout1->addWidget( myShininessF );
 
@@ -409,7 +409,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
 
   // Shininess layout
   QHBoxLayout* shLayout2 = new QHBoxLayout( myMaterialBWidget );
-  shLayout2->setMargin( MARGIN ); frLayout->setSpacing( SPACING );
+  shLayout2->setMargin( MARGIN ); shLayout2->setSpacing( SPACING );
   shLayout2->addWidget( shininessLab2 );
   shLayout2->addWidget( myShininessB );
 
