@@ -942,67 +942,67 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
               }
             }
           }
+
+          // get material properties, set material
+          Material_Model* aModelF = 0;
+          Material_Model* aModelB = 0;
+          if ( useStudy ) {
+            // Get front material property from study and construct front material model
+            QString aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();
+            QStringList aProps =  aMaterialF.split(DIGIT_SEPARATOR);
+            aModelF = Material_Model::getMaterialModel( aProps );
+
+            // Get back material property from study and construct back material model
+            QString aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
+            if ( !aMaterialB.isEmpty() ) {
+              QStringList aPropsB =  aMaterialB.split(DIGIT_SEPARATOR);
+              aModelB = Material_Model::getMaterialModel( aPropsB );
+            }
+            else
+              aModelB = aModelF;
+
+          } else {
+            // Get front material property from study and construct front material model
+            aModelF = new Material_Model();
+            aModelF->fromResources( aResMgr, "Geometry", true );
+
+            // Get back material property from study and construct back material model
+            aModelB = new Material_Model();
+            aModelB->fromResources( aResMgr, "Geometry", false );         
+          }
+
+          // Set front material property
+          QString aMaterialPropF = aModelF->getMaterialProperty();
+          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), FRONT_MATERIAL_PROP, aMaterialPropF );
+
+          // Set back material property
+          QString aMaterialPropB = aModelB->getMaterialProperty();
+          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), BACK_MATERIAL_PROP, aMaterialPropB );
+
+          // Get front material properties from the model
+          Graphic3d_MaterialAspect aMatF = aModelF->getMaterialOCCAspect();
+
+          // Get back material properties from the model
+          Graphic3d_MaterialAspect aMatB = aModelB->getMaterialOCCAspect();
+
+          // Set front material for the selected shape
+          AISShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
+          AISShape->SetMaterial(aMatF); 
+
+          // Set back material for the selected shape
+          AISShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
+          AISShape->SetMaterial(aMatB);
+
+          // Return to the default facing mode
+          AISShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
+
+          // Release memory
+          if ( aModelF )
+            delete aModelF;
+          if ( aModelB )
+            delete aModelB;
+
         }
-
-	// get material properties, set material
-	Material_Model* aModelF = 0;
-	Material_Model* aModelB = 0;
-        if ( useStudy ) {
-	  // Get front material property from study and construct front material model
-          QString aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();
-          QStringList aProps =  aMaterialF.split(DIGIT_SEPARATOR);
-	  aModelF = Material_Model::getMaterialModel( aProps );
-
-	  // Get back material property from study and construct back material model
-          QString aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
-	  if ( !aMaterialB.isEmpty() ) {
-	    QStringList aPropsB =  aMaterialB.split(DIGIT_SEPARATOR);
-	    aModelB = Material_Model::getMaterialModel( aPropsB );
-	  }
-	  else
-	    aModelB = aModelF;
-
-	} else {
-	  // Get front material property from study and construct front material model
-	  aModelF = new Material_Model();
-	  aModelF->fromResources( aResMgr, "Geometry", true );
-	  
-	  // Get back material property from study and construct back material model
-	  aModelB = new Material_Model();
-	  aModelB->fromResources( aResMgr, "Geometry", false );	  
-        }
-
-	// Set front material property
-	QString aMaterialPropF = aModelF->getMaterialProperty();
-	aStudy->setObjectProperty( aMgrId, anIO->getEntry(), FRONT_MATERIAL_PROP, aMaterialPropF );
-
-	// Set back material property
-	QString aMaterialPropB = aModelB->getMaterialProperty();
-	aStudy->setObjectProperty( aMgrId, anIO->getEntry(), BACK_MATERIAL_PROP, aMaterialPropB );
-
-	// Get front material properties from the model
-        Graphic3d_MaterialAspect aMatF = aModelF->getMaterialOCCAspect();
-
-	// Get back material properties from the model
-        Graphic3d_MaterialAspect aMatB = aModelB->getMaterialOCCAspect();
-
-	// Set front material for the selected shape
-	AISShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
-	AISShape->SetMaterial(aMatF);	
-
-	// Set back material for the selected shape
-	AISShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
-	AISShape->SetMaterial(aMatB);
-
-	// Return to the default facing mode
-	AISShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
-
-	// Release memory
-	if ( aModelF )
-	  delete aModelF;
-	if ( aModelB )
-	  delete aModelB;
-
 
         // AISShape->SetName(???); ??? necessary to set name ???
         occPrs->AddObject( AISShape );
