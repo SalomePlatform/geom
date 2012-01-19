@@ -43,7 +43,8 @@ salomeinclude_HEADERS =				\
 	GEOM_OCCReader.h			\
 	GEOM_SmartPtr.h				\
 	GEOM_PainterPolyDataMapper.h		\
-	GEOM_DeviceActor.h
+	GEOM_DeviceActor.h			\
+	GEOM_Constants.h
 
 # Libraries targets
 lib_LTLIBRARIES = libGEOMObject.la
