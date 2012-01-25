@@ -5,10 +5,13 @@ General presentation of the GEOM python package
 
 The GEOM python package essentially contains:
 
+* Utility functions to handle GEOM items in Salome study.
+* Wrapping functions to help the usage of existing tools:
+
+  - a sketcher module to create sketches from the python API   
 * The visualization of structural elements: a function to create
   geometrical 3D representations of mechanical models called
   "structural elements".
-* Utility functions to handle GEOM items in Salome study.
 
 The functions are distributed in the python package
 ``salome.geom``. For example, the usage of the visualization of

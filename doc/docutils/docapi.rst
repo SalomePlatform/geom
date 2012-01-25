@@ -16,6 +16,15 @@ code documentation included in source python files.
 .. automodule:: salome.geom.geomtools
    :members:
 
+:mod:`sketcher` -- Wrapper to help the creation of simple sketches
+------------------------------------------------------------------
+
+.. automodule:: salome.geom.sketcher
+   :members:
+
+.. autoclass:: Sketcher
+   :members:
+
 :mod:`structelem` -- Structural elements package
 ------------------------------------------------
 
