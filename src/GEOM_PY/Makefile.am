@@ -24,4 +24,5 @@ SUBDIRS= structelem
 mypkgpythondir = $(salomepythondir)/salome/geom
 mypkgpython_PYTHON = \
 	__init__.py \
-	geomtools.py
+	geomtools.py \
+	sketcher.py
