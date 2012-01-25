@@ -90,9 +90,9 @@
 #include <Standard_ConstructionError.hxx>
 
 //modified by NIZNHY-PKV Wed Dec 28 13:48:20 2011f
-static
-  void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
-		      const Handle(TopTools_HSequenceOfShape)& aWires);
+//static
+//  void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
+//		      const Handle(TopTools_HSequenceOfShape)& aWires);
 //modified by NIZNHY-PKV Wed Dec 28 13:48:23 2011t
 
 //=======================================================================
@@ -258,7 +258,7 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     ShapeAnalysis_FreeBounds::ConnectEdgesToWires(aSeqEdgesIn, Precision::Confusion(),
                                                   /*shared*/Standard_False, aSeqWiresOut);
     //modified by NIZNHY-PKV Wed Dec 28 13:46:55 2011f
-    KeepEdgesOrder(aSeqEdgesIn, aSeqWiresOut);
+    //KeepEdgesOrder(aSeqEdgesIn, aSeqWiresOut);
     //modified by NIZNHY-PKV Wed Dec 28 13:46:59 2011t
 
     // 3. Separate closed wires
@@ -987,6 +987,7 @@ const Handle(GEOMImpl_ShapeDriver) Handle(GEOMImpl_ShapeDriver)::DownCast(const 
 //function : KeepEdgesOrder
 //purpose  : 
 //=======================================================================
+/*
 void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
 		    const Handle(TopTools_HSequenceOfShape)& aWires)
 {
@@ -1039,5 +1040,5 @@ void KeepEdgesOrder(const Handle(TopTools_HSequenceOfShape)& aEdges,
   //
   aWires->Remove(1, aNbWires);
 }
-
+*/
 //modified by NIZNHY-PKV Wed Dec 28 13:48:34 2011t
