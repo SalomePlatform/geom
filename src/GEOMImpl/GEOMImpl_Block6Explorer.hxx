@@ -214,9 +214,25 @@ class GEOMImpl_Block6Explorer
                                     const Standard_Boolean findAll = Standard_False);
   // returns number of found faces
 
+  /*!
+   * Build a face, bound by the given wire.
+   * \param theWire The initial wire to build the face on.
+   * \param isPlanarWanted. If true, try to build a planar face.
+   * \note If isPlanarWanted is true, but planar face cannot be built
+   *       with acceptable tolerance, any face will be built.
+   * \return Error or warning description. Empty string in case of success.
+   */
   static TCollection_AsciiString MakeFace (const TopoDS_Wire&     theWire,
                                            const Standard_Boolean isPlanarWanted,
                                            TopoDS_Shape&          theResult);
+
+  /*!
+   * Build a face, bound by the given wire.
+   * \param theWire The initial wire to build the face on.
+   * \return Error or warning description. Empty string in case of success.
+   */
+  static TCollection_AsciiString MakeAnyFace (const TopoDS_Wire& theWire,
+                                              TopoDS_Shape&      theResult);
 
  private:
   // ---------- PRIVATE FIELDS ----------

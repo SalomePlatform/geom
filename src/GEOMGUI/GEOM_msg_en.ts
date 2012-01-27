@@ -627,7 +627,8 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
-        <translation>Tolerance of resulting face is too big</translation>
+        <translation>Cannot build a planar face: required tolerance is
+        too big. Non-planar face is built.</translation>
     </message>
     <message>
         <source>GEOM_FACE_OR_LCS</source>

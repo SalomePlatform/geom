@@ -1732,7 +1732,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
             if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                print "WARNING: Tolerance of resulting face is too big."
+                #print "WARNING: Tolerance of resulting face is too big."
+                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
             return anObj
