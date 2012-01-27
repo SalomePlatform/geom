@@ -124,12 +124,13 @@ public:
         void restoreIsoNumbers();
         void resetIsoNumbers();
 
+        void storeBoundaryColors();
+
 protected: 
   void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
 		   const Handle(Prs3d_Presentation)& aPrs,
 		   const Standard_Integer aMode);
 
-  void storeBoundaryColors();
   void restoreBoundaryColors();
 
   Quantity_Color myShadingColor;

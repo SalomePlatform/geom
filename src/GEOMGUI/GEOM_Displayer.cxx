@@ -797,6 +797,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
             anAspect->SetColor( aColor );
             AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
+	    AISShape->storeBoundaryColors();
 
             // Set free boundaries aspect
             col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );

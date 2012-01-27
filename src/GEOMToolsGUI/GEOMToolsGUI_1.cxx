@@ -340,8 +340,11 @@ void GEOMToolsGUI::OnColor()
                   }
 
                   io->SetColor( aColor );
-                  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-                    Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aColor );
+                  if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
+                    Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
+		    aGAISShape->SetShadingColor( aColor );
+		    aGAISShape->storeBoundaryColors();
+		  }
 
                   appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
 

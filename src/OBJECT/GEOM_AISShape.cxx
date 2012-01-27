@@ -192,6 +192,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
       restoreIsoNumbers();
 
       shadingMode(aPresentationManager, aPrs, aMode);
+
+      // Store wireframe edges colors
+      storeBoundaryColors();
+
       break;
     }
     case 3: //StdSelect_DM_HLR:
