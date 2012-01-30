@@ -687,6 +687,8 @@ void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloat
     myOneFaceEdgeActor->GetProperty()->SetColor(r,g,b);          // standalone face edge color (Wireframe)
     mySharedEdgeActor->GetProperty()->SetColor(r,g,b);           // share edge color (Wireframe)
   }
+
+  StoreBoundaryColors();
 }
 
 void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFloatingPointType& b)
@@ -1008,7 +1010,8 @@ void GEOM_Actor::ResetIsoNumbers()
 
 void GEOM_Actor::StoreBoundaryColors()
 {
-  mySharedEdgeActor->GetProperty()->GetColor(myEdgesInWireframeColor);
+  myShadingFaceProp->GetColor(myEdgesInWireframeColor);
+
 }
  
 void GEOM_Actor::RestoreBoundaryColors()
