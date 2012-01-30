@@ -222,8 +222,11 @@ void GEOMToolsGUI::OnAutoColor()
       ic->SetLocalAttributes( io, aCurDrawer );
 
       io->SetColor( aQuanColor );
-      if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-        Handle(GEOM_AISShape)::DownCast( io )->SetShadingColor( aQuanColor );
+      if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
+	Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
+        aGAISShape->SetShadingColor( aQuanColor );
+	aGAISShape->storeBoundaryColors();
+      }
 
       io->Redisplay( Standard_True );
     }
