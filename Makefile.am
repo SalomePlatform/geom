@@ -33,7 +33,7 @@ else !GEOM_ENABLE_GUI
                     -I ${KERNEL_ROOT_DIR}/salome_adm/unix/config_files
 endif
 
-SUBDIRS = idl adm_local resources src doc bin
+SUBDIRS = idl adm_local resources src bin doc
 
 DIST_SUBDIRS = idl adm_local resources src bin doc
 
