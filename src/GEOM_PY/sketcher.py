@@ -48,7 +48,7 @@ Additionnal examples can be found as unit tests in the source code.
 geompyEnable = True
 try:
     import geompy
-except ImportError:
+except:
     geompyEnable = False
     
 

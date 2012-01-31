@@ -34,7 +34,7 @@ from salome.kernel.studyedit import getActiveStudyId, getStudyEditor
 from salome.kernel.services import IDToObject
 try:
     from salome.gui import helper
-except ImportError:
+except:
     pass
 
 _geompys = {}
