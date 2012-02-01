@@ -45,7 +45,10 @@ libMaterial_la_CPPFLAGS =		\
 	$(GUI_CXXFLAGS)			\
 	-I$(srcdir)/../OBJECT
 
-libMaterial_la_LDFLAGS  = 		\
-	$(GUI_LDFLAGS) -lVTKViewer -lOCCViewer -lsuit -lSalomeApp
+libMaterial_la_LDFLAGS  = -lVTKViewer -lOCCViewer -lsuit -lSalomeApp \
+	$(GUI_LDFLAGS) -lqtx \
+	$(QT_MT_LIBS) \
+	$(CAS_LDFLAGS) -lTKV3d -lTKGeomBase \
+	$(VTK_LIBS)
 
 dist_salomeres_DATA = resources/SalomeMaterial.xml

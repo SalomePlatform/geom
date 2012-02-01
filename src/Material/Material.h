@@ -24,7 +24,7 @@
 #define MATERIAL_H
 
 #if defined WIN32
-#  if defined MATERIAL_SALOME_EXPORTS || defined MATERIAL_EXPORTS || defined SalomeMaterial_EXPORTS
+#  if defined MATERIAL_SALOME_EXPORTS || defined Material_EXPORTS
 #    define MATERIAL_SALOME_EXPORT _declspec( dllexport )
 #  else
 #    define MATERIAL_SALOME_EXPORT _declspec( dllimport )
