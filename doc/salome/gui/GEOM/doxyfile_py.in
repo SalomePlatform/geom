@@ -99,8 +99,8 @@ EXAMPLE_RECURSIVE      = NO
 #---------------------------------------------------------------------------
 #Input related options
 #---------------------------------------------------------------------------
-INPUT             = .
-FILE_PATTERNS     = geompy.py
+INPUT             = . @top_srcdir@/idl
+FILE_PATTERNS     = geompy.py GEOM_Gen.idl
 IMAGE_PATH        = @srcdir@/images
 EXAMPLE_PATH      = @top_srcdir@/src/GEOM_SWIG
 RECURSIVE         = NO

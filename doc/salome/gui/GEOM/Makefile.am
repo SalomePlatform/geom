@@ -33,9 +33,7 @@ usr_docs: doxyfile_tui doxyfile_py doxyfile
 	echo "===========================================" ;			\
 	echo "Replacing geompyDC by geompy" ;					\
 	echo "===========================================" ;			\
-	sed -e "/class geompyDC/d" -e "s/^ *#/#/g" -e "s/^ *def /def /g" 	\
-	  -e "s/geompyDC/geompy/g" $(top_srcdir)/src/GEOM_SWIG/geompyDC.py > 	\
-	  ./geompy.py ; 							\
+	$(KERNEL_ROOT_DIR)/bin/salome/prepare_generating_doc.py geompy.py $(top_srcdir)/src/GEOM_SWIG/geompyDC.py geompy ;	\
 	echo "===========================================" ;			\
 	echo "Generating examples documentation" ;				\
 	echo "===========================================" ;			\

@@ -6,7 +6,7 @@
    select <b>Repair - > Shape Processing</b>.
 \n This operation processes one or more shapes using various operators.
 
-\n The \b Result will be a \b GEOM_Object.
+\n The \b Result will be a \b GEOM.GEOM_Object.
 
 \n <b>TUI Command:</b> <em>geompy.ProcessShape(Shape, Operators,
 Parameters, Values),</em> where \em Shape is a processed shape, \em Operators
