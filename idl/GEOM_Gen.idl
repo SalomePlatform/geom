@@ -188,7 +188,7 @@ module GEOM
 
   typedef sequence<GEOM_Object> ListOfGO;
 
-  # GEOM_Object
+  //# GEOM_Object
   /*!
    *  \brief Interface of geometric object
    */
@@ -343,9 +343,9 @@ module GEOM
      */
     long long getShape();
 
-    ######################################################################
-    # Internal methods (For sub-shape identification)
-    ######################################################################
+ //   ######################################################################
+ //   # Internal methods (For sub-shape identification)
+ //   ######################################################################
     /*!
      *  \brief Get geometric shape of the object as a byte stream
      */
@@ -395,7 +395,7 @@ module GEOM
     string GetParameters();
   };
 
-  # GEOM_IOperations:
+ // # GEOM_IOperations:
   /*!
    *  \brief Basic methods of all geometric operations
    */
@@ -438,7 +438,7 @@ module GEOM
      */
     void AbortOperation();
   };
-  # GEOM_IBasicOperations:
+  //# GEOM_IBasicOperations:
   /*!
    *  \brief Interface for basic geometry creation
    *
@@ -1081,7 +1081,7 @@ module GEOM
     GEOM_Object RecomputeObject (in GEOM_Object theObject);
   };
   
-  # GEOM_I3DPrimOperations:
+ // # GEOM_I3DPrimOperations:
   /*!
    *  \brief Interface for 3D primitives creation
    *
@@ -1444,7 +1444,7 @@ module GEOM
 
   };
 
-  # GEOM_IShapesOperations
+ // # GEOM_IShapesOperations
   /*!
    *  \brief Interface for Shapes creation:
    *
@@ -2101,7 +2101,7 @@ module GEOM
                                 in GEOM_Object theShapeWhat);
   };
 
-  # GEOM_IBlocksOperations: 
+ // # GEOM_IBlocksOperations: 
   /*!
    *  \brief Interface for Blocks construction
    *  Face from points or edges, Block from faces,
@@ -2110,7 +2110,7 @@ module GEOM
   interface GEOM_IBlocksOperations : GEOM_IOperations
   {
    
-    # Creation of blocks
+  //  # Creation of blocks
 
     /*!
      *  \brief Create a quadrangle face from four edges. Order of Edges is not
@@ -2171,7 +2171,7 @@ module GEOM
                                 in GEOM_Object theFace2);
 
     
-    # Extract elements of blocks and blocks compounds
+  //  # Extract elements of blocks and blocks compounds
      
 
     /*!
@@ -2281,7 +2281,7 @@ module GEOM
                                     in long        theShapeType,
                                     in double      theTolerance);
 
-     #  Extract blocks from blocks compounds
+   //  #  Extract blocks from blocks compounds
      
 
     /*!
@@ -2425,7 +2425,7 @@ module GEOM
     ListOfGO GetBlocksByParts (in GEOM_Object theCompound,
                                in ListOfGO    theParts);
 
-   #  Operations on blocks with gluing of result
+  // #  Operations on blocks with gluing of result
 
     /*!
      *  \brief Multi-transformate block and glue the result.
@@ -2460,7 +2460,7 @@ module GEOM
                                            in long        theDirFace2V,
                                            in long        theNbTimesV);
 
-   # Special operation - propagation
+  // # Special operation - propagation
    
 
     /*!
@@ -2475,7 +2475,7 @@ module GEOM
     ListOfGO Propagate (in GEOM_Object theShape);
   };
 
-  # GEOM_IBooleanOperations
+ // # GEOM_IBooleanOperations
   /*!
    *  \brief Interface for boolean operations (Cut, Fuse, Common)
    */
@@ -2561,7 +2561,7 @@ module GEOM
                                    in GEOM_Object thePlane);
   };
 
-  # GEOM_ICurvesOperations:
+ // # GEOM_ICurvesOperations:
   /*!
    *  \brief Interface for curves creation.
    *
@@ -2790,7 +2790,7 @@ module GEOM
     GEOM_Object MakeSketcherOnPlane (in string theCommand, in GEOM_Object theWorkingPlane);
   };
 
-  # GEOM_ILocalOperations:
+ // # GEOM_ILocalOperations:
   /*!
    *  \brief Interface for fillet and chamfer creation.
    */
@@ -2965,7 +2965,7 @@ module GEOM
     long GetSubShapeIndex (in GEOM_Object theShape, in GEOM_Object theSubShape);
   };
 
-  #  GEOM_IHealingOperations: 
+ // #  GEOM_IHealingOperations: 
   /*!
    *  \brief Interface for shape healing operations
    *
@@ -3107,7 +3107,7 @@ module GEOM
 
   };
 
-  # GEOM_IInsertOperations:
+ // # GEOM_IInsertOperations:
   /*!
    *  \brief Interface for shape insert operations (like copy, import).
    *
@@ -3190,7 +3190,7 @@ module GEOM
     ListOfLong GetAllTextures();
   };
 
-  # GEOM_IKindOfShape:
+ // # GEOM_IKindOfShape:
   /*!
    *  \brief Interface for shape_kind enumeration.
    */
@@ -3264,7 +3264,7 @@ module GEOM
     };
   };
 
-  # GEOM_IMeasureOperations:
+ // # GEOM_IMeasureOperations:
   /*!
    *  \brief Interface for measurement (distance, whatis) and
    *  properties calculation (like Centre of Mass, Inertia, etc.).
@@ -3517,7 +3517,7 @@ module GEOM
 
   };
 
-  # GEOM_IGroupOperations:
+ // # GEOM_IGroupOperations:
   /*!
    *  \brief Interface for groups creation.
    */
@@ -3595,7 +3595,7 @@ module GEOM
     ListOfLong GetObjects (in GEOM_Object theGroup);
   };
 
-  # GEOM_IAdvancedOperations:
+ // # GEOM_IAdvancedOperations:
   /*!
    *  \brief Interface for advanced modeling functions.
    */
@@ -3731,7 +3731,7 @@ module GEOM
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 
-  # GEOM_Gen:
+ // # GEOM_Gen:
   /*!
    *  \brief Interface to access other GEOM interfaces.
    *
@@ -3835,7 +3835,7 @@ module GEOM
                                  in boolean           theInheritFirstArg,
                                  in boolean           theAddPrefix);
 
-    #  Methods to access interfaces for objects creation and transformation
+   // #  Methods to access interfaces for objects creation and transformation
     
     GEOM_IBasicOperations     GetIBasicOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_ITransformOperations GetITransformOperations(in long theStudyID) raises (SALOME::SALOME_Exception);
@@ -3851,7 +3851,7 @@ module GEOM
     GEOM_IGroupOperations     GetIGroupOperations    (in long theStudyID) raises (SALOME::SALOME_Exception);
     GEOM_IAdvancedOperations  GetIAdvancedOperations (in long theStudyID) raises (SALOME::SALOME_Exception);
 
-    # Objects Management
+  //  # Objects Management
      
 
     /*!
@@ -3877,7 +3877,7 @@ module GEOM
      */
     GEOM_Object AddSubShape (in GEOM_Object theMainShape, in ListOfLong theIndices);
 
-  #  GEOM_Objects IOR Management
+ // #  GEOM_Objects IOR Management
     
     /*!
      *  \brief Returns a GEOM_Object defined by its IOR
