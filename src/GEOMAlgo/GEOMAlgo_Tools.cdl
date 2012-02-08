@@ -18,98 +18,108 @@
 -- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
 -- See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
---
+
 -- File:	GEOMAlgo_Tools.cdl
 -- Created:	Mon Dec  6 11:26:02 2004
 -- Author:	Peter KURNEV
---
-class Tools from GEOMAlgo 
 
-	---Purpose: 
+class Tools from GEOMAlgo
 
-uses    
-    Pnt from gp, 
-    Surface from Geom, 
-    ShapeEnum from TopAbs,  
-    Edge  from TopoDS, 
-    Face  from TopoDS, 
+      ---Purpose:
+
+uses
+    Pnt from gp,
+    Surface from Geom,
+    ShapeEnum from TopAbs,
+    Edge  from TopoDS,
+    Face  from TopoDS,
     Shape from TopoDS,
-    ListOfShape from TopTools,  
+    ListOfShape from TopTools,
     IndexedDataMapOfShapeListOfShape from TopTools,
-    Context from IntTools, 
-    IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo  --qft 
-    
+    Context from IntTools,
+    IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo  --qft
+
 --raises
 
-is   
-    IsCompositeShape(myclass;  
-    	    aS  :Shape from TopoDS) 
-	returns Boolean from Standard;    
+is
+    IsCompositeShape(myclass;
+                     aS  :Shape from TopoDS)
+        returns Boolean from Standard;
 
-    RefineSDShapes(myclass; 
+    RefineSDShapes(myclass;
     	    aMSD:out IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo; --qft
-    	    aTol:Real from Standard; 
-    	    aCtx:out Context from IntTools) 
+    	    aTol:Real from Standard;
+    	    aCtx:out Context from IntTools)
     	returns Integer from Standard;
 
-    FindSDShapes(myclass; 
-    	    aLE :ListOfShape from TopTools;   
-    	    aTol:Real from Standard; 
-    	    aMEE:out IndexedDataMapOfShapeListOfShape from TopTools; 
-	    aCtx:out Context from IntTools) 
+    FindSDShapes(myclass;
+    	    aLE :ListOfShape from TopTools;
+    	    aTol:Real from Standard;
+    	    aMEE:out IndexedDataMapOfShapeListOfShape from TopTools;
+	    aCtx:out Context from IntTools)
     	returns Integer from Standard;
-     
-    FindSDShapes(myclass; 
-    	    aE1   :Shape from TopoDS; 
-	    aLE   :ListOfShape from TopTools; 
-	    aTol  :Real from Standard;   
+
+    FindSDShapes(myclass;
+    	    aE1   :Shape from TopoDS;
+	    aLE   :ListOfShape from TopTools;
+	    aTol  :Real from Standard;
     	    aLESD :out ListOfShape from TopTools;
-	    aCtx  :out Context from IntTools) 
-    	returns Integer from Standard;  
-	 
-    ProjectPointOnShape(myclass;  
-    	    aP1: Pnt from gp;  
-    	    aS  :Shape from TopoDS;  
-	    aP2:out Pnt from gp; 
-    	    aCtx  :out Context from IntTools) 
-        returns Boolean from Standard;  
-  
-    PointOnShape(myclass;  
-    	    aS  :Shape from TopoDS; 
-	    aP3D:out Pnt from gp); 
-	     
-    PointOnEdge(myclass;  
-    	    aE  :Edge from TopoDS; 
-	    aP3D:out Pnt from gp); 
-	     
-    PointOnEdge(myclass;  
-    	    aE  :Edge from TopoDS; 
-    	    aT  :Real from Standard;   
-	    aP3D:out Pnt from gp); 
+	    aCtx  :out Context from IntTools)
+    	returns Integer from Standard;
+	
+    ProjectPointOnShape(myclass;
+    	    aP1: Pnt from gp;
+    	    aS  :Shape from TopoDS;
+	    aP2:out Pnt from gp;
+    	    aCtx  :out Context from IntTools)
+        returns Boolean from Standard;
 
-    PointOnFace(myclass;  
-    	    aF  :Face from TopoDS; 
-	    aP3D:out Pnt from gp); 
-     
-    PointOnFace(myclass;  
-    	    aF  :Face from TopoDS; 
-    	    aU  :Real from Standard; 
-    	    aV  :Real from Standard; 
-	    aP3D:out Pnt from gp);     
+    PointOnShape(myclass;
+    	    aS  :Shape from TopoDS;
+	    aP3D:out Pnt from gp);
 
-    RefinePCurveForEdgeOnFace  (myclass; 
-    	    aE  :  Edge from TopoDS; 
-            aF  :  Face from TopoDS; 
-    	    aU1 : Real from Standard; 
-    	    aU2 : Real from Standard); 
+    PointOnEdge(myclass;
+    	    aE  :Edge from TopoDS;
+	    aP3D:out Pnt from gp);
 
-    IsUPeriodic(myclass;  
-    	    aS:Surface from Geom) 
-    	returns Boolean from Standard;   
+    PointOnEdge(myclass;
+    	    aE  :Edge from TopoDS;
+    	    aT  :Real from Standard;
+	    aP3D:out Pnt from gp);
 
-    CorrectWires(myclass; 
-    	    aS  :Shape from TopoDS) 
-    	returns Boolean from Standard; 
+    PointOnFace(myclass;
+    	    aF  :Face from TopoDS;
+	    aP3D:out Pnt from gp);
+
+    PointOnFace(myclass;
+    	    aF  :Face from TopoDS;
+    	    aU  :Real from Standard;
+    	    aV  :Real from Standard;
+	    aP3D:out Pnt from gp);
+
+    RefinePCurveForEdgeOnFace  (myclass;
+    	    aE  :  Edge from TopoDS;
+            aF  :  Face from TopoDS;
+    	    aU1 : Real from Standard;
+    	    aU2 : Real from Standard);
+
+    IsUPeriodic(myclass;
+    	    aS:Surface from Geom)
+    	returns Boolean from Standard;
+
+    CorrectWires(myclass;
+    	    aS  :Shape from TopoDS)
+    	returns Boolean from Standard;
+
+    --modified by NIZNHY-PKV Mon Feb 06 06:59:14 2012f
+    BuildPCurveForEdgeOnFace (myclass;
+    	    aE   :  Edge from TopoDS;
+    	    aEold:  Edge from TopoDS;
+            aF   :  Face from TopoDS;
+    	    aCtx  :out Context from IntTools)
+    	returns Integer from Standard;
+    --modified by NIZNHY-PKV Mon Feb 06 06:59:22 2012t
+
 --fields
 
 end Tools;

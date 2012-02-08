@@ -18,12 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-// File:	GEOMAlgo_Gluer2_1.cxx
-// Created:	
-// Author:	Peter KURNEV
-//		<peter@PREFEX>
-//
+
+// File:     GEOMAlgo_Gluer2_1.cxx
+// Author:   Peter KURNEV
+
 #include <GEOMAlgo_Gluer2.hxx>
 
 #include <gp_XYZ.hxx>
@@ -58,13 +56,12 @@
 
 #include <GEOMAlgo_Tools.hxx>
 
-
 //=======================================================================
 //function : MakeBRepShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer2::MakeBRepShapes(const TopoDS_Shape& theS, 
-				    TopoDS_Shape& theSnew)
+void GEOMAlgo_Gluer2::MakeBRepShapes(const TopoDS_Shape& theS,
+                                     TopoDS_Shape& theSnew)
 {
   TopAbs_ShapeEnum aType;
   //
@@ -94,12 +91,13 @@ void GEOMAlgo_Gluer2::MakeBRepShapes(const TopoDS_Shape& theS,
 }
 //=======================================================================
 //function : MakeFace
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF, 
-			       TopoDS_Face& theFnew)
+void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
+                               TopoDS_Face& theFnew)
 {
   Standard_Boolean bIsToReverse, bIsUPeriodic;
+  Standard_Integer iRet;
   Standard_Real aTol, aUMin, aUMax, aVMin, aVMax;
   TopAbs_Orientation aOrE;
   Handle(Geom_Surface) aS;
@@ -156,23 +154,30 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
       //
       aEx=aE;
       if (myOrigins.IsBound(aE)) {
-	aEx=*((TopoDS_Edge*)(&myOrigins.Find(aE)));
+        aEx=*((TopoDS_Edge*)(&myOrigins.Find(aE)));
       }
       //
       if (!BRep_Tool::Degenerated(aEx)) {
-	aEx.Orientation(TopAbs_FORWARD);
-	if (bIsUPeriodic) {
-	  GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aEx, aFF, aUMin, aUMax);
-	}
-	BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aEx, aFF);
-	//  
-	bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aEx, aE, myContext);
-	if (bIsToReverse) {
-	  aEx.Reverse();
-	}
+        aEx.Orientation(TopAbs_FORWARD);
+        if (bIsUPeriodic) {
+          GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aEx, aFF, aUMin, aUMax);
+        }
+        //
+        //modified by NIZNHY-PKV Fri Feb 03 11:18:17 2012f
+        iRet=GEOMAlgo_Tools::BuildPCurveForEdgeOnFace(aE, aEx, aFF, myContext);
+        if (iRet) {
+          continue;
+        }
+        //BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aEx, aFF);
+        //modified by NIZNHY-PKV Fri Feb 03 11:18:20 2012t
+        //
+        bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aEx, aE, myContext);
+        if (bIsToReverse) {
+          aEx.Reverse();
+        }
       }
       else {
-	aEx.Orientation(aE.Orientation());
+        aEx.Orientation(aE.Orientation());
       }
       aBB.Add(aWr, aEx);
     }// for (; aItE.More(); aItE.Next()) {
@@ -183,10 +188,10 @@ void GEOMAlgo_Gluer2::MakeFace(const TopoDS_Face& theF,
 }
 //=======================================================================
 //function : MakeEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer2::MakeEdge(const TopoDS_Edge& aE, 
-			       TopoDS_Edge& aNewEdge)
+void GEOMAlgo_Gluer2::MakeEdge(const TopoDS_Edge& aE,
+                               TopoDS_Edge& aNewEdge)
 {
   myErrorStatus=0;
   //
@@ -218,15 +223,13 @@ void GEOMAlgo_Gluer2::MakeEdge(const TopoDS_Edge& aE,
   aVR2.Orientation(TopAbs_REVERSED);
   //
   if (!bIsDE) {
-    BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge); 
+    BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge);
   }
   else {
     Standard_Real aTol;
     BRep_Builder aBB;
     TopoDS_Edge E;
-    //TopAbs_Orientation anOrE;
     //
-    //anOrE=aE.Orientation();
     aTol=BRep_Tool::Tolerance(aE);
     //
     E=aEx;
@@ -243,10 +246,10 @@ void GEOMAlgo_Gluer2::MakeEdge(const TopoDS_Edge& aE,
 }
 //=======================================================================
 //function : MakeVertex
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer2::MakeVertex(const TopTools_ListOfShape& aLV, 
-				 TopoDS_Vertex& aNewVertex)
+void GEOMAlgo_Gluer2::MakeVertex(const TopTools_ListOfShape& aLV,
+                                 TopoDS_Vertex& aNewVertex)
 {
   Standard_Integer aNbV;
   Standard_Real aTolV, aD, aDmax;
@@ -289,10 +292,10 @@ void GEOMAlgo_Gluer2::MakeVertex(const TopTools_ListOfShape& aLV,
 }
 //=======================================================================
 //function : MapBRepShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::MapBRepShapes(const TopoDS_Shape& aS,
-				    TopTools_MapOfShape& aM)
+                                    TopTools_MapOfShape& aM)
 {
   //Standard_Boolean bHasBRep;
   TopAbs_ShapeEnum aType;

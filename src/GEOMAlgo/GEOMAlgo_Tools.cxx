@@ -25,15 +25,22 @@
 
 #include <GEOMAlgo_Tools.ixx>
 
+#include <gp.hxx>
 #include <gp_Pnt.hxx>
 #include <gp_Pnt2d.hxx>
+#include <gp_Vec2d.hxx>
+#include <gp_Dir2d.hxx>
 
-#include <Geom_Surface.hxx>
-#include <Geom_Curve.hxx>
 #include <Geom2d_Curve.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
+
+#include <Geom_Curve.hxx>
+#include <Geom_Surface.hxx>
+
 #include <GeomAdaptor_Surface.hxx>
 
 #include <GeomAPI_ProjectPointOnSurf.hxx>
+#include <GeomAPI_ProjectPointOnCurve.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 
@@ -53,16 +60,16 @@
 #include <BOPTools_Tools2D.hxx>
 #include <IntTools_Context.hxx>
 
-#include <GEOMAlgo_PassKeyShape.hxx>//qft
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>//qft
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 
-static 
+static
   void GetCount(const TopoDS_Shape& aS,
                 Standard_Integer& iCnt);
 
 //=======================================================================
 //function : IsCompositeShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Tools::IsCompositeShape(const TopoDS_Shape& aS)
 {
@@ -79,7 +86,7 @@ Standard_Boolean GEOMAlgo_Tools::IsCompositeShape(const TopoDS_Shape& aS)
 
 //=======================================================================
 //function : GetCount
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GetCount(const TopoDS_Shape& aS,
               Standard_Integer& iCnt)
@@ -100,13 +107,13 @@ void GetCount(const TopoDS_Shape& aS,
   aIt.Initialize(aS);
   for (; aIt.More(); aIt.Next()) {
     const TopoDS_Shape& aSx=aIt.Value();
-    GetCount(aSx, iCnt); 
+    GetCount(aSx, iCnt);
   }
 }
 
 //=======================================================================
 //function : RefineSDShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMPKLE,
                                                   const Standard_Real aTol,
@@ -129,7 +136,7 @@ void GetCount(const TopoDS_Shape& aS,
     //
     aNbEE=aMEE.Extent();
     if (aNbEE==1) {
-      continue;  // nothing to do 
+      continue;  // nothing to do
     }
     //
     for (j=1; j<=aNbEE; ++j) {
@@ -168,7 +175,7 @@ void GetCount(const TopoDS_Shape& aS,
 }
 //=======================================================================
 //function : FindSDShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
                                               const Standard_Real aTol,
@@ -184,11 +191,11 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
   aNbE=aLE.Extent();
   if (!aNbE) {
     return 3; // Err
-  } 
+  }
   //modified by NIZNHY-PKV Thu Dec 30 10:56:52 2004 f
   if (aNbE==1) {
     return 0; // Nothing to do
-  } 
+  }
   //modified by NIZNHY-PKV Thu Dec 30 10:56:56 2004 t
   //
   while(1) {
@@ -240,7 +247,7 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
 }
 //=======================================================================
 //function : FindSDShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
                                               const TopTools_ListOfShape& aLE,
@@ -265,7 +272,7 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
     else {
       bIsDone=GEOMAlgo_Tools::ProjectPointOnShape(aP1, aE2, aP2, aCtx);
       if (!bIsDone) {
-        //return 1; 
+        //return 1;
         continue; // jfa BUG 20361
       }
       aD2=aP1.SquareDistance(aP2);
@@ -279,7 +286,7 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
 
 //=======================================================================
 //function : ProjectPointOnShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
                                                      const TopoDS_Shape& aS,
@@ -327,10 +334,10 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
           return bIsDone;
         }
         //
-        aP2 = aProj.NearestPoint(); 
+        aP2 = aProj.NearestPoint();
       }
       break;
-      //  
+      //
     default:
       break; // Err
     }
@@ -338,7 +345,7 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
 }
 //=======================================================================
 //function : PointOnShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Tools::PointOnShape(const TopoDS_Shape& aS,
                                   gp_Pnt& aP3D)
@@ -359,14 +366,14 @@ void GEOMAlgo_Tools::PointOnShape(const TopoDS_Shape& aS,
       GEOMAlgo_Tools::PointOnFace(aF, aP3D);
       }
       break;
-      //  
+      //
     default:
       break; // Err
   }
 }
 //=======================================================================
 //function : PointOnFace
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
                                  gp_Pnt& aP3D)
@@ -375,14 +382,14 @@ void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
   //
   BRepTools::UVBounds(aF, aUMin, aUMax, aVMin, aVMax);
   //
-  aU=BOPTools_Tools2D::IntermediatePoint(aUMin, aUMax); 
-  aV=BOPTools_Tools2D::IntermediatePoint(aVMin, aVMax); 
+  aU=BOPTools_Tools2D::IntermediatePoint(aUMin, aUMax);
+  aV=BOPTools_Tools2D::IntermediatePoint(aVMin, aVMax);
   //
   GEOMAlgo_Tools::PointOnFace(aF, aU, aV, aP3D);
 }
 //=======================================================================
 //function : PointOnFace
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
                                  const Standard_Real aU,
@@ -396,7 +403,7 @@ void GEOMAlgo_Tools::PointOnFace(const TopoDS_Face& aF,
 }
 //=======================================================================
 //function : PointOnEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
                                  gp_Pnt& aP3D)
@@ -409,7 +416,7 @@ void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
 }
 //=======================================================================
 //function : PointOnEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
                                  const Standard_Real aT,
@@ -423,12 +430,12 @@ void GEOMAlgo_Tools::PointOnEdge(const TopoDS_Edge& aE,
 }
 //=======================================================================
 //function : RefinePCurveForEdgeOnFace
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
                                                const TopoDS_Face& aF,
-                                               const Standard_Real aUMin, 
-                                               const Standard_Real aUMax) 
+                                               const Standard_Real aUMin,
+                                               const Standard_Real aUMax)
 {
   Standard_Real aT1, aT2, aTx, aUx, aTol;
   gp_Pnt2d aP2D;
@@ -449,13 +456,13 @@ void GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(const TopoDS_Edge& aE,
       Handle(Geom2d_Curve) aC2Dx;
       //
       aTol=BRep_Tool::Tolerance(aE);
-      aBB.UpdateEdge(aE, aC2Dx, aF, aTol); 
+      aBB.UpdateEdge(aE, aC2Dx, aF, aTol);
     }
   }
 }
 //=======================================================================
 //function : IsUPeriodic
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Tools::IsUPeriodic(const  Handle(Geom_Surface) &aS)
 {
@@ -470,4 +477,136 @@ Standard_Boolean GEOMAlgo_Tools::IsUPeriodic(const  Handle(Geom_Surface) &aS)
         aType==GeomAbs_Sphere);
   //
   return bRet;
+}
+
+//modified by NIZNHY-PKV Fri Feb 03 11:16:35 2012f
+//=======================================================================
+//function : BuildPCurveForEdgeOnFace
+//purpose  :
+//=======================================================================
+Standard_Integer
+  GEOMAlgo_Tools::BuildPCurveForEdgeOnFace(const TopoDS_Edge& aEold,
+                                           const TopoDS_Edge& aEnew,
+                                           const TopoDS_Face& aF,
+                                           IntTools_Context& aCtx)
+{
+  Standard_Boolean bIsClosed, bUClosed, bHasOld;
+  Standard_Integer iRet, aNbPoints;
+  Standard_Real aTS, aTS1, aTS2, aT, aT1, aT2, aScPr, aTol;
+  Standard_Real aU, aV, aUS1, aVS1, aUS2, aVS2;
+  gp_Pnt aP;
+  gp_Pnt2d aP2DS1, aP2DS2, aP2D;
+  gp_Vec2d aV2DS1, aV2DS2;
+  Handle(Geom2d_Curve) aC2D, aC2DS1, aC2DS2;
+  Handle(Geom_Surface) aS;
+  TopoDS_Edge aES;
+  //
+  iRet=0;
+  //
+  bHasOld=BOPTools_Tools2D::HasCurveOnSurface(aEnew, aF, aC2D, aT1, aT2, aTol);
+  if (bHasOld) {
+    return iRet;
+  }
+  //
+  BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aEnew, aF);
+  aC2D=BRep_Tool::CurveOnSurface(aEnew, aF, aT1, aT2);
+  if (aC2D.IsNull()){
+    iRet=1;
+    return iRet;
+  }
+  //
+  bIsClosed=BRep_Tool::IsClosed(aEold, aF);
+  if (!bIsClosed) {
+    return iRet;
+  }
+  //
+  aTol=1.e-7;
+  //
+  // 1. bUClosed - direction of closeness
+  //
+  aES=aEold;
+  aES.Orientation(TopAbs_FORWARD);
+  aC2DS1=BRep_Tool::CurveOnSurface(aES, aF, aTS1, aTS2);
+  //
+  aES.Orientation(TopAbs_REVERSED);
+  aC2DS2=BRep_Tool::CurveOnSurface(aES, aF, aTS1, aTS2);
+  //
+  aTS=BOPTools_Tools2D::IntermediatePoint(aTS1, aTS2);
+  //
+  aC2DS1->D1(aTS, aP2DS1, aV2DS1);
+  aC2DS2->D1(aTS, aP2DS2, aV2DS2);
+  //
+  gp_Vec2d aV2DS12(aP2DS1, aP2DS2);
+  gp_Dir2d aD2DS12(aV2DS12);
+  const gp_Dir2d& aD2DX=gp::DX2d();
+  //
+  aScPr=aD2DS12*aD2DX;
+  bUClosed=Standard_True;
+  if (fabs(aScPr) < aTol) {
+    bUClosed=!bUClosed;
+  }
+  //
+  // 2. aP2D - point on curve aC2D, that corresponds to aP2DS1
+  aP2DS1.Coord(aUS1, aVS1);
+  aP2DS2.Coord(aUS2, aVS2);
+  //
+  aS=BRep_Tool::Surface(aF);
+  aS->D0(aUS1, aVS1, aP);
+  //
+  GeomAPI_ProjectPointOnCurve& aProjPC=aCtx.ProjPC(aEnew);
+  //
+  aProjPC.Perform(aP);
+  aNbPoints=aProjPC.NbPoints();
+  if (!aNbPoints) {
+    iRet=2;
+    return iRet;
+  }
+  //
+  aT=aProjPC.LowerDistanceParameter();
+
+  //
+  // 3. Build the second 2D curve
+  Standard_Boolean bRevOrder;
+  gp_Vec2d aV2DT, aV2D;
+  Handle(Geom2d_Curve) aC2Dnew;
+  Handle(Geom2d_TrimmedCurve) aC2DTnew;
+  BRep_Builder aBB;
+  //
+  aC2D->D1(aT, aP2D, aV2D);
+  aP2D.Coord(aU, aV);
+  //
+  aC2Dnew=Handle(Geom2d_Curve)::DownCast(aC2D->Copy());
+  aC2DTnew = new Geom2d_TrimmedCurve(aC2Dnew, aT1, aT2);
+  //
+  aV2DT=aV2DS12;
+  if (!bUClosed) {    // V Closed
+    if (fabs(aV-aVS2)<aTol) {
+      aV2DT.Reverse();
+    }
+  }
+  else {   // U Closed
+    if (fabs(aU-aUS2)<aTol) {
+      aV2DT.Reverse();
+    }
+  }
+  //
+  aC2DTnew->Translate(aV2DT);
+  //
+  // 4 Order the 2D curves
+  bRevOrder=Standard_False;
+  aScPr=aV2D*aV2DS1;
+  if(aScPr<0.) {
+    bRevOrder=!bRevOrder;
+  }
+  //
+  // 5. Update the edge
+  aTol=BRep_Tool::Tolerance(aEnew);
+  if (!bRevOrder) {
+    aBB.UpdateEdge(aEnew, aC2D, aC2DTnew, aF, aTol);
+  }
+  else {
+    aBB.UpdateEdge(aEnew, aC2DTnew, aC2D , aF, aTol);
+  }
+  //
+  return iRet;
 }
