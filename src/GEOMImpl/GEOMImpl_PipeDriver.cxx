@@ -2440,8 +2440,18 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
 
   // Glue (for bug 0020207)
   TopExp_Explorer anExpV (aShape, TopAbs_VERTEX);
-  if (anExpV.More())
-    aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
+  if (anExpV.More()) {
+    Standard_Real aVertMaxTol = -RealLast();
+    for (; anExpV.More(); anExpV.Next()) {
+      TopoDS_Vertex aVertex = TopoDS::Vertex(anExpV.Current());
+      Standard_Real aTol = BRep_Tool::Tolerance(aVertex);
+      if (aTol > aVertMaxTol)
+        aVertMaxTol = aTol;
+    }
+    aVertMaxTol += Precision::Confusion();
+    aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, aVertMaxTol, Standard_True);
+    //aShape = GEOMImpl_GlueDriver::GlueFaces(aShape, Precision::Confusion(), Standard_True);
+  }
 
   TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
   aFunction->SetValue(aRes);
