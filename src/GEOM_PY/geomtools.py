@@ -91,7 +91,7 @@ class GeomStudyTools:
         if GEOM is None:
             GEOM = __import__("GEOM")
         if studyEditor is None:
-            studyEditor = helper.getStudyEditor()
+            studyEditor = getStudyEditor()
         self.editor = studyEditor
 
     def displayShapeByName(self, shapeName, color = None):
@@ -114,15 +114,33 @@ class GeomStudyTools:
             geomObj = self.editor.getOrLoadObject(sObj)
             if geomObj:
                 shape = geomObj._narrow(GEOM.GEOM_Object)
-                if shape:                
-                    geomgui = salome.ImportComponentGUI("GEOM")            
-                    geomgui.createAndDisplayGO(entry)
-                    geomgui.setDisplayMode(entry, DisplayMode)
-                    if color is not None:
-                        geomgui.setColor(entry, color[0], color[1], color[2])
-                    return True
+                if shape:
+                    return self.displayShapeByEntry(entry,color)
         return False
 
+    def displayShapeByEntry(self, entry, color = None):
+        """
+        Display the geometrical shape whose entry is given by `entry`.
+        """
+        geomgui = salome.ImportComponentGUI("GEOM")            
+        geomgui.createAndDisplayGO(entry)
+        geomgui.setDisplayMode(entry, DisplayMode)
+        if color is not None:
+            geomgui.setColor(entry, color[0], color[1], color[2])
+        return True
+
+    def eraseShapeByEntry(self, entry):
+        """
+        Erase the geometrical shape whose entry is given by
+        `entry`. Please note that the shape is just erased from the
+        viewer. The associated study object still exists in the study,
+        and the geom object still exists in the GEOM engine.
+        """
+        geomgui = salome.ImportComponentGUI("GEOM")
+        eraseFromAllWindows=True
+        geomgui.eraseGO(entry,eraseFromAllWindows)
+        return True
+    
     def getGeomObjectSelected(self):
         '''
         Returns the GEOM object currently selected in the objects browser.
