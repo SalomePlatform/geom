@@ -32,7 +32,7 @@ VectorX is the direction of OX axis and VectorY is the direction of OY axis.
 
 \image html neo-localcs3.png
 
-Press «OK» or «Apply» button to create an LCS at the location with the
+Press \c OK or \c Apply button to create an LCS at the location with the
 specified coordinates. The new object is shown in the Object Browser
 and in 3D viewer.
 
