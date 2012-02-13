@@ -54,9 +54,11 @@ EntityGUI_PictureImportDlg::EntityGUI_PictureImportDlg( GeometryGUI* theGeometry
                                     bool modal, Qt::WindowFlags fl )
   : GEOMBase_Skeleton( theGeometryGUI, parent, modal, fl )
 {
+  QPixmap image0 = QPixmap(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_IMPORT_PICTURE")));
   setWindowTitle( tr( "GEOM_IMPORT_PICT_TITLE" ) );
   mainFrame()->GroupConstructors->setTitle( tr( "GEOM_PICTURE" ) );
 
+  mainFrame()->RadioButton1->setIcon(image0);
   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);

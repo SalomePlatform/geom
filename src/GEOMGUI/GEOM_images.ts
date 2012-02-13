@@ -280,6 +280,10 @@
             <translation>interpol.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_IMPORT_PICTURE</source>
+            <translation>import_picture.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_LINE_2P</source>
             <translation>line2points.png</translation>
         </message>
@@ -836,6 +840,10 @@
             <translation>build_face.png</translation>
         </message>
         <message>
+            <source>ICO_FEATURE_DETECTION</source>
+            <translation>feature_detect.png</translation>
+        </message>
+        <message>
             <source>ICO_FILLET</source>
             <translation>fillet.png</translation>
         </message>
@@ -883,7 +891,11 @@
             <source>ICO_INERTIA</source>
             <translation>axisinertia.png</translation>
         </message>
-	<message>
+        <message>
+            <source>ICO_PICTURE_IMPORT</source>
+            <translation>import_picture.png</translation>
+        </message>
+	    <message>
             <source>ICO_LINE</source>
             <translation>line.png</translation>
         </message>
