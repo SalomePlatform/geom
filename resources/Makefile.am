@@ -82,6 +82,7 @@ erase.png			\
 eraseall.png			\
 face_hw.png			\
 face_vechw.png			\
+feature_detect.png		\
 fillet.png			\
 fillet1d.png			\
 fillet2d.png			\
@@ -92,6 +93,7 @@ filletface.png			\
 filling.png			\
 fuse.png			\
 geometry.png			\
+import_picture.png		\
 limit_tolerance.png		\
 line.png			\
 line2points.png			\
