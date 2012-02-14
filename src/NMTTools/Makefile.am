@@ -66,9 +66,6 @@ salomeinclude_HEADERS = \
 	NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx \
 	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx \
 	NMTTools_IndexedDataMapOfShapePaveBlock.hxx \
-	NMTTools_IteratorOfCoupleOfShape.hxx \
-	NMTTools_IteratorOfCoupleOfShape.ixx \
-	NMTTools_IteratorOfCoupleOfShape.jxx \
 	NMTTools_ListIteratorOfListOfCommonBlock.hxx \
 	NMTTools_ListIteratorOfListOfCoupleOfShape.hxx \
 	NMTTools_ListNodeOfListOfCommonBlock.hxx \
@@ -110,7 +107,6 @@ dist_libNMTTools_la_SOURCES = \
 	NMTTools_IndexedDataMapOfIndexedMapOfInteger_0.cxx \
 	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_0.cxx \
 	NMTTools_IndexedDataMapOfShapePaveBlock_0.cxx \
-	NMTTools_IteratorOfCoupleOfShape.cxx \
 	NMTTools_ListIteratorOfListOfCommonBlock_0.cxx \
 	NMTTools_ListIteratorOfListOfCoupleOfShape_0.cxx \
 	NMTTools_ListNodeOfListOfCommonBlock_0.cxx \
@@ -154,7 +150,6 @@ CDL_FILES =					\
 	NMTTools_CoupleOfShape.cdl		\
 	NMTTools_DEProcessor.cdl		\
 	NMTTools_FaceInfo.cdl			\
-	NMTTools_IteratorOfCoupleOfShape.cdl	\
 	NMTTools_PaveFiller.cdl			\
 	NMTTools_Tools.cdl
 
