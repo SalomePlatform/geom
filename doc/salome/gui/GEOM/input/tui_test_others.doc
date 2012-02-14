@@ -112,7 +112,7 @@
 \until "b0 image"
 
 \anchor swig_GetShapesNearPoint
-\until "faces near point"
+\until faces near point
 
 \anchor swig_GetShapesOnPlane
 \until Face on Plane
