@@ -54,6 +54,9 @@
 #include <gce_MakePln.hxx>
 #include <Precision.hxx>
 #include <AIS.hxx>
+#include <AIS_Drawer.hxx>
+#include <Prs3d_AngleAspect.hxx>
+#include <Prs3d_LineAspect.hxx>
 
 // QT Includes
 #include <qlineedit.h>
@@ -379,7 +382,9 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
 
 	SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
 	int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-	anIO->SetWidth(w);
+  Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
+  asp->LineAspect()->SetWidth(w);
+	anIO->Attributes()->SetAngleAspect(asp);
 
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));

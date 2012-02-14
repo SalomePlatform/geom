@@ -45,6 +45,9 @@
 // OCCT Includes
 #include <Geom_Plane.hxx>
 #include <AIS_LengthDimension.hxx>
+#include <AIS_Drawer.hxx>
+#include <Prs3d_LengthAspect.hxx>
+#include <Prs3d_LineAspect.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <gce_MakePln.hxx>
@@ -330,7 +333,9 @@ SALOME_Prs* MeasureGUI_DistanceDlg::buildPrs()
       
       SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
       int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
-      anIO->SetWidth(w);
+      Handle(Prs3d_LengthAspect) asp = new Prs3d_LengthAspect();
+      asp->LineAspect()->SetWidth(w);
+      anIO->Attributes()->SetLengthAspect(asp);
 
       SOCC_Prs* aPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 
