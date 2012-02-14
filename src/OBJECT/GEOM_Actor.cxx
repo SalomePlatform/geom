@@ -497,12 +497,24 @@ void GEOM_Actor::SetWireframeProperty(vtkProperty* Prop)
   myWireframeFaceActor->SetProperty(Prop);
 }
 
+
+vtkProperty* GEOM_Actor::GetWireframeProperty()
+{
+  return myWireframeFaceActor->GetProperty();
+}
+
 void GEOM_Actor::SetShadingProperty(vtkProperty* Prop)
 {
 #ifdef MYDEBUG
   MESSAGE ( "GEOM_Actor::SetShadingProperty" );
 #endif
   myShadingFaceProp->DeepCopy(Prop);
+}
+
+
+vtkProperty* GEOM_Actor::GetShadingProperty()
+{
+  return myShadingFaceProp;
 }
 
 
@@ -995,6 +1007,27 @@ void GEOM_Actor::StoreIsoNumbers()
   myWireframeFaceSource->GetNbIso(myNbIsos[0], myNbIsos[1]);
 }
 
+void GEOM_Actor::SetIsosWidth(const int width) {
+  myWireframeFaceActor->GetProperty()->SetLineWidth(width);
+}
+
+int GEOM_Actor::GetIsosWidth() const {
+  return myWireframeFaceActor->GetProperty()->GetLineWidth();
+}
+
+void GEOM_Actor::SetWidth(const int width) {
+  myIsolatedEdgeActor->GetProperty()->SetLineWidth(width);
+  myOneFaceEdgeActor->GetProperty()->SetLineWidth(width);
+  mySharedEdgeActor->GetProperty()->SetLineWidth(width);
+  myHighlightProp->SetLineWidth(width);
+  myPreHighlightProp->SetLineWidth(width+1);
+
+}
+
+int GEOM_Actor::GetWidth() const {
+  return myIsolatedEdgeActor->GetProperty()->GetLineWidth();
+}
+    
 void GEOM_Actor::RestoreIsoNumbers()
 {
   if ( myNbIsos[0] > 0 || myNbIsos[1] > 0 )

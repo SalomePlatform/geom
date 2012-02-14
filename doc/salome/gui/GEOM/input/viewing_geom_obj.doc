@@ -33,6 +33,8 @@ deflection coefficient of a shape.</li>
 material properties of a shape.</li>
 <li>\subpage point_marker_page "Point Marker" - allows to change the
 representation of geometrical vertices.</li>
+<li>\subpage line_width_page "Line Width" - allows to change the
+width of the edges and isolines.</li>
 <li><b>Auto color</b> / <b>Disable auto color</b> - activates the auto color
 mode. When the auto color mode is enabled, the groups created on the
 sub-shapes of the selected geometrical object are automatically

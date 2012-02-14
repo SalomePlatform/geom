@@ -76,6 +76,8 @@ private:
   void         OnPublishObject() ;
   void         OnPointMarker();
   void         OnMaterialProperties();
+  void         OnEdgeWidth();
+  void         OnIsosWidth();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

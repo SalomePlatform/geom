@@ -32,6 +32,7 @@
 #include "GEOMToolsGUI_MarkerDlg.h"
 #include "GEOMToolsGUI_PublishDlg.h"
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
+#include "GEOMToolsGUI_LineWidthDlg.h"
 
 #include <GeometryGUI.h>
 #include <GeometryGUI_Operations.h>
@@ -79,6 +80,7 @@
 #include <Prs3d_IsoAspect.hxx>
 #include <Prs3d_PointAspect.hxx>
 #include <Graphic3d_AspectMarker3d.hxx>
+#include <Graphic3d_AspectLine3d.hxx>
 
 #if OCC_VERSION_LARGE > 0x06040000 // Porting to OCCT6.5.1
 #include <TColStd_HArray1OfByte.hxx>
@@ -392,7 +394,6 @@ void GEOMToolsGUI::OnTexture()
       if ( !selected.IsEmpty() ) {
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
-        int mgrId = window->getViewManager()->getGlobalId();
         if ( isOCC ) {
           QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_IMAGE_FILES"));
           if( !aTexture.isEmpty() )
@@ -563,12 +564,17 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
       }
 
       for(; ic->MoreCurrent(); ic->NextCurrent()) {
+        int aMgrId = window->getViewManager()->getGlobalId();
         CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
 
         Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
 
-        CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbUIso) );
-        CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, 0.5 , newNbVIso) );
+	QVariant v = aStudy->getObjectProperty( aMgrId, CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP , QVariant() );
+	
+	int width = v.isValid() ? v.toInt() : 1;
+
+        CurDrawer->SetUIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width , newNbUIso) );
+        CurDrawer->SetVIsoAspect( new Prs3d_IsoAspect(Quantity_NOC_GRAY75, Aspect_TOL_SOLID, width , newNbVIso) );
 
 	CurObject->storeIsoNumbers();
         
@@ -576,8 +582,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         ic->Redisplay(CurObject);
 
         QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-        int aMgrId = window->getViewManager()->getGlobalId();
-        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_PROP, anIsos);
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_WIDTH_PROP, anIsos);
       }
     }
     GeometryGUI::Modified();
@@ -939,4 +944,246 @@ void GEOMToolsGUI::OnPublishObject() {
   GEOMToolsGUI_PublishDlg * publishDlg =
     new GEOMToolsGUI_PublishDlg( SUIT_Session::session()->activeApplication()->desktop() );
   publishDlg->exec();
+}
+
+
+void GEOMToolsGUI::OnEdgeWidth()
+{
+  SUIT_ViewWindow* window = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
+
+
+  bool isOCC = (window && window->getViewManager()->getType() == OCCViewer_Viewer::Type());
+  bool isVTK = (window && window->getViewManager()->getType() == SVTK_Viewer::Type());
+  int mgrId = window->getViewManager()->getGlobalId();
+
+  if (isOCC) { // if is OCCViewer
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    ic->InitCurrent();
+    if (ic->MoreCurrent()) {
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+
+      int aWidth = (int)CurObject->Width();
+
+      GEOMToolsGUI_LineWidthDlg * Dlg = new GEOMToolsGUI_LineWidthDlg
+        (SUIT_Session::session()->activeApplication()->desktop(),"EDGE_WIDTH_TLT");
+      Dlg->setTheLW(aWidth);
+      int aNewWidth = 0;
+      if (Dlg->exec()) {
+	aNewWidth = Dlg->getTheLW();
+	bool ok = (aNewWidth != aWidth && aNewWidth != 0 );
+	if (ok) {
+	  for(; ic->MoreCurrent(); ic->NextCurrent()) {
+	    CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+	    CurObject->SetWidth(aNewWidth);
+	    ic->Redisplay(CurObject);
+	    appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP, aNewWidth);
+	  }
+	}
+      }
+    }
+    else {
+      return;
+    }
+    GeometryGUI::Modified();
+  }
+  else if (isVTK) { // if is VTKViewer
+    SalomeApp_Application* app = dynamic_cast<SalomeApp_Application*>
+      (SUIT_Session::session()->activeApplication());
+    if (!app)
+      return;
+
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if (!aSelMgr)
+      return;
+
+    SALOME_ListIO selected;
+    aSelMgr->selectedObjects(selected);
+    if (selected.IsEmpty())
+      return;
+
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>(window);
+    if (!vtkVW)
+      return;
+
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+
+    vtkActorCollection* aCollection = vtkActorCollection::New();
+
+    for (SALOME_ListIteratorOfListIO It (selected); It.More(); It.Next()) {
+      Handle(SALOME_InteractiveObject) anIObject = It.Value();
+      SALOME_Prs* aPrs = view->CreatePrs(anIObject->getEntry());
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>(aPrs);
+      if (vtkPrs) {
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
+      }
+    }
+
+    if (aCollection)
+      aCollection->InitTraversal();
+    else
+      return;
+
+    int aWidth = 1;
+
+    vtkActor* anAct = aCollection->GetNextActor();
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct))
+      aWidth = anActor->GetWidth();
+    else
+      return;
+
+    GEOMToolsGUI_LineWidthDlg * Dlg = new GEOMToolsGUI_LineWidthDlg
+      (SUIT_Session::session()->activeApplication()->desktop(),"EDGE_WIDTH_TLT");
+    
+    Dlg->setTheLW(aWidth);
+    if (Dlg->exec()) {
+      SUIT_OverrideCursor();
+      aWidth = Dlg->getTheLW();
+      while (anAct != NULL) {
+        if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+          // There are no casting to needed actor.
+          anActor->SetWidth(aWidth);
+          appStudy->setObjectProperty(mgrId, anActor->getIO()->getEntry(), EDGE_WIDTH_PROP, aWidth);
+        }
+        anAct = aCollection->GetNextActor();
+      }
+    }
+    GeometryGUI::Modified();
+  } // end vtkviewer
+}
+
+
+void GEOMToolsGUI::OnIsosWidth() {
+  SalomeApp_Application* app =
+    dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  SUIT_ViewWindow* window = app->desktop()->activeWindow();
+
+  bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
+  bool isVTK = ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() );
+
+  if(isOCC){ // if is OCCViewer
+
+    OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
+    Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+
+    ic->InitCurrent();
+    if ( ic->MoreCurrent() ) {
+      Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+      CurObject->restoreIsoNumbers();
+      Handle(AIS_Drawer)    CurDrawer = CurObject->Attributes();
+
+      Handle(Graphic3d_AspectLine3d) asp = CurDrawer->UIsoAspect()->Aspect();
+      
+      Quantity_Color C;
+      Aspect_TypeOfLine T;
+      Standard_Real W;
+      asp->Values(C,T,W);
+
+      int aWidth = (int)W;
+
+      GEOMToolsGUI_LineWidthDlg * Dlg =
+	new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(),"ISOS_WIDTH_TLT" );
+
+      Dlg->setTheLW( aWidth );
+
+      if ( Dlg->exec() ) {
+	SUIT_OverrideCursor();          
+	aWidth = Dlg->getTheLW();
+      } else //Cancel case
+	return;
+      
+      for(; ic->MoreCurrent(); ic->NextCurrent()) {
+	int aMgrId = window->getViewManager()->getGlobalId();
+	CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+	
+	Handle(AIS_Drawer) CurDrawer = CurObject->Attributes();
+	
+	CurObject->Attributes()->UIsoAspect()->SetWidth(aWidth);
+	CurObject->Attributes()->VIsoAspect()->SetWidth(aWidth);
+	
+	ic->Redisplay(CurObject);
+	
+	aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_WIDTH_PROP, aWidth);
+      }
+      GeometryGUI::Modified();
+    }
+  }
+  else if(isVTK){ // if is VTKViewer
+    //
+    // Warning. It's works incorrect. must be recheked.
+    //
+    SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >
+      ( SUIT_Session::session()->activeApplication() );
+    if ( !app )
+      return;
+    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
+    if ( !aSelMgr )
+      return;
+    SALOME_ListIO selected;
+    aSelMgr->selectedObjects( selected );
+    if ( selected.IsEmpty() )
+      return;
+
+    SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
+    if ( !vtkVW )
+      return;
+
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+
+    vtkActorCollection* aCollection = vtkActorCollection::New();
+
+    for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+      Handle(SALOME_InteractiveObject) anIObject = It.Value();
+      SALOME_Prs* aPrs = view->CreatePrs( anIObject->getEntry() );
+      SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( aPrs );
+      if ( vtkPrs ) {
+        vtkActorCollection* anActors = vtkPrs->GetObjects();
+        anActors->InitTraversal();
+        vtkActor* anAct = anActors->GetNextActor();
+        aCollection->AddItem(anAct);
+      }
+    }
+
+    if(aCollection)
+      aCollection->InitTraversal();
+    else
+      return;
+
+    int aWidth = 1;
+
+    vtkActor* anAct = aCollection->GetNextActor();
+    if (GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+      aWidth = anActor->GetIsosWidth();
+    }
+    else
+      return;
+    
+    GEOMToolsGUI_LineWidthDlg* Dlg =
+      new GEOMToolsGUI_LineWidthDlg( SUIT_Session::session()->activeApplication()->desktop(), "ISOS_WIDTH_TLT" );
+    
+    Dlg->setTheLW( aWidth );
+    if (Dlg->exec() ) {
+      SUIT_OverrideCursor();
+      aWidth = Dlg->getTheLW();
+    } else 
+      return; //Cancel case 
+    
+    while( anAct!= NULL ) {
+      if(GEOM_Actor* anActor = GEOM_Actor::SafeDownCast(anAct)) {
+        // There are no casting to needed actor.
+	anActor->SetIsosWidth(aWidth);
+	int aMgrId = window->getViewManager()->getGlobalId();
+        aStudy->setObjectProperty(aMgrId ,anActor->getIO()->getEntry(), ISOS_WIDTH_PROP, aWidth);
+      }
+      anAct = aCollection->GetNextActor();
+    }
+    
+    view->Repaint();
+    GeometryGUI::Modified();
+  } // end vtkviewer  
 }

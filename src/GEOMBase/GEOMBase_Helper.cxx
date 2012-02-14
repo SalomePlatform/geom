@@ -37,6 +37,7 @@
 #include <SUIT_ViewModel.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
+#include <SUIT_ResourceMgr.h>
 
 #include <SalomeApp_Module.h>
 #include <SalomeApp_Application.h>
@@ -317,7 +318,12 @@ void GEOMBase_Helper::displayPreview( GEOM::GEOM_Object_ptr object,
   getDisplayer()->SetColor( color == -1 ? Quantity_NOC_VIOLET : color );
 
   // set width of displayed shape
-  getDisplayer()->SetWidth( lineWidth );
+  int lw = lineWidth;
+  if(lw == -1) {
+    SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();    
+    lw = resMgr->integerValue("Geometry", "preview_edge_width", -1);
+  }
+  getDisplayer()->SetWidth( lw );
 
   // set display mode of displayed shape
   int aPrevDispMode = getDisplayer()->SetDisplayMode( displayMode );

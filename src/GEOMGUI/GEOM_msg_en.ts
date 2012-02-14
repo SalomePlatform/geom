@@ -12,6 +12,14 @@
         <translation>Invert</translation>
     </message>
     <message>
+        <source>EDGE_WIDTH_TLT</source>
+        <translation>Select Edge Width</translation>
+    </message>
+    <message>
+        <source>ISOS_WIDTH_TLT</source>
+        <translation>Select Isos Width</translation>
+    </message>
+    <message>
         <source>CLOSE_CONTOUR_NEW_OBJ_NAME</source>
         <translation>CloseContour</translation>
     </message>
@@ -2575,6 +2583,34 @@ Please, select face, shell or solid and try again</translation>
         <translation>Texture</translation>
     </message>
     <message>
+        <source>MEN_EDGE_WIDTH</source>
+        <translation>Edge Width</translation>
+    </message>
+    <message>
+        <source>TOP_EDGE_WIDTH</source>
+        <translation>Edge Width</translation>
+    </message>
+    <message>
+        <source>STB_EDGE_WIDTH</source>
+        <translation>Edge Width</translation>
+    </message>   
+    <message>
+        <source>MEN_ISOS_WIDTH</source>
+        <translation>Isos Width</translation>
+    </message>
+    <message>
+        <source>TOP_ISOS_WIDTH</source>
+        <translation>Isos Width</translation>
+    </message>
+    <message>
+        <source>STB_ISOS_WIDTH</source>
+        <translation>Isos Width</translation>
+    </message>
+    <message>
+        <source>MEN_LINE_WIDTH</source>
+        <translation>Line Width</translation>
+    </message>  
+    <message>
         <source>MEN_POP_SETTEXTURE</source>
         <translation>Texture</translation>
     </message>
@@ -2905,6 +2941,22 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PREF_BACK_MATERIAL</source>
         <translation>Default back material</translation>
+    </message>
+    <message>
+        <source>PREF_EDGE_WIDTH</source>
+        <translation>Edges width</translation>
+    </message>
+    <message>
+        <source>PREF_ISOLINES_WIDTH</source>
+        <translation>Iso lines width</translation>
+    </message>
+    <message>
+        <source>PREF_PREVIEW_EDGE_WIDTH</source>
+        <translation>Preview edges width</translation>
+    </message>
+    <message>
+        <source>PREF_MEASURES_LINE_WIDTH</source>
+        <translation>Measures lines width</translation>
     </message>
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
@@ -4779,7 +4831,7 @@ Number of sketch points too small</translation>
     <message>
         <source>EMPTY_NAME</source>
         <translation>Please, specify a non-empty group name</translation>
-    </message>
+    </message>    
     <message>
         <source>GROUP_NAME</source>
         <translation>Group Name</translation>
@@ -5001,6 +5053,13 @@ Would you like to continue?</translation>
     <message>
         <source>GEOM_DEFLECTION</source>
         <translation>Deflection :</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_LineWidthDlg</name>
+    <message>
+        <source>GEOM_LINE_WIDTH</source>
+        <translation>Line width:</translation>
     </message>
 </context>
 <context>

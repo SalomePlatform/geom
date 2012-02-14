@@ -86,6 +86,9 @@ public:
   void SetWireframeProperty(vtkProperty* Prop);
   void SetShadingProperty(vtkProperty* Prop);
 
+  vtkProperty* GetWireframeProperty();
+  vtkProperty* GetShadingProperty();
+
   void setDeflection(double adef);
   virtual void setDisplayMode(int thenewmode);
 
@@ -165,6 +168,15 @@ public:
   virtual
   void
   GetNbIsos(int &theNbU,int &theNbV);
+  
+  virtual 
+  void SetIsosWidth(const int width);
+
+  int GetIsosWidth() const;
+
+  virtual void SetWidth(const int width);
+
+  int GetWidth() const;
   
   //! Vector mode management
   virtual

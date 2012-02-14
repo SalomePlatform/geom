@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -20,32 +17,43 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : MeasureGUI.h
-// Author : Damien COQUERET, Open CASCADE S.A.S.
+//  GEOM GEOMGUI : GUI for Geometry component
+//  File   : GEOMToolsGUI_DeflectionDlg.h
+//  Author : OCC Team
 //
-#ifndef MEASUREGUI_H
-#define MEASUREGUI_H
+#ifndef GEOMTOOLSGUI_LINEWIDTHDLG_H
+#define GEOMTOOLSGUI_LINEWIDTHDLG_H
 
-#include <GEOMGUI.h>
+#include "GEOM_ToolsGUI.hxx"
+
+#include <QDialog>
+
+class SalomeApp_IntSpinBox;
 
 //=================================================================================
-// class    : MeasureGUI
+// class    : GEOMToolsGUI_LineWidthDlg
 // purpose  :
 //=================================================================================
-
-#define DISPLAY_PREVIEW_MACRO \
-SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr(); \
-int w = resMgr->integerValue("Geometry", "measures_line_width", 1); \
-displayPreview(true, false, true, true, w, -1, -1);
-
-class MeasureGUI : public GEOMGUI
+class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_LineWidthDlg : public QDialog
 {
-public:
-  MeasureGUI( GeometryGUI* ); 
-  ~MeasureGUI();
+  Q_OBJECT
 
-  bool OnGUIEvent( int, SUIT_Desktop* );
+public:
+  GEOMToolsGUI_LineWidthDlg( QWidget*, const QString& );
+  ~GEOMToolsGUI_LineWidthDlg();
+
+  int       getTheLW() const;
+  void      setTheLW( const int );
+
+private slots:
+  void      ClickOnHelp();
+
+private:
+ void       keyPressEvent( QKeyEvent* );
+
+private:
+ SalomeApp_IntSpinBox*    mySpinBox;
+ QString                  myHelpFileName;
 };
 
-#endif // MEASUREGUI_H
+#endif // GEOMTOOLSGUI_LINEWIDTHDLG_H

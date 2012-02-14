@@ -36,7 +36,8 @@ salomeinclude_HEADERS =				\
 	GEOMToolsGUI_DeleteDlg.h		\
 	GEOMToolsGUI_MarkerDlg.h                \
 	GEOMToolsGUI_PublishDlg.h		\
-	GEOMToolsGUI_MaterialPropertiesDlg.h
+	GEOMToolsGUI_MaterialPropertiesDlg.h    \
+	GEOMToolsGUI_LineWidthDlg.h
 
 dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI.cxx			\
@@ -47,7 +48,8 @@ dist_libGEOMToolsGUI_la_SOURCES =		\
 	GEOMToolsGUI_DeleteDlg.cxx		\
 	GEOMToolsGUI_MarkerDlg.cxx              \
 	GEOMToolsGUI_PublishDlg.cxx		\
-	GEOMToolsGUI_MaterialPropertiesDlg.cxx
+	GEOMToolsGUI_MaterialPropertiesDlg.cxx  \
+	GEOMToolsGUI_LineWidthDlg.cxx
 
 MOC_FILES = 					\
 	GEOMToolsGUI_TransparencyDlg_moc.cxx	\
@@ -56,7 +58,8 @@ MOC_FILES = 					\
 	GEOMToolsGUI_DeleteDlg_moc.cxx		\
 	GEOMToolsGUI_MarkerDlg_moc.cxx          \
 	GEOMToolsGUI_PublishDlg_moc.cxx		\
-	GEOMToolsGUI_MaterialPropertiesDlg_moc.cxx
+	GEOMToolsGUI_MaterialPropertiesDlg_moc.cxx \
+	GEOMToolsGUI_LineWidthDlg_moc.cxx
 
 nodist_libGEOMToolsGUI_la_SOURCES =		\
 	$(MOC_FILES)

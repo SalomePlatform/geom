@@ -377,6 +377,10 @@ SALOME_Prs* MeasureGUI_AngleDlg::buildPrs()
           anIO->SetArrowSize(arrowSize);
         }
 
+	SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+	int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
+	anIO->SetWidth(w);
+
         SOCC_Prs* aPrs =
           dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
 

@@ -371,6 +371,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpPublishObject:// GEOM ROOT OBJECT - POPUP - PUBLISH
     OnPublishObject();
     break;
+  case GEOMOp::OpEdgeWidth:
+    OnEdgeWidth();
+    break;
+  case GEOMOp::OpIsosWidth:
+    OnIsosWidth(); 
+    break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

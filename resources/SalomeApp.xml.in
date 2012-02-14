@@ -57,6 +57,11 @@
     <parameter name="geom_preview"        value="false"  />
     <parameter name="front_material"      value="Gold" />
     <parameter name="back_material"       value="Gold" />
+    <parameter name="edge_width"          value="1" />
+    <parameter name="isolines_width"      value="1" />
+    <parameter name="preview_edge_width"  value="1" />
+    <parameter name="measures_line_width" value="1" />
+
     <!-- Input field precisions -->
     <parameter name="def_precision"       value="3"  />
     <parameter name="length_precision"    value="6"  />

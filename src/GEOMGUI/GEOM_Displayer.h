@@ -134,6 +134,11 @@ public:
   void          UnsetWidth();
   double        GetWidth  () const;
   bool          HasWidth  () const;
+
+  /* Set width for iso-lines displaying. If it is equal -1 then default width is used. */
+  void          SetIsosWidth  ( const int );
+  int           GetIsosWidth  () const;
+  bool          HasIsosWidth  () const;
   
   /* Set display mode shape displaying. If it is equal -1 then display mode is used. */
   int           SetDisplayMode( const int );
@@ -215,6 +220,7 @@ protected:
   Quantity_Color                   myShadingColor;
   int                              myColor;
   double                           myWidth;
+  int                              myIsosWidth;
   bool                             myToActivate;
   int                              myDisplayMode;
   Aspect_TypeOfMarker              myTypeOfMarker;

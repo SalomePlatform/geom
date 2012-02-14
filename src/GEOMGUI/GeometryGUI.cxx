@@ -424,6 +424,8 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpPublishObject:      // ROOT GEOM OBJECT - POPUP MENU - PUBLISH
   case GEOMOp::OpPointMarker:        // POPUP MENU - POINT MARKER
   case GEOMOp::OpMaterialProperties: // POPUP MENU - MATERIAL PROPERTIES
+  case GEOMOp::OpEdgeWidth:          // POPUP MENU - LINE WIDTH - EDGE WIDTH
+  case GEOMOp::OpIsosWidth:          // POPUP MENU - LINE WIDTH - ISOS WIDTH
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDisplayMode:        // MENU VIEW - WIREFRAME/SHADING
@@ -844,6 +846,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpShading,          "POP_SHADING", "", 0, true );
   createGeomAction( GEOMOp::OpShadingWithEdges, "POP_SHADING_WITH_EDGES", "", 0, true );
   createGeomAction( GEOMOp::OpTexture,          "POP_TEXTURE", "", 0, true );
+  createGeomAction( GEOMOp::OpEdgeWidth,        "EDGE_WIDTH");
+  createGeomAction( GEOMOp::OpIsosWidth,        "ISOS_WIDTH");
   createGeomAction( GEOMOp::OpVectors,          "POP_VECTORS", "", 0, true );
   createGeomAction( GEOMOp::OpDeflection,       "POP_DEFLECTION" );
   createGeomAction( GEOMOp::OpColor,            "POP_COLOR" );
@@ -1234,6 +1238,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpMaterialProperties ), clientOCCorVTK_AndSomeVisible + " and ($component={'GEOM'}) and selcount>0 and isVisible", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpSetTexture ), -1, -1 ); // texture
   mgr->setRule( action( GEOMOp::OpSetTexture ), clientOCCorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
+
+  int lineW = mgr->insert(  tr( "MEN_LINE_WIDTH" ), -1, -1 ); // line width menu
+  mgr->insert( action(  GEOMOp::OpEdgeWidth ), lineW, -1 ); // edge width
+  mgr->setRule( action( GEOMOp::OpEdgeWidth ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+
+  mgr->insert( action(  GEOMOp::OpIsosWidth ), lineW, -1 ); // isos width
+  mgr->setRule( action( GEOMOp::OpIsosWidth ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
+  
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpAutoColor ), -1, -1 ); // auto color
   mgr->setRule( action( GEOMOp::OpAutoColor ), autoColorPrefix + " and isAutoColor=false", QtxPopupMgr::VisibleRule );
@@ -1679,10 +1691,32 @@ void GeometryGUI::createPreferences()
   int front_material = addPreference( tr( "PREF_FRONT_MATERIAL" ), genGroup,
 				      LightApp_Preferences::Selector,
 				      "Geometry", "front_material" );
-
+  
   int back_material = addPreference( tr( "PREF_BACK_MATERIAL" ), genGroup,
 				     LightApp_Preferences::Selector,
 				     "Geometry", "back_material" );
+
+  int nb = 4;
+  int wd[nb];
+  int iter=0;
+
+  wd[iter++] = addPreference( tr( "PREF_EDGE_WIDTH" ), genGroup,
+			      LightApp_Preferences::IntSpin, "Geometry", "edge_width" );
+
+  wd[iter++] = addPreference( tr( "PREF_ISOLINES_WIDTH" ), genGroup,
+			      LightApp_Preferences::IntSpin, "Geometry", "isolines_width" );
+
+  wd[iter++] = addPreference( tr( "PREF_PREVIEW_EDGE_WIDTH" ), genGroup,
+				     LightApp_Preferences::IntSpin, "Geometry", "preview_edge_width" );
+  
+  wd[iter++] = addPreference( tr( "PREF_MEASURES_LINE_WIDTH" ), genGroup,
+			      LightApp_Preferences::IntSpin, "Geometry", "measures_line_width" );
+
+  for(int i = 0; i < nb; i++) {
+    setPreferenceProperty( wd[i], "min", 1 );    
+    setPreferenceProperty( wd[i], "max", 5 );
+  }
+
 
   // Quantities with individual precision settings
   int precGroup = addPreference( tr( "GEOM_PREF_GROUP_PRECISION" ), tabId );
@@ -1950,6 +1984,17 @@ void GeometryGUI::storeVisualParameters (int savePoint)
 	if(aProps.contains(BACK_MATERIAL_PROP)) {
           param = occParam + BACK_MATERIAL_PROP;
           ip->setParameter(entry, param, aProps.value(BACK_MATERIAL_PROP).toString().toLatin1().data());
+	  
+	}
+
+	if(aProps.contains( EDGE_WIDTH_PROP )) {
+             param = occParam + EDGE_WIDTH_PROP;
+           ip->setParameter(entry, param, aProps.value(EDGE_WIDTH_PROP).toString().toLatin1().data());				     
+        }
+	
+	if(aProps.contains( ISOS_WIDTH_PROP )) {
+	  param = occParam + ISOS_WIDTH_PROP;
+	  ip->setParameter(entry, param, aProps.value(ISOS_WIDTH_PROP).toString().toLatin1().data());
         }
       } // object iterator
     } // for (views)
@@ -2062,7 +2107,13 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( FRONT_MATERIAL_PROP, val);
       } else if(paramNameStr == BACK_MATERIAL_PROP) {
         aListOfMap[viewIndex].insert( BACK_MATERIAL_PROP, val);
+      }  else if(paramNameStr == EDGE_WIDTH_PROP) {
+	aListOfMap[viewIndex].insert( EDGE_WIDTH_PROP , val);
+      }  else if(paramNameStr == ISOS_WIDTH_PROP) {
+	aListOfMap[viewIndex].insert( ISOS_WIDTH_PROP , val);
       }
+
+		    
 
     } // for names/parameters iterator
 

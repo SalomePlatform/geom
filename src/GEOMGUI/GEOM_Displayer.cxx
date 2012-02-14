@@ -313,7 +313,11 @@ GEOM_Displayer::GEOM_Displayer( SalomeApp_Study* st )
   myShadingColor = SalomeApp_Tools::color( col );
 
   myDisplayMode = resMgr->integerValue("Geometry", "display_mode", 0);
+
   int aType = resMgr->integerValue("Geometry", "type_of_marker", (int)Aspect_TOM_PLUS);
+  myWidth = resMgr->integerValue("Geometry", "edge_width", -1);
+  myIsosWidth = resMgr->integerValue("Geometry", "isolines_width", -1);
+
   myTypeOfMarker = (Aspect_TypeOfMarker)(std::min((int)Aspect_TOM_RING3, std::max((int)Aspect_TOM_POINT, aType)));
   myScaleOfMarker = (resMgr->integerValue("Geometry", "marker_scale", 1)-(int)GEOM::MS_10)*0.5 + 1.0;
   myScaleOfMarker = std::min(7.0, std::max(1., myScaleOfMarker));
@@ -696,10 +700,15 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
         anAspect->SetNumber( anUIsoNumber );
         anAspect->SetColor( aColor );
+	if(HasIsosWidth())
+	  anAspect->SetWidth( GetIsosWidth() );
         AISShape->Attributes()->SetUIsoAspect( anAspect );
+
 
         anAspect = AISShape->Attributes()->VIsoAspect();
         anAspect->SetNumber( aVIsoNumber );
+	if(HasIsosWidth())
+	  anAspect->SetWidth( GetIsosWidth() );
         anAspect->SetColor( aColor );
         AISShape->Attributes()->SetVIsoAspect( anAspect );
 
@@ -828,6 +837,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             double aDC = 0;
             if(useStudy) {
               aDC = aPropMap.value(DEFLECTION_COEFF_PROP).toDouble();
+	      SetWidth(aPropMap.value(EDGE_WIDTH_PROP).toInt());
+	      SetIsosWidth(aPropMap.value(ISOS_WIDTH_PROP).toInt());
             }
             else {
               aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
@@ -1003,6 +1014,13 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           if ( aModelB )
             delete aModelB;
 
+	  if(HasWidth())
+	    aStudy->setObjectProperty( aMgrId, anIO->getEntry(), EDGE_WIDTH_PROP, GetWidth() );
+
+	  if(HasIsosWidth())
+	    aStudy->setObjectProperty( aMgrId, anIO->getEntry(), ISOS_WIDTH_PROP, GetIsosWidth() );
+
+
         }
 
         // AISShape->SetName(???); ??? necessary to set name ???
@@ -1133,11 +1151,6 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     aProp->SetColor( aColor.Red(), aColor.Green(), aColor.Blue() );
   }
 
-  if ( HasWidth() )
-  {
-    aProp->SetLineWidth( GetWidth() );
-  }
-
   while ( anActor != NULL )
   {
     SALOME_Actor* GActor = SALOME_Actor::SafeDownCast( anActor );
@@ -1172,6 +1185,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
           aIsos[0] = uv[0].toInt(); aIsos[1] = uv[1].toInt();
           aGeomGActor->SetNbIsos(aIsos);
           aGeomGActor->SetOpacity(1.0 - aPropMap.value(TRANSPARENCY_PROP).toDouble());
+	  SetWidth(aPropMap.value(EDGE_WIDTH_PROP).toInt());
+	  SetIsosWidth(aPropMap.value(ISOS_WIDTH_PROP).toInt());
           aGeomGActor->SetVectorMode(aPropMap.value(VECTOR_MODE_PROP).toInt());
 	  int aDispModeId = aPropMap.value(DISPLAY_MODE_PROP).toInt();
 	  // Specially processing of 'Shading with edges' mode from preferences,
@@ -1217,6 +1232,13 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
 	    // Release memory
 	    delete aModelB;
+
+	    if(HasWidth())
+	      aStudy->setObjectProperty( aMgrId, anEntry, EDGE_WIDTH_PROP, GetWidth() );
+
+	    if(HasIsosWidth())
+	      aStudy->setObjectProperty( aMgrId, anEntry, ISOS_WIDTH_PROP, GetIsosWidth() );
+	  
 	  }
 	  else {
 	    // Set the same front and back materials for the selected shape
@@ -1292,6 +1314,17 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 	}
       }
 
+    if ( HasWidth() )
+      {
+	aGeomGActor->SetWidth( GetWidth() );
+      }
+    
+    
+    if ( HasIsosWidth() )
+      {
+	aGeomGActor->SetIsosWidth( GetIsosWidth() );
+      }
+    
     if ( myToActivate )
       GActor->PickableOn();
     else
@@ -1760,6 +1793,23 @@ void GEOM_Displayer::UnsetWidth()
   myWidth = -1;
 }
 
+
+int GEOM_Displayer::GetIsosWidth() const
+{
+  return myIsosWidth;
+}
+
+void GEOM_Displayer::SetIsosWidth(const int width) 
+{
+  myIsosWidth = width;
+}
+
+bool GEOM_Displayer::HasIsosWidth() const
+{
+  return myIsosWidth != -1;
+}
+
+
 //=================================================================
 /*!
  *  GEOM_Displayer::SetToActivate
@@ -1962,11 +2012,19 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   QString aMaterialF = aModelF.getMaterialProperty();
   aDefaultMap.insert( FRONT_MATERIAL_PROP , aMaterialF );  
 
-  //  Back material
+  //9.  Back material
   Material_Model aModelB;
   aModelB.fromResources( aResMgr, "Geometry", false );
   QString aMaterialB = aModelB.getMaterialProperty();
   aDefaultMap.insert( BACK_MATERIAL_PROP , aMaterialB );
+
+  //10. Width of the edges
+  aDefaultMap.insert( EDGE_WIDTH_PROP , aResMgr->integerValue("Geometry", "edge_width", 1));
+
+
+  //11. Width of iso-lines
+  aDefaultMap.insert( ISOS_WIDTH_PROP , aResMgr->integerValue("Geometry", "isolines_width", 1));
+
 
   return aDefaultMap;
 }
@@ -2005,6 +2063,17 @@ bool GEOM_Displayer::MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault) 
     theOrigin.insert(BACK_MATERIAL_PROP, theDefault.value(BACK_MATERIAL_PROP));
     nbInserted++;
   }
+
+  if(!theOrigin.contains(EDGE_WIDTH_PROP)) {
+    theOrigin.insert(EDGE_WIDTH_PROP, theDefault.value(EDGE_WIDTH_PROP));
+    nbInserted++;
+  }
+
+  if(!theOrigin.contains(ISOS_WIDTH_PROP)) {
+    theOrigin.insert(ISOS_WIDTH_PROP, theDefault.value(ISOS_WIDTH_PROP));
+    nbInserted++;
+  }
+
   return (nbInserted > 0);
 }
 

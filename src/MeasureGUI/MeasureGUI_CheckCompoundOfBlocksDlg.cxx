@@ -24,6 +24,7 @@
 // File   : MeasureGUI_CheckCompoundOfBlocksDlg.cxx
 // Author : Vladimir KLYACHIN, Open CASCADE S.A.S. (vladimir.klyachin@opencascade.com)
 //
+#include "MeasureGUI.h"
 #include "MeasureGUI_CheckCompoundOfBlocksDlg.h"
 #include "MeasureGUI_Widgets.h"
 
@@ -188,7 +189,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::SelectionIntoArgument()
   myObj = aSelectedObject;
   myGrp->LineEdit1->setText( GEOMBase::GetName( myObj ) );
   processObject();
-  displayPreview(true);
+  DISPLAY_PREVIEW_MACRO;
 }
 
 //=================================================================================
@@ -228,7 +229,7 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::ActivateThisDialog()
     connect( aSel, SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   activateSelection();
-  displayPreview(true);
+  DISPLAY_PREVIEW_MACRO
 }
 
 //=================================================================================
@@ -418,9 +419,11 @@ void MeasureGUI_CheckCompoundOfBlocksDlg::onSubShapesListSelectionChanged()
     QList<int>::iterator it;
     for ( it = aIds.begin(); it != aIds.end(); ++it ) {
       aSubShape = anIndices.FindKey(aObjLst[(*it)]);
+      SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+      int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
       try {
         getDisplayer()->SetColor( Quantity_NOC_RED );
-        getDisplayer()->SetWidth( 3 );
+        getDisplayer()->SetWidth( w );
         getDisplayer()->SetToActivate( false );
         aPrs = !aSubShape.IsNull() ? getDisplayer()->BuildPrs( aSubShape ) : 0;
         if ( aPrs )

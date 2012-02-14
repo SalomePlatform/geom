@@ -21,6 +21,7 @@
 // File   : MeasureGUI_NormaleDlg.cxx
 // Author : Julia DOROVSKIKH, Open CASCADE S.A.S.
 //
+#include "MeasureGUI.h"
 #include "MeasureGUI_NormaleDlg.h"
 
 #include <DlgRef.h>
@@ -246,7 +247,7 @@ void MeasureGUI_NormaleDlg::SelectionIntoArgument()
       GroupArgs->PushButton1->click();
   }
 
-  displayPreview(true);
+  DISPLAY_PREVIEW_MACRO
 }
 
 //=================================================================================
@@ -286,7 +287,7 @@ void MeasureGUI_NormaleDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   // seems we need it only to avoid preview disappearing, caused by selection mode change
-  displayPreview(true);
+  DISPLAY_PREVIEW_MACRO
 }
 
 //=================================================================================
@@ -313,7 +314,7 @@ void MeasureGUI_NormaleDlg::ActivateThisDialog()
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
            this, SLOT( SelectionIntoArgument() ) );
 
-  displayPreview(true);
+  DISPLAY_PREVIEW_MACRO
 }
 
 //=================================================================================

@@ -54,6 +54,8 @@ namespace GEOMOp {
     OpHideChildren        = 1251,   // POPUP MENU - HIDE CHILDREN
     OpUnpublishObject     = 1253,   // POPUP MENU - UNPUBLISH
     OpPublishObject       = 1254,   // GEOM ROOT OBJECT - POPUP MENU - PUBLISH
+    OpEdgeWidth           = 1260,   // POPUP MENU - LINE WIDTH - EDGE WIDTH
+    OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
 
     // DisplayGUI ----------------//--------------------------------
     OpDisplayMode         = 2000,   // MENU VIEW  - DISPLAY MODE - WIREFRAME/SHADING/SHADING WITH EDGES
