@@ -151,7 +151,20 @@ RepairGUI_GlueDlg::RepairGUI_GlueDlg(GeometryGUI* theGeometryGUI, QWidget* paren
 
   /***************************************************************/
 
-  setHelpFileName("glue_faces_operation_page.html");
+  QString aHelpFileName; 
+  switch ( myGlueMode ) {
+    case TopAbs_EDGE:
+      {
+        aHelpFileName = "glue_edges_operation_page.html";
+        break;
+      }
+    case TopAbs_FACE:
+      {
+        aHelpFileName = "glue_faces_operation_page.html";
+        break;
+      }
+  }
+  setHelpFileName(aHelpFileName);
 
   // Disable second way of gluing if OCC viewer is not active one
   if (myGeomGUI->getApp()->desktop()->activeWindow()->getViewManager()->getType()
