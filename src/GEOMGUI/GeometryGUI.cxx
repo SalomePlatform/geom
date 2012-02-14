@@ -1696,7 +1696,7 @@ void GeometryGUI::createPreferences()
 				     LightApp_Preferences::Selector,
 				     "Geometry", "back_material" );
 
-  int nb = 4;
+  const int nb = 4;
   int wd[nb];
   int iter=0;
 
