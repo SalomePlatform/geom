@@ -1528,9 +1528,9 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
 {
   MESSAGE("EntityGUI_SketcherDlg::OnPointSelected")
   
-  SUIT_ViewWindow*       theViewWindow  = getDesktop()->activeWindow();
-  OCCViewer_ViewPort3d*  vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
-  QString                theImgFileName = vp->backgroundImageFilename();
+  SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
+  OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+  Qtx::BackgroundData   bg             = vp->background();
   
   double x, y;
   x = y = 0;
@@ -1549,7 +1549,7 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
   gp_Pnt aTrsfPnt; 
   GEOMBase::VertexToPoint( aShape, aTrsfPnt );
   
-  autoApply = ( (getPnt2ConstructorId() == 1) && (!theImgFileName.isEmpty()) );  // If no additional argument needed after selection and there is a backgroundimage
+  autoApply = ( (getPnt2ConstructorId() == 1) && (!bg.isValid()) );  // If no additional argument needed after selection and there is a backgroundimage
                                                                                  // -> apply automatically 
   
   if ( getPnt1ConstructorId() == 0 ){                    // Relative selection mode
