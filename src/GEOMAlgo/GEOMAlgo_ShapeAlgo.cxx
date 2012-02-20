@@ -18,22 +18,21 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_ShapeAlgo.cxx
 // Created:     Tue Dec  7 12:06:54 2004
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_ShapeAlgo.ixx>
+
+#include <Basics_OCCTVersion.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_ShapeAlgo
 //purpose  : 
 //=======================================================================
 GEOMAlgo_ShapeAlgo::GEOMAlgo_ShapeAlgo()
-: 
-  GEOMAlgo_Algo()
+  : GEOMAlgo_Algo()
 {
   myTolerance=0.0001;
 }
@@ -45,6 +44,38 @@ GEOMAlgo_ShapeAlgo::GEOMAlgo_ShapeAlgo()
 GEOMAlgo_ShapeAlgo::~GEOMAlgo_ShapeAlgo()
 {
 }
+
+#if OCC_VERSION_LARGE > 0x06050200
+//=======================================================================
+//function : SetContext
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_ShapeAlgo::SetContext(const Handle(IntTools_Context)& theContext)
+{
+  myContext=theContext;
+}
+
+//=======================================================================
+//function : Context
+//purpose  : 
+//=======================================================================
+const Handle(IntTools_Context)& GEOMAlgo_ShapeAlgo::Context()const 
+{
+  return myContext;
+}
+
+//=======================================================================
+//function : Perform
+//purpose  : 
+//=======================================================================
+void GEOMAlgo_ShapeAlgo::Perform()
+{
+  if (myContext.IsNull()) {
+    myContext=new IntTools_Context;
+  }
+}
+#endif
+
 //=======================================================================
 //function : SetShape
 //purpose  : 

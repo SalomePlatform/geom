@@ -24,6 +24,8 @@
 
 #include <NMTTools_PaveFiller.ixx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <Bnd_HArray1OfBox.hxx>
 #include <Bnd_BoundSortBox.hxx>
 #include <Bnd_Box.hxx>
@@ -57,7 +59,7 @@
 
 #include <TopExp_Explorer.hxx>
 #include <TopExp.hxx>
-//
+
 #include <IntTools_SequenceOfPntOn2Faces.hxx>
 #include <IntTools_PntOnFace.hxx>
 #include <IntTools_PntOn2Faces.hxx>
@@ -293,7 +295,11 @@ void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
         }
         //
         const TopoDS_Edge& aEx=*((TopoDS_Edge*)&myDS->Shape(nEx));
+#if OCC_VERSION_LARGE > 0x06050200
+        GeomAPI_ProjectPointOnCurve& aPPCx=myContext->ProjPC(aEx);
+#else
         GeomAPI_ProjectPointOnCurve& aPPCx=myContext.ProjPC(aEx);
+#endif
         //
         for (j=0; j<2; ++j) {
           aPPCx.Perform(aPMax[j]);

@@ -18,10 +18,18 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _NMTTools_Tools_HeaderFile
 #define _NMTTools_Tools_HeaderFile
+
+#ifndef _Standard_HeaderFile
+#include <Standard.hxx>
+#endif
+#ifndef _Standard_Macro_HeaderFile
+#include <Standard_Macro.hxx>
+#endif
+
+#include <Basics_OCCTVersion.hxx>
 
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
@@ -32,6 +40,13 @@
 #ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
 #endif
+
+#if OCC_VERSION_LARGE > 0x06050200
+#include <Handle_IntTools_Context.hxx>
+#else
+class IntTools_Context;
+#endif
+
 class TopTools_ListOfShape;
 class TopoDS_Vertex;
 class BOPTools_CArray1OfVVInterference;
@@ -39,101 +54,65 @@ class BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger;
 class BOPTools_CArray1OfSSInterference;
 class TopoDS_Edge;
 class TopoDS_Face;
-class IntTools_Context;
 class NMTTools_ListOfCoupleOfShape;
 class NMTTools_IndexedDataMapOfShapeIndexedMapOfShape;
 class Geom2d_Curve;
 
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-
 class NMTTools_Tools  {
-
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  void* operator new(size_t,void* anAddress)
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
+  }
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
+  }
 
 
-Standard_EXPORT static  void MakeNewVertex(const TopTools_ListOfShape& aLV,TopoDS_Vertex& aNewVertex) ;
+  Standard_EXPORT static  void MakeNewVertex(const TopTools_ListOfShape& aLV,TopoDS_Vertex& aNewVertex) ;
 
+  Standard_EXPORT static  void FindChains(const BOPTools_CArray1OfVVInterference& aVVs,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
 
-Standard_EXPORT static  void FindChains(const BOPTools_CArray1OfVVInterference& aVVs,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
+  Standard_EXPORT static  void FindChains(const BOPTools_CArray1OfSSInterference& aVVs,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
 
+  Standard_EXPORT static  void FindChains(const BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCV,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
 
-Standard_EXPORT static  void FindChains(const BOPTools_CArray1OfSSInterference& aVVs,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
+  Standard_EXPORT static  Standard_Boolean IsSplitInOnFace (const TopoDS_Edge& aE,
+                                                            const TopoDS_Face& aF,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                            const Handle(IntTools_Context)& aCtx);
+#else
+                                                            IntTools_Context& aCtx);
+#endif
 
+  Standard_EXPORT static  Standard_Boolean AreFacesSameDomain (const TopoDS_Face& aF1,
+                                                               const TopoDS_Face& aF2,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                               const Handle(IntTools_Context)& aCtx);
+#else
+                                                               IntTools_Context& aCtx);
+#endif
 
-Standard_EXPORT static  void FindChains(const BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCV,BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger& aMCX) ;
+  Standard_EXPORT static  void FindChains(const NMTTools_ListOfCoupleOfShape& aLCS,NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM) ;
 
+  Standard_EXPORT static  void FindChains(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM1,NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM2) ;
 
-Standard_EXPORT static  Standard_Boolean IsSplitInOnFace(const TopoDS_Edge& aE,const TopoDS_Face& aF,IntTools_Context& aCtx) ;
+  Standard_EXPORT static  void MakePCurve(const TopoDS_Edge& aE,const TopoDS_Face& aF,const Handle(Geom2d_Curve)& aC2D) ;
 
-
-Standard_EXPORT static  Standard_Boolean AreFacesSameDomain(const TopoDS_Face& aF1,const TopoDS_Face& aF2,IntTools_Context& aCtx) ;
-
-
-Standard_EXPORT static  void FindChains(const NMTTools_ListOfCoupleOfShape& aLCS,NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM) ;
-
-
-Standard_EXPORT static  void FindChains(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM1,NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& aM2) ;
-
-
-Standard_EXPORT static  void MakePCurve(const TopoDS_Edge& aE,const TopoDS_Face& aF,const Handle(Geom2d_Curve)& aC2D) ;
-
-
-Standard_EXPORT static  void UpdateEdge(const TopoDS_Edge& aE,const Standard_Real aTol) ;
-
-
-
-
+  Standard_EXPORT static  void UpdateEdge(const TopoDS_Edge& aE,const Standard_Real aTol) ;
 
 protected:
 
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+private:
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

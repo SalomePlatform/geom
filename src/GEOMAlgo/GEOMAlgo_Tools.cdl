@@ -49,14 +49,14 @@ is
     RefineSDShapes(myclass;
     	    aMSD:out IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo; --qft
     	    aTol:Real from Standard;
-    	    aCtx:out Context from IntTools)
+    	    aCtx: Context from IntTools)
     	returns Integer from Standard;
 
     FindSDShapes(myclass;
     	    aLE :ListOfShape from TopTools;
     	    aTol:Real from Standard;
     	    aMEE:out IndexedDataMapOfShapeListOfShape from TopTools;
-	    aCtx:out Context from IntTools)
+	    aCtx: Context from IntTools)
     	returns Integer from Standard;
 
     FindSDShapes(myclass;
@@ -64,14 +64,14 @@ is
 	    aLE   :ListOfShape from TopTools;
 	    aTol  :Real from Standard;
     	    aLESD :out ListOfShape from TopTools;
-	    aCtx  :out Context from IntTools)
+	    aCtx  : Context from IntTools)
     	returns Integer from Standard;
 	
     ProjectPointOnShape(myclass;
     	    aP1: Pnt from gp;
     	    aS  :Shape from TopoDS;
 	    aP2:out Pnt from gp;
-    	    aCtx  :out Context from IntTools)
+    	    aCtx  : Context from IntTools)
         returns Boolean from Standard;
 
     PointOnShape(myclass;
@@ -111,14 +111,12 @@ is
     	    aS  :Shape from TopoDS)
     	returns Boolean from Standard;
 
-    --modified by NIZNHY-PKV Mon Feb 06 06:59:14 2012f
     BuildPCurveForEdgeOnFace (myclass;
     	    aE   :  Edge from TopoDS;
     	    aEold:  Edge from TopoDS;
             aF   :  Face from TopoDS;
-    	    aCtx  :out Context from IntTools)
+    	    aCtx  : Context from IntTools)
     	returns Integer from Standard;
-    --modified by NIZNHY-PKV Mon Feb 06 06:59:22 2012t
 
 --fields
 

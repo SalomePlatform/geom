@@ -155,10 +155,6 @@ is
     	 returns Context from IntTools; 
     	---C++:return const &	
 
-    ChangeContext(me:out) 
-    	 returns Context from IntTools;  
-    	---C++:return &	
-
     PavePool(me) 
     	returns  PavePool from BOPTools; 
     	---C++:return const &	 

@@ -187,6 +187,11 @@ void GEOMAlgo_FinderShapeOn::Perform()
     return;
   }
   //
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_ShapeAlgo::Perform();
+#endif
+  //
   myIsAnalytic=GEOMAlgo_SurfaceTools::IsAnalytic(mySurface);
   //
   MakeArgument1();
@@ -544,9 +549,9 @@ void GEOMAlgo_FinderShapeOn::CopySource(const TopoDS_Shape& aE,
 //
 //=======================================================================
 //function : BuildTriangulation
-//purpose  : 
+//purpose  :
 //=======================================================================
-bool GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape& theShape)
+Standard_Boolean GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape& theShape)
 {
   // calculate deflection
   Standard_Real aDeviationCoefficient = 0.001;

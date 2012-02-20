@@ -15,26 +15,29 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File:       NMTTools_CheckerSI.cxx
 //  Created:    Mon Feb 19 11:32:08 2007
 //  Author:     Peter KURNEV
-//
+
 #include <NMTTools_CheckerSI.ixx>
+
+#include <NMTTools_DEProcessor.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_IteratorCheckerSI.hxx>
 #include <NMTDS_InterfPool.hxx>
-#include <NMTTools_DEProcessor.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#include <IntTools_Context.hxx>
 
 //=======================================================================
 //function : 
 //purpose  : 
 //=======================================================================
-  NMTTools_CheckerSI::NMTTools_CheckerSI()
-:
-  NMTTools_PaveFiller()
+NMTTools_CheckerSI::NMTTools_CheckerSI()
+  : NMTTools_PaveFiller()
 {
   myStopStatus=0;
 }
@@ -42,14 +45,14 @@
 //function : ~
 //purpose  : 
 //=======================================================================
-  NMTTools_CheckerSI::~NMTTools_CheckerSI()
+NMTTools_CheckerSI::~NMTTools_CheckerSI()
 {
 }
 //=======================================================================
 //function : Clear
 //purpose  : 
 //=======================================================================
-  void NMTTools_CheckerSI::Clear()
+void NMTTools_CheckerSI::Clear()
 {
   NMTTools_PaveFiller::Clear();
 }
@@ -57,7 +60,7 @@
 //function : StopStatus
 //purpose  : 
 //=======================================================================
-  Standard_Integer NMTTools_CheckerSI::StopStatus()const
+Standard_Integer NMTTools_CheckerSI::StopStatus()const
 {
   return myStopStatus;
 }
@@ -65,7 +68,7 @@
 //function : Init
 //purpose  : 
 //=======================================================================
-  void NMTTools_CheckerSI::Init()
+void NMTTools_CheckerSI::Init()
 {
   myIsDone=Standard_False;
   if (myCompositeShape.IsNull()) {
@@ -83,18 +86,24 @@
   myDSIt->SetDS(myDS);
   myDSIt->Prepare();
   //
-  // 4.
+  // 3.
   myNbSources=myDS->NumberOfShapesOfTheObject()+
               myDS->NumberOfShapesOfTheTool();
   myNbEdges=myDS->NbEdges();
-  // 5
+  // 4.
   myIP=new NMTDS_InterfPool;
+  //
+  // 5.
+#if OCC_VERSION_LARGE > 0x06050200
+      // In OCCT6.5.3 class IntTools_Context become a handle
+  myContext=new IntTools_Context;
+#endif
 }
 //=======================================================================
 //function : Perform
 //purpose  : 
 //=======================================================================
-  void NMTTools_CheckerSI::Perform()
+void NMTTools_CheckerSI::Perform()
 {
   myIsDone=Standard_False;
   myStopStatus=0;

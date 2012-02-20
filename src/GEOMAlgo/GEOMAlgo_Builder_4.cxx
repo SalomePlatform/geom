@@ -18,13 +18,19 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_Builder_4.cxx
-// Created:     
-// Author:      Peter KURNEV 
-//
+// Author:      Peter KURNEV
+
 #include <GEOMAlgo_Builder.hxx>
+
+#include <GEOMAlgo_Tools3D.hxx>
+
+#include <NMTTools_PaveFiller.hxx>
+
+#include <NMTDS_ShapesDataStructure.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <TopoDS_Iterator.hxx>
 
@@ -35,25 +41,22 @@
 
 #include <IntTools_Context.hxx>
 
-#include <NMTDS_ShapesDataStructure.hxx>
-
-#include <NMTTools_PaveFiller.hxx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-
 static
   void MapShapes(const TopoDS_Shape& aS,
                  TopTools_MapOfShape& aM);
 
 //=======================================================================
 //function : Generated
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Generated(const TopoDS_Shape& theS)
 {
-  /*const NMTDS_ShapesDataStructure& aDS=**/myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
+#if OCC_VERSION_LARGE > 0x06050200
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
+#else
   IntTools_Context& aCtx=pPF->ChangeContext();
+#endif
   //
   Standard_Boolean bHasImage, bToReverse;
   TopAbs_ShapeEnum aType;
@@ -72,8 +75,8 @@ static
   //
   aType=theS.ShapeType();
   //
-  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) { 
+  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
     const TopTools_ListOfShape& aLSp=myImages.Image(theS);
     aIt.Initialize(aLSp);
     for (; aIt.More(); aIt.Next()) {
@@ -102,13 +105,16 @@ static
 }
 //=======================================================================
 //function : Modified
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Modified(const TopoDS_Shape& theS)
 {
-  /*const NMTDS_ShapesDataStructure& aDS=**/myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
+#if OCC_VERSION_LARGE > 0x06050200
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
+#else
   IntTools_Context& aCtx=pPF->ChangeContext();
+#endif
   //
   Standard_Boolean bHasImage, bToReverse;
   TopAbs_ShapeEnum aType;
@@ -127,8 +133,8 @@ static
   //
   aType=theS.ShapeType();
   //
-  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) { 
+  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
     const TopTools_ListOfShape& aLSp=myImages.Image(theS);
     aIt.Initialize(aLSp);
     for (; aIt.More(); aIt.Next()) {
@@ -156,7 +162,7 @@ static
 }
 //=======================================================================
 //function : IsDeleted
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Builder::IsDeleted(const TopoDS_Shape& theS)
 {
@@ -181,8 +187,8 @@ static
   }
   //
   aType=theS.ShapeType();
-  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
-      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) { 
+  if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
+      aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
     const TopTools_ListOfShape& aLSp=myImages.Image(theS);
     aIt.Initialize(aLSp);
     for (; aIt.More(); aIt.Next()) {
@@ -205,7 +211,7 @@ static
 }
 //=======================================================================
 //function : PrepareHistory
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::PrepareHistory()
 {
@@ -219,10 +225,10 @@ static
   TopTools_ListIteratorOfListOfShape aIt;
   TopTools_MapIteratorOfMapOfShape aItM;
   //
-  // 1. Clearing 
+  // 1. Clearing
   GEOMAlgo_BuilderShape::PrepareHistory();
   //
-  // 2. myMapShape - all shapes of result with theirs sub-shapes 
+  // 2. myMapShape - all shapes of result with theirs sub-shapes
   MapShapes(myShape, myMapShape);
   //
   // 3. MS - all argument shapes with theirs sub-shapes
@@ -263,13 +269,13 @@ static
     //
     //modified by NIZNHY-PKV Thu Dec  7 11:34:10 2006t
     //
-    // 4.2 As it was 
+    // 4.2 As it was
     if (!myHasDeleted) {
       myHasDeleted=IsDeleted(aSx);//xx
     }
     //
     if (!myHasGenerated || !myHasModified) {
-      if (aType==TopAbs_EDGE   || aType==TopAbs_FACE || 
+      if (aType==TopAbs_EDGE   || aType==TopAbs_FACE ||
           aType==TopAbs_VERTEX || aType==TopAbs_SOLID) {
         //modified by NIZNHY-PKV Thu Dec  7 11:53:01 2006f
         //bHasImage=myImages.HasImage(aSx);
@@ -296,14 +302,13 @@ static
             } // if (myMapShape.Contains(aSp))
           }
         }
-      } 
+      }
     }
   }
-  
 }
 //=======================================================================
 //function : MapShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void MapShapes(const TopoDS_Shape& theS,
                  TopTools_MapOfShape& theM)

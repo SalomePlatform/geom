@@ -18,13 +18,26 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_Tools3D_HeaderFile
 #define _GEOMAlgo_Tools3D_HeaderFile
 
+#include <Basics_OCCTVersion.hxx>
+
+#ifndef _Standard_HeaderFile
+#include <Standard.hxx>
+#endif
+#ifndef _Standard_Macro_HeaderFile
+#include <Standard_Macro.hxx>
+#endif
+
 #ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
+#endif
+#if OCC_VERSION_LARGE > 0x06050200
+#ifndef _Handle_IntTools_Context_HeaderFile
+#include <Handle_IntTools_Context.hxx>
+#endif
 #endif
 #ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
@@ -38,6 +51,7 @@
 #ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
 #endif
+
 class TopoDS_Shape;
 class IntTools_Context;
 class TopoDS_Face;
@@ -52,180 +66,234 @@ class TopTools_IndexedDataMapOfShapeListOfShape;
 class NMTTools_ListOfCoupleOfShape;
 
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
 //!  Auxiliary tools for Algorithms <br>
 class GEOMAlgo_Tools3D  {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  void* operator new(size_t,void* anAddress)
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
+  }
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
+  }
 
-//! Returns True if the shape theSplit has opposite <br>
-//!          direction than theShape <br>
-//!          theContext - cashed geometrical tools <br>
-Standard_EXPORT static  Standard_Boolean IsSplitToReverse(const TopoDS_Shape& theSplit,const TopoDS_Shape& theShape,IntTools_Context& theContext) ;
+  //! Returns True if the shape theSplit has opposite <br>
+  //!          direction than theShape <br>
+  //!          theContext - cashed geometrical tools <br>
+  Standard_EXPORT static Standard_Boolean IsSplitToReverse (const TopoDS_Shape& theSplit,
+                                                            const TopoDS_Shape& theShape,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                            const Handle(IntTools_Context)& theContext);
+#else
+                                                            IntTools_Context& theContext);
+#endif
 
-//! Returns True if normal direction of the face <br>
-//!          theShape is not the same as for the face <br>
-//!          theSplit <br>
-//!          theContext - cashed geometrical tools <br>
-Standard_EXPORT static  Standard_Boolean IsSplitToReverse(const TopoDS_Face& theSplit,const TopoDS_Face& theShape,IntTools_Context& theContext) ;
+  //! Returns True if normal direction of the face <br>
+  //!          theShape is not the same as for the face <br>
+  //!          theSplit <br>
+  //!          theContext - cashed geometrical tools <br>
+  Standard_EXPORT static Standard_Boolean IsSplitToReverse (const TopoDS_Face& theSplit,
+                                                            const TopoDS_Face& theShape,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                            const Handle(IntTools_Context)& theContext);
+#else
+                                                            IntTools_Context& theContext);
+#endif
 
-//! Returns True if tangent direction of the edge <br>
-//!          theEdge is not the same as for the edge <br>
-//!          theSplit <br>
-//!          theContext - cashed geometrical tools <br>
-Standard_EXPORT static  Standard_Boolean IsSplitToReverse(const TopoDS_Edge& theEdge,const TopoDS_Edge& theSplit,IntTools_Context& theContext) ;
+  //! Returns True if tangent direction of the edge <br>
+  //!          theEdge is not the same as for the edge <br>
+  //!          theSplit <br>
+  //!          theContext - cashed geometrical tools <br>
+  Standard_EXPORT static Standard_Boolean IsSplitToReverse (const TopoDS_Edge& theEdge,
+                                                            const TopoDS_Edge& theSplit,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                            const Handle(IntTools_Context)& theContext);
+#else
+                                                            IntTools_Context& theContext);
+#endif
 
-//! For the couple of faces theF1, theF2 <br>
-//!          computes sense value <br>
-//!          Returns 0 if the faces are not sensible <br>
-//!          Returns 1 if the faces have same sense <br>
-//!          Returns 2 if the faces have opposite sense <br>
-Standard_EXPORT static  Standard_Integer Sense(const TopoDS_Face& theF1,const TopoDS_Face& theF2) ;
+  //! For the couple of faces theF1, theF2 <br>
+  //!          computes sense value <br>
+  //!          Returns 0 if the faces are not sensible <br>
+  //!          Returns 1 if the faces have same sense <br>
+  //!          Returns 2 if the faces have opposite sense <br>
+  Standard_EXPORT static Standard_Integer Sense (const TopoDS_Face& theF1, const TopoDS_Face& theF2);
 
-//! Makes new face theF2 from surface and wires <br>
-//!          of the face theF1 <br>
-Standard_EXPORT static  void CopyFace(const TopoDS_Face& theF1,TopoDS_Face& theF2) ;
+  //! Makes new face theF2 from surface and wires <br>
+  //!          of the face theF1 <br>
+  Standard_EXPORT static void CopyFace (const TopoDS_Face& theF1, TopoDS_Face& theF2);
 
-//! Makes empty shape theShape of the type theType <br>
-Standard_EXPORT static  void MakeContainer(const TopAbs_ShapeEnum theType,TopoDS_Shape& theShape) ;
+  //! Makes empty shape theShape of the type theType <br>
+  Standard_EXPORT static void MakeContainer (const TopAbs_ShapeEnum theType, TopoDS_Shape& theShape);
 
-//! For the list of faces theLS build block <br>
-//!          theLSCB in terms of connexity by edges <br>
-//!          theMapAvoid - set of edges to avoid for <br>
-//!          the treatment <br>
-Standard_EXPORT static  void MakeConnexityBlock(const TopTools_ListOfShape& theLS,const TopTools_IndexedMapOfShape& theMapAvoid,TopTools_ListOfShape& theLSCB) ;
+  //! For the list of faces theLS build block <br>
+  //!          theLSCB in terms of connexity by edges <br>
+  //!          theMapAvoid - set of edges to avoid for <br>
+  //!          the treatment <br>
+  Standard_EXPORT static void MakeConnexityBlock (const TopTools_ListOfShape& theLS,
+                                                  const TopTools_IndexedMapOfShape& theMapAvoid,
+                                                  TopTools_ListOfShape& theLSCB);
 
-//! Computes the 3-D state of the shape theShape <br>
-//!          toward solid theSolid. <br>
-//!          theTol - value of precision of computation <br>
-//!          theContext- cahed geometrical tools <br>
-//!          Returns 3-D state. <br>
-Standard_EXPORT static  TopAbs_State ComputeStateByOnePoint(const TopoDS_Shape& theShape,const TopoDS_Solid& theSolid,const Standard_Real theTol,IntTools_Context& theContext) ;
+  //! Computes the 3-D state of the shape theShape <br>
+  //!          toward solid theSolid. <br>
+  //!          theTol - value of precision of computation <br>
+  //!          theContext- cahed geometrical tools <br>
+  //!          Returns 3-D state. <br>
+  Standard_EXPORT static TopAbs_State ComputeStateByOnePoint (const TopoDS_Shape& theShape,
+                                                              const TopoDS_Solid& theSolid,
+                                                              const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                              const Handle(IntTools_Context)& theContext);
+#else
+                                                              IntTools_Context& theContext);
+#endif
 
-//! Computes the 3-D state of the point thePoint <br>
-//!          toward solid theSolid. <br>
-//!          theTol - value of precision of computation <br>
-//!          theContext- cahed geometrical tools <br>
-//!          Returns 3-D state. <br>
-Standard_EXPORT static  TopAbs_State ComputeState(const gp_Pnt& thePoint,const TopoDS_Solid& theSolid,const Standard_Real theTol,IntTools_Context& theContext) ;
+  //! Computes the 3-D state of the point thePoint <br>
+  //!          toward solid theSolid. <br>
+  //!          theTol - value of precision of computation <br>
+  //!          theContext- cahed geometrical tools <br>
+  //!          Returns 3-D state. <br>
+  Standard_EXPORT static TopAbs_State ComputeState (const gp_Pnt& thePoint,
+                                                    const TopoDS_Solid& theSolid,
+                                                    const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                    const Handle(IntTools_Context)& theContext);
+#else
+                                                    IntTools_Context& theContext);
+#endif
 
-//! Computes the 3-D state of the vertex theVertex <br>
-//!          toward solid theSolid. <br>
-//!          theTol - value of precision of computation <br>
-//!          theContext- cahed geometrical tools <br>
-//!          Returns 3-D state. <br>
-Standard_EXPORT static  TopAbs_State ComputeState(const TopoDS_Vertex& theVertex,const TopoDS_Solid& theSolid,const Standard_Real theTol,IntTools_Context& theContext) ;
+  //! Computes the 3-D state of the vertex theVertex <br>
+  //!          toward solid theSolid. <br>
+  //!          theTol - value of precision of computation <br>
+  //!          theContext- cahed geometrical tools <br>
+  //!          Returns 3-D state. <br>
+  Standard_EXPORT static TopAbs_State ComputeState (const TopoDS_Vertex& theVertex,
+                                                    const TopoDS_Solid& theSolid,
+                                                    const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                    const Handle(IntTools_Context)& theContext);
+#else
+                                                    IntTools_Context& theContext);
+#endif
 
-//! Computes the 3-D state of the edge theEdge <br>
-//!          toward solid theSolid. <br>
-//!          theTol - value of precision of computation <br>
-//!          theContext- cahed geometrical tools <br>
-//!          Returns 3-D state. <br>
-Standard_EXPORT static  TopAbs_State ComputeState(const TopoDS_Edge& theEdge,const TopoDS_Solid& theSolid,const Standard_Real theTol,IntTools_Context& theContext) ;
+  //! Computes the 3-D state of the edge theEdge <br>
+  //!          toward solid theSolid. <br>
+  //!          theTol - value of precision of computation <br>
+  //!          theContext- cahed geometrical tools <br>
+  //!          Returns 3-D state. <br>
+  Standard_EXPORT static TopAbs_State ComputeState (const TopoDS_Edge& theEdge,
+                                                    const TopoDS_Solid& theSolid,
+                                                    const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                    const Handle(IntTools_Context)& theContext);
+#else
+                                                    IntTools_Context& theContext);
+#endif
 
-//! Computes the 3-D state of the face theFace <br>
-//!          toward solid theSolid. <br>
-//!          theTol - value of precision of computation <br>
-//!          theBounds - set of edges of theFace to avoid <br>
-//!          theContext- cahed geometrical tools <br>
-//!          Returns 3-D state. <br>
-Standard_EXPORT static  TopAbs_State ComputeState(const TopoDS_Face& theFace,const TopoDS_Solid& theSolid,const Standard_Real theTol,const TopTools_IndexedMapOfShape& theBounds,IntTools_Context& theContext) ;
+  //! Computes the 3-D state of the face theFace <br>
+  //!          toward solid theSolid. <br>
+  //!          theTol - value of precision of computation <br>
+  //!          theBounds - set of edges of theFace to avoid <br>
+  //!          theContext- cahed geometrical tools <br>
+  //!          Returns 3-D state. <br>
+  Standard_EXPORT static TopAbs_State ComputeState (const TopoDS_Face& theFace,
+                                                    const TopoDS_Solid& theSolid,
+                                                    const Standard_Real theTol,
+                                                    const TopTools_IndexedMapOfShape& theBounds,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                    const Handle(IntTools_Context)& theContext);
+#else
+                                                    IntTools_Context& theContext);
+#endif
 
-//! Returns True if the face theFace is inside of the <br>
-//!          couple of faces theFace1, theFace2. <br>
-//!          The faces theFace, theFace1, theFace2  must <br>
-//!          share the edge theEdge <br>
-Standard_EXPORT static  Standard_Boolean IsInternalFace(const TopoDS_Face& theFace,const TopoDS_Edge& theEdge,const TopoDS_Face& theFace1,const TopoDS_Face& theFace2,IntTools_Context& theContext) ;
+  //! Returns True if the face theFace is inside of the <br>
+  //!          couple of faces theFace1, theFace2. <br>
+  //!          The faces theFace, theFace1, theFace2  must <br>
+  //!          share the edge theEdge <br>
+  Standard_EXPORT static Standard_Boolean IsInternalFace (const TopoDS_Face& theFace,
+                                                          const TopoDS_Edge& theEdge,
+                                                          const TopoDS_Face& theFace1,
+                                                          const TopoDS_Face& theFace2,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                          const Handle(IntTools_Context)& theContext);
+#else
+                                                          IntTools_Context& theContext);
+#endif
 
-//! Returns True if the face theFace is inside of the <br>
-//!          appropriate couple of faces (from the set theLF)    . <br>
-//!          The faces of the set theLF and theFace  must <br>
-//!          share the edge theEdge <br>
-Standard_EXPORT static  Standard_Boolean IsInternalFace(const TopoDS_Face& theFace,const TopoDS_Edge& theEdge,const TopTools_ListOfShape& theLF,IntTools_Context& theContext) ;
+  //! Returns True if the face theFace is inside of the <br>
+  //!          appropriate couple of faces (from the set theLF)    . <br>
+  //!          The faces of the set theLF and theFace  must <br>
+  //!          share the edge theEdge <br>
+  Standard_EXPORT static Standard_Boolean IsInternalFace (const TopoDS_Face& theFace,
+                                                          const TopoDS_Edge& theEdge,
+                                                          const TopTools_ListOfShape& theLF,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                          const Handle(IntTools_Context)& theContext);
+#else
+                                                          IntTools_Context& theContext);
+#endif
 
-//! Returns True if the face theFace is inside the <br>
-//!          solid theSolid. <br>
-//!          theMEF - Map Edge/Faces for theSolid <br>
-//!          theTol - value of precision of computation <br>
-//!          theContext- cahed geometrical tools <br>
-Standard_EXPORT static  Standard_Boolean IsInternalFace(const TopoDS_Face& theFace,const TopoDS_Solid& theSolid,const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,const Standard_Real theTol,IntTools_Context& theContext) ;
+  //! Returns True if the face theFace is inside the <br>
+  //!          solid theSolid. <br>
+  //!          theMEF - Map Edge/Faces for theSolid <br>
+  //!          theTol - value of precision of computation <br>
+  //!          theContext- cahed geometrical tools <br>
+  Standard_EXPORT static Standard_Boolean IsInternalFace (const TopoDS_Face& theFace,
+                                                          const TopoDS_Solid& theSolid,
+                                                          const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,
+                                                          const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                          const Handle(IntTools_Context)& theContext);
+#else
+                                                          IntTools_Context& theContext);
+#endif
 
-//!  For the face theFace and its edge theEdge <br>
-//!           finds the face suitable to produce shell. <br>
-//!           theLCEF - set of faces to search. All faces <br>
-//!           from theLCEF must share edge theEdge <br>
-Standard_EXPORT static  void GetFaceOff(const TopoDS_Edge& theEdge,const TopoDS_Face& theFace,const NMTTools_ListOfCoupleOfShape& theLCEF,TopoDS_Face& theFaceOff) ;
+  //!  For the face theFace and its edge theEdge <br>
+  //!           finds the face suitable to produce shell. <br>
+  //!           theLCEF - set of faces to search. All faces <br>
+  //!           from theLCEF must share edge theEdge <br>
+  Standard_EXPORT static void GetFaceOff (const TopoDS_Edge& theEdge,
+                                          const TopoDS_Face& theFace,
+                                          const NMTTools_ListOfCoupleOfShape& theLCEF,
+                                          TopoDS_Face& theFaceOff);
 
-//! For the face theFace gets the edge theEdgeOnF <br>
-//!          that is the same as theEdge <br>
-//!          Returns True if such edge exists <br>
-//!          Returns False if there is no such edge <br>
-Standard_EXPORT static  Standard_Boolean GetEdgeOnFace(const TopoDS_Edge& theEdge,const TopoDS_Face& theFace,TopoDS_Edge& theEdgeOnF) ;
+  //! For the face theFace gets the edge theEdgeOnF <br>
+  //!          that is the same as theEdge <br>
+  //!          Returns True if such edge exists <br>
+  //!          Returns False if there is no such edge <br>
+  Standard_EXPORT static Standard_Boolean GetEdgeOnFace (const TopoDS_Edge& theEdge,
+                                                         const TopoDS_Face& theFace,
+                                                         TopoDS_Edge& theEdgeOnF);
 
-//! Returns True if the face theFace contains <br>
-//!          the edge theEdge but with opposite orientation. <br>
-//!          If the method  returns True theEdgeOff is the <br>
-//!          edge founded <br>
-Standard_EXPORT static  Standard_Boolean GetEdgeOff(const TopoDS_Edge& theEdge,const TopoDS_Face& theFace,TopoDS_Edge& theEdgeOff) ;
+  //! Returns True if the face theFace contains <br>
+  //!          the edge theEdge but with opposite orientation. <br>
+  //!          If the method  returns True theEdgeOff is the <br>
+  //!          edge founded <br>
+  Standard_EXPORT static Standard_Boolean GetEdgeOff (const TopoDS_Edge& theEdge,
+                                                      const TopoDS_Face& theFace,
+                                                      TopoDS_Edge& theEdgeOff);
 
-//! Computes a point <theP> inside the face <theF>. <br>
-//!          <theP2D> -  2D  representation of <theP> <br>
-//!          on the surface of <theF> <br>
-//!          Returns 0 in case of success. <br>
-Standard_EXPORT   static  Standard_Integer PntInFace(const TopoDS_Face& theF,gp_Pnt& theP,gp_Pnt2d& theP2D) ;
-
-
-
+  //! Computes a point <theP> inside the face <theF>. <br>
+  //!          <theP2D> -  2D  representation of <theP> <br>
+  //!          on the surface of <theF> <br>
+  //!          Returns 0 in case of success. <br>
+  Standard_EXPORT static Standard_Integer PntInFace (const TopoDS_Face& theF,
+                                                     gp_Pnt& theP,
+                                                     gp_Pnt2d& theP2D);
 
 protected:
 
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+private:
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

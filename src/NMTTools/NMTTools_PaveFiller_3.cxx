@@ -18,14 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        NMTTools_PaveFiller_3.cxx
 // Created:     Mon Dec  8 16:06:56 2003
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <NMTTools_PaveFiller.ixx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -48,6 +48,7 @@ static
   Standard_Boolean Contains(const TopoDS_Face& aF,
                             const TopoDS_Vertex& aV);
 // Contribution of Samtech www.samcef.com END
+
 //=======================================================================
 // function: PerformVF
 // purpose: 
@@ -106,7 +107,11 @@ static
       }
       // Contribution of Samtech www.samcef.com END
       //
+#if OCC_VERSION_LARGE > 0x06050200
+      aFlag=myContext->ComputeVS (aV1, aF2, aU, aV);
+#else
       aFlag=myContext.ComputeVS (aV1, aF2, aU, aV);
+#endif
       //
       if (!aFlag) {
         //

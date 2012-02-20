@@ -18,13 +18,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_BuilderFace.cxx
-// Created:     
 // Author:      Peter KURNEV
-//
+
 #include <GEOMAlgo_BuilderFace.ixx>
+
+#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_BuilderTools.hxx>
+#include <GEOMAlgo_WireEdgeSet.hxx>
+#include <GEOMAlgo_WESCorrector.hxx>
+
+#include <NMTTools_ListOfCoupleOfShape.hxx>
+#include <NMTTools_CoupleOfShape.hxx>
+#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <gp_Pnt2d.hxx>
 #include <gp_Pln.hxx>
@@ -71,15 +80,6 @@
 #include <BOP_WireEdgeSet.hxx>
 #include <BOP_WESCorrector.hxx>
 
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-#include <NMTTools_CoupleOfShape.hxx>
-#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-#include <GEOMAlgo_BuilderTools.hxx>
-#include <GEOMAlgo_WireEdgeSet.hxx>
-#include <GEOMAlgo_WESCorrector.hxx>
-
 //
 static
   Standard_Boolean IsGrowthWire(const TopoDS_Shape& ,
@@ -89,7 +89,12 @@ static
 static 
   Standard_Boolean IsInside(const TopoDS_Shape& ,
                             const TopoDS_Shape& ,
+#if OCC_VERSION_LARGE > 0x06050200
+                            const Handle(IntTools_Context)& );
+#else
                             IntTools_PContext& );
+#endif
+
 static
   void MakeInternalWires(const TopTools_MapOfShape& ,
                          TopTools_ListOfShape& );
@@ -134,15 +139,22 @@ static
 {
   myErrorStatus=0;
   //
+#if OCC_VERSION_LARGE <= 0x06050200
   if (myContext==NULL) {
     myErrorStatus=11;// Null Context
     return;
   }
+#endif
   //
   if (myFace.IsNull()) {
     myErrorStatus=12;// Null face generix
     return;
   }
+  //
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_BuilderArea::Perform();
+#endif
   //
   PerformShapesToAvoid();
   if (myErrorStatus) {
@@ -619,7 +631,11 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theHole,
                           const TopoDS_Shape& theF2,
+#if OCC_VERSION_LARGE > 0x06050200
+                          const Handle(IntTools_Context)& theContext)
+#else
                           IntTools_PContext& theContext)
+#endif
 {
   Standard_Boolean bRet;
   Standard_Real aT, aU, aV;

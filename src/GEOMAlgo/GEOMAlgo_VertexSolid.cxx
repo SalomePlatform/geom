@@ -18,14 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_VertexSolid.cxx
 // Created:     Wed Jan 12 16:36:40 2005
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_VertexSolid.ixx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <gp_Pnt.hxx>
 
@@ -136,14 +136,22 @@ void GEOMAlgo_VertexSolid::Prepare()
   BOPTools_CArray1OfVVInterference& aVVs=pIP->VVInterferences();
   const BOPTools_PaveFiller& aPF=myDSFiller->PaveFiller();
   BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)&aPF; 
+#if OCC_VERSION_LARGE > 0x06050200
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
+#else
   IntTools_Context& aCtx=pPF->ChangeContext();
+#endif
   //
   const TopoDS_Shape& aObj=aDS.Object();
   const TopoDS_Shape& aTool=aDS.Tool();
   //
   const TopoDS_Solid& aSolid=(myRank==1) ? TopoDS::Solid(aTool) : TopoDS::Solid(aObj);
   //
+#if OCC_VERSION_LARGE > 0x06050200
+  BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
+#else
   BRepClass3d_SolidClassifier& aSC=aCtx.SolidClassifier(aSolid);
+#endif
   //
   iBeg=1;
   iEnd=aDS.NumberOfShapesOfTheObject();

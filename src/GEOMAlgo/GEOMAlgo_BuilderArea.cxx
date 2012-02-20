@@ -18,47 +18,81 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_BuilderArea.cxx
-// Created:     
-// Author:      Peter KURNEV 
-//
+// Author:      Peter KURNEV
+
 #include <GEOMAlgo_BuilderArea.ixx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+
 #include <TopoDS_Shape.hxx>
 
+#include <IntTools_Context.hxx>
+
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
-  GEOMAlgo_BuilderArea::GEOMAlgo_BuilderArea()
-:
-  GEOMAlgo_Algo()
+GEOMAlgo_BuilderArea::GEOMAlgo_BuilderArea()
+  : GEOMAlgo_Algo()
 {
+#if OCC_VERSION_LARGE <= 0x06050200
   myContext=NULL;
+#endif
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
-  GEOMAlgo_BuilderArea::~GEOMAlgo_BuilderArea()
+GEOMAlgo_BuilderArea::~GEOMAlgo_BuilderArea()
 {
 }
 //=======================================================================
 //function : SetContext
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderArea::SetContext(const IntTools_Context& theContext)
+#if OCC_VERSION_LARGE > 0x06050200
+void GEOMAlgo_BuilderArea::SetContext(const Handle(IntTools_Context)& theContext)
+#else
+void GEOMAlgo_BuilderArea::SetContext(const IntTools_Context& theContext)
+#endif
 {
+#if OCC_VERSION_LARGE > 0x06050200
+  myContext=theContext;
+#else
   myContext=(IntTools_Context*)&theContext;
+#endif
+}
+
+#if OCC_VERSION_LARGE > 0x06050200
+//=======================================================================
+//function : Context
+//purpose  :
+//=======================================================================
+const Handle(IntTools_Context)& GEOMAlgo_BuilderArea::Context()const
+{
+  return myContext;
 }
 //=======================================================================
-//function : SetShapes
-//purpose  : 
+//function : Perform
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderArea::SetShapes(const TopTools_ListOfShape& theLF)
+void GEOMAlgo_BuilderArea::Perform()
+{
+  if (myContext.IsNull()) {
+    myContext=new IntTools_Context;
+  }
+}
+#endif
+
+//=======================================================================
+//function : SetShapes
+//purpose  :
+//=======================================================================
+void GEOMAlgo_BuilderArea::SetShapes(const TopTools_ListOfShape& theLF)
 {
   TopTools_ListIteratorOfListOfShape aIt;
   //
@@ -71,54 +105,53 @@
 }
 //=======================================================================
 //function : Shapes
-//purpose  : 
+//purpose  :
 //=======================================================================
-  const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Shapes()const
+const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Shapes()const
 {
   return myShapes;
 }
 //=======================================================================
 //function : Loops
-//purpose  : 
+//purpose  :
 //=======================================================================
-  const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Loops()const
+const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Loops()const
 {
   return myLoops;
 }
 //=======================================================================
-//function : Solids
-//purpose  : 
+//function : Areas
+//purpose  :
 //=======================================================================
-  const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Areas()const
+const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Areas()const
 {
   return myAreas;
 }
 //=======================================================================
 //function :PerformShapesToAvoid
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderArea::PerformShapesToAvoid()
+void GEOMAlgo_BuilderArea::PerformShapesToAvoid()
 {
 }
 //=======================================================================
 //function : PerformLoops
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderArea::PerformLoops()
+void GEOMAlgo_BuilderArea::PerformLoops()
 {
 }
 //=======================================================================
 //function : PerformAreas
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderArea::PerformAreas()
+void GEOMAlgo_BuilderArea::PerformAreas()
 {
 }
 //=======================================================================
 //function : PerformInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_BuilderArea::PerformInternalShapes()
+void GEOMAlgo_BuilderArea::PerformInternalShapes()
 {
 }
-

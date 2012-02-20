@@ -18,108 +18,86 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
 #define _GEOMAlgo_ShapeAlgo_HeaderFile
 
-#ifndef _TopoDS_Shape_HeaderFile
+#include <GEOMAlgo_Algo.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#include <Standard.hxx>
+#include <Standard_Macro.hxx>
+
 #include <TopoDS_Shape.hxx>
-#endif
-#ifndef _Standard_Real_HeaderFile
+
 #include <Standard_Real.hxx>
-#endif
-#ifndef _IntTools_Context_HeaderFile
+
+#if OCC_VERSION_LARGE > 0x06050200
+#include <Handle_IntTools_Context.hxx>
+#else
 #include <IntTools_Context.hxx>
 #endif
-#ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
-#endif
+
+class IntTools_Context;
 class TopoDS_Shape;
-
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
 
 class GEOMAlgo_ShapeAlgo  : public GEOMAlgo_Algo {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  void* operator new(size_t,void* anAddress)
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
+  }
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
+  }
 
+#if OCC_VERSION_LARGE > 0x06050200
+  //! Sets cashed geometrical tools <br>
+  Standard_EXPORT     void SetContext(const Handle(IntTools_Context)& theContext) ;
+  //! Returns cashed geometrical tools <br>
+  Standard_EXPORT    const Handle_IntTools_Context& Context() const;
 
-Standard_EXPORT   void SetShape(const TopoDS_Shape& aS) ;
+  Standard_EXPORT   virtual  void Perform() ;
+#endif
 
+  Standard_EXPORT   void SetShape(const TopoDS_Shape& aS) ;
 
-Standard_EXPORT   void SetTolerance(const Standard_Real aT) ;
+  Standard_EXPORT   void SetTolerance(const Standard_Real aT) ;
 
+  Standard_EXPORT  const TopoDS_Shape& Shape() const;
 
-Standard_EXPORT  const TopoDS_Shape& Shape() const;
+  Standard_EXPORT   Standard_Real Tolerance() const;
 
-
-Standard_EXPORT   Standard_Real Tolerance() const;
-
-
-Standard_EXPORT  const TopoDS_Shape& Result() const;
-
-
-
-
+  Standard_EXPORT  const TopoDS_Shape& Result() const;
 
 protected:
 
- // Methods PROTECTED
- // 
+
+  Standard_EXPORT GEOMAlgo_ShapeAlgo();
+  Standard_EXPORT virtual ~GEOMAlgo_ShapeAlgo();
 
 
-Standard_EXPORT GEOMAlgo_ShapeAlgo();
-Standard_EXPORT virtual ~GEOMAlgo_ShapeAlgo();
+  TopoDS_Shape myShape;
+  Standard_Real myTolerance;
+  TopoDS_Shape myResult;
+#if OCC_VERSION_LARGE > 0x06050200
+  Handle_IntTools_Context myContext;
+#else
+  IntTools_Context myContext;
+#endif
 
-
- // Fields PROTECTED
- //
-TopoDS_Shape myShape;
-Standard_Real myTolerance;
-TopoDS_Shape myResult;
-IntTools_Context myContext;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+private:
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

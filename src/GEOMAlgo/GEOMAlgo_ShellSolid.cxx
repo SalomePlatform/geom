@@ -18,14 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_ShellSolid.cxx
 // Created:     Wed Jan 12 12:49:45 2005
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_ShellSolid.ixx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <Standard_Failure.hxx>
 
@@ -265,9 +265,15 @@ void GEOMAlgo_ShellSolid::BuildResult()
             TopoDS::Solid(aDS.Tool()) : TopoDS::Solid(aDS.Object());
           //
           BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)& aPaveFiller;
+#if OCC_VERSION_LARGE > 0x06050200
+          const Handle(IntTools_Context)& aCtx=pPF->Context();
+          //
+          BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aRefSolid);
+#else
           IntTools_Context& aCtx=pPF->ChangeContext();
           //
           BRepClass3d_SolidClassifier& aSC=aCtx.SolidClassifier(aRefSolid);
+#endif
           aSC.Perform(aP3D, aTol);
           aSt=aSC.State();
           if (aSt==TopAbs_IN) {

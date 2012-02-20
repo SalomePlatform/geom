@@ -39,7 +39,16 @@ is
     Initialize 
     	returns ShapeAlgo from GEOMAlgo;  
     ---C++: alias "Standard_EXPORT virtual ~GEOMAlgo_ShapeAlgo();"  
-    
+
+    SetContext(me:out;
+    	       theContext:Context from IntTools);
+	---Purpose: Sets cashed geometrical tools
+
+    Context(me)
+    	returns  Context from IntTools;
+	---Purpose: Returns cashed geometrical tools
+    ---C++:  return const &
+
     SetShape(me:out; 
     	    aS:Shape from TopoDS);
      
@@ -56,7 +65,10 @@ is
     Result(me) 
     	returns Shape from TopoDS; 
     ---C++:return const &  
-    
+
+    Perform(me:out)
+	is redefined;
+
 fields 
     myShape     : Shape from TopoDS is protected;     
     myTolerance : Real from Standard is protected; 

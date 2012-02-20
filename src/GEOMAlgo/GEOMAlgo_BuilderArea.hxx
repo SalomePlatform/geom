@@ -18,10 +18,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMAlgo_BuilderArea_HeaderFile
 #define _GEOMAlgo_BuilderArea_HeaderFile
+
+#include <Basics_OCCTVersion.hxx>
 
 #ifndef _TopTools_ListOfShape_HeaderFile
 #include <TopTools_ListOfShape.hxx>
@@ -29,9 +30,13 @@
 #ifndef _TopTools_MapOfOrientedShape_HeaderFile
 #include <TopTools_MapOfOrientedShape.hxx>
 #endif
-#ifndef _IntTools_PContext_HeaderFile
+
+#if OCC_VERSION_LARGE > 0x06050200
+#include <Handle_IntTools_Context.hxx>
+#else
 #include <IntTools_PContext.hxx>
 #endif
+
 #ifndef _GEOMAlgo_Algo_HeaderFile
 #include <GEOMAlgo_Algo.hxx>
 #endif
@@ -64,11 +69,18 @@ public:
       { 
         if (anAddress) Standard::Free((Standard_Address&)anAddress); 
       }
- // Methods PUBLIC
- // 
 
 //! Sets cashed geometrical tools <br>
+#if OCC_VERSION_LARGE > 0x06050200
+  Standard_EXPORT     void SetContext(const Handle(IntTools_Context)& theContext) ;
+#else
 Standard_EXPORT   void SetContext(const IntTools_Context& theContext) ;
+#endif
+
+#if OCC_VERSION_LARGE > 0x06050200
+  //! Returns cashed geometrical tools <br>
+  Standard_EXPORT    const Handle_IntTools_Context& Context() const;
+#endif
 
 //! Sets edges/faces to process <br>
 Standard_EXPORT   void SetShapes(const TopTools_ListOfShape& theLS) ;
@@ -82,57 +94,44 @@ Standard_EXPORT  const TopTools_ListOfShape& Loops() const;
 //! Returns faces/solids that have been built <br>
 Standard_EXPORT  const TopTools_ListOfShape& Areas() const;
 
-
-
-
+#if OCC_VERSION_LARGE > 0x06050200
+  Standard_EXPORT   virtual  void Perform() ;
+#endif
 
 protected:
 
- // Methods PROTECTED
- // 
-
-//!  Empty  constructor <br>
-Standard_EXPORT GEOMAlgo_BuilderArea();
+  //!  Empty  constructor <br>
+  Standard_EXPORT   GEOMAlgo_BuilderArea();
 Standard_EXPORT virtual ~GEOMAlgo_BuilderArea();
-
-//!  Collect the edges/faces that <br>
+  //!  Collect the edges/faces that <br>
 //!           a) are internal <br>
 //!           b) are the same and have different orientation <br>
-Standard_EXPORT virtual  void PerformShapesToAvoid() ;
-
-//! Build draft faces/shells <br>
+  Standard_EXPORT virtual  void PerformShapesToAvoid() ;
+  //! Build draft faces/shells <br>
 //!          a)myLoops - draft faces/shells that consist of <br>
 //!                      boundary edges/faces <br>
 //!          b)myLoopsInternal - draft faces/shells that contains <br>
 //!                               inner edges/faces <br>
-Standard_EXPORT virtual  void PerformLoops() ;
-
-//! Build draft faces/solids that contains boundary faces <br>
-Standard_EXPORT virtual  void PerformAreas() ;
-
-//! Build finalized faces/solids with internal wires/shells <br>
-Standard_EXPORT virtual  void PerformInternalShapes() ;
+  Standard_EXPORT virtual  void PerformLoops() ;
+  //! Build draft faces/solids that contains boundary faces <br>
+  Standard_EXPORT virtual  void PerformAreas() ;
+  //! Build finalized faces/solids with internal wires/shells <br>
+  Standard_EXPORT virtual  void PerformInternalShapes() ;
 
 
- // Fields PROTECTED
- //
 TopTools_ListOfShape myShapes;
 TopTools_ListOfShape myLoops;
 TopTools_ListOfShape myLoopsInternal;
 TopTools_MapOfOrientedShape myShapesToAvoid;
 TopTools_ListOfShape myAreas;
+#if OCC_VERSION_LARGE > 0x06050200
+Handle_IntTools_Context myContext;
+#else
 IntTools_PContext myContext;
+#endif
 
 
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+private:
 
 };
 
@@ -141,7 +140,6 @@ private:
 
 
 // other Inline functions and methods (like "C++: function call" methods)
-//
 
 
 #endif

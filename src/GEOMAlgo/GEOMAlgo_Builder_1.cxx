@@ -18,38 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_Builder_1.cxx
-// Created:     
 // Author:      Peter KURNEV 
-//
-#include <GEOMAlgo_Builder.hxx>
-//
-#include <TColStd_ListOfInteger.hxx>
 
-#include <TopoDS.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Wire.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Shell.hxx>
-#include <TopoDS_Iterator.hxx>
-//
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_ListOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
-//
-#include <BRep_Tool.hxx>
-#include <BRep_Builder.hxx>
-//
-#include <IntTools_Context.hxx>
-#include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
-#include <BOPTools_ListOfPaveBlock.hxx>
-#include <BOPTools_PaveBlock.hxx>
-//
-#include <NMTDS_ShapesDataStructure.hxx>
-//
+#include <GEOMAlgo_Builder.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#include <GEOMAlgo_Tools3D.hxx>
+
 #include <NMTTools_PaveFiller.hxx>
 #include <NMTTools_CommonBlockPool.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
@@ -57,10 +35,32 @@
 #include <NMTTools_CommonBlockPool.hxx>
 #include <NMTTools_ListOfCommonBlock.hxx>
 #include <NMTTools_CommonBlockAPI.hxx>
-//
-#include <GEOMAlgo_Tools3D.hxx>
+
+#include <NMTDS_ShapesDataStructure.hxx>
+
+#include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 
+#include <TopoDS.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Wire.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopoDS_Shell.hxx>
+#include <TopoDS_Iterator.hxx>
+
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
+
+#include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+
+#include <IntTools_Context.hxx>
+
+#include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
+#include <BOPTools_ListOfPaveBlock.hxx>
+#include <BOPTools_PaveBlock.hxx>
 
 
 static
@@ -112,8 +112,11 @@ static
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   const BOPTools_SplitShapesPool& aSSP=pPF->SplitShapesPool();
-/*  NMTTools_CommonBlockPool& aCBP=*/pPF->ChangeCommonBlockPool();
+#if OCC_VERSION_LARGE > 0x06050200
+  const Handle(IntTools_Context)& aCtx=pPF->Context();
+#else
   IntTools_Context& aCtx=pPF->ChangeContext();
+#endif
   //
   Standard_Boolean bToReverse;
   Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB, aNbLB;
@@ -227,7 +230,11 @@ static
   //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
+#if OCC_VERSION_LARGE > 0x06050200
+  const Handle(IntTools_Context)& aCtx= pPF->Context();
+#else
   IntTools_Context& aCtx= pPF->ChangeContext();
+#endif
   //
   aNbS=aDS.NumberOfShapesOfTheObject();
   for (i=1; i<=aNbS; ++i) {

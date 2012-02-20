@@ -27,6 +27,8 @@
 //
 #include <NMTTools_PaveFiller.ixx>
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <TColStd_IndexedMapOfInteger.hxx>
 
 #include <BRep_Tool.hxx>
@@ -49,7 +51,9 @@
 #include <IntTools_ShrunkRange.hxx>
 #include <IntTools_Range.hxx>
 #include <IntTools_EdgeFace.hxx>
+#if OCC_VERSION_LARGE <= 0x06050200
 #include <IntTools_PContext.hxx>
+#endif
 #include <IntTools_SequenceOfCommonPrts.hxx>
 #include <IntTools_CommonPrt.hxx>
 #include <IntTools_Tools.hxx>
@@ -191,7 +195,11 @@ static
       aEF.SetDiscretize (aDiscretize);
       aEF.SetDeflection (aDeflection);
       // 
+#if OCC_VERSION_LARGE > 0x06050200
+      aEF.SetContext(myContext);
+#else
       aEF.SetContext((IntTools_PContext)&myContext);
+#endif
       // 
       IntTools_Range anewSR = aSR;
       // 
@@ -527,7 +535,11 @@ static
       nE=aME(j);
       const TopoDS_Edge aE=TopoDS::Edge(myDS->Shape(nE));//mpv
       //
+#if OCC_VERSION_LARGE > 0x06050200
+      aFlag=myContext->ComputeVE (aNewVertex, aE, aT);
+#else
       aFlag=myContext.ComputeVE (aNewVertex, aE, aT);
+#endif
       //
       if (!aFlag) {
         aPave.SetInterference(-1);

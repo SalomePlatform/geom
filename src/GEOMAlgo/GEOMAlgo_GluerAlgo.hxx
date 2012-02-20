@@ -18,23 +18,25 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // File:        GEOMAlgo_GluerAlgo.hxx
-// Created:     
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #ifndef _GEOMAlgo_GluerAlgo_HeaderFile
 #define _GEOMAlgo_GluerAlgo_HeaderFile
 
 #include <Standard_Macro.hxx>
-#include <TopoDS_Shape.hxx>
 #include <Standard_Real.hxx>
 #include <Standard_Boolean.hxx>
+
+#include <TopoDS_Shape.hxx>
 #include <IntTools_Context.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapOfShapeShape.hxx>
+
 #include <GEOMAlgo_BuilderShape.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 //=======================================================================
 //class    : GEOMAlgo_GluerAlgo
@@ -72,10 +74,14 @@ public:
   
   Standard_EXPORT 
     virtual  void Clear() ;
-  
-  Standard_EXPORT 
-    IntTools_Context& Context() ;
-  
+
+#if OCC_VERSION_LARGE > 0x06050200
+  Standard_EXPORT void SetContext(const Handle(IntTools_Context)&);
+  Standard_EXPORT const Handle(IntTools_Context)& Context();
+#else
+  Standard_EXPORT IntTools_Context& Context();
+#endif
+
   Standard_EXPORT 
     const TopTools_DataMapOfShapeListOfShape& Images() const;
   
@@ -86,7 +92,11 @@ protected:
   TopoDS_Shape myArgument;
   Standard_Real myTolerance;
   Standard_Boolean myCheckGeometry;
+#if OCC_VERSION_LARGE > 0x06050200
+  Handle(IntTools_Context) myContext;
+#else
   IntTools_Context myContext;
+#endif
   TopTools_DataMapOfShapeListOfShape myImages;
   TopTools_DataMapOfShapeShape myOrigins;
   

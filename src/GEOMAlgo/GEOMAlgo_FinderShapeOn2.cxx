@@ -18,16 +18,26 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_FinderShapeOn1.cxx
 // Created:     Fri Mar  4 10:31:06 2005
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
-#include <GEOMAlgo_FinderShapeOn2.ixx>
-#include <math.h>
 
+#include <GEOMAlgo_FinderShapeOn2.ixx>
+
+#include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
+
+#include <GEOMAlgo_SurfaceTools.hxx>
+#include <GEOMAlgo_StateCollector.hxx>
+#include <GEOMAlgo_FinderShapeOn.hxx>
+
+#include <GEOMAlgo_PassKey.hxx>
+#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
+#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#include <math.h>
 
 #include <Precision.hxx>
 #include <TColStd_Array1OfInteger.hxx>
@@ -68,16 +78,6 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepLib_MakeEdge.hxx>
-
-#include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-
-#include <GEOMAlgo_SurfaceTools.hxx>
-#include <GEOMAlgo_StateCollector.hxx>
-#include <GEOMAlgo_FinderShapeOn.hxx>
-
-#include <GEOMAlgo_PassKey.hxx>
-#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
-#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn1
@@ -224,6 +224,11 @@
   if(myErrorStatus) {
     return;
   }
+  //
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_ShapeAlgo::Perform();
+#endif
   //
   myClsf->SetTolerance(myTolerance);
   //

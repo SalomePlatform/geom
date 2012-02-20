@@ -18,67 +18,68 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        GEOMAlgo_GlueDetector.cxx
 // Created:     Wed Dec 15 11:08:09 2004
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_GlueAnalyser.ixx>
+
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_Gluer.hxx>
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Compound.hxx>
+#include <TopoDS_Vertex.hxx>
 
 #include <BRep_Builder.hxx>
 
 #include <TopExp.hxx>
 
+#include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
-#include <GEOMAlgo_CoupleOfShapes.hxx>
-
-#include <GEOMAlgo_Gluer.hxx>
 #include <Bnd_HArray1OfBox.hxx>
 #include <Bnd_BoundSortBox.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
 #include <Bnd_Box.hxx>
-#include <TColStd_ListOfInteger.hxx>
-#include <TopTools_MapOfShape.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
+
 #include <BRepBndLib.hxx>
+
+#include <TColStd_ListOfInteger.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 
 //=======================================================================
 //function : 
 //purpose  : 
 //=======================================================================
-  GEOMAlgo_GlueAnalyser::GEOMAlgo_GlueAnalyser()
-:
-  GEOMAlgo_Gluer()
+GEOMAlgo_GlueAnalyser::GEOMAlgo_GlueAnalyser()
+  : GEOMAlgo_Gluer()
 {}
 //=======================================================================
 //function : ~
 //purpose  : 
 //=======================================================================
-  GEOMAlgo_GlueAnalyser::~GEOMAlgo_GlueAnalyser()
+GEOMAlgo_GlueAnalyser::~GEOMAlgo_GlueAnalyser()
 {}
 //=======================================================================
 //function : HasSolidsToGlue
 //purpose  : 
 //=======================================================================
-  Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsToGlue()const
+Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsToGlue()const
 {
   return !mySolidsToGlue.IsEmpty();
 }
@@ -86,7 +87,7 @@
 //function : HasSolidsAlone
 //purpose  : 
 //=======================================================================
-  Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
+Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 {
   return !mySolidsAlone.IsEmpty();
 }
@@ -122,6 +123,11 @@
   if (myErrorStatus) {
     return;
   }
+  //
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_ShapeAlgo::Perform();
+#endif
   //
   InnerTolerance();
   if (myErrorStatus) {

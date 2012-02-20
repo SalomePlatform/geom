@@ -154,7 +154,10 @@ void NMTTools_PaveFiller::PerformVE()
       }
       //
       //modified by NIZNHY-PKV Mon Dec 28 08:58:05 2009f
-#if OCC_VERSION_LARGE > 0x06030008
+#if OCC_VERSION_LARGE > 0x06050200
+      // In OCCT6.5.3 class IntTools_Context become a handle
+      aFlag = myContext->ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
+#elif OCC_VERSION_LARGE > 0x06030008
       // In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
       aFlag = myContext.ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
 #else

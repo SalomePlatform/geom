@@ -18,12 +18,11 @@
 -- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 --
 -- See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
---
 
 --  File:	GEOMAlgo_FinderShapeOn.cdl
 --  Created:	Tue Jan 11 14:35:52 2005
 --  Author:	Peter KURNEV
---
+
 class FinderShapeOn from GEOMAlgo 
     inherits ShapeAlgo from GEOMAlgo 
     
@@ -98,8 +97,11 @@ is
 	aImages   : out DataMapOfShapeShape from TopTools;   	 
 	aOriginals: out DataMapOfShapeShape from TopTools;   	 
     	aSC : out Shape from TopoDS); 
-	
-					
+
+    BuildTriangulation(myclass;
+                       aS  :Shape from TopoDS)
+        returns Boolean from Standard;
+
 
 fields 
     mySurface    : Surface from Geom is protected;  

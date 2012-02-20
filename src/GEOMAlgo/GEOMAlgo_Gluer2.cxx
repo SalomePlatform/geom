@@ -18,11 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // File:        GEOMAlgo_Gluer2.cxx
 // Author:      Peter KURNEV
 
 #include <GEOMAlgo_Gluer2.hxx>
+
+#include <GEOMAlgo_GlueDetector.hxx>
+#include <GEOMAlgo_Tools3D.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 
@@ -31,8 +36,9 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
-#include <BRep_Builder.hxx>
 #include <TopExp.hxx>
+
+#include <BRep_Builder.hxx>
 #include <BRepLib.hxx>
 
 #include <TopTools_MapOfShape.hxx>
@@ -42,9 +48,6 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
-
-#include <GEOMAlgo_GlueDetector.hxx>
-#include <GEOMAlgo_Tools3D.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_Gluer2
@@ -143,6 +146,11 @@ void GEOMAlgo_Gluer2::Perform()
   if (myErrorStatus) {
     return;
   }
+  //
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_GluerAlgo::Perform();
+#endif
   //
   PerformShapesToWork();
   if (myErrorStatus) {
@@ -620,6 +628,7 @@ void GEOMAlgo_Gluer2::BuildResult()
   //
   myShape=aCnew;
 }
+
 //--------------------------------------------------------
 //
 // ErrorStatus

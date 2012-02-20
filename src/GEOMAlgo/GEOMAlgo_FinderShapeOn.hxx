@@ -68,80 +68,63 @@ class GEOMAlgo_FinderShapeOn  : public GEOMAlgo_ShapeAlgo {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size) 
+  {
+    return Standard::Allocate(size); 
+  }
+  void  operator delete(void *anAddress) 
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
 
-Standard_EXPORT GEOMAlgo_FinderShapeOn();
-Standard_EXPORT virtual ~GEOMAlgo_FinderShapeOn();
+  Standard_EXPORT GEOMAlgo_FinderShapeOn();
+  Standard_EXPORT virtual ~GEOMAlgo_FinderShapeOn();
 
+  Standard_EXPORT virtual void Perform();
 
-Standard_EXPORT virtual  void Perform() ;
+  Standard_EXPORT   void SetSurface(const Handle(Geom_Surface)& aS) ;
 
+  Standard_EXPORT   void SetShapeType(const TopAbs_ShapeEnum aST) ;
 
-Standard_EXPORT   void SetSurface(const Handle(Geom_Surface)& aS) ;
+  Standard_EXPORT   void SetState(const GEOMAlgo_State aSF) ;
 
+  Standard_EXPORT  const Handle_Geom_Surface& Surface() const;
 
-Standard_EXPORT   void SetShapeType(const TopAbs_ShapeEnum aST) ;
+  Standard_EXPORT   TopAbs_ShapeEnum ShapeType() const;
 
+  Standard_EXPORT   GEOMAlgo_State State() const;
 
-Standard_EXPORT   void SetState(const GEOMAlgo_State aSF) ;
+  Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
 
+  Standard_EXPORT static void CopySource (const TopoDS_Shape& aS,
+                                          TopTools_DataMapOfShapeShape& aImages,
+                                          TopTools_DataMapOfShapeShape& aOriginals,
+                                          TopoDS_Shape& aSC) ;
 
-Standard_EXPORT  const Handle_Geom_Surface& Surface() const;
+  Standard_EXPORT static Standard_Boolean BuildTriangulation (const TopoDS_Shape& theShape);
 
-
-Standard_EXPORT   TopAbs_ShapeEnum ShapeType() const;
-
-
-Standard_EXPORT   GEOMAlgo_State State() const;
-
-
-Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
-
-
-Standard_EXPORT static  void CopySource(const TopoDS_Shape& aS,TopTools_DataMapOfShapeShape& aImages,TopTools_DataMapOfShapeShape& aOriginals,TopoDS_Shape& aSC) ;
-
-Standard_EXPORT static  bool BuildTriangulation (const TopoDS_Shape& theShape);
 
 protected:
 
- // Methods PROTECTED
- // 
+
+  Standard_EXPORT virtual  void CheckData() ;
+
+  Standard_EXPORT   void MakeArgument1() ;
+
+  Standard_EXPORT   void MakeArgument2() ;
+
+  Standard_EXPORT   void Find() ;
+
+  Standard_EXPORT   void Find(const TopoDS_Shape& aS) ;
+
+  Standard_EXPORT   void FindVertices() ;
 
 
-Standard_EXPORT virtual  void CheckData() ;
-
-
-Standard_EXPORT   void MakeArgument1() ;
-
-
-Standard_EXPORT   void MakeArgument2() ;
-
-
-Standard_EXPORT   void Find() ;
-
-
-Standard_EXPORT   void Find(const TopoDS_Shape& aS) ;
-
-
-Standard_EXPORT   void FindVertices() ;
-
-
- // Fields PROTECTED
- //
 Handle_Geom_Surface mySurface;
 TopAbs_ShapeEnum myShapeType;
 GEOMAlgo_State myState;
@@ -155,22 +138,9 @@ Standard_Boolean myIsAnalytic;
 
 private: 
 
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

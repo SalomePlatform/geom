@@ -43,15 +43,12 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Iterator.hxx>
 
-
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
-
-
 
 #include <TopTools_SequenceOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
@@ -113,15 +110,15 @@ static
                       const TopoDS_Face& aF);
 static
   Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
-                            const GeomAdaptor_Surface& aGAS);   
+                            const GeomAdaptor_Surface& aGAS);
 
 static
   Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
 //
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_WireSplitter::GEOMAlgo_WireSplitter()
 :
@@ -131,14 +128,14 @@ static
 }
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_WireSplitter::~GEOMAlgo_WireSplitter()
 {
 }
 //=======================================================================
 // function: SetFace
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WireSplitter::SetFace(const TopoDS_Face& aFace)
 {
@@ -146,7 +143,7 @@ static
 }
 //=======================================================================
 // function: Face
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Face& GEOMAlgo_WireSplitter::Face()const
 {
@@ -154,7 +151,7 @@ static
 }
 //=======================================================================
 // function: SetEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WireSplitter::SetEdges(const TopTools_ListOfShape& aLE)
 {
@@ -174,7 +171,7 @@ static
 }
 //=======================================================================
 // function: Edges
-// purpose: 
+// purpose:
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_WireSplitter::Edges()const
 {
@@ -182,7 +179,7 @@ static
 }
 //=======================================================================
 // function: IsNothingToDo
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean GEOMAlgo_WireSplitter::IsNothingToDo()const
 {
@@ -190,7 +187,7 @@ static
 }
 //=======================================================================
 // function: Shapes
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTColStd_ListOfListOfShape& GEOMAlgo_WireSplitter::Shapes()const
 {
@@ -198,7 +195,7 @@ static
 }
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WireSplitter::Perform()
 {
@@ -208,7 +205,7 @@ static
   Standard_Integer index, i, aNb, aCntIn, aCntOut;
   Standard_Boolean anIsIn;
   Standard_Real anAngle;
-  
+
   BOP_ListOfEdgeInfo emptyInfo;
   TopTools_ListIteratorOfListOfShape anItList;
   //
@@ -231,12 +228,12 @@ static
       if (!index) {
         index=mySmartMap.Add(aVertex, emptyInfo);
       }
-      
+
       BOP_ListOfEdgeInfo& aListOfEInfo=mySmartMap(index);
 
       BOP_EdgeInfo aEInfo;
       aEInfo.SetEdge(anEdge);
-      
+
       TopAbs_Orientation anOr=aVertex.Orientation();
 
       if (anOr==TopAbs_FORWARD) {
@@ -253,9 +250,9 @@ static
   //
   aNb=mySmartMap.Extent();
   //
-  // 2. myNothingToDo 
+  // 2. myNothingToDo
   myNothingToDo=Standard_True;
-  
+
   for (i=1; i<=aNb; i++) {
     aCntIn=0;
     aCntOut=0;
@@ -280,16 +277,16 @@ static
   // Each vertex has one edge In and one - Out. Good. But it is not enought
   // to consider that nothing to do with this. We must check edges on TShape
   // coinsidence. If there are such edges there is something to do with.
-  // 
+  //
   if (myNothingToDo) {
     Standard_Integer aNbE, aNbMapEE;
     TopTools_IndexedDataMapOfShapeListOfShape aMapEE;
     aNbE=myEdges.Extent();
-    
+
     anItList.Initialize(myEdges);
     for (; anItList.More(); anItList.Next()) {
       const TopoDS_Shape& aE = anItList.Value();
-      
+
       if (!aMapEE.Contains(aE)) {
         TopTools_ListOfShape aLEx;
         aLEx.Append(aE);
@@ -300,7 +297,7 @@ static
         aLEx.Append(aE);
       }
     }
-    
+
     Standard_Boolean bFlag;
     bFlag=Standard_True;
     aNbMapEE=aMapEE.Extent();
@@ -326,7 +323,7 @@ static
     }
     myNothingToDo=myNothingToDo && bFlag;
   }
-  // 
+  //
   //
   if (myNothingToDo) {
     myErrorStatus=0;
@@ -353,45 +350,45 @@ static
         aVV.Orientation(TopAbs_REVERSED);
         anAngle=Angle2D (aVV, aE, myFace, aGAS, Standard_True);
       }
-      // 
+      //
       else { // OUT
         //
         aVV.Orientation(TopAbs_FORWARD);
         anAngle=Angle2D (aVV, aE, myFace, aGAS, Standard_False);
       }
       anEdgeInfo.SetAngle(anAngle);
-      
+
     }
   }
   //
   // 4. Do
   //
   Standard_Boolean anIsOut, anIsNotPassed;
-  
+
   TopTools_SequenceOfShape aLS, aVertVa;
   TColgp_SequenceOfPnt2d aCoordVa;
-  
+
   BOP_ListIteratorOfListOfEdgeInfo anIt;
 
   for (i=1; i<=aNb; i++) {
     const TopoDS_Vertex aVa=TopoDS::Vertex (mySmartMap.FindKey(i));
     const BOP_ListOfEdgeInfo& aLEInfo=mySmartMap(i);
-    
+
     anIt.Initialize(aLEInfo);
     for (; anIt.More(); anIt.Next()) {
       BOP_EdgeInfo& anEdgeInfo=anIt.Value();
       const TopoDS_Edge& aEOuta=anEdgeInfo.Edge();
-      
+
       anIsOut=!anEdgeInfo.IsIn();
       anIsNotPassed=!anEdgeInfo.Passed();
-      
+
       if (anIsOut && anIsNotPassed) {
         //
         aLS.Clear();
         aVertVa.Clear();
         aCoordVa.Clear();
         //
-        Path(aGAS, myFace, aVa, aEOuta, anEdgeInfo, aLS, 
+        Path(aGAS, myFace, aVa, aEOuta, anEdgeInfo, aLS,
              aVertVa, aCoordVa, myShapes, mySmartMap);
       }
     }
@@ -402,7 +399,7 @@ static
     TopoDS_Vertex aV1, aV2;
     BOPTColStd_ListOfListOfShape aShapes;
     BOPTColStd_ListIteratorOfListOfListOfShape anItW(myShapes);
-    
+
     for (; anItW.More(); anItW.Next()) {
       TopTools_IndexedMapOfShape aMV, aME;
       const TopTools_ListOfShape& aLE=anItW.Value();
@@ -433,7 +430,7 @@ static
 }
 //=======================================================================
 // function: Path
-// purpose: 
+// purpose:
 //=======================================================================
   void Path (const GeomAdaptor_Surface& aGAS,
              const TopoDS_Face& myFace,
@@ -445,12 +442,11 @@ static
              TColgp_SequenceOfPnt2d& aCoordVa,
              BOPTColStd_ListOfListOfShape& myShapes,
              BOP_IndexedDataMapOfVertexListEdgeInfo& mySmartMap)
-                               
 {
   Standard_Integer i,j, aNb, aNbj;
   Standard_Real aTol, anAngleIn, anAngleOut, anAngle, aMinAngle;
   Standard_Real aTol2D, aTol2D2;
-  Standard_Real aTol2, aD2;//, aTolUVb, aTolVVb;  
+  Standard_Real aTol2, aD2;//, aTolUVb, aTolVVb;
   Standard_Boolean anIsSameV2d, anIsSameV, anIsFound, anIsOut, anIsNotPassed;
   BOP_ListIteratorOfListOfEdgeInfo anIt;
   TopoDS_Vertex aVb;
@@ -460,7 +456,7 @@ static
   //
   // append block
   //
-  // Do not escape through edge from which you enter 
+  // Do not escape through edge from which you enter
   aNb=aLS.Length();
   if (aNb==1) {
     const TopoDS_Shape& anEPrev=aLS(aNb);
@@ -473,12 +469,12 @@ static
   anEdgeInfo.SetPassed(Standard_True);
   aLS.Append(aEOuta);
   aVertVa.Append(aVa);
-  
+
   TopoDS_Vertex pVa=aVa;
   pVa.Orientation(TopAbs_FORWARD);
   gp_Pnt2d aPa=Coord2d(pVa, aEOuta, myFace);
   aCoordVa.Append(aPa);
-  
+
   GetNextVertex (pVa, aEOuta, aVb);
 
   gp_Pnt2d aPb=Coord2d(aVb, aEOuta, myFace);
@@ -569,11 +565,11 @@ static
     const TopoDS_Edge& aE=anEI.Edge();
     anIsOut=!anEI.IsIn();
     anIsNotPassed=!anEI.Passed();
-    
+
     if (anIsOut && anIsNotPassed) {
       aCurIndexE++;
       //
-      // Is there one way to go out of the vertex 
+      // Is there one way to go out of the vertex
       // we have to use it only.
       Standard_Integer iCnt;
       iCnt=NbWaysOut (aLEInfo);
@@ -610,16 +606,16 @@ static
         anIsFound=Standard_True;
       }
     }
-  } // for (; anIt.More(); anIt.Next()) 
+  } // for (; anIt.More(); anIt.Next())
   //
   if (!anIsFound) {
     // no way to go . (Error)
     return;
   }
-  
+
   aEOutb=pEdgeInfo->Edge();
   //
-  Path (aGAS, myFace, aVb, aEOutb, *pEdgeInfo, aLS, 
+  Path (aGAS, myFace, aVb, aEOutb, *pEdgeInfo, aLS,
         aVertVa, aCoordVa, myShapes, mySmartMap);
 }
 //=======================================================================
@@ -649,7 +645,7 @@ static
 // purpose:
 //=======================================================================
  Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
-                            const GeomAdaptor_Surface& aGAS)                 
+                            const GeomAdaptor_Surface& aGAS)
 {
   Standard_Real aTol2D, anUr, aVr, aTolV3D;
   GeomAbs_SurfaceType aType;
@@ -733,19 +729,19 @@ static
   if (AIn >= aTwoPi) {
     AIn=AIn-aTwoPi;
   }
-  
+
   if (AOut >= aTwoPi) {
     AOut=AOut-aTwoPi;
   }
 
   A1 = AIn + M_PI;
-  
+
   if (A1 >= aTwoPi) {
     A1=A1-aTwoPi;
   }
-  
+
   A2=AOut;
-  
+
   dA=A1-A2;
   if (dA <= 0.) {
     dA=aTwoPi+dA;
@@ -763,7 +759,7 @@ static
 }
 //=======================================================================
 // function: GetNextVertex
-// purpose: 
+// purpose:
 //=======================================================================
  void GetNextVertex(const TopoDS_Vertex& aV,
                     const TopoDS_Edge& aE,
@@ -783,7 +779,7 @@ static
 }
 //=======================================================================
 // function: Angle2D
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Real Angle2D (const TopoDS_Vertex& aV,
                          const TopoDS_Edge& anEdge,
@@ -801,7 +797,7 @@ static
     return 0.;
   }
   //
-  BOPTools_Tools2D::CurveOnSurface (anEdge, myFace, aC2D, 
+  BOPTools_Tools2D::CurveOnSurface (anEdge, myFace, aC2D,
                                     aFirst, aLast, aToler, Standard_True);
   //dt=1.e-7;
   dt=2.*Tolerance2D(aV, aGAS);
@@ -810,7 +806,7 @@ static
   if(dt > aTX) {
     // to save direction of the curve as much as it possible
     // in the case of big tolerances
-    dt = aTX; 
+    dt = aTX;
   }
   //
   if (fabs (aTV-aFirst) < fabs(aTV - aLast)) {
@@ -839,7 +835,7 @@ static
 }
 //=======================================================================
 // function: Angle
-// purpose: 
+// purpose:
 //=======================================================================
 Standard_Real Angle (const gp_Dir2d& aDir2D)
 {
@@ -851,10 +847,10 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 
   return anAngle;
 }
-//
+
 //=======================================================================
 // function: NbWaysOut
-// purpose: 
+// purpose:
 //=======================================================================
 Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& aLEInfo)
 {

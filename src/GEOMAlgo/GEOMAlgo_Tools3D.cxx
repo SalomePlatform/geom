@@ -18,12 +18,17 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 //  File    : GEOMAlgo_Tools3D.cxx
-//  Created :
 //  Author  : Peter KURNEV
 
 #include <GEOMAlgo_Tools3D.ixx>
+
+#include <NMTTools_ListOfCoupleOfShape.hxx>
+#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
+#include <NMTTools_CoupleOfShape.hxx>
+
+#include <Basics_OCCTVersion.hxx>
 
 #include <Precision.hxx>
 
@@ -44,6 +49,7 @@
 
 #include <Geom2dHatch_Intersector.hxx>
 #include <Geom2dHatch_Hatcher.hxx>
+
 #include <HatchGen_Domain.hxx>
 
 #include <GeomAPI_ProjectPointOnSurf.hxx>
@@ -69,7 +75,7 @@
 
 #include <BRep_Builder.hxx>
 #include <BRep_Tool.hxx>
-//
+
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
@@ -87,19 +93,15 @@
 #include <BOPTools_Tools2D.hxx>
 #include <BOPTools_Tools.hxx>
 
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
-#include <NMTTools_CoupleOfShape.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
-//
+
 #include <GeomAdaptor_Surface.hxx>
 
 
-//
 static
   Standard_Boolean FindFacePairs (const TopoDS_Edge& ,
                                   const TopTools_ListOfShape& ,
@@ -117,7 +119,11 @@ static
                                     Standard_Real aT,
                                     gp_Pnt& aPF,
                                     gp_Dir& aDNF,
+#if OCC_VERSION_LARGE > 0x06050200
+                                    const Handle(IntTools_Context)& aCtx);
+#else
                                     IntTools_Context& aCtx);
+#endif
 
 //=======================================================================
 //function : IsInternalFace
@@ -127,7 +133,11 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
                                                   const TopoDS_Solid& theSolid,
                                                   const TopTools_IndexedDataMapOfShapeListOfShape& theMEF,
                                                   const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                  const Handle(IntTools_Context)& theContext)
+#else
                                                   IntTools_Context& theContext)
+#endif
 {
   Standard_Boolean bRet;
   Standard_Integer aNbF;
@@ -193,7 +203,11 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
   Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
                                                     const TopoDS_Edge& theEdge,
                                                     const TopTools_ListOfShape& theLF,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                    const Handle(IntTools_Context)& theContext)
+#else
                                                     IntTools_Context& theContext)
+#endif
 {
   Standard_Boolean bRet;
   Standard_Boolean aNbF;
@@ -236,7 +250,11 @@ Standard_Boolean GEOMAlgo_Tools3D::IsInternalFace(const TopoDS_Face& theFace,
                                                     const TopoDS_Edge& theEdge,
                                                     const TopoDS_Face& theFace1,
                                                     const TopoDS_Face& theFace2,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                    const Handle(IntTools_Context)& theContext)
+#else
                                                     IntTools_Context& theContext)
+#endif
 {
   Standard_Boolean bRet;
   Standard_Real aT1, aT2, aT, aDt2D, aDt2Dx;
@@ -426,7 +444,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
                                              const TopoDS_Solid& theRef,
                                              const Standard_Real theTol,
                                              const TopTools_IndexedMapOfShape& theBounds,
+#if OCC_VERSION_LARGE > 0x06050200
+                                             const Handle(IntTools_Context)& theCtx)
+#else
                                              IntTools_Context& theCtx)
+#endif
 {
   TopAbs_State aState;
   TopExp_Explorer aExp;
@@ -467,7 +489,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   TopAbs_State GEOMAlgo_Tools3D::ComputeStateByOnePoint(const TopoDS_Shape& theS,
                                                        const TopoDS_Solid& theRef,
                                                        const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                       const Handle(IntTools_Context)& theCtx)
+#else
                                                        IntTools_Context& theCtx)
+#endif
 {
   TopAbs_State aState;
   TopAbs_ShapeEnum aType;
@@ -491,7 +517,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   TopAbs_State GEOMAlgo_Tools3D::ComputeState(const TopoDS_Vertex& theV,
                                              const TopoDS_Solid& theRef,
                                              const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                             const Handle(IntTools_Context)& theCtx)
+#else
                                              IntTools_Context& theCtx)
+#endif
 {
   TopAbs_State aState;
   gp_Pnt aP3D;
@@ -507,7 +537,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   TopAbs_State GEOMAlgo_Tools3D::ComputeState(const TopoDS_Edge& theE,
                                              const TopoDS_Solid& theRef,
                                              const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                             const Handle(IntTools_Context)& theCtx)
+#else
                                              IntTools_Context& theCtx)
+#endif
 {
   Standard_Real aT1, aT2, aT = 0.;
   TopAbs_State aState;
@@ -557,11 +591,19 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   TopAbs_State GEOMAlgo_Tools3D::ComputeState(const gp_Pnt& theP,
                                              const TopoDS_Solid& theRef,
                                              const Standard_Real theTol,
+#if OCC_VERSION_LARGE > 0x06050200
+                                             const Handle(IntTools_Context)& theCtx)
+#else
                                              IntTools_Context& theCtx)
+#endif
 {
   TopAbs_State aState;
   //
+#if OCC_VERSION_LARGE > 0x06050200
+  BRepClass3d_SolidClassifier& aSC=theCtx->SolidClassifier(theRef);
+#else
   BRepClass3d_SolidClassifier& aSC=theCtx.SolidClassifier(theRef);
+#endif
   aSC.Perform(theP, theTol);
   //
   aState=aSC.State();
@@ -572,9 +614,13 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
 // function: IsSplitToReverse
 // purpose:
 //=======================================================================
-  Standard_Boolean GEOMAlgo_Tools3D::IsSplitToReverse(const TopoDS_Shape& theSp,
+Standard_Boolean GEOMAlgo_Tools3D::IsSplitToReverse (const TopoDS_Shape& theSp,
                                                      const TopoDS_Shape& theSr,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                     const Handle(IntTools_Context)& theCtx)
+#else
                                                      IntTools_Context& theCtx)
+#endif
 {
   Standard_Boolean bRet;
   TopAbs_ShapeEnum aType;
@@ -606,9 +652,13 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
 //function :IsSplitToReverse
 //purpose  :
 //=======================================================================
-  Standard_Boolean GEOMAlgo_Tools3D::IsSplitToReverse(const TopoDS_Face& theFSp,
+Standard_Boolean GEOMAlgo_Tools3D::IsSplitToReverse (const TopoDS_Face& theFSp,
                                                      const TopoDS_Face& theFSr,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                     const Handle(IntTools_Context)& theContext)
+#else
                                                      IntTools_Context& theContext)
+#endif
 {
   Standard_Boolean bRet, bFound, bInFace;
   Standard_Real aT1, aT2, aT, aU, aV, aScPr;
@@ -677,7 +727,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   //modified by NIZNHY-PKV Tue Nov 22 10:50:37 2011t
   //
   // Parts of theContext.ComputeVS(..)
+#if OCC_VERSION_LARGE > 0x06050200
+  GeomAPI_ProjectPointOnSurf& aProjector=theContext->ProjPS(theFSr);
+#else
   GeomAPI_ProjectPointOnSurf& aProjector=theContext.ProjPS(theFSr);
+#endif
   aProjector.Perform(aPFSp);
   if (!aProjector.IsDone()) {
     return bRet;
@@ -685,7 +739,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   //
   aProjector.LowerDistanceParameters(aU, aV);
   gp_Pnt2d aP2D(aU, aV);
+#if OCC_VERSION_LARGE > 0x06050200
+  bInFace=theContext->IsPointInFace (theFSr, aP2D);
+#else
   bInFace=theContext.IsPointInFace (theFSr, aP2D);
+#endif
   if (!bInFace) {
     return bRet;
   }
@@ -707,9 +765,13 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
 //function :IsSplitToReverse
 //purpose  :
 //=======================================================================
-  Standard_Boolean GEOMAlgo_Tools3D::IsSplitToReverse(const TopoDS_Edge& theSplit,
+Standard_Boolean GEOMAlgo_Tools3D::IsSplitToReverse (const TopoDS_Edge& theSplit,
                                                      const TopoDS_Edge& theEdge,
+#if OCC_VERSION_LARGE > 0x06050200
+                                                     const Handle(IntTools_Context)& theContext)
+#else
                                                      IntTools_Context& theContext)
+#endif
 {
   Standard_Boolean bRet, aFlag, bIsDegenerated;
   Standard_Real aTE, aTS, aScPr, aTa, aTb, aT1, aT2;
@@ -741,7 +803,11 @@ Standard_Boolean GEOMAlgo_Tools3D::GetEdgeOff (const TopoDS_Edge& theE1,
   aFlag=BOPTools_Tools2D::EdgeTangent(theSplit, aTS, aVS);
   gp_Dir aDTS(aVS);
   //
+#if OCC_VERSION_LARGE > 0x06050200
+  aFlag=theContext->ProjectPointOnEdge(aP, theEdge, aTE);
+#else
   aFlag=theContext.ProjectPointOnEdge(aP, theEdge, aTE);
+#endif
   aFlag=BOPTools_Tools2D::EdgeTangent(theEdge, aTE, aVE);
   gp_Dir aDTE(aVE);
   //
@@ -1086,7 +1152,11 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
                                   Standard_Real aT,
                                   gp_Pnt& aPF,
                                   gp_Dir& aDNF,
+#if OCC_VERSION_LARGE > 0x06050200
+                                  const Handle(IntTools_Context)& aCtx)
+#else
                                   IntTools_Context& aCtx)
+#endif
 {
   Standard_Boolean bReverse;
   Standard_Real aT1, aT2, dT, aU, aV;
@@ -1166,7 +1236,11 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
     aDNF.Reverse();
   }
   //
+#if OCC_VERSION_LARGE > 0x06050200
+  GeomAPI_ProjectPointOnSurf& aProjector=aCtx->ProjPS(aF);
+#else
   GeomAPI_ProjectPointOnSurf& aProjector=aCtx.ProjPS(aF);
+#endif
   //
   aProjector.Perform(aPFx);
   if(aProjector.IsDone()) {

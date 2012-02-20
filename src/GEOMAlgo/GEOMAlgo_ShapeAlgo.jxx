@@ -20,6 +20,9 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+#ifndef _IntTools_Context_HeaderFile
+#include <IntTools_Context.hxx>
+#endif
 #ifndef _TopoDS_Shape_HeaderFile
 #include <TopoDS_Shape.hxx>
 #endif

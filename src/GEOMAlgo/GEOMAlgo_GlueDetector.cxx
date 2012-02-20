@@ -18,15 +18,23 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // File:        GEOMAlgo_GlueDetector.cxx
-// Created:     
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_GlueDetector.hxx>
 
-#include <Bnd_Box.hxx>
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
+
+#include <NMTDS_BndSphereTree.hxx>
+#include <NMTDS_BndSphere.hxx>
+#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
 #include <NCollection_UBTreeFiller.hxx>
 
 #include <TColStd_ListOfInteger.hxx>
@@ -49,27 +57,20 @@
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 
 #include <TopExp.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepBndLib.hxx>
 
-#include <NMTDS_BndSphereTree.hxx>
-#include <NMTDS_BndSphere.hxx>
-#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
-
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
+#include <Bnd_Box.hxx>
 
 //=======================================================================
 //function : 
 //purpose  : 
 //=======================================================================
 GEOMAlgo_GlueDetector::GEOMAlgo_GlueDetector()
-:
-  GEOMAlgo_GluerAlgo(),
-  GEOMAlgo_Algo()
+  : GEOMAlgo_GluerAlgo(),
+    GEOMAlgo_Algo()
 {}
 //=======================================================================
 //function : ~
@@ -90,6 +91,11 @@ void GEOMAlgo_GlueDetector::Perform()
   if (myErrorStatus) {
     return;
   }
+  //
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_GluerAlgo::Perform();
+#endif
   //
   DetectVertices();
   if (myErrorStatus) {

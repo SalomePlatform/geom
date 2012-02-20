@@ -18,20 +18,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:        NMTTools_PaveFiller.cxx
 // Created:     Fri Dec  5 14:58:54 2003
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <NMTTools_PaveFiller.ixx>
-//
-#include <BOPTColStd_Failure.hxx>
-#include <NMTDS_ShapesDataStructure.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
 #include <NMTTools_DEProcessor.hxx>
+
+#include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_InterfPool.hxx>
+
+#include <BOPTColStd_Failure.hxx>
 
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
@@ -126,18 +128,26 @@
 // function: Context
 // purpose: 
 //=======================================================================
-  const IntTools_Context& NMTTools_PaveFiller::Context() const
+#if OCC_VERSION_LARGE > 0x06050200
+const Handle(IntTools_Context)& NMTTools_PaveFiller::Context() const
+#else
+const IntTools_Context& NMTTools_PaveFiller::Context() const
+#endif
 {
   return myContext;
 }
+
+#if OCC_VERSION_LARGE <= 0x06050200
 //=======================================================================
 // function: ChangeContext
 // purpose: 
 //=======================================================================
-  IntTools_Context& NMTTools_PaveFiller::ChangeContext() 
+IntTools_Context& NMTTools_PaveFiller::ChangeContext() 
 {
   return myContext;
 }
+#endif
+
 //=======================================================================
 // function: PavePool
 // purpose: 
@@ -221,8 +231,13 @@
               myDS->NumberOfShapesOfTheTool();
   myNbEdges=myDS->NbEdges();
   //
-  // 4
+  // 4.
   myIP=new NMTDS_InterfPool;
+#if OCC_VERSION_LARGE > 0x06050200
+  //
+  // 5.
+  myContext=new IntTools_Context;
+#endif
 }
 
 //=======================================================================

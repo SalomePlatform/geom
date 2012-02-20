@@ -18,16 +18,26 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:	GEOMAlgo_Gluer.cxx
 // Created:	Sat Dec 04 12:45:53 2004
 // Author:	Peter KURNEV
-//		<peter@PREFEX>
-//
+
 #include <GEOMAlgo_Gluer.ixx>
 
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx> 
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
+
 #include <NMTDS_BoxBndTree.hxx>
+#include <NMTDS_BndSphereTree.hxx>
+#include <NMTDS_BndSphere.hxx>
+#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
 #include <NCollection_UBTreeFiller.hxx>
 
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
@@ -82,18 +92,6 @@
 #include <BOPTools_Tools2D.hxx>
 #include <BOP_CorrectTolerances.hxx>
 
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx> 
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
-//
-//modified by NIZNHY-PKV Thu Jan 21 10:02:52 2010f
-#include <NMTDS_BndSphereTree.hxx>
-#include <NMTDS_BndSphere.hxx>
-#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
-//modified by NIZNHY-PKV Thu Jan 21 10:02:56 2010t
-//
 static 
   void GetSubShapes(const TopoDS_Shape& aS,
 		    TopTools_IndexedMapOfShape& aMSS);
@@ -181,11 +179,17 @@ const TopTools_DataMapOfShapeShape& GEOMAlgo_Gluer::Origins()const
 //=======================================================================
 void GEOMAlgo_Gluer::Perform()
 {
+  const Standard_Integer aNb=8;
+  Standard_Integer i;
+  //
   myErrorStatus=0;
   myWarningStatus=0;
   //
-  Standard_Integer i;
-  const Standard_Integer aNb=8;
+#if OCC_VERSION_LARGE > 0x06050200
+  // Initialize the context
+  GEOMAlgo_ShapeAlgo::Perform();
+#endif
+  //
   void (GEOMAlgo_Gluer::* pF[aNb])()={
     &GEOMAlgo_Gluer::CheckData,       &GEOMAlgo_Gluer::InnerTolerance,
     &GEOMAlgo_Gluer::MakeVertices,    &GEOMAlgo_Gluer::MakeEdges,
@@ -1031,7 +1035,11 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
     aC3D=BRep_Tool::Curve(aE, aT1, aT2);
     aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
     aC3D->D0(aT, aP);
+#if OCC_VERSION_LARGE > 0x06050200
+    myContext->ProjectPointOnEdge(aP, aER, aTR);
+#else
     myContext.ProjectPointOnEdge(aP, aER, aTR);
+#endif
     //
     BOPTools_Tools3D::GetNormalToFaceOnEdge (aE, aF, aT, aDNF);
     if (aF.Orientation()==TopAbs_REVERSED) {
