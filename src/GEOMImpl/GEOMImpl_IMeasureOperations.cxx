@@ -788,6 +788,15 @@ gp_Ax3 GEOMImpl_IMeasureOperations::GetPosition (const TopoDS_Shape& theShape)
       Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
       gp_Pln aPln = aGPlane->Pln();
       aResult = aPln.Position();
+      // In case of reverse orinetation of the face invert the plane normal
+      // (the face's normal does not mathc the plane's normal in this case)
+      if(theShape.Orientation() == TopAbs_REVERSED)
+      {
+        gp_Dir Vx =  aResult.XDirection();
+        gp_Dir N  =  aResult.Direction().Mirrored(Vx); 
+        gp_Pnt P  =  aResult.Location();
+        aResult = gp_Ax3(P, N, Vx);
+      }       
     }
   }
 
