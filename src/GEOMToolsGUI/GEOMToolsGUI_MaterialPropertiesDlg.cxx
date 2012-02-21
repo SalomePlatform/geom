@@ -427,6 +427,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   setButtonPosition( Right, Close );
   setDialogFlags( AlignOnce );
   myMaterialList->setEditTriggers( QAbstractItemView::EditKeyPressed );
+  myMaterialList->installEventFilter( this );
 
   // ! RESOURCES
   QStringList globalMaterials = resourceMgr()->materials( Material_ResourceMgr::Global );
@@ -574,23 +575,26 @@ void GEOMToolsGUI_MaterialPropertiesDlg::accept()
   \brief Process key press event
   \param e key event
 */
-void GEOMToolsGUI_MaterialPropertiesDlg::keyPressEvent( QKeyEvent* e )
+bool GEOMToolsGUI_MaterialPropertiesDlg::eventFilter( QObject* o, QEvent* e )
 {
-  if ( e->key() == Qt::Key_Delete ) {
-    QListWidgetItem* item = myMaterialList->currentItem();
-    if ( item && item->data( TypeRole ).toInt() == User ) {
-      if ( QMessageBox::question( this,
-                                  tr( "Delete user material" ),
-                                  tr( "Remove material %1?" ).arg( item->text() ),
-                                  QMessageBox::Yes | QMessageBox::No,
-                                  QMessageBox::Yes ) == QMessageBox::Yes ) {
-        resourceMgr()->remove( item->data( NameRole ).toString() );
-        resourceMgr()->save();
-        delete item;
+  if ( o == myMaterialList && e->type() == QEvent::KeyPress ) {
+    QKeyEvent* ke = (QKeyEvent*)e;
+    if ( ke->key() == Qt::Key_Delete ) {
+      QListWidgetItem* item = myMaterialList->currentItem();
+      if ( item && item->data( TypeRole ).toInt() == User ) {
+	if ( QMessageBox::question( this,
+				    tr( "Delete user material" ),
+				    tr( "Remove material %1?" ).arg( item->text() ),
+				    QMessageBox::Yes | QMessageBox::No,
+				    QMessageBox::Yes ) == QMessageBox::Yes ) {
+	  resourceMgr()->remove( item->data( NameRole ).toString() );
+	  resourceMgr()->save();
+	  delete item;
+	}
       }
     }
   }
-  QtxDialog::keyPressEvent( e );
+  return QtxDialog::eventFilter( o, e );
 }
 
 /*!

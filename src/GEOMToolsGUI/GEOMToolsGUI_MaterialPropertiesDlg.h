@@ -63,8 +63,7 @@ public:
 
   void                  accept();
 
-protected:
-  void                  keyPressEvent( QKeyEvent* );
+  bool                  eventFilter( QObject*, QEvent* );
 
 private:
   Material_ResourceMgr* resourceMgr();
