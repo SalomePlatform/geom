@@ -906,6 +906,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpArc,     basicId, -1 );
   createMenu( GEOMOp::OpCurve,   basicId, -1 );
   createMenu( separator(),       basicId, -1 );
+  createMenu( GEOMOp::Op2dSketcher, basicId, -1 );
+  createMenu( GEOMOp::Op3dSketcher, basicId, -1 );
   createMenu( GEOMOp::OpVector,  basicId, -1 );
   createMenu( GEOMOp::OpPlane,   basicId, -1 );
   createMenu( GEOMOp::OpLCS,     basicId, -1 );
@@ -919,6 +921,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpCone,      primId, -1 );
   createMenu( GEOMOp::OpRectangle, primId, -1 );
   createMenu( GEOMOp::OpDisk,      primId, -1 );
+  createMenu( GEOMOp::OpPipeTShape,primId, -1 );
 
   int genId = createMenu( tr( "MEN_GENERATION" ), newEntId, -1 );
   createMenu( GEOMOp::OpPrism,      genId, -1 );
@@ -926,8 +929,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
 
-  int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
-  createMenu( GEOMOp::OpPipeTShape, advId, -1 );
+//   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+//   createMenu( GEOMOp::OpPipeTShape, advId, -1 );
 //   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
@@ -942,11 +945,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   int blocksId = createMenu( tr( "MEN_BLOCKS" ), newEntId, -1 );
   createMenu( GEOMOp::OpQuadFace,  blocksId, -1 );
   createMenu( GEOMOp::OpHexaSolid, blocksId, -1 );
-
-  createMenu( separator(),          newEntId, -1 );
-
-  createMenu( GEOMOp::Op2dSketcher, newEntId, -1 );
-  createMenu( GEOMOp::Op3dSketcher, newEntId, -1 );
 
   createMenu( separator(),          newEntId, -1 );
 
