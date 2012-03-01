@@ -586,6 +586,19 @@ Please, select face, shell or solid and try again</translation>
         <translation>Extrusion</translation>
     </message>
     <message>
+        <source>GEOM_EXTRUDED_CUT</source>
+        <translation>Extruded cut</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_BOSS</source>
+        <translation>Extruded boss</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUSION</source>
+        <translation>Extrusion</translation>
+    </message>
+
+    <message>
         <source>GEOM_EXTRUSION_BSV</source>
         <translation>Base Shapes + Vector</translation>
     </message>
@@ -805,6 +818,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_HOLES</source>
         <translation>Holes</translation>
+    </message>
+    <message>
+        <source>GEOM_INIT_SHAPE</source>
+        <translation>Initial shape</translation>
     </message>
     <message>
         <source>GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE</source>
@@ -1567,6 +1584,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shell Construction</translation>
     </message>
     <message>
+        <source>GEOM_SKETCH</source>
+        <translation>Sketch</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_ABS</source>
         <translation>Absolute</translation>
     </message>
@@ -1725,6 +1746,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SKETCHER_VXVY</source>
         <translation>VX-VY</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCHER_WPLANE</source>
+        <translation>Select a planar face or a plane</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_VY2</source>
@@ -2369,6 +2394,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_EXTRUSION</source>
         <translation>Extrusion</translation>
+    </message>
+    <message>
+        <source>MEN_EXTRUDED_CUT</source>
+        <translation>Extruded cut</translation>
+    </message>
+    <message>
+        <source>MEN_EXTRUDED_BOSS</source>
+        <translation>Extruded boss</translation>
     </message>
     <message>
         <source>MEN_FACE</source>

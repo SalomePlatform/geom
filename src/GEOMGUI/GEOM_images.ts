@@ -779,7 +779,7 @@
             <source>ICO_DELETE</source>
             <translation>delete.png</translation>
         </message>
-	<message>
+        <message>
             <source>ICO_DISK</source>
             <translation>disk.png</translation>
         </message>
@@ -790,6 +790,14 @@
         <message>
             <source>ICO_DISPLAY_ALL</source>
             <translation>displayall.png</translation>
+        </message>
+        <message>
+            <source>ICO_DISPLAY_ONLY</source>
+            <translation>displayonly.png</translation>
+        </message>
+        <message>
+            <source>ICO_DRAFT</source>
+            <translation>draft.png</translation>
         </message>
         <message>
             <source>ICO_DISPLAY_ONLY</source>
@@ -822,6 +830,14 @@
         <message>
             <source>ICO_EXPLODE_BLOCKS</source>
             <translation>subshape.png</translation>
+        </message>
+         <message>
+            <source>ICO_EXTRUDED_BOSS</source>
+            <translation>extruded_boss.png</translation>
+        </message>
+        <message>
+            <source>ICO_EXTRUDED_CUT</source>
+            <translation>extruded_cut.png</translation>
         </message>
         <message>
             <source>ICO_EXTRUSION</source>

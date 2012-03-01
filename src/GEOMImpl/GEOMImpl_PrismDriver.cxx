@@ -31,16 +31,19 @@
 #include <GEOM_Function.hxx>
 
 #include <BRepPrimAPI_MakePrism.hxx>
+#include <BRepFeat_MakeDPrism.hxx>
 
 #include <BRep_Builder.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_Sewing.hxx>
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRepCheck_Shell.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 #include <BRep_Tool.hxx>
+#include <BRepTools.hxx>
 
 #include <TopAbs.hxx>
 #include <TopExp.hxx>
@@ -64,6 +67,8 @@
 #include <Standard_Stream.hxx>
 
 #include <Standard_ConstructionError.hxx>
+
+#include "utilities.h"
 
 //=======================================================================
 //function : GetID
@@ -180,11 +185,143 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       }
     }
   }
+  
+  else if (aType == DRAFT_PRISM_FEATURE) {
+    Handle(GEOM_Function) aRefInit = aCI.GetInitShape();
+    Handle(GEOM_Function) aRefBase = aCI.GetBase();   
+    TopoDS_Shape anInitShape = aRefInit->GetValue();        // Initial shape
+    TopoDS_Shape aSketch     = aRefBase->GetValue();  
+    Standard_Real aHeight    = aCI.GetH();                  // Height of the extrusion
+    Standard_Real anAngle    = aCI.GetDraftAngle();         // Draft angle
+    Standard_Boolean isProtrusion = (aCI.GetFuseFlag()==1); 
+    // Flag to know wether the feature is a protrusion (fuse) or a depression (cut)
+    
+    if (anInitShape.ShapeType() == TopAbs_COMPOUND)
+    {
+      TopExp_Explorer anExp(anInitShape, TopAbs_SOLID);
+      int solidCount = 0;
+      for(;anExp.More();anExp.Next())
+      {
+        solidCount++;
+      }
+      if (solidCount == 0)
+      {
+        Standard_ConstructionError::Raise("The input shape is a compound without any solid");
+      }
+      else if (solidCount > 1)
+      {
+        Standard_ConstructionError::Raise("The input shape is a compound with more than one solid");
+      }
+    }
+     
+    TopoDS_Wire aWire = TopoDS_Wire();
+    
+    if (aSketch.ShapeType() == TopAbs_EDGE)
+    {
+      aWire = BRepBuilderAPI_MakeWire(TopoDS::Edge(aSketch));
+    }
+    else if (aSketch.ShapeType() == TopAbs_WIRE)
+    {
+      aWire = TopoDS::Wire(aSketch);
+    }
+    else
+    {
+      Standard_ConstructionError::Raise("The input sketch is neither a wire nor an edge");
+    }
+    
+    if (!aWire.Closed())
+      Standard_ConstructionError::Raise("The wire has to be closed");
+       
+    // history of the Base wire (RefBase)
+    Handle(GEOM_Object) aSuppObj;
+    TDF_LabelSequence aLabelSeq;
+    aRefBase->GetDependency(aLabelSeq);
+    
+    // If the base wire has only one dependency we use it
+    // to determine the right normal of the face which
+    // must be oriented towards outside of the solid (like the support face)
+    if (aLabelSeq.Length()==1)  
+    {
+      TDF_Label anArgumentRefLabel = aLabelSeq.Value(1);
+      aSuppObj = GEOM_Object::GetReferencedObject(anArgumentRefLabel);   
+    }
+    
+    // Construction of the face if the wire hasn't any support face
+    TopoDS_Face aFaceBase = BRepBuilderAPI_MakeFace(aWire);
+ 
+    if(!aSuppObj.IsNull())      // If the wire has a support
+    {
+      TopoDS_Shape aSupport = aSuppObj->GetValue();
+      if (aSupport.ShapeType() == TopAbs_FACE)
+      {
+        Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aSupport));
+        TopoDS_Face aTempFace = BRepBuilderAPI_MakeFace(aSurf, aWire);
+        
+        if(aTempFace.Orientation() != TopoDS::Face(aSupport).Orientation())
+        {
+          aFaceBase=TopoDS::Face(aTempFace.Reversed());
+        }
+        else
+          aFaceBase=aTempFace;
+      }
+    }
+    
+    // Invert height and angle if the operation is an extruded cut
+    bool invert = !isProtrusion; 
+    
+    // If the face has a reverse orientation invert for extruded boss operations
+    if(aFaceBase.Orientation() == TopAbs_REVERSED)
+      invert = isProtrusion;
+
+    if(invert)
+    {
+      anAngle = -anAngle;  // Invert angle and height
+      aHeight = -aHeight;
+    }
+    
+    BRepFeat_MakeDPrism thePrism(anInitShape, aFaceBase, TopoDS_Face(),
+                                 anAngle*PI180, isProtrusion, Standard_True); 
+    
+    thePrism.Perform(aHeight);
+    
+    aShape = thePrism.Shape();
+  }
 
   if (aShape.IsNull()) return 0;
-
-  TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
-  aFunction->SetValue(aRes);
+  
+  
+  if (aType == DRAFT_PRISM_FEATURE)
+  {
+    TopoDS_Shape aRes = aShape;
+    
+    // If the result is a compound with only one solid,
+    // return the solid
+    if (aShape.ShapeType() == TopAbs_COMPOUND)  
+    {
+      TopExp_Explorer anExp(aShape, TopAbs_SOLID);
+      
+      int solidNb = 0;
+      TopoDS_Solid aSolid;
+      
+      for(;anExp.More();anExp.Next())
+      {
+        aSolid = TopoDS::Solid(anExp.Current());
+        solidNb++;
+      }
+      if (solidNb == 1)
+      {
+        aRes = aSolid;
+      } 
+    } 
+    
+    aFunction->SetValue(aRes);
+  }
+  else
+  {
+    TopoDS_Shape aRes = GEOMImpl_IShapesOperations::CompsolidToCompound(aShape);
+    aFunction->SetValue(aRes);
+  }
+  
 
   log.SetTouched(Label());
 

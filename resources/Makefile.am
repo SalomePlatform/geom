@@ -78,8 +78,11 @@ disk_r.png			\
 display.png			\
 displayonly.png			\
 displayall.png			\
+draft.png			\
 erase.png			\
 eraseall.png			\
+extruded_boss.png		\
+extruded_cut.png		\
 face_hw.png			\
 face_vechw.png			\
 feature_detect.png		\

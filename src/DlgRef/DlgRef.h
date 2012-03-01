@@ -500,6 +500,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_2Sel2Spin1Push
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel2Spin1Push_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel2Spin1Push : public QWidget, 
+                                       public Ui::DlgRef_2Sel2Spin1Push_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel2Spin1Push( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel2Spin1Push();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel3Spin2Rb
 //////////////////////////////////////////
 

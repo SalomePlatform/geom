@@ -1718,6 +1718,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>VX-VY</translation>
     </message>
     <message>
+        <source>GEOM_SKETCHER_WPLANE</source>
+        <translation>Sélectionnez une face plane ou un plan</translation>
+    </message>
+    <message>
         <source>GEOM_SKETCHER_VY2</source>
         <translation>VY :</translation>
     </message>

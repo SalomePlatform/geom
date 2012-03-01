@@ -512,6 +512,8 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpFillet2d:           // MENU OPERATION - FILLET 2D
   case GEOMOp::OpFillet1d:           // MENU OPERATION - FILLET 1D
   case GEOMOp::OpSharedShapes:       // MENU OPERATION - GET SHARED SHAPES
+  case GEOMOp::OpExtrudedBoss:       // MENU OPERATION - EXTRUDED BOSS
+  case GEOMOp::OpExtrudedCut:        // MENU OPERATION - EXTRUDED CUT
     libName = "OperationGUI";
     break;
   case GEOMOp::OpSewing:             // MENU REPAIR - SEWING
@@ -785,6 +787,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   //createGeomAction( GEOMOp::OpClipping,        "CLIPPING" );
   createGeomAction( GEOMOp::OpShapesOnShape,  "GET_SHAPES_ON_SHAPE" );
   createGeomAction( GEOMOp::OpSharedShapes,   "GET_SHARED_SHAPES" );
+  createGeomAction( GEOMOp::OpExtrudedCut,    "EXTRUDED_CUT" );
+  createGeomAction( GEOMOp::OpExtrudedBoss,   "EXTRUDED_BOSS" );
   createGeomAction( GEOMOp::OpFillet1d,       "FILLET_1D" );
   createGeomAction( GEOMOp::OpFillet2d,       "FILLET_2D" );
 
@@ -1001,6 +1005,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpFillet2d,      operId, -1 );
   createMenu( GEOMOp::OpFillet3d,      operId, -1 );
   createMenu( GEOMOp::OpChamfer,       operId, -1 );
+  createMenu( GEOMOp::OpExtrudedBoss,  operId, -1 );
+  createMenu( GEOMOp::OpExtrudedCut,   operId, -1 );
   //createMenu( GEOMOp::OpClipping,      operId, -1 );
 
   int repairId = createMenu( tr( "MEN_REPAIR" ), -1, -1, 10 );
@@ -1076,40 +1082,50 @@ void GeometryGUI::initialize( CAM_Application* app )
 */
 
   // ---- create toolbars --------------------------
-
+  
   int basicTbId = createTool( tr( "TOOL_BASIC" ) );
-  createTool( GEOMOp::OpPoint,   basicTbId );
-  createTool( GEOMOp::OpLine,    basicTbId );
-  createTool( GEOMOp::OpCircle,  basicTbId );
-  createTool( GEOMOp::OpEllipse, basicTbId );
-  createTool( GEOMOp::OpArc,     basicTbId );
-  createTool( GEOMOp::OpCurve,   basicTbId );
-  createTool( GEOMOp::OpVector,  basicTbId );
-  createTool( GEOMOp::OpPlane,   basicTbId );
-  createTool( GEOMOp::OpLCS,     basicTbId );
+  createTool( GEOMOp::OpPoint,      basicTbId );
+  createTool( GEOMOp::OpLine,       basicTbId );
+  createTool( GEOMOp::OpCircle,     basicTbId );
+  createTool( GEOMOp::OpEllipse,    basicTbId );
+  createTool( GEOMOp::OpArc,        basicTbId );
+  createTool( GEOMOp::OpCurve,      basicTbId );
+  createTool( GEOMOp::OpVector,     basicTbId );
+  createTool( GEOMOp::Op2dSketcher, basicTbId ); //rnc
+  createTool( GEOMOp::Op3dSketcher, basicTbId ); //rnc
+  createTool( GEOMOp::OpPlane,      basicTbId );
+  createTool( GEOMOp::OpLCS,        basicTbId );
   createTool( GEOMOp::OpOriginAndVectors, basicTbId );
-
+  
+//   int sketchTbId = createTool( tr( "TOOL_SKETCH" ) );
+//   createTool( GEOMOp::Op2dSketcher,  sketchTbId );
+//   createTool( GEOMOp::Op3dSketcher,  sketchTbId );
+  
   int primTbId = createTool( tr( "TOOL_PRIMITIVES" ) );
-  createTool( GEOMOp::OpBox,       primTbId );
-  createTool( GEOMOp::OpCylinder,  primTbId );
-  createTool( GEOMOp::OpSphere,    primTbId );
-  createTool( GEOMOp::OpTorus,     primTbId );
-  createTool( GEOMOp::OpCone,      primTbId );
-  createTool( GEOMOp::OpRectangle, primTbId );
-  createTool( GEOMOp::OpDisk,      primTbId );
-
+  createTool( GEOMOp::OpBox,        primTbId );
+  createTool( GEOMOp::OpCylinder,   primTbId );
+  createTool( GEOMOp::OpSphere,     primTbId );
+  createTool( GEOMOp::OpTorus,      primTbId );
+  createTool( GEOMOp::OpCone,       primTbId );
+  createTool( GEOMOp::OpRectangle,  primTbId );
+  createTool( GEOMOp::OpDisk,       primTbId );
+  createTool( GEOMOp::OpPipeTShape, primTbId ); //rnc
+  
+//   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) ); //rnc
+//   createTool( GEOMOp::OpPipeTShape, advancedTbId );
+  
   int boolTbId = createTool( tr( "TOOL_BOOLEAN" ) );
-  createTool( GEOMOp::OpFuse,    boolTbId );
-  createTool( GEOMOp::OpCommon,  boolTbId );
-  createTool( GEOMOp::OpCut,     boolTbId );
-  createTool( GEOMOp::OpSection, boolTbId );
-
-  int genTbId = createTool( tr( "TOOL_GENERATION" ) );
+  createTool( GEOMOp::OpFuse,       boolTbId );
+  createTool( GEOMOp::OpCommon,     boolTbId );
+  createTool( GEOMOp::OpCut,        boolTbId );
+  createTool( GEOMOp::OpSection,    boolTbId );
+  
+   int genTbId = createTool( tr( "TOOL_GENERATION" ) );
   createTool( GEOMOp::OpPrism,      genTbId );
   createTool( GEOMOp::OpRevolution, genTbId );
   createTool( GEOMOp::OpFilling,    genTbId );
   createTool( GEOMOp::OpPipe,       genTbId );
-
+  
   int transTbId = createTool( tr( "TOOL_TRANSFORMATION" ) );
   createTool( GEOMOp::OpTranslate,      transTbId );
   createTool( GEOMOp::OpRotate,         transTbId );
@@ -1121,29 +1137,22 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( separator(),              transTbId );
   createTool( GEOMOp::OpMultiTranslate, transTbId );
   createTool( GEOMOp::OpMultiRotate,    transTbId );
-
+  
   int operTbId = createTool( tr( "TOOL_OPERATIONS" ) );
-  createTool( GEOMOp::Op2dSketcher,      operTbId );
-  createTool( GEOMOp::Op3dSketcher,      operTbId );
-  createTool( separator(),               operTbId );
   createTool( GEOMOp::OpExplode,         operTbId );
-  createTool( separator(),               operTbId );
-#ifdef WITH_OPENCV
-  createTool( GEOMOp::OpFeatureDetect,   operTbId );
-#endif
-  createTool( GEOMOp::OpPictureImport,   operTbId );
-  createTool( separator(),               operTbId );
-
   createTool( GEOMOp::OpPartition,       operTbId );
   createTool( GEOMOp::OpArchimede,       operTbId );
   createTool( GEOMOp::OpShapesOnShape,   operTbId );
   createTool( GEOMOp::OpSharedShapes,    operTbId );
-  createTool( separator(),               operTbId );
-  createTool( GEOMOp::OpFillet1d,        operTbId );
-  createTool( GEOMOp::OpFillet2d,        operTbId );
-  createTool( GEOMOp::OpFillet3d,        operTbId );
-  createTool( GEOMOp::OpChamfer,         operTbId );
-
+  
+  int featTbId = createTool( tr( "TOOL_FEATURES" ) );
+  createTool( GEOMOp::OpFillet1d,        featTbId );
+  createTool( GEOMOp::OpFillet2d,        featTbId );
+  createTool( GEOMOp::OpFillet3d,        featTbId );
+  createTool( GEOMOp::OpChamfer,         featTbId );
+  createTool( GEOMOp::OpExtrudedBoss,    featTbId );
+  createTool( GEOMOp::OpExtrudedCut,     featTbId );
+  
   int buildTbId = createTool( tr( "TOOL_BUILD" ) );
   createTool( GEOMOp::OpEdge,     buildTbId );
   createTool( GEOMOp::OpWire,     buildTbId );
@@ -1171,9 +1180,13 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpCheckShape,       measureTbId );
   createTool( GEOMOp::OpCheckCompound,    measureTbId );
   createTool( GEOMOp::OpCheckSelfInters,  measureTbId );
+  
+  int picturesTbId = createTool( tr( "TOOL_PICTURES" ) );
+  createTool( GEOMOp::OpPictureImport,    picturesTbId );
+  #ifdef WITH_OPENCV
+    createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
+  #endif
 
-  int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
-  createTool( GEOMOp::OpPipeTShape, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------

@@ -63,7 +63,7 @@
 ##     @defgroup l3_basic_op      Basic Operations
 ##     @defgroup l3_boolean       Boolean Operations
 ##     @defgroup l3_transform     Transformation Operations
-##     @defgroup l3_local         Local Operations (Fillet and Chamfer)
+##     @defgroup l3_local         Local Operations (Fillet, Chamfer and other Features)
 ##     @defgroup l3_blocks_op     Blocks Operations
 ##     @defgroup l3_healing       Repairing Operations
 ##     @defgroup l3_restore_ss    Restore presentation parameters and a tree of sub-shapes
@@ -6222,6 +6222,64 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             else:
                 anObj = self.MakeChamferFaces(aShape,d1,d2,ListShape)
             return anObj
+            
+        ## Remove material from a solid by extrusion of the base shape on the given distance.
+        #  @param theInit Shape to remove material from. It must be a solid or 
+        #  a compound made of a single solid.
+        #  @param theBase Closed edge or wire defining the base shape to be extruded.
+        #  @param theH Prism dimension along the normal to theBase
+        #  @param theAngle Draft angle in degrees.
+        #  @return New GEOM.GEOM_Object, containing the initial shape with removed material 
+        #
+        #  @ref tui_creation_prism "Example"
+        def MakeExtrudedCut(self, theInit, theBase, theH, theAngle):
+            """
+            Add material to a solid by extrusion of the base shape on the given distance.
+
+            Parameters:
+                theInit Shape to remove material from. It must be a solid or a compound made of a single solid.
+                theBase Closed edge or wire defining the base shape to be extruded.
+                theH Prism dimension along the normal  to theBase
+                theAngle Draft angle in degrees.
+
+            Returns:
+                New GEOM.GEOM_Object,  containing the initial shape with removed material.
+            """
+            # Example: see GEOM_TestAll.py
+            #theH,Parameters = ParseParameters(theH)
+            anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, False)
+            RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
+            #anObj.SetParameters(Parameters)
+            return anObj   
+            
+        ## Add material to a solid by extrusion of the base shape on the given distance.
+        #  @param theInit Shape to add material to. It must be a solid or 
+        #  a compound made of a single solid.
+        #  @param theBase Closed edge or wire defining the base shape to be extruded.
+        #  @param theH Prism dimension along the normal to theBase
+        #  @param theAngle Draft angle in degrees.
+        #  @return New GEOM.GEOM_Object, containing the initial shape with added material 
+        #
+        #  @ref tui_creation_prism "Example"
+        def MakeExtrudedBoss(self, theInit, theBase, theH, theAngle):
+            """
+            Add material to a solid by extrusion of the base shape on the given distance.
+
+            Parameters:
+                theInit Shape to add material to. It must be a solid or a compound made of a single solid.
+                theBase Closed edge or wire defining the base shape to be extruded.
+                theH Prism dimension along the normal  to theBase
+                theAngle Draft angle in degrees.
+
+            Returns:
+                New GEOM.GEOM_Object,  containing the initial shape with added material.
+            """
+            # Example: see GEOM_TestAll.py
+            #theH,Parameters = ParseParameters(theH)
+            anObj = self.PrimOp.MakeDraftPrism(theInit, theBase, theH, theAngle, True)
+            RaiseIfFailed("MakeExtrudedBoss", self.PrimOp)
+            #anObj.SetParameters(Parameters)
+            return anObj   
 
         # end of l3_local
         ## @}

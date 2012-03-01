@@ -89,7 +89,10 @@ class GEOMImpl_I3DPrimOperations : public GEOM_IOperations {
 
   Standard_EXPORT Handle(GEOM_Object) MakePrismDXDYDZ2Ways (Handle(GEOM_Object) theBase,
                                                             double theDX, double theDY, double theDZ);
-
+  
+  Standard_EXPORT Handle(GEOM_Object) MakeDraftPrism  (Handle(GEOM_Object) theInitShape, Handle(GEOM_Object) theBase,
+                                                       double theHeight, double theAngle, bool theFuse);
+  
   Standard_EXPORT Handle(GEOM_Object) MakePipe (Handle(GEOM_Object) theBase,
                                                 Handle(GEOM_Object) thePath);
 

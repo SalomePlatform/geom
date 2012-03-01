@@ -1311,6 +1311,23 @@ module GEOM
                                             in double theDX, in double theDY, in double theDZ,
                                             in double theScaleFactor);
 
+
+    /*!
+     *  \brief Add / Remove material to / from  a solid by extrusion of the base shape on the given distance.
+     *  \param theInitShape Initial shape on which to perform the feature.It has to be a solid or 
+     *   a compound made of a single solid
+     *  \param theBase Edge or wire defining the base shape to be extruded. 
+     *  \param theHeight Prism dimension along the normal of the face.
+     *  \param theAngle Draft angel in degrees
+     *  \param theFuse If true material is added else material is removed
+     *  \return New GEOM_Object, containing the modified shape
+     */
+    GEOM_Object MakeDraftPrism (in GEOM_Object theInitShape,
+                                in GEOM_Object theBase,
+                                in double theHeight, 
+                                in double theAngle,
+                                in boolean theFuse);
+
     /*!
      *  \brief Create a shape by extrusion of the base shape along
      *  the path shape. The path shape can be a wire or an edge.

@@ -100,6 +100,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_REDO"    ) ) );
   QPixmap image3( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
   QPixmap image4( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC"     ) ) );
+  QPixmap image5 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setWindowTitle( tr( "GEOM_SKETCHER_TITLE" ) );
 
@@ -116,19 +117,29 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   /***************************************************************/
 
   GroupBox1 = new QGroupBox(tr("GEOM_CS"), this);
-  QHBoxLayout* planeLayout = new QHBoxLayout(GroupBox1);
+  QGridLayout* planeLayout = new QGridLayout(GroupBox1);
   planeLayout->setSpacing(6);
   planeLayout->setMargin(11);
 
   ComboBox1 = new QComboBox(GroupBox1);
-  ComboBox1->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
-  planeLayout->addWidget(ComboBox1);
+  //ComboBox1->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
+  planeLayout->addWidget(ComboBox1,0,0,1,2);
 
   planeButton = new QPushButton (GroupBox1);
-  planeButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
+  //planeButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
   planeButton->setText( tr( "GEOM_SKETCHER_RESTORE" ) );
-  planeLayout->addWidget(planeButton);
-
+  planeLayout->addWidget(planeButton,0,2);
+  
+  selButton = new QPushButton (GroupBox1);
+  selButton->setIcon(image5);
+  planeLayout->addWidget(selButton,1,0);
+  
+  WPlaneLineEdit = new QLineEdit (GroupBox1);
+  WPlaneLineEdit->setReadOnly(true);
+  planeLayout->addWidget(WPlaneLineEdit,1,1,1,2);
+  
+  planeLayout->setColumnStretch(1,1);
+  
   topLayout->addWidget(GroupBox1);
   topLayout->addWidget( MainWidget );
   topLayout->setStretch( 1, 1);
@@ -311,8 +322,9 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   connect( Group2Sel->checkBox,      SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
   connect( Group1Sel1Spin->checkBox, SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
 
-  connect( ComboBox1,                SIGNAL( activated( int ) ),       this, SLOT( SelectionIntoArgument() ) );
+  connect( ComboBox1,                SIGNAL( activated( int ) ),       this, SLOT( ActivateLocalCS() ) );
   connect( planeButton,              SIGNAL( clicked() ),              this, SLOT( ActivateLocalCS() ) );
+  connect( selButton,                SIGNAL( clicked() ),              this, SLOT( SetEditCurrentArgument() ) );
 
   connect( myGeometryGUI,            SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -394,12 +406,14 @@ void EntityGUI_SketcherDlg::Init()
 {
   /* init variables */
   autoApply = false;
-  myEditCurrentArgument = Group1Sel->LineEdit1;
+  
+  myEditCurrentArgument = WPlaneLineEdit; // Initiate the parameters selection with the first WPlaneLineEdit
+  
   myCommand.append( "Sketcher" );
   myUndoCommand.append( "Sketcher" );
 
   mySketchState = FIRST_POINT;
-  globalSelection( GEOM_POINT );
+  globalSelection( GEOM_FACE );
 
   myCheckFlag = 0;
 
@@ -409,6 +423,13 @@ void EntityGUI_SketcherDlg::Init()
   myLastY2 = 0.0;
 
   myHelpFileName = "create_sketcher_page.html";
+  
+  GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
+  myGlobalCS = aBasicOp->MakeMarker( 0,0,0,
+                                     0,0,1,
+                                     1,0,0 ); 
+  myWPlane = myGlobalCS;
+  myLCSList.push_back( WPlaneToLCS(myGlobalCS) );
 
   /* Get setting of step value from file configuration */
   double step = SUIT_Session::session()->resourceMgr()->doubleValue( "Geometry", "SettingsGeomStep", 100.0 );
@@ -435,10 +456,15 @@ void EntityGUI_SketcherDlg::Init()
 
   MainWidget->RadioButton1->setChecked( true );
 
-  TypeClicked( 0 );
-
   FindLocalCS();
+  TypeClicked( 0 );
+  // If a face has already been selected use it. Placed after FindLocalCS to avoid clearing the combobox
+  // that should be filled with the possibly selected face
+  SelectionIntoArgument();     
+  
   resize(100,100);
+  
+  setPrefix(tr("GEOM_SKETCH"));
 
   ActivateLocalCS();
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
@@ -451,6 +477,7 @@ void EntityGUI_SketcherDlg::Init()
 //=================================================================================
 void EntityGUI_SketcherDlg::InitClick()
 {
+  MESSAGE("EntityGUI_SketcherDlg::InitClick()")
   disconnect( myGeometryGUI->getApp()->selectionMgr(), 0, this, 0 );
   myCheckFlag = 0;
 
@@ -1007,6 +1034,8 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   if ( sender() && sender()->inherits( "QPushButton" ) )
     ( (QPushButton*)sender() )->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
+//   addSubshapesToStudy();
+
   QString aParameters;
   myCommand.append( GetNewCommand( aParameters ) );
   mySketchState = NEXT_POINT;
@@ -1168,210 +1197,163 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 {
   MESSAGE("EntityGUI_SketcherDlg::SelectionIntoArgument")
   myEditCurrentArgument->setText( "" );
-  double tmpX = myX;
-  double tmpY = myY;
-  myX = myLastX1;
-  myY = myLastY1;
-  //  printf ("\nmyX = %f         myY = %f", myX, myY);
-  //  printf ("\nmyLastX1 = %f    myLastY1 = %f", myLastX1, myLastY1);
-  //  printf ("\nmyLastX2 = %f    myLastY2 = %f", myLastX2, myLastY2);
-
-  if ( sender() == ComboBox1 )
-      ActivateLocalCS();
 
   LightApp_SelectionMgr* aSelMgr = myGeometryGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
-
-  int nbSel = aSelList.Extent();
-  MESSAGE("NbSel = "<<nbSel)
-  if (nbSel == 1 && myEditCurrentArgument == Group1Sel->LineEdit1) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( !CORBA::is_nil(aSelectedObject) ) {
-      TopoDS_Shape aShape;
-      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
-        gp_Trsf aTrans;
-        gp_Ax3 aWPlane = GetActiveLocalCS();
-
-        aTrans.SetTransformation(aWPlane);
-        BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
-        aShape = aTransformation.Shape();
-
-        gp_Pnt aPnt;
-        if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-          myX = aPnt.X();
-          myY = aPnt.Y();
-          Group1Sel->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
-          if( Group2Spin->isVisible() && mySketchType == PT_ABS ) {
-            disconnect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            disconnect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            Group2Spin->SpinBox_DX->setValue(myX);
-            Group2Spin->SpinBox_DY->setValue(myY);
-            connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-          } else if ( Group2Spin->isVisible() && mySketchType == PT_RELATIVE ) {
-            if ( myLastX1 && myLastY1 ) {
-              Group2Spin->SpinBox_DX->setValue(myX - myLastX1);
-              Group2Spin->SpinBox_DY->setValue(myY - myLastY1);
-            } else {
-              if ( mySketchState != FIRST_POINT ) {
-                Group2Spin->SpinBox_DX->setValue(myX - tmpX);
-                Group2Spin->SpinBox_DY->setValue(myY - tmpY);
-              } else {
-                Group2Spin->SpinBox_DX->setValue(myX);
-                Group2Spin->SpinBox_DY->setValue(myY);
-              }
-            }
-          }
-        }
-      }
-    }
+  
+  this->activateWindow();
+  
+  if (aSelList.Extent() == 0)
+  {
+    selButton->setDown(false);
+    WPlaneLineEdit->setEnabled(false);
+    WPlaneLineEdit->setText(tr("GEOM_SKETCHER_WPLANE"));
+    return;
   }
+  else if (aSelList.Extent() != 1)                                
+    return;
+  
+  double tmpX = myX;
+  double tmpY = myY;
+  myX = myLastX1;
+  myY = myLastY1;
+  
+  TopAbs_ShapeEnum aNeedType = TopAbs_VERTEX;
+  if (myEditCurrentArgument == WPlaneLineEdit)
+    aNeedType = TopAbs_FACE;
+  
+ 
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  
+  if(aSelectedObject && GEOMBase::GetShape(aSelectedObject.get(), aShape) 
+                     && !aShape.IsNull())
+  { 
+    QString aName = GEOMBase::GetName( aSelectedObject.get() ); 
+    myEditCurrentArgument->setText(aName);
+    if (myEditCurrentArgument==WPlaneLineEdit)  
+    { 
+      AddLocalCS(aSelectedObject.get());
+      selButton->setDown(false);
+      WPlaneLineEdit->setEnabled(false);
+      TypeClicked( 0 );
+    }           
+    else
+    {
+      gp_Trsf aTrans;
+      gp_Ax3 aWPlane = GetActiveLocalCS();
 
-  if (nbSel == 1 && myEditCurrentArgument == Group1Sel1Spin->LineEdit1) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( !CORBA::is_nil(aSelectedObject) ) {
-      TopoDS_Shape aShape;
-      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
-        gp_Trsf aTrans;
-        gp_Ax3 aWPlane = GetActiveLocalCS();
+      aTrans.SetTransformation(aWPlane);
+      BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
+      aShape = aTransformation.Shape();
 
-        aTrans.SetTransformation(aWPlane);
-        BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
-        aShape = aTransformation.Shape();
-
-        gp_Pnt aPnt;
-        if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-          myX = aPnt.X();
-          myY = aPnt.Y();
-          Group1Sel1Spin->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
-          if( Group3Spin->isVisible() && mySketchType == PT_ABS ) {
+      gp_Pnt aPnt;
+      if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) 
+      {
+        myX = aPnt.X();
+        myY = aPnt.Y();       
+        double Xcoord = myX;
+        double Ycoord = myY;
+        
+        switch (mySketchType)
+        {
+          case PT_ABS:
+          disconnect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+          disconnect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+          
+          Group2Spin->SpinBox_DX->setValue(Xcoord);
+          Group2Spin->SpinBox_DY->setValue(Ycoord);
+      
+          connect( Group2Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+          connect( Group2Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+            break;
+            
+          case PT_RELATIVE:
+            if (myLastX1 && myLastY1)
+            {
+              Xcoord = myX - myLastX1;
+              Ycoord = myY - myLastY1;
+            }
+            else if (mySketchState != FIRST_POINT)
+            {
+              Xcoord = myX - tmpX;
+              Ycoord = myY - tmpY;
+            }          
+            Group2Spin->SpinBox_DX->setValue(Xcoord);
+            Group2Spin->SpinBox_DY->setValue(Ycoord);      
+            break; 
+            
+          case PT_ABS_RADIUS:
             disconnect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             disconnect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            Group3Spin->SpinBox_DX->setValue(myX);
-            Group3Spin->SpinBox_DY->setValue(myY);
+            
+            Group3Spin->SpinBox_DX->setValue(Xcoord);
+            Group3Spin->SpinBox_DY->setValue(Ycoord);
+      
             connect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             connect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-          } else if ( Group3Spin->isVisible() && mySketchType == PT_RELATIVE ) {
-            if ( myLastX1 && myLastY1 ) {
-              Group3Spin->SpinBox_DX->setValue(myX - myLastX1);
-              Group3Spin->SpinBox_DY->setValue(myY - myLastY1);
-            } else {
-              if ( mySketchState != FIRST_POINT ) {
-                Group3Spin->SpinBox_DX->setValue(myX - tmpX);
-                Group3Spin->SpinBox_DY->setValue(myY - tmpY);
-              } else {
-                Group3Spin->SpinBox_DX->setValue(myX);
-                Group3Spin->SpinBox_DY->setValue(myY);
-              }
+            break;
+            
+          case PT_REL_RADIUS:
+            if (myLastX1 && myLastY1)
+            {
+              Xcoord = myX - myLastX1;
+              Ycoord = myY - myLastY1;
             }
-          }
-        }
-      }
-    }
-  }
-
-  if (nbSel == 1 && myEditCurrentArgument == Group2Sel->LineEdit1) {
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( !CORBA::is_nil(aSelectedObject) ) {
-      TopoDS_Shape aShape;
-      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
-        gp_Trsf aTrans;
-        gp_Ax3 aWPlane = GetActiveLocalCS();
-
-        aTrans.SetTransformation(aWPlane);
-        BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
-        aShape = aTransformation.Shape();
-
-        gp_Pnt aPnt;
-        if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-          myXc = aPnt.X();
-          myYc = aPnt.Y();
-          Group2Sel->LineEdit1->setText( GEOMBase::GetName( aSelectedObject ) );
-          if( Group4Spin->isVisible() && mySketchType == PT_ABS ) {
+            else if (mySketchState != FIRST_POINT)
+            {
+              Xcoord = myX - tmpX;
+              Ycoord = myY - tmpY;
+            }             
+            Group3Spin->SpinBox_DX->setValue(Xcoord);
+            Group3Spin->SpinBox_DY->setValue(Ycoord);
+            break; 
+            
+          case PT_ABS_CENTER:
             disconnect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
             disconnect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            Group4Spin->SpinBox_DX->setValue(myXc);
-            Group4Spin->SpinBox_DY->setValue(myYc);
+            
+            Group4Spin->SpinBox_DX->setValue(Xcoord);
+            Group4Spin->SpinBox_DY->setValue(Ycoord);
+      
             connect( Group4Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-          } else if ( Group4Spin->isVisible() && mySketchType == PT_RELATIVE ) {
-            if ( myLastX1 && myLastY1 ) {
-              Group4Spin->SpinBox_DX->setValue(myXc - myLastX1);
-              Group4Spin->SpinBox_DY->setValue(myYc - myLastY1);
-            } else {
-              if ( mySketchState != FIRST_POINT ) {
-                Group4Spin->SpinBox_DX->setValue(myXc - tmpX);
-                Group4Spin->SpinBox_DY->setValue(myYc - tmpY);
-              } else {
-                Group4Spin->SpinBox_DX->setValue(myXc);
-                Group4Spin->SpinBox_DY->setValue(myYc);
-              }
+            connect( Group4Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );        
+            break;
+            
+          case PT_REL_CENTER:
+            if (myLastX1 && myLastY1)
+            {
+              Xcoord = myXc - myLastX1;
+              Ycoord = myYc - myLastY1;
             }
-          }
+            else if (mySketchState != FIRST_POINT)
+            {
+              Xcoord = myXc - tmpX;
+              Ycoord = myYc - tmpY;
+            } 
+            else
+            {
+              Xcoord = myXc;
+              Ycoord = myYc;
+            }
+            
+            Group4Spin->SpinBox_DX->setValue(Xcoord);
+            Group4Spin->SpinBox_DY->setValue(Ycoord);            
+            break; 
+            
         }
       }
     }
   }
 
-  if (nbSel == 1 && myEditCurrentArgument == Group2Sel->LineEdit2) {
-    if (!Group2Sel->LineEdit1->text().isEmpty()){    //Check wether or not Linedit2 has been modified
-      myX=tmpX;                                      // If yes keep the old values of X and Y  
-      myY=tmpY;
-    }
-    GEOM::GEOM_Object_var aSelectedObject = GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-    if ( !CORBA::is_nil(aSelectedObject) ) {
-      TopoDS_Shape aShape;
-      if (GEOMBase::GetShape(aSelectedObject, aShape, TopAbs_VERTEX)) {
-        gp_Trsf aTrans;
-        gp_Ax3 aWPlane = GetActiveLocalCS();
-
-        aTrans.SetTransformation(aWPlane);
-        BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
-        aShape = aTransformation.Shape();
-
-        gp_Pnt aPnt;
-        if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) {
-          myX = aPnt.X();
-          myY = aPnt.Y();
-          Group2Sel->LineEdit2->setText( GEOMBase::GetName( aSelectedObject ) );
-          if( Group4Spin->isVisible() && mySketchType == PT_ABS ) {
-            disconnect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            disconnect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            Group4Spin->SpinBox_DZ->setValue(myX);
-            Group4Spin->SpinBox_DS->setValue(myY);
-            connect( Group4Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-            connect( Group4Spin->SpinBox_DS, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
-          } else if ( Group4Spin->isVisible() && mySketchType == PT_RELATIVE ) {
-            if ( myLastX1 && myLastY1 ) {
-              Group4Spin->SpinBox_DZ->setValue(myX - myLastX1);
-              Group4Spin->SpinBox_DS->setValue(myY - myLastY1);
-            } else {
-              if ( mySketchState != FIRST_POINT ) {
-                Group4Spin->SpinBox_DZ->setValue(myX - tmpX);
-                Group4Spin->SpinBox_DS->setValue(myY - tmpY);
-              } else {
-                Group4Spin->SpinBox_DZ->setValue(myX);
-                Group4Spin->SpinBox_DS->setValue(myY);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  if (nbSel == 0){                 // If no object selected
-    myX=tmpX;                      // Don't change the point coordinates
-    myY=tmpY;                      // and don't redisplay the preview
-  }
-  else if(!autoApply){
+  if(!autoApply){
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   }
-  if ( autoApply ){    
+  else {    
     ClickOnApply();
     autoApply = false;
   }
-  this->activateWindow();
   
 }
 
@@ -1382,6 +1364,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
 //=================================================================================
 void EntityGUI_SketcherDlg::SetEditCurrentArgument()
 {
+  TopAbs_ShapeEnum myNeedType = TopAbs_VERTEX;
   if ( sender() == Group1Sel->PushButton1 ) {
     myEditCurrentArgument = Group1Sel->LineEdit1;
     myEditCurrentArgument->setFocus();
@@ -1406,7 +1389,14 @@ void EntityGUI_SketcherDlg::SetEditCurrentArgument()
     Group2Sel->LineEdit2->setEnabled(true);
    // myEditCurrentArgument->setFocus();
   }
-  SelectionIntoArgument();
+  else if ( sender() == selButton ) {
+    myNeedType = TopAbs_FACE;
+    myEditCurrentArgument = WPlaneLineEdit;
+    WPlaneLineEdit->setEnabled(true);
+    selButton->setDown(true);
+  }
+  globalSelection(); // close local selection to clear it
+  localSelection(GEOM::GEOM_Object::_nil(), myNeedType);
 }
 
 
@@ -1470,9 +1460,9 @@ void EntityGUI_SketcherDlg::ActivateThisDialog()
           SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
   //myGeometryGUI->SetState( 0 );
-  globalSelection( GEOM_POINT );
+//   globalSelection( GEOM_POINT );
   
-  myEditCurrentArgument = Group1Sel->LineEdit1;
+  myEditCurrentArgument = WPlaneLineEdit;
   myEditCurrentArgument->setFocus();
   
    if ( sender() == Group1Sel->LineEdit1 ) {
@@ -2235,24 +2225,14 @@ bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
     }
   }
 
-  gp_Ax3 myWPlane = GetActiveLocalCS();
-  GEOM::ListOfDouble_var WPlane = new GEOM::ListOfDouble;
-  WPlane->length( 9 );
-  WPlane[0] = myWPlane.Location().X();
-  WPlane[1] = myWPlane.Location().Y();
-  WPlane[2] = myWPlane.Location().Z();
-
-  WPlane[3] = myWPlane.Direction().X();
-  WPlane[4] = myWPlane.Direction().Y();
-  WPlane[5] = myWPlane.Direction().Z();
-
-  WPlane[6] = myWPlane.XDirection().X();
-  WPlane[7] = myWPlane.XDirection().Y();
-  WPlane[8] = myWPlane.XDirection().Z();
-
   GEOM::GEOM_ICurvesOperations_var anOper = GEOM::GEOM_ICurvesOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = anOper->MakeSketcher( cmd.toLatin1().constData(), WPlane );
-
+  GEOM::GEOM_Object_var anObj = NULL;
+  
+  int index = ComboBox1->currentIndex();
+  if(index != -1 && !myWPlane->_is_nil()) // The combobox is not empty
+  {
+    anObj = anOper->MakeSketcherOnPlane( cmd.toLatin1().constData(), myWPlane );
+  }
   if ( !anObj->_is_nil() )
   {
     if( !IsPreview() ) {
@@ -2325,7 +2305,7 @@ void EntityGUI_SketcherDlg::displayPntPreview(const double x,
                                              )
 {
   // Get globalCS and working plane
-  gp_Ax3 globalCS = myLCSList.first(); //gp_Ax3(aOrigin, aDirZ, aDirX);
+  gp_Ax3 globalCS = WPlaneToLCS( myGlobalCS );
   gp_Ax3 aWPlane  = GetActiveLocalCS();
   
   // Build point in localCS
@@ -2393,6 +2373,16 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
 }
 
 //=================================================================================
+// function : acceptMouseEvent()
+// purpose  :
+//=================================================================================
+bool EntityGUI_SketcherDlg::acceptMouseEvent() const 
+{
+  return ( (getPnt1ConstructorId() == 1 || getPnt1ConstructorId() == 0)  //accept mouse event only on absolute and relative selection mode        
+           && !WPlaneLineEdit->isEnabled());                                  // called by EntityGUI::OnMousePress()
+}  
+
+//=================================================================================
 // function : keyPressEvent()
 // purpose  :
 //=================================================================================
@@ -2458,13 +2448,42 @@ void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
 }
 
 //=================================================================================
+// function : AddLocalCS()
+// purpose  : Add All Coordinates systems in study
+//=================================================================================
+void EntityGUI_SketcherDlg::AddLocalCS(GEOM::GEOM_Object_var aSelectedObject)
+{
+  MESSAGE("EntityGUI_SketcherDlg::AddLocalCS")
+  QString aName = GEOMBase::GetName( aSelectedObject );
+  
+  int index = ComboBox1->findText(aName, Qt::MatchExactly);
+  
+  if (index==-1)  // If the working plane hasn't been added yet
+  {   
+    myWPlaneList.push_back(aSelectedObject);
+    myWPlane = aSelectedObject;
+    addSubshapesToStudy();
+    myLCSList.push_back(WPlaneToLCS(aSelectedObject));
+    ComboBox1->addItem(aName); 
+    index = ComboBox1->count();
+    ComboBox1->setCurrentIndex(index-1);    
+  }
+  else
+  {
+    ComboBox1->setCurrentIndex(index);
+  }
+  ActivateLocalCS();   
+}
+
+//=================================================================================
 // function : FindLocalCS()
 // purpose  : Find All Coordinates systems in study
 //=================================================================================
 void EntityGUI_SketcherDlg::FindLocalCS()
 {
+  MESSAGE("EntityGUI_SketcherDlg::FindLocalCS")
   ComboBox1->clear();
-  myLCSList.clear();
+  myWPlaneList.clear();
   SalomeApp_Application* app =
     dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
   if ( !app )
@@ -2478,11 +2497,7 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 
   //add Global CS
   ComboBox1->addItem(tr("GEOM_GCS"));
-  gp_Pnt aOrigin = gp_Pnt(0, 0, 0);
-  gp_Dir aDirZ = gp_Dir(0, 0, 1);
-  gp_Dir aDirX = gp_Dir(1, 0, 0);
-  gp_Ax3 globalCS = gp_Ax3(aOrigin, aDirZ, aDirX);
-  myLCSList.push_back(globalCS);
+  myWPlaneList.push_back(myGlobalCS);
 
   // get GEOM component
   CORBA::String_var geomIOR = app->orb()->object_to_string( GeometryGUI::GetGeomGen() );
@@ -2497,30 +2512,54 @@ void EntityGUI_SketcherDlg::FindLocalCS()
 
   // browse through all GEOM data tree
   _PTR(ChildIterator) it ( aStudy->NewChildIterator( comp ) );
-  for ( it->InitEx( true ); it->More(); it->Next() ) {
+  for ( it->InitEx( true ); it->More(); it->Next() ) 
+  {
     _PTR(SObject) child( it->Value() );
     CORBA::Object_var corbaObj = GeometryGUI::ClientSObjectToObject( child );
     GEOM::GEOM_Object_var geomObj = GEOM::GEOM_Object::_narrow( corbaObj );
     if( CORBA::is_nil( geomObj ) ) 
       continue;
-    if (geomObj->GetType() == GEOM_MARKER) {
+    if (geomObj->GetType() == GEOM_MARKER) 
+    {
+      myWPlaneList.push_back(geomObj);
+      myLCSList.push_back(WPlaneToLCS(geomObj));
       ComboBox1->addItem(geomObj->GetName());
-      TopoDS_Shape aShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), geomObj);
-      
-      gp_Ax3 aLCS;
-      aLCS.Transform(aShape.Location().Transformation());
-      if (aShape.ShapeType() == TopAbs_FACE) {
-        Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aShape));
-        if (!aGS.IsNull() && aGS->IsKind(STANDARD_TYPE(Geom_Plane))) {
-          Handle(Geom_Plane) aGPlane = Handle(Geom_Plane)::DownCast(aGS);
-          gp_Pln aPln = aGPlane->Pln();
-          aLCS = aPln.Position();
-        }
-      }
-      myLCSList.push_back(aLCS);
+      MESSAGE("ComboBox1->addItem() in  EntityGUI_SketcherDlg::FindLocalCS()")
     }
   }
 }
+
+//=================================================================================
+// function : WPlaneToLCS ( aWPlane )
+// purpose  : 
+//=================================================================================
+gp_Ax3 EntityGUI_SketcherDlg::WPlaneToLCS( GEOM::GEOM_Object_var geomObj )
+{
+  TopoDS_Shape aShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), geomObj);
+  
+  gp_Ax3 aLCS;
+  if (CORBA::is_nil( geomObj ) || aShape.IsNull())
+  {
+    MESSAGE("CORBA::is_nil( geomObj ) || aShape.IsNull()")
+  }
+  aLCS.Transform(aShape.Location().Transformation());
+  if (aShape.ShapeType() == TopAbs_FACE) 
+  {
+    GEOM::GEOM_IMeasureOperations_ptr aMeasureOp =
+    myGeometryGUI->GetGeomGen()->GetIMeasureOperations( getStudyId() );
+    double Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz;
+    aMeasureOp->GetPosition( geomObj, Ox, Oy, Oz, Zx, Zy, Zz, Xx, Xy, Xz);
+    if ( aMeasureOp->IsDone() )
+    {  
+      gp_Pnt aPnt ( Ox, Oy, Oz );
+      gp_Dir aDirN ( Zx, Zy, Zz );
+      gp_Dir aDirX ( Xx, Xy, Xz );
+      aLCS = gp_Ax3( aPnt, aDirN, aDirX );
+    }
+  }
+  return aLCS;
+}
+
 
 //=================================================================================
 // function : getPnt1ConstructorId()
@@ -2550,11 +2589,13 @@ int EntityGUI_SketcherDlg::getPnt2ConstructorId() const
 //=================================================================================
 gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 {
+  MESSAGE("EntityGUI_SketcherDlg::GetActiveLocalCS()")
   int ind = ComboBox1->currentIndex();
   if (ind == -1)
     return myGeometryGUI->GetWorkingPlane();
-
+  
   gp_Ax3 aLCS = myLCSList.at(ind);
+  myWPlane = myWPlaneList.at(ind);
 
   return aLCS;
 }
@@ -2565,6 +2606,17 @@ gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 //=================================================================================
 void EntityGUI_SketcherDlg::ActivateLocalCS()
 {
-    myGeometryGUI->SetWorkingPlane( GetActiveLocalCS() );
-    myGeometryGUI->ActiveWorkingPlane();
+  MESSAGE("EntityGUI_SketcherDlg::ActivateLocalCS")
+  myGeometryGUI->SetWorkingPlane( GetActiveLocalCS() );
+  myGeometryGUI->ActiveWorkingPlane();
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void EntityGUI_SketcherDlg::addSubshapesToStudy()
+{
+  MESSAGE("EntityGUI_SketcherDlg::addSubshapesToStudy()")
+  GEOMBase::PublishSubObject(myWPlane);
 }

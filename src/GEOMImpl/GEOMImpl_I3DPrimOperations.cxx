@@ -1295,6 +1295,88 @@ Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakePrismDXDYDZ2Ways
 
 //=============================================================================
 /*!
+ *  MakeDraftPrism
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_I3DPrimOperations::MakeDraftPrism
+       (Handle(GEOM_Object) theInitShape ,Handle(GEOM_Object) theBase, double theHeight, double theAngle, bool theFuse)
+{
+  SetErrorCode(KO);
+
+  if (theBase.IsNull() || theInitShape.IsNull()) return NULL;
+
+  Handle(GEOM_Object) aPrism = NULL;
+  
+  if ( theFuse )
+  {
+    //Add a new Extruded Boss object  
+    aPrism = GetEngine()->AddObject(GetDocID(), GEOM_EXTRUDED_BOSS);
+  }
+  else
+  { 
+    //Add a new Extruded Cut object  
+    aPrism = GetEngine()->AddObject(GetDocID(), GEOM_EXTRUDED_CUT);
+  }
+  
+  //Add a new Prism function for the creation of a Draft Prism feature
+  Handle(GEOM_Function) aFunction = 
+    aPrism->AddFunction(GEOMImpl_PrismDriver::GetID(), DRAFT_PRISM_FEATURE);
+  if (aFunction.IsNull()) return NULL;
+  
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_PrismDriver::GetID()) return NULL;
+  
+  GEOMImpl_IPrism aCI (aFunction);
+
+  Handle(GEOM_Function) aRefInit = theInitShape->GetLastFunction();
+  Handle(GEOM_Function) aRefBase = theBase->GetLastFunction();
+ 
+  if (aRefBase.IsNull() || aRefInit.IsNull()) return NULL;
+  
+  // Set parameters 
+  aCI.SetBase(aRefBase);
+  aCI.SetInitShape(aRefInit);
+  aCI.SetH(theHeight);
+  aCI.SetDraftAngle(theAngle);
+  if ( theFuse )
+    aCI.SetFuseFlag(1);
+  else
+    aCI.SetFuseFlag(0);
+  
+  //Compute the Draft Prism Feature value
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Extrusion can not be created, check input data");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+  
+  //Make a Python command
+  if(theFuse)
+  {
+    GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakeExtrudedBoss("
+      << theInitShape << ", " << theBase << ", " << theHeight << ", " << theAngle << ")";
+  }
+  else
+  {   
+    GEOM::TPythonDump(aFunction) << aPrism << " = geompy.MakeExtrudedCut("
+      << theInitShape << ", " << theBase << ", " << theHeight << ", " << theAngle << ")";
+  }
+
+  SetErrorCode(OK);
+  return aPrism;
+}
+
+//=============================================================================
+/*!
  *  MakePipe
  */
 //=============================================================================

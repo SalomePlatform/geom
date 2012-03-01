@@ -94,6 +94,7 @@ HEADERS += DlgRef_1Sel3Spin1Check.h
 HEADERS += DlgRef_1Sel4Spin2Check.h
 HEADERS += DlgRef_2Sel1Spin2Check.h
 HEADERS += DlgRef_2Sel2Spin1Check.h
+HEADERS += DlgRef_2Sel2Spin1Push.h
 HEADERS += DlgRef_2Sel2Spin3Check.h
 HEADERS += DlgRef_2Sel4Spin1Check.h
 HEADERS += DlgRef_3Sel4Spin2Check.h

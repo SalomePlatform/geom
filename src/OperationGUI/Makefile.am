@@ -32,6 +32,7 @@ salomeinclude_HEADERS =				\
 	OperationGUI_ChamferDlg.h		\
 	OperationGUI_GetShapesOnShapeDlg.h	\
 	OperationGUI_GetSharedShapesDlg.h	\
+	OperationGUI_ExtrudedFeatureDlg.h	\
 	OperationGUI_ClippingDlg.h
 
 # Libraries targets
@@ -46,6 +47,7 @@ dist_libOperationGUI_la_SOURCES =		\
 	OperationGUI_FilletDlg.cxx		\
 	OperationGUI_Fillet1d2dDlg.cxx		\
 	OperationGUI_ChamferDlg.cxx		\
+	OperationGUI_ExtrudedFeatureDlg.cxx	\
 	OperationGUI_ClippingDlg.cxx
 
 MOC_FILES =					\
@@ -56,6 +58,7 @@ MOC_FILES =					\
 	OperationGUI_FilletDlg_moc.cxx		\
 	OperationGUI_Fillet1d2dDlg_moc.cxx	\
 	OperationGUI_ChamferDlg_moc.cxx		\
+	OperationGUI_ExtrudedFeatureDlg_moc.cxx	\
 	OperationGUI_ClippingDlg_moc.cxx
 
 nodist_libOperationGUI_la_SOURCES =		\
@@ -81,6 +84,7 @@ libOperationGUI_la_CPPFLAGS =		\
 	-I$(srcdir)/../GEOMClient	\
 	-I$(srcdir)/../GEOMImpl		\
 	-I$(srcdir)/../GEOMAlgo		\
+	-I$(srcdir)/../GEOM             \
 	-I$(top_builddir)/src/DlgRef	\
 	-I$(top_builddir)/idl
 

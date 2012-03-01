@@ -73,9 +73,8 @@ public:
 
   bool eventFilter (QObject* object, QEvent* event);
   
-  bool                               acceptMouseEvent() const { return ( getPnt1ConstructorId() == 1 
-                                                                      || getPnt1ConstructorId() == 0 );  }   //accept mouse event only on absolute and relative selection mode
-  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt& );                // called by EntityGUI::OnMousePress()
+  bool                               acceptMouseEvent() const;  // called by EntityGUI::OnMousePress()
+  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt& );             
 
 protected:
   void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
@@ -86,7 +85,8 @@ protected:
   virtual GEOM::GEOM_IOperations_ptr createOperation();
   virtual bool                       isValid( QString& );
   virtual bool                       execute( ObjectList& );
-
+  virtual void                       addSubshapesToStudy();
+  
   void                               closeEvent( QCloseEvent* );
   void                               keyPressEvent( QKeyEvent* );
 
@@ -170,6 +170,9 @@ private:
   QGroupBox*                         GroupBox1;
   QComboBox*                         ComboBox1;
   QPushButton*                       planeButton;
+  QPushButton*                       selButton;
+  
+  QLineEdit*                         WPlaneLineEdit;
 
   GeometryGUI*                       myGeometryGUI;
 
@@ -178,6 +181,9 @@ private:
   double                             myLineWidth;
 
   QList<gp_Ax3>                      myLCSList;
+  GEOM::GEOM_Object_var              myGlobalCS;
+  GEOM::GEOM_Object_var              myWPlane;
+  QList< GEOM::GEOM_Object_var >     myWPlaneList;
 
   int                                myCheckFlag;
   
@@ -215,8 +221,10 @@ private slots:
   void                               CheckBoxClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               SetDoubleSpinBoxStep( double );
+  void                               AddLocalCS( GEOM::GEOM_Object_var );
   void                               FindLocalCS();
   gp_Ax3                             GetActiveLocalCS();
+  gp_Ax3                             WPlaneToLCS( GEOM::GEOM_Object_var );
   void                               ActivateLocalCS();
 };
 

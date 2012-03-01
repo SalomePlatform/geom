@@ -707,6 +707,37 @@ GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakePrismDXDYDZWithScaling
 
 //=============================================================================
 /*!
+ *  MakeDraftPrism
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_I3DPrimOperations_i::MakeDraftPrism
+                      (GEOM::GEOM_Object_ptr theInitShape, GEOM::GEOM_Object_ptr theBase, 
+                       CORBA::Double  theHeight,
+                       CORBA::Double  theAngle,
+                       CORBA::Boolean theFuse)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+  
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aInit   = GetObjectImpl(theInitShape);
+  Handle(GEOM_Object) aBase   = GetObjectImpl(theBase);
+
+  if (aBase.IsNull() || aInit.IsNull()) return aGEOMObject._retn();
+
+  //Create the Prism
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDraftPrism(aInit, aBase, theHeight, theAngle, theFuse);
+ 
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  MakePipe
  */
 //=============================================================================

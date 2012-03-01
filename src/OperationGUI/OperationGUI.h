@@ -36,6 +36,8 @@
 class OperationGUI : public GEOMGUI
 {
 public :
+  enum ExtrudedFeatOperation { CUT = 1, BOSS = 2 };
+  
   OperationGUI( GeometryGUI* );
   ~OperationGUI();
 

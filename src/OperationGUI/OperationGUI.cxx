@@ -43,6 +43,7 @@
 #include "OperationGUI_ClippingDlg.h"    // Clipping dialog box
 #include "OperationGUI_GetShapesOnShapeDlg.h"
 #include "OperationGUI_GetSharedShapesDlg.h"
+#include "OperationGUI_ExtrudedFeatureDlg.h" // Methods EXTRUDED BOSS / CUT
 
 //=======================================================================
 // function : OperationGUI()
@@ -81,6 +82,8 @@ bool OperationGUI::OnGUIEvent (int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpClipping:      (new OperationGUI_ClippingDlg        (getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpShapesOnShape: (new OperationGUI_GetShapesOnShapeDlg(getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpSharedShapes:  (new OperationGUI_GetSharedShapesDlg (getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpExtrudedBoss:  (new OperationGUI_ExtrudedFeatureDlg (BOSS, getGeometryGUI(), parent))->show(); break;
+  case GEOMOp::OpExtrudedCut:   (new OperationGUI_ExtrudedFeatureDlg (CUT, getGeometryGUI(), parent))->show(); break;
   case GEOMOp::OpFillet1d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, true))->show(); break;
   case GEOMOp::OpFillet2d:      (new OperationGUI_Fillet1d2dDlg      (getGeometryGUI(), parent, false))->show(); break;
   default:
