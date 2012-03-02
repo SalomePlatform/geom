@@ -229,6 +229,11 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       Standard_ConstructionError::Raise("The input sketch is neither a wire nor an edge");
     }
     
+    TopoDS_Vertex aV1, aV2;
+    TopExp::Vertices(aWire, aV1, aV2);
+    if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+      aWire.Closed( true );
+    
     if (!aWire.Closed())
       Standard_ConstructionError::Raise("The wire has to be closed");
        
