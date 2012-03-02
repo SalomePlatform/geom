@@ -257,7 +257,7 @@ libGEOMimpl_la_LDFLAGS  =			\
 	../SKETCHER/libGEOMSketcher.la		\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
-	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset \
+	$(CAS_LDPATH) -lTKCAF -lTKFillet -lTKOffset -lTKFeat \
         $(PYTHON_LIBS)
 
 # extra dist files
