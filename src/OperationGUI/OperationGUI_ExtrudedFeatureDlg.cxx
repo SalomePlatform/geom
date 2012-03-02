@@ -361,19 +361,13 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
     
   bool isProtrusion = (myOperation == OperationGUI::BOSS);  
   
+  // Hide the initial shape in order to see the modifications on the preview
+  getDisplayer()->Erase(myObject1.get(),false,false);   
+  
   GEOM::GEOM_Object_var anObj = anOper->MakeDraftPrism(myObject1.get(), myObject2.get(), 
                                                        myGroup->SpinBox_DX->value(),
                                                        angle,
                                                        isProtrusion);
-//    switch (myOperation) 
-//   {
-//     case OperationGUI::BOSS:
-//       anObj = anOper->MakeDraftPrism(myObject1.get(), myObject2.get(),myGroup->SpinBox_DX->value(),angle, true);
-//       break;
-//     case OperationGUI::CUT:
-//       anObj = anOper->MakeDraftPrism(myObject1.get(), myObject2.get(),myGroup->SpinBox_DX->value(),angle, false);
-//       break;
-//   }
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
 
