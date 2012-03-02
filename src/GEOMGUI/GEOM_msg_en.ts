@@ -582,10 +582,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>GUI library corresponding to the user action can not be found or loaded</translation>
     </message>
     <message>
-        <source>GEOM_EXTRUSION</source>
-        <translation>Extrusion</translation>
-    </message>
-    <message>
         <source>GEOM_EXTRUDED_CUT</source>
         <translation>Extruded cut</translation>
     </message>

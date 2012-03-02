@@ -800,10 +800,6 @@
             <translation>draft.png</translation>
         </message>
         <message>
-            <source>ICO_DISPLAY_ONLY</source>
-            <translation>displayonly.png</translation>
-        </message>
-        <message>
             <source>ICO_EDGE</source>
             <translation>build_edge.png</translation>
         </message>
