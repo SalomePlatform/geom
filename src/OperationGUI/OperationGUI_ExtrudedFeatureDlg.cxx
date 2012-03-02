@@ -203,20 +203,26 @@ bool OperationGUI_ExtrudedFeatureDlg::ClickOnApply()
 void OperationGUI_ExtrudedFeatureDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
-
+  
   if (send == myGroup->PushButton1) {
     myEditCurrentArgument = myGroup->LineEdit1;
 
     myGroup->PushButton2->setDown(false);
     myGroup->LineEdit2->setEnabled(false);
+    
+    globalSelection();   // close local selection
   }
   else if (send == myGroup->PushButton2) {
     myEditCurrentArgument = myGroup->LineEdit2;
 
     myGroup->PushButton1->setDown(false);
     myGroup->LineEdit1->setEnabled(false);
+    
+    globalSelection(); // close local selection to clear it
+//     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
   }
-
+  
   // enable line edit
   myEditCurrentArgument->setEnabled(true);
   myEditCurrentArgument->setFocus();
@@ -244,7 +250,7 @@ void OperationGUI_ExtrudedFeatureDlg::SelectionIntoArgument()
   if (myEditCurrentArgument == myGroup->LineEdit2)
   {
     types.clear();
-    types << TopAbs_EDGE << TopAbs_WIRE;
+    types << TopAbs_EDGE << TopAbs_WIRE << TopAbs_FACE;
   }
 
   GEOM::GeomObjPtr aSelectedObject = getSelected( types );
@@ -372,6 +378,15 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
     objects.push_back(anObj._retn());
 
   return true;
+}
+
+//=================================================================================
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
+//=================================================================================
+void OperationGUI_ExtrudedFeatureDlg::addSubshapesToStudy()
+{
+  GEOMBase::PublishSubObject( myObject2.get() );
 }
 
 
