@@ -277,21 +277,20 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
           else
             aFaceBase=aTempFace;
         }
-      }
-      
-      // Invert height and angle if the operation is an extruded cut
-      bool invert = !isProtrusion; 
-      
-      // If the face has a reverse orientation invert for extruded boss operations
-      if(aFaceBase.Orientation() == TopAbs_REVERSED)
-        invert = isProtrusion;
-
-      if(invert)
-      {
-        anAngle = -anAngle;  // Invert angle and height
-        aHeight = -aHeight;
-      }
+      } 
+    }
     
+    // Invert height and angle if the operation is an extruded cut
+    bool invert = !isProtrusion; 
+    
+    // If the face has a reversed orientation invert for extruded boss operations
+    if(aFaceBase.Orientation() == TopAbs_REVERSED)
+      invert = isProtrusion;
+
+    if(invert)
+    {
+      anAngle = -anAngle;  // Invert angle and height
+      aHeight = -aHeight;
     }
     
     BRepFeat_MakeDPrism thePrism(anInitShape, aFaceBase, TopoDS_Face(),
