@@ -351,8 +351,6 @@ bool OperationGUI_ExtrudedFeatureDlg::isValid (QString&)
 //=================================================================================
 bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
 {
-//   GEOM::GEOM_Object_var anObj;
-
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
   
   double angle=0.0;
