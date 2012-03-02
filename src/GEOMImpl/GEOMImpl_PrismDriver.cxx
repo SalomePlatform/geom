@@ -214,74 +214,84 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       }
     }
      
-    TopoDS_Wire aWire = TopoDS_Wire();
+    TopoDS_Face aFaceBase;
     
-    if (aSketch.ShapeType() == TopAbs_EDGE)
+    if (aSketch.ShapeType() == TopAbs_FACE)
     {
-      aWire = BRepBuilderAPI_MakeWire(TopoDS::Edge(aSketch));
-    }
-    else if (aSketch.ShapeType() == TopAbs_WIRE)
-    {
-      aWire = TopoDS::Wire(aSketch);
+      aFaceBase = TopoDS::Face(aSketch); 
     }
     else
     {
-      Standard_ConstructionError::Raise("The input sketch is neither a wire nor an edge");
-    }
-    
-    TopoDS_Vertex aV1, aV2;
-    TopExp::Vertices(aWire, aV1, aV2);
-    if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
-      aWire.Closed( true );
-    
-    if (!aWire.Closed())
-      Standard_ConstructionError::Raise("The wire has to be closed");
-       
-    // history of the Base wire (RefBase)
-    Handle(GEOM_Object) aSuppObj;
-    TDF_LabelSequence aLabelSeq;
-    aRefBase->GetDependency(aLabelSeq);
-    
-    // If the base wire has only one dependency we use it
-    // to determine the right normal of the face which
-    // must be oriented towards outside of the solid (like the support face)
-    if (aLabelSeq.Length()==1)  
-    {
-      TDF_Label anArgumentRefLabel = aLabelSeq.Value(1);
-      aSuppObj = GEOM_Object::GetReferencedObject(anArgumentRefLabel);   
-    }
-    
-    // Construction of the face if the wire hasn't any support face
-    TopoDS_Face aFaceBase = BRepBuilderAPI_MakeFace(aWire);
- 
-    if(!aSuppObj.IsNull())      // If the wire has a support
-    {
-      TopoDS_Shape aSupport = aSuppObj->GetValue();
-      if (aSupport.ShapeType() == TopAbs_FACE)
+      TopoDS_Wire aWire = TopoDS_Wire();
+      
+      if (aSketch.ShapeType() == TopAbs_EDGE)
       {
-        Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aSupport));
-        TopoDS_Face aTempFace = BRepBuilderAPI_MakeFace(aSurf, aWire);
-        
-        if(aTempFace.Orientation() != TopoDS::Face(aSupport).Orientation())
-        {
-          aFaceBase=TopoDS::Face(aTempFace.Reversed());
-        }
-        else
-          aFaceBase=aTempFace;
+        aWire = BRepBuilderAPI_MakeWire(TopoDS::Edge(aSketch));
       }
-    }
-    
-    // Invert height and angle if the operation is an extruded cut
-    bool invert = !isProtrusion; 
-    
-    // If the face has a reverse orientation invert for extruded boss operations
-    if(aFaceBase.Orientation() == TopAbs_REVERSED)
-      invert = isProtrusion;
+      else if (aSketch.ShapeType() == TopAbs_WIRE)
+      {
+        aWire = TopoDS::Wire(aSketch);
+      }
+      else
+      {
+        Standard_ConstructionError::Raise("The input sketch is not a wire, an edge or a face");
+      }
+      
+      TopoDS_Vertex aV1, aV2;
+      TopExp::Vertices(aWire, aV1, aV2);
+      if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+        aWire.Closed( true );
+      
+      if (!aWire.Closed())
+        Standard_ConstructionError::Raise("The edge or wire is not closed");
+        
+      // history of the Base wire (RefBase)
+      Handle(GEOM_Object) aSuppObj;
+      TDF_LabelSequence aLabelSeq;
+      aRefBase->GetDependency(aLabelSeq);
+      
+      // If the base wire has only one dependency we use it
+      // to determine the right normal of the face which
+      // must be oriented towards outside of the solid (like the support face)
+      if (aLabelSeq.Length()==1)  
+      {
+        TDF_Label anArgumentRefLabel = aLabelSeq.Value(1);
+        aSuppObj = GEOM_Object::GetReferencedObject(anArgumentRefLabel);   
+      }
+      
+      // Construction of the face if the wire hasn't any support face
+      aFaceBase = BRepBuilderAPI_MakeFace(aWire);
+  
+      if(!aSuppObj.IsNull())      // If the wire has a support
+      {
+        TopoDS_Shape aSupport = aSuppObj->GetValue();
+        if (aSupport.ShapeType() == TopAbs_FACE)
+        {
+          Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aSupport));
+          TopoDS_Face aTempFace = BRepBuilderAPI_MakeFace(aSurf, aWire);
+          
+          if(aTempFace.Orientation() != TopoDS::Face(aSupport).Orientation())
+          {
+            aFaceBase=TopoDS::Face(aTempFace.Reversed());
+          }
+          else
+            aFaceBase=aTempFace;
+        }
+      }
+      
+      // Invert height and angle if the operation is an extruded cut
+      bool invert = !isProtrusion; 
+      
+      // If the face has a reverse orientation invert for extruded boss operations
+      if(aFaceBase.Orientation() == TopAbs_REVERSED)
+        invert = isProtrusion;
 
-    if(invert)
-    {
-      anAngle = -anAngle;  // Invert angle and height
-      aHeight = -aHeight;
+      if(invert)
+      {
+        anAngle = -anAngle;  // Invert angle and height
+        aHeight = -aHeight;
+      }
+    
     }
     
     BRepFeat_MakeDPrism thePrism(anInitShape, aFaceBase, TopoDS_Face(),
