@@ -485,6 +485,7 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
                               anAngle*PI180, isProtrusion, Standard_True); 
     
     aPrism.Perform(aHeight);
+    aPrism.Check();          // Raises NotDone if done is false
     
     aShape = aPrism.Shape();
     
