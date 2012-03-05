@@ -2,7 +2,37 @@
 
 \page extruded_cut_operation_page Extruded cut
 
-The "Extruded cut" operation allows you to remove material from an object by extruding a profile or a face 
-along the normal to its plane.
+The <b>Extruded cut</b> operation allows you to easily remove material from a \b solid by extruding a profile along the normal to its plane.
+
+- \image html extruded_cut_example.png
+
+To produce the <b>extruded cut</b>:
+
+1. Draw the \b profile of the extrusion. It can be:
+
+ - a \b Sketch drawn on a planar face of the object you want to cut.
+ 
+ - any closed edge or wire of the desired shape (circle, ellipse ...).
+
+2. In the <b>Main Menu</b> select <b>Operations - > Extruded Cut</b> or click on 
+\image html extruded_cut.png
+
+3. Fill in the dialog box fields:
+
+\image
+
+The input parameters are:
+
+- The <b>initial shape</b> you want to cut. It must be a solid or a compound made of a single solid.
+
+- The \b profile. It must be a \b closed edge or wire and it must be \b planar.
+
+- The \b height of extrusion. It's calculated from the <b>base profile</b> along the normal to its plane.
+
+And optionnaly:
+
+- A <b>draft angle</b> in degrees. Activated by clicking on \image html draft.png
+
+
 
 */
