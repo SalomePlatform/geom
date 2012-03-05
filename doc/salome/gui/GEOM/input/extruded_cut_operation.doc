@@ -1,0 +1,8 @@
+/*!
+
+\page extruded_cut_operation_page Extruded cut
+
+The "Extruded cut" operation allows you to remove material from an object by extruding a profile or a face 
+along the normal to its plane.
+
+*/

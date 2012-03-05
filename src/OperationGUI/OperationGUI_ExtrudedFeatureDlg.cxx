@@ -75,10 +75,12 @@ OperationGUI_ExtrudedFeatureDlg::OperationGUI_ExtrudedFeatureDlg(const int theOp
     case OperationGUI::BOSS:
       image0 = QPixmap(aResMgr->loadPixmap("GEOM", tr("ICO_EXTRUDED_BOSS")));
       aTitle = tr("GEOM_EXTRUDED_BOSS");
+      setHelpFileName("extruded_boss_operation_page.html");
       break;
     case OperationGUI::CUT:
       image0 = QPixmap( aResMgr->loadPixmap("GEOM", tr("ICO_EXTRUDED_CUT")));
       aTitle = tr("GEOM_EXTRUDED_CUT");
+      setHelpFileName("extruded_cut_operation_page.html");
       break;
   }
     
@@ -209,8 +211,8 @@ void OperationGUI_ExtrudedFeatureDlg::SetEditCurrentArgument()
 
     myGroup->PushButton2->setDown(false);
     myGroup->LineEdit2->setEnabled(false);
-    
-    globalSelection();   // close local selection
+   
+//     globalSelection();   // close local selection
   }
   else if (send == myGroup->PushButton2) {
     myEditCurrentArgument = myGroup->LineEdit2;
@@ -218,9 +220,15 @@ void OperationGUI_ExtrudedFeatureDlg::SetEditCurrentArgument()
     myGroup->PushButton1->setDown(false);
     myGroup->LineEdit1->setEnabled(false);
     
-    globalSelection(); // close local selection to clear it
-//     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
-    localSelection( GEOM::GEOM_Object::_nil(), TopAbs_FACE );
+//     globalSelection(); // close local selection to clear it
+    
+// //     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
+//     if (myObject1)
+//     {
+//       localSelection( myObject1.get(), TopAbs_FACE );
+// //       localSelection( myObject1.get(), TopAbs_EDGE );
+//     }
+//    /* localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE ); */ 
   }
   
   // enable line edit
@@ -360,7 +368,7 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
   bool isProtrusion = (myOperation == OperationGUI::BOSS);  
   
   // Hide the initial shape in order to see the modifications on the preview
-  getDisplayer()->Erase(myObject1.get(),false,false);   
+  erase(myObject1.get(),false);   
   
   GEOM::GEOM_Object_var anObj = anOper->MakeDraftPrism(myObject1.get(), myObject2.get(), 
                                                        myGroup->SpinBox_DX->value(),
@@ -372,14 +380,14 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
   return true;
 }
 
-//=================================================================================
-// function : addSubshapeToStudy
-// purpose  : virtual method to add new SubObjects if local selection
-//=================================================================================
-void OperationGUI_ExtrudedFeatureDlg::addSubshapesToStudy()
-{
-  GEOMBase::PublishSubObject( myObject2.get() );
-}
+// //=================================================================================
+// // function : addSubshapeToStudy
+// // purpose  : virtual method to add new SubObjects if local selection
+// //=================================================================================
+// void OperationGUI_ExtrudedFeatureDlg::addSubshapesToStudy()
+// {
+//   GEOMBase::PublishSubObject( myObject2.get() );
+// }
 
 
 
