@@ -196,49 +196,6 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
     Standard_Boolean isProtrusion = (aCI.GetFuseFlag()==1); 
     // Flag to know wether the feature is a protrusion (fuse) or a depression (cut)
     
-    if (anInitShape.ShapeType() == TopAbs_COMPOUND)
-    {
-      TopExp_Explorer anExp(anInitShape, TopAbs_SOLID);
-      int solidCount = 0;
-      for(;anExp.More();anExp.Next())
-      {
-        solidCount++;
-        if (solidCount > 1)
-          Standard_ConstructionError::Raise("The input shape is a compound with more than one solid");
-      }
-      if (solidCount == 0)
-        Standard_ConstructionError::Raise("The input shape is a compound without any solid");
-    }
-    
-//     if (aSketch.ShapeType() == TopAbs_FACE)
-//     {
-//       aFaceBase = TopoDS::Face(aSketch); 
-//     }
-//     else
-//     {
-    TopoDS_Wire aWire = TopoDS_Wire();
-    
-    if (aSketch.ShapeType() == TopAbs_EDGE)
-    {
-      aWire = BRepBuilderAPI_MakeWire(TopoDS::Edge(aSketch));
-    }
-    else if (aSketch.ShapeType() == TopAbs_WIRE)
-    {
-      aWire = TopoDS::Wire(aSketch);
-    }
-    else
-    {
-      Standard_ConstructionError::Raise("The input profile is neither a wire, nor edge");
-    }
-    
-    TopoDS_Vertex aV1, aV2;
-    TopExp::Vertices(aWire, aV1, aV2);
-    if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
-      aWire.Closed( true );
-    
-    if (!aWire.Closed())
-      Standard_ConstructionError::Raise("The input profile is not closed");
-      
     // history of the Base wire (RefBase)
     Handle(GEOM_Object) aSuppObj;
     TDF_LabelSequence aLabelSeq;
@@ -253,46 +210,12 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       aSuppObj = GEOM_Object::GetReferencedObject(anArgumentRefLabel);   
     }
     
-    // Construction of the face if the wire hasn't any support face
-    TopoDS_Face aFaceBase = BRepBuilderAPI_MakeFace(aWire);
-
+    TopoDS_Shape aSupport;
+    
     if(!aSuppObj.IsNull())      // If the wire has a support
-    {
-      TopoDS_Shape aSupport = aSuppObj->GetValue();
-      if (aSupport.ShapeType() == TopAbs_FACE)
-      {
-        Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aSupport));
-        TopoDS_Face aTempFace = BRepBuilderAPI_MakeFace(aSurf, aWire);
-        
-        if(aTempFace.Orientation() != TopoDS::Face(aSupport).Orientation())
-        {
-          aFaceBase=TopoDS::Face(aTempFace.Reversed());
-        }
-        else
-          aFaceBase=aTempFace;
-      }
-    } 
-//     }
+      aSupport = aSuppObj->GetValue();
     
-    // Invert height and angle if the operation is an extruded cut
-    bool invert = !isProtrusion; 
-    
-    // If the face has a reversed orientation invert for extruded boss operations
-    if(aFaceBase.Orientation() == TopAbs_REVERSED)
-      invert = isProtrusion;
-
-    if(invert)
-    {
-      anAngle = -anAngle;  // Invert angle and height
-      aHeight = -aHeight;
-    }
-    
-    BRepFeat_MakeDPrism thePrism(anInitShape, aFaceBase, TopoDS_Face(),
-                                 anAngle*PI180, isProtrusion, Standard_True); 
-    
-    thePrism.Perform(aHeight);
-    
-    aShape = thePrism.Shape();
+    aShape = MakeDraftPrism(anInitShape, aSketch, aHeight, anAngle, isProtrusion, aSupport); 
   }
 
   if (aShape.IsNull()) return 0;
@@ -315,11 +238,11 @@ Standard_Integer GEOMImpl_PrismDriver::Execute(TFunction_Logbook& log) const
       {
         aSolid = TopoDS::Solid(anExp.Current());
         solidNb++;
+        if (solidNb > 1)
+          break;
       }
       if (solidNb == 1)
-      {
         aRes = aSolid;
-      } 
     } 
     
     aFunction->SetValue(aRes);
@@ -476,6 +399,98 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeScaledPrism (const TopoDS_Shape& theShape
 
   return aShape;
 }
+
+//=======================================================================
+//function : MakeDraftPrism
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitShape,
+                                                    const TopoDS_Shape& theBaseShape,
+                                                    const Standard_Real theHeight,
+                                                    const Standard_Real theAngle,
+                                                    bool                isProtrusion,
+                                                    const TopoDS_Shape& theSupport)
+{
+  TopoDS_Shape aShape;
+  
+  if (theInitShape.ShapeType() == TopAbs_COMPOUND)
+    {
+      TopExp_Explorer anExp(theInitShape, TopAbs_SOLID);
+      int solidCount = 0;
+      for(;anExp.More();anExp.Next())
+      {
+        solidCount++;
+        if (solidCount > 1)
+          Standard_ConstructionError::Raise("The input shape is a compound with more than one solid");
+      }
+      if (solidCount == 0)
+        Standard_ConstructionError::Raise("The input shape is a compound without any solid");
+    }
+    
+    TopoDS_Wire aWire = TopoDS_Wire();
+    
+    if (theBaseShape.ShapeType() == TopAbs_EDGE)
+    {
+      aWire = BRepBuilderAPI_MakeWire(TopoDS::Edge(theBaseShape));
+    }
+    else if (theBaseShape.ShapeType() == TopAbs_WIRE)
+    {
+      aWire = TopoDS::Wire(theBaseShape);
+    }
+    else
+    {
+      Standard_ConstructionError::Raise("The input profile is neither a wire, nor edge");
+    }
+    
+    TopoDS_Vertex aV1, aV2;
+    TopExp::Vertices(aWire, aV1, aV2);
+    if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
+      aWire.Closed( true );
+    
+    if (!aWire.Closed())
+      Standard_ConstructionError::Raise("The input profile is not closed");
+    
+    // Construction of the face if the wire hasn't any support face
+    TopoDS_Face aFaceBase = BRepBuilderAPI_MakeFace(aWire);
+
+    if(!theSupport.IsNull() && theSupport.ShapeType() == TopAbs_FACE)      // If the wire has a support
+    {
+      Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(theSupport));
+      TopoDS_Face aTempFace = BRepBuilderAPI_MakeFace(aSurf, aWire);
+      
+      if(aTempFace.Orientation() != TopoDS::Face(theSupport).Orientation())
+      {
+        aFaceBase=TopoDS::Face(aTempFace.Reversed());
+      }
+      else
+        aFaceBase=aTempFace;
+    } 
+    
+    // Invert height and angle if the operation is an extruded cut
+    bool invert = !isProtrusion; 
+    
+    // If the face has a reversed orientation invert for extruded boss operations
+    if(aFaceBase.Orientation() == TopAbs_REVERSED)
+      invert = isProtrusion;
+
+    Standard_Real anAngle = theAngle;
+    Standard_Real aHeight = theHeight;
+    if(invert)
+    {
+      anAngle  = -theAngle;  // Invert angle and height
+      aHeight  = -theHeight;
+    }
+    
+    BRepFeat_MakeDPrism aPrism(theInitShape, aFaceBase, TopoDS_Face(),
+                              anAngle*PI180, isProtrusion, Standard_True); 
+    
+    aPrism.Perform(aHeight);
+    
+    aShape = aPrism.Shape();
+    
+    return aShape;
+}
+                                                   
 
 //=======================================================================
 //function : GEOMImpl_PrismDriver_Type_

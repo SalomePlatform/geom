@@ -157,7 +157,14 @@ public:
                                                        const gp_Vec&       theVector,
                                                        const Standard_Real theScaleFactor,
                                                        const gp_Pnt&       theCDG = gp::Origin(),
-                                                       bool                isCDG = false); 
+                                                       bool                isCDG = false);
+  
+  Standard_EXPORT static TopoDS_Shape MakeDraftPrism (const TopoDS_Shape& theInitShape,
+                                                      const TopoDS_Shape& theBaseShape,
+                                                      const Standard_Real theHeight,
+                                                      const Standard_Real theAngle,
+                                                      bool                isProtrusion,
+                                                      const TopoDS_Shape& theSupport);
 
 
   // Type management
