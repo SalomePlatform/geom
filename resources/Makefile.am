@@ -57,6 +57,7 @@ chamferedge.png			\
 chamferface.png			\
 chamferedgefromface.png		\
 change_orientation.png		\
+change_direction.png		\
 check.png			\
 circle.png			\
 circlepointvector.png		\

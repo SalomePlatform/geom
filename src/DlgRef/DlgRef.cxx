@@ -443,6 +443,20 @@ DlgRef_2Sel2Spin1Push::~DlgRef_2Sel2Spin1Push()
 }
 
 //////////////////////////////////////////
+// DlgRef_2Sel2Spin2Push
+//////////////////////////////////////////
+
+DlgRef_2Sel2Spin2Push::DlgRef_2Sel2Spin2Push( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_2Sel2Spin2Push::~DlgRef_2Sel2Spin2Push()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_2Sel3Spin2Rb
 //////////////////////////////////////////
 

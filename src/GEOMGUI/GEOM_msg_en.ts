@@ -326,6 +326,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Objects to change orientation</translation>
     </message>
     <message>
+        <source>GEOM_CHANGE_DIRECTION</source>
+        <translation>Change direction</translation>
+    </message>
+    <message>
         <source>GEOM_CHANGE_ORIENTATION_TITLE</source>
         <translation>Change orientation</translation>
     </message>
@@ -540,6 +544,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_DropSmallEdges</source>
         <translation>DropSmallEdges</translation>
+    </message>
+    <message>
+        <source>GEOM_DRAFT_ANGLE</source>
+        <translation>Draft angle:</translation>
     </message>
     <message>
         <source>GEOM_EDGE</source>
@@ -1210,6 +1218,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_PIPE_TITLE</source>
         <translation>Pipe Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_PROFILE</source>
+        <translation>Profile</translation>
     </message>
     <message>
         <source>GEOM_SEGMENT</source>

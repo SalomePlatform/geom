@@ -516,6 +516,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_2Sel2Spin2Push
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel2Spin2Push_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel2Spin2Push : public QWidget, 
+                                       public Ui::DlgRef_2Sel2Spin2Push_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel2Spin2Push( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel2Spin2Push();
+};
+
+//////////////////////////////////////////
 // DlgRef_2Sel3Spin2Rb
 //////////////////////////////////////////
 

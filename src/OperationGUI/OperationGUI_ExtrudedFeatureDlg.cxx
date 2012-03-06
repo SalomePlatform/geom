@@ -69,6 +69,7 @@ OperationGUI_ExtrudedFeatureDlg::OperationGUI_ExtrudedFeatureDlg(const int theOp
   QPixmap image0;
   QPixmap image1 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
   QPixmap image2 (aResMgr->loadPixmap("GEOM", tr("ICO_DRAFT")));
+  QPixmap image3 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_CHANGE_DIRECTION")));
   QString aTitle;
   switch (myOperation) 
   {
@@ -94,15 +95,21 @@ OperationGUI_ExtrudedFeatureDlg::OperationGUI_ExtrudedFeatureDlg(const int theOp
   
   mainFrame()->RadioButton1->setChecked(true);
   
-  myGroup = new DlgRef_2Sel2Spin1Push(centralWidget());
+  myGroup = new DlgRef_2Sel2Spin2Push(centralWidget());
+  
+  myGroup->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  
   myGroup->PushButton1->setIcon(image1);
   myGroup->PushButton2->setIcon(image1);
   myGroup->PushButton3->setIcon(image2);
+  myGroup->PushButton4->setIcon(image3);
   myGroup->LineEdit1->setReadOnly(true);
   myGroup->LineEdit2->setReadOnly(true);
   myGroup->TextLabel1->setText(tr("GEOM_INIT_SHAPE"));
-  myGroup->TextLabel2->setText(tr("GEOM_SKETCH"));
+  myGroup->TextLabel2->setText(tr("GEOM_PROFILE"));
   myGroup->TextLabel3->setText(tr("GEOM_HEIGHT"));
+  myGroup->TextLabel4->setText(tr("GEOM_DRAFT_ANGLE"));
+  myGroup->TextLabel5->setText(tr("GEOM_CHANGE_DIRECTION"));
  
   
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
@@ -153,6 +160,7 @@ void OperationGUI_ExtrudedFeatureDlg::Init()
   connect(myGroup->PushButton1, SIGNAL(clicked()),     this, SLOT(SetEditCurrentArgument()));
   connect(myGroup->PushButton2, SIGNAL(clicked()),     this, SLOT(SetEditCurrentArgument()));
   connect(myGroup->PushButton3, SIGNAL(clicked(bool)), this, SLOT(ButtonClicked(bool)));
+  connect(myGroup->PushButton4, SIGNAL(clicked(bool)), this, SLOT(ButtonClicked(bool)));
   connect(myGroup->SpinBox_DX,  SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(myGroup->SpinBox_DY,  SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   
@@ -331,7 +339,10 @@ void OperationGUI_ExtrudedFeatureDlg::ValueChangedInSpinBox()
 //=================================================================================
 void OperationGUI_ExtrudedFeatureDlg::ButtonClicked(bool checked)
 {
-  myGroup->SpinBox_DY->setEnabled(checked);
+  QPushButton* send = (QPushButton*)sender();
+  if (send == myGroup->PushButton3)
+    myGroup->SpinBox_DY->setEnabled(checked);
+ 
   displayPreview(true);
 }
 
@@ -362,16 +373,24 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
   GEOM::GEOM_I3DPrimOperations_var anOper = GEOM::GEOM_I3DPrimOperations::_narrow(getOperation());
   
   double angle=0.0;
+  double aHeight = myGroup->SpinBox_DX->value();
+  
   if (myGroup->PushButton3->isChecked())
     angle=myGroup->SpinBox_DY->value();
+  
+  if (myGroup->PushButton4->isChecked())
+  {
+    aHeight = -aHeight;
+    angle   = -angle;
+  }
     
   bool isProtrusion = (myOperation == OperationGUI::BOSS);  
   
   // Hide the initial shape in order to see the modifications on the preview
-  erase(myObject1.get(),false);   
+  erase(myObject1.get(),false); 
   
   GEOM::GEOM_Object_var anObj = anOper->MakeDraftPrism(myObject1.get(), myObject2.get(), 
-                                                       myGroup->SpinBox_DX->value(),
+                                                       aHeight,
                                                        angle,
                                                        isProtrusion);
   if (!anObj->_is_nil())

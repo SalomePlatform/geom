@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DlgRef_2Sel2Spin1Push_QTD</class>
- <widget class="QWidget" name="DlgRef_2Sel2Spin1Push_QTD">
+ <class>DlgRef_2Sel2Spin2Push_QTD</class>
+ <widget class="QWidget" name="DlgRef_2Sel2Spin2Push_QTD">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>281</width>
-    <height>150</height>
+    <height>165</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -42,7 +42,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="2">
        <widget class="QPushButton" name="PushButton1">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -55,7 +55,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
+      <item row="0" column="3" colspan="2">
        <widget class="QLineEdit" name="LineEdit1"/>
       </item>
       <item row="1" column="0">
@@ -74,7 +74,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="1" column="2">
        <widget class="QPushButton" name="PushButton2">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -87,7 +87,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="1" column="3" colspan="2">
        <widget class="QLineEdit" name="LineEdit2"/>
       </item>
       <item row="2" column="0">
@@ -106,13 +106,17 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2">
+      <item row="2" column="2" colspan="3">
        <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DX"/>
       </item>
-      <item row="3" column="2">
-       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DY"/>
+      <item row="4" column="0">
+       <widget class="QLabel" name="TextLabel4">
+        <property name="text">
+         <string>TL4</string>
+        </property>
+       </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="2">
        <widget class="QPushButton" name="PushButton3">
         <property name="text">
          <string/>
@@ -122,10 +126,23 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="TextLabel4">
+      <item row="4" column="3" colspan="2">
+       <widget class="SalomeApp_DoubleSpinBox" name="SpinBox_DY"/>
+      </item>
+      <item row="5" column="2">
+       <widget class="QPushButton" name="PushButton4">
         <property name="text">
-         <string>TL4</string>
+         <string/>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="TextLabel5">
+        <property name="text">
+         <string>TL5</string>
         </property>
        </widget>
       </item>

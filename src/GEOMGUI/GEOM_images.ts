@@ -148,6 +148,10 @@
             <translation>change_orientation.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_CHANGE_DIRECTION</source>
+            <translation>change_direction.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_REMOVE_EXTRA_EDGES</source>
             <translation>remove_extra_edges.png</translation>
         </message>

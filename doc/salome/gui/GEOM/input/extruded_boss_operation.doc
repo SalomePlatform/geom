@@ -2,7 +2,42 @@
 
 \page extruded_boss_operation_page Extruded boss
 
-The "Extruded boss" operation allows you to add material to an object by extruding a profile or a face 
-along the normal to its plane.
+The <b>Extruded boss</b> operation allows you to easily add material on a \b solid by extruding a profile along the normal to its plane.
+
+\image html extruded_boss_example.png
+
+To produce the <b>extruded boss</b>:
+
+1. Draw the \b profile of the extrusion. It can be:
+
+ - a \b Sketch drawn on a planar face of the object you want to boss.
+ 
+ - any closed edge or wire of the desired shape (circle, ellipse ...).
+
+2. In the <b>Main Menu</b> select <b>Operations - > Extruded Boss</b> or click on 
+\image html extruded_boss.png
+
+3. Fill in the dialog box fields:
+
+\image html extruded_boss_dlg.png
+
+The input arguments are:
+
+- The <b>initial shape</b> you want to add material on. It must be a solid or a compound made of a single solid.
+
+- The \b profile. It must be a \b closed edge or wire and it must be \b planar.
+
+- The \b height of extrusion. It's calculated from the <b>base profile</b> along the normal to its plane.
+
+And optionnaly:
+
+- A <b>draft angle</b> in degrees. Activated by clicking on \image html draft.png
+
+The direction can be reversed by pushing the <b> Change direction </b> button: \image html change_direction.png
+
+
+This functionality is available via the textual interface with the command:
+
+\n <b>TUI Command:</b> <em>geompy.MakeExtrudedBoss(InitShape, Profile, Height, Angle),</em>
 
 */

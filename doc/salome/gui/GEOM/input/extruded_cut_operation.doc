@@ -4,7 +4,7 @@
 
 The <b>Extruded cut</b> operation allows you to easily remove material from a \b solid by extruding a profile along the normal to its plane.
 
-- \image html extruded_cut_example.png
+\image html extruded_cut_example.png
 
 To produce the <b>extruded cut</b>:
 
@@ -19,9 +19,9 @@ To produce the <b>extruded cut</b>:
 
 3. Fill in the dialog box fields:
 
-\image
+\image html extruded_cut_dlg.png
 
-The input parameters are:
+The input arguments are:
 
 - The <b>initial shape</b> you want to cut. It must be a solid or a compound made of a single solid.
 
@@ -33,6 +33,12 @@ And optionnaly:
 
 - A <b>draft angle</b> in degrees. Activated by clicking on \image html draft.png
 
+The direction can be reversed by pushing the <b> Change direction </b> button: \image html change_direction.png
+
+
+This functionality is available via the textual interface with the command:
+
+\n <b>TUI Command:</b> <em>geompy.MakeExtrudedCut(InitShape, Profile, Height,Angle),</em>
 
 
 */

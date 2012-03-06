@@ -36,7 +36,7 @@
 // class DlgRef_2Sel;
 // class DlgRef_1Sel3Spin;
 // class DlgRef_1Sel2Spin;
-class DlgRef_2Sel2Spin1Push;
+class DlgRef_2Sel2Spin2Push;
 
 // class QLineEdit;
 // class QGroupBox;
@@ -73,7 +73,7 @@ private:
   GEOM::GeomObjPtr            myObject1;
   GEOM::GeomObjPtr            myObject2;
   
-  DlgRef_2Sel2Spin1Push*      myGroup;
+  DlgRef_2Sel2Spin2Push*      myGroup;
   
 private slots:
   void                        ClickOnOk();
