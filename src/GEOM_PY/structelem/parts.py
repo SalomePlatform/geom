@@ -25,6 +25,8 @@ directly in the general case. Structural elements should be created by the
 class :class:`~salome.geom.structelem.StructuralElementManager`.
 """
 
+import math
+
 import salome
 
 from salome.kernel.logger import Logger
@@ -347,30 +349,6 @@ class Beam(StructuralElementPart):
         return listMarkers
 
 
-class GeneralBeam(Beam):
-    """
-    This class defines a beam with a generic section. It is represented only
-    as the underlying wire. See class :class:`StructuralElementPart` for the
-    description of the parameters.
-    """
-
-    def __init__(self, studyId, groupName, groupGeomObj, parameters,
-                 name = Beam.DEFAULT_NAME):
-        Beam.__init__(self, studyId, groupName, groupGeomObj, parameters,
-                      name)
-        logger.debug(repr(self))
-
-    def _buildPart(self):
-        """
-        Create a copy of the underlying wire.
-        """
-        edges = self._getSubShapes(1e-7)
-        wire = None
-        if len(edges) > 0:
-            wire = self.geom.MakeWire(edges)
-        return wire
-
-
 class CircularBeam(Beam):
     """
     This class defines a beam with a circular section. It can be full or
@@ -571,6 +549,48 @@ class RectangularBeam(Beam):
             self._makeSectionRectangles(lPoint, lNormal, self.HY2, self.HZ2,
                                         self.EPY2, self.EPZ2)
         return (outerRect1, innerRect1, outerRect2, innerRect2)
+
+
+def getParameterInDict(nameList, parametersDict, default = None):
+    """
+    This method finds the value of a parameter in the parameters
+    dictionary. The argument is a list because some parameters can have
+    several different names.
+    """
+    for name in nameList:
+        if parametersDict.has_key(name):
+            return parametersDict[name]
+    return default
+
+
+class GeneralBeam(RectangularBeam):
+    """
+    This class defines a beam with a generic section. It is represented as a
+    full rectangular beam with the following parameters:
+    
+    * HY1 = sqrt(12 * IZ1 / A1)
+    * HZ1 = sqrt(12 * IY1 / A1)
+    * HY2 = sqrt(12 * IZ2 / A2)
+    * HZ2 = sqrt(12 * IY2 / A2)
+    
+    See class :class:`StructuralElementPart` for the description of the other
+    parameters.
+    """
+
+    def __init__(self, studyId, groupName, groupGeomObj, parameters,
+                 name = Beam.DEFAULT_NAME):
+        self.IY1 = getParameterInDict(["IY1", "IY"], parameters)
+        self.IZ1 = getParameterInDict(["IZ1", "IZ"], parameters)
+        self.IY2 = getParameterInDict(["IY2", "IY"], parameters)
+        self.IZ2 = getParameterInDict(["IZ2", "IZ"], parameters)
+        self.A1 = getParameterInDict(["A1", "A"], parameters)
+        self.A2 = getParameterInDict(["A2", "A"], parameters)
+        parameters["HY1"] = math.sqrt(12 * self.IZ1 / self.A1)
+        parameters["HZ1"] = math.sqrt(12 * self.IY1 / self.A1)
+        parameters["HY2"] = math.sqrt(12 * self.IZ2 / self.A2)
+        parameters["HZ2"] = math.sqrt(12 * self.IY2 / self.A2)
+        RectangularBeam.__init__(self, studyId, groupName, groupGeomObj, parameters,
+                                 name)
 
 
 class StructuralElementPart2D(StructuralElementPart):
