@@ -4424,6 +4424,13 @@ Please, select face, shell or solid and try again</translation>
         <translation>Import operation has finished with errors:</translation>
     </message>
     <message>
+        <source>EXPORT_IGES_HETEROGENEOUS_COMPOUND</source>
+        <translation>This compound cannot be exported in IGES format
+without loss, because it contains entities, that must be saved in
+different modes. It is vertices, edges and wires on the one hand and
+shells and solids on the other hand.</translation>
+    </message>
+    <message>
         <source>GEOM_PUBLISH_NAMED_SHAPES</source>
         <translation>Create groups for named shapes (if there are any)?</translation>
     </message>
