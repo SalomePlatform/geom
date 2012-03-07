@@ -482,7 +482,7 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
     }
     
     BRepFeat_MakeDPrism aPrism(theInitShape, aFaceBase, TopoDS_Face(),
-                              anAngle*PI180, isProtrusion, Standard_True); 
+                              anAngle*M_PI/180., isProtrusion, Standard_True); 
     
     aPrism.Perform(aHeight);
     aPrism.Check();          // Raises NotDone if done is false
