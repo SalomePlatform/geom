@@ -262,22 +262,23 @@ void PrimitiveGUI_CylinderDlg::SelectionIntoArgument()
     QString aName = GEOMBase::GetName( aSelectedObject.get() );
 
     myEditCurrentArgument->setText(aName);
-  
-    // clear selection
-    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
-    myGeomGUI->getApp()->selectionMgr()->clearSelected();
-    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
-	    this, SLOT(SelectionIntoArgument()));
     
     if (myEditCurrentArgument == GroupPoints->LineEdit1) {
       myPoint = aSelectedObject;
       if (myPoint && !myDir)
-	GroupPoints->PushButton2->click();
+        GroupPoints->PushButton2->click();
     }
     else if (myEditCurrentArgument == GroupPoints->LineEdit2) {
       myDir = aSelectedObject;
       if (myDir && !myPoint)
-	GroupPoints->PushButton1->click();
+        GroupPoints->PushButton1->click();
+    }
+    // clear selection
+    if ((myDir && !myPoint) || (myPoint && !myDir)) {
+      disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+      myGeomGUI->getApp()->selectionMgr()->clearSelected();
+      connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+	      this, SLOT(SelectionIntoArgument()));
     }
   }
 
