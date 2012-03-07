@@ -117,6 +117,7 @@ public:
   void                        ActiveWorkingPlane();
 
   virtual bool                renameObject( const QString&, const QString& );
+  virtual bool                renameAllowed( const QString& ) const;
 
   virtual void                windows( QMap<int, int>& ) const;
   virtual void                viewManagers( QStringList& ) const;

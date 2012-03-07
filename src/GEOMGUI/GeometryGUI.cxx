@@ -2180,29 +2180,50 @@ void GeometryGUI::onViewAboutToShow()
 }
 
 /*!
+  \brief Check if this object is can't be renamed in place
+
+  This method can be re-implemented in the subclasses.
+  Return true in case if object isn't reference or component (module root).
+
+  \param id column id
+  \return \c true if the item can be renamed by the user in place (e.g. in the Object browser)
+*/
+bool GeometryGUI::renameAllowed( const QString& entry) const {
+
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0; 
+  SalomeApp_DataObject* obj = appStudy ? dynamic_cast<SalomeApp_DataObject*>(appStudy->findObjectByEntry(entry)) : 0;
+  
+  return (app && appStudy && obj && !appStudy->isComponent(entry) && !obj->isReference());
+}
+
+
+/*!
   Rename object by entry.
   \param entry entry of the object
   \param name new name of the object
   \brief Return \c true if rename operation finished successfully, \c false otherwise.
 */
 bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
-
-  bool appRes = SalomeApp_Module::renameObject(entry,name);
-  if( !appRes )
-    return false;
-
+  
   bool result = false;
-
+  
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication());
   SalomeApp_Study* appStudy = app ? dynamic_cast<SalomeApp_Study*>( app->activeStudy() ) : 0;
-
+  
   if(!appStudy)
     return result;
-
+  
   _PTR(Study) aStudy = appStudy->studyDS();
-
+  
   if(!aStudy)
     return result;
+
+  bool aLocked = (_PTR(AttributeStudyProperties)(appStudy->studyDS()->GetProperties()))->IsLocked();
+  if ( aLocked ) {
+    SUIT_MessageBox::warning ( app->desktop(), QObject::tr("WRN_WARNING"), QObject::tr("WRN_STUDY_LOCKED") );
+    return result;
+  }
 
   _PTR(SObject) obj ( aStudy->FindObjectID(qPrintable(entry)) );
   _PTR(GenericAttribute) anAttr;
@@ -2220,3 +2241,4 @@ bool GeometryGUI::renameObject( const QString& entry, const QString& name) {
   }
   return result;
 }
+
