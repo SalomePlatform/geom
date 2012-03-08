@@ -28,6 +28,7 @@ class :class:`~salome.geom.structelem.StructuralElementManager`.
 import math
 
 import salome
+import SALOMEDS
 
 from salome.kernel.logger import Logger
 from salome.kernel import termcolor
@@ -44,6 +45,16 @@ HOLLOW = "HOLLOW"
 MIN_DIM_FOR_EXTRUDED_SHAPE = 2e-4
 MIN_LENGTH_FOR_EXTRUSION = 1e-4
 MIN_THICKNESS = 1e-5
+
+# Colors for the structural elements
+GREEN = SALOMEDS.Color(0.0, 1.0, 0.0)
+LIGHT_GREEN = SALOMEDS.Color(0.0, 1.0, 170.0/255.0)
+BLUE = SALOMEDS.Color(0.0, 0.0, 1.0)
+LIGHT_BLUE = SALOMEDS.Color(0.0, 0.5, 1.0)
+RED = SALOMEDS.Color(1.0, 0.0, 0.0)
+LIGHT_RED = SALOMEDS.Color(1.0, 0.5, 0.5)
+PURPLE = SALOMEDS.Color(170.0/255.0, 85.0/255.0, 1.0)
+ORANGE = SALOMEDS.Color(1.0, 170.0/255.0, 0.0)
 
 
 class InvalidParameterError(Exception):
@@ -117,7 +128,7 @@ class StructuralElementPart:
     DEFAULT_NAME = "StructElemPart"
 
     def __init__(self, studyId, groupName, groupGeomObj, parameters,
-                 name = DEFAULT_NAME):
+                 name = DEFAULT_NAME, color = None):
         self._parameters = parameters
         self.groupName = groupName
         self._groupGeomObj = groupGeomObj
@@ -131,6 +142,9 @@ class StructuralElementPart:
         if mainShape is not None and listIDs is not None:
             for id in listIDs:
                 self.baseShapesSet.add(SubShapeID(mainShape, id))
+        self.color = color
+        if self.color is None:
+            self.color = self._groupGeomObj.GetColor()
 
     def _getParameter(self, nameList, default = None):
         """
@@ -191,9 +205,9 @@ class StructuralElementPart:
         """
         shape = self._buildPart()
         markers = self._buildMarkers()
-        shape.SetColor(self._groupGeomObj.GetColor())
+        shape.SetColor(self.color)
         for marker in markers:
-            marker.SetColor(self._groupGeomObj.GetColor())
+            marker.SetColor(self.color)
         return (shape, markers)
 
     def _buildPart(self):
@@ -245,9 +259,9 @@ class Beam(StructuralElementPart):
     DEFAULT_NAME = "Beam"
 
     def __init__(self, studyId, groupName, groupGeomObj, parameters,
-                 name = DEFAULT_NAME):
+                 name = DEFAULT_NAME, color = None):
         StructuralElementPart.__init__(self, studyId, groupName, groupGeomObj,
-                                       parameters, name)
+                                       parameters, name, color)
         self._orientation = orientation.Orientation1D()
 
     def _isReversed(self, path):
@@ -368,9 +382,15 @@ class CircularBeam(Beam):
     """
 
     def __init__(self, studyId, groupName, groupGeomObj, parameters,
-                 name = Beam.DEFAULT_NAME):
+                 name = Beam.DEFAULT_NAME, color = None):
+        if color is None:
+            if parameters.has_key("R1"): # variable section
+                color = LIGHT_RED
+            else:                       # constant section
+                color = RED
+
         Beam.__init__(self, studyId, groupName, groupGeomObj, parameters,
-                      name)
+                      name, color)
 
         self.R1 = self._getParameter(["R1", "R"])
         self.R2 = self._getParameter(["R2", "R"])
@@ -451,9 +471,15 @@ class RectangularBeam(Beam):
     """
 
     def __init__(self, studyId, groupName, groupGeomObj, parameters,
-                 name = Beam.DEFAULT_NAME):
+                 name = Beam.DEFAULT_NAME, color = None):
+        if color is None:
+            if parameters.has_key("HY1") or parameters.has_key("H1"):
+                color = LIGHT_BLUE # variable section
+            else:                  # constant section
+                color = BLUE
+
         Beam.__init__(self, studyId, groupName, groupGeomObj, parameters,
-                      name)
+                      name, color)
 
         self.HY1 = self._getParameter(["HY1", "HY", "H1", "H"])
         self.HZ1 = self._getParameter(["HZ1", "HZ", "H1", "H"])
@@ -578,7 +604,7 @@ class GeneralBeam(RectangularBeam):
     """
 
     def __init__(self, studyId, groupName, groupGeomObj, parameters,
-                 name = Beam.DEFAULT_NAME):
+                 name = Beam.DEFAULT_NAME, color = None):
         self.IY1 = getParameterInDict(["IY1", "IY"], parameters)
         self.IZ1 = getParameterInDict(["IZ1", "IZ"], parameters)
         self.IY2 = getParameterInDict(["IY2", "IY"], parameters)
@@ -589,8 +615,15 @@ class GeneralBeam(RectangularBeam):
         parameters["HZ1"] = math.sqrt(12 * self.IY1 / self.A1)
         parameters["HY2"] = math.sqrt(12 * self.IZ2 / self.A2)
         parameters["HZ2"] = math.sqrt(12 * self.IY2 / self.A2)
+
+        if color is None:
+            if parameters.has_key("IY1"): # variable section
+                color = LIGHT_GREEN
+            else:                         # constant section
+                color = GREEN
+
         RectangularBeam.__init__(self, studyId, groupName, groupGeomObj, parameters,
-                                 name)
+                                 name, color)
 
 
 class StructuralElementPart2D(StructuralElementPart):
@@ -937,27 +970,31 @@ def VisuBarreGenerale(studyId, groupName, groupGeomObj, parameters,
     """
     Alias for class :class:`GeneralBeam`.
     """
-    return GeneralBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return GeneralBeam(studyId, groupName, groupGeomObj, parameters, name,
+                       color = ORANGE)
       
 def VisuBarreRectangle(studyId, groupName, groupGeomObj, parameters,
                        name = "BARRE"):
     """
     Alias for class :class:`RectangularBeam`.
     """
-    return RectangularBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return RectangularBeam(studyId, groupName, groupGeomObj, parameters, name,
+                           color = ORANGE)
 
 def VisuBarreCercle(studyId, groupName, groupGeomObj, parameters,
                     name = "BARRE"):
     """
     Alias for class :class:`CircularBeam`.
     """
-    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name,
+                        color = ORANGE)
 
 def VisuCable(studyId, groupName, groupGeomObj, parameters, name = "CABLE"):
     """
     Alias for class :class:`CircularBeam`.
     """
-    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name)
+    return CircularBeam(studyId, groupName, groupGeomObj, parameters, name,
+                        color = PURPLE)
 
 def VisuCoque(studyId, groupName, groupGeomObj, parameters, name = "COQUE"):
     """
