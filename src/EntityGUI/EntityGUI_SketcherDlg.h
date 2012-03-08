@@ -68,7 +68,7 @@ class EntityGUI_SketcherDlg : public QDialog, GEOMBase_Helper
 
 public:
   EntityGUI_SketcherDlg( GeometryGUI*, QWidget* = 0, bool = false, Qt::WindowFlags = 0,
-                         const double = 2. );
+                         const double = -1 );
   ~EntityGUI_SketcherDlg();
 
   bool eventFilter (QObject* object, QEvent* event);

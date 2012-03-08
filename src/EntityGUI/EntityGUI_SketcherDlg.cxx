@@ -58,6 +58,7 @@
 #include <Sketcher_Profile.hxx>
 
 #include <SalomeApp_Study.h>
+#include <SalomeApp_Tools.h>
 
 #include <gp_Pln.hxx>
 
@@ -2260,11 +2261,17 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                             const int             displayMode,
                                             const int             color )
 { 
-  // Set color for preview shape
-  getDisplayer()->SetColor( Quantity_NOC_RED );
-
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr(); 
+  
+  QColor aColor = resMgr->colorValue("Geometry","line_color",QColor(255,0,0));
+  Quantity_NameOfColor line_color = SalomeApp_Tools::color( aColor ).Name();
+  
   // set width of displayed shape
-  getDisplayer()->SetWidth( (lineWidth == -1)?myLineWidth:lineWidth );
+  int lw = lineWidth;
+  if(lw == -1) { 
+    lw = resMgr->integerValue("Geometry", "preview_edge_width", -1);
+  }
+  getDisplayer()->SetWidth( lw );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );
@@ -2279,6 +2286,7 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
     return;
 
   // Build prs
+  getDisplayer()->SetColor( line_color );
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( anApplyedWire );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
@@ -2288,6 +2296,8 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
+  getDisplayer()->SetColor( line_color );
+  
   getDisplayer()->UnsetName();
 
   // Enable activation of displayed objects
