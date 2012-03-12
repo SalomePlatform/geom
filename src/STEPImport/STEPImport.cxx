@@ -41,6 +41,7 @@
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
 #include <StepShape_TopologicalRepresentationItem.hxx>
+#include <StepGeom_GeometricRepresentationItem.hxx>
 
 #include <Transfer_Binder.hxx>
 #include <TNaming_Builder.hxx>
@@ -177,12 +178,13 @@ extern "C"
           Handle(Transfer_TransientProcess) TP = TR->TransientProcess();
           Handle(Standard_Type) tPD  = STANDARD_TYPE(StepBasic_ProductDefinition);
           Handle(Standard_Type) tShape  = STANDARD_TYPE(StepShape_TopologicalRepresentationItem);
+          Handle(Standard_Type) tGeom  = STANDARD_TYPE(StepGeom_GeometricRepresentationItem);
 
           Standard_Integer nb = Model->NbEntities();
           for (Standard_Integer ie = 1; ie <= nb; ie++) {
             Handle(Standard_Transient) enti = Model->Value(ie);
             Handle(TCollection_HAsciiString) aName;
-            if ( enti->IsKind( tShape ))
+            if ( enti->IsKind( tShape ) || enti->IsKind(tGeom))
             {
               aName = Handle(StepRepr_RepresentationItem)::DownCast(enti)->Name();
             }
