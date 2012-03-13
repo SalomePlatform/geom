@@ -78,6 +78,8 @@ private:
   void         OnMaterialProperties();
   void         OnEdgeWidth();
   void         OnIsosWidth();
+  void         OnBringToFront();
+  void         OnClsBringToFront();
 
   // Shortcut commands
   void         OnChangeTransparency( bool );

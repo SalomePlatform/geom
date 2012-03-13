@@ -1,0 +1,10 @@
+/*!
+
+\page bring_to_front_page Bring To Front
+
+\n This option is relevant for better viewing of the complex 3D models. 
+This item allow to bring to front of viewer selected geometrical object.
+
+\image html bring_example.png
+
+*/

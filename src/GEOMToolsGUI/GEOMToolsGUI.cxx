@@ -373,6 +373,12 @@ bool GEOMToolsGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   case GEOMOp::OpIsosWidth:
     OnIsosWidth();
     break;
+  case GEOMOp::OpBringToFront:
+    OnBringToFront();
+    break;
+  case GEOMOp::OpClsBringToFront:
+    OnClsBringToFront();
+     break;
   default:
     SUIT_Session::session()->activeApplication()->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
     break;

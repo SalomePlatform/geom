@@ -70,6 +70,8 @@ namespace GEOMOp {
     OpShadingWithEdges    = 2202,   // POPUP MENU - DISPLAY MODE - SHADING WITH EDGES
     OpVectors             = 2203,   // POPUP MENU - DISPLAY MODE - SHOW EDGE DIRECTION
     OpTexture             = 2204,   // POPUP MENU - DISPLAY MODE - TEXTURE
+    OpBringToFront        = 2205,   // POPUP MENU - BRING TO FRONT
+    OpClsBringToFront     = 2206,
     // BasicGUI ------------------//--------------------------------
     OpPoint               = 3000,   // MENU NEW ENTITY - BASIC - POINT
     OpLine                = 3001,   // MENU NEW ENTITY - BASIC - LINE

@@ -666,15 +666,18 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->SetDisplayMode( aPropMap.value(DISPLAY_MODE_PROP).toInt() );
           AISShape->SetDisplayVectors(aPropMap.value(VECTOR_MODE_PROP).toInt());
 
-          //Color property
-          if(aPropMap.contains(COLOR_PROP)) {
+	  if(aPropMap.contains(TOP_LEVEL_PROP)) {
+	    AISShape->setTopLevel( aPropMap.value(TOP_LEVEL_PROP).value<Standard_Boolean>() );
+	  } 
+	  
+	  if(aPropMap.contains(COLOR_PROP)) {
             Quantity_Color  quant_col = SalomeApp_Tools::color( aPropMap.value(COLOR_PROP).value<QColor>());
             AISShape->SetShadingColor( quant_col );
           } else
             useObjColor = true;
         }else {
           MESSAGE("myDisplayMode = "<< myDisplayMode)
-          AISShape->SetDisplayMode( myDisplayMode );
+	    AISShape->SetDisplayMode( myDisplayMode );
           AISShape->SetShadingColor( myShadingColor );
         }
 
@@ -848,7 +851,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             AISShape->SetOwnDeviationCoefficient(aDC);
           }
         }
-
+		
         if ( HasTexture() )
         {
           AISShape->SetTextureFileName(TCollection_AsciiString(myTexture.c_str()));
@@ -856,7 +859,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           AISShape->DisableTextureModulate();
           AISShape->SetDisplayMode(3);
         }
-        
+	  
         if ( HasWidth() )
           AISShape->SetWidth( GetWidth() );
 
@@ -899,7 +902,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                   anAspect->SetTypeOfMarker( myTypeOfMarker );
                   AISShape->Attributes()->SetPointAspect( anAspect );
                 }
-              } else if(!hasColor) {
+              } else if( !hasColor ) {
                 //In case if color wasn't defined in the property map of the object
                 //and GEOM_Object color also wasn't defined get default color from Resource Mgr.
                 QColor col = aResMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
@@ -2025,6 +2028,10 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   //11. Width of iso-lines
   aDefaultMap.insert( ISOS_WIDTH_PROP , aResMgr->integerValue("Geometry", "isolines_width", 1));
 
+  if(viewer_type == SOCC_Viewer::Type()) {
+
+    aDefaultMap.insert(TOP_LEVEL_PROP, Standard_False);
+  }
 
   return aDefaultMap;
 }

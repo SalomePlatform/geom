@@ -72,6 +72,11 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
+#include <SalomeApp_Tools.h>
+
+#include <SUIT_Session.h>
+#include <SUIT_ResourceMgr.h>
+
 
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
                              const Handle(AIS_InteractiveContext)& theIC,
@@ -139,6 +144,8 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
 
   myUIsoNumber = -1;
   myVIsoNumber = -1;
+
+  myTopLevel = Standard_False;
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -174,17 +181,30 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
                             const Standard_Integer aMode)
 {  
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
+
+  Handle(AIS_InteractiveContext) anIC = GetContext();
   
-//   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
+  //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
   switch (aMode) {
     case 0://StdSelect_DM_Wireframe: 
     {
+
       restoreIsoNumbers();
 
       // Restore wireframe edges colors
       restoreBoundaryColors();
 
+
+      if(isTopLevel()) {
+	SetColor(topLevelColor());
+
+	Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
+	anAspect->SetColor( topLevelColor() );
+	Attributes()->SetWireAspect( anAspect );
+      }
+
       StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
+      
       break;
     }
     case 1://StdSelect_DM_Shading:
@@ -200,7 +220,10 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
     }
     case 3: //StdSelect_DM_HLR:
     {
-      AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+      if(!isTopLevel())
+	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+      else 
+	shadingMode(aPresentationManager, aPrs, AIS_Shaded);
       break;
     }
   }
@@ -373,7 +396,7 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
       //       P->SetPrimitivesAspect(a4bis);
       //        G->SetGroupPrimitivesAspect(a4bis);
       //a4bis->SetInteriorColor(myShadingColor);
-      myDrawer->ShadingAspect()->SetColor(myShadingColor);
+      myDrawer->ShadingAspect()->SetColor(isTopLevel() ? topLevelColor() : myShadingColor);
 
       // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
       //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
@@ -432,4 +455,20 @@ void GEOM_AISShape::restoreBoundaryColors()
   anAspect = myDrawer->UnFreeBoundaryAspect();
   anAspect->SetColor( myUnFreeBoundaryColor );
   myDrawer->SetUnFreeBoundaryAspect( anAspect );
+}
+
+
+Standard_Boolean GEOM_AISShape::isTopLevel() {
+  return myTopLevel;
+}
+
+void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
+  myTopLevel = f;
+}
+
+Quantity_Color GEOM_AISShape::topLevelColor() {
+  SUIT_Session* session = SUIT_Session::session();
+  SUIT_ResourceMgr* resMgr = session->resourceMgr();
+  QColor c = resMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
+  return SalomeApp_Tools::color(c);
 }

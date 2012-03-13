@@ -1012,7 +1012,7 @@ void GEOM_Actor::SetIsosWidth(const int width) {
 }
 
 int GEOM_Actor::GetIsosWidth() const {
-  return myWireframeFaceActor->GetProperty()->GetLineWidth();
+  return (int)myWireframeFaceActor->GetProperty()->GetLineWidth();
 }
 
 void GEOM_Actor::SetWidth(const int width) {
@@ -1025,7 +1025,7 @@ void GEOM_Actor::SetWidth(const int width) {
 }
 
 int GEOM_Actor::GetWidth() const {
-  return myIsolatedEdgeActor->GetProperty()->GetLineWidth();
+  return (int)myIsolatedEdgeActor->GetProperty()->GetLineWidth();
 }
     
 void GEOM_Actor::RestoreIsoNumbers()

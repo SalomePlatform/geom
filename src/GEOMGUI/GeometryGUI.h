@@ -56,6 +56,7 @@
 
 class QDialog;
 class QMenu;
+class QAction;
 class GEOMGUI_OCCSelector;
 class LightApp_VTKSelector;
 class LightApp_Selection;
@@ -130,6 +131,8 @@ public:
 
   virtual void storeVisualParameters  (int savePoint);
   virtual void restoreVisualParameters(int savePoint);
+
+  QAction*                    getAction(const int id);
 
 public slots:
   virtual bool                deactivateModule( SUIT_Study* );

@@ -426,6 +426,8 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpMaterialProperties: // POPUP MENU - MATERIAL PROPERTIES
   case GEOMOp::OpEdgeWidth:          // POPUP MENU - LINE WIDTH - EDGE WIDTH
   case GEOMOp::OpIsosWidth:          // POPUP MENU - LINE WIDTH - ISOS WIDTH
+  case GEOMOp::OpBringToFront:       // POPUP MENU - BRING TO FRONT
+  case GEOMOp::OpClsBringToFront:    //
     libName = "GEOMToolsGUI";
     break;
   case GEOMOp::OpDisplayMode:        // MENU VIEW - WIREFRAME/SHADING
@@ -844,6 +846,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpSelectCompound,   "COMPOUND_SEL_ONLY", "",  0, true );
   createGeomAction( GEOMOp::OpSelectAll,        "ALL_SEL_ONLY", "",  0, true );
   createGeomAction( GEOMOp::OpShowOnly,         "DISPLAY_ONLY" );
+  createGeomAction( GEOMOp::OpBringToFront,     "BRING_TO_FRONT", "", 0, true );
+  createGeomAction( GEOMOp::OpClsBringToFront,  "CLS_BRING_TO_FRONT" );
   createGeomAction( GEOMOp::OpHide,             "ERASE" );
 
   createGeomAction( GEOMOp::OpWireframe,        "POP_WIREFRAME", "", 0, true );
@@ -1216,6 +1220,17 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->insert( action(  GEOMOp::OpGroupEdit ), -1, -1 );  // edit group
   mgr->setRule( action( GEOMOp::OpGroupEdit ),  QString("client='ObjectBrowser' and type='Group' and selcount=1 and isOCC=true"), QtxPopupMgr::VisibleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
+
+#if OCC_VERSION_LARGE > 0x06050200
+  //QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true and topLevel=false";
+  QString bringRule = clientOCCorOB + " and ($component={'GEOM'}) and (selcount>0) and isOCC=true";
+  mgr->insert( action(GEOMOp::OpBringToFront ), -1, -1 ); // bring to front
+  mgr->setRule(action(GEOMOp::OpBringToFront), bringRule, QtxPopupMgr::VisibleRule );
+  mgr->setRule(action(GEOMOp::OpBringToFront), "topLevel=true", QtxPopupMgr::ToggleRule );
+  mgr->insert( action(GEOMOp::OpClsBringToFront ), -1, -1 ); // clear bring to front
+  mgr->setRule( action(GEOMOp::OpClsBringToFront ), clientOCC, QtxPopupMgr::VisibleRule );  
+#endif
+  mgr->insert( separator(), -1, -1 );     // -----------
   dispmodeId = mgr->insert(  tr( "MEN_DISPLAY_MODE" ), -1, -1 ); // display mode menu
   mgr->insert( action(  GEOMOp::OpWireframe ), dispmodeId, -1 ); // wireframe
   mgr->setRule( action( GEOMOp::OpWireframe ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
@@ -1308,7 +1323,6 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule(action(GEOMOp::OpSelectAll),      selectOnly + " and selectionmode='ALL'", QtxPopupMgr::ToggleRule);
   mgr->insert( action(GEOMOp::OpShowOnly ), -1, -1 ); // display only
   mgr->setRule(action(GEOMOp::OpShowOnly ), rule.arg( types ).arg( "true" ), QtxPopupMgr::VisibleRule );
-  mgr->insert( separator(), -1, -1 );
 
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpUnpublishObject ), -1, -1 ); // Unpublish object
@@ -1693,6 +1707,12 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_ISOS_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "isos_color" );
 
+  addPreference( tr( "PREF_TOPLEVEL_COLOR" ), genGroup,
+                 LightApp_Preferences::Color, "Geometry", "toplevel_color" );
+
+  addPreference( "", genGroup, LightApp_Preferences::Space );
+
+
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
                             LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
 
@@ -1964,6 +1984,13 @@ void GeometryGUI::storeVisualParameters (int savePoint)
             param = occParam + TRANSPARENCY_PROP;
             ip->setParameter(entry, param, QString::number(aProps.value(TRANSPARENCY_PROP).toDouble()).toLatin1().data());
           }
+
+          if(aProps.contains(TOP_LEVEL_PROP)) {
+            param = occParam + TOP_LEVEL_PROP;
+	    Standard_Boolean val = aProps.value(TOP_LEVEL_PROP).value<Standard_Boolean>();
+	    if (val == Standard_True) 
+	      ip->setParameter(entry, param, "1");
+          }	  
         }
 
         if(aProps.contains(ISOS_PROP)) {
@@ -2092,9 +2119,12 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
       } else if(paramNameStr == OPACITY_PROP) {
         aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, 1. - val.toDouble());
 
-      }        else if(paramNameStr == TRANSPARENCY_PROP) {
-        aListOfMap[viewIndex].insert(TRANSPARENCY_PROP, val.toDouble());
+      } else if(paramNameStr == TRANSPARENCY_PROP) {
+        aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val.toDouble() );
 
+      }	else if(paramNameStr == TOP_LEVEL_PROP) {
+	  aListOfMap[viewIndex].insert( TRANSPARENCY_PROP, val == "1" ? Standard_True : Standard_False );
+	  
       } else if(paramNameStr == DISPLAY_MODE_PROP) {
         aListOfMap[viewIndex].insert( DISPLAY_MODE_PROP, val.toInt());
 
@@ -2177,6 +2207,15 @@ void GeometryGUI::onViewAboutToShow()
     a->setText ( tr("MEN_VECTOR_MODE_ON") );
     a->setEnabled(false);
   }
+}
+
+/*!
+  \brief Return action by id
+  \param id identifier of the action
+  \return action 
+*/
+QAction* GeometryGUI::getAction(const int id) {
+  return action(id);
 }
 
 /*!

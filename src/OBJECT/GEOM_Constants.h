@@ -46,6 +46,7 @@
 #define FRONT_MATERIAL_PROP   "FrontMaterial"   //Object front material property
 #define BACK_MATERIAL_PROP    "BackMaterial"    //Object back material property
 #define EDGE_WIDTH_PROP       "EdgeWidth"       //Width of the edge
-#define ISOS_WIDTH_PROP       "IsosWidth"       //Width of the iso-lines 
+#define ISOS_WIDTH_PROP       "IsosWidth"       //Width of the iso-lines
+#define TOP_LEVEL_PROP        "TopLevelFlag"    //Top level flag
 
 #endif //GEOM_CONSTANTS_H

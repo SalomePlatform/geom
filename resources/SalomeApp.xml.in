@@ -49,6 +49,7 @@
     <parameter name="line_color"          value="255, 0, 0" />
     <parameter name="point_color"         value="255, 255, 0" />
     <parameter name="isos_color"          value="200, 200, 200" />
+    <parameter name="toplevel_color"      value="170, 85, 0" />
     <parameter name="type_of_marker"      value="1"  />
     <parameter name="deflection_coeff"    value="0.001"  />
     <parameter name="auto_create_base_objects" value="false"  />

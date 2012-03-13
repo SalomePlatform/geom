@@ -2364,6 +2364,30 @@ Please, select face, shell or solid and try again</translation>
         <translation>Show Only</translation>
     </message>
     <message>
+        <source>MEN_BRING_TO_FRONT</source>
+        <translation>Bring To Front</translation>
+    </message>
+    <message>
+	<source>TOP_BRING_TO_FRONT</source>
+        <translation>Bring To Front</translation>
+    </message>
+    <message>
+        <source>STB_BRING_TO_FRONT</source>
+        <translation>Bring To Front</translation>
+    </message>
+    <message>
+        <source>MEN_CLS_BRING_TO_FRONT</source>
+        <translation>Clear Top Level State</translation>
+    </message>
+    <message>
+        <source>TOP_CLS_BRING_TO_FRONT</source>
+        <translation>Clear Top Level State</translation>
+    </message>
+    <message>
+        <source>STB_CLS_BRING_TO_FRONT</source>
+        <translation>Clear Top Level State</translation>
+    </message>
+    <message>
         <source>MEN_EDGE</source>
         <translation>Edge</translation>
     </message>
@@ -2934,6 +2958,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>PREF_ISOS_COLOR</source>
         <translation>Color of isolines</translation>
+    </message>
+    <message>
+        <source>PREF_TOPLEVEL_COLOR</source>
+        <translation>Top level color</translation>
     </message>
     <message>
         <source>PREF_LINE_COLOR</source>

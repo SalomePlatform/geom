@@ -149,6 +149,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = isAutoColor( idx );
   else if ( p == "isVectorsMode" )
     v = isVectorsMode( idx );
+  else if ( p == "topLevel" )
+    v = topLevel( idx );
   else if ( p == "hasHiddenChildren" )
     v = hasHiddenChildren( idx );
   else if ( p == "hasShownChildren" )
@@ -511,4 +513,41 @@ QString GEOMGUI_Selection::selectionMode() const
     }
   }
   return "";
+}
+
+bool GEOMGUI_Selection::topLevel( const int index ) const {
+  bool res = false;
+  
+#ifdef USE_VISUAL_PROP_MAP
+  bool found = false;
+  QVariant v = visibleProperty( entry( index ), TOP_LEVEL_PROP );
+  if ( v.canConvert<bool>() ) {
+    res = v.toBool();
+    found = true;
+  }
+
+  if ( !found ) {
+#endif
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
+    QString viewType = activeViewType();
+    if ( view && viewType == OCCViewer_Viewer::Type() ) {
+      SALOME_Prs* prs = view->CreatePrs( entry( index ).toLatin1().constData() );
+      if ( prs ) {
+	if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+	  SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+	  AIS_ListOfInteractive lst;
+	  occPrs->GetObjects( lst );
+	  if ( lst.Extent() ) {
+	    Handle(AIS_InteractiveObject) io = lst.First();
+	    if ( !io.IsNull() ) {
+	      Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+	      if ( !aSh.IsNull() )
+		res = (bool)aSh->isTopLevel();
+	    }
+	  }
+	}
+      }
+    }
+  }
+  return res;
 }

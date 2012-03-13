@@ -99,6 +99,8 @@ public:
         void setIO(const Handle(SALOME_InteractiveObject)& name) ;
         void setName(const Standard_CString aName) ;
         Standard_CString getName() ;
+        Standard_Boolean isTopLevel();
+        void setTopLevel(Standard_Boolean);
         Handle_SALOME_InteractiveObject getIO() ;
         void highlightSubShapes(const TColStd_IndexedMapOfInteger& aIndexMap, const Standard_Boolean aHighlight );
         ~GEOM_AISShape();
@@ -126,6 +128,8 @@ public:
 
         void storeBoundaryColors();
 
+	static Quantity_Color topLevelColor();
+
 protected: 
   void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
 		   const Handle(Prs3d_Presentation)& aPrs,
@@ -146,6 +150,7 @@ protected:
 private: 
   TCollection_AsciiString myName;
   bool                    myDisplayVectors;
+  Standard_Boolean        myTopLevel;
 };
 
 
