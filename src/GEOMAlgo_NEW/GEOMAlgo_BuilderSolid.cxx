@@ -390,7 +390,6 @@ void GEOMAlgo_BuilderSolid::PerformLoops()
     if (IsClosedShell(aShell)) {
       myLoops.Append(aShell);
     }
-    //modified by NIZNHY-PKV Wed Oct 27 07:10:41 2010f
     else {
       Standard_Boolean bRefine;
       TopoDS_Shell aShx;
@@ -400,7 +399,6 @@ void GEOMAlgo_BuilderSolid::PerformLoops()
 	myLoops.Append(aShx);
       }
     }
-    //modified by NIZNHY-PKV Wed Oct 27 07:10:44 2010t
   } // for (; aItF.More(); aItF.Next()) { 
   //
   // Post Treatment
@@ -611,10 +609,11 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
     return;
   }
   // 
+  Standard_Integer bFlag;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aShellIt, aSolidIt;
   TopoDS_Iterator aIt; 
-  TopTools_MapOfShape aMF, aMFP;
+  TopTools_MapOfShape aMF, aMFP, aMFS;
   TopTools_MapIteratorOfMapOfShape aItMF;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
   TopTools_ListOfShape aLSI;
@@ -636,6 +635,16 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
   for ( ; aSolidIt.More(); aSolidIt.Next()) {
     TopoDS_Solid& aSolid=*((TopoDS_Solid*)(&aSolidIt.Value()));
     //
+    //modified by NIZNHY-PKV Wed Mar 07 08:52:18 2012f
+    aMFS.Clear();
+    {
+      TopExp_Explorer aExp(aSolid, TopAbs_FACE);
+      while (aExp.More()) {
+	aMFS.Add(aExp.Current());
+	aExp.Next();
+      }
+    }
+    //modified by NIZNHY-PKV Wed Mar 07 08:52:20 2012t
     aMEF.Clear();
     TopExp::MapShapesAndAncestors(aSolid, TopAbs_EDGE, TopAbs_FACE, aMEF);
     //
@@ -644,9 +653,17 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
     aItMF.Initialize(aMF);
     for (; aItMF.More(); aItMF.Next()) {
       const TopoDS_Face& aF=*((TopoDS_Face*)(&aItMF.Key()));
-      if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext)) {
-        aMFP.Add(aF);
+      //modified by NIZNHY-PKV Wed Mar 07 08:54:56 2012f
+      if (!aMFS.Contains(aF)) {
+	bFlag=GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext);
+	if (bFlag) {
+	  aMFP.Add(aF);
+	}
       }
+      //if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext)) {
+      //  aMFP.Add(aF);
+      //}
+      //modified by NIZNHY-PKV Wed Mar 07 08:56:07 2012t
     }
     //
     // 2.2 Make Internal Shells
@@ -832,8 +849,8 @@ Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
 //function : RefineShell
 //purpose  :
 //=======================================================================
-  Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
-			       TopoDS_Shell& aShx)
+Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
+			     TopoDS_Shell& aShx)
 			       
 {
   Standard_Boolean bRet;

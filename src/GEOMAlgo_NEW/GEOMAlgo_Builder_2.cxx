@@ -101,6 +101,11 @@ static
                         const Standard_Integer ,
                         NMTTools_IndexedDataMapOfIndexedMapOfInteger& );
 
+//modified by NIZNHY-PKV Thu Feb 16 12:24:52 2012f
+static
+  Standard_Boolean IsClosed(const TopoDS_Edge& ,
+			    const TopoDS_Face& );
+//modified by NIZNHY-PKV Thu Feb 16 12:24:56 2012t
 
 //=======================================================================
 //function : FillImagesFaces
@@ -307,7 +312,10 @@ void GEOMAlgo_Builder::BuildSplitFaces()
       }
       //
       bIsDegenerated=BRep_Tool::Degenerated(aE);
-      bIsClosed=BRep_Tool::IsClosed(aE, aF);
+      //modified by NIZNHY-PKV Wed Mar 07 07:46:09 2012f
+      bIsClosed=IsClosed(aE, aF);
+      //bIsClosed=BRep_Tool::IsClosed(aE, aF); 
+      //modified by NIZNHY-PKV Wed Mar 07 07:46:13 2012t
       //
       const TopTools_ListOfShape& aLIE=myImages.Image(aE);
       aIt.Initialize(aLIE);
@@ -928,6 +936,35 @@ void UpdateCandidates(const Standard_Integer theNF,
     theMFMV.Add(theNF, aMV);
   }
 }
+
+//modified by NIZNHY-PKV Thu Feb 16 12:25:16 2012f
+//=======================================================================
+//function : IsClosed
+//purpose  : 
+//=======================================================================
+Standard_Boolean IsClosed(const TopoDS_Edge& aE,
+			  const TopoDS_Face& aF)
+{
+  Standard_Boolean bRet;
+  //
+  bRet=BRep_Tool::IsClosed(aE, aF);
+  if (bRet) {
+    TopTools_MapOfShape aM;
+    TopExp_Explorer aExp(aF, TopAbs_EDGE);
+    for (; aExp.More(); aExp.Next()) {
+      const TopoDS_Shape& aEx=aExp.Current();
+      //
+      if (aM.Add(aEx)) {
+	bRet=aEx.IsSame(aE);
+	if (bRet) {
+	  break;
+	}
+      }
+    }
+  }
+  return bRet;
+}
+//modified by NIZNHY-PKV Thu Feb 16 12:25:25 2012t
 
 /*
     {
