@@ -10,7 +10,7 @@ To produce the <b>extruded boss</b>:
 
 1. Draw the \b profile of the extrusion. It can be:
 
- - a \b Sketch drawn on a planar face of the object you want to boss.
+ - a <a href="create_sketcher_page.html">\b Sketch </a> drawn on a planar face of the object you want to boss.
  
  - any closed edge or wire of the desired shape (circle, ellipse ...).
 
