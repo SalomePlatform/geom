@@ -322,6 +322,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Changer l&apos;orientation</translation>
     </message>
     <message>
+        <source>GEOM_CHANGE_DIRECTION</source>
+        <translation>Changer la direction</translation>
+    </message>
+    <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND</source>
         <translation>Controler un Assemblage de Blocs</translation>
     </message>
@@ -534,6 +538,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>ArêtesMineuresOmises</translation>
     </message>
     <message>
+        <source>GEOM_DRAFT_ANGLE</source>
+        <translation>Angle de dépouille</translation>
+    </message>
+    <message>
         <source>GEOM_EDGE</source>
         <translation>Arête</translation>
     </message>
@@ -576,6 +584,22 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_EXTRUSION</source>
         <translation>Extrusion</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_CUT_TITLE</source>
+        <translation>Enlèvement de matière extrudé</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_CUT</source>
+        <translation>Enlèvement_extrudé</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_BOSS</source>
+        <translation>Bossage_extrudé</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_BOSS_TITLE</source>
+        <translation>Bossage extrudé</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV</source>
@@ -828,6 +852,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_INF_LOADED</source>
         <translation>Le fichier %1 est ouvert.</translation>
+    </message>
+    <message>
+        <source>GEOM_INIT_SHAPE</source>
+        <translation>Objet d&apos;origine</translation>
     </message>
     <message>
         <source>GEOM_INTERNAL_WIRES</source>
@@ -1104,6 +1132,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_PROJECTION_TITLE</source>
         <translation>Projection sur une face</translation>
+    </message>
+    <message>
+        <source>GEOM_PROFILE</source>
+        <translation>Profile</translation>
     </message>
     <message>
         <source>GEOM_SOURCE_OBJECT</source>
@@ -1556,6 +1588,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SHELL_TITLE</source>
         <translation>Construction d&apos;une coque</translation>
+    </message>
+    <message>
+        <source>GEOM_SKETCH</source>
+        <translation>Esquisse</translation>
     </message>
     <message>
         <source>GEOM_SKETCHER_ABS</source>
@@ -2215,7 +2251,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_FEATURE_DETECTION</source>
-        <translation>Détection de contours</translation>
+        <translation>Reconnaissance de formes</translation>
     </message>
     <message>
         <source>MEN_PICTURE_IMPORT</source>
@@ -2364,6 +2400,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_EXTRUSION</source>
         <translation>Extrusion</translation>
+    </message>
+    <message>
+        <source>MEN_EXTRUDED_CUT</source>
+        <translation>Enlèvement de matière extrudé</translation>
+    </message>
+    <message>
+        <source>MEN_EXTRUDED_BOSS</source>
+        <translation>Bossage extrudé</translation>
     </message>
     <message>
         <source>MEN_FACE</source>
@@ -3478,6 +3522,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Opérations booléennes </translation>
     </message>
     <message>
+        <source>TOOL_FEATURES</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
         <source>TOOL_GENERATION</source>
         <translation>Génération</translation>
     </message>
@@ -3496,6 +3544,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOOL_OPERATIONS</source>
         <translation>Opérations</translation>
+    </message>
+    <message>
+        <source>TOOL_PICTURES</source>
+        <translation>Images</translation>
     </message>
     <message>
         <source>TOOL_ADVANCED</source>
@@ -3650,6 +3702,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer une extrusion</translation>
     </message>
     <message>
+        <source>TOP_EXTRUDED_BOSS</source>
+        <translation>Bossage extrudé</translation>
+    </message>
+    <message>
+        <source>TOP_EXTRUDED_CUT</source>
+        <translation>Enlèvement de matière extrudé</translation>
+    </message>
+    <message>
         <source>TOP_FACE</source>
         <translation>Construire une face</translation>
     </message>
@@ -3744,6 +3804,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>TOP_MUL_TRANSLATION</source>
         <translation>Multi-translation</translation>
+    </message>
+    <message>
+        <source>TOP_PICTURE_IMPORT</source>
+        <translation>Importer une image dans la vue</translation>
+    </message>
+    <message>
+        <source>TOP_FEATURE_DETECTION</source>
+        <translation>Reconnaisance de formes</translation>
     </message>
     <message>
         <source>TOP_OFFSET</source>
@@ -4665,7 +4733,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
 </context>
 <context>
-    <name>EntityGUI_CornerDetectionDlg</name>
+    <name>EntityGUI_FeatureDetectorDlg</name>
     <message>
         <source>GEOM_DETECT_TITLE</source>
         <translation>Détecter les angles</translation>
@@ -4701,7 +4769,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>GEOM_DETECT_ZONE</source>
         <translation>Sélectionner une zone de détection
-(toute l'image par défaut)</translation>
+(toute l&apos;image par défaut)</translation>
     </message>
     <message>
         <source>GEOM_DETECT_OUTPUT</source>
@@ -4710,7 +4778,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     <message>
         <source>GEOM_PICTURE</source>
         <translation>Image</translation>
-    </message>   
+    </message>
     <message>
         <source>GEOM_COLOR_FILTER</source>
         <translation>Filtre</translation>

@@ -590,18 +590,25 @@ Please, select face, shell or solid and try again</translation>
         <translation>GUI library corresponding to the user action can not be found or loaded</translation>
     </message>
     <message>
-        <source>GEOM_EXTRUDED_CUT</source>
+        <source>GEOM_EXTRUDED_CUT_TITLE</source>
         <translation>Extruded cut</translation>
     </message>
     <message>
-        <source>GEOM_EXTRUDED_BOSS</source>
+        <source>GEOM_EXTRUDED_CUT</source>
+        <translation>Extruded_cut</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_BOSS_TITLE</source>
         <translation>Extruded boss</translation>
+    </message>
+    <message>
+        <source>GEOM_EXTRUDED_BOSS</source>
+        <translation>Extruded_boss</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION</source>
         <translation>Extrusion</translation>
     </message>
-
     <message>
         <source>GEOM_EXTRUSION_BSV</source>
         <translation>Base Shapes + Vector</translation>
@@ -2253,7 +2260,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>MEN_FEATURE_DETECTION</source>
-        <translation>Feature detection</translation>
+        <translation>Shape recognition</translation>
     </message>
     <message>
         <source>MEN_PICTURE_IMPORT</source>
@@ -2658,7 +2665,7 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_EDGE_WIDTH</source>
         <translation>Edge Width</translation>
-    </message>   
+    </message>
     <message>
         <source>MEN_ISOS_WIDTH</source>
         <translation>Isos Width</translation>
@@ -2674,7 +2681,7 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_LINE_WIDTH</source>
         <translation>Line Width</translation>
-    </message>  
+    </message>
     <message>
         <source>MEN_POP_SETTEXTURE</source>
         <translation>Texture</translation>
@@ -3596,6 +3603,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Boolean operations</translation>
     </message>
     <message>
+        <source>TOOL_FEATURES</source>
+        <translation>Modification</translation>
+    </message>
+    <message>
         <source>TOOL_GENERATION</source>
         <translation>Generation</translation>
     </message>
@@ -3614,6 +3625,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOOL_OPERATIONS</source>
         <translation>Operations</translation>
+    </message>
+    <message>
+        <source>TOOL_PICTURES</source>
+        <translation>Pictures</translation>
     </message>
     <message>
         <source>TOOL_ADVANCED</source>
@@ -3768,6 +3783,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create an extrusion</translation>
     </message>
     <message>
+        <source>TOP_EXTRUDED_BOSS</source>
+        <translation>Extruded boss</translation>
+    </message>
+    <message>
+        <source>TOP_EXTRUDED_CUT</source>
+        <translation>Extruded cut</translation>
+    </message>
+    <message>
         <source>TOP_FACE</source>
         <translation>Build face</translation>
     </message>
@@ -3862,6 +3885,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>TOP_MUL_TRANSLATION</source>
         <translation>Multi-Translation</translation>
+    </message>
+    <message>
+        <source>TOP_PICTURE_IMPORT</source>
+        <translation>Import picture in viewer</translation>
+    </message>
+    <message>
+        <source>TOP_FEATURE_DETECTION</source>
+        <translation>Shape recognition</translation>
     </message>
     <message>
         <source>TOP_OFFSET</source>
@@ -4617,7 +4648,7 @@ Otherwise the dimensions will be kept without modifications.</translation>
     <message>
         <source>GEOM_PCURVE_NBSTEP</source>
         <translation>Number of steps</translation>
-    </message>        
+    </message>
 </context>
 <context>
     <name>BasicGUI_EllipseDlg</name>
@@ -4835,7 +4866,7 @@ Number of sketch points too small</translation>
     <message>
         <source>GEOM_PICTURE</source>
         <translation>Picture</translation>
-    </message>   
+    </message>
     <message>
         <source>GEOM_COLOR_FILTER</source>
         <translation>Filtering sample</translation>
@@ -4907,7 +4938,7 @@ Number of sketch points too small</translation>
     <message>
         <source>EMPTY_NAME</source>
         <translation>Please, specify a non-empty group name</translation>
-    </message>    
+    </message>
     <message>
         <source>GROUP_NAME</source>
         <translation>Group Name</translation>
