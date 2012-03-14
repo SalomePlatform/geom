@@ -2,38 +2,83 @@
 
 \page create_sketcher_page Sketcher
 
-Sketcher allows to create curves of 2 types: line segment and arc.
-By default the start point of the curve is located at the point of
+The sketcher allows you to create a profile made of curves of 2 types: line segments and arcs.
+
+<b>Example:</b>
+
+\image html sketch_example.png
+
+To create a \b Sketch:
+
+<ol>
+<li>In the main menu select <em>New Entity / Sketch</em> or click on \image html sketch.png </li>
+
+<li> Select the plane or the planar face on which to create the sketch. By default the sketch is created on the XOY plane of the global coordinate system.
+If Local Coordinate systems have been created in the study they appear in the combobox and can be selected as reference coordinate system.</li>
+
+<li> Select a start point. By default the start point of the curve is located at the point of
 origin of the reference coordinate system and the curve lies in the
-plane XOY.  The end of the curve is defined by
-means of "destination", which can be a destination point (coupled with a radius
-or a center for an arc) or a destination direction coupled with length 
-of a segment or angle and radius of an arc.
+plane XOY.</li>
 
-\n <b>Warning:</b> When constructing an arc by its center and destination point, 
-the constraint on the center is first taken into account. Therefore
-if the constraints are incompatible the destination point <b> won't lie 
-on the constructed arc</b> (a warning message will be displayed).
+<li> Create curve portions and click on \b Apply after each step.</li>
 
-\n Sketcher is able to create planar curves only. Therefore, it is
-necessary to select coordinate system (Global or Local) before starting 
-a sketch. Sketcher creates curves lying in the XOY plane of the selected Coordinate System.
+<li> Select either \b Close or <b>Sketch Closure</b> if you want to close the profile before closing the window.</li>
+</ol>
 
-\n This functionality is available from the main menu via <em>New
-Entity / Sketch</em>.
+To create a \b Segment:
 
-\n The Result of the operation will be a \b GEOM_Object.
+<ol>
+<li> In the <b>Element Type</b> part of the dialog box select:
 
-\n <b>TUI Command:</b> <em>geompy.MakeSketcher(Command, WorkingPlane)</em>
-\n This algorithm creates a sketcher (wire or face), following the
-textual description, passed through the Command argument. The edges of
-the resulting wire or face will be arcs of circles and/or linear
-segments.
-\n \em Command is a string, defining the sketcher by the coordinates of
-points in the current LCS.
-\n <em>WorkingPlane</em> can be a Local CS, a plane, or a planar face. The plane is
-defined by the XYZ coordinates of three non-coincident points. The
-planar face is an existing GEOM_Object.
+\image html line_icon.png </li>
+
+<li> You can define the segment by either it's <b>end point</b> or a \b direction and a length. The direction is defined relatively to the tangent at the last point of the sketch. It can be:
+
+  - Tangent (colinear to the tangent at the last point)
+  - Perpendicular
+  - Defined by an angle
+  - Defined by a vector (Vx, Vy)
+
+</li>
+
+</ol>
+  
+To create an \b Arc:
+
+<ol>
+<li> In the <b>Element Type</b> part of the dialog box select \image html arc_icon.png </li>
+
+<li> You can define the segment by either it's <b>end point</b> or a \b direction a \b radius and an \b angle. </li>
+
+<ul>
+  <li>In case of an end point the arc can be built in three different ways:</li>
+  <ul>
+    <li>From the end point only. The arc is \b tangential to the end of the sketch.</li>
+    <li>From the end point and a \b radius. (The radius must be greater than half of the distance between the last point and the end point of the arc).</li>
+    <li>From the \b center of the circle and the end point. The constraint on the center is first taken into account.
+    The destination point is only used to define the angle of the arc and won't lie on the arc in the general case.</li>
+  </ul>
+  
+  <li>The direction is defined relatively to the tangent at the last point of the sketch. It can be:</li>
+  
+  <ul>
+    <li>Tangent (colinear to the tangent at the last point)</li><
+    <li>Perpendicular</li>
+    <li>Defined by an angle</li>
+    <li>Defined by a vector (Vx, Vy)</li>
+  </ul>
+</ul>
+    
+</ol>
+
+For the first segment or arc of the sketch the reference direction is the X direction of the reference coordinate system.
+
+\n The Result of the operation will be a \b Wire.
+
+
+\n <b>Dialog Box:</b>
+
+\image html sketcher_dlg.png
 
 \n <b>Arguments:</b>
 <ol>
@@ -63,15 +108,16 @@ is predefined and is equal to 90 degrees);</li>
 \n <b>"Sketch Validation"</b> button applies the wire, only red part will be built by "Sketch Validation".
 \n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it.
 
-\n <b>Dialog Box:</b>
 
-\image html neo-scetcher1.png
-<br>
-\image html neo-scetcher2.png
+\n <b>TUI Command:</b> <em>geompy.MakeSketcherOnPlane(Command, WorkingPlane)</em>
+\n This algorithm creates a sketcher (wire or face), following the
+textual description, passed through the Command argument. The edges of
+the resulting wire or face will be arcs of circles and/or linear
+segments.
+\n \em Command is a string, defining the sketcher by the coordinates of
+points in the current LCS.
+\n <em>WorkingPlane</em> can be a Local CS, a plane, or a planar face.
 
-\n <b>Example:</b>
-
-\image html image204.png "Creation of a circle with sketcher"
 
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sketcher_page "Sketcher".
