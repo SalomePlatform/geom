@@ -21,12 +21,10 @@
 #  Author : Damien COQUERET (OCC)
 #  Modified by : Alexander BORODIN (OCN) - autotools usage
 #  Module : GEOM
-#  $Header: 
 
 include $(top_srcdir)/adm_local/unix/make_common_starter.am
 
 # Libraries targets
-
 lib_LTLIBRARIES = libGEOMimpl.la
 
 # header files 
@@ -241,17 +239,17 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(BOOST_CPPFLAGS)		\
         $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
-	-I$(srcdir)/../NMTDS		\
-	-I$(srcdir)/../NMTTools		\
+	-I$(srcdir)/../$(NMTDS_VAR)		\
+	-I$(srcdir)/../$(NMTTools_VAR)		\
 	-I$(srcdir)/../GEOM		\
-	-I$(srcdir)/../GEOMAlgo		\
+	-I$(srcdir)/../$(GEOMAlgo_VAR)		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
 	../GEOM/libGEOMbasic.la			\
-	../GEOMAlgo/libGEOMAlgo.la		\
+	../$(GEOMAlgo_VAR)/libGEOMAlgo.la		\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\

@@ -316,6 +316,19 @@ echo
 
 CHECK_CAS
 
+echo "OCC_VERSION_DEVELOPMENT = ${OCC_VERSION_DEVELOPMENT}"
+NMTDS_VAR=NMTDS
+NMTTools_VAR=NMTTools
+GEOMAlgo_VAR=GEOMAlgo
+if test "${OCC_VERSION_DEVELOPMENT}" == "1"; then
+  NMTDS_VAR=NMTDS_NEW
+  NMTTools_VAR=NMTTools_NEW
+  GEOMAlgo_VAR=GEOMAlgo_NEW
+fi
+AC_SUBST(NMTDS_VAR)
+AC_SUBST(NMTTools_VAR)
+AC_SUBST(GEOMAlgo_VAR)
+
 echo
 echo ---------------------------------------------
 echo Testing html generators
@@ -445,6 +458,7 @@ AC_OUTPUT([ \
   src/EntityGUI/Makefile \
   src/GEOM/Makefile \
   src/GEOMAlgo/Makefile \
+  src/GEOMAlgo_NEW/Makefile \
   src/GEOMBase/Makefile \
   src/GEOMClient/Makefile \
   src/GEOMFiltersSelection/Makefile \
@@ -464,7 +478,9 @@ AC_OUTPUT([ \
   src/IGESImport/Makefile \
   src/MeasureGUI/Makefile \
   src/NMTDS/Makefile \
+  src/NMTDS_NEW/Makefile \
   src/NMTTools/Makefile \
+  src/NMTTools_NEW/Makefile \
   src/OBJECT/Makefile \
   src/OCC2VTK/Makefile \
   src/OperationGUI/Makefile \
