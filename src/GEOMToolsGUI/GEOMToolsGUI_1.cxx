@@ -23,8 +23,6 @@
 //  File   : GEOMToolsGUI_1.cxx
 //  Author : Sergey ANIKIN, Open CASCADE S.A.S. (sergey.anikin@opencascade.com)
 
-#define protected public
-
 #include <PyConsole_Console.h>
 
 #include "GEOMToolsGUI.h"
@@ -1232,7 +1230,7 @@ void GEOMToolsGUI::OnBringToFront() {
   
   bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
 
-  QAction* a = getGeometryGUI()->action( GEOMOp::OpBringToFront );
+  QAction* a = getGeometryGUI()->getAction( GEOMOp::OpBringToFront );
   bool checked = a->isChecked();
   
   if ( isOCC ) {
