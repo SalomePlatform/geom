@@ -32,6 +32,7 @@ class QLabel;
 class QPoint;
 class DlgRef_3Radio;
 class DlgRef_1Sel;
+class DlgRef_1Sel1Frame;
 
 class gp_Pnt;
 class ShapeRec_FeatureDetector;
@@ -84,28 +85,19 @@ private:
   
   int                                myConstructorId;
   
-  QGroupBox*                         mySelectionGroup;
-  
-  QLabel*                            mySnapshotLabel;
-  QLabel*                            myImgSampleLabel;
-  
+  DlgRef_1Sel1Frame*                 mySelectionGroup; 
   DlgRef_1Sel*                       mySelWidget;
+  
+  // Output typeselection widget
+  DlgRef_3Radio*                     myOutputGroup;;
   
   gp_Pnt                             myStartPnt;
   gp_Pnt                             myEndPnt;
   QRect                              myRect;
-  
-  QPushButton*                       mySelButton;
-  QLineEdit*                         myLineEdit;
-  QPushButton*                       myPushButton; 
   
   // Picture dimensions and position
   int                                height;
   int                                width;
   double                             pictureLeft;
   double                             pictureTop;
-  
-  // Output slection widget
-  DlgRef_3Radio*                     myOutputGroup;;
-
 };

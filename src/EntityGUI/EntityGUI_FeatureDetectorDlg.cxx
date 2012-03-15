@@ -106,9 +106,9 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
                                               bool modal, Qt::WindowFlags fl)
   : GEOMBase_Skeleton(theGeometryGUI, parent, modal, fl) 
 {
-  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("OCCViewer", tr("ICON_OCCVIEWER_VIEW_DUMP")));
-  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
-  
+  QPixmap image0(SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image1(SUIT_Session::session()->resourceMgr()->loadPixmap("OCCViewer", tr("ICON_OCCVIEWER_VIEW_DUMP")));
+
   setWindowTitle(tr("GEOM_DETECT_TITLE"));
   
   /***************************************************************/
@@ -132,38 +132,20 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
 //   myViewGroup->hide();
   
   // Widgets for the selection of the picture and the Region Of Interest 
-  mySelectionGroup = new QGroupBox(tr("GEOM_ARGUMENTS"), centralWidget());
-  QGridLayout* mySelectGrpLayout = new QGridLayout(mySelectionGroup);
   
-  myPushButton = new QPushButton(mySelectionGroup);
-  myPushButton->setIcon(image0);
-  myPushButton->setCheckable(true);
-  myPushButton->setAutoExclusive(true);
   
-  mySelButton = new QPushButton(mySelectionGroup);
-  mySelButton->setIcon(image1);
-  mySelButton->setCheckable(true);
-  mySelButton->setAutoExclusive(true);
+  mySelectionGroup = new DlgRef_1Sel1Frame(centralWidget());
+
+  mySelectionGroup->PushButton1->setIcon(image0);
+  mySelectionGroup->PushButton1->setCheckable(true);
+  mySelectionGroup->PushButton1->setAutoExclusive(true);
   
-  myLineEdit = new QLineEdit(mySelectionGroup);
-  
-  mySnapshotLabel          = new QLabel(mySelectionGroup);
-  QFrame* myImgSampleFrame = new QFrame(mySelectionGroup);
-  myImgSampleFrame->setFrameRect(QRect(0,0,40,10));
-  myImgSampleFrame->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-  QLabel* myPictureLabel   = new QLabel(tr( "GEOM_PICTURE" ),mySelectionGroup);
-  mySelectGrpLayout->addWidget(myPictureLabel,   0, 0);
-  mySelectGrpLayout->addWidget(mySelButton,      0, 1);
-  mySelectGrpLayout->addWidget(myLineEdit,       0, 2);// 1, 2);
-  
-  mySelectGrpLayout->addWidget(mySnapshotLabel,  1, 0);
-  mySelectGrpLayout->addWidget(myPushButton,     1, 1);
-  mySelectGrpLayout->addWidget(myImgSampleFrame, 1, 2, 2, 1);
-  mySelectGrpLayout->setRowStretch(3, 1);
-  
-  QGridLayout* myFrameLayout = new QGridLayout(myImgSampleFrame);
-  myImgSampleLabel           = new QLabel(myImgSampleFrame);
-  myFrameLayout->addWidget(myImgSampleLabel,     0, 0);
+  mySelectionGroup->PushButton2->setIcon(image1);
+  mySelectionGroup->PushButton2->setCheckable(true);
+  mySelectionGroup->PushButton2->setAutoExclusive(true);
+
+  mySelectionGroup->TextLabel1->setText(tr( "GEOM_PICTURE" ));
+  mySelectionGroup->FrameLabel->setText("");
   
   myOutputGroup = new DlgRef_3Radio(centralWidget());
   myOutputGroup->GroupBox1->setTitle(tr("GEOM_DETECT_OUTPUT"));
@@ -207,13 +189,13 @@ void EntityGUI_FeatureDetectorDlg::Init()
   connect( buttonOk(),        SIGNAL( clicked() ),               this, SLOT( ClickOnOk() ) );
   connect( buttonApply(),     SIGNAL( clicked() ),               this, SLOT( ClickOnApply() ) );
   connect( this,              SIGNAL(constructorsClicked(int)),  this, SLOT(ConstructorsClicked(int))); 
-  connect( myPushButton,      SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );
-  connect( mySelButton,       SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );  
+  connect( mySelectionGroup->PushButton2,      SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );
+  connect( mySelectionGroup->PushButton1,       SIGNAL( clicked() ),               this, SLOT( onButtonClicked() ) );  
 //   connect( myViewButtonGroup, SIGNAL( buttonClicked( int ) ),    this, SLOT( onViewClicked( int ) ) );
   connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),this, SLOT( SelectionIntoArgument() ) );
   
   myConstructorId = 0;
-  mySelButton->click();
+  mySelectionGroup->PushButton1->click();
   
 //   SetEditCurrentArgument();
   SelectionIntoArgument();
@@ -268,7 +250,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
     }
 
   if (aSelList.Extent() != 1) {
-    if (myEditCurrentArgument == myLineEdit) 
+    if (myEditCurrentArgument == mySelectionGroup->LineEdit1) 
       myFace.nullify();
     return;
   }
@@ -280,7 +262,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
     QString aName = GEOMBase::GetName( aSelectedObject.get() );
     myEditCurrentArgument->setText( aName );
     
-    if ( myEditCurrentArgument == myLineEdit ) {
+    if ( myEditCurrentArgument == mySelectionGroup->LineEdit1 ) {
       myFace = aSelectedObject;
       AISit = soccViewer->entry2aisobjects.find(myFaceEntry.toStdString());
       if (AISit == soccViewer->entry2aisobjects.end())
@@ -316,7 +298,7 @@ void EntityGUI_FeatureDetectorDlg::SelectionIntoArgument()
 //=================================================================================
 bool EntityGUI_FeatureDetectorDlg::acceptMouseEvent() const
 { 
-  return myPushButton->isChecked();  
+  return mySelectionGroup->PushButton2->isChecked();  
 }
 
 //=======================================================================
@@ -358,7 +340,10 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 //       myViewGroup->show();
 //       mySelectionGroup->show();
       myOutputGroup->hide();
-      mySnapshotLabel->setText(tr("GEOM_DETECT_ZONE"));
+//       mySelectionGroup->TextLabel2->setText(tr("GEOM_DETECT_ZONE"));
+      mySelectionGroup->TextLabel2->hide();
+      mySelectionGroup->Frame->hide();
+      mySelectionGroup->PushButton2->hide();
       initName(tr("GEOM_CORNERS"));
       break;
     case CONTOURS:
@@ -366,7 +351,10 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 //       mySelectionGroup->hide();
 //       mySelectionGroup->show();
       myOutputGroup->show();
-      mySnapshotLabel->setText(tr("GEOM_COLOR_FILTER"));
+      mySelectionGroup->TextLabel2->show();
+      mySelectionGroup->Frame->show();
+      mySelectionGroup->PushButton2->show();
+      mySelectionGroup->TextLabel2->setText(tr("GEOM_COLOR_FILTER"));
       initName(tr("GEOM_CONTOURS"));
       break;
     case LINES:
@@ -374,7 +362,7 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 //       mySelectionGroup->hide();
 //       mySelectionGroup->show();
       myOutputGroup->hide();
-      mySnapshotLabel->setText(tr(""));
+      mySelectionGroup->TextLabel2->setText(tr(""));
       initName(tr("GEOM_LINES"));
       break;
   }
@@ -419,16 +407,16 @@ void EntityGUI_FeatureDetectorDlg::ConstructorsClicked(int id)
 void EntityGUI_FeatureDetectorDlg::onButtonClicked()
 {
   QPushButton* send = (QPushButton*)sender();
-  if (send == myPushButton)
+  if (send == mySelectionGroup->PushButton2)
   {
-    myLineEdit->setEnabled(false);
+    mySelectionGroup->LineEdit1->setEnabled(false);
   }
-  else if (send == mySelButton)
+  else if (send == mySelectionGroup->PushButton1)
   {
     myStartPnt = gp_Pnt(0,0,0);
     myEndPnt   = myStartPnt;
-    myEditCurrentArgument = myLineEdit;
-    myLineEdit->setEnabled(true);   
+    myEditCurrentArgument = mySelectionGroup->LineEdit1;
+    mySelectionGroup->LineEdit1->setEnabled(true);   
   }
 }
 
@@ -480,8 +468,8 @@ void EntityGUI_FeatureDetectorDlg::showImageSample()
   
   // Display the result
   QPixmap pixmap(QString(samplePicturePath.c_str()));
-  myImgSampleLabel->setPixmap(pixmap);
-  myImgSampleLabel->setMask(pixmap.mask());
+  mySelectionGroup->FrameLabel->setPixmap(pixmap);
+  mySelectionGroup->FrameLabel->setMask(pixmap.mask());
 }
 
 //=================================================================================
