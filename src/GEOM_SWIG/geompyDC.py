@@ -430,7 +430,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Get name for sub-shape aSubObj of shape aMainObj
         #
-        # @ref swig_SubShapeAllSorted "Example"
+        # @ref swig_SubShapeName "Example"
         def SubShapeName(self,aSubObj, aMainObj):
             """
             Get name for sub-shape aSubObj of shape aMainObj
@@ -456,7 +456,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #                                                  these arguments description
         #  \return study entry of the published shape in form of string
         #
-        #  @ref swig_MakeQuad4Vertices "Example"
+        #  @ref swig_all_addtostudy "Example"
         def addToStudy(self, aShape, aName, doRestoreSubShapes=False,
                        theArgs=[], theFindMethod=GEOM.FSM_GetInPlace, theInheritFirstArg=False):
             """
@@ -494,7 +494,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  \param aName  the name for the shape
         #
         #  \return study entry of the published shape in form of string
-        #  @ref swig_SubShapeAllSorted "Example"
+        #  @ref swig_all_addtostudyInFather "Example"
         def addToStudyInFather(self, aFather, aShape, aName):
             """
             Publish in study aShape with name aName as sub-object of previously published aFather
@@ -517,22 +517,22 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Unpublish object in study
         #
-        #  \param aobj the object to be unpublished
-	def hideInStudy(self, obj):
+        #  \param obj the object to be unpublished
+        def hideInStudy(self, obj):
             """
             Unpublish object in study
 
             Parameters:
                 obj the object to be unpublished
             """
-	    ior = salome.orb.object_to_string(obj)
-	    aSObject = self.myStudy.FindObjectIOR(ior)
-	    if aSObject is not None:
-		genericAttribute = self.myBuilder.FindOrCreateAttribute(aSObject, "AttributeDrawable")
+            ior = salome.orb.object_to_string(obj)
+            aSObject = self.myStudy.FindObjectIOR(ior)
+            if aSObject is not None:
+                genericAttribute = self.myBuilder.FindOrCreateAttribute(aSObject, "AttributeDrawable")
                 drwAttribute = genericAttribute._narrow(SALOMEDS.AttributeDrawable)
-		drwAttribute.SetDrawable(False)
-	    pass
-	
+                drwAttribute.SetDrawable(False)
+                pass
+
         # end of l1_geompy_auxiliary
         ## @}
 
@@ -4016,7 +4016,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  selected by they indices in list of all sub-shapes of type <VAR>aType</VAR>.
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #  @param aShape Shape to get sub-shape of.
-        #  @param aListOfInd List of sub-shapes indices.
+        #  @param ListOfInd List of sub-shapes indices.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @return A compound of sub-shapes of aShape.
         #
@@ -4096,7 +4096,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  selected by they indices in sorted list of all sub-shapes of type <VAR>aType</VAR>.
         #  Each index is in range [1, Nb_Sub-Shapes_Of_Given_Type]
         #  @param aShape Shape to get sub-shape of.
-        #  @param aListOfInd List of sub-shapes indices.
+        #  @param ListOfInd List of sub-shapes indices.
         #  @param aType Type of sub-shapes to be retrieved (see ShapeType())
         #  @return A compound of sub-shapes of aShape.
         #
@@ -4147,9 +4147,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("ExtractSubShapes", self.ShapesOp)
             return ListObj
 
-        ## Get a set of sub-shapes defined by their unique IDs inside <VAR>theMainShape</VAR>
-        #  @param theMainShape Main shape.
-        #  @param theIndices List of unique IDs of sub-shapes inside <VAR>theMainShape</VAR>.
+        ## Get a set of sub-shapes defined by their unique IDs inside <VAR>aShape</VAR>
+        #  @param aShape Main shape.
+        #  @param anIDs List of unique IDs of sub-shapes inside <VAR>aShape</VAR>.
         #  @return List of GEOM.GEOM_Object, corresponding to found sub-shapes.
         #
         #  @ref swig_all_decompose "Example"
@@ -4158,8 +4158,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             Get a set of sub-shapes defined by their unique IDs inside theMainShape
 
             Parameters:
-                theMainShape Main shape.
-                theIndices List of unique IDs of sub-shapes inside theMainShape.
+                aShape Main shape.
+                anIDs List of unique IDs of sub-shapes inside theMainShape.
 
             Returns:      
                 List of GEOM.GEOM_Object, corresponding to found sub-shapes.
@@ -4805,7 +4805,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Initial shape.
         #  @param theTolerance Maximum distance between edges,
         #                      which can be considered as coincident.
-        #  @param theFaces List of edges for gluing.
+        #  @param theEdges List of edges for gluing.
         #  @return New GEOM.GEOM_Object, containing a copy of theShape
         #          without some edges.
         #
@@ -4819,7 +4819,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Initial shape.
                 theTolerance Maximum distance between edges,
                              which can be considered as coincident.
-                theFaces List of edges for gluing.
+                theEdges List of edges for gluing.
 
             Returns:  
                 New GEOM.GEOM_Object, containing a copy of theShape
@@ -4873,7 +4873,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_common "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCommon(self, s1, s2):
+        def MakeCommon(self, theShape1, theShape2):
             """
             Perform Common boolean operation on two given shapes.
 
@@ -4885,7 +4885,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the result shape.
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(s1, s2, 1)
+            return self.MakeBoolean(theShape1, theShape2, 1)
 
         ## Perform Cut boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
@@ -4894,7 +4894,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_cut "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeCut(self, s1, s2):
+        def MakeCut(self, theShape1, theShape2):
             """
             Perform Cut boolean operation on two given shapes.
 
@@ -4907,7 +4907,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(s1, s2, 2)
+            return self.MakeBoolean(theShape1, theShape2, 2)
 
         ## Perform Fuse boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
@@ -4916,7 +4916,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_fuse "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeFuse(self, s1, s2):
+        def MakeFuse(self, theShape1, theShape2):
             """
             Perform Fuse boolean operation on two given shapes.
 
@@ -4929,7 +4929,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(s1, s2, 3)
+            return self.MakeBoolean(theShape1, theShape2, 3)
 
         ## Perform Section boolean operation on two given shapes.
         #  @param theShape1 First argument for boolean operation.
@@ -4938,7 +4938,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #
         #  @ref tui_section "Example 1"
         #  \n @ref swig_MakeCommon "Example 2"
-        def MakeSection(self, s1, s2):
+        def MakeSection(self, theShape1, theShape2):
             """
             Perform Section boolean operation on two given shapes.
 
@@ -4951,7 +4951,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             
             """
             # Example: see GEOM_TestOthers.py
-            return self.MakeBoolean(s1, s2, 4)
+            return self.MakeBoolean(theShape1, theShape2, 4)
 
         # end of l3_boolean
         ## @}
@@ -8475,7 +8475,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theOriginal geometry object for copy
         #  @return unique object identifier
         #  @ingroup l1_geompy_auxiliary
-        #  @ref swig_all_advanced "Example"
+        #  @ref swig_MakeCopy "Example"
         def MakeCopy(self,theOriginal):
             """
             Create a copy of the given object

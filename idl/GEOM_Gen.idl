@@ -273,7 +273,7 @@ module GEOM
 
     /*!
      *  Toggle auto color mode on the object.
-     *  \param theAtoColor is a flag which toggles auto color mode.
+     *  \param theAutoColor is a flag which toggles auto color mode.
      */
     void SetAutoColor(in boolean theAutoColor);
 
@@ -499,8 +499,8 @@ module GEOM
      */
     GEOM_Object MakePointOnCurveByCoord (in GEOM_Object theRefCurve,
                                          in double theXParameter,
-                                         in double theYarameter,
-                                         in double theZPameter);
+                                         in double theYParameter,
+                                         in double theZParameter);
 
     /*!
      *  \brief Create a point, corresponding to the given parameters on the
@@ -524,8 +524,8 @@ module GEOM
      */
     GEOM_Object MakePointOnSurfaceByCoord (in GEOM_Object theRefSurf,
                                            in double theXParameter,
-                                           in double theYarameter,
-                                           in double theZPameter);
+                                           in double theYParameter,
+                                           in double theZParameter);
 
 
     /*!
@@ -540,8 +540,8 @@ module GEOM
      *  \brief Create a vector, corresponding to tangent to the given parameter on the given curve.
      *  \param theRefCurve The referenced curve.
      *  \param theParameter Value of parameter on the referenced curve.This value should be have value
-     *  \between 0. and 1.. Value of 0. corresponds first parameter of curve value 1. corresponds
-     *  \last parameter of curve.
+     *                      between 0. and 1.. Value of 0. corresponds first parameter of curve; value
+     *                      1. corresponds last parameter of curve.
      *  \return New GEOM_Object, containing the created point.
      */
      GEOM_Object MakeTangentOnCurve (in GEOM_Object theRefCurve,
@@ -628,7 +628,7 @@ module GEOM
     /*!
      *  \brief Create a plane, by two vectors.
      *  \param theVec1 Vector1, the plane has to pass through first point of this vector.
-     *  \param theVec Vector2, defining the plane normal direction.
+     *  \param theVec2 Vector2, defining the plane normal direction.
      *  \param theTrimSize Half size of a side of quadrangle face, representing the plane.
      *  \return New GEOM_Object, containing the created plane.
      */
@@ -761,7 +761,7 @@ module GEOM
      *  \param theObject The object to be translated.
      *  \param theVector Translation vector, giving a direction.
      *  \param theDistance Translation distance, giving a distance.
-     *  \param theCope Translation copy, creating its copy if true.
+     *  \param theCopy Translation copy, creating its copy if true.
      *  \return New GEOM_Object, containing the translated object.
      */
     GEOM_Object TranslateVectorDistance (in GEOM_Object theObject,
@@ -807,8 +807,8 @@ module GEOM
      *  \brief Rotate given object around vector perpendicular to plane containing three points.
      *  \param theObject The object to be rotated.
      *  \param theCentPoint central point - the axis is the vector perpendicular to the plane
-     *  containing the three points.
-     *  \param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+     *                      containing the three points.
+     *  \param thePoint1,thePoint2 - in a perpendicular plan of the axis.
      *  \return theObject.
      */
     GEOM_Object RotateThreePoints (in GEOM_Object theObject,
@@ -824,7 +824,7 @@ module GEOM
      *  \param theObject The object to be rotated.
      *  \param theCentPoint central point - the axis is the vector perpendicular to the plane
      *  containing the three points.
-     *  \param thePoint1 and thePoint2 - in a perpendicular plan of the axis.
+     *  \param thePoint1,thePoint2 - in a perpendicular plan of the axis.
      *  \return New GEOM_Object, containing the rotated object.
      */
     GEOM_Object RotateThreePointsCopy (in GEOM_Object theObject,
@@ -1053,7 +1053,7 @@ module GEOM
      *  \param  thePath Wire or Edge along that the object will be translated.
      *  \param  theDistance progress of Path (0 = actual location, 1 = end of path location).
      *  \param  theCopy is a true or false parameter. true is to create a copy, false to move the object.
-     *  \param  theCopy is a true or false parameter. true is to reverse direction, false is to move normal direction.
+     *  \param  theReverse is a true or false parameter. true is to reverse direction, false is to move normal direction.
      *  \return New GEOM_Object, containing the displaced shape.
      */
     GEOM_Object PositionAlongPath (in GEOM_Object theObject,
@@ -1125,7 +1125,7 @@ module GEOM
     /*!
      *  \brief Create a face by normale vector or edge and two specified sizes,
      *  vertical (H) and horisontal (W).
-     *  \param theVec defines plane.
+     *  \param theObj defines plane.
      *  \param theH vertical size (height).
      *  \param theW horisontal size (width).
      *  \return New GEOM_Object, containing the created face.
@@ -1298,7 +1298,7 @@ module GEOM
     /*!
      *  \brief Create a shape by extrusion of the base shape along a vector, defined by DX DY DZ.
      *  \param theBase Base shape to be extruded.
-     *  \param DX, DY, DZ end of extrusion vector.
+     *  \param theDX, theDY, theDZ end of extrusion vector.
      *  \return New GEOM_Object, containing the created prism.
      */
     GEOM_Object MakePrismDXDYDZ (in GEOM_Object theBase,
@@ -1358,12 +1358,14 @@ module GEOM
 
     /*!
      *  \brief Create a filling from the given compound of contours.
+     *  \param theShape Initial shape on which to perform the feature.
      *  \param theMinDeg a minimal degree of BSpline surface to create
      *  \param theMaxDeg a maximal degree of BSpline surface to create
      *  \param theTol2D a 2d tolerance to be reached
      *  \param theTol3D a 3d tolerance to be reached
      *  \param theNbIter a number of iteration of approximation algorithm
      *  \param theMethod Kind of method to perform filling operation.
+     *  \param theApprox Boolean indicating if result should be approximated
      *  \return New GEOM_Object, containing the created filling surface.
      */
     GEOM_Object MakeFilling (in GEOM_Object theShape,
@@ -1399,7 +1401,7 @@ module GEOM
      *  \param thePath - Path shape to extrude the base shape along it.
      *  \param theWithContact - the mode defining that the section is translated to be in
      *                          contact with the spine.
-     *  \param - WithCorrection - defining that the section is rotated to be
+     *  \param theWithCorrection - defining that the section is rotated to be
      *                                 orthogonal to the spine tangent in the correspondent point
      *  \return New GEOM_Object, containing the created pipe.
      */
@@ -1423,7 +1425,7 @@ module GEOM
      *  \param thePath - Path shape to extrude the base shape along it.
      *  \param theWithContact - the mode defining that the section is translated to be in
      *                          contact with the spine.
-     *  \param - WithCorrection - defining that the section is rotated to be
+     *  \param theWithCorrection - defining that the section is rotated to be
      *                                 orthogonal to the spine tangent in the correspondent point
      *  \return New GEOM_Object, containing the created pipe.
      */
@@ -1613,7 +1615,7 @@ module GEOM
      *  in compliance with given list of edges
      *  \param theShape Initial shape.
      *  \param theTolerance Maximum distance between edges, which can be considered as coincident.
-     *  \param theFaces List of edges for gluing.
+     *  \param theEdges List of edges for gluing.
      *  \return New GEOM_Object, containing a copy of theShape without some edges.
      */
     GEOM_Object MakeGlueEdgesByList (in GEOM_Object theShape,
@@ -1815,7 +1817,7 @@ module GEOM
                                in GEOM_Object theAx1,
                                in shape_state theState);
     /*!
-     *  \briefFind in \a theShape all sub-shapes of type \a theShapeType, situated relatively
+     *  \brief Find in \a theShape all sub-shapes of type \a theShapeType, situated relatively
      *  the specified plane by the certain way, defined through \a theState parameter.
      *  \param theShape Shape to find sub-shapes of.
      *  \param theShapeType Type of sub-shapes to be retrieved.
@@ -2167,7 +2169,7 @@ module GEOM
      *  faces is not important. 
      *
      *  It is  not necessary that Faces share the same edge.
-     *  \param theFace1-theFace6 Faces for the hexahedral solid.
+     *  \param theFace1,theFace2,theFace3,theFace4,theFace5,theFace6 Faces for the hexahedral solid.
      *  \return New GEOM_Object, containing the created solid.
      */
     GEOM_Object MakeHexa (in GEOM_Object theFace1,
@@ -2236,7 +2238,7 @@ module GEOM
     /*!
      *  \brief Returns a face, found in the given shape by four given corner vertices.
      *  \param theShape Block or a compound of blocks.
-     *  \param thePoint1-thePoint4 Points, close to the corners of the desired face.
+     *  \param thePoint1,thePoint2,thePoint3,thePoint4 Points, close to the corners of the desired face.
      *  \return New GEOM_Object, containing the found face.
      */
     GEOM_Object GetFaceByPoints (in GEOM_Object theShape,
@@ -2275,7 +2277,7 @@ module GEOM
 
     /*!
      *  \brief Find a face of block, whose outside normale has minimal angle with the given vector.
-     *  \param theShape Block or a compound of blocks.
+     *  \param theBlock Block or a compound of blocks.
      *  \param theVector Vector, close to the normale of the desired face.
      *  \return New GEOM_Object, containing the found face.
      */
@@ -2307,8 +2309,8 @@ module GEOM
      *  \param theMinNbFaces If solid has lower number of faces, it is not a block.
      *  \param theMaxNbFaces If solid has higher number of faces, it is not a block.
      *    \note If theMaxNbFaces = 0, the maximum number of faces is not restricted.
+     *  \param theNbBlocks Number of specified blocks in theCompound.
      *  \return TRUE, if the given compound contains only blocks.
-     *  \return theNbBlocks Number of specified blocks in theCompound.
      */
     boolean IsCompoundOfBlocks (in GEOM_Object theCompound,
                                 in long        theMinNbFaces,
@@ -2361,8 +2363,8 @@ module GEOM
      *  - The glue between two quadrangle faces should be applied.
      *    \note Single block is also accepted as a valid compound of blocks.
      *  \param theCompound The compound to check.
+     *  \param theErrors Structure, containing discovered errors and incriminated sub-shapes.
      *  \return TRUE, if the given shape is a compound of blocks.
-     *  \return theErrors Structure, containing discovered errors and incriminated sub-shapes.
      */
     boolean CheckCompoundOfBlocks (in GEOM_Object theCompound,
                                    out BCErrors   theErrors);
@@ -2518,7 +2520,7 @@ module GEOM
      *  \note  Each compound from ListShapes and ListTools will be exploded in order
      *         to avoid possible intersection between shapes from this compound.
      *  \param theLimit Type of resulting shapes (corresponding to TopAbs_ShapeEnum).
-     *  \param KeepNonlimitShapes: if this parameter == 0, then only shapes of
+     *  \param theKeepNonlimitShapes: if this parameter == 0, then only shapes of
      *                             target type (equal to Limit) are kept in the result,
      *                             else standalone shapes of lower dimension
      *                             are kept also (if they exist).
@@ -2734,7 +2736,7 @@ module GEOM
      *  \param thezExpr parametric equation of the coordinates Z.
      *  \param theParamMin the minimal value of the parameter.
      *  \param theParamMax the maximum value of the parameter.
-     *  \param theParamStep the number of steps of the parameter discretization.
+     *  \param theParamNbStep the number of steps of the parameter discretization.
      *  \param theCurveType the type of the curve.
      *  \return New GEOM_Object, containing the created curve.
      */    
@@ -2944,7 +2946,7 @@ module GEOM
     *  \brief Perform a chamfer on edges,
     *  with distance D1 on the first specified face (if several for one edge)
     *  \param theShape Shape, to perform chamfer on.
-    *  \param theD1 theD2 Chamfer size
+    *  \param theD1,theD2 Chamfer size
     *  \param theEdges Sequence of edges of \a theShape.
     *  \return New GEOM_Object, containing the result shape.
     */
@@ -3363,7 +3365,7 @@ module GEOM
     /*!
      *  \brief Get inertia matrix and moments of inertia of theShape.
      *  \param theShape Shape to calculate inertia of.
-     *  \param I(1-3)(1-3) Output. Components of the inertia matrix of the given shape.
+     *  \param I11,I12,I13,I21,I22,I23,I31,I32,I33 Output. Components of the inertia matrix of the given shape.
      *  \param Ix,Iy,Iz Output. Moments of inertia of the given shape.
      *  \return Returns inertia through the last twelve arguments.
      */
@@ -3843,7 +3845,24 @@ module GEOM
      *
      *  To be used from GUI and from geompy.addToStudy.
      *  Work like the above method, but accepts study object theSObject instead of GEOM_Object.
+     *  \param theStudy  the study, in which theObject is published already,
+     *                   and in which the arguments will be published
      *  \param theSObject study object, referencing GEOM_Object, arguments of which will be published
+     *  \param theArgs   list of GEOM_Object, operation arguments to be published.
+     *                   If this list is empty, all operation arguments will be published
+     *  \param theFindMethod method to search sub-shapes, corresponding to arguments and
+     *                       their sub-shapes. Value from enumeration GEOM::find_shape_method.
+     *  \param theInheritFirstArg set properties of the first argument for \a theObject.
+     *                            Do not publish sub-shapes in place of arguments, but only
+     *                            in place of sub-shapes of the first argument,
+     *                            because the whole shape corresponds to the first argument.
+     *                            Mainly to be used after transformations, but it also can be
+     *                            usefull after partition with one object shape, and some other
+     *                            operations, where only the first argument has to be considered.
+     *                            If theObject has only one argument shape, this flag is automatically
+     *                            considered as True, not regarding really passed value.
+     *  \param theAddPrefix add prefix "from_" to names of restored sub-shapes,
+     *                      and prefix "from_subshapes_of_" to names of partially restored sub-shapes.
      */
     ListOfGO RestoreSubShapesSO (in SALOMEDS::Study   theStudy,
                                  in SALOMEDS::SObject theSObject,

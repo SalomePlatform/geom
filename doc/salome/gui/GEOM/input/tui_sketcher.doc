@@ -1,6 +1,6 @@
 /*!
 
-\page tui_sketcher_page Sketcher
+\page tui_sketcher_page 2D Sketcher
 
 \code
 import geompy

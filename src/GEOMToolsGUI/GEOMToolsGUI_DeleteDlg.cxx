@@ -71,6 +71,8 @@ static QStringList objectsToNames( const QMap<QString, QString>& objects )
 /*!
   \brief Constructor.
   \param parent parent widget
+  \param objects map of objects names/objects
+  \param deleteAll if True, delete all objects
 */
 GEOMToolsGUI_DeleteDlg::GEOMToolsGUI_DeleteDlg( QWidget* parent, 
                                                 const QMap<QString, QString>& objects, 

@@ -2994,6 +2994,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Créer une boîte</translation>
     </message>
     <message>
+        <source>STB_FEATURE_DETECTION</source>
+        <translation>Reconnaisance de formes</translation>
+    </message>
+    <message>
+        <source>STB_PICTURE_IMPORT</source>
+        <translation>Importer une image dans la vue</translation>
+    </message>
+    <message>
         <source>STB_CHAMFER</source>
         <translation>Créer un chanfrein</translation>
     </message>
@@ -3124,6 +3132,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>STB_EXTRUSION</source>
         <translation>Créer une extrusion</translation>
+    </message>
+    <message>
+        <source>STB_EXTRUDED_CUT</source>
+        <translation>Enlèvement de matière extrudé</translation>
+    </message>
+    <message>
+        <source>STB_EXTRUDED_BOSS</source>
+        <translation>Bossage extrudé</translation>
     </message>
     <message>
         <source>STB_FACE</source>

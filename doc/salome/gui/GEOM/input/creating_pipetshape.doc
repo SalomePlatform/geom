@@ -2,8 +2,7 @@
 
 \page create_pipetshape_page PipeTShape
 
-To create a \b PipeTShape in the <b>Main Menu</b> select <b>New Entity - >
-Advanced - > PipeTShape </b>
+To create a \b PipeTShape in the <b>Main Menu</b> select <b>New Entity -> Primitives -> PipeTShape</b>
 
 Specify the parameters of the PipeTShape object in the opened dialog
 box and press "Apply" or "Apply & Close" button.

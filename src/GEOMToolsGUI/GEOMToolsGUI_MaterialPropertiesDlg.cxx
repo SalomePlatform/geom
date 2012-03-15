@@ -573,6 +573,7 @@ void GEOMToolsGUI_MaterialPropertiesDlg::accept()
 
 /*!
   \brief Process key press event
+  \param o sender
   \param e key event
 */
 bool GEOMToolsGUI_MaterialPropertiesDlg::eventFilter( QObject* o, QEvent* e )

@@ -2224,7 +2224,7 @@ QAction* GeometryGUI::getAction(const int id) {
   This method can be re-implemented in the subclasses.
   Return true in case if object isn't reference or component (module root).
 
-  \param id column id
+  \param entry column id
   \return \c true if the item can be renamed by the user in place (e.g. in the Object browser)
 */
 bool GeometryGUI::renameAllowed( const QString& entry) const {

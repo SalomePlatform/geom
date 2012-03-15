@@ -1,17 +1,17 @@
 /*!
 
-\page create_sketcher_page Sketcher
+\page create_sketcher_page 2D Sketcher
 
-The sketcher allows you to create a profile made of curves of 2 types: line segments and arcs.
+The 2D Sketcher allows you to create a profile made of curves of 2 types: line segments and arcs.
 
 <b>Example:</b>
 
 \image html sketch_example.png
 
-To create a \b Sketch:
+To create a \b 2D Sketch:
 
 <ol>
-<li>In the main menu select <em>New Entity / Sketch</em> or click on \image html sketch.png </li>
+<li>In the main menu select <em>New Entity -> Basic -> 2D Sketch</em> or click on \image html sketch.png </li>
 
 <li> Select the plane or the planar face on which to create the sketch. By default the sketch is created on the XOY plane of the global coordinate system.
 If Local Coordinate systems have been created in the study they appear in the combobox and can be selected as reference coordinate system.</li>

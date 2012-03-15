@@ -217,9 +217,10 @@ class GEOMImpl_Block6Explorer
   /*!
    * Build a face, bound by the given wire.
    * \param theWire The initial wire to build the face on.
-   * \param isPlanarWanted. If true, try to build a planar face.
+   * \param isPlanarWanted If true, try to build a planar face.
    * \note If isPlanarWanted is true, but planar face cannot be built
    *       with acceptable tolerance, any face will be built.
+   * \param theResult The resulting shape.
    * \return Error or warning description. Empty string in case of success.
    */
   static TCollection_AsciiString MakeFace (const TopoDS_Wire&     theWire,
@@ -229,6 +230,7 @@ class GEOMImpl_Block6Explorer
   /*!
    * Build a face, bound by the given wire.
    * \param theWire The initial wire to build the face on.
+   * \param theResult The resulting shape.
    * \return Error or warning description. Empty string in case of success.
    */
   static TCollection_AsciiString MakeAnyFace (const TopoDS_Wire& theWire,

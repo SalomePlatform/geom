@@ -1120,9 +1120,9 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Objec
 //=============================================================================
 /*!
  *  MakePipeTShape
- *  Create a T-shape object with specified caracteristics for the main and
- *  the incident pipes (radius, width, half-length).
- *  Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
+ *  \brief Create a T-shape object with specified caracteristics for the main and
+ *         the incident pipes (radius, width, half-length).
+ *         Center of the shape is (0,0,0). The main plane of the T-shape is XOY.
  *  \param theR1 Internal radius of main pipe
  *  \param theW1 Width of main pipe
  *  \param theL1 Half-length of main pipe
@@ -1134,9 +1134,9 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapeMirrorAndGlue(Handle(GEOM_Objec
  */
 //=============================================================================
 Handle(TColStd_HSequenceOfTransient)
-GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1, double theL1,
-                                             double theR2, double theW2, double theL2,
-                                             bool theHexMesh)
+  GEOMImpl_IAdvancedOperations::MakePipeTShape(double theR1, double theW1, double theL1,
+                                               double theR2, double theW2, double theL2,
+                                               bool theHexMesh)
 {
   MESSAGE("GEOMImpl_IAdvancedOperations::MakePipeTShape");
   SetErrorCode(KO);
@@ -1977,7 +1977,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
 //=============================================================================
 /*!
  *  MakePipeTShapeFilletWithPosition
- *  Create a T-shape object with specified caracteristics for the main and
+ *  \brief Create a T-shape object with specified caracteristics for the main and
  *  the incident pipes (radius, width, half-length). A fillet is created
  *  on the junction of the pipes.
  *  The extremities of the main pipe are located on junctions points P1 and P2.

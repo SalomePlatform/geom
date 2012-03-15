@@ -9,19 +9,16 @@ range of geometrical objects, from points to complex extrusions:
 <li>create \subpage create_basic_geom_obj_page "Basic objects" - points,
 lines, circles...</li>
 <li>create \subpage create_primitives_page "Primitives" - cubes, spheres, cones...</li>
+<li>create \subpage create_adv_obj_page "Advanced geometrical objects" - Pipe TShape...</li>
 <li>create \subpage create_complex_obj_page "Complex objects" by
 extrusion, rotation, interpolation of other objects.</li>
 <li>create and edit \subpage work_with_groups_page "Groups of objects" of
 lower dimension, which belong to the objects of higher dimension.</li>
 <li>\subpage build_by_blocks_page "Build by blocks" faces from
 edges and solids from faces.</li>
-<li>create line segments and arcs using \subpage create_sketcher_page
-"Sketcher".</li>
-<li>create a closed or unclosed 3D wire from a list of points using
-\subpage create_3dsketcher_page "3D Sketcher".</li>
 <li>\subpage create_explode_page "Explode" objects of higher dimension
 into sub-objects of lower dimension.</li> 
-<li>create \subpage create_adv_obj_page "Advanced geometrical objects" - edges, wires, shells...</li>
+<li>create \subpage create_topological_obj_page "Topological objects" - edges, wires, shells...</li>
 </ul>
 
 \note It is possible to use the variables defined in the SALOME \b NoteBook

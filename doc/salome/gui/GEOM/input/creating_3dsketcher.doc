@@ -4,7 +4,7 @@
 
 3D Sketcher allows creating a closed or unclosed 3D wire from a list of points.
 
-To create a 3D Sketch, select in the main menu <em>New Entity -> 3D Sketch</em>.
+To create a 3D Sketch, select in the main menu <em>New Entity -> Basic -> 3D Sketch</em>.
 
 \image html 3dsketch2.png
 

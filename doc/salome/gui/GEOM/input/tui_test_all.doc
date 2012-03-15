@@ -37,6 +37,9 @@
 \anchor swig_MakeVertexOnSurface
 \until p_on_face
 
+\anchor swig_MakeVertexOnSurfaceByCoord
+\until p_on_face2
+
 \until S = geompy.MakeRotation
 
 \anchor swig_MakeLineTwoFaces
@@ -44,6 +47,9 @@
 
 \anchor swig_all_advanced
 \until MakeSewing
+
+\anchor swig_MakeCopy
+\until MakeCopy
 
 \anchor swig_all_trsf
 \until RotatPnt
@@ -56,6 +62,9 @@
 
 \anchor swig_ChangeOrientation
 \until ChangeOrientation
+
+\anchor swig_ExtractShapes
+\until prism_edges
 
 \anchor swig_FilletChamfer
 \until End of Local operations
@@ -71,6 +80,12 @@
 
 \anchor swig_all_addtostudy
 \until id_Partition1
+
+\anchor swig_all_addtostudyInFather
+\until id_SubFace
+
+\anchor swig_SubShapeName
+\until nameS
 
 \anchor swig_all_decompose
 \until print "DONE"

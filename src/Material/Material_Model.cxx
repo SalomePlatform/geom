@@ -319,6 +319,7 @@ void Material_Model::clearModel()
 
   \param theResMgr resources manager
   \param theResSection resources section name
+  \param theIsFront if True, it is front material, else it is back material
   \sa save()
 */
 void Material_Model::fromResources( QtxResourceMgr* theResMgr,
@@ -408,6 +409,7 @@ void Material_Model::fromResources( QtxResourceMgr* theResMgr,
 
   \param theResMgr resources manager
   \param theResSection resources section name
+  \param theIsFront if True, it is front material, else it is back material
   \sa fromResources()
 */
 void Material_Model::save( QtxResourceMgr* theResMgr,

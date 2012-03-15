@@ -205,13 +205,13 @@ std::string ShapeRec_FeatureDetector::CroppImage()
 
 /*!
   Performs contours detection and store them in contours 
-  \param src - src image to find contours of 
+  \param binaryImg - src image to find contours of 
 */
-void ShapeRec_FeatureDetector::_detectAndRetrieveContours( Mat src )
+void ShapeRec_FeatureDetector::_detectAndRetrieveContours( Mat binaryImg )
 {
-  src = src > 1; 
+  binaryImg = binaryImg > 1; 
   int method = CV_CHAIN_APPROX_NONE;
-  findContours( src, contours, hierarchy,CV_RETR_CCOMP, method);
+  findContours( binaryImg, contours, hierarchy,CV_RETR_CCOMP, method);
   // Other possible approximations CV_CHAIN_APPROX_TC89_KCOS, CV_CHAIN_APPROX_TC89_L1, CV_CHAIN_APPROX_SIMPLE cf. OpenCV documentation 
   // for precise information
 }

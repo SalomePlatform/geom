@@ -3075,6 +3075,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Create a box</translation>
     </message>
     <message>
+        <source>STB_FEATURE_DETECTION</source>
+        <translation>Shape recognition</translation>
+    </message>
+    <message>
+        <source>STB_PICTURE_IMPORT</source>
+        <translation>Import picture in viewer</translation>
+    </message>
+    <message>
         <source>STB_CHAMFER</source>
         <translation>Create a chamfer</translation>
     </message>
@@ -3205,6 +3213,14 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_EXTRUSION</source>
         <translation>Create an extrusion</translation>
+    </message>
+    <message>
+        <source>STB_EXTRUDED_CUT</source>
+        <translation>Extruded cut</translation>
+    </message>
+    <message>
+        <source>STB_EXTRUDED_BOSS</source>
+        <translation>Extruded boss</translation>
     </message>
     <message>
         <source>STB_FACE</source>
