@@ -98,6 +98,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1Sel1Frame
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1Sel1Frame_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1Sel1Frame : public QWidget, 
+                                        public Ui::DlgRef_1Sel1Frame_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1Sel1Frame( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Sel1Frame();
+};
+
+//////////////////////////////////////////
 // DlgRef_1Sel1List1Check3Btn
 //////////////////////////////////////////
 
@@ -821,6 +837,22 @@ class DLGREF_EXPORT DlgRef_3Spin : public QWidget,
 public:
   DlgRef_3Spin( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_3Spin();
+};
+
+//////////////////////////////////////////
+// DlgRef_4Spin
+//////////////////////////////////////////
+
+#include "ui_DlgRef_4Spin_QTD.h"
+
+class DLGREF_EXPORT DlgRef_4Spin : public QWidget, 
+                                   public Ui::DlgRef_4Spin_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_4Spin( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_4Spin();
 };
 
 //////////////////////////////////////////

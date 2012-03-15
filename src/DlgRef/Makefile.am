@@ -40,6 +40,7 @@ UIC_FILES =					\
 	ui_DlgRef_1Sel1Check1List_QTD.h		\
 	ui_DlgRef_1Sel1Check1Sel_QTD.h		\
 	ui_DlgRef_1Sel1Check_QTD.h		\
+	ui_DlgRef_1Sel1Frame_QTD.h		\
 	ui_DlgRef_1Sel1List1Check3Btn_QTD.h	\
 	ui_DlgRef_1Sel1Spin1Check_QTD.h		\
 	ui_DlgRef_1Sel1Spin_QTD.h		\
@@ -89,6 +90,7 @@ UIC_FILES =					\
 	ui_DlgRef_4Sel1List_QTD.h		\
 	ui_DlgRef_4Sel1Spin2Check_QTD.h		\
 	ui_DlgRef_4Sel1Spin3Check_QTD.h		\
+	ui_DlgRef_4Spin_QTD.h			\
 	ui_DlgRef_6Sel_QTD.h			\
 	ui_DlgRef_Skeleton_QTD.h
 

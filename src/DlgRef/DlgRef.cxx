@@ -79,6 +79,20 @@ DlgRef_1Sel1Check::~DlgRef_1Sel1Check()
 }
 
 //////////////////////////////////////////
+// DlgRef_1Sel1Frame
+//////////////////////////////////////////
+
+DlgRef_1Sel1Frame::DlgRef_1Sel1Frame( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_1Sel1Frame::~DlgRef_1Sel1Frame()
+{
+}
+
+//////////////////////////////////////////
 // DlgRef_1Sel1List1Check3Btn
 //////////////////////////////////////////
 
@@ -737,6 +751,20 @@ DlgRef_3Spin::DlgRef_3Spin( QWidget* parent, Qt::WindowFlags f )
 }
 
 DlgRef_3Spin::~DlgRef_3Spin()
+{
+}
+
+//////////////////////////////////////////
+// DlgRef_4Spin
+//////////////////////////////////////////
+
+DlgRef_4Spin::DlgRef_4Spin( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+DlgRef_4Spin::~DlgRef_4Spin()
 {
 }
 
