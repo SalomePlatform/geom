@@ -53,6 +53,8 @@
 #include <TopoDS_Compound.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TDF_Label.hxx>
+#include <TDF_ChildIDIterator.hxx>
+#include <TNaming_NamedShape.hxx>
 #include <TDF_Tool.hxx>
 #include <Interface_Static.hxx>
 
@@ -232,14 +234,29 @@ extern "C"
             {
               TopoDS_Shape aSub = anIndices.FindKey(isub);
               if (aSub.IsPartner(S)) {
-                // create label and set shape
                 TDF_Label L;
-                TDF_TagSource aTag;
-                L = aTag.NewChild(theShapeLabel);
-                TNaming_Builder tnBuild (L);
-                //tnBuild.Generated(S);
-                tnBuild.Generated(aSub);
-
+                if (enti->IsKind(tGeom)) {
+                  // check all named shapes using iterator
+                  TDF_ChildIDIterator anIt (theShapeLabel, TDataStd_Name::GetID(), Standard_True);
+                  for (; anIt.More(); anIt.Next()) {
+                    Handle(TDataStd_Name) nameAttr =
+                      Handle(TDataStd_Name)::DownCast(anIt.Value());
+                    if (nameAttr.IsNull()) continue;
+                    TDF_Label Lab = nameAttr->Label();
+                    Handle(TNaming_NamedShape) shAttr; 
+                    if (Lab.FindAttribute(TNaming_NamedShape::GetID(), shAttr) && shAttr->Get().IsEqual(aSub))
+                      L = Lab;
+                  }
+                }
+                // create label and set shape
+                if (L.IsNull())
+                {
+                  TDF_TagSource aTag;
+                  L = aTag.NewChild(theShapeLabel);
+                  TNaming_Builder tnBuild (L);
+                  //tnBuild.Generated(S);
+                  tnBuild.Generated(aSub);
+                }
                 // set a name
                 TDataStd_Name::Set(L, aNameExt);
               }
