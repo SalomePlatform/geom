@@ -89,7 +89,7 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 //================================================================
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
   : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false ),
-    myIsApplyAndClose( false ), myIsOptimizedBrowsing( false )
+    myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true )
 {
 }
 
@@ -253,7 +253,7 @@ void GEOMBase_Helper::redisplay( GEOM::GEOM_Object_ptr object,
 // Purpose  : Method for displaying preview based on execute() results
 //================================================================
 void GEOMBase_Helper::displayPreview( const bool   display,
-				      const bool   activate,
+                                      const bool   activate,
                                       const bool   update,
                                       const bool   toRemoveFromEngine,
                                       const double lineWidth,
@@ -279,6 +279,10 @@ void GEOMBase_Helper::displayPreview( const bool   display,
   try {
     SUIT_OverrideCursor wc;
     ObjectList objects;
+ 
+    if ( !isWaitCursorEnabled() )
+      wc.suspend();
+    
     if ( !execute( objects ) || !getOperation()->IsDone() ) {
       wc.suspend();
     }
@@ -766,7 +770,6 @@ bool GEOMBase_Helper::commitCommand( const char* )
 bool GEOMBase_Helper::hasCommand() const
 {
   bool res = (bool) myCommand;
-  MESSAGE("hasCommand = "<<res)
   return (bool)myCommand;
 }
 

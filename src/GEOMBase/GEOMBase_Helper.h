@@ -73,7 +73,7 @@ protected:
   void redisplay       ( GEOM::GEOM_Object_ptr, const bool = true, const bool = true );
 
   virtual void displayPreview ( const bool   display,
-				const bool   activate = false, 
+                                const bool   activate = false, 
                                 const bool   update = true,
                                 const bool   toRemoveFromEngine = true,
                                 const double lineWidth = -1, 
@@ -187,6 +187,9 @@ protected:
 
   virtual void                setIsOptimizedBrowsing( const bool theFlag );
   virtual bool                isOptimizedBrowsing() const;
+  
+  virtual void                setIsWaitCursorEnabled( const bool theFlag ) {myIsWaitCursorEnabled = theFlag;}
+  virtual bool                isWaitCursorEnabled() const {return myIsWaitCursorEnabled ;}
 
 private:
   QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
@@ -206,6 +209,7 @@ private:
   SUIT_Desktop*               myDesktop;
   bool                        myIsApplyAndClose;
   bool                        myIsOptimizedBrowsing;
+  bool                        myIsWaitCursorEnabled;
 
 };
 
