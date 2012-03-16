@@ -39,13 +39,6 @@
 #include <GEOM_Object.hxx>
 
 // OCCT Includes
-// #include <TopoDS_Shape.hxx>
-// #include <TopoDS_Edge.hxx>
-// #include <TopoDS.hxx>
-// #include <TopExp.hxx>
-// #include <TColStd_IndexedMapOfInteger.hxx>
-// #include <TopTools_IndexedMapOfShape.hxx>
-// #include <Precision.hxx>
 #include <TColStd_HSequenceOfTransient.hxx>
 
 #include <GEOMImpl_Types.hxx>
@@ -75,12 +68,12 @@ OperationGUI_ExtrudedFeatureDlg::OperationGUI_ExtrudedFeatureDlg(const int theOp
   {
     case OperationGUI::BOSS:
       image0 = QPixmap(aResMgr->loadPixmap("GEOM", tr("ICO_EXTRUDED_BOSS")));
-      aTitle = tr("GEOM_EXTRUDED_BOSS");
+      aTitle = tr("GEOM_EXTRUDED_BOSS_TITLE");
       setHelpFileName("extruded_boss_operation_page.html");
       break;
     case OperationGUI::CUT:
       image0 = QPixmap( aResMgr->loadPixmap("GEOM", tr("ICO_EXTRUDED_CUT")));
-      aTitle = tr("GEOM_EXTRUDED_CUT");
+      aTitle = tr("GEOM_EXTRUDED_CUT_TITLE");
       setHelpFileName("extruded_cut_operation_page.html");
       break;
   }
@@ -168,11 +161,19 @@ void OperationGUI_ExtrudedFeatureDlg::Init()
   connect(((SalomeApp_Application*)(SUIT_Session::session()->activeApplication()))->selectionMgr(),
            SIGNAL(currentSelectionChanged()), this, SLOT(SelectionIntoArgument()));
   
-  initName(mainFrame()->GroupConstructors->title());
+  switch (myOperation) 
+  {
+    case OperationGUI::BOSS:
+      initName(tr("GEOM_EXTRUDED_BOSS"));     
+      break;
+    case OperationGUI::CUT:
+      initName(tr("GEOM_EXTRUDED_CUT"));  
+      break;
+  }
   
   mainFrame()->RadioButton1->setFocus();
   
-  globalSelection(GEOM_ALLSHAPES); //TODO à changer
+  globalSelection(GEOM_ALLSHAPES);
   
   myGroup->PushButton1->click();
   SelectionIntoArgument();
@@ -219,24 +220,12 @@ void OperationGUI_ExtrudedFeatureDlg::SetEditCurrentArgument()
 
     myGroup->PushButton2->setDown(false);
     myGroup->LineEdit2->setEnabled(false);
-   
-//     globalSelection();   // close local selection
   }
   else if (send == myGroup->PushButton2) {
     myEditCurrentArgument = myGroup->LineEdit2;
 
     myGroup->PushButton1->setDown(false);
     myGroup->LineEdit1->setEnabled(false);
-    
-//     globalSelection(); // close local selection to clear it
-    
-// //     localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE );
-//     if (myObject1)
-//     {
-//       localSelection( myObject1.get(), TopAbs_FACE );
-// //       localSelection( myObject1.get(), TopAbs_EDGE );
-//     }
-//    /* localSelection( GEOM::GEOM_Object::_nil(), TopAbs_EDGE ); */ 
   }
   
   // enable line edit
