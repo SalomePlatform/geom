@@ -819,6 +819,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Glue edges</translation>
     </message>
     <message>
+        <source>GLUE_ERROR_STICKED_SHAPES</source>
+        <translation>The tolerance value is too big. Sticked shapes are detected.</translation>
+    </message>
+    <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
         <translation>Limit tolerance</translation>
     </message>
