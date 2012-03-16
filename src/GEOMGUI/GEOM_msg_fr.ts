@@ -12,6 +12,14 @@
         <translation>Inverser</translation>
     </message>
     <message>
+        <source>EDGE_WIDTH_TLT</source>
+        <translation>Epaisseur des arêtes</translation>
+    </message>
+    <message>
+        <source>ISOS_WIDTH_TLT</source>
+        <translation>Epaisseur des isos</translation>
+    </message>
+    <message>
         <source>CLOSE_CONTOUR_NEW_OBJ_NAME</source>
         <translation>ContourFerme</translation>
     </message>
@@ -318,12 +326,12 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Objets à modifier</translation>
     </message>
     <message>
-        <source>GEOM_CHANGE_ORIENTATION_TITLE</source>
-        <translation>Changer l&apos;orientation</translation>
-    </message>
-    <message>
         <source>GEOM_CHANGE_DIRECTION</source>
         <translation>Changer la direction</translation>
+    </message>
+    <message>
+        <source>GEOM_CHANGE_ORIENTATION_TITLE</source>
+        <translation>Changer l&apos;orientation</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND</source>
@@ -582,10 +590,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Il est impossible de trouver ou d&apos;ouvrir la librairie IHM correspondante à l&apos;action de l&apos;utilisateur</translation>
     </message>
     <message>
-        <source>GEOM_EXTRUSION</source>
-        <translation>Extrusion</translation>
-    </message>
-    <message>
         <source>GEOM_EXTRUDED_CUT_TITLE</source>
         <translation>Enlèvement de matière extrudé</translation>
     </message>
@@ -594,12 +598,16 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Enlèvement_extrudé</translation>
     </message>
     <message>
+        <source>GEOM_EXTRUDED_BOSS_TITLE</source>
+        <translation>Bossage extrudé</translation>
+    </message>
+    <message>
         <source>GEOM_EXTRUDED_BOSS</source>
         <translation>Bossage_extrudé</translation>
     </message>
     <message>
-        <source>GEOM_EXTRUDED_BOSS_TITLE</source>
-        <translation>Bossage extrudé</translation>
+        <source>GEOM_EXTRUSION</source>
+        <translation>Extrusion</translation>
     </message>
     <message>
         <source>GEOM_EXTRUSION_BSV</source>
@@ -651,7 +659,8 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MAKE_FACE_TOLERANCE_TOO_BIG</source>
-        <translation>La face créée a une tolérance élevée</translation>
+        <translation>Impossible de construire une face plane: 
+        la face créée a une tolérance trop élevée</translation>
     </message>
     <message>
         <source>GEOM_FACE_OR_LCS</source>
@@ -810,6 +819,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Recoller les arêtes</translation>
     </message>
     <message>
+        <source>GLUE_ERROR_STICKED_SHAPES</source>
+        <translation>La valeur de la tolérance est trop importante. Détection de shapes "sticked".</translation>
+    </message>
+    <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
         <translation>Limiter la tolérance</translation>
     </message>
@@ -820,6 +833,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_HOLES</source>
         <translation>Trous</translation>
+    </message>
+    <message>
+        <source>GEOM_INIT_SHAPE</source>
+        <translation>Objet d&apos;origine</translation>
     </message>
     <message>
         <source>GEOM_IDENTICAL_NAMES_SELECT_BY_MOUSE</source>
@@ -852,10 +869,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_INF_LOADED</source>
         <translation>Le fichier %1 est ouvert.</translation>
-    </message>
-    <message>
-        <source>GEOM_INIT_SHAPE</source>
-        <translation>Objet d&apos;origine</translation>
     </message>
     <message>
         <source>GEOM_INTERNAL_WIRES</source>
@@ -1134,10 +1147,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Projection sur une face</translation>
     </message>
     <message>
-        <source>GEOM_PROFILE</source>
-        <translation>Profile</translation>
-    </message>
-    <message>
         <source>GEOM_SOURCE_OBJECT</source>
         <translation>Point, arête ou contour de source</translation>
     </message>
@@ -1220,6 +1229,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_PIPE_TITLE</source>
         <translation>Construction d&apos;un tuyau</translation>
+    </message>
+    <message>
+        <source>GEOM_PROFILE</source>
+        <translation>Profile</translation>
     </message>
     <message>
         <source>GEOM_SEGMENT</source>
@@ -2362,6 +2375,30 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Afficher uniquement</translation>
     </message>
     <message>
+        <source>MEN_BRING_TO_FRONT</source>
+        <translation>Afficher au premier plan</translation>
+    </message>
+    <message>
+	<source>TOP_BRING_TO_FRONT</source>
+        <translation>Afficher au premier plan</translation>
+    </message>
+    <message>
+        <source>STB_BRING_TO_FRONT</source>
+        <translation>Afficher au premier plan</translation>
+    </message>
+    <message>
+        <source>MEN_CLS_BRING_TO_FRONT</source>
+        <translation>Effacer les objets mis au premier plan</translation>
+    </message>
+    <message>
+        <source>TOP_CLS_BRING_TO_FRONT</source>
+        <translation>Effacer les objets mis au premier plan</translation>
+    </message>
+    <message>
+        <source>STB_CLS_BRING_TO_FRONT</source>
+        <translation>Effacer les objets mis au premier plan</translation>
+    </message>
+    <message>
         <source>MEN_EDGE</source>
         <translation>Arête</translation>
     </message>
@@ -2615,11 +2652,39 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_SHADING_WITH_EDGES</source>
-        <translation>Ombrage Avec Arêtes</translation>
+        <translation>Ombrage avec arêtes</translation>
     </message>
     <message>
         <source>MEN_POP_TEXTURE</source>
         <translation>Texture</translation>
+    </message>
+    <message>
+        <source>MEN_EDGE_WIDTH</source>
+        <translation>Epaisseur d&apos;arête</translation>
+    </message>
+    <message>
+        <source>TOP_EDGE_WIDTH</source>
+        <translation>Epaisseur d&apos;arête</translation>
+    </message>
+    <message>
+        <source>STB_EDGE_WIDTH</source>
+        <translation>Epaisseur d&apos;arête</translation>
+    </message>
+    <message>
+        <source>MEN_ISOS_WIDTH</source>
+        <translation>Epaisseur des isos</translation>
+    </message>
+    <message>
+        <source>TOP_ISOS_WIDTH</source>
+        <translation>Epaisseur des isos</translation>
+    </message>
+    <message>
+        <source>STB_ISOS_WIDTH</source>
+        <translation>Epaisseur des isos</translation>
+    </message>
+    <message>
+        <source>MEN_LINE_WIDTH</source>
+        <translation>Epaisseur des lignes</translation>
     </message>
     <message>
         <source>MEN_POP_SETTEXTURE</source>
@@ -2906,6 +2971,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Couleur des isolignes</translation>
     </message>
     <message>
+        <source>PREF_TOPLEVEL_COLOR</source>
+        <translation>Couleur des objets mis au premier plan</translation>
+    </message>
+    <message>
         <source>PREF_LINE_COLOR</source>
         <translation>Couleur des arêtes, vecteurs, contours</translation>
     </message>
@@ -2947,15 +3016,31 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_FRONT_MATERIAL</source>
-        <translation>Devant du matériel par défaut</translation>
+        <translation>Devant du matériau par défaut</translation>
     </message>
     <message>
         <source>PREF_BACK_MATERIAL</source>
-        <translation>Retour du matériel par défaut</translation>
+        <translation>Retour du matériau par défaut</translation>
+    </message>
+    <message>
+        <source>PREF_EDGE_WIDTH</source>
+        <translation>Epaisseur des arêtes</translation>
+    </message>
+    <message>
+        <source>PREF_ISOLINES_WIDTH</source>
+        <translation>Epaisseur des isolignes</translation>
+    </message>
+    <message>
+        <source>PREF_PREVIEW_EDGE_WIDTH</source>
+        <translation>Prévisualiser l&apos;épaisseur des arêtes</translation>
+    </message>
+    <message>
+        <source>PREF_MEASURES_LINE_WIDTH</source>
+        <translation>Epaisseur des traits de mesure</translation>
     </message>
     <message>
         <source>PROCESS_SHAPE_NEW_OBJ_NAME</source>
-        <translation>FormeRetraitée</translation>
+        <translation>FormeRetraitee</translation>
     </message>
     <message>
         <source>REMOVE_HOLES_NEW_OBJ_NAME</source>
@@ -4418,6 +4503,13 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>L&apos;import s&apos;est fini avec des erreurs:</translation>
     </message>
     <message>
+        <source>EXPORT_IGES_HETEROGENEOUS_COMPOUND</source>
+        <translation>Cet assemblage ne peut pas être exporté au format IGES
+sans perte car il contient des entités qui doivent être sauvegardées
+dans des modes différents. Les sommets, arêtes et contours d'un côté et
+les coques et solides d'un autre.</translation>
+    </message>
+    <message>
         <source>GEOM_PUBLISH_NAMED_SHAPES</source>
         <translation>Créer des groupes pour les objets indiqués (s&apos;ils existent)?</translation>
     </message>
@@ -5088,6 +5180,13 @@ Voulez-vous continuer?</translation>
     <message>
         <source>GEOM_DEFLECTION</source>
         <translation>Déformation :</translation>
+    </message>
+</context>
+<context>
+    <name>GEOMToolsGUI_LineWidthDlg</name>
+    <message>
+        <source>GEOM_LINE_WIDTH</source>
+        <translation>Epaisseur de ligne :</translation>
     </message>
 </context>
 <context>
