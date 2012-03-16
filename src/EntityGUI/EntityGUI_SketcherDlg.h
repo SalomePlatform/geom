@@ -49,6 +49,7 @@ class EntityGUI_Point;
 class EntityGUI_Dir1;
 class EntityGUI_Dir2;
 class EntityGUI_Skeleton;
+class DlgRef_4Spin;
 class GeometryGUI;
 
 #ifndef COORD_MIN
@@ -74,7 +75,7 @@ public:
   bool eventFilter (QObject* object, QEvent* event);
   
   bool                               acceptMouseEvent() const;  // called by EntityGUI::OnMousePress()
-  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt& );             
+  void                               OnPointSelected( Qt::KeyboardModifiers, const gp_Pnt&, bool isStart = true );             
 
 protected:
   void                               initSpinBox( SalomeApp_DoubleSpinBox*, 
@@ -118,6 +119,9 @@ private:
                                                    TopoDS_Shape& );
   int                                getPnt1ConstructorId() const;
   int                                getPnt2ConstructorId() const;
+  void                               OnFirstPoint();
+  void                               OnNextPoint(); 
+
 
 private:
   int                                myConstructorId;
@@ -139,12 +143,14 @@ private:
   QStringList                        myUndoParameters;
 
   Standard_Real                      myX, myY, myDX, myDY;
+  Standard_Real                      myX1, myY1, myX2, myY2;
   Standard_Real                      myXc, myYc, myDXc, myDYc;
   Standard_Real                      myLength, myAngle, myRadius;
   Standard_Real                      myLastX1, myLastY1;
   Standard_Real                      myLastX2, myLastY2;
 
   QString                            myXStr, myYStr, myDXStr, myDYStr;
+  QString                            myX1Str, myY1Str, myX2Str, myY2Str;
   QString                            myXcStr, myYcStr, myDXcStr, myDYcStr;
   QString                            myLengthStr, myAngleStr, myRadiusStr;
   QString                            myLastX1Str, myLastY1Str;
@@ -164,6 +170,7 @@ private:
   EntityGUI_2Spin*                   Group2Spin;
   EntityGUI_3Spin1Check*             Group3Spin;
   EntityGUI_4Spin1Check*             Group4Spin;
+  DlgRef_4Spin*                      GroupRect;
 
   QLabel*                            myErrLabel;
 
@@ -213,6 +220,7 @@ private slots:
   void                               DeactivateActiveDialog();
   void                               ActivateThisDialog();
   void                               TypeClicked( int );
+  void                               RectClicked();
   void                               DestClicked( int );
   void                               PointClicked( int );
   void                               Point2Clicked( int );

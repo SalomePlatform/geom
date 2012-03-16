@@ -222,6 +222,7 @@ EntityGUI_Skeleton::EntityGUI_Skeleton( QWidget* parent, Qt::WindowFlags f )
   ButtonGroup = new QButtonGroup( this );
   ButtonGroup->addButton( RadioButton1, 0 );
   ButtonGroup->addButton( RadioButton2, 1 );
+  ButtonGroup->addButton( RadioButton3, 2 );
 }
 
 EntityGUI_Skeleton::~EntityGUI_Skeleton()

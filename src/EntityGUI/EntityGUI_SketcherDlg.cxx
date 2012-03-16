@@ -30,6 +30,7 @@
 
 #include <OCCViewer_ViewPort3d.h>
 #include <OCCViewer_ViewWindow.h>
+#include <OCCViewer_ViewSketcher.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
@@ -44,6 +45,8 @@
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+
+#include <DlgRef.h>
 
 #include <QKeyEvent>
 
@@ -84,7 +87,21 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
   setModal( modal );
   setAttribute( Qt::WA_DeleteOnClose );
-
+  
+  // Disable rectangular selection
+//   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
+//   ((OCCViewer_ViewWindow*)theViewWindow)->setEnabledDrawMode( false );
+//   MESSAGE("((OCCViewer_ViewWindow*)theViewWindow)->isEnabledDrawMode();"<<((OCCViewer_ViewWindow*)theViewWindow)->isEnabledDrawMode())
+//   OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+//   vp->setSketchingEnabled( false );
+//   MESSAGE("vp->isSketchingEnabled()"<<vp->isSketchingEnabled())
+//   ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(true);
+//   OCCViewer_ViewSketcher* aViewSketcher = ((OCCViewer_ViewWindow*)theViewWindow)->getSketcher( OCCViewer_ViewWindow::Rect );
+//   aViewSketcher->deactivate()
+//   aViewSketcher->setVisible(false);
+  
+//   this->setMouseTracking(false);
+  
   myGeometryGUI->SetActiveDialogBox(this);
 
   MainWidget = new EntityGUI_Skeleton( this );
@@ -123,11 +140,9 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   planeLayout->setMargin(11);
 
   ComboBox1 = new QComboBox(GroupBox1);
-  //ComboBox1->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed) );
   planeLayout->addWidget(ComboBox1,0,0,1,2);
 
   planeButton = new QPushButton (GroupBox1);
-  //planeButton->setSizePolicy( QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
   planeButton->setText( tr( "GEOM_SKETCHER_RESTORE" ) );
   planeLayout->addWidget(planeButton,0,2);
   
@@ -228,6 +243,13 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   Group4Spin->checkBox->setText( tr( "GEOM_REVERSE" ) );
   Group4Spin->buttonUndo->setIcon( image1 );
   Group4Spin->buttonRedo->setIcon( image2 );
+  
+  GroupRect = new DlgRef_4Spin( MainWidget->SkeletonCnt );
+  GroupRect->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
+  GroupRect->TextLabel1->setText("X1:");
+  GroupRect->TextLabel2->setText("Y1:");
+  GroupRect->TextLabel3->setText("X2:");
+  GroupRect->TextLabel4->setText("Y2:");
 
   // Defines a palette for the error message on Group4Spin and Group2Sel 
   QPalette palette;
@@ -253,6 +275,7 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   SkeletonCntlayout->addWidget( Group2Spin, 0, 0 );
   SkeletonCntlayout->addWidget( Group3Spin, 0, 0 );
   SkeletonCntlayout->addWidget( Group4Spin, 0, 0 );
+  SkeletonCntlayout->addWidget( GroupRect, 0, 0 );
   //SkeletonCntlayout->setStretch( 0, 1);
   /***************************************************************/
 
@@ -317,6 +340,10 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   connect( Group4Spin->SpinBox_DY,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group4Spin->SpinBox_DZ,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group4Spin->SpinBox_DS,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRect->SpinBox_DX1,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRect->SpinBox_DX2,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRect->SpinBox_DY1,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupRect->SpinBox_DY2,   SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
 
   connect( Group3Spin->checkBox,     SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
   connect( Group4Spin->checkBox,     SIGNAL( stateChanged( int ) ),    this, SLOT( CheckBoxClicked( int ) ) );
@@ -355,7 +382,10 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
 //=================================================================================
 EntityGUI_SketcherDlg::~EntityGUI_SketcherDlg()
 {
+//   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
+  
   myGeometryGUI->SetActiveDialogBox( 0 );
+//   ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(false);
 }
 
 
@@ -427,8 +457,8 @@ void EntityGUI_SketcherDlg::Init()
   
   GEOM::GEOM_IBasicOperations_var aBasicOp = getGeomEngine()->GetIBasicOperations( getStudyId() );
   myGlobalCS = aBasicOp->MakeMarker( 0,0,0,
-                                     0,0,1,
-                                     1,0,0 ); 
+                                     1,0,0,
+                                     0,1,0 ); 
   myWPlane = myGlobalCS;
   myLCSList.push_back( WPlaneToLCS(myGlobalCS) );
 
@@ -448,10 +478,18 @@ void EntityGUI_SketcherDlg::Init()
   initSpinBox( Group4Spin->SpinBox_DX, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
   initSpinBox( Group4Spin->SpinBox_DY, COORD_MIN, COORD_MAX, 0.1, "length_precision" );
   initSpinBox( Group4Spin->SpinBox_DS, COORD_MIN, COORD_MAX, 5., "length_precision" );
-
+  
+  initSpinBox( GroupRect->SpinBox_DX1, COORD_MIN, COORD_MAX, step, "length_precision" ); 
+  initSpinBox( GroupRect->SpinBox_DY1, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupRect->SpinBox_DX2, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupRect->SpinBox_DY2, COORD_MIN, COORD_MAX, step, "length_precision" );
+    
   /* displays Dialog */
-  MainWidget->GroupConstructors->setEnabled( false );
-  MainWidget->GroupDest1->setEnabled( false );
+
+//   MainWidget->RadioButton1->setEnabled( false );
+//   MainWidget->RadioButton2->setEnabled( false );
+//   MainWidget->RadioButton3->setEnabled( true );
+//   MainWidget->GroupDest1->setEnabled( false );
   setEnabledUndo( false );
   setEnabledRedo( false );
 
@@ -461,6 +499,9 @@ void EntityGUI_SketcherDlg::Init()
   TypeClicked( 0 );
   // If a face has already been selected use it. Placed after FindLocalCS to avoid clearing the combobox
   // that should be filled with the possibly selected face
+  
+  OnFirstPoint();
+  
   SelectionIntoArgument();     
   
   resize(100,100);
@@ -468,6 +509,8 @@ void EntityGUI_SketcherDlg::Init()
   setPrefix(tr("GEOM_SKETCH"));
 
   ActivateLocalCS();
+  
+  setIsWaitCursorEnabled( false );
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
@@ -489,6 +532,7 @@ void EntityGUI_SketcherDlg::InitClick()
   Group2Spin->hide();
   Group3Spin->hide();
   Group4Spin->hide();
+  GroupRect->hide();
   globalSelection(); // close local selection to clear it
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 }
@@ -501,22 +545,95 @@ void EntityGUI_SketcherDlg::InitClick()
 void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
 {
   myConstructorId = constructorId;
+  MainWidget->buttonEnd->setText(tr("GEOM_BUT_CLOSE"));
+  MainWidget->buttonClose->setEnabled(true);
+  
   if ( myConstructorId == 0 ) {    // SEGMENT
     GroupPt2->RB_Point1->setChecked( true );
+    GroupPt ->setEnabled( true );
     GroupPt2->setEnabled( false );
+    GroupD1->setEnabled( true );
     GroupD2->setEnabled( true );
     MainWidget->RB_Dest1->setEnabled( true );
     MainWidget->RB_Dest1->setChecked( true );
+    
+    MainWidget->GroupDest ->setEnabled( true );
+    MainWidget->GroupDest1->setEnabled( true );
+    MainWidget->GroupDest ->show();
+    MainWidget->GroupDest1->show();
     DestClicked( 1 );
+    if (mySketchState == FIRST_POINT)
+    {
+      OnFirstPoint();
+    }
   }
   else if (  myConstructorId == 1 ) { // ARC
+    GroupPt ->setEnabled( true );
     GroupPt2->setEnabled( true );
     GroupD2->RB_Dir21->setChecked( true );
+    GroupD1->setEnabled( true );
     GroupD2->setEnabled( false );
     MainWidget->RB_Dest1->setEnabled( true ); 
     MainWidget->RB_Dest1->setChecked( true );
+    
+    MainWidget->GroupDest ->setEnabled( true );
+    MainWidget->GroupDest1->setEnabled( true );
+    MainWidget->GroupDest ->show();
+    MainWidget->GroupDest1->show();
     DestClicked( 1 );
+    if (mySketchState == FIRST_POINT)
+    {
+      OnFirstPoint();
+    }
   }
+  else if (  myConstructorId == 2 ) { // RECTANGLE
+    GroupPt ->setEnabled( false );
+    GroupPt2->setEnabled( false );
+    GroupD1 ->setEnabled( false );
+    GroupD2 ->setEnabled( false );
+    MainWidget->GroupDest ->setEnabled( false );
+    MainWidget->GroupDest1->setEnabled( false );
+
+    GroupPt ->hide();
+    GroupPt2->hide();
+    GroupD1 ->hide();
+    GroupD2 ->hide();
+    MainWidget->GroupDest ->hide();
+    MainWidget->GroupDest1->hide();
+    
+    MainWidget->buttonEnd->setText(tr("Apply and Close"));
+    MainWidget->buttonClose->setEnabled(false);
+    
+    GroupRect->setEnabled( true );
+    MainWidget->RadioButton1->setEnabled( true );
+    MainWidget->RadioButton2->setEnabled( true );
+    
+    RectClicked();
+  }
+}
+
+//=================================================================================
+// function : RectClicked()
+// purpose  : Radio button management
+//=================================================================================
+void EntityGUI_SketcherDlg::RectClicked()
+{
+  InitClick();
+  GroupRect->show();
+  
+  myX1=0;
+  myX2=10;
+  myY1=0;
+  myY2=10;
+
+  GroupRect->SpinBox_DX1->setValue(myX1); 
+  GroupRect->SpinBox_DY1->setValue(myY1);
+  GroupRect->SpinBox_DX2->setValue(myX2);
+  GroupRect->SpinBox_DY2->setValue(myY2);
+  
+  resize( minimumSizeHint() );
+  
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 
@@ -562,7 +679,6 @@ void EntityGUI_SketcherDlg::PointClicked( int constructorId )
   myConstructorPntId = constructorId;  
   GroupPt->RB_Point3->setEnabled( true );
   int buttonId = GroupPt2->ButtonGroup->checkedId();
-  MESSAGE("checkedId ="<< buttonId)
   if (buttonId >= 0){           // = If a button is checked
     Point2Clicked(buttonId);
   }
@@ -756,7 +872,6 @@ void EntityGUI_SketcherDlg::Dir1Clicked( int constructorId )
 {
   myConstructorDirId = constructorId;
   int dirButtonId = GroupD2->ButtonGroup->checkedId();
-  MESSAGE("checkedId ="<< dirButtonId)
   if (dirButtonId >= 0){           // = If a button is checked
     Dir2Clicked(dirButtonId);
   }
@@ -984,6 +1099,7 @@ void EntityGUI_SketcherDlg::ClickOnCancel()
 //=================================================================================
 void EntityGUI_SketcherDlg::ClickOnEnd()
 {
+  MESSAGE("EntityGUI_SketcherDlg::ClickOnEnd()")
   if ( sender() == MainWidget->buttonClose ) {
     // Verify validity of commands
     if ( myCommand.count() <= 2 ) {
@@ -1016,12 +1132,23 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
          ( Group1Sel1Spin->buttonApply->isEnabled() && Group1Sel1Spin->isVisible() ) )  {     
       ClickOnApply();
     }*/
+//     ClickOnApply(); // TEST remove then
     myIsAllAdded = true;
   }
 
+  if (myConstructorId == 2)
+  {
+    QString aParameters;
+    myCommand.append( GetNewCommand( aParameters ) );
+    mySketchState = NEXT_POINT;
+    if ( onAccept() )
+      ClickOnCancel();
+  }
   if ( myCommand.size() > 2 )
+  {
     if ( !onAccept() )
       return;
+  }
 
   close();
 }
@@ -1032,6 +1159,7 @@ void EntityGUI_SketcherDlg::ClickOnEnd()
 //=================================================================================
 bool EntityGUI_SketcherDlg::ClickOnApply()
 {
+  MESSAGE("EntityGUI_SketcherDlg::ClickOnApply()")
   if ( sender() && sender()->inherits( "QPushButton" ) )
     ( (QPushButton*)sender() )->setFocus(); // to update value of currently edited spin-box (PAL11948)
 
@@ -1039,7 +1167,11 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
 
   QString aParameters;
   myCommand.append( GetNewCommand( aParameters ) );
-  mySketchState = NEXT_POINT;
+  if (mySketchState == FIRST_POINT)
+  {
+    mySketchState = NEXT_POINT;
+    OnNextPoint();
+  }
 
   myUndoCommand.clear();
   myUndoCommand.append( "Sketcher" );
@@ -1047,8 +1179,6 @@ bool EntityGUI_SketcherDlg::ClickOnApply()
   myParameters.append( aParameters );
   myUndoParameters.clear();
 
-  MainWidget->GroupConstructors->setEnabled( true );
-  MainWidget->GroupDest1->setEnabled( true );
   setEnabledUndo( true );
   setEnabledRedo( false );
 
@@ -1126,8 +1256,8 @@ void EntityGUI_SketcherDlg::ClickOnUndo()
     connect( myGeometryGUI->getApp()->selectionMgr(),
              SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
 
-    MainWidget->GroupConstructors->setEnabled( false );
-    MainWidget->GroupDest1->setEnabled( false );
+    OnFirstPoint();
+
     setEnabledUndo( false );
   }
 
@@ -1149,9 +1279,9 @@ void EntityGUI_SketcherDlg::ClickOnRedo()
   myUndoParameters.pop_back();
 
   mySketchState = NEXT_POINT;
-
-  MainWidget->GroupConstructors->setEnabled( true );
-  MainWidget->GroupDest1->setEnabled( true );
+  
+  OnNextPoint();
+  
   setEnabledUndo( true );
 
   if ( myUndoCommand.count() == 1 )
@@ -1515,12 +1645,12 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 // function : OnPointSelected
 // purpose  :
 //=================================================================================
-void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, const gp_Pnt& thePnt)
+void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, const gp_Pnt& thePnt,
+                                            bool isStart )
 {
-  MESSAGE("EntityGUI_SketcherDlg::OnPointSelected")
-  
   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
   OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+  
   QString                theImgFileName;
   vp->background().texture( theImgFileName ); ////////////// VSR: temporarily
   
@@ -1575,6 +1705,43 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
       Group4Spin->buttonApply->setFocus(); 
       break;
   }
+  if ( myConstructorId == 2 ) //RECTANGLE
+  {
+    if (isStart)
+    {
+      GroupRect->SpinBox_DX1->setValue( aTrsfPnt.X() );
+      GroupRect->SpinBox_DY1->setValue( aTrsfPnt.Y() );
+      GroupRect->SpinBox_DX2->setValue( aTrsfPnt.X() );
+      GroupRect->SpinBox_DY2->setValue( aTrsfPnt.Y() );
+    }
+    else
+    {
+      GroupRect->SpinBox_DX2->setValue( aTrsfPnt.X() );
+      GroupRect->SpinBox_DY2->setValue( aTrsfPnt.Y() );
+    }
+  }
+}
+
+//=================================================================================
+// function : OnFirstPoint
+// purpose  :
+//=================================================================================
+void EntityGUI_SketcherDlg::OnFirstPoint()
+{
+  MainWidget->RadioButton3->setEnabled( true );
+  MainWidget->GroupDest1->setEnabled( false );
+  GroupPt2->setEnabled( false );
+}
+
+//=================================================================================
+// function : OnNextPoint
+// purpose  :
+//=================================================================================
+void EntityGUI_SketcherDlg::OnNextPoint()
+{
+  MainWidget->RadioButton3->setEnabled( false );
+  MainWidget->GroupDest1->setEnabled( true );
+  TypeClicked(myConstructorId);
 }
 
 //=================================================================================
@@ -1583,7 +1750,6 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
 //=================================================================================
 void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
 {
-  MESSAGE("EntityGUI_SketcherDlg::ValueChangedInSpinBox")
   QObject* send = (QObject*)sender();
   Standard_Real vx, vy, vz, vs, minRad, dx, dy;
   vx = vy = vz = vs = minRad = dx = dy = 0.0;
@@ -1863,6 +2029,13 @@ void EntityGUI_SketcherDlg::ValueChangedInSpinBox( double newValue )
       myLengthStr = vsStr;
     }
   }
+  else if ( myConstructorId == 2 ) {  // RECTANGLE
+    myX1 = GroupRect->SpinBox_DX1->value(); myX1Str = GroupRect->SpinBox_DX1->text();
+    myX2 = GroupRect->SpinBox_DX2->value(); myX2Str = GroupRect->SpinBox_DX2->text();
+    myY1 = GroupRect->SpinBox_DY1->value(); myY1Str = GroupRect->SpinBox_DY1->text();
+    myY2 = GroupRect->SpinBox_DY2->value(); myY2Str = GroupRect->SpinBox_DY2->text();
+  }
+
   
   if (!autoApply) 
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
@@ -1913,7 +2086,10 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
       myNewCommand = myNewCommand + "F " + QString::number( myDX, Format, DigNum ) + " " + QString::number( myDY, Format, DigNum );
       theParameters = myDXStr + ":" + myDYStr;
     }
-    return myNewCommand;
+    if (myConstructorId == 2 )
+      myNewCommand = ":";
+    else
+      return myNewCommand;
   }
 
   if ( myConstructorId == 0  ) {  // SEGMENT
@@ -2028,6 +2204,15 @@ QString EntityGUI_SketcherDlg::GetNewCommand( QString& theParameters )
       theParameters = myDXStr + ":" + myDYStr + ":" + myRadiusStr + ":" + myLengthStr;
     }
   }
+  else if ( myConstructorId == 2 ) {  // RECTANGLE
+      myNewCommand = myNewCommand + "F " + QString::number( myX1, Format, DigNum) + " " + QString::number( myY1, Format, DigNum)
+                                  + ":TT " + QString::number( myX1, Format, DigNum) + " " + QString::number( myY2, Format, DigNum)
+                                  + ":TT " + QString::number( myX2, Format, DigNum) + " " + QString::number( myY2, Format, DigNum)
+                                  + ":TT " + QString::number( myX2, Format, DigNum) + " " + QString::number( myY1, Format, DigNum)
+                                  + ":WW";
+                          
+      theParameters = myX1Str + ":" + myY1Str + ":" + myX2Str + ":" + myY2Str ;
+    }
   return myNewCommand;
 }
 
@@ -2083,6 +2268,7 @@ bool EntityGUI_SketcherDlg::isValid( QString& msg )
 //=================================================================================
 bool EntityGUI_SketcherDlg::execute( ObjectList& objects )
 {
+  MESSAGE("EntityGUI_SketcherDlg::execute")
   SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
   int aPrecision = resMgr->integerValue( "Geometry", "length_precision", 6 );
   int DigNum = qAbs(aPrecision);                   // options for the format of numbers in  myNewCommand
@@ -2286,12 +2472,17 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
     return;
 
   // Build prs
-  getDisplayer()->SetColor( line_color );
+  if( myConstructorId != 2)
+    getDisplayer()->SetColor( line_color );
+  else
+    getDisplayer()->SetColor( Quantity_NOC_VIOLET );
+  
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( anApplyedWire );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
   getDisplayer()->SetColor( Quantity_NOC_VIOLET );
+  
   aPrs = getDisplayer()->BuildPrs( aLastSegment );
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
@@ -2388,8 +2579,11 @@ bool EntityGUI_SketcherDlg::createShapes( GEOM::GEOM_Object_ptr theObject,
 //=================================================================================
 bool EntityGUI_SketcherDlg::acceptMouseEvent() const 
 {
-  return ( (getPnt1ConstructorId() == 1 || getPnt1ConstructorId() == 0)  //accept mouse event only on absolute and relative selection mode        
-           && !WPlaneLineEdit->isEnabled());                                  // called by EntityGUI::OnMousePress()
+  return ( (getPnt1ConstructorId() == 1 
+            || getPnt1ConstructorId() == 0
+            || myConstructorId == 2)                       //accept mouse event only on absolute and relative selection mode                                                        
+            && !WPlaneLineEdit->isEnabled());              //or when the constructor is rectangle
+                                                           //called by EntityGUI::OnMousePress()        
 }  
 
 //=================================================================================
@@ -2463,7 +2657,6 @@ void EntityGUI_SketcherDlg::SetDoubleSpinBoxStep( double step )
 //=================================================================================
 void EntityGUI_SketcherDlg::AddLocalCS(GEOM::GEOM_Object_var aSelectedObject)
 {
-  MESSAGE("EntityGUI_SketcherDlg::AddLocalCS")
   QString aName = GEOMBase::GetName( aSelectedObject );
   
   int index = ComboBox1->findText(aName, Qt::MatchExactly);
@@ -2491,7 +2684,6 @@ void EntityGUI_SketcherDlg::AddLocalCS(GEOM::GEOM_Object_var aSelectedObject)
 //=================================================================================
 void EntityGUI_SketcherDlg::FindLocalCS()
 {
-  MESSAGE("EntityGUI_SketcherDlg::FindLocalCS")
   ComboBox1->clear();
   myWPlaneList.clear();
   SalomeApp_Application* app =
@@ -2534,7 +2726,6 @@ void EntityGUI_SketcherDlg::FindLocalCS()
       myWPlaneList.push_back(geomObj);
       myLCSList.push_back(WPlaneToLCS(geomObj));
       ComboBox1->addItem(geomObj->GetName());
-      MESSAGE("ComboBox1->addItem() in  EntityGUI_SketcherDlg::FindLocalCS()")
     }
   }
 }
@@ -2599,7 +2790,6 @@ int EntityGUI_SketcherDlg::getPnt2ConstructorId() const
 //=================================================================================
 gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 {
-  MESSAGE("EntityGUI_SketcherDlg::GetActiveLocalCS()")
   int ind = ComboBox1->currentIndex();
   if (ind == -1)
     return myGeometryGUI->GetWorkingPlane();
@@ -2616,7 +2806,6 @@ gp_Ax3 EntityGUI_SketcherDlg::GetActiveLocalCS()
 //=================================================================================
 void EntityGUI_SketcherDlg::ActivateLocalCS()
 {
-  MESSAGE("EntityGUI_SketcherDlg::ActivateLocalCS")
   myGeometryGUI->SetWorkingPlane( GetActiveLocalCS() );
   myGeometryGUI->ActiveWorkingPlane();
 }
@@ -2627,6 +2816,5 @@ void EntityGUI_SketcherDlg::ActivateLocalCS()
 //=================================================================================
 void EntityGUI_SketcherDlg::addSubshapesToStudy()
 {
-  MESSAGE("EntityGUI_SketcherDlg::addSubshapesToStudy()")
   GEOMBase::PublishSubObject(myWPlane);
 }

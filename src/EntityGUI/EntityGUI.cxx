@@ -120,7 +120,6 @@ bool EntityGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //=================================================================================
 bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
 {
-  MESSAGE("EntityGUI::OnMousePress")
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 
   // Create Point dialog, OCC viewer 
@@ -133,6 +132,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
     if ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 ) 
     { 
       EntityGUI_SketcherDlg* aSketcherDlg = (EntityGUI_SketcherDlg*) aDlg;
+      ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(true);
       if ( aSketcherDlg->acceptMouseEvent() ) {
         OCCViewer_Viewer* anOCCViewer =
           ( (OCCViewer_ViewManager*)( theViewWindow->getViewManager() ) )->getOCCViewer();
@@ -202,7 +202,7 @@ bool EntityGUI::OnMousePress( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWi
 //=================================================================================
 bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
 {
-  MESSAGE("EntityGUI::OnMouseRelease")
+  ((OCCViewer_ViewWindow*)theViewWindow)->setSketcherStyle(false);
   QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
 #ifdef WITH_OPENCV
   if ( aDlg && ( QString( aDlg->metaObject()->className() ).compare( "EntityGUI_FeatureDetectorDlg" ) == 0 ) &&
@@ -225,6 +225,31 @@ bool EntityGUI::OnMouseRelease( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_View
   return false;
 }
 
+//=================================================================================
+// function : 0nMouseMove()
+// purpose  : [static] manage mouse events
+//=================================================================================
+bool EntityGUI::OnMouseMove( QMouseEvent* pe, SUIT_Desktop* parent, SUIT_ViewWindow* theViewWindow )
+{
+  QDialog* aDlg = getGeometryGUI()->GetActiveDialogBox();
+  
+  if ( aDlg && QString( aDlg->metaObject()->className() ).compare( "EntityGUI_SketcherDlg" ) == 0 &&
+       theViewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) 
+  { 
+    EntityGUI_SketcherDlg* aSketcherDlg = (EntityGUI_SketcherDlg*) aDlg;
+    if ( aSketcherDlg->acceptMouseEvent() ) 
+    {    
+      OCCViewer_ViewPort3d* vp =  ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+      gp_Pnt aPnt = ConvertClickToPoint( pe->x(), pe->y(), vp->getView() );
+  
+      Qt::KeyboardModifiers modifiers = pe->modifiers();
+      if (QApplication::mouseButtons() == Qt::LeftButton )
+        aSketcherDlg->OnPointSelected( modifiers, aPnt, false );  // "feed" the point to point construction dialog
+    }
+  }
+    
+  return false;
+}
 
 //=======================================================================
 // function : ConvertClickToPoint()

@@ -185,6 +185,13 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="QRadioButton" name="RadioButton3">
+        <property name="text">
+         <string>Rectangle</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
