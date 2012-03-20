@@ -79,7 +79,7 @@ libGEOMObject_la_LDFLAGS  =			\
 	$(VTK_LIBS) \
 	$(KERNEL_LDFLAGS)  -lSALOMELocalTrace \
 	$(GUI_LDFLAGS) -lsuit -lqtx -lVTKViewer -lSVTK -lSalomeObject -lSalomeApp\
-	$(CORBA_LIBS) \
+	$(CORBA_LIBS)
 #	$(STDLIB) \
 #	$(PYTHON_LIBS) \
 #	$(OGL_LIBS)
