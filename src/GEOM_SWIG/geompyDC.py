@@ -81,6 +81,7 @@ from salome_notebook import *
 
 import GEOM
 import math
+import os
 
 ## Enumeration ShapeType as a dictionary. \n
 ## Topological types of shapes (like Open Cascade types). See GEOM::shape_type for details.
@@ -2886,7 +2887,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFace(self,theWire, isPlanarWanted):
+        def MakeFace(self, theWire, isPlanarWanted):
             """
             Create a face on the given wire.
 
@@ -2901,8 +2902,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
             if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                #print "WARNING: Tolerance of resulting face is too big."
-                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
+                if os.getenv("GEOM_MAKEFACE_ALLOW_NONPLANAR") is not None:
+                    print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
+                else:
+                    RaiseIfFailed("MakeFace", self.ShapesOp)
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
             return anObj
@@ -2914,7 +2917,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
-        def MakeFaceWires(self,theWires, isPlanarWanted):
+        def MakeFaceWires(self, theWires, isPlanarWanted):
             """
             Create a face on the given wires set.
 
@@ -2929,16 +2932,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
             if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                print "WARNING: Tolerance of resulting face is too big."
+                if os.getenv("GEOM_MAKEFACE_ALLOW_NONPLANAR") is not None:
+                    print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
+                else:
+                    RaiseIfFailed("MakeFace", self.ShapesOp)
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             return anObj
 
-        ## See  MakeFaceWires() method for details.
+        ## See MakeFaceWires() method for details.
         #
         #  @ref tui_creation_face "Example 1"
         #  \n @ref swig_MakeFaces  "Example 2"
-        def MakeFaces(self,theWires, isPlanarWanted):
+        def MakeFaces(self, theWires, isPlanarWanted):
             """
             See geompy.MakeFaceWires() method for details.
             """
