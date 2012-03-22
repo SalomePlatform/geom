@@ -33,5 +33,6 @@
 
 #define GEOM_VERSION_STR "@VERSION@"
 #define GEOM_VERSION     @XVERSION@
+#define GEOM_DEVELOPMENT @VERSION_DEV@
 
 #endif // __GEOM_VERSION_H__
