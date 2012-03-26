@@ -240,20 +240,25 @@ Mat ShapeRec_FeatureDetector::_colorFiltering()
   cvResetImageROI(find_image);
   
   IplImage* test_hsv = cvCreateImage(cvGetSize(test_image),8,3);
-  IplImage* test_hue = cvCreateImage(cvGetSize(test_image),8,1);
+  IplImage* h_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
+  IplImage* s_plane = cvCreateImage( cvGetSize(test_image), 8, 1 );
   CvHistogram* hist;
 
   cvCvtColor(test_image, test_hsv, CV_BGR2HSV);
-  cvCvtPixToPlane(test_hsv, test_hue, 0, 0, 0);
+  
+  cvCvtPixToPlane(test_hsv, h_plane, s_plane, 0, 0);
+  IplImage* planes[] = { h_plane, s_plane };
   
   //create hist
-  int size_hist = 10;
-  float hranges[] = {0, 180};
-  float* ranges = hranges;
-  hist = cvCreateHist(1, &size_hist, CV_HIST_ARRAY, &ranges, 1);
+  int hbins = 30, sbins = 32;                        // TODO think to the best values here
+  int   hist_size[] = { hbins, sbins };
+  float hranges[] = { 0, 180 };
+  float sranges[] = { 0, 255 };
+  float* ranges[] = { hranges, sranges };
+  hist = cvCreateHist(2, hist_size, CV_HIST_ARRAY, ranges, 1);
   
-  //calculate hue` histogram
-  cvCalcHist(&test_hue, hist, 0 ,0);
+  //calculate hue /saturation histogram
+  cvCalcHist(planes, hist, 0 ,0);
 
 //   // TEST print of the histogram for debugging
 //   IplImage* hist_image = cvCreateImage(cvSize(320,300),8,3);
@@ -279,21 +284,28 @@ Mat ShapeRec_FeatureDetector::_colorFiltering()
 //   cvNamedWindow("hist", 1); cvShowImage("hist",hist_image);
   
   
-  //calculate back projection of hue plane of input image
+  //calculate back projection of hue and saturation planes of input image
   IplImage* backproject = cvCreateImage(cvGetSize(find_image), 8, 1);
   IplImage* binary_backproject = cvCreateImage(cvGetSize(find_image), 8, 1);
   IplImage* find_hsv = cvCreateImage(cvGetSize(find_image),8,3);
-  IplImage* find_hue = cvCreateImage(cvGetSize(find_image),8,1);
+  IplImage* find_hplane = cvCreateImage(cvGetSize(find_image),8,1);
+  IplImage* find_splane = cvCreateImage(cvGetSize(find_image),8,1);
   
   cvCvtColor(find_image, find_hsv, CV_BGR2HSV);
-  cvCvtPixToPlane(find_hsv, find_hue, 0, 0, 0);
-  cvCalcBackProject(&find_hue, backproject, hist);
+  cvCvtPixToPlane(find_hsv, find_hplane, find_splane, 0, 0);
+  IplImage* find_planes[] = { find_hplane, find_splane };
+  cvCalcBackProject(find_planes, backproject, hist);
   
   // Threshold in order to obtain binary image
   cvThreshold(backproject, binary_backproject, 1, 255, CV_THRESH_BINARY);  // NOTE it would be good to think about the best threshold to use (it's 1 for now)
   cvReleaseImage(&test_image);
   cvReleaseImage(&test_hsv);
-  cvReleaseImage(&test_hue);
+  cvReleaseImage(&h_plane);
+  cvReleaseImage(&s_plane);
+  cvReleaseImage(&find_image);
+  cvReleaseImage(&find_hsv);
+  cvReleaseImage(&find_hplane);
+  cvReleaseImage(&find_splane);
   cvReleaseImage(&backproject);
   
   return Mat(binary_backproject);
