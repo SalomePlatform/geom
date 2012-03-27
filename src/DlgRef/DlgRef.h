@@ -228,6 +228,22 @@ public:
 };
 
 //////////////////////////////////////////
+// DlgRef_1Sel3Spin2Check1Spin
+//////////////////////////////////////////
+
+#include "ui_DlgRef_1Sel3Spin2Check1Spin_QTD.h"
+
+class DLGREF_EXPORT DlgRef_1Sel3Spin2Check1Spin : public QWidget, 
+                                                  public Ui::DlgRef_1Sel3Spin2Check1Spin_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_1Sel3Spin2Check1Spin( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_1Sel3Spin2Check1Spin();
+};
+
+//////////////////////////////////////////
 // DlgRef_1Sel3Spin1Check
 //////////////////////////////////////////
 
@@ -417,6 +433,22 @@ class DLGREF_EXPORT DlgRef_2Sel1Spin2Check : public QWidget,
 public:
   DlgRef_2Sel1Spin2Check( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_2Sel1Spin2Check();
+};
+
+//////////////////////////////////////////
+// DlgRef_2Sel1Spin3Check1Spin
+//////////////////////////////////////////
+
+#include "ui_DlgRef_2Sel1Spin3Check1Spin_QTD.h"
+
+class DLGREF_EXPORT DlgRef_2Sel1Spin3Check1Spin : public QWidget, 
+                                                  public Ui::DlgRef_2Sel1Spin3Check1Spin_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_2Sel1Spin3Check1Spin( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_2Sel1Spin3Check1Spin();
 };
 
 //////////////////////////////////////////
@@ -753,6 +785,24 @@ class DLGREF_EXPORT DlgRef_3Sel3Spin1Check : public QWidget,
 public:
   DlgRef_3Sel3Spin1Check( QWidget* = 0, Qt::WindowFlags = 0 );
   ~DlgRef_3Sel3Spin1Check();
+
+  void ShowRows( int, int, bool = true );
+};
+
+//////////////////////////////////////////
+// DlgRef_3Sel2Check3Spin
+//////////////////////////////////////////
+
+#include "ui_DlgRef_3Sel2Check3Spin_QTD.h"
+
+class DLGREF_EXPORT DlgRef_3Sel2Check3Spin : public QWidget, 
+                                             public Ui::DlgRef_3Sel2Check3Spin_QTD
+{
+  Q_OBJECT
+
+public:
+  DlgRef_3Sel2Check3Spin( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~DlgRef_3Sel2Check3Spin();
 
   void ShowRows( int, int, bool = true );
 };

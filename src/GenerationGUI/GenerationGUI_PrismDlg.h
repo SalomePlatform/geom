@@ -30,9 +30,9 @@
 #include "GEOMBase_Skeleton.h"
 #include "GEOM_GenericObjPtr.h"
 
-class DlgRef_2Sel2Spin3Check;
-class DlgRef_3Sel3Spin2Check;
-class DlgRef_1Sel4Spin2Check;
+class DlgRef_2Sel1Spin3Check1Spin;
+class DlgRef_3Sel2Check3Spin;
+class DlgRef_1Sel3Spin2Check1Spin;
 
 //=================================================================================
 // class    : GenerationGUI_PrismDlg
@@ -63,9 +63,9 @@ private:
   GEOM::GeomObjPtr                   myVec;  /* Vector, defining the direction */
   GEOM::GeomObjPtr                   myPoint1, myPoint2;   /* Points for extrusion */ 
   
-  DlgRef_2Sel2Spin3Check*            GroupVecH;
-  DlgRef_3Sel3Spin2Check*            Group2Points;
-  DlgRef_1Sel4Spin2Check*            GroupDXDYDZ;
+  DlgRef_2Sel1Spin3Check1Spin*       GroupVecH;
+  DlgRef_3Sel2Check3Spin*            Group2Points;
+  DlgRef_1Sel3Spin2Check1Spin*       GroupDXDYDZ;
   
 private slots:
   void                               ClickOnOk();

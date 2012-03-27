@@ -73,7 +73,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
 
   mainFrame()->RadioButton1->setChecked(true);
 
-  GroupVecH = new DlgRef_2Sel2Spin3Check(centralWidget());
+  GroupVecH = new DlgRef_2Sel1Spin3Check1Spin(centralWidget());
   GroupVecH->GroupBox1->setTitle(tr("GEOM_EXTRUSION_BSV"));
   GroupVecH->TextLabel1->setText(tr("GEOM_BASE"));
   GroupVecH->TextLabel2->setText(tr("GEOM_VECTOR"));
@@ -87,7 +87,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   GroupVecH->CheckBox2->setText(tr("GEOM_REVERSE"));
   GroupVecH->CheckBox3->setText(tr("GEOM_SCALE_PRISM"));
 
-  Group2Points = new DlgRef_3Sel3Spin2Check(centralWidget());
+  Group2Points = new DlgRef_3Sel2Check3Spin(centralWidget());
   Group2Points->GroupBox1->setTitle(tr("GEOM_EXTRUSION_BSV_2P"));
   Group2Points->TextLabel1->setText(tr("GEOM_BASE"));
   Group2Points->TextLabel2->setText(tr("GEOM_POINT_I").arg(1));
@@ -99,7 +99,7 @@ GenerationGUI_PrismDlg::GenerationGUI_PrismDlg (GeometryGUI* theGeometryGUI, QWi
   Group2Points->CheckBox1->setText(tr("GEOM_BOTHWAY"));
   Group2Points->CheckBox2->setText(tr("GEOM_SCALE_PRISM"));
 
-  GroupDXDYDZ = new DlgRef_1Sel4Spin2Check(centralWidget());
+  GroupDXDYDZ = new DlgRef_1Sel3Spin2Check1Spin(centralWidget());
   GroupDXDYDZ->GroupBox1->setTitle(tr("GEOM_EXTRUSION_DXDYDZ"));
   GroupDXDYDZ->TextLabel1->setText(tr("GEOM_BASE"));
   GroupDXDYDZ->PushButton1->setIcon(image1);
