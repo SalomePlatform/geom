@@ -27,6 +27,8 @@
 
 #include "utilities.h"
 
+#include <Basics_OCCTVersion.hxx>
+
 #include <BRep_Tool.hxx>
 #include <BRep_TFace.hxx>
 #include <BRep_Builder.hxx>
@@ -994,12 +996,12 @@ void GEOMImpl_Block6Explorer::InitByTwoFaces (const TopoDS_Shape& theFace1,
   TopoDS_Vertex aV1, aV2;
 
   TopExp::Vertices(wire1, aV1, aV2);
-  if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
-    aWire1.Closed( true );
+  if (!aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2))
+    aWire1.Closed(true);
 
   TopExp::Vertices(wire2, aV1, aV2);
-  if ( !aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2) )
-    aWire2.Closed( true );
+  if (!aV1.IsNull() && !aV2.IsNull() && aV1.IsSame(aV2))
+    aWire2.Closed(true);
 
   // 4. Generate side surface
   if (!aWire1.Closed() || !aWire2.Closed()) {
@@ -1358,6 +1360,20 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
 
   // 12.04.2006 for PAL12149 begin
   Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aFace));
+#if OCC_VERSION_LARGE > 0x06050200
+  BRep_Builder BB;
+  TopoDS_Iterator itw(theWire);
+  for (; itw.More(); itw.Next())
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(itw.Value());
+    TopoDS_Edge NewEdge = TopoDS::Edge(MF.Generated(anEdge).First());
+    Standard_Real fpar, lpar;
+    Handle(Geom2d_Curve) NewPCurve = BRep_Tool::CurveOnSurface(NewEdge, TopoDS::Face(aFace), fpar, lpar);
+    TopLoc_Location aLoc;
+    Standard_Real NewTol = BRep_Tool::Tolerance(NewEdge);
+    BB.UpdateEdge(anEdge, NewPCurve, aGS, aLoc, NewTol);
+  }
+#endif
   BRepBuilderAPI_MakeFace MK1 (aGS, theWire);
   if (MK1.IsDone()) {
     TopoDS_Shape aFace1 = MK1.Shape();
