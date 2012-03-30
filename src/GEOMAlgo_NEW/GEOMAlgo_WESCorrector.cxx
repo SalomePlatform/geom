@@ -18,12 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 // File:        NMTAlgo_WESCorrector.cxx
-// Created:     
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #include <GEOMAlgo_WESCorrector.hxx>
 
 #include <Geom_Surface.hxx>
@@ -60,17 +58,17 @@
 #include <GEOMAlgo_WESScaler.hxx>
 
 static
-  void MakeWire(const TopTools_ListOfShape& aLE, 
+  void MakeWire(const TopTools_ListOfShape& aLE,
                 TopoDS_Wire& newWire);
 
 
 static
-  Standard_Boolean IsToScale(const TopoDS_Face& aF, 
-			     Standard_Real& aScale);
+  Standard_Boolean IsToScale(const TopoDS_Face& aF,
+                             Standard_Real& aScale);
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_WESCorrector::GEOMAlgo_WESCorrector()
 :
@@ -79,14 +77,14 @@ static
 }
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_WESCorrector::~GEOMAlgo_WESCorrector()
 {
 }
 //=======================================================================
 // function: SetWES
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESCorrector::SetWES (const GEOMAlgo_WireEdgeSet& aWES)
 {
@@ -95,23 +93,23 @@ static
 }
 //=======================================================================
 // function: WES
-// purpose: 
+// purpose:
 //=======================================================================
-  GEOMAlgo_WireEdgeSet& GEOMAlgo_WESCorrector::WES () 
+  GEOMAlgo_WireEdgeSet& GEOMAlgo_WESCorrector::WES ()
 {
   return *myWES;
 }
 //=======================================================================
 // function: NewWES
-// purpose: 
+// purpose:
 //=======================================================================
-  GEOMAlgo_WireEdgeSet& GEOMAlgo_WESCorrector::NewWES () 
+  GEOMAlgo_WireEdgeSet& GEOMAlgo_WESCorrector::NewWES ()
 {
   return myNewWES;
 }
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESCorrector::Perform()
 {
@@ -122,7 +120,7 @@ static
 }
 //=======================================================================
 // function: DoConnexityBlocks
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESCorrector::DoConnexityBlocks()
 {
@@ -149,7 +147,7 @@ static
     }
   }
   //
-  // 2. 
+  // 2.
   aNbV=aMVE.Extent();
   for (i=1; i<=aNbV; ++i) {
     const TopoDS_Shape& aV=aMVE.FindKey(i);
@@ -166,7 +164,7 @@ static
     //
     //------------------------------------- goal: aMEC
     aMEC.Clear();    // aMEC - edges of CB
-    aMVP.Clear();    // aMVP - vertices to process right now 
+    aMVP.Clear();    // aMVP - vertices to process right now
     aMVAdd.Clear();  // aMVAdd vertices to process on next step of while(1)
     //
     aMVP.Add(aV);
@@ -193,7 +191,7 @@ static
             }
           }
         }
-      }//for (j=1; j<=aNbVP; ++j) 
+      }//for (j=1; j<=aNbVP; ++j)
       //
       aNbVP=aMVAdd.Extent();
       if (!aNbVP) {
@@ -213,7 +211,7 @@ static
     TopTools_IndexedDataMapOfShapeListOfShape aMVER;
     //
     bRegular=Standard_True;
-   
+
     aNbC=aMEC.Extent();
     for (j=1; j<=aNbC; ++j) {
       aER=aMEC(j);
@@ -224,21 +222,17 @@ static
         aER.Orientation(TopAbs_REVERSED);
         aLEC.Append(aER);
         //
-	bRegular=Standard_False;
+        bRegular=Standard_False;
       }
       else {
         aLEC.Append(aER);
       }
       //
       if (bRegular) {
-	//modified by NIZNHY-PKV Wed Oct 20 14:45:52 2010f
-	const  TopoDS_Edge& aEx=*((TopoDS_Edge*)&aER);
-	if (!BRep_Tool::Degenerated(aEx)) {
-	  TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
-	}
-	//
-        //TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
-	//modified by NIZNHY-PKV Wed Oct 20 14:46:48 2010t
+        const  TopoDS_Edge& aEx=*((TopoDS_Edge*)&aER);
+        if (!BRep_Tool::Degenerated(aEx)) {
+          TopExp::MapShapesAndAncestors(aER, TopAbs_VERTEX, TopAbs_EDGE, aMVER);
+        }
       }
     }//for (j=1; j<=aNbC; ++j) {
     //
@@ -273,7 +267,7 @@ static
 
 //=======================================================================
 // function: DoCorrections
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESCorrector::DoCorrections()
 {
@@ -315,7 +309,7 @@ static
       aWSC.Perform();
       iErr=aWSC.ErrorStatus();
       if (iErr) {
-	return;
+        return;
       }
       //
       const TopoDS_Face& aFS=aWSC.FaceScaled();
@@ -327,31 +321,31 @@ static
       aWS.Perform();
       iErr=aWS.ErrorStatus();
       if (iErr) {
-	continue;
+        continue;
       }
       //
       bIsNothingToDo=aWS.IsNothingToDo();
       if (bIsNothingToDo) {
-	MakeWire(aLE, aW);
-	myNewWES.AddShape (aW);
-	continue;
+        MakeWire(aLE, aW);
+        myNewWES.AddShape (aW);
+        continue;
       }
       //
       const BOPTColStd_ListOfListOfShape& aLLSS=aWS.Shapes();
       aItLLSS.Initialize(aLLSS);
       for (; aItLLSS.More(); aItLLSS.Next()) {
-	TopTools_ListOfShape aLS;
-	//
-	const TopTools_ListOfShape& aLSS=aItLLSS.Value();
-	aIt.Initialize(aLSS);
-	for (; aIt.More(); aIt.Next()) {
-	  const TopoDS_Shape& aES=aIt.Value();
-	  aE=aWSC.Origin(aES);
-	  aLS.Append(aE);
-	}
-	//
-	MakeWire(aLS, aW);
-	myNewWES.AddShape (aW);
+        TopTools_ListOfShape aLS;
+        //
+        const TopTools_ListOfShape& aLSS=aItLLSS.Value();
+        aIt.Initialize(aLSS);
+        for (; aIt.More(); aIt.Next()) {
+          const TopoDS_Shape& aES=aIt.Value();
+          aE=aWSC.Origin(aES);
+          aLS.Append(aE);
+        }
+        //
+        MakeWire(aLS, aW);
+        myNewWES.AddShape (aW);
       }
     }//if(bToScale)
     //
@@ -362,32 +356,33 @@ static
       aWS.Perform();
       iErr=aWS.ErrorStatus();
       if (iErr) {
-	continue;
+        continue;
       }
       bIsNothingToDo=aWS.IsNothingToDo();
       if (bIsNothingToDo) {
-	MakeWire(aLE, aW);
-	myNewWES.AddShape (aW);
-	continue;
+        MakeWire(aLE, aW);
+        myNewWES.AddShape (aW);
+        continue;
       }
       //
       const BOPTColStd_ListOfListOfShape& aSSS=aWS.Shapes();
-    
+      //
       BOPTColStd_ListIteratorOfListOfListOfShape aWireIt(aSSS);
       for (; aWireIt.More(); aWireIt.Next()) {
-	const TopTools_ListOfShape& aLEx=aWireIt.Value();
-	//
-	MakeWire(aLEx, aW);
-	myNewWES.AddShape (aW);
+        const TopTools_ListOfShape& aLEx=aWireIt.Value();
+        //
+        MakeWire(aLEx, aW);
+        myNewWES.AddShape (aW);
       }
     }// else
   }
 }
+
 //=======================================================================
 // function: MakeWire
-// purpose: 
+// purpose:
 //=======================================================================
-  void MakeWire(const TopTools_ListOfShape& aLE, 
+  void MakeWire(const TopTools_ListOfShape& aLE,
                 TopoDS_Wire& newWire)
 {
   BRep_Builder aBB;
@@ -399,18 +394,15 @@ static
     aBB.Add(newWire, aE);
   }
 }
-//
 
- 
 //=======================================================================
 //function : IsToScale
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean IsToScale(const TopoDS_Face& aF, 
-			   Standard_Real& aScale)
+Standard_Boolean IsToScale(const TopoDS_Face& aF,
+                           Standard_Real& aScale)
 {
   Standard_Boolean bRet;
-  Standard_Real aV1, aV2, dV, aTr;
   GeomAbs_SurfaceType aType;
   BRepAdaptor_Surface aBAS;
   //
@@ -420,15 +412,28 @@ Standard_Boolean IsToScale(const TopoDS_Face& aF,
   aBAS.Initialize(aF);
   aType=aBAS.GetType();
   if (aType==GeomAbs_Cylinder) {
+    Standard_Real aV1, aV2, dV, dU, aTr, aC;
+    //
     aTr=1.e5;
     aV1=aBAS.FirstVParameter();
     aV2=aBAS.LastVParameter();
     dV=aV2-aV1;
+    //
     if (dV>aTr) {
       bRet=!bRet;
       aScale=1./aTr;
+      return bRet;
     }
+    //modified by NIZNHY-PKV Fri Mar 30 10:54:34 2012f
+    dU=M_PI;
+    aC=dV/dU;
+    aTr=25.;
+    if(aC>aTr){
+      bRet=!bRet;
+      aScale=1./aC;
+      return bRet;
+    }
+    //modified by NIZNHY-PKV Fri Mar 30 10:54:35 2012t
   }
   return bRet;
 }
-
