@@ -3933,7 +3933,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
-  if (aModifiedArray->Length() > 1) {
+  if (aModifiedArray->Length() > 1 || theShapeWhat->GetType() == GEOM_GROUP) {
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
@@ -4161,7 +4161,7 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlaceOld (Handle(GEOM_Objec
     return NULL;
   }
 
-  if (aModifiedArray->Length() > 1) {
+  if (aModifiedArray->Length() > 1 || theShapeWhat->GetType() == GEOM_GROUP) {
     //Set a GROUP type
     aResult->SetType(GEOM_GROUP);
 
