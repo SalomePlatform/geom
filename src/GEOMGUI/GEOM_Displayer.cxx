@@ -41,6 +41,7 @@
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
+#include <GEOM_VTKPropertyMaterial.hxx>
 
 #include <Material_Model.h>
 
@@ -809,7 +810,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             anAspect = AISShape->Attributes()->UnFreeBoundaryAspect();
             anAspect->SetColor( aColor );
             AISShape->Attributes()->SetUnFreeBoundaryAspect( anAspect );
-	    AISShape->storeBoundaryColors();
+            AISShape->storeBoundaryColors();
 
             // Set free boundaries aspect
             col = aResMgr->colorValue( "Geometry", "free_bound_color", QColor( 0, 255, 0 ) );
@@ -827,10 +828,10 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             anAspect->SetColor( aColor );
             AISShape->Attributes()->SetWireAspect( anAspect );
 
-	    // Set color for edges in shading
-	    col = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
-	    aColor = SalomeApp_Tools::color( col );
-	    AISShape->SetEdgesInShadingColor( aColor );
+            // Set color for edges in shading
+            col = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
+            aColor = SalomeApp_Tools::color( col );
+            AISShape->SetEdgesInShadingColor( aColor );
 	    
             // bug [SALOME platform 0019868]
             // Set deviation angle. Default one is 12 degrees (Prs3d_Drawer.cxx:18)
@@ -840,8 +841,8 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             double aDC = 0;
             if(useStudy) {
               aDC = aPropMap.value(DEFLECTION_COEFF_PROP).toDouble();
-	      SetWidth(aPropMap.value(EDGE_WIDTH_PROP).toInt());
-	      SetIsosWidth(aPropMap.value(ISOS_WIDTH_PROP).toInt());
+              SetWidth(aPropMap.value(EDGE_WIDTH_PROP).toInt());
+              SetIsosWidth(aPropMap.value(ISOS_WIDTH_PROP).toInt());
             }
             else {
               aDC = aResMgr->doubleValue("Geometry", "deflection_coeff", 0.001);
@@ -960,62 +961,30 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
 
           // get material properties, set material
           Material_Model* aModelF = 0;
-          Material_Model* aModelB = 0;
           if ( useStudy ) {
-            // Get front material property from study and construct front material model
-            QString aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();
+            // Get material property from study and construct material model
+            QString aMaterialF = aPropMap.value(MATERIAL_PROP).toString();
             QStringList aProps =  aMaterialF.split(DIGIT_SEPARATOR);
             aModelF = Material_Model::getMaterialModel( aProps );
-
-            // Get back material property from study and construct back material model
-            QString aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
-            if ( !aMaterialB.isEmpty() ) {
-              QStringList aPropsB =  aMaterialB.split(DIGIT_SEPARATOR);
-              aModelB = Material_Model::getMaterialModel( aPropsB );
-            }
-            else
-              aModelB = aModelF;
-
           } else {
-            // Get front material property from study and construct front material model
+            // Get material property from study and construct material model
             aModelF = new Material_Model();
-            aModelF->fromResources( aResMgr, "Geometry", true );
-
-            // Get back material property from study and construct back material model
-            aModelB = new Material_Model();
-            aModelB->fromResources( aResMgr, "Geometry", false );         
+            aModelF->fromResources( aResMgr, "Geometry" );
           }
 
-          // Set front material property
+          // Set material property
           QString aMaterialPropF = aModelF->getMaterialProperty();
-          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), FRONT_MATERIAL_PROP, aMaterialPropF );
+          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), MATERIAL_PROP, aMaterialPropF );
 
-          // Set back material property
-          QString aMaterialPropB = aModelB->getMaterialProperty();
-          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), BACK_MATERIAL_PROP, aMaterialPropB );
-
-          // Get front material properties from the model
+          // Get material properties from the model
           Graphic3d_MaterialAspect aMatF = aModelF->getMaterialOCCAspect();
 
-          // Get back material properties from the model
-          Graphic3d_MaterialAspect aMatB = aModelB->getMaterialOCCAspect();
-
-          // Set front material for the selected shape
-          AISShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
-          AISShape->SetMaterial(aMatF); 
-
-          // Set back material for the selected shape
-          AISShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
-          AISShape->SetMaterial(aMatB);
-
-          // Return to the default facing mode
-          AISShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
+          // Set material for the selected shape
+           AISShape->SetMaterial(aMatF);
 
           // Release memory
           if ( aModelF )
             delete aModelF;
-          if ( aModelB )
-            delete aModelB;
 
 	  if(HasWidth())
 	    aStudy->setObjectProperty( aMgrId, anIO->getEntry(), EDGE_WIDTH_PROP, GetWidth() );
@@ -1204,52 +1173,21 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
           aGeomGActor->setDisplayMode(aDispModeId);
           aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble());
 
-	  // Get front material property of the object stored in the study
-	  QString aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();
+	  // Get material property of the object stored in the study
+	  QString aMaterialF = aPropMap.value(MATERIAL_PROP).toString();
 	  QStringList aPropsF =  aMaterialF.split(DIGIT_SEPARATOR);
-	  // Create front material model
+	  // Create material model
 	  Material_Model* aModelF = Material_Model::getMaterialModel( aPropsF );	  
-	  // Set front material properties for the object
+	  // Set material properties for the object
 	  QString aMaterialPropF = aModelF->getMaterialProperty();
-	  aStudy->setObjectProperty( aMgrId, anEntry, FRONT_MATERIAL_PROP, aMaterialPropF );	  
-	  // Get material properties from the front model
-	  vtkProperty* aMatPropF = aModelF->getMaterialVTKProperty();
+	  aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, aMaterialPropF );	  
+	  // Get material properties from the model
+	  GEOM_VTKPropertyMaterial* aMatPropF = aModelF->getMaterialVTKProperty();
+	  // Set the same front and back materials for the selected shape
+    std::vector<vtkProperty*> aProps;
+    aProps.push_back( (vtkProperty*) aMatPropF );
+	  aGeomGActor->SetMaterial(aProps);
 	  
-	  // Get back material property of the object stored in the study
-	  QString aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
-	  if ( !aMaterialB.isEmpty() ) {
-	    QStringList aPropsB =  aMaterialB.split(DIGIT_SEPARATOR);	    
-	    // Create back material model
-	    Material_Model* aModelB = Material_Model::getMaterialModel( aPropsB );
-	    // Set back material properties for the object
-	    QString aMaterialPropB = aModelB->getMaterialProperty();
-	    aStudy->setObjectProperty( aMgrId, anEntry, BACK_MATERIAL_PROP, aMaterialPropB );
-	    // Get material properties from the back model
-	    vtkProperty* aMatPropB = aModelB->getMaterialVTKProperty();
-
-	    // Set front and back materials for the selected shape
-	    std::vector<vtkProperty*> aProps;
-	    aProps.push_back(aMatPropF);
-	    aProps.push_back(aMatPropB);
-	    aGeomGActor->SetMaterial(aProps);
-
-	    // Release memory
-	    delete aModelB;
-
-	    if(HasWidth())
-	      aStudy->setObjectProperty( aMgrId, anEntry, EDGE_WIDTH_PROP, GetWidth() );
-
-	    if(HasIsosWidth())
-	      aStudy->setObjectProperty( aMgrId, anEntry, ISOS_WIDTH_PROP, GetIsosWidth() );
-	  
-	  }
-	  else {
-	    // Set the same front and back materials for the selected shape
-	    std::vector<vtkProperty*> aProps;
-	    aProps.push_back(aMatPropF);
-	    aGeomGActor->SetMaterial(aProps);
-	  }
-
 	  // Release memory
 	  delete aModelF;
 
@@ -1283,37 +1221,26 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
               }
             }
           }
-          aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
+          if ( !aMatPropF->GetPhysical() )
+            aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
         }
 	else {
 	  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 	  if ( aResMgr ) {
-	    // Create front material model
+	    // Create material model
 	    Material_Model aModelF;
-	    // Get front material name from resources
-	    aModelF.fromResources( aResMgr, "Geometry", true );
-	    // Set front material properties for the object
+	    // Get material name from resources
+	    aModelF.fromResources( aResMgr, "Geometry" );
+	    // Set material properties for the object
 	    QString aMaterialPropF = aModelF.getMaterialProperty();
-	    aStudy->setObjectProperty( aMgrId, anEntry, FRONT_MATERIAL_PROP, aMaterialPropF );	    
-	    // Get material properties from the front model
-	    vtkProperty* aMatPropF = aModelF.getMaterialVTKProperty();
-
-	    // Create back material model
-	    Material_Model aModelB;
-	    // Get back material name from resources
-	    aModelB.fromResources( aResMgr, "Geometry", false );
-	    // Set back material properties for the object
-	    QString aMaterialPropB = aModelB.getMaterialProperty();
-	    aStudy->setObjectProperty( aMgrId, anEntry, BACK_MATERIAL_PROP, aMaterialPropB );
-	    // Get material properties from the back model
-	    vtkProperty* aMatPropB = aModelB.getMaterialVTKProperty();
+	    aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, aMaterialPropF );	    
+	    // Get material properties from the model
+	    GEOM_VTKPropertyMaterial* aMatPropF = aModelF.getMaterialVTKProperty();
 
 	    // Set material for the selected shape
-	    std::vector<vtkProperty*> aProps;
-	    aProps.push_back(aMatPropF);
-	    aProps.push_back(aMatPropB);
-	    aGeomGActor->SetMaterial(aProps);
-	  }
+      std::vector<vtkProperty*> aProps;
+      aProps.push_back( (vtkProperty*) aMatPropF );
+	    aGeomGActor->SetMaterial(aProps);	  }
 	}
       }
 
@@ -2009,23 +1936,16 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   aDefaultMap.insert( DEFLECTION_COEFF_PROP , aDC);
 
   //8. Material
-  //   Front material
   Material_Model aModelF;
-  aModelF.fromResources( aResMgr, "Geometry", true );
+  aModelF.fromResources( aResMgr, "Geometry" );
   QString aMaterialF = aModelF.getMaterialProperty();
-  aDefaultMap.insert( FRONT_MATERIAL_PROP , aMaterialF );  
+  aDefaultMap.insert( MATERIAL_PROP , aMaterialF );  
 
-  //9.  Back material
-  Material_Model aModelB;
-  aModelB.fromResources( aResMgr, "Geometry", false );
-  QString aMaterialB = aModelB.getMaterialProperty();
-  aDefaultMap.insert( BACK_MATERIAL_PROP , aMaterialB );
-
-  //10. Width of the edges
+  //9. Width of the edges
   aDefaultMap.insert( EDGE_WIDTH_PROP , aResMgr->integerValue("Geometry", "edge_width", 1));
 
 
-  //11. Width of iso-lines
+  //10. Width of iso-lines
   aDefaultMap.insert( ISOS_WIDTH_PROP , aResMgr->integerValue("Geometry", "isolines_width", 1));
 
   if(viewer_type == SOCC_Viewer::Type()) {
@@ -2062,12 +1982,8 @@ bool GEOM_Displayer::MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault) 
     theOrigin.insert(DEFLECTION_COEFF_PROP, theDefault.value(DEFLECTION_COEFF_PROP));
     nbInserted++;
   }
-  if(!theOrigin.contains(FRONT_MATERIAL_PROP)) {
-    theOrigin.insert(FRONT_MATERIAL_PROP, theDefault.value(FRONT_MATERIAL_PROP));
-    nbInserted++;
-  }
-  if(!theOrigin.contains(BACK_MATERIAL_PROP)) {
-    theOrigin.insert(BACK_MATERIAL_PROP, theDefault.value(BACK_MATERIAL_PROP));
+  if(!theOrigin.contains(MATERIAL_PROP)) {
+    theOrigin.insert(MATERIAL_PROP, theDefault.value(MATERIAL_PROP));
     nbInserted++;
   }
 
@@ -2078,6 +1994,11 @@ bool GEOM_Displayer::MergePropertyMaps(PropMap& theOrigin, PropMap& theDefault) 
 
   if(!theOrigin.contains(ISOS_WIDTH_PROP)) {
     theOrigin.insert(ISOS_WIDTH_PROP, theDefault.value(ISOS_WIDTH_PROP));
+    nbInserted++;
+  }
+
+  if(!theOrigin.contains(COLOR_PROP)) {
+    theOrigin.insert(COLOR_PROP, theDefault.value(COLOR_PROP));
     nbInserted++;
   }
 

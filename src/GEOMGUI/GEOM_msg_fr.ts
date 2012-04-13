@@ -5275,6 +5275,10 @@ Voulez-vous continuer?</translation>
         <translation>Shininess:</translation>
     </message>
     <message>
+        <source>PHYSICAL</source>
+        <translation>Physical:</translation>
+    </message>
+    <message>
         <source>CUSTOM_MATERIAL</source>
         <translation>Matériau personnalisé</translation>
     </message>
