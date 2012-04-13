@@ -70,14 +70,10 @@ private:
 
   void                  fromModel( Material_Model* );
   void                  toModel( Material_Model* ) const;
-  void                  toFrontModel( Material_Model* ) const;
-  void                  toBackModel( Material_Model* ) const;
   
   QString               findUniqueName( const QString&,
 					QListWidgetItem* = 0,
 					bool = false );
-
-  bool                  isFrontTabActive() const;
 
 signals:
   void                  materialChanged();
@@ -88,8 +84,6 @@ private slots:
   void                  onApply();
   void                  onHelp();
 
-  void                  onBackMaterialChecked( bool );
-  void                  onCurrentTabChanged( int );
   void                  onMaterialChanged();
   void                  onChanged();
   void                  onItemChanged( QListWidgetItem* );
@@ -99,23 +93,17 @@ private:
   
   Material_ResourceMgr* myResMgr;
 
-  QCheckBox*            myBackMaterialCheck;
+  QCheckBox*            myMaterialPhysicalCheck;
 
-  //! Current material model for front material
+  //! Current material model for material
   Material_Model*       myCurrentModelF;
-
-  //! Current material model for back material
-  Material_Model*       myCurrentModelB;
 
   QListWidget*          myMaterialList;
   int                   myMaterialListFId;
-  int                   myMaterialListBId;
 
   QTabWidget*           myMaterialTab;
-  QWidget*              myMaterialBWidget;
-  bool                  myIsBTabWasActivated;
 
-  //! Controls defining front material properties
+  //! Controls defining material properties
   QGroupBox*            myAmbientGroupF;
   QtxColorButton*       myAmbientColorF;
   QtxDoubleSpinBox*     myAmbientCoefntF;
@@ -133,25 +121,6 @@ private:
   QtxDoubleSpinBox*     myEmissionCoefntF;
 
   QtxDoubleSpinBox*     myShininessF;
-
-  //! Controls defining back material properties
-  QGroupBox*            myAmbientGroupB;
-  QtxColorButton*       myAmbientColorB;
-  QtxDoubleSpinBox*     myAmbientCoefntB;
-
-  QGroupBox*            myDiffuseGroupB;
-  QtxColorButton*       myDiffuseColorB;
-  QtxDoubleSpinBox*     myDiffuseCoefntB;
-
-  QGroupBox*            mySpecularGroupB;
-  QtxColorButton*       mySpecularColorB;
-  QtxDoubleSpinBox*     mySpecularCoefntB;
-
-  QGroupBox*            myEmissionGroupB;
-  QtxColorButton*       myEmissionColorB;
-  QtxDoubleSpinBox*     myEmissionCoefntB;
-
-  QtxDoubleSpinBox*     myShininessB;
 
   QString               myHelpFileName;
 

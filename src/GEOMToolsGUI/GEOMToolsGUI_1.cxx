@@ -34,6 +34,7 @@
 #include "GEOMToolsGUI_PublishDlg.h"
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 #include "GEOMToolsGUI_LineWidthDlg.h"
+#include "Material_Model.h"
 
 #include <GeometryGUI.h>
 #include <GeometryGUI_Operations.h>
@@ -293,22 +294,35 @@ void GEOMToolsGUI::OnColor()
           if ( c.isValid() ) {
             SUIT_OverrideCursor();
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-              aView->SetColor( It.Value(), c );
-              appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+              QString defMatProp;
+              QVariant mp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, defMatProp);
+              QString matProp = mp.value<QString>();
+              QStringList aProps =  matProp.split(DIGIT_SEPARATOR);
+              Material_Model* aModelF = Material_Model::getMaterialModel( aProps );
+              bool aPhys = false;
+              if ( aModelF ) {
+                aPhys = aModelF->isPhysical();
+                // Release memory
+                delete aModelF;
+              }
+              if ( !aPhys ) {
+                aView->SetColor( It.Value(), c );
+                appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+              }
             }
             GeometryGUI::Modified();
           }
         } // if ( isVTK )
         else if ( isOCC ) {
-	  Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
+	        Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
           if ( !io.IsNull() ) {
             Quantity_Color aColor;
             io->Color( aColor ); 
-	    QColor ic = QColor((int )( aColor.Red() * 255.0 ),
+            QColor ic = QColor((int )( aColor.Red() * 255.0 ),
 			      (int)( aColor.Green() * 255.0 ),
 			      (int)( aColor.Blue() * 255.0 ));	    
 
-	    QVariant v = appStudy->getObjectProperty(mgrId,selected.First()->getEntry(), COLOR_PROP, ic);
+			      QVariant v = appStudy->getObjectProperty(mgrId,selected.First()->getEntry(), COLOR_PROP, ic);
 
             QColor initcolor = v.value<QColor>();
             QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
@@ -318,8 +332,19 @@ void GEOMToolsGUI::OnColor()
               OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
               Handle (AIS_InteractiveContext) ic = vm->getAISContext();
               for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+                QString defMatProp;
+                QVariant mp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, defMatProp);
+                QString matProp = mp.value<QString>();
+                QStringList aProps =  matProp.split(DIGIT_SEPARATOR);
+                Material_Model* aModelF = Material_Model::getMaterialModel( aProps );
+                bool aPhys = false;
+                if ( aModelF ) {
+                  aPhys = aModelF->isPhysical();
+                  // Release memory
+                  delete aModelF;
+                }
                 io = GEOMBase::GetAIS( It.Value(), true );
-                if ( !io.IsNull() ) {
+                if ( !io.IsNull()  && !aPhys ) { // change color only for shapes with not physical type of material
                   
                   if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
                     TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
@@ -351,14 +376,14 @@ void GEOMToolsGUI::OnColor()
                       ic->SetLocalAttributes(io, aCurDrawer, Standard_False);
                     }
                   }
-		  
+
                   io->SetColor( aColor );
                   if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
                     Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
-		    aGAISShape->SetShadingColor( aColor );
-		    aGAISShape->storeBoundaryColors();
-		  }
-		  
+                    aGAISShape->SetShadingColor( aColor );
+                    aGAISShape->storeBoundaryColors();
+                  }
+
                   appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
 		  
                   io->Redisplay( Standard_True );
@@ -375,7 +400,7 @@ void GEOMToolsGUI::OnColor()
                   aSColor.G = (double)c.green() / 255.0;
                   aSColor.B = (double)c.blue() / 255.0;
                   anObject->SetColor( aSColor );
-                  anObject->SetAutoColor( false );		  
+                  anObject->SetAutoColor( false );		 
                 }
               } // for
               ic->UpdateCurrentViewer();

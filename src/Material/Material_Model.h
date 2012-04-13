@@ -31,7 +31,7 @@
 
 class Graphic3d_MaterialAspect;
 
-class vtkProperty;
+class GEOM_VTKPropertyMaterial;
 
 class QtxResourceMgr;
 
@@ -57,14 +57,14 @@ public:
   QString                getMaterialProperty();
 
   Graphic3d_MaterialAspect getMaterialOCCAspect();
-  vtkProperty*             getMaterialVTKProperty();
+  GEOM_VTKPropertyMaterial*             getMaterialVTKProperty();
 
   void                initDefaults();
-  void                fromResources( QtxResourceMgr*, const QString& = QString(), bool theIsFront = true );
-  void                save( QtxResourceMgr* = 0, const QString& = QString(), bool theIsFront = true );
+  void                fromResources( QtxResourceMgr*, const QString& = QString());
+  void                save( QtxResourceMgr* = 0, const QString& = QString() );
 
   QtxResourceMgr*     resourceMgr() const;
-  QString             resourceSection( bool theIsFront ) const;
+  QString             resourceSection() const;
 
   bool                hasAmbientReflection();
   bool                hasDiffuseReflection();
@@ -74,19 +74,22 @@ public:
   QColor              color( ReflectionType ) const;
   void                setColor( ReflectionType, const QColor& );
   void                setColor( QString,
-				QString,
-				ReflectionType );
+				                        QString,
+				                        ReflectionType );
   void                removeColor( ReflectionType );
 
   double              coefficient( ReflectionType ) const;
   void                setCoefficient( ReflectionType, double );  
   void                setCoefficient( QString,
-				      QString,
-				      ReflectionType );
+				                              QString,
+				                              ReflectionType );
   void                removeCoefficient( ReflectionType );
 
   double              shininess() const;
   void                setShininess( double );  
+
+  bool                isPhysical() const;
+  void                setPhysical( bool );
 
 private:
   void                clearModel();
@@ -102,6 +105,8 @@ private:
   CoefficientMap      myCoefficients;
 
   double              myShininess;
+
+  bool                myIsPhysical;
 
 };
 

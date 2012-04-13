@@ -46,6 +46,7 @@ libMaterial_la_CPPFLAGS =		\
 	-I$(srcdir)/../OBJECT
 
 libMaterial_la_LDFLAGS  = -lVTKViewer -lOCCViewer -lsuit -lSalomeApp \
+	../OBJECT/libGEOMObject.la		\
 	$(GUI_LDFLAGS) -lqtx \
 	$(QT_MT_LIBS) \
 	$(CAS_LDFLAGS) -lTKV3d -lTKGeomBase \

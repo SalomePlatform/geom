@@ -113,8 +113,7 @@ GEOM_Actor::GEOM_Actor():
 
   myHighlightProp(vtkProperty::New()),
   myPreHighlightProp(vtkProperty::New()),
-  myShadingFaceProp(vtkProperty::New()),
-  myShadingBackFaceProp(vtkProperty::New())
+  myShadingFaceProp(vtkProperty::New())
 { 
 #ifdef MYDEBUG
   MESSAGE (this<< " GEOM_Actor::GEOM_Actor");
@@ -203,7 +202,6 @@ GEOM_Actor::~GEOM_Actor()
   myHighlightProp->Delete();
   myPreHighlightProp->Delete();
   myShadingFaceProp->Delete();
-  myShadingBackFaceProp->Delete();
 } 
  
 GEOM_Actor*  
@@ -548,6 +546,7 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
   case eShadingWithEdges://shading with edges
     myPreHighlightProp->SetRepresentationToSurface();
     myHighlightProp->SetRepresentationToSurface();
+    myShadingFaceProp->SetRepresentationToSurface();
     break;
   }
 
@@ -555,17 +554,14 @@ void GEOM_Actor::Render(vtkRenderer *ren, vtkMapper *theMapper)
     if(myIsPreselected){
       this->myHighlightActor->SetProperty(myPreHighlightProp.GetPointer());
       myShadingFaceActor->SetProperty(myPreHighlightProp.GetPointer());
-      myShadingFaceActor->SetBackfaceProperty(myPreHighlightProp.GetPointer());
     } else {
       this->myHighlightActor->SetProperty(myShadingFaceProp.GetPointer());
       myShadingFaceActor->SetProperty(myShadingFaceProp.GetPointer());
-      myShadingFaceActor->SetBackfaceProperty(myShadingBackFaceProp.GetPointer());
     }
   }
   else{
     this->myHighlightActor->SetProperty(myHighlightProp.GetPointer());
     myShadingFaceActor->SetProperty(myHighlightProp.GetPointer());
-    myShadingFaceActor->SetBackfaceProperty(myHighlightProp.GetPointer());
   }
 
   this->Property->Render(this, ren);
@@ -676,7 +672,6 @@ void GEOM_Actor::SetOpacity(vtkFloatingPointType opa)
 {
   // enk:tested OK
   myShadingFaceProp->SetOpacity(opa);
-  myShadingBackFaceProp->SetOpacity(opa);
   myHighlightProp->SetOpacity(opa);
   myPreHighlightProp->SetOpacity(opa);
   myVertexActor->GetProperty()->SetOpacity(opa);
@@ -692,7 +687,6 @@ void GEOM_Actor::SetColor(vtkFloatingPointType r,vtkFloatingPointType g,vtkFloat
 {
   // enk:tested OK
   myShadingFaceProp->SetColor(r,g,b);                          // shading color (Shading)
-  myShadingBackFaceProp->SetColor(r,g,b);                      // back face shading color (Shading)
   myVertexActor->GetProperty()->SetColor(r,g,b);               // vertex actor (Shading/Wireframe)
   if ( myDisplayMode != (int)eShadingWithEdges ) {
     myIsolatedEdgeActor->GetProperty()->SetColor(r,g,b);         // standalone edge color (Wireframe)
@@ -715,42 +709,23 @@ void GEOM_Actor::GetColor(vtkFloatingPointType& r,vtkFloatingPointType& g,vtkFlo
 
 void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
 {
-  int aSize = theProps.size();
-
-  if ( aSize < 1 || aSize > 2)
-    return;
-
-  // theProps[0] -- front material properties
-  // theProps[1] -- back material properties (if exist)
-  // If there are no back material properties,
-  // we get front material properties as back material
-
+  // we set material properties as back and front material
   double aCoefnt;
 
   // Set reflection coefficients
   aCoefnt = theProps[0]->GetAmbient();
   myShadingFaceProp->SetAmbient(aCoefnt);
   myVertexActor->GetProperty()->SetAmbient(aCoefnt);
-  if ( aSize == 2 )
-    aCoefnt = theProps[1]->GetAmbient();
-  myShadingBackFaceProp->SetAmbient(aCoefnt);
 
   // Set diffuse coefficients
   aCoefnt = theProps[0]->GetDiffuse();
   myShadingFaceProp->SetDiffuse(aCoefnt);
   myVertexActor->GetProperty()->SetDiffuse(aCoefnt);
-  if ( aSize == 2 )
-    aCoefnt = theProps[1]->GetDiffuse();
-  myShadingBackFaceProp->SetDiffuse(aCoefnt);
   
   // Set specular coefficients
   aCoefnt = theProps[0]->GetSpecular();
   myShadingFaceProp->SetSpecular(aCoefnt);
   myVertexActor->GetProperty()->SetSpecular(aCoefnt);
-  if ( aSize == 2 )
-    aCoefnt = theProps[1]->GetSpecular();
-  myShadingBackFaceProp->SetSpecular(aCoefnt);
-
 
   double* aColor;
 
@@ -758,46 +733,26 @@ void GEOM_Actor::SetMaterial(std::vector<vtkProperty*> theProps)
   aColor = theProps[0]->GetAmbientColor();
   myShadingFaceProp->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
   myVertexActor->GetProperty()->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
-  if ( aSize == 2 )
-    aColor = theProps[1]->GetAmbientColor();
-  myShadingBackFaceProp->SetAmbientColor(aColor[0], aColor[1], aColor[2]);
 
   // Set diffuse colors
   aColor = theProps[0]->GetDiffuseColor();
   myShadingFaceProp->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
   myVertexActor->GetProperty()->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
-  if ( aSize == 2 )
-    aColor = theProps[1]->GetDiffuseColor();
-  myShadingBackFaceProp->SetDiffuseColor(aColor[0], aColor[1], aColor[2]);
 
   // Set specular colors
   aColor = theProps[0]->GetSpecularColor();
   myShadingFaceProp->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
   myVertexActor->GetProperty()->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
-  if ( aSize == 2 )
-    aColor = theProps[1]->GetSpecularColor();
-  myShadingBackFaceProp->SetSpecularColor(aColor[0], aColor[1], aColor[2]);
 
   // Set shininess
   aCoefnt = theProps[0]->GetSpecularPower();
   myShadingFaceProp->SetSpecularPower(aCoefnt);
   myVertexActor->GetProperty()->SetSpecularPower(aCoefnt);
-  if ( aSize == 2 )
-    aCoefnt = theProps[1]->GetSpecularPower();
-  myShadingBackFaceProp->SetSpecularPower(aCoefnt);
-
-  // Set back face material property
-  myShadingFaceActor->SetBackfaceProperty(myShadingBackFaceProp.GetPointer());
 }
 
-vtkProperty* GEOM_Actor::GetFrontMaterial()
+vtkProperty* GEOM_Actor::GetMaterial()
 {
   return myShadingFaceProp;
-}
-
-vtkProperty* GEOM_Actor::GetBackMaterial()
-{
-  return myShadingBackFaceProp;
 }
 
 bool GEOM_Actor::IsInfinitive()

@@ -30,6 +30,7 @@
     <parameter name="specular-color"          value="#ffffff" />
     <parameter name="specular-coefficient"    value="0.06" />
     <parameter name="shininess"               value="0.0078125" />
+    <parameter name="physical"                value="false" />
   </section>
   <section name="Shiny plastic" >
     <parameter name="ambient-color"           value="#333333" />
@@ -39,6 +40,7 @@
     <parameter name="specular-color"          value="#ffffff" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="1.0" />
+    <parameter name="physical"                value="false" />
   </section>
   <section name="Satin" >
     <parameter name="ambient-color"           value="#333333" />
@@ -48,6 +50,7 @@
     <parameter name="specular-color"          value="#ffffff" />
     <parameter name="specular-coefficient"    value="0.44" />
     <parameter name="shininess"               value="0.09375" />
+    <parameter name="physical"                value="false" />
   </section>
   <section name="Metal" >
     <parameter name="diffuse-color"           value="#000000" />
@@ -55,6 +58,7 @@
     <parameter name="specular-color"          value="#ffffff" />
     <parameter name="specular-coefficient"    value="0.45" />
     <parameter name="shininess"               value="0.13" />
+    <parameter name="physical"                value="false" />
   </section>
   <section name="Brass">
     <parameter name="ambient-color"           value="#543907" />
@@ -64,6 +68,7 @@
     <parameter name="specular-color"          value="#fdf0ce" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.21794844" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Bronze">
     <parameter name="ambient-color"           value="#36200d" />
@@ -73,6 +78,7 @@
     <parameter name="specular-color"          value="#64452a" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.2" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Copper" >
     <parameter name="ambient-color"           value="#54423a" />
@@ -82,6 +88,7 @@
     <parameter name="specular-color"          value="#f3ba00" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.93" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Gold" >
     <parameter name="ambient-color"           value="#ffc451" />
@@ -91,6 +98,7 @@
     <parameter name="specular-color"          value="#fffac7" />
     <parameter name="specular-coefficient"    value="0.9" />
     <parameter name="shininess"               value="0.0625" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Pewter" >
     <parameter name="ambient-color"           value="#1b0f1d" />
@@ -100,6 +108,7 @@
     <parameter name="specular-color"          value="#555585" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.076923047" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Plaster" >
     <parameter name="ambient-color"           value="#313131" />
@@ -109,6 +118,7 @@
     <parameter name="specular-color"          value="#828282" />
     <parameter name="specular-coefficient"    value="0.06" />
     <parameter name="shininess"               value="0.0078125" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Silver" >
     <parameter name="ambient-color"           value="#313131" />
@@ -118,6 +128,7 @@
     <parameter name="specular-color"          value="#828282" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.2" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Steel" >
     <parameter name="ambient-color"           value="#333333" />
@@ -127,6 +138,7 @@
     <parameter name="specular-color"          value="#ffffff" />
     <parameter name="specular-coefficient"    value="0.98" />
     <parameter name="shininess"               value="0.06" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Stone" >
     <parameter name="ambient-color"           value="#ffcc9e" />
@@ -136,6 +148,7 @@
     <parameter name="specular-color"          value="#faff99" />
     <parameter name="specular-coefficient"    value="0.08" />
     <parameter name="shininess"               value="0.17" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Chrome" >
     <parameter name="ambient-color"           value="#595959" />
@@ -145,6 +158,7 @@
     <parameter name="specular-color"          value="#f9f9f9" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.1" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Neon" >
     <parameter name="ambient-color"           value="#ffffff" />
@@ -156,6 +170,7 @@
     <parameter name="emission-color"          value="#00ff75" />
     <parameter name="emission-coefficient"    value="0.9" />
     <parameter name="shininess"               value="0.05" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Aluminium" >
     <parameter name="ambient-color"           value="#4c4c4c" />
@@ -165,6 +180,7 @@
     <parameter name="specular-color"          value="#b3b3cc" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.09" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Obsidian" >
     <parameter name="ambient-color"           value="#0d0c10" />
@@ -174,6 +190,7 @@
     <parameter name="specular-color"          value="#555458" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.3" />
+    <parameter name="physical"                value="true" />
   </section>
   <section name="Jade" >
     <parameter name="ambient-color"           value="#223828" />
@@ -183,5 +200,6 @@
     <parameter name="specular-color"          value="#505050" />
     <parameter name="specular-coefficient"    value="1.0" />
     <parameter name="shininess"               value="0.1" />
+    <parameter name="physical"                value="true" />
   </section>  
 </document>

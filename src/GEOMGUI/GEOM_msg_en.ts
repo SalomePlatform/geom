@@ -3015,12 +3015,8 @@ Please, select face, shell or solid and try again</translation>
         <translation>Default wireframe color</translation>
     </message>
     <message>
-        <source>PREF_FRONT_MATERIAL</source>
-        <translation>Default front material</translation>
-    </message>
-    <message>
-        <source>PREF_BACK_MATERIAL</source>
-        <translation>Default back material</translation>
+        <source>PREF_MATERIAL</source>
+        <translation>Default material</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
@@ -5273,6 +5269,10 @@ Would you like to continue?</translation>
     <message>
         <source>SHININESS</source>
         <translation>Shininess:</translation>
+    </message>
+    <message>
+        <source>PHYSICAL</source>
+        <translation>Physical:</translation>
     </message>
     <message>
         <source>CUSTOM_MATERIAL</source>

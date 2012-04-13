@@ -127,8 +127,7 @@ public:
 
   // Material
   void SetMaterial(std::vector<vtkProperty*> theProps);
-  vtkProperty* GetFrontMaterial();
-  vtkProperty* GetBackMaterial();
+  vtkProperty* GetMaterial();
 
   virtual bool IsInfinitive();
 
@@ -244,7 +243,6 @@ private:
   vtkSmartPointer<vtkProperty>  myHighlightProp;
   vtkSmartPointer<vtkProperty>  myPreHighlightProp;
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;
-  vtkSmartPointer<vtkProperty>  myShadingBackFaceProp;
 
   PAppendFilter myAppendFilter;
   PPolyGeomPainterDataMapper myPolyDataMapper;

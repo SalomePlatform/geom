@@ -24,6 +24,7 @@
 #include "Material_Model.h"
 #include "Material_ResourceMgr.h"
 
+#include "GEOM_VTKPropertyMaterial.hxx"
 #include <GEOM_Constants.h>
 
 #include <QtxResourceMgr.h>
@@ -32,9 +33,6 @@
 
 // OCCT Includes
 #include <Graphic3d_AspectFillArea3d.hxx>
-
-// VTK includes
-#include <vtkProperty.h> 
 
 /*!
   \brief Constructor
@@ -45,6 +43,7 @@ Material_Model::Material_Model()
   : myResourceMgr( 0 )
 {
   myShininess = 0.0;
+  myIsPhysical = false;
 }
 
 /*!
@@ -96,8 +95,18 @@ Material_Model* Material_Model::getMaterialModel( QStringList theProps )
       bool ok;
       double aCoef = aProp.right( aProp.length() - (anId+aPropName.length()) ).toDouble(&ok);
       if ( ok )
-	aModel->setShininess( aCoef );
+	      aModel->setShininess( aCoef );
     }    
+
+    // Set current material type: physical or artificial
+    aPropName = "Physical=";
+    anId = aProp.indexOf(aPropName);
+    if ( anId != -1 ) {
+      bool ok;
+      bool aFlag = aProp.right( aProp.length() - (anId+aPropName.length()) ).toInt( &ok );
+        if ( ok )
+      aModel->setPhysical( aFlag );
+    }   
   }
 
   return aModel;
@@ -171,6 +180,11 @@ QString Material_Model::getMaterialProperty()
     aMaterial += "%1Shininess=%2";
     aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
     aMaterial = aMaterial.arg( shininess() );
+    // Type: physical - True, artificial - False
+    // Insert properties into persistent string
+    aMaterial += "%1Physical=%2";
+    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
+    aMaterial = aMaterial.arg( isPhysical() );
   }
 
   return aMaterial;
@@ -228,6 +242,7 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect()
   }
   // Shininess
   aMat.SetShininess( shininess() );
+  aMat.SetMaterialType(isPhysical() ? Graphic3d_MATERIAL_PHYSIC : Graphic3d_MATERIAL_ASPECT);
 
   return aMat;
 }
@@ -237,10 +252,10 @@ Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect()
   
   \return VTK property with correspondent material properties
 */
-vtkProperty* Material_Model::getMaterialVTKProperty()
+GEOM_VTKPropertyMaterial* Material_Model::getMaterialVTKProperty()
 {
   // Get material properties from the current model
-  vtkProperty* aProperty = vtkProperty::New();
+  GEOM_VTKPropertyMaterial* aProperty = GEOM_VTKPropertyMaterial::New();
   
   bool isReflectionTypeActive;
   QColor c;
@@ -272,6 +287,8 @@ vtkProperty* Material_Model::getMaterialVTKProperty()
   }
   // Shininess
   aProperty->SetSpecularPower( shininess()*100.0 );
+  //Type
+  aProperty->SetPhysical( isPhysical() );
 
   return aProperty;
 }
@@ -298,6 +315,9 @@ void Material_Model::initDefaults()
   
   // Set default shininess
   setShininess( 0.039 );
+
+  // Set default type - artificial
+  setPhysical( false );
 }
 
 /*!
@@ -308,6 +328,7 @@ void Material_Model::clearModel()
   myColors.clear();
   myCoefficients.clear();
   myShininess = 0.0;
+  myIsPhysical = false;
 }
 
 /*!
@@ -319,12 +340,10 @@ void Material_Model::clearModel()
 
   \param theResMgr resources manager
   \param theResSection resources section name
-  \param theIsFront if True, it is front material, else it is back material
   \sa save()
 */
 void Material_Model::fromResources( QtxResourceMgr* theResMgr,
-				    const QString& theResSection,
-				    bool theIsFront )
+				    const QString& theResSection/*, bool theIsFront*/ )
 {
   // Clear current content of the model
   // before setting properties from resources
@@ -338,19 +357,11 @@ void Material_Model::fromResources( QtxResourceMgr* theResMgr,
     return;
 
   if ( theResSection.compare( "Geometry" ) == 0 ) {
-    if ( theIsFront ) {
-      myResourceSection = theResMgr->stringValue("Geometry", "front_material", "Gold");
-    }
-    else {
-      myResourceSection = theResMgr->stringValue("Geometry", "back_material", "");
-      if ( myResourceSection.isEmpty() )
-	myResourceSection = theResMgr->stringValue("Geometry", "front_material", "Gold");
-    }
-      
+    myResourceSection = theResMgr->stringValue("Geometry", "material", "Gold");     
     myResourceMgr = new Material_ResourceMgr();
   }
   
-  QString section = resourceSection( theIsFront );
+  QString section = resourceSection();
 
   // If there is no material preference in XML files,
   // use the default material hardcoded in material model
@@ -399,6 +410,11 @@ void Material_Model::fromResources( QtxResourceMgr* theResMgr,
   if ( resourceMgr()->hasValue( section, "shininess" ) ) {
     setShininess( resourceMgr()->doubleValue( section, "shininess" ) );
   }
+
+  // Set type: physical or artificial
+  if ( resourceMgr()->hasValue( section, "physical" ) ) {
+    setPhysical( resourceMgr()->booleanValue( section, "physical" ) );
+  }
 }
 
 /*!
@@ -409,19 +425,17 @@ void Material_Model::fromResources( QtxResourceMgr* theResMgr,
 
   \param theResMgr resources manager
   \param theResSection resources section name
-  \param theIsFront if True, it is front material, else it is back material
   \sa fromResources()
 */
 void Material_Model::save( QtxResourceMgr* theResMgr,
-			   const QString& theResSection,
-			   bool theIsFront )
+			   const QString& theResSection)
 {
   if ( !theResMgr )
     theResMgr = resourceMgr();
   if ( !theResMgr )
     return;
 
-  QString section = theResSection.isEmpty() ? resourceSection( theIsFront ) : theResSection;
+  QString section = theResSection.isEmpty() ? resourceSection() : theResSection;
   myResourceSection = section;
 
   if ( hasAmbientReflection() ) {
@@ -478,6 +492,9 @@ void Material_Model::save( QtxResourceMgr* theResMgr,
 
   // Save shininess
   theResMgr->setValue( section, "shininess", shininess() );
+
+  // Save type: physical or artificial
+  theResMgr->setValue( section, "physical", isPhysical() );
 }
 
 /*!
@@ -495,20 +512,15 @@ QtxResourceMgr* Material_Model::resourceMgr() const
   \brief Get resources section name
 
   If section name is empty, default material name from "Geometry" section
-  is returned ("front_material" or "back_material" is used depending on
-  the parameter value)
+  is returned.
 
-  \param theIsFront the flag indicating that section of front or back material
-  is required
   \return resource section name passed previously to the fromResources() method
   \sa fromResources(), resourceMgr()
 */
-QString Material_Model::resourceSection( bool theIsFront ) const
+QString Material_Model::resourceSection() const
 {
   return !myResourceSection.isEmpty() ? myResourceSection : 
-    SUIT_Session::session()->resourceMgr()->stringValue("Geometry", 
-							( theIsFront ? "front_material" : "back_material" ),
-							"Gold");
+    SUIT_Session::session()->resourceMgr()->stringValue("Geometry", "material", "Gold");
 }
 
 /*!
@@ -682,3 +694,25 @@ void Material_Model::setShininess( double theShininess)
 {
   myShininess = theShininess;
 }
+
+/*!
+  \brief Get type value: physical or artificial
+  \return True if the material is physical and False if the material is artificial
+  \sa setShininess()
+*/
+bool Material_Model::isPhysical() const
+{
+  return myIsPhysical;
+}
+
+/*!
+  \brief Set type: physical or artificial
+
+  \param theFlag True if the material is physical and False if the material is artificial
+  \sa isPhysical()
+*/
+void Material_Model::setPhysical( bool theFlag)
+{
+  myIsPhysical = theFlag;
+}
+ 

@@ -56,8 +56,7 @@
     <parameter name="base_vectors_length" value="1"  />
     <parameter name="marker_scale"        value="1"  />
     <parameter name="geom_preview"        value="false"  />
-    <parameter name="front_material"      value="Gold" />
-    <parameter name="back_material"       value="Gold" />
+    <parameter name="material"            value="Plastic" />
     <parameter name="edge_width"          value="1" />
     <parameter name="isolines_width"      value="1" />
     <parameter name="preview_edge_width"  value="1" />
