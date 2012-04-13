@@ -526,7 +526,7 @@ QString GEOMGUI_Selection::selectionMode() const
 
 bool GEOMGUI_Selection::topLevel( const int index ) const {
   bool res = false;
-  
+
 #ifdef USE_VISUAL_PROP_MAP
   bool found = false;
   QVariant v = visibleProperty( entry( index ), TOP_LEVEL_PROP );
@@ -588,7 +588,7 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const{
              Handle(AIS_InteractiveObject) io = lst.First();
              if ( !io.IsNull() ) {
                Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
-               if ( !aSh.IsNull() ) 
+               if ( !aSh.IsNull() )
                  res =(bool) aSh->Attributes()->ShadingAspect()->
                       Material(Aspect_TypeOfFacingModel::Aspect_TOFM_BOTH_SIDE).MaterialType( Graphic3d_MATERIAL_PHYSIC );
              }
