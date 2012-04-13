@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,16 +18,16 @@
 //
 // File:	NMTTools_ListOfCommonBlock.hxx
 // Created:	Mon Feb 20 07:27:34 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 #ifndef NMTTools_ListOfCommonBlock_HeaderFile
 #define NMTTools_ListOfCommonBlock_HeaderFile
 
-#include <NCollection_List.hxx>   
+#include <NCollection_List.hxx>
 #include <NMTTools_CommonBlock.hxx>
 
-typedef NCollection_List <NMTTools_CommonBlock> NMTTools_ListOfCommonBlock; 
-typedef NMTTools_ListOfCommonBlock::Iterator NMTTools_ListIteratorOfListOfCommonBlock;  
+typedef NCollection_List <NMTTools_CommonBlock> NMTTools_ListOfCommonBlock;
+typedef NMTTools_ListOfCommonBlock::Iterator NMTTools_ListIteratorOfListOfCommonBlock;
 
 #endif

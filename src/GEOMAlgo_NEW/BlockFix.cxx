@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -79,26 +79,26 @@ static void FixResult(const TopoDS_Shape& result,
     TopoDS_Face aFace = TopoDS::Face(aShape);
     TopLoc_Location L;
     Handle(Geom_Surface) Surf = BRep_Tool::Surface(aFace,L);
-    
+
     if( Surf->IsKind(STANDARD_TYPE(Geom_SphericalSurface)) ||
         Surf->IsKind(STANDARD_TYPE(Geom_CylindricalSurface)) ) {
-    
+
       Standard_Integer nbWires = 0;
       for (TopExp_Explorer ex_w(aFace,TopAbs_WIRE); ex_w.More(); ex_w.Next()) {
         nbWires++;
-        Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(TopoDS::Wire(ex_w.Current()), 
-                                                      aFace, 
+        Handle(ShapeFix_Wire) sfw = new ShapeFix_Wire(TopoDS::Wire(ex_w.Current()),
+                                                      aFace,
                                                       Precision::Confusion());
         sfw->FixReorder();
         if(sfw->StatusReorder ( ShapeExtend_FAIL ))
           continue;
-        
+
         sfw->SetPrecision(2.*Tol);
         sfw->FixShifted();
-        
+
         Standard_Boolean isDone = sfw->LastFixStatus ( ShapeExtend_DONE );
         isDone |= sfw->FixDegenerated();
-        
+
         // remove degenerated edges from not degenerated points
         ShapeAnalysis_Edge sae;
         Handle(ShapeExtend_WireData) sewd = sfw->WireData();
@@ -111,10 +111,10 @@ static void FixResult(const TopoDS_Shape& result,
             i--;
           }
         }
-        
+
         //isDone |= sfw->FixLacking(); // commented by skl 22.03.2005 (PAL8395)
-        
-        // remove neighbour seam edges 
+
+        // remove neighbour seam edges
         if(isDone) {
           for( i = 1; i<sewd->NbEdges();i++) {
             if(sewd->IsSeam(i) && sewd->IsSeam(i+1)) {
@@ -129,8 +129,8 @@ static void FixResult(const TopoDS_Shape& result,
             sewd->Remove(sewd->NbEdges());
           }
         }
-        
-               
+
+
         if(isDone) {
           TopoDS_Wire ResWire = sfw->Wire();
           Context->Replace(ex_w.Current(), ResWire);
@@ -143,7 +143,7 @@ static void FixResult(const TopoDS_Shape& result,
         if(sff->FixOrientation())
           Context->Replace(aFixedFace,sff->Face());
       }
-      
+
     }
   }
 }
@@ -154,11 +154,11 @@ static void FixResult(const TopoDS_Shape& result,
 
 //=======================================================================
 //function : ConvertToAnalytical
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 TopoDS_Shape BlockFix::RotateSphereSpace (const TopoDS_Shape& S,
-                                          const Standard_Real Tol) 
+                                          const Standard_Real Tol)
 {
 
   // Create a modification description
@@ -168,17 +168,17 @@ TopoDS_Shape BlockFix::RotateSphereSpace (const TopoDS_Shape& S,
   TopTools_DataMapOfShapeShape context;
   BRepTools_Modifier MD;
   TopoDS_Shape result = ShapeCustom::ApplyModifier ( S, SR, context,MD );
-  
+
   Handle(ShapeBuild_ReShape) RS = new ShapeBuild_ReShape;
   FixResult(result,RS,Tol);
   result = RS->Apply(result);
-  
+
   ShapeFix_Edge sfe;
   for(TopExp_Explorer exp(result,TopAbs_EDGE); exp.More(); exp.Next()) {
     TopoDS_Edge E = TopoDS::Edge(exp.Current());
     sfe.FixVertexTolerance (E);
   }
-  
+
   ShapeFix::SameParameter(result,Standard_False);
   return result;
 }
@@ -186,11 +186,11 @@ TopoDS_Shape BlockFix::RotateSphereSpace (const TopoDS_Shape& S,
 
 //=======================================================================
 //function : FixRanges
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 TopoDS_Shape BlockFix::FixRanges (const TopoDS_Shape& S,
-                                  const Standard_Real Tol) 
+                                  const Standard_Real Tol)
 {
   // Create a modification description
   Handle(BlockFix_PeriodicSurfaceModifier) SR = new BlockFix_PeriodicSurfaceModifier;
@@ -199,17 +199,17 @@ TopoDS_Shape BlockFix::FixRanges (const TopoDS_Shape& S,
   TopTools_DataMapOfShapeShape context;
   BRepTools_Modifier MD;
   TopoDS_Shape result = ShapeCustom::ApplyModifier ( S, SR, context,MD );
-  
+
   Handle(ShapeBuild_ReShape) RS = new ShapeBuild_ReShape;
   FixResult(result,RS,Tol);
   result = RS->Apply(result);
-  
+
   ShapeFix_Edge sfe;
   for(TopExp_Explorer exp(result,TopAbs_EDGE); exp.More(); exp.Next()) {
     TopoDS_Edge E = TopoDS::Edge(exp.Current());
     sfe.FixVertexTolerance (E);
   }
-  
+
   ShapeFix::SameParameter(result,Standard_False);
 
   return result;

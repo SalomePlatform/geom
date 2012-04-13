@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -37,7 +37,7 @@
 
 //=======================================================================
 // function:  NMTTools_CommonBlockAPI::NMTTools_CommonBlockAPI
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlockAPI::NMTTools_CommonBlockAPI (const NMTTools_ListOfCommonBlock& aLCB)
 {
@@ -45,7 +45,7 @@
 }
 //=======================================================================
 // function:  List
-// purpose: 
+// purpose:
 //=======================================================================
   const NMTTools_ListOfCommonBlock& NMTTools_CommonBlockAPI::List () const
 {
@@ -85,7 +85,7 @@
 }
 //=======================================================================
 // function:  IsCommonBlock
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlockAPI::IsCommonBlock(const BOPTools_PaveBlock& aPB) const
 {
@@ -107,7 +107,7 @@
 
 //=======================================================================
 // function:  CommonBlock
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlock& NMTTools_CommonBlockAPI::CommonBlock(const BOPTools_PaveBlock& aPB)const
 {

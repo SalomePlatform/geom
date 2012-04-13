@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:        GEOMAlgo_GluerAlgo.hxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
@@ -38,51 +38,51 @@
 
 //=======================================================================
 //class    : GEOMAlgo_GluerAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
 class GEOMAlgo_GluerAlgo {
 public:
 
-  Standard_EXPORT 
+  Standard_EXPORT
     GEOMAlgo_GluerAlgo();
 
-  Standard_EXPORT 
+  Standard_EXPORT
     virtual ~GEOMAlgo_GluerAlgo();
 
-  Standard_EXPORT 
+  Standard_EXPORT
     virtual void SetArgument(const TopoDS_Shape& theShape) ;
 
-  Standard_EXPORT 
+  Standard_EXPORT
     const TopoDS_Shape& Argument() const;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     void SetTolerance(const Standard_Real aT) ;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     Standard_Real Tolerance() const;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     void SetCheckGeometry(const Standard_Boolean aFlag) ;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     Standard_Boolean CheckGeometry() const;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     virtual  void Perform() ;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     virtual  void Clear() ;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     void SetContext(const Handle(IntTools_Context)&) ;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     const Handle(IntTools_Context)& Context() ;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     const TopTools_DataMapOfShapeListOfShape& Images() const;
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     const TopTools_DataMapOfShapeShape& Origins() const;
 
 protected:
@@ -92,7 +92,7 @@ protected:
   Handle(IntTools_Context) myContext;
   TopTools_DataMapOfShapeListOfShape myImages;
   TopTools_DataMapOfShapeShape myOrigins;
-  
+
 private:
 };
 #endif

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -36,7 +36,7 @@
 
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_PaveFiller::NMTTools_PaveFiller()
 {
@@ -49,7 +49,7 @@
 }
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_PaveFiller::~NMTTools_PaveFiller()
 {
@@ -57,19 +57,19 @@
 }
 //=======================================================================
 // function: Clear
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Clear()
 {
   if (myDSIt) {
     delete myDSIt;
-  } 
+  }
   if (myDS) {
     delete myDS;
   }
   myDSIt=NULL;
   myDS=NULL;
-  
+
   if (myIP) {
     delete myIP;
   }
@@ -77,7 +77,7 @@
 }
 //=======================================================================
 // function: SetCompositeShape
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::SetCompositeShape(const TopoDS_Shape& aS)
 {
@@ -85,7 +85,7 @@
 }
 //=======================================================================
 // function: CompositeShape
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& NMTTools_PaveFiller::CompositeShape()const
 {
@@ -93,7 +93,7 @@
 }
 //=======================================================================
 // function:  DS
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PShapesDataStructure NMTTools_PaveFiller::DS()
 {
@@ -101,7 +101,7 @@
 }
 //=======================================================================
 // function: DSIt
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PIterator NMTTools_PaveFiller::DSIt()
 {
@@ -109,7 +109,7 @@
 }
 //=======================================================================
 // function:  IP
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PInterfPool NMTTools_PaveFiller::IP()
 {
@@ -117,7 +117,7 @@
 }
 //=======================================================================
 // function:IsDone
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::IsDone() const
 {
@@ -125,7 +125,7 @@
 }
 //=======================================================================
 // function: Context
-// purpose: 
+// purpose:
 //=======================================================================
   const Handle(IntTools_Context)& NMTTools_PaveFiller::Context() const
 {
@@ -133,7 +133,7 @@
 }
 //=======================================================================
 // function: PavePool
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_PavePool& NMTTools_PaveFiller::PavePool() const
 {
@@ -141,7 +141,7 @@
 }
 //=======================================================================
 // function: ChangePavePool
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePool()
 {
@@ -149,7 +149,7 @@
 }
 //=======================================================================
 // function: ChangePavePoolNew
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePoolNew()
 {
@@ -157,7 +157,7 @@
 }
 //=======================================================================
 // function:  CommonBlockPool
-// purpose: 
+// purpose:
 //=======================================================================
   const NMTTools_CommonBlockPool& NMTTools_PaveFiller::CommonBlockPool() const
 {
@@ -165,7 +165,7 @@
 }
 //=======================================================================
 // function:  ChangeCommonBlockPool
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlockPool& NMTTools_PaveFiller::ChangeCommonBlockPool()
 {
@@ -173,7 +173,7 @@
 }
 //=======================================================================
 // function:  SplitShapesPool
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_SplitShapesPool& NMTTools_PaveFiller::SplitShapesPool() const
 {
@@ -181,7 +181,7 @@
 }
 //=======================================================================
 // function:  ChangeSplitShapesPool
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_SplitShapesPool& NMTTools_PaveFiller::ChangeSplitShapesPool()
 {
@@ -189,7 +189,7 @@
 }
 //=======================================================================
 // function: Init
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Init()
 {
@@ -217,13 +217,13 @@
   // 4
   myIP=new NMTDS_InterfPool;
   //
-  // 5 
+  // 5
   myContext=new IntTools_Context;
 }
 
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Perform()
 {
@@ -239,7 +239,7 @@
     //
     // 2.VE
     myPavePool.Resize (myNbEdges);
-    
+
     PrepareEdges();
 
     PerformVE();
@@ -273,7 +273,7 @@
     RefinePavePool();
     //
     myPavePoolNew.Destroy();
-    
+
     MakeSplitEdges();
 
     UpdateCommonBlocks();
@@ -285,7 +285,7 @@
     //
     MakePCurves();
     //
-    // 7.Postprocessing 
+    // 7.Postprocessing
     UpdatePaveBlocks();
     //
     NMTTools_DEProcessor aDEP(*this);

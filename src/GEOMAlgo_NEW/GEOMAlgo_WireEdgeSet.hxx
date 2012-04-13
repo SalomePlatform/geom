@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,7 +21,7 @@
 //
 
 // File:        GEOMAlgo_WireEdgeSet.hxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
@@ -37,31 +37,31 @@
 
 //=======================================================================
 //function : GEOMAlgo_WireEdgeSet
-//purpose  : 
+//purpose  :
 //=======================================================================
 class GEOMAlgo_WireEdgeSet  {
  public:
   Standard_EXPORT
     GEOMAlgo_WireEdgeSet();
-  
+
   Standard_EXPORT
     void Clear() ;
-  
+
   Standard_EXPORT
     void SetFace(const TopoDS_Face& aF) ;
-  
+
   Standard_EXPORT
     const TopoDS_Face& Face() const;
-  
+
   Standard_EXPORT
     void AddStartElement(const TopoDS_Shape& sS) ;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& StartElements() const;
-  
+
   Standard_EXPORT
     void AddShape(const TopoDS_Shape& sS) ;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& Shapes() const;
 

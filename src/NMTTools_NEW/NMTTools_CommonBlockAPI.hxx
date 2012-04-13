@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -41,28 +41,28 @@
 
 //=======================================================================
 //class    : NMTTools_CommonBlockAPI
-//purpose  : 
+//purpose  :
 //=======================================================================
-class NMTTools_CommonBlockAPI  
+class NMTTools_CommonBlockAPI
 {
  public:
   Standard_EXPORT
     NMTTools_CommonBlockAPI(const NMTTools_ListOfCommonBlock& aList);
-  
+
 //! Selector <br>
   Standard_EXPORT
     const NMTTools_ListOfCommonBlock& List() const;
-  
+
 //! Returns all PaveBlock-s (from the list) that are <br>
 //! common for the given edge with  DS-index <anE> <br>
   Standard_EXPORT
     const BOPTools_ListOfPaveBlock& CommonPaveBlocks(const Standard_Integer anE) const;
-  
+
 //! Returns TRUE if given PaveBlock <aPB> is <br>
 //! common for the Blocks from the list <br>
   Standard_EXPORT
     Standard_Boolean IsCommonBlock(const BOPTools_PaveBlock& aPB) const;
-  
+
   Standard_EXPORT
     NMTTools_CommonBlock& CommonBlock(const BOPTools_PaveBlock& aPB) const;
 protected:

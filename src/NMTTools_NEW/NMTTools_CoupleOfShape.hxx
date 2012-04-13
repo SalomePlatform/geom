@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -34,23 +34,23 @@
 
 //=======================================================================
 //class    : NMTTools_CoupleOfShape
-//purpose  : 
+//purpose  :
 //=======================================================================
-class NMTTools_CoupleOfShape  
+class NMTTools_CoupleOfShape
 {
  public:
-  Standard_EXPORT   
+  Standard_EXPORT
     NMTTools_CoupleOfShape();
-  
-  Standard_EXPORT     
+
+  Standard_EXPORT
     void SetShape1(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void SetShape2(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape1() const;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape2() const;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,7 +21,7 @@
 //
 
 // File:        GEOMAlgo_BuilderFace.cxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //
 #include <GEOMAlgo_BuilderFace.hxx>
@@ -86,7 +86,7 @@ static
 
                                 const TopTools_IndexedMapOfShape& );
 
-static 
+static
   Standard_Boolean IsInside(const TopoDS_Shape& ,
                             const TopoDS_Shape& ,
                             const Handle(IntTools_Context)& );
@@ -95,8 +95,8 @@ static
                          TopTools_ListOfShape& );
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_BuilderFace::GEOMAlgo_BuilderFace()
 :
@@ -105,14 +105,14 @@ static
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_BuilderFace::~GEOMAlgo_BuilderFace()
 {
 }
 //=======================================================================
 //function : SetFace
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::SetFace(const TopoDS_Face& theFace)
 {
@@ -120,7 +120,7 @@ static
 }
 //=======================================================================
 //function : Face
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Face& GEOMAlgo_BuilderFace::Face()const
 {
@@ -128,7 +128,7 @@ static
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::Perform()
 {
@@ -163,7 +163,7 @@ static
 }
 //=======================================================================
 //function :PerformShapesToAvoid
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformShapesToAvoid()
 {
@@ -234,12 +234,12 @@ static
       break;
     }
     //
-  }//while (1) 
+  }//while (1)
   //printf(" EdgesToAvoid=%d, iCnt=%d\n", EdgesToAvoid.Extent(), iCnt);
-}  
+}
 //=======================================================================
 //function : PerformLoops
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformLoops()
 {
@@ -252,11 +252,11 @@ static
   TopTools_IndexedDataMapOfShapeListOfShape aVEMap;
   TopTools_MapOfOrientedShape aMAdded;
   TopoDS_Iterator aItW;
-  BRep_Builder aBB; 
+  BRep_Builder aBB;
   GEOMAlgo_WireEdgeSet aWES;
   GEOMAlgo_WESCorrector aWESCor;
   //
-  // 1. Usual Wires 
+  // 1. Usual Wires
   myLoops.Clear();
   aWES.SetFace(myFace);
   //
@@ -282,7 +282,7 @@ static
   //modified by NIZNHY-PKV Tue Aug  5 15:09:29 2008f
   // Post Treatment
   TopTools_MapOfOrientedShape aMEP;
-  // 
+  //
   // a. collect all edges that are in loops
   aIt.Initialize (myLoops);
   for (; aIt.More(); aIt.Next()) {
@@ -293,7 +293,7 @@ static
       aMEP.Add(aE);
     }
   }
-  // 
+  //
   // b. collect all edges that are to avoid
   aItM.Initialize(myShapesToAvoid);
   for (; aItM.More(); aItM.Next()) {
@@ -343,7 +343,7 @@ static
         const TopoDS_Vertex& aV = TopoDS::Vertex(aItE.Value());
         const TopTools_ListOfShape& aLE=aVEMap.FindFromKey(aV);
         aIt.Initialize(aLE);
-        for (; aIt.More()&&bFlag; aIt.Next()) { 
+        for (; aIt.More()&&bFlag; aIt.Next()) {
           const TopoDS_Shape& aEx=aIt.Value();
           if (aMAdded.Add(aEx)) {
             aBB.Add(aW, aEx);
@@ -351,7 +351,7 @@ static
               bFlag=!bFlag;
             }
           }
-        }//for (; aIt.More(); aIt.Next()) { 
+        }//for (; aIt.More(); aIt.Next()) {
       }//for (; aItE.More(); aItE.Next()) {
     }//for (; aItW.More(); aItW.Next()) {
     myLoopsInternal.Append(aW);
@@ -359,7 +359,7 @@ static
 }
 //=======================================================================
 //function : PerformAreas
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformAreas()
 {
@@ -367,7 +367,7 @@ static
   //
   Standard_Boolean bIsGrowth, bIsHole;
   Standard_Real aTol;
-  TopTools_ListOfShape aNewFaces, aHoleWires; 
+  TopTools_ListOfShape aNewFaces, aHoleWires;
   TopoDS_Shape anInfinitePointShape;
   TopTools_DataMapOfShapeShape aInOutMap;
   TopTools_DataMapOfShapeListOfShape aMSH;
@@ -398,7 +398,7 @@ static
       aNewFaces.Append (aFace);
     }
     else{
-      // check if a wire is a hole 
+      // check if a wire is a hole
       //XX
       //bIsHole=IsHole(aWire, myFace, myContext);
       bIsHole=GEOMAlgo_BuilderTools::IsHole(aWire, myFace);
@@ -470,20 +470,20 @@ static
       aBB.Add (aF, aHole);
     }
     //
-    // update classifier 
+    // update classifier
     aTol=BRep_Tool::Tolerance(aF);
     IntTools_FClass2d& aClsf=myContext->FClass2d(aF);
     aClsf.Init(aF, aTol);
   }
   //
-  // These aNewFaces are draft faces that 
+  // These aNewFaces are draft faces that
   // do not contain any internal shapes
   //
   myAreas.Append(aNewFaces);
 }
 //=======================================================================
 //function : PerformInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderFace::PerformInternalShapes()
 {
@@ -493,11 +493,11 @@ static
   if (!aNbWI) {// nothing to do
     return;
   }
-  // 
+  //
   //Standard_Real aTol;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aIt1, aIt2;
-  TopoDS_Iterator aIt; 
+  TopoDS_Iterator aIt;
   TopTools_MapOfShape aME, aMEP;
   TopTools_MapIteratorOfMapOfShape aItME;
   TopTools_IndexedDataMapOfShapeListOfShape aMVE;
@@ -559,7 +559,7 @@ static
 }
 //=======================================================================
 //function : MakeInternalWires
-//purpose  : 
+//purpose  :
 //=======================================================================
 void MakeInternalWires(const TopTools_MapOfShape& theME,
                        TopTools_ListOfShape& theWires)
@@ -585,7 +585,7 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
     //
     // make a new shell
     TopoDS_Wire aW;
-    aBB.MakeWire(aW);    
+    aBB.MakeWire(aW);
     aEE.Orientation(TopAbs_INTERNAL);
     aBB.Add(aW, aEE);
     //
@@ -598,7 +598,7 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
         const TopoDS_Shape& aV =aExp.Current();
         const TopTools_ListOfShape& aLE=aMVE.FindFromKey(aV);
         aItE.Initialize(aLE);
-        for (; aItE.More(); aItE.Next()) { 
+        for (; aItE.More(); aItE.Next()) {
           TopoDS_Shape aEL=aItE.Value();
           if (aAddedMap.Add(aEL)){
             aEL.Orientation(TopAbs_INTERNAL);
@@ -612,7 +612,7 @@ void MakeInternalWires(const TopTools_MapOfShape& theME,
 }
 //=======================================================================
 //function : IsInside
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theHole,
                           const TopoDS_Shape& theF2,
@@ -620,7 +620,7 @@ Standard_Boolean IsInside(const TopoDS_Shape& theHole,
 {
   Standard_Boolean bRet;
   Standard_Real aT, aU, aV;
-  
+
   TopAbs_State aState;
   TopExp_Explorer aExp;
   TopTools_IndexedMapOfShape aME2;
@@ -653,14 +653,14 @@ Standard_Boolean IsInside(const TopoDS_Shape& theHole,
 
 //=======================================================================
 //function : IsGrowthWire
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsGrowthWire(const TopoDS_Shape& theWire,
                               const TopTools_IndexedMapOfShape& theMHE)
 {
   Standard_Boolean bRet;
   TopoDS_Iterator aIt;
-  // 
+  //
   bRet=Standard_False;
   if (theMHE.Extent()) {
     aIt.Initialize(theWire);
@@ -683,7 +683,7 @@ Standard_Boolean IsGrowthWire(const TopoDS_Shape& theWire,
 /*
 //=======================================================================
 //function : IsInside
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theHole,
                           const TopoDS_Shape& theF2,

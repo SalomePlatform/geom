@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	GEOMAlgo_IndexedDataMapOfIntegerShape.hxx
 // Created:	Wed Feb 22 11:22:18 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -27,7 +27,7 @@
 
 
 
-#include <TopoDS_Shape.hxx>  
+#include <TopoDS_Shape.hxx>
 #include <Standard_Integer.hxx>
 #include <TColStd_MapIntegerHasher.hxx>
 
@@ -35,8 +35,8 @@
 #include <NCollection_IndexedDataMap.hxx>
 
 
-typedef NCollection_IndexedDataMap<Standard_Integer, TopoDS_Shape, TColStd_MapIntegerHasher> GEOMAlgo_IndexedDataMapOfIntegerShape; 
- 
+typedef NCollection_IndexedDataMap<Standard_Integer, TopoDS_Shape, TColStd_MapIntegerHasher> GEOMAlgo_IndexedDataMapOfIntegerShape;
+
 #undef _NCollection_MapHasher
 
 

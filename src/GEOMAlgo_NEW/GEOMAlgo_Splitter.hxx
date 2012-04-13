@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -19,7 +19,6 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//
 //  File:   GEOMAlgo_Splitter.hxx
 //
 //  Author: Peter KURNEV
@@ -39,9 +38,9 @@
 //! Implementation of Gluing Operation Algorithm (GA) <br>
 //=======================================================================
 //function : GEOMAlgo_Splitter
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_Splitter  : public GEOMAlgo_Builder 
+class GEOMAlgo_Splitter  : public GEOMAlgo_Builder
 {
  public:
 
@@ -51,28 +50,28 @@ class GEOMAlgo_Splitter  : public GEOMAlgo_Builder
 
   Standard_EXPORT
     virtual ~GEOMAlgo_Splitter();
-  
+
   //!  Clears internal fields and arguments <br>
   Standard_EXPORT
     virtual  void Clear() ;
-  
+
   //!  Adds Tool argument theShape of the operation <br>
   Standard_EXPORT
     virtual  void AddTool(const TopoDS_Shape& theShape) ;
-  
+
   //!  Returns the arguments of the operation <br>
   Standard_EXPORT
     const TopTools_ListOfShape& Tools() const;
-  
+
   Standard_EXPORT
     void SetLimit(const TopAbs_ShapeEnum aLimit) ;
-  
+
   Standard_EXPORT
     TopAbs_ShapeEnum Limit() const;
-  
+
   Standard_EXPORT
     void SetLimitMode(const Standard_Integer aLimitMode) ;
-  
+
   Standard_EXPORT
     Standard_Integer LimitMode() const;
   //!  Adds Tool arguments of the operation as <br>

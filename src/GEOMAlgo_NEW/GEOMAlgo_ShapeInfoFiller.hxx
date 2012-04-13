@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,81 +36,81 @@
 
 //=======================================================================
 //class    : GEOMAlgo_ShapeInfoFiller
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_ShapeInfoFiller  : public GEOMAlgo_Algo 
+class GEOMAlgo_ShapeInfoFiller  : public GEOMAlgo_Algo
 {
  public:
   Standard_EXPORT
     GEOMAlgo_ShapeInfoFiller();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_ShapeInfoFiller();
-  
+
   Standard_EXPORT
     void SetShape(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape() const;
-  
+
   Standard_EXPORT
     void SetTolerance(const Standard_Real aT) ;
-  
+
   Standard_EXPORT
     Standard_Real Tolerance() const;
-  
+
   Standard_EXPORT
     const GEOMAlgo_ShapeInfo& Info() const;
-  
+
   Standard_EXPORT
     const GEOMAlgo_ShapeInfo& Info(const TopoDS_Shape& aS) const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
 
  protected:
   Standard_EXPORT
     virtual  void CheckData() ;
-  
+
   Standard_EXPORT
     void FillNbSubShapes(const TopoDS_Shape& aS,GEOMAlgo_ShapeInfo& aInfo) ;
-  
+
   Standard_EXPORT
     void FillSubShapes(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillShape(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillVertex(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillEdge(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillFace(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillSolid(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillContainer(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void FillDetails(const TopoDS_Face& aF,const gp_Pln& aPln) ;
-  
+
   Standard_EXPORT
     void FillDetails(const TopoDS_Face& aF,const gp_Sphere& aSph) ;
-  
+
   Standard_EXPORT
     void FillDetails(const TopoDS_Face& aF,const gp_Cylinder& aCyl) ;
-  
+
   Standard_EXPORT
     void FillDetails(const TopoDS_Face& aF,const gp_Cone& aCone) ;
-  
+
   Standard_EXPORT
     void FillDetails(const TopoDS_Face& aF,const gp_Torus& aTorus) ;
-  
+
   Standard_EXPORT
     void FillDetails(const TopoDS_Solid& aS) ;
 

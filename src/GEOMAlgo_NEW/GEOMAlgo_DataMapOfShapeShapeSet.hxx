@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	GEOMAlgo_DataMapOfShapeShapeSet.hxx
 // Created:	Wed Feb 22 08:36:15 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -33,9 +33,9 @@
 #include <NCollection_DataMap.hxx>
 
 
-typedef NCollection_DataMap<TopoDS_Shape, GEOMAlgo_ShapeSet, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapeShapeSet; 
+typedef NCollection_DataMap<TopoDS_Shape, GEOMAlgo_ShapeSet, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapeShapeSet;
 typedef GEOMAlgo_DataMapOfShapeShapeSet::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet;
- 
+
 #undef _NCollection_MapHasher
 
 

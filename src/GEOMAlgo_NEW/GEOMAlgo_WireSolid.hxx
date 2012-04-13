@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -34,24 +34,24 @@
 
 //=======================================================================
 //class    : GEOMAlgo_WireSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_WireSolid  : public GEOMAlgo_ShapeSolid 
+class GEOMAlgo_WireSolid  : public GEOMAlgo_ShapeSolid
 {
  public:
   Standard_EXPORT
     GEOMAlgo_WireSolid();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_WireSolid();
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
- 
+
  protected:
   Standard_EXPORT
     virtual  void Prepare() ;
-  
+
   Standard_EXPORT
     virtual  void BuildResult() ;
 };

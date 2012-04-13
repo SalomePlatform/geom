@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,19 +15,20 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:	GEOMAlgo_ListOfCoupleOfShapes.hxx
 // Created:	Wed Feb 22 08:23:27 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 #ifndef GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
 #define GEOMAlgo_ListOfCoupleOfShapes_HeaderFile
 
-#include <NCollection_List.hxx>   
+#include <NCollection_List.hxx>
 #include <GEOMAlgo_CoupleOfShapes.hxx>
 
-typedef NCollection_List<GEOMAlgo_CoupleOfShapes> GEOMAlgo_ListOfCoupleOfShapes; 
+typedef NCollection_List<GEOMAlgo_CoupleOfShapes> GEOMAlgo_ListOfCoupleOfShapes;
 typedef GEOMAlgo_ListOfCoupleOfShapes::Iterator GEOMAlgo_ListIteratorOfListOfCoupleOfShapes;
 
 #endif

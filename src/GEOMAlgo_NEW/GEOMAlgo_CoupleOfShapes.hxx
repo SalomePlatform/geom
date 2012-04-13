@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -31,29 +31,29 @@
 
 //=======================================================================
 //class    : GEOMAlgo_CoupleOfShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_CoupleOfShapes  
+class GEOMAlgo_CoupleOfShapes
 {
  public:
   Standard_EXPORT
     GEOMAlgo_CoupleOfShapes();
-  
+
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,const TopoDS_Shape& aS2) ;
-  
+
   Standard_EXPORT
     void SetShape1(const TopoDS_Shape& aS1) ;
-  
+
   Standard_EXPORT
     void SetShape2(const TopoDS_Shape& aS2) ;
-  
+
   Standard_EXPORT
     void Shapes(TopoDS_Shape& aS1,TopoDS_Shape& aS2) const;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape1() const;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape2() const;
 

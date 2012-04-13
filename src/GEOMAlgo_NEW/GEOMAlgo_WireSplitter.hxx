@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_WireSplitter.hxx
 // Author:      Peter KURNEV
@@ -39,35 +40,35 @@
 //!  . <br>
 //=======================================================================
 //class    : GEOMAlgo_WireSplitter
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_WireSplitter  : public GEOMAlgo_Algo 
+class GEOMAlgo_WireSplitter  : public GEOMAlgo_Algo
 {
 public:
-  Standard_EXPORT   
+  Standard_EXPORT
     GEOMAlgo_WireSplitter();
 
-  Standard_EXPORT 
+  Standard_EXPORT
     virtual ~GEOMAlgo_WireSplitter();
-  
+
   Standard_EXPORT
     void SetFace(const TopoDS_Face& aF) ;
-  
+
   Standard_EXPORT
     void SetEdges(const TopTools_ListOfShape& aLE) ;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& Edges() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     Standard_Boolean IsNothingToDo() const;
-  
+
   Standard_EXPORT
     const TopoDS_Face& Face() const;
-  
+
   Standard_EXPORT
     const BOPTColStd_ListOfListOfShape& Shapes() const;
 

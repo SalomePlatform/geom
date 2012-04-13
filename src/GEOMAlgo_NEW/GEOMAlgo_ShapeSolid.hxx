@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -39,27 +39,27 @@
 
 //=======================================================================
 //function : GEOMAlgo_ShapeSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_ShapeSolid  : public GEOMAlgo_Algo 
+class GEOMAlgo_ShapeSolid  : public GEOMAlgo_Algo
 {
  public:
   Standard_EXPORT
     void SetFiller(const BOPTools_DSFiller& aDSF) ;
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_ShapeSolid();
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& Shapes(const TopAbs_State aState) const;
 
 protected:
   Standard_EXPORT
     GEOMAlgo_ShapeSolid();
-  
+
   Standard_EXPORT
     virtual  void BuildResult()  = 0;
-  
+
   Standard_EXPORT
     virtual  void Prepare()  = 0;
 

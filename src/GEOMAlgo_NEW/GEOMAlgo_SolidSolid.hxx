@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -35,9 +35,9 @@
 
 //=======================================================================
 //function : GEOMAlgo_SolidSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid 
+class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid
 {
  public:
   Standard_EXPORT
@@ -45,13 +45,13 @@ class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid
 
   Standard_EXPORT
     virtual ~GEOMAlgo_SolidSolid();
-  
-  Standard_EXPORT   
+
+  Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     void SetShape2(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape2() const;
 

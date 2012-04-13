@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	NMTTools_DataMapOfIntegerListOfPaveBlock.hxx
 // Created:	Mon Feb 20 09:27:40 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -32,9 +32,9 @@
 #define _NCollection_MapHasher
 #include <NCollection_DataMap.hxx>
 
-typedef NCollection_DataMap<Standard_Integer, BOPTools_ListOfPaveBlock, TColStd_MapIntegerHasher> NMTTools_DataMapOfIntegerListOfPaveBlock; 
-typedef NMTTools_DataMapOfIntegerListOfPaveBlock::Iterator NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock; 
- 
+typedef NCollection_DataMap<Standard_Integer, BOPTools_ListOfPaveBlock, TColStd_MapIntegerHasher> NMTTools_DataMapOfIntegerListOfPaveBlock;
+typedef NMTTools_DataMapOfIntegerListOfPaveBlock::Iterator NMTTools_DataMapIteratorOfDataMapOfIntegerListOfPaveBlock;
+
 #undef _NCollection_MapHasher
 
 

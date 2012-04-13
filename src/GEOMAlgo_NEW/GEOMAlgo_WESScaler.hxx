@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,8 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_WESScaler.hxx
-// Created:	
-// Author:	
+// Created:
+// Author:
 //		<pkv@VORTEX>
 
 #ifndef _GEOMAlgo_WESScaler_HeaderFile
@@ -35,9 +35,9 @@
 
 //=======================================================================
 //function : GEOMAlgo_WESScaler
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_WESScaler  : public GEOMAlgo_Algo 
+class GEOMAlgo_WESScaler  : public GEOMAlgo_Algo
 {
 public:
   //! Empty constructor <br>
@@ -46,47 +46,47 @@ public:
 
   Standard_EXPORT
     virtual ~GEOMAlgo_WESScaler();
-  
+
   //! Modifier <br>
   Standard_EXPORT
     void SetScale(const Standard_Real aWES) ;
-  
+
   //! Selector <br>
   Standard_EXPORT
     Standard_Real Scale() const;
-  
+
   Standard_EXPORT
     void SetFace(const TopoDS_Face& aF) ;
-  
+
   Standard_EXPORT
     const TopoDS_Face& Face() const;
-  
+
   Standard_EXPORT
     void SetEdges(const TopTools_ListOfShape& aLE) ;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& Edges() const;
-  
+
   //!  Performs the algorithm <br>
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     const TopoDS_Face& FaceScaled() const;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& EdgesScaled() const;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Image(const TopoDS_Shape& aS) const;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Origin(const TopoDS_Shape& aS) const;
-  
+
   //! Selector <br>
   Standard_EXPORT
     const GEOMAlgo_DataMapOfOrientedShapeShape& Images() const;
-  
+
   //! Selector <br>
   Standard_EXPORT
     const GEOMAlgo_DataMapOfOrientedShapeShape& Origins() const;
@@ -95,8 +95,8 @@ public:
 
   //!  Performs the algorithm <br>
   Standard_EXPORT   virtual  void CheckData() ;
-  
-  
+
+
   Standard_Real myScale;
   TopoDS_Face myFace;
   TopTools_ListOfShape myEdges;

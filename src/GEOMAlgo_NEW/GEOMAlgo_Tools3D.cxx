@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -1182,9 +1182,9 @@ void GetApproxNormalToFaceOnEdge (const TopoDS_Edge& aEx,
 //modified by NIZNHY-PKV Tue Nov 22 10:36:59 2011f
 //=======================================================================
 //function : PntInFace
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF, 
+Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF,
 					     gp_Pnt& theP,
 					     gp_Pnt2d& theP2D)
 {
@@ -1210,8 +1210,8 @@ Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF,
   aTolTangfIntr=1.e-10;
   //
   Geom2dHatch_Intersector aIntr(aTotArcIntr, aTolTangfIntr);
-  Geom2dHatch_Hatcher aHatcher(aIntr, 
-			       aTolHatch2D, aTolHatch3D, 
+  Geom2dHatch_Hatcher aHatcher(aIntr,
+			       aTolHatch2D, aTolHatch3D,
 			       Standard_True, Standard_False);
   //
   iErr=0;
@@ -1219,7 +1219,7 @@ Standard_Integer GEOMAlgo_Tools3D::PntInFace(const TopoDS_Face& aF,
   //
   aFF=aF;
   aFF.Orientation (TopAbs_FORWARD);
-  // 
+  //
   aS=BRep_Tool::Surface(aFF);
   BRepTools::UVBounds(aFF, aUMin, aUMax, aVMin, aVMax);
   //

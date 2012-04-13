@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:      BlockFix_UnionEdges.cxx
 // Created:   07.12.04 15:27:30
@@ -141,9 +142,9 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       Handle(Geom_Line) L2 = Handle(Geom_Line)::DownCast(c3d2);
       gp_Dir Dir1 = L1->Position().Direction();
       gp_Dir Dir2 = L2->Position().Direction();
-      //if(!Dir1.IsEqual(Dir2,Precision::Angular())) { 
-      //if(!Dir1.IsParallel(Dir2,Precision::Angular())) { 
-      if(!Dir1.IsParallel(Dir2,Tol)) { 
+      //if(!Dir1.IsEqual(Dir2,Precision::Angular())) {
+      //if(!Dir1.IsParallel(Dir2,Precision::Angular())) {
+      if(!Dir1.IsParallel(Dir2,Tol)) {
         continue;
       }
       // can union lines => create new edge

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -39,23 +39,23 @@ DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
 
 //=======================================================================
 //class    : GEOMAlgo_HAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_HAlgo : public MMgt_TShared 
+class GEOMAlgo_HAlgo : public MMgt_TShared
 {
  public:
   Standard_EXPORT
     virtual  void Perform()  = 0;
-  
+
   Standard_EXPORT
     virtual  void CheckData() ;
-  
+
   Standard_EXPORT
     virtual  void CheckResult() ;
-  
+
   Standard_EXPORT
     Standard_Integer ErrorStatus() const;
-  
+
   Standard_EXPORT
     Standard_Integer WarningStatus() const;
 

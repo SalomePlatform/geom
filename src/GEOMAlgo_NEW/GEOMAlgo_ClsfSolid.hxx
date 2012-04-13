@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -36,26 +36,26 @@ DEFINE_STANDARD_HANDLE(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 
 //=======================================================================
 //class : GEOMAlgo_ClsfSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_ClsfSolid : public GEOMAlgo_Clsf 
+class GEOMAlgo_ClsfSolid : public GEOMAlgo_Clsf
 {
  public:
   Standard_EXPORT
     GEOMAlgo_ClsfSolid();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_ClsfSolid();
-  
+
   Standard_EXPORT
     void SetShape(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     virtual  void CheckData() ;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -75,7 +75,7 @@
 
 //=======================================================================
 //function : GEOMAlgo_ShellSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShellSolid::GEOMAlgo_ShellSolid()
 :
@@ -84,16 +84,16 @@ GEOMAlgo_ShellSolid::GEOMAlgo_ShellSolid()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShellSolid::~GEOMAlgo_ShellSolid()
 {
 }
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
-void GEOMAlgo_ShellSolid::Perform() 
+void GEOMAlgo_ShellSolid::Perform()
 {
   myErrorStatus=0;
   //
@@ -124,12 +124,12 @@ void GEOMAlgo_ShellSolid::Perform()
 }
 //=======================================================================
 // function: Prepare
-// purpose: 
+// purpose:
 //=======================================================================
-void GEOMAlgo_ShellSolid::Prepare() 
+void GEOMAlgo_ShellSolid::Prepare()
 {
   const BOPTools_PaveFiller& aPaveFiller=myDSFiller->PaveFiller();
-  // 
+  //
   // 1 States
   BOPTools_SolidStateFiller aStateFiller(aPaveFiller);
   aStateFiller.Do();
@@ -147,9 +147,9 @@ void GEOMAlgo_ShellSolid::Prepare()
 }
 //=================================================================================
 // function: BuildResult
-// purpose: 
+// purpose:
 //=================================================================================
-void GEOMAlgo_ShellSolid::BuildResult() 
+void GEOMAlgo_ShellSolid::BuildResult()
 {
   Standard_Boolean bIsTouchCase;
   Standard_Integer i, j, nF1, nF2, aNbFFs, aNbS, aNbCurves, nSp, iRank1;
@@ -261,7 +261,7 @@ void GEOMAlgo_ShellSolid::BuildResult()
           aTol=1.e-7;
           //
           BOPTools_Tools3D::PointNearEdge(aE, aF1, aP2D, aP3D);
-          const TopoDS_Solid& aRefSolid=(myRank==1) ? 
+          const TopoDS_Solid& aRefSolid=(myRank==1) ?
             TopoDS::Solid(aDS.Tool()) : TopoDS::Solid(aDS.Object());
           //
           BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)& aPaveFiller;
@@ -276,15 +276,15 @@ void GEOMAlgo_ShellSolid::BuildResult()
           else if (aSt==TopAbs_OUT) {
             myLSOUT.Append(aF1);
           }
-        } 
-        break; 
-      } // if (aNbPB<2) { 
+        }
+        break;
+      } // if (aNbPB<2) {
     } //for (; anExp.More(); anExp.Next())
-  } 
+  }
 }
 //=======================================================================
 // function: DetectSDFaces
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_ShellSolid::DetectSDFaces()
 {
@@ -299,9 +299,9 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
   aNb=aFFs.Extent();
   for (i=1; i<=aNb; i++) {
     bFlag=Standard_False;
-    
+
     BOPTools_SSInterference& aFF=aFFs(i);
-    
+
     nF1=aFF.Index1();
     nF2=aFF.Index2();
     const TopoDS_Face& aF1=TopoDS::Face(aDS.Shape(nF1));
@@ -314,11 +314,11 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
     if (!aNbSps) {
       continue;
     }
-    
+
     const BOPTools_PaveBlock& aPB=aLPB.First();
     const TopoDS_Edge& aSpE=TopoDS::Edge(aDS.Shape(aPB.Edge()));
-    
-    BOPTools_Tools3D::GetNormalToFaceOnEdge (aSpE, aF1, aDNF1); 
+
+    BOPTools_Tools3D::GetNormalToFaceOnEdge (aSpE, aF1, aDNF1);
     BOPTools_Tools3D::GetNormalToFaceOnEdge (aSpE, aF2, aDNF2);
     iSenseFlag=BOPTools_Tools3D::SenseFlag (aDNF1, aDNF2);
     //
@@ -327,13 +327,13 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
     //
       TopoDS_Face aF1FWD=aF1;
       aF1FWD.Orientation (TopAbs_FORWARD);
-      
+
       BOP_WireEdgeSet aWES (aF1FWD);
       BOP_SDFWESFiller aWESFiller(nF1, nF2, *myDSFiller);
       aWESFiller.SetSenseFlag(iSenseFlag);
       aWESFiller.SetOperation(BOP_COMMON);
       aWESFiller.Do(aWES);
-      
+
       BOP_FaceBuilder aFB;
       aFB.Do(aWES);
       const TopTools_ListOfShape& aLF=aFB.NewFaces();
@@ -348,7 +348,7 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
           //
           Standard_Boolean bIsValidIn2D, bNegativeFlag;
           bIsValidIn2D=BOPTools_Tools3D::IsValidArea (aFaceResult, bNegativeFlag);
-          if (bIsValidIn2D) { 
+          if (bIsValidIn2D) {
             //if(CheckSameDomainFaceInside(aFaceResult, aF2)) {
             iZone=1;
             break;
@@ -357,15 +357,15 @@ void GEOMAlgo_ShellSolid::DetectSDFaces()
           //
         }
       }
-      
-      if (iZone) { 
+
+      if (iZone) {
         bFlag=Standard_True;
         aFF.SetStatesMap(aWESFiller.StatesMap());
       }
-      
+
     }// if (iSenseFlag)
-  
+
   aFF.SetTangentFacesFlag(bFlag);
   aFF.SetSenseFlag (iSenseFlag);
-  }// end of for (i=1; i<=aNb; i++) 
+  }// end of for (i=1; i<=aNb; i++)
 }

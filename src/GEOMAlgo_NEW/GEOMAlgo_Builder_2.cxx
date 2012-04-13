@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -314,7 +314,7 @@ void GEOMAlgo_Builder::BuildSplitFaces()
       bIsDegenerated=BRep_Tool::Degenerated(aE);
       //modified by NIZNHY-PKV Wed Mar 07 07:46:09 2012f
       bIsClosed=IsClosed(aE, aF);
-      //bIsClosed=BRep_Tool::IsClosed(aE, aF); 
+      //bIsClosed=BRep_Tool::IsClosed(aE, aF);
       //modified by NIZNHY-PKV Wed Mar 07 07:46:13 2012t
       //
       const TopTools_ListOfShape& aLIE=myImages.Image(aE);
@@ -589,7 +589,7 @@ void GEOMAlgo_Builder::FillSameDomainFaces()
   // 2. Find Chains
   NMTTools_IndexedDataMapOfShapeIndexedMapOfShape aMC;
   //
-  NMTTools_Tools::FindChains(aLCS, aMC); 
+  NMTTools_Tools::FindChains(aLCS, aMC);
   //
   Standard_Boolean bIsImage;
   Standard_Integer aIx, aIxMin, aNbMSDF, k, aNbMFj;
@@ -940,7 +940,7 @@ void UpdateCandidates(const Standard_Integer theNF,
 //modified by NIZNHY-PKV Thu Feb 16 12:25:16 2012f
 //=======================================================================
 //function : IsClosed
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsClosed(const TopoDS_Edge& aE,
 			  const TopoDS_Face& aF)

@@ -1,23 +1,23 @@
-//  Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-//  Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-//  CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
 //
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License.
+// This library is free software; you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public
+// License as published by the Free Software Foundation; either
+// version 2.1 of the License.
 //
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
+// This library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
-//  See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+// See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 //  File:        NMTTools_PaveFiller_6.cxx
 //  Created:     Fri Dec 19 10:27:31 2003
@@ -243,7 +243,7 @@ void NMTTools_PaveFiller::MakeBlocks()
   //
   BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
   //
-  
+
   //
   // 1. Make Section Edges from intersection curves
   //    between each pair of faces
@@ -1289,14 +1289,14 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
 //
 //=======================================================================
 //function : FillFaceInfo
-//purpose  : 
+//purpose  :
 //=======================================================================
 void NMTTools_PaveFiller::FillFaceInfo()
 {
   Standard_Integer i, aNbS, aNbFFs, nF, aNbVFs, aNbEFs, j, n1, n2, nX, aNbF;
   TopAbs_ShapeEnum aType;
   TopoDS_Shape aS;
-  TColStd_ListIteratorOfListOfInteger aItF; 
+  TColStd_ListIteratorOfListOfInteger aItF;
   BOPTools_ListIteratorOfListOfPaveBlock anItPB;
   NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo aItMFI;
   NMTTools_ListIteratorOfListOfCommonBlock aItCB;
@@ -1437,19 +1437,19 @@ void NMTTools_PaveFiller::FillFaceInfo()
 //=======================================================================
 //function : CorrectTolR3D
 //purpose  : Attempt to correct the value of tolerance aTolR3D for
-//           the intersection curve in order to 
+//           the intersection curve in order to
 //           compel it to pass through the sticks.
-//           Prerequisites: 
+//           Prerequisites:
 //             2. The are based on B-Spline surfaces;
 //             1. There is at least the one intersection curve;
 //             2. The faces have stick vertices to catch the curve;
 //             3. The intersection angle is rather small (0.7-7 deg)
-//              
+//
 //=======================================================================
 void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
 					const TColStd_MapOfInteger& aMVStick,
 					Standard_Real& aTolR3D)
-     
+
 {
   Standard_Boolean bHasBounds;
   Standard_Integer i, nF[2], nV, aNbCurves;
@@ -1531,7 +1531,7 @@ void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
     }
   }
   //
-  
+
   aTolR=aTolVmax/aA;
   if (aTolR<aTolTresh) {
     aTolR3D=aTolR;
@@ -1550,7 +1550,7 @@ void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
   Standard_Boolean bIsClosed, bHasBounds, bAdded;
   Standard_Integer nVC, j;
   Standard_Real aT[2], aTolR3D, aTC, dT, aTx;
-  gp_Pnt aP[2] ; 
+  gp_Pnt aP[2] ;
   BOPTools_Pave aPVx;
   BOPTools_ListIteratorOfListOfPave aItLP;
   //
@@ -1569,7 +1569,7 @@ void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
   if (!bHasBounds){
     return;
   }
-  // 
+  //
   bAdded=Standard_False;
   dT=Precision::PConfusion();
   aTolR3D=aFFi.TolR3D();

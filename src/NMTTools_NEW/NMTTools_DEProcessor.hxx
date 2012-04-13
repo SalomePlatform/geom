@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -49,26 +49,26 @@
 //! <br>
 //=======================================================================
 //class    : NMTTools_DEProcessor
-//purpose  : 
+//purpose  :
 //=======================================================================
 class NMTTools_DEProcessor  {
 public:
 
 
-  
+
 //! Constructor <br>
 //! <br>
 //! Constructor <br>
 //! <br>
-  Standard_EXPORT  
+  Standard_EXPORT
     NMTTools_DEProcessor(NMTTools_PaveFiller& aFiller);
-  
+
 //! Launches the processor <br>
-  Standard_EXPORT 
+  Standard_EXPORT
     void Do() ;
-  
+
 //! Returns TRUE if it is Ok <br>
-  Standard_EXPORT 
+  Standard_EXPORT
     Standard_Boolean IsDone() const;
 
 
@@ -76,29 +76,29 @@ public:
 protected:
   Standard_EXPORT
     void FindDegeneratedEdges() ;
-  
+
   Standard_EXPORT
     void DoPaves() ;
-  
+
   Standard_EXPORT
     void FindPaveBlocks(const Standard_Integer nED,
 			const Standard_Integer nVD,
 			const Standard_Integer nFD,
 			BOPTools_ListOfPaveBlock& aLPB) ;
-  
+
   Standard_EXPORT
     void FillPaveSet(const Standard_Integer nED,
 		     const Standard_Integer nVD,
 		     const Standard_Integer nFD,
 		     const BOPTools_ListOfPaveBlock& aLPB) ;
-  
+
   Standard_EXPORT
     void FillSplitEdgesPool(const Standard_Integer nED) ;
-  
+
   Standard_EXPORT
     void MakeSplitEdges(const Standard_Integer nED,
 			const Standard_Integer nFD) ;
-  
+
   Standard_EXPORT
     void MakeSplitEdge(const TopoDS_Edge& aS1,
 		       const TopoDS_Face& aF,

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	NMTTools_IndexedDataMapOfShapePaveBlock.hxx
 // Created:	Mon Feb 20 11:55:34 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -32,8 +32,8 @@
 #define _NCollection_MapHasher
 #include <NCollection_IndexedDataMap.hxx>
 
-typedef NCollection_IndexedDataMap <TopoDS_Shape, BOPTools_PaveBlock, TopTools_ShapeMapHasher> NMTTools_IndexedDataMapOfShapePaveBlock; 
- 
+typedef NCollection_IndexedDataMap <TopoDS_Shape, BOPTools_PaveBlock, TopTools_ShapeMapHasher> NMTTools_IndexedDataMapOfShapePaveBlock;
+
 #undef _NCollection_MapHasher
 
 

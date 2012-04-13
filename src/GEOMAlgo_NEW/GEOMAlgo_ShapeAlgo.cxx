@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -30,25 +30,25 @@
 
 //=======================================================================
 //function : GEOMAlgo_ShapeAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeAlgo::GEOMAlgo_ShapeAlgo()
-: 
+:
   GEOMAlgo_Algo()
 {
   myTolerance=0.0001;
 }
-       
+
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeAlgo::~GEOMAlgo_ShapeAlgo()
 {
 }
 //=======================================================================
 //function : SetContext
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::SetContext(const Handle(IntTools_Context)& theContext)
 {
@@ -56,15 +56,15 @@ void GEOMAlgo_ShapeAlgo::SetContext(const Handle(IntTools_Context)& theContext)
 }
 //=======================================================================
 //function : Context
-//purpose  : 
+//purpose  :
 //=======================================================================
-const Handle(IntTools_Context)& GEOMAlgo_ShapeAlgo::Context()const 
+const Handle(IntTools_Context)& GEOMAlgo_ShapeAlgo::Context()const
 {
   return myContext;
 }
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::SetShape(const TopoDS_Shape& aS)
 {
@@ -72,7 +72,7 @@ void GEOMAlgo_ShapeAlgo::SetShape(const TopoDS_Shape& aS)
 }
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Shape()const
 {
@@ -80,7 +80,7 @@ const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Shape()const
 }
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::SetTolerance(const Standard_Real aT)
 {
@@ -88,7 +88,7 @@ void GEOMAlgo_ShapeAlgo::SetTolerance(const Standard_Real aT)
 }
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Real GEOMAlgo_ShapeAlgo::Tolerance()const
 {
@@ -96,7 +96,7 @@ Standard_Real GEOMAlgo_ShapeAlgo::Tolerance()const
 }
 //=======================================================================
 //function : Result
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Result()const
 {
@@ -104,7 +104,7 @@ const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Result()const
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::Perform()
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:	GEOMAlgo_GetInPlace_1.cxx
 // Author:	Peter KURNEV
@@ -63,29 +64,29 @@
 
 
 
-static 
-  Standard_Integer PntInEdge(const TopoDS_Edge& aF, 
+static
+  Standard_Integer PntInEdge(const TopoDS_Edge& aF,
 			     gp_Pnt& aP);
-static 
-  Standard_Integer PntInEdge(const TopoDS_Edge& aF, 
+static
+  Standard_Integer PntInEdge(const TopoDS_Edge& aF,
 			     gp_Pnt& aP,
 			     Standard_Real& aT);
-static 
-  Standard_Integer PntInFace(const TopoDS_Face& aF, 
+static
+  Standard_Integer PntInFace(const TopoDS_Face& aF,
 			     gp_Pnt& aP);
-static 
-  Standard_Integer PntInFace(const TopoDS_Face& aF, 
+static
+  Standard_Integer PntInFace(const TopoDS_Face& aF,
 			     gp_Pnt& aP,
 			     gp_Pnt2d& theP2D);
-static 
-  Standard_Integer PntInSolid(const TopoDS_Solid& aZ, 
+static
+  Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
 			      const Standard_Real aTol,
 			      gp_Pnt& aP);
-			      
+
 
 //=======================================================================
 //function : CheckCoincidence
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
 						       const TopoDS_Shape& aS2)
@@ -122,12 +123,12 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
     //
     else if (aType2==TopAbs_FACE) {
       const TopoDS_Face& aF2=*((TopoDS_Face*)&aS2);
-      iErr=PntInFace(aF2, aP2); 
+      iErr=PntInFace(aF2, aP2);
     }
     //
     else if (aType2==TopAbs_SOLID) {
       const TopoDS_Solid& aZ2=*((TopoDS_Solid*)&aS2);
-      iErr=PntInSolid(aZ2, myTolerance, aP2); 
+      iErr=PntInSolid(aZ2, myTolerance, aP2);
     }
     //
     else {
@@ -158,7 +159,7 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
       if (aDmin < myTolerance) {
 	dT=1.e-12;
 	BRep_Tool::Curve(aE1, aT1, aT2);
-        if(aT > (aT1-dT) && aT < (aT2+dT)) {  
+        if(aT > (aT1-dT) && aT < (aT2+dT)) {
 	  bOk=Standard_True;
 	}
       }
@@ -172,7 +173,7 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
     const TopoDS_Face& aF1=*((TopoDS_Face*)&aS1);
     //
     bOk=myContext->IsValidPointForFace(aP2, aF1, myTolerance);
-  }  
+  }
   //
   else if (aType1==TopAbs_SOLID) {
     const TopoDS_Solid& aZ1=*((TopoDS_Solid*)&aS1);
@@ -193,11 +194,11 @@ Standard_Boolean GEOMAlgo_GetInPlace::CheckCoincidence(const TopoDS_Shape& aS1,
 //
 //=======================================================================
 //function : PntInEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer PntInEdge(const TopoDS_Edge& aE,
 			   gp_Pnt& aP)
-			   
+
 {
   Standard_Integer iErr;
   Standard_Real aT;
@@ -208,7 +209,7 @@ Standard_Integer PntInEdge(const TopoDS_Edge& aE,
 }
 //=======================================================================
 //function : PntInEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer PntInEdge(const TopoDS_Edge& aE,
 			   gp_Pnt& aP,
@@ -228,7 +229,7 @@ Standard_Integer PntInEdge(const TopoDS_Edge& aE,
 }
 //=======================================================================
 //function : PntInSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
 			    const Standard_Real aTol,
@@ -239,7 +240,7 @@ Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
   gp_Pnt aPx;
   gp_Pnt2d aP2Dx;
   gp_Vec aDNx;
-  
+
   TopoDS_Face aF;
   TopExp_Explorer aExp;
   //
@@ -267,24 +268,24 @@ Standard_Integer PntInSolid(const TopoDS_Solid& aZ,
 }
 //=======================================================================
 //function : PntInFace
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Integer PntInFace(const TopoDS_Face& aF, 
+Standard_Integer PntInFace(const TopoDS_Face& aF,
 			   gp_Pnt& aP)
 {
-  Standard_Integer iErr; 
+  Standard_Integer iErr;
   //
   gp_Pnt2d aP2Dx;
   //
-  iErr=PntInFace(aF, aP, aP2Dx); 
+  iErr=PntInFace(aF, aP, aP2Dx);
   //
   return iErr;
 }
 //=======================================================================
 //function : PntInFace
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Integer PntInFace(const TopoDS_Face& aF, 
+Standard_Integer PntInFace(const TopoDS_Face& aF,
 			   gp_Pnt& theP,
 			   gp_Pnt2d& theP2D)
 {
@@ -310,8 +311,8 @@ Standard_Integer PntInFace(const TopoDS_Face& aF,
   aTolTangfIntr=1.e-10;
   //
   Geom2dHatch_Intersector aIntr(aTotArcIntr, aTolTangfIntr);
-  Geom2dHatch_Hatcher aHatcher(aIntr, 
-			       aTolHatch2D, aTolHatch3D, 
+  Geom2dHatch_Hatcher aHatcher(aIntr,
+			       aTolHatch2D, aTolHatch3D,
 			       Standard_True, Standard_False);
   //
   iErr=0;
@@ -319,7 +320,7 @@ Standard_Integer PntInFace(const TopoDS_Face& aF,
   //
   aFF=aF;
   aFF.Orientation (TopAbs_FORWARD);
-  // 
+  //
   aS=BRep_Tool::Surface(aFF);
   BRepTools::UVBounds(aFF, aUMin, aUMax, aVMin, aVMax);
   //

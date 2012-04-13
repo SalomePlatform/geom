@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,8 +21,8 @@
 //
 
 // File:        GEOMAlgo_Builder_1.cxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
 #include <GEOMAlgo_Builder.hxx>
 //
@@ -74,7 +74,7 @@ static
 
 //=======================================================================
 //function : FillImagesVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesVertices()
 {
@@ -103,7 +103,7 @@ static
 }
 //=======================================================================
 // function: FillImagesEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesEdges()
 {
@@ -204,12 +204,12 @@ static
     }
     //
     myImages.Bind(aE, aLSp);
-    
+
   }//for (i=1; i<=aNb; ++i)
 }
 //=======================================================================
 // function: FillImagesContainers
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesContainers(const TopAbs_ShapeEnum theType)
 {
@@ -220,7 +220,7 @@ static
   TopAbs_ShapeEnum aType;
   BRep_Builder aBB;
   TopoDS_Iterator aIt;
-  TopTools_ListIteratorOfListOfShape aItIm; 
+  TopTools_ListIteratorOfListOfShape aItIm;
   TopTools_MapOfShape aMS;
   TopTools_MapIteratorOfMapOfShape aItS;
   //
@@ -282,12 +282,12 @@ static
         aBB.Add(aCIm, aF);
       }
     }
-    myImages.Bind(aC, aCIm); 
+    myImages.Bind(aC, aCIm);
   }// for (; aItS.More(); aItS.Next()) {
 }
 //=======================================================================
 // function: FillImagesCompounds
-// purpose: 
+// purpose:
 //=======================================================================
 void FillImagesCompounds(const TopTools_MapOfShape& theMS,
                          BRepAlgo_Image& theImages)
@@ -303,18 +303,18 @@ void FillImagesCompounds(const TopTools_MapOfShape& theMS,
 }
 //=======================================================================
 //function : FillImagesCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
 void FillImagesCompound(const TopoDS_Shape& theS,
                         BRepAlgo_Image& theImages,
                         TopTools_MapOfShape& theMFP)
-{ 
+{
   Standard_Boolean bInterferred;
   TopAbs_ShapeEnum aTypeX;
   TopAbs_Orientation aOrX;
   TopoDS_Iterator aIt;
   BRep_Builder aBB;
-  TopTools_ListIteratorOfListOfShape aItIm; 
+  TopTools_ListIteratorOfListOfShape aItIm;
   //
   if (!theMFP.Add(theS)) {
     return;
@@ -356,5 +356,5 @@ void FillImagesCompound(const TopoDS_Shape& theS,
       aBB.Add(aCIm, aSX);
     }
   }
-  theImages.Bind(theS, aCIm); 
+  theImages.Bind(theS, aCIm);
 }

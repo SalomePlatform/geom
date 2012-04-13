@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@
 
 //=======================================================================
 //class    : NMTTools_CheckerSI
-//purpose  : 
+//purpose  :
 //=======================================================================
 class NMTTools_CheckerSI  : public NMTTools_PaveFiller
 {
@@ -42,23 +42,23 @@ class NMTTools_CheckerSI  : public NMTTools_PaveFiller
 
   Standard_EXPORT
     virtual ~NMTTools_CheckerSI();
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     Standard_Integer StopStatus() const;
 
  protected:
   Standard_EXPORT
     virtual  void Init() ;
-  
+
   Standard_EXPORT
     virtual  void Clear() ;
-  
+
   Standard_EXPORT
     virtual  void PreparePaveBlocks(const Standard_Integer nE) ;
-  
+
   Standard_EXPORT
     virtual  void PreparePaveBlocks(const TopAbs_ShapeEnum aType1,
 				    const TopAbs_ShapeEnum aType2) ;

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -45,29 +45,29 @@ DEFINE_STANDARD_HANDLE(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 
 //=======================================================================
 //class    : GEOMAlgo_Clsf
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_Clsf : public GEOMAlgo_HAlgo 
+class GEOMAlgo_Clsf : public GEOMAlgo_HAlgo
 {
  public:
   Standard_EXPORT
     void SetPnt(const gp_Pnt& aP) ;
-  
+
   Standard_EXPORT
     const gp_Pnt& Pnt() const;
-  
+
   Standard_EXPORT
     void SetTolerance(const Standard_Real aT) ;
-  
+
   Standard_EXPORT
     Standard_Real Tolerance() const;
-  
+
   Standard_EXPORT
     TopAbs_State State() const;
-  
+
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Curve)& aCT) const;
-  
+
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
@@ -76,7 +76,7 @@ class GEOMAlgo_Clsf : public GEOMAlgo_HAlgo
  protected:
   Standard_EXPORT
     GEOMAlgo_Clsf();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_Clsf();
 

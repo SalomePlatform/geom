@@ -1,5 +1,5 @@
 
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -22,7 +22,7 @@
 //
 
 // File:        GEOMAlgo_PassKeyShape.hxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
@@ -40,59 +40,59 @@
 
 //=======================================================================
 //class    : GEOMAlgo_PassKeyShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 class GEOMAlgo_PassKeyShape  {
  public:
   Standard_EXPORT
     GEOMAlgo_PassKeyShape();
-  
-  Standard_EXPORT 
+
+  Standard_EXPORT
     virtual ~GEOMAlgo_PassKeyShape();
-  
+
   Standard_EXPORT
     GEOMAlgo_PassKeyShape(const GEOMAlgo_PassKeyShape& Other);
-  
+
   Standard_EXPORT
     GEOMAlgo_PassKeyShape& Assign(const GEOMAlgo_PassKeyShape& Other) ;
-    
+
   GEOMAlgo_PassKeyShape& operator =(const GEOMAlgo_PassKeyShape& Other) {
     return Assign(Other);
   }
-  
+
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,
 		   const TopoDS_Shape& aS2) ;
-  
+
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,
 		   const TopoDS_Shape& aS2,
 		   const TopoDS_Shape& aS3) ;
-  
+
   Standard_EXPORT
     void SetShapes(const TopoDS_Shape& aS1,
 		   const TopoDS_Shape& aS2,
 		   const TopoDS_Shape& aS3,
 		   const TopoDS_Shape& aS4) ;
-  
+
   Standard_EXPORT
     void SetShapes(const TopTools_ListOfShape& aLS) ;
-  
+
   Standard_EXPORT
     void Clear() ;
-  
+
   Standard_EXPORT
     Standard_Integer NbIds() const;
-  
+
   Standard_EXPORT
     Standard_Boolean IsEqual(const GEOMAlgo_PassKeyShape& aOther) const;
-  
+
   Standard_EXPORT
     Standard_Integer HashCode(const Standard_Integer Upper) const;
-  
+
   Standard_EXPORT
     void Dump(const Standard_Integer aHex = 0) const;
 

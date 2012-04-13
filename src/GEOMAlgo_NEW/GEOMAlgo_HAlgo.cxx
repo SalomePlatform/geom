@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -31,8 +31,8 @@ IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_HAlgo::GEOMAlgo_HAlgo()
 :
@@ -41,14 +41,14 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 {}
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_HAlgo::~GEOMAlgo_HAlgo()
 {
 }
 //=======================================================================
 // function: CheckData
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_HAlgo::CheckData()
 {
@@ -56,7 +56,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 }
 //=======================================================================
 // function: CheckResult
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_HAlgo::CheckResult()
 {
@@ -64,7 +64,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 }
 //=======================================================================
 // function: ErrorStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_HAlgo::ErrorStatus()const
 {
@@ -72,7 +72,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 }
 //=======================================================================
 // function: WarningStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_HAlgo::WarningStatus()const
 {

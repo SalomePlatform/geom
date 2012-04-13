@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -16,10 +16,9 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-//		<pkv@BDEURI37616>
 // File:	NMTTools_MapIteratorOfMapOfPaveBlock.hxx
 // Created:	Mon Feb 20 11:47:30 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 

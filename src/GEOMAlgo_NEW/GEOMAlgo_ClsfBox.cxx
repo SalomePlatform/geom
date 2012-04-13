@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -47,8 +47,8 @@ IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfBox::GEOMAlgo_ClsfBox()
 :
@@ -57,14 +57,14 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfBox::~GEOMAlgo_ClsfBox()
 {
 }
 //=======================================================================
 //function : SetBox
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfBox::SetBox(const TopoDS_Shape& aBox)
 {
@@ -72,7 +72,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : Box
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_ClsfBox::Box() const
 {
@@ -80,10 +80,10 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfBox::CheckData()
-{ 
+{
   Standard_Integer i, aNbF;
   TopAbs_ShapeEnum aTypeShape;
   TopAbs_Orientation aOr;
@@ -122,7 +122,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
     aS=BRep_Tool::Surface(aF);
     myGAS[i-1].Load(aS);
     aType=myGAS[i-1].GetType();
-    if (!aType==GeomAbs_Plane) { 
+    if (!aType==GeomAbs_Plane) {
       myErrorStatus=13; // unallowed surface type
       return;
     }
@@ -146,7 +146,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfBox::Perform()
 {
@@ -162,7 +162,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
   }
   */
   iNext=1;
-  aNbON=0; 
+  aNbON=0;
   aNbIN=0;
   for(i=0; i<aNbS && iNext; i++) {
     GEOMAlgo_SurfaceTools::GetState(myPnt, myGAS[i], myTolerance, aSt);
@@ -181,7 +181,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
       default:
         myState=TopAbs_UNKNOWN;
         iNext=0;
-        break; 
+        break;
     }
   }
   //
@@ -198,7 +198,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfBox::CanBeON(const Handle(Geom_Curve)& aC) const
 {
@@ -206,7 +206,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfBox::CanBeON(const Handle(Geom_Surface)& aS1) const
 {

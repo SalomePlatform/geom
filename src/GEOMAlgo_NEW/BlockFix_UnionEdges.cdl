@@ -1,4 +1,4 @@
--- Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+-- Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 --
 -- Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 -- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -26,24 +26,24 @@
 --
 class UnionEdges from BlockFix
 
-    	---Purpose: 
-	
+    	---Purpose:
+
 uses
-    
+
     Shape           from TopoDS,
     ReShape         from ShapeBuild
 
 is
 
     Create returns UnionEdges from BlockFix;
-    
+
     Perform(me: in out; Shape: Shape from TopoDS;
                         Tol  : Real)
-    returns Shape from TopoDS;    
-    
+    returns Shape from TopoDS;
+
 fields
 
     myTolerance : Real;
     myContext   : ReShape from ShapeBuild;
-    
+
 end UnionEdges;

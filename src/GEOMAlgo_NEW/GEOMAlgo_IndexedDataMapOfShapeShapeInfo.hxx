@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx
 // Created:	Wed Feb 22 11:16:54 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -26,15 +26,15 @@
 #define GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
 
 
-#include <TopoDS_Shape.hxx>  
+#include <TopoDS_Shape.hxx>
 #include <TopTools_ShapeMapHasher.hxx>
 #include <GEOMAlgo_ShapeInfo.hxx>
 
 #define _NCollection_MapHasher
 #include <NCollection_IndexedDataMap.hxx>
 
-typedef NCollection_IndexedDataMap<TopoDS_Shape, GEOMAlgo_ShapeInfo, TopTools_ShapeMapHasher> GEOMAlgo_IndexedDataMapOfShapeShapeInfo; 
- 
+typedef NCollection_IndexedDataMap<TopoDS_Shape, GEOMAlgo_ShapeInfo, TopTools_ShapeMapHasher> GEOMAlgo_IndexedDataMapOfShapeShapeInfo;
+
 #undef _NCollection_MapHasher
 
 

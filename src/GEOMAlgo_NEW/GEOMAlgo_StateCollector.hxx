@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -36,17 +36,17 @@
 
 //=======================================================================
 // class   : GEOMAlgo_StateCollector
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_StateCollector  
+class GEOMAlgo_StateCollector
 {
  public:
   Standard_EXPORT
     GEOMAlgo_StateCollector();
-  
+
   Standard_EXPORT
     Standard_Boolean AppendState(const TopAbs_State aSt) ;
-  
+
   Standard_EXPORT
     TopAbs_State State() const;
 

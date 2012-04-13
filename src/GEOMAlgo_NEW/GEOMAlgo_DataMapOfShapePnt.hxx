@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	GEOMAlgo_DataMapOfShapePnt.hxx
 // Created:	Wed Feb 22 11:10:15 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -34,9 +34,9 @@
 #include <NCollection_DataMap.hxx>
 #include <gp_Pnt.hxx>
 
-typedef NCollection_DataMap<TopoDS_Shape, gp_Pnt, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapePnt; 
+typedef NCollection_DataMap<TopoDS_Shape, gp_Pnt, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapePnt;
 typedef GEOMAlgo_DataMapOfShapePnt::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfShapePnt;
- 
+
 #undef _NCollection_MapHasher
 
 

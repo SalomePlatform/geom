@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,8 +21,8 @@
 //
 
 // File:        GEOMAlgo_BuilderSolid.hxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
 #ifndef _GEOMAlgo_BuilderSolid_HeaderFile
 #define _GEOMAlgo_BuilderSolid_HeaderFile
@@ -34,18 +34,18 @@
 //! The algorithm to build solids from set of faces <br>
 //=======================================================================
 //function : GEOMAlgo_BuilderSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_BuilderSolid  : public GEOMAlgo_BuilderArea 
+class GEOMAlgo_BuilderSolid  : public GEOMAlgo_BuilderArea
 {
  public:
   //!  Empty  constructor <br>
   Standard_EXPORT
     GEOMAlgo_BuilderSolid();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_BuilderSolid();
-  
+
   //!  Performs the algorithm <br>
   Standard_EXPORT
     virtual  void Perform() ;
@@ -56,7 +56,7 @@ class GEOMAlgo_BuilderSolid  : public GEOMAlgo_BuilderArea
   //!           b) are the same and have different orientation <br>
   Standard_EXPORT
     virtual  void PerformShapesToAvoid() ;
-  
+
   //! Build draft shells <br>
   //!          a)myLoops - draft shells that consist of <br>
   //!                       boundary faces <br>
@@ -64,11 +64,11 @@ class GEOMAlgo_BuilderSolid  : public GEOMAlgo_BuilderArea
   //!                               inner faces <br>
   Standard_EXPORT
     virtual  void PerformLoops() ;
-  
+
   //! Build draft solids that contains boundary faces <br>
   Standard_EXPORT
     virtual  void PerformAreas() ;
-  
+
   //! Build finalized solids with internal shells <br>
   Standard_EXPORT
     virtual  void PerformInternalShapes() ;

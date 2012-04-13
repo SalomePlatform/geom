@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -31,8 +31,8 @@ IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_Clsf::GEOMAlgo_Clsf()
 :
@@ -44,14 +44,14 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_Clsf::~GEOMAlgo_Clsf()
 {
 }
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Clsf::SetTolerance(const Standard_Real aT)
 {
@@ -59,7 +59,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_Clsf::Tolerance()const
 {
@@ -67,7 +67,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : SetPnt
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Clsf::SetPnt(const gp_Pnt& aP)
 {
@@ -75,7 +75,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : Pnt
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Pnt& GEOMAlgo_Clsf::Pnt()const
 {
@@ -83,7 +83,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : State
-//purpose  : 
+//purpose  :
 //=======================================================================
   TopAbs_State GEOMAlgo_Clsf::State() const
 {
@@ -91,7 +91,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Clsf::CanBeON(const Handle(Geom_Curve)& ) const
 {
@@ -99,7 +99,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Clsf::CanBeON(const Handle(Geom_Surface)& ) const
 {

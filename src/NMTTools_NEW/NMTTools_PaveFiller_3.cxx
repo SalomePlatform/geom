@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -49,9 +49,9 @@ static
 
 //=======================================================================
 // function: PerformVF
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformVF() 
+  void NMTTools_PaveFiller::PerformVF()
 {
   myIsDone=Standard_False;
   //
@@ -63,7 +63,7 @@ static
   //
   BOPTools_CArray1OfVSInterference& aVSs=myIP->VSInterferences();
   //
-  // V/E Interferences 
+  // V/E Interferences
   myDSIt->Initialize(TopAbs_VERTEX, TopAbs_FACE);
   //
   // BlockLength correction
@@ -98,7 +98,7 @@ static
         //
       aF2=TopoDS::Face(myDS->Shape(aWith));
       //
-      // Modified  Thu Sep 14 14:35:18 2006 
+      // Modified  Thu Sep 14 14:35:18 2006
       // Contribution of Samtech www.samcef.com BEGIN
       if (Contains(aF2, aV1)) {
         continue;
@@ -129,11 +129,11 @@ static
   }
   myIsDone=Standard_True;
 }
-// Modified  Thu Sep 14 14:35:18 2006 
+// Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Face& aF,
                           const TopoDS_Vertex& aV)

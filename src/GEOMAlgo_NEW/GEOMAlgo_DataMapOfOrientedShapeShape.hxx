@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	GEOMAlgo_DataMapOfOrientedShapeShape.hxx
 // Created:	Wed Feb 22 11:03:36 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -32,9 +32,9 @@
 #include <NCollection_DataMap.hxx>
 
 
-typedef NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, TopTools_OrientedShapeMapHasher> GEOMAlgo_DataMapOfOrientedShapeShape; 
+typedef NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, TopTools_OrientedShapeMapHasher> GEOMAlgo_DataMapOfOrientedShapeShape;
 typedef GEOMAlgo_DataMapOfOrientedShapeShape::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape;
- 
+
 #undef _NCollection_MapHasher
 
 

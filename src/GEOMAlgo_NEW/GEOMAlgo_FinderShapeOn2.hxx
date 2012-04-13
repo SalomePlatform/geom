@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -44,80 +44,80 @@
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn2
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_FinderShapeOn2  : public GEOMAlgo_ShapeAlgo 
+class GEOMAlgo_FinderShapeOn2  : public GEOMAlgo_ShapeAlgo
 {
  public:
   Standard_EXPORT
     GEOMAlgo_FinderShapeOn2();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_FinderShapeOn2();
-  
+
   Standard_EXPORT
     void SetClsf(const Handle(GEOMAlgo_Clsf)& aClsf) ;
-  
+
   Standard_EXPORT
     const Handle_GEOMAlgo_Clsf& Clsf() const;
-  
+
   Standard_EXPORT
     void SetShapeType(const TopAbs_ShapeEnum aST) ;
-  
+
   Standard_EXPORT
     TopAbs_ShapeEnum ShapeType() const;
-  
+
   Standard_EXPORT
     void SetState(const GEOMAlgo_State aSF) ;
-  
+
   Standard_EXPORT
     GEOMAlgo_State State() const;
-  
+
   Standard_EXPORT
     void SetNbPntsMin(const Standard_Integer aNb) ;
-  
+
   Standard_EXPORT
     Standard_Integer NbPntsMin() const;
-  
+
   Standard_EXPORT
     void SetNbPntsMax(const Standard_Integer aNb) ;
-  
+
   Standard_EXPORT
     Standard_Integer NbPntsMax() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& Shapes() const;
-  
+
   Standard_EXPORT
     const GEOMAlgo_IndexedDataMapOfShapeState& MSS() const;
 
 protected:
   Standard_EXPORT
     virtual  void CheckData() ;
-  
+
   Standard_EXPORT
     void ProcessVertices() ;
-  
+
   Standard_EXPORT
     void ProcessEdges() ;
-  
+
   Standard_EXPORT
     void ProcessFaces() ;
-  
+
   Standard_EXPORT
     void ProcessSolids() ;
-  
+
   Standard_EXPORT
     void InnerPoints(const TopoDS_Face& aF,
 		     GEOMAlgo_ListOfPnt& aLP) ;
-  
+
   Standard_EXPORT
     void InnerPoints(const TopoDS_Edge& aE,
 		     GEOMAlgo_ListOfPnt& aLP) ;
-  
+
   Standard_EXPORT
     void InnerPoints(const TopoDS_Edge& aE,
 		     const Standard_Integer aNbPnts,

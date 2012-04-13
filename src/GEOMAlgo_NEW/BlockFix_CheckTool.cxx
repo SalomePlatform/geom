@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -57,7 +57,7 @@ BlockFix_CheckTool::BlockFix_CheckTool( )
 
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void BlockFix_CheckTool::SetShape(const TopoDS_Shape& aShape)
@@ -70,10 +70,10 @@ void BlockFix_CheckTool::SetShape(const TopoDS_Shape& aShape)
 
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-void BlockFix_CheckTool::Perform() 
+void BlockFix_CheckTool::Perform()
 {
   myNbSolids=0;
   myNbBlocks=0;
@@ -209,7 +209,7 @@ void BlockFix_CheckTool::Perform()
       }
     }
 
-    if (IsBlock) 
+    if (IsBlock)
       myNbBlocks++;
     else {
       if (MayBeUF) {
@@ -232,7 +232,7 @@ void BlockFix_CheckTool::Perform()
 
 //=======================================================================
 //function : NbPossibleBlocks
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Integer BlockFix_CheckTool::NbPossibleBlocks() const
@@ -243,13 +243,13 @@ Standard_Integer BlockFix_CheckTool::NbPossibleBlocks() const
 
 //=======================================================================
 //function : PossibleBlock
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 TopoDS_Shape BlockFix_CheckTool::PossibleBlock(const Standard_Integer num) const
 {
   TopoDS_Shape res;
-  if( num>0 && num<=myPossibleBlocks.Length() ) 
+  if( num>0 && num<=myPossibleBlocks.Length() )
     res = myPossibleBlocks.Value(num);
   return res;
 }
@@ -257,7 +257,7 @@ TopoDS_Shape BlockFix_CheckTool::PossibleBlock(const Standard_Integer num) const
 
 //=======================================================================
 //function : DumpCheckResult
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void BlockFix_CheckTool::DumpCheckResult(Standard_OStream& S) const

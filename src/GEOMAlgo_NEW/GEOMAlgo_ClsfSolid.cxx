@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -34,8 +34,8 @@ IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSolid::GEOMAlgo_ClsfSolid()
 :
@@ -45,7 +45,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSolid::~GEOMAlgo_ClsfSolid()
 {
@@ -58,7 +58,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSolid::SetShape(const TopoDS_Shape& aS)
 {
@@ -66,7 +66,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_ClsfSolid::Shape()const
 {
@@ -74,7 +74,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSolid::CheckData()
 {
@@ -92,7 +92,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
   //
   aType=myShape.ShapeType();
   if (!(aType==TopAbs_SOLID || aType==TopAbs_SHELL)) {
-    myErrorStatus=12; 
+    myErrorStatus=12;
     return;
   }
   //
@@ -115,7 +115,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSolid::Perform()
 {

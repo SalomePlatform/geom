@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -48,7 +48,7 @@
 #include <NMTTools_CommonBlockAPI.hxx>
 
 
-// Modified  to add new method Thu Sep 14 14:35:18 2006 
+// Modified  to add new method Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 // function:  SharedEdges
@@ -70,7 +70,7 @@
     nE1=aExp.Current();
     aM1.Add(nE1);
   }
-  
+
   aExp.Init(nF2, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
     nE2=aExp.Current();
@@ -103,7 +103,7 @@
   if (aCBAPI.IsCommonBlock(aPB)) {
     NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
     //
-    aIsCommonBlock=1;   
+    aIsCommonBlock=1;
     //
     const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
     aItPBx.Initialize(aLPBx);
@@ -690,13 +690,13 @@
   return 0; //Ok
 }
 //modified by NIZNHY-PKV Mon Oct 17 12:07:48 2011f
-static 
+static
   void SortPaveBlocks(BOPTools_ListOfPaveBlock &);
 static
-  void SortShell(const Standard_Integer, 
+  void SortShell(const Standard_Integer,
 		 BOPTools_PaveBlock *);
 static
-  Standard_Boolean Less(const BOPTools_PaveBlock &, 
+  Standard_Boolean Less(const BOPTools_PaveBlock &,
 			const BOPTools_PaveBlock &);
 
 //=======================================================================
@@ -707,7 +707,7 @@ static
                                              BOPTools_ListOfPaveBlock& aLPBIn)
 {
   Standard_Integer j, aNbCBP, nSpIn;
-  TColStd_MapOfInteger aMFence; 
+  TColStd_MapOfInteger aMFence;
   BOPTools_ListOfPaveBlock aLPB;
   BOPTools_ListIteratorOfListOfPaveBlock aItPB;
   NMTTools_ListIteratorOfListOfCommonBlock aItCB;
@@ -772,10 +772,10 @@ void SortPaveBlocks(BOPTools_ListOfPaveBlock &aLPBIn)
 }
 //=======================================================================
 //function : SortShell
-//purpose  : 
+//purpose  :
 //=======================================================================
-void SortShell(const Standard_Integer n, 
-	       BOPTools_PaveBlock *a) 
+void SortShell(const Standard_Integer n,
+	       BOPTools_PaveBlock *a)
 {
   Standard_Integer nd, i, j, l, d=1;
   BOPTools_PaveBlock x;
@@ -800,15 +800,15 @@ void SortShell(const Standard_Integer n,
 	j-=d;
 	if (j > -1) goto m30;
       }//if (a[l] < a[j]){
-    }//for (i=0; i<nd; ++i) 
+    }//for (i=0; i<nd; ++i)
   }//while (1)
 }
 
 //=======================================================================
 //function : Less
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean Less(const BOPTools_PaveBlock &aPB1, 
+Standard_Boolean Less(const BOPTools_PaveBlock &aPB1,
 		      const BOPTools_PaveBlock &aPB2)
 {
   Standard_Boolean bRet;

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -32,7 +32,7 @@
 
 //=======================================================================
 //function : GEOMAlgo_ShapeSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeSolid::GEOMAlgo_ShapeSolid()
 :
@@ -43,14 +43,14 @@ GEOMAlgo_ShapeSolid::GEOMAlgo_ShapeSolid()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeSolid::~GEOMAlgo_ShapeSolid()
 {
 }
 //=======================================================================
 //function : SetFiller
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeSolid::SetFiller(const BOPTools_DSFiller& aDSFiller)
 {
@@ -58,7 +58,7 @@ void GEOMAlgo_ShapeSolid::SetFiller(const BOPTools_DSFiller& aDSFiller)
 }
 //=======================================================================
 // function: Shapes
-// purpose: 
+// purpose:
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const TopAbs_State aState) const
 {
@@ -73,10 +73,10 @@ const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const TopAbs_State aStat
       break;
     case TopAbs_ON:
       pL=&myLSON;
-      break;  
+      break;
     default:
       pL=&myLSON;
-      break; 
+      break;
   }
   return *pL;
 }

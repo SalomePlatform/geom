@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_GlueDetector.hxx
 // Created:     Wed Dec 15 11:08:09 2004
@@ -36,9 +37,9 @@
 
 //=======================================================================
 //function : GEOMAlgo_GlueAnalyser
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_GlueAnalyser  : public GEOMAlgo_Gluer 
+class GEOMAlgo_GlueAnalyser  : public GEOMAlgo_Gluer
 {
  public:
   Standard_EXPORT
@@ -46,35 +47,35 @@ class GEOMAlgo_GlueAnalyser  : public GEOMAlgo_Gluer
 
   Standard_EXPORT
     virtual ~GEOMAlgo_GlueAnalyser();
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     Standard_Boolean HasSolidsToGlue() const;
-  
+
   Standard_EXPORT
     const GEOMAlgo_ListOfCoupleOfShapes& SolidsToGlue() const;
-  
+
   Standard_EXPORT
     Standard_Boolean HasSolidsAlone() const;
-  
+
   Standard_EXPORT
     const TopTools_ListOfShape& SolidsAlone() const;
 
  protected:
   Standard_EXPORT
     void DetectVertices() ;
-  
+
   Standard_EXPORT
     void DetectEdges() ;
-  
+
   Standard_EXPORT
     void DetectFaces() ;
-  
+
   Standard_EXPORT
     void DetectShapes(const TopAbs_ShapeEnum aType) ;
-  
+
   Standard_EXPORT
     void DetectSolids() ;
 

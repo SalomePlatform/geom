@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -44,43 +44,43 @@ DEFINE_STANDARD_HANDLE(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
 
 //=======================================================================
 //function : GEOMAlgo_ClsfBox
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_ClsfBox : public GEOMAlgo_Clsf 
+class GEOMAlgo_ClsfBox : public GEOMAlgo_Clsf
 {
  public:
   Standard_EXPORT
     GEOMAlgo_ClsfBox();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_ClsfBox();
-  
+
   Standard_EXPORT
     void SetBox(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Box() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     virtual  void CheckData() ;
-  
+
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Curve)& aC) const;
-  
+
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
-  
+
   DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfBox)
-    
+
  protected:
   TopoDS_Shape myBox;
   GeomAdaptor_Surface myGAS[6];
 
 
-private: 
+private:
 
 
 

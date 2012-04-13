@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	NMTTools_DataMapOfIntegerFaceInfo.hxx
 // Created:	Mon Feb 20 12:21:55 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
@@ -31,9 +31,9 @@
 #define _NCollection_MapHasher
 #include <NCollection_DataMap.hxx>
 
-typedef NCollection_DataMap<Standard_Integer, NMTTools_FaceInfo, TColStd_MapIntegerHasher> NMTTools_DataMapOfIntegerFaceInfo; 
-typedef NMTTools_DataMapOfIntegerFaceInfo::Iterator NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo; 
- 
+typedef NCollection_DataMap<Standard_Integer, NMTTools_FaceInfo, TColStd_MapIntegerHasher> NMTTools_DataMapOfIntegerFaceInfo;
+typedef NMTTools_DataMapOfIntegerFaceInfo::Iterator NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo;
+
 #undef _NCollection_MapHasher
 
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,8 +21,8 @@
 //
 
 // File:        GEOMAlgo_BuilderArea.cxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
 #include <GEOMAlgo_BuilderArea.hxx>
 
@@ -31,8 +31,8 @@
 #include <IntTools_Context.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
 GEOMAlgo_BuilderArea::GEOMAlgo_BuilderArea()
 :
@@ -41,14 +41,14 @@ GEOMAlgo_BuilderArea::GEOMAlgo_BuilderArea()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_BuilderArea::~GEOMAlgo_BuilderArea()
 {
 }
 //=======================================================================
 //function : SetContext
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::SetContext(const Handle(IntTools_Context)& theContext)
 {
@@ -56,15 +56,15 @@ void GEOMAlgo_BuilderArea::SetContext(const Handle(IntTools_Context)& theContext
 }
 //=======================================================================
 //function : Context
-//purpose  : 
+//purpose  :
 //=======================================================================
-const Handle(IntTools_Context)& GEOMAlgo_BuilderArea::Context()const 
+const Handle(IntTools_Context)& GEOMAlgo_BuilderArea::Context()const
 {
   return myContext;
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::Perform()
 {
@@ -74,7 +74,7 @@ void GEOMAlgo_BuilderArea::Perform()
 }
 //=======================================================================
 //function : SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::SetShapes(const TopTools_ListOfShape& theLF)
 {
@@ -89,7 +89,7 @@ void GEOMAlgo_BuilderArea::SetShapes(const TopTools_ListOfShape& theLF)
 }
 //=======================================================================
 //function : Shapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Shapes()const
 {
@@ -97,7 +97,7 @@ const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Shapes()const
 }
 //=======================================================================
 //function : Loops
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Loops()const
 {
@@ -105,7 +105,7 @@ const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Loops()const
 }
 //=======================================================================
 //function : Areas
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Areas()const
 {
@@ -113,28 +113,28 @@ const TopTools_ListOfShape& GEOMAlgo_BuilderArea::Areas()const
 }
 //=======================================================================
 //function :PerformShapesToAvoid
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::PerformShapesToAvoid()
 {
 }
 //=======================================================================
 //function : PerformLoops
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::PerformLoops()
 {
 }
 //=======================================================================
 //function : PerformAreas
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::PerformAreas()
 {
 }
 //=======================================================================
 //function : PerformInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_BuilderArea::PerformInternalShapes()
 {

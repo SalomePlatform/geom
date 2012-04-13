@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_GlueDetector.cxx
 // Created:     Wed Dec 15 11:08:09 2004
@@ -60,8 +61,8 @@
 #include <BRepBndLib.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_GlueAnalyser::GEOMAlgo_GlueAnalyser()
 :
@@ -69,13 +70,13 @@
 {}
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_GlueAnalyser::~GEOMAlgo_GlueAnalyser()
 {}
 //=======================================================================
 //function : HasSolidsToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsToGlue()const
 {
@@ -83,7 +84,7 @@
 }
 //=======================================================================
 //function : HasSolidsAlone
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 {
@@ -91,7 +92,7 @@
 }
 //=======================================================================
 //function : SolidsToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
   const GEOMAlgo_ListOfCoupleOfShapes& GEOMAlgo_GlueAnalyser::SolidsToGlue()const
 {
@@ -99,7 +100,7 @@
 }
 //=======================================================================
 //function : SolidsAlone
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_GlueAnalyser::SolidsAlone()const
 {
@@ -107,7 +108,7 @@
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::Perform()
 {
@@ -152,7 +153,7 @@
 }
 //=======================================================================
 //function : DetectVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectVertices()
 {
@@ -183,11 +184,11 @@
     const TopoDS_Shape& aV=aMV(i);
     Bnd_Box aBox;
     //
-    aBox.SetGap(myTol); 
+    aBox.SetGap(myTol);
     BRepBndLib::Add(aV, aBox);
     aHAB->SetValue(i, aBox);
     aMIS.Add(i, aV);
-    aMSB.Add(aV, aBox); 
+    aMSB.Add(aV, aBox);
   }
   //
   aBSB.Initialize(aHAB);
@@ -203,7 +204,7 @@
     const TColStd_ListOfInteger& aLI=aBSB.Compare(aBoxV);
     aNbVSD=aLI.Extent();
     if (!aNbVSD) {
-      myErrorStatus=3; // it must not be 
+      myErrorStatus=3; // it must not be
       return;
     }
     //
@@ -239,7 +240,7 @@
 }
 //=======================================================================
 //function : DetectFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectFaces()
 {
@@ -247,7 +248,7 @@
 }
 //=======================================================================
 //function : DetectEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectEdges()
 {
@@ -255,7 +256,7 @@
 }
 //=======================================================================
 //function : DetectShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectShapes(const TopAbs_ShapeEnum aType)
 {
@@ -273,7 +274,7 @@
   aNbF=aMF.Extent();
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
-    // 
+    //
     //aPKF.Clear();//qft
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=TopoDS::Face(aS);
@@ -333,7 +334,7 @@
 }
 //=======================================================================
 //function : DetectSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectSolids()
 {
@@ -406,7 +407,7 @@
   //
   mySolidsToGlue.Clear();
   mySolidsAlone.Clear();
-  
+
   //
   aNbC=aMPKLS.Extent();
   if (!aNbC) {

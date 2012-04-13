@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -34,8 +34,8 @@ IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSurf::GEOMAlgo_ClsfSurf()
 :
@@ -44,14 +44,14 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSurf::~GEOMAlgo_ClsfSurf()
 {
 }
 //=======================================================================
 //function : SetSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::SetSurface(const Handle(Geom_Surface)& aS)
 {
@@ -59,7 +59,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 }
 //=======================================================================
 //function : Surface
-//purpose  : 
+//purpose  :
 //=======================================================================
   const Handle(Geom_Surface)& GEOMAlgo_ClsfSurf::Surface() const
 {
@@ -67,7 +67,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::CheckData()
 {
@@ -82,7 +82,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
   //
   myGAS.Load(myS);
   aType=myGAS.GetType();
-  if (!(aType==GeomAbs_Plane || 
+  if (!(aType==GeomAbs_Plane ||
         aType==GeomAbs_Cylinder ||
         aType==GeomAbs_Sphere)) {
     myErrorStatus=11; // unallowed surface type
@@ -90,7 +90,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::Perform()
 {
@@ -105,7 +105,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfSurf::CanBeON(const Handle(Geom_Curve)& aC) const
 {
@@ -124,7 +124,7 @@ IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfSurf::CanBeON(const Handle(Geom_Surface)& aS1) const
 {

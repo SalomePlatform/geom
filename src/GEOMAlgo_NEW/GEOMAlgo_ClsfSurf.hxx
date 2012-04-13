@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -43,9 +43,9 @@ DEFINE_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf)
 
 //=======================================================================
 // class   : GEOMAlgo_ClsfSurf
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf 
+class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf
 {
  public:
   Standard_EXPORT
@@ -53,22 +53,22 @@ class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf
 
   Standard_EXPORT
     virtual ~GEOMAlgo_ClsfSurf();
-  
+
   Standard_EXPORT
     void SetSurface(const Handle(Geom_Surface)& aS) ;
-  
+
   Standard_EXPORT
     const Handle_Geom_Surface& Surface() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
-  
+
   Standard_EXPORT
     virtual  void CheckData() ;
-  
+
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Curve)& aC) const;
-  
+
   Standard_EXPORT
     virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 

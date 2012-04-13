@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -40,46 +40,46 @@
 
 //=======================================================================
 //function : NMTTools_CommonBlock
-//purpose  : 
+//purpose  :
 //=======================================================================
 class NMTTools_CommonBlock  {
  public:
   Standard_EXPORT
     NMTTools_CommonBlock();
-  
+
   Standard_EXPORT
     void AddPaveBlock(const BOPTools_PaveBlock& aPB) ;
-  
+
   Standard_EXPORT
     void AddFace(const Standard_Integer aF) ;
-  
+
   Standard_EXPORT
     void AddFaces(const TColStd_ListOfInteger& aLF) ;
-  
+
   Standard_EXPORT
     const BOPTools_ListOfPaveBlock& PaveBlocks() const;
-  
+
   Standard_EXPORT
     const TColStd_ListOfInteger& Faces() const;
-  
+
   Standard_EXPORT
     const BOPTools_PaveBlock& PaveBlock1() const;
-  
+
   Standard_EXPORT
     BOPTools_PaveBlock& PaveBlock1(const Standard_Integer anIx) ;
-  
+
   Standard_EXPORT
     BOPTools_PaveBlock& PaveBlockOnEdge(const Standard_Integer anIndex) ;
-  
+
   Standard_EXPORT
     Standard_Boolean IsPaveBlockOnFace(const Standard_Integer anIndex) const;
-  
+
   Standard_EXPORT
     Standard_Boolean IsPaveBlockOnEdge(const Standard_Integer anIndex) const;
-  
+
   Standard_EXPORT
     Standard_Boolean IsEqual(const NMTTools_CommonBlock& aCB) const;
-  
+
   Standard_EXPORT
     Standard_Boolean Contains(const BOPTools_PaveBlock& aPB) const;
 

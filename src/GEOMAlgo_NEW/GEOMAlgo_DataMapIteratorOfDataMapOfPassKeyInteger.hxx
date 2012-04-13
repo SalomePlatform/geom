@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@
 //
 // File:	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx
 // Created:	Wed Feb 22 10:58:14 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 

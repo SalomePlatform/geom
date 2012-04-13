@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -28,8 +28,8 @@
 #include <GEOMAlgo_Algo.hxx>
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_Algo::GEOMAlgo_Algo()
 :
@@ -39,14 +39,14 @@
 {}
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_Algo::~GEOMAlgo_Algo()
 {
 }
 //=======================================================================
 // function: CheckData
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Algo::CheckData()
 {
@@ -54,7 +54,7 @@
 }
 //=======================================================================
 // function: CheckResult
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Algo::CheckResult()
 {
@@ -62,7 +62,7 @@
 }
 //=======================================================================
 // function: ErrorStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_Algo::ErrorStatus()const
 {
@@ -70,7 +70,7 @@
 }
 //=======================================================================
 // function: WarningStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_Algo::WarningStatus()const
 {
@@ -82,7 +82,7 @@
 
 //=======================================================================
 //function : ComputeInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
 {

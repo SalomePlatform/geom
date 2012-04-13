@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -19,21 +19,21 @@
 
 // File:	NMTTools_MapOfPaveBlock.hxx
 // Created:	Mon Feb 20 08:19:07 2012
-// Author:	
+// Author:
 //		<pkv@BDEURI37616>
 
 
 #ifndef NMTTools_MapOfPaveBlock_HeaderFile
 #define NMTTools_MapOfPaveBlock_HeaderFile
 
-#include <BOPTools_PaveBlock.hxx>  
+#include <BOPTools_PaveBlock.hxx>
 #include <BOPTools_PaveBlockMapHasher.hxx>
 
 #define _NCollection_MapHasher
-#include <NCollection_Map.hxx>   
+#include <NCollection_Map.hxx>
 
-typedef NCollection_Map<BOPTools_PaveBlock, BOPTools_PaveBlockMapHasher> NMTTools_MapOfPaveBlock; 
-typedef NMTTools_MapOfPaveBlock::Iterator NMTTools_MapIteratorOfMapOfPaveBlock;  
+typedef NCollection_Map<BOPTools_PaveBlock, BOPTools_PaveBlockMapHasher> NMTTools_MapOfPaveBlock;
+typedef NMTTools_MapOfPaveBlock::Iterator NMTTools_MapIteratorOfMapOfPaveBlock;
 
 #undef _NCollection_MapHasher
 

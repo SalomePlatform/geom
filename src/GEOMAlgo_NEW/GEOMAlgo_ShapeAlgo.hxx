@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -37,42 +37,42 @@
 
 //=======================================================================
 //class    : GEOMAlgo_ShapeAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_ShapeAlgo  : public GEOMAlgo_Algo 
+class GEOMAlgo_ShapeAlgo  : public GEOMAlgo_Algo
 {
  public:
 
   //! Sets cashed geometrical tools <br>
   Standard_EXPORT
     void SetContext(const Handle(IntTools_Context)& theContext) ;
-  
+
   //! Returns cashed geometrical tools <br>
   Standard_EXPORT
     const Handle_IntTools_Context& Context() const;
-  
+
   Standard_EXPORT
     void SetShape(const TopoDS_Shape& aS) ;
-  
+
   Standard_EXPORT
     void SetTolerance(const Standard_Real aT) ;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Shape() const;
-  
+
   Standard_EXPORT
     Standard_Real Tolerance() const;
-  
+
   Standard_EXPORT
     const TopoDS_Shape& Result() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
 
 protected:
   Standard_EXPORT
     GEOMAlgo_ShapeAlgo();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_ShapeAlgo();
 

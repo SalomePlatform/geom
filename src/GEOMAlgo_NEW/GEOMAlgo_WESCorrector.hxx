@@ -1,5 +1,5 @@
 
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,7 +21,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:        NMTAlgo_WESCorrector.hxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
@@ -40,9 +40,9 @@
 //!   The NewWES will contain only wires instead of wires and edges. <br>
 //=======================================================================
 //class    : GEOMAlgo_WESCorrector
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_WESCorrector  : public GEOMAlgo_Algo 
+class GEOMAlgo_WESCorrector  : public GEOMAlgo_Algo
 {
  public:
   //! Empty constructor; <br>
@@ -52,21 +52,21 @@ class GEOMAlgo_WESCorrector  : public GEOMAlgo_Algo
 
   Standard_EXPORT
     virtual ~GEOMAlgo_WESCorrector();
-  
+
   //! Modifier <br>
   Standard_EXPORT
     void SetWES(const GEOMAlgo_WireEdgeSet& aWES) ;
-  
+
   //! Performs the algorithm that  consists  of  two  steps <br>
   //! 1. Make conexity blocks (  DoConnexityBlocks()  ) <br>
   //! 2. Make corrections     (  DoCorrections()  ) <br>
-  Standard_EXPORT   
+  Standard_EXPORT
     virtual  void Perform() ;
-  
+
   //! Selector <br>
   Standard_EXPORT
     GEOMAlgo_WireEdgeSet& WES() ;
-  
+
   //! Selector <br>
   Standard_EXPORT
     GEOMAlgo_WireEdgeSet& NewWES() ;
@@ -74,7 +74,7 @@ class GEOMAlgo_WESCorrector  : public GEOMAlgo_Algo
 protected:
   Standard_EXPORT
     void DoConnexityBlocks() ;
-  
+
   Standard_EXPORT
     void DoCorrections() ;
 

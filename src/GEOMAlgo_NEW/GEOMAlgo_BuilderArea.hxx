@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,8 +21,8 @@
 //
 
 // File:        GEOMAlgo_BuilderArea.hxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
 
 #ifndef _GEOMAlgo_BuilderArea_HeaderFile
@@ -40,35 +40,35 @@
 //!          faces/solids from set of edges/faces <br>
 //=======================================================================
 //class    : GEOMAlgo_BuilderArea
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_BuilderArea  : public GEOMAlgo_Algo 
+class GEOMAlgo_BuilderArea  : public GEOMAlgo_Algo
 {
  public:
   //! Sets cashed geometrical tools <br>
   Standard_EXPORT
     void SetContext(const Handle(IntTools_Context)& theContext) ;
-  
+
   //! Returns cashed geometrical tools <br>
   Standard_EXPORT
     const Handle_IntTools_Context& Context() const;
-  
+
   //! Sets edges/faces to process <br>
   Standard_EXPORT
     void SetShapes(const TopTools_ListOfShape& theLS) ;
-  
+
   //! Returns edges/faces to process <br>
   Standard_EXPORT
     const TopTools_ListOfShape& Shapes() const;
-  
+
   //! Returns wires/shells that have been built <br>
   Standard_EXPORT
     const TopTools_ListOfShape& Loops() const;
-  
+
   //! Returns faces/solids that have been built <br>
   Standard_EXPORT
     const TopTools_ListOfShape& Areas() const;
-  
+
   Standard_EXPORT
     virtual  void Perform() ;
 
@@ -82,7 +82,7 @@ class GEOMAlgo_BuilderArea  : public GEOMAlgo_Algo
   //!  Collect the edges/faces that <br>
   //!           a) are internal <br>
   //!           b) are the same and have different orientation <br>
-  
+
   Standard_EXPORT
     virtual  void PerformShapesToAvoid() ;
 
@@ -94,10 +94,10 @@ class GEOMAlgo_BuilderArea  : public GEOMAlgo_Algo
   Standard_EXPORT
     virtual  void PerformLoops() ;
   //! Build draft faces/solids that contains boundary faces <br>
-  
+
   Standard_EXPORT
     virtual  void PerformAreas() ;
-  
+
   //! Build finalized faces/solids with internal wires/shells <br>
   Standard_EXPORT
     virtual  void PerformInternalShapes() ;

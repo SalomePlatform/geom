@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,8 +21,8 @@
 //
 
 // File:        GEOMAlgo_BuilderShape.hxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
 #ifndef _GEOMAlgo_BuilderShape_HeaderFile
 #define _GEOMAlgo_BuilderShape_HeaderFile
@@ -40,7 +40,7 @@
 //! Root class for algorithms that has shape as result <br>
 //=======================================================================
 //class    : GEOMAlgo_BuilderShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 class GEOMAlgo_BuilderShape  : public GEOMAlgo_Algo
 {
@@ -48,36 +48,36 @@ class GEOMAlgo_BuilderShape  : public GEOMAlgo_Algo
   //!  Returns the result of algorithm <br>
   Standard_EXPORT
     const TopoDS_Shape& Shape() const;
-  
+
   //! Returns the list of shapes generated from the <br>
   //!          shape theS. <br>
   Standard_EXPORT
     virtual const TopTools_ListOfShape& Generated(const TopoDS_Shape& theS) ;
-  
+
   //! Returns the list of shapes modified from the <br>
   //!          shape theS. <br>
   Standard_EXPORT
     virtual const TopTools_ListOfShape& Modified(const TopoDS_Shape& theS) ;
-  
+
   //! Returns true if the shape theS has been deleted. <br>
   Standard_EXPORT
     virtual  Standard_Boolean IsDeleted(const TopoDS_Shape& theS) ;
-  
+
   //! Returns true if the at least one shape(or sub-shape) <br>
   //!          of arguments has been deleted. <br>
   Standard_EXPORT
     Standard_Boolean HasDeleted() const;
-  
+
   //! Returns true if the at least one shape(or sub-shape) <br>
   //!          of arguments has generated shapes. <br>
   Standard_EXPORT
     Standard_Boolean HasGenerated() const;
-  
+
   //! Returns true if the at least one shape(or sub-shape) <br>
   //!          of arguments has modified shapes. <br>
   Standard_EXPORT
     Standard_Boolean HasModified() const;
-  
+
   Standard_EXPORT
     const TopTools_IndexedDataMapOfShapeListOfShape& ImagesResult() const;
 
@@ -85,10 +85,10 @@ protected:
   //! Empty constructor <br>
   Standard_EXPORT
     GEOMAlgo_BuilderShape();
-  
+
   Standard_EXPORT
     virtual ~GEOMAlgo_BuilderShape();
-  
+
   //!  Prepare information for history support <br>
   Standard_EXPORT
     virtual  void PrepareHistory() ;

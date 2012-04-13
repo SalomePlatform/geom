@@ -1,4 +1,4 @@
--- Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+-- Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 --
 -- Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 -- CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -42,19 +42,19 @@ uses
 is
 
     class SphereSpaceModifier;
-    
+
     class UnionFaces;
-    
+
     class UnionEdges;
-    
+
     class BlockFixAPI;
     	---Purpose: API class to perform the fixing of the
 	--          block
-    
+
     class PeriodicSurfaceModifier;
 
     class CheckTool;
-    
+
     RotateSphereSpace (S: Shape from TopoDS; Tol: Real)
     returns Shape from TopoDS;
 

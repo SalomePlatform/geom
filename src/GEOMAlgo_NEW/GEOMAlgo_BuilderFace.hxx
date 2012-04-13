@@ -1,5 +1,5 @@
 
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -22,7 +22,7 @@
 //
 
 // File:        GEOMAlgo_BuilderFace.hxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //
 #ifndef _GEOMAlgo_BuilderFace_HeaderFile
@@ -36,27 +36,27 @@
 //! The algorithm to build faces from set of edges <br>
 //=======================================================================
 //class    : GEOMAlgo_BuilderFace
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_BuilderFace  : public GEOMAlgo_BuilderArea 
+class GEOMAlgo_BuilderFace  : public GEOMAlgo_BuilderArea
 {
  public:
-  
+
   //!  Empty  constructor <br>
   Standard_EXPORT
     GEOMAlgo_BuilderFace();
 
   Standard_EXPORT
     virtual ~GEOMAlgo_BuilderFace();
-  
+
   //! Sets the face generatix <br>
   Standard_EXPORT
     void SetFace(const TopoDS_Face& theFace) ;
-  
+
   //! Returns the face generatix <br>
   Standard_EXPORT
     const TopoDS_Face& Face() const;
-  
+
   //!  Performs the algorithm <br>
   Standard_EXPORT
     virtual  void Perform() ;
@@ -67,7 +67,7 @@ class GEOMAlgo_BuilderFace  : public GEOMAlgo_BuilderArea
   //!           b) are the same and have different orientation <br>
   Standard_EXPORT
     virtual  void PerformShapesToAvoid() ;
-  
+
   //! Build draft wires <br>
   //!          a)myLoops - draft wires that consist of <br>
   //!                       boundary edges <br>
@@ -75,11 +75,11 @@ class GEOMAlgo_BuilderFace  : public GEOMAlgo_BuilderArea
   //!                               inner edges <br>
   Standard_EXPORT
     virtual  void PerformLoops() ;
-  
+
   //! Build draft faces that contains boundary edges <br>
   Standard_EXPORT
     virtual  void PerformAreas() ;
-  
+
   //! Build finalized faces with internals <br>
   Standard_EXPORT
     virtual  void PerformInternalShapes() ;

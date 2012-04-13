@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -30,8 +30,8 @@
 #include <IntTools_Context.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   NMTTools_CheckerSI::NMTTools_CheckerSI()
 :
@@ -41,14 +41,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   NMTTools_CheckerSI::~NMTTools_CheckerSI()
 {
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void NMTTools_CheckerSI::Clear()
 {
@@ -56,7 +56,7 @@
 }
 //=======================================================================
 //function : StopStatus
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer NMTTools_CheckerSI::StopStatus()const
 {
@@ -64,7 +64,7 @@
 }
 //=======================================================================
 //function : Init
-//purpose  : 
+//purpose  :
 //=======================================================================
   void NMTTools_CheckerSI::Init()
 {
@@ -91,12 +91,12 @@
   // 4
   myIP=new NMTDS_InterfPool;
   //
-  // 5 
+  // 5
   myContext=new IntTools_Context;
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void NMTTools_CheckerSI::Perform()
 {
@@ -168,7 +168,7 @@
   //
   MakePCurves();
   //
-  // 7. Postprocessing 
+  // 7. Postprocessing
   UpdatePaveBlocks();
   //
   NMTTools_DEProcessor aDEP(*this);

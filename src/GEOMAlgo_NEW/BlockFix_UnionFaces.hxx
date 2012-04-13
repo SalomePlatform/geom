@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -42,21 +42,21 @@ class TopoDS_Face;
 class BlockFix_UnionFaces
 {
 public:
-  void* operator new(size_t,void* anAddress) 
+  void* operator new(size_t,void* anAddress)
   {
     return anAddress;
   }
-  void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
   }
-  void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
   }
 
   // Methods PUBLIC
-  // 
+  //
   Standard_EXPORT BlockFix_UnionFaces();
 
   Standard_EXPORT   Standard_Real& GetTolerance();
@@ -80,7 +80,7 @@ public:
   Standard_EXPORT virtual  void MovePCurves(TopoDS_Face& aTarget,
                                             const TopoDS_Face& aSource) const;
 
-private: 
+private:
   // Fields PRIVATE
   //
   Standard_Real myTolerance;
