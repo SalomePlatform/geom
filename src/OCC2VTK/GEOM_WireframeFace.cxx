@@ -132,8 +132,8 @@ CreateIso(const TopoDS_Face& theFace,
                                      Standard_False);
   
   Standard_Real anUMin, anUMax, aVMin, aVMax;
-  TColStd_Array1OfReal anUPrm(1, theNbIso[0]), aVPrm(1, theNbIso[1]);
-  TColStd_Array1OfInteger anUInd(1, theNbIso[0]), aVInd(1, theNbIso[1]);
+  TColStd_Array1OfReal anUPrm(0, theNbIso[0]), aVPrm(0, theNbIso[1]);
+  TColStd_Array1OfInteger anUInd(0, theNbIso[0]), aVInd(0, theNbIso[1]);
 
   anUInd.Init(0);
   aVInd.Init(0);
