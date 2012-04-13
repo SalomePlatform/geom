@@ -64,6 +64,7 @@
 #include <AIS_ListOfInteractive.hxx>
 #include <AIS_GraphicTool.hxx>
 #include <AIS_Drawer.hxx>
+#include <Aspect_TypeOfFacingModel.hxx>
 #include <Prs3d_ShadingAspect.hxx>
 #include<Graphic3d_MaterialAspect.hxx>
 
@@ -589,8 +590,8 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const{
              if ( !io.IsNull() ) {
                Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
                if ( !aSh.IsNull() )
-                 res =(bool) aSh->Attributes()->ShadingAspect()->
-                      Material(Aspect_TypeOfFacingModel::Aspect_TOFM_BOTH_SIDE).MaterialType( Graphic3d_MATERIAL_PHYSIC );
+                 res = (bool) aSh->Attributes()->ShadingAspect()->
+			 Material(Aspect_TOFM_BOTH_SIDE).MaterialType( Graphic3d_MATERIAL_PHYSIC );
              }
            }
          }
