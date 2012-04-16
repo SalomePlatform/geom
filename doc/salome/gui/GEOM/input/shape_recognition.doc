@@ -7,6 +7,12 @@
 This tool allows you to create geometrical shapes automatically out from pictures elements by performing shape recognition algorithms.
 <b>Contours</b> or <b>Corners</b> can be built.
 
+\b Example: 
+
+Détection of the cost line on a nautical chart
+
+\image html contour_detection_example2.png 
+
 To use the <b>Shape recogition</b> tool you have to \ref import_picture_page "Import a picture" in the view first.Then you can choose to create either <b>contours</b> or <b>corners</b> out from this picture. 
 
 To create <b>Contours</b> :
