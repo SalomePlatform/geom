@@ -3015,12 +3015,8 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Couleur des contours par défaut</translation>
     </message>
     <message>
-        <source>PREF_FRONT_MATERIAL</source>
-        <translation>Devant du matériau par défaut</translation>
-    </message>
-    <message>
-        <source>PREF_BACK_MATERIAL</source>
-        <translation>Retour du matériau par défaut</translation>
+        <source>PREF_MATERIAL</source>
+        <translation>Matériau par défaut</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
