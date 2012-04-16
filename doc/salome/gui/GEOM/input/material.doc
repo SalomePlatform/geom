@@ -9,14 +9,16 @@
 
 in the following dialog box.
 
-<center><em><b>Set Material Properties</b> dialog: 
 \image html material.png
+<center><em><b>Set Material Properties</b> dialog</em></center>
 
-\n With help of <b>Set Material Properties</b> dialog it is possible to set 
+
+With help of <b>Set Material Properties</b> dialog it is possible to set 
 materials of the selected shape(s). 
 
 This functionality is available in OCC and VTK viewers.
 
+\anchor material
 User can changed the following material properties
 
 - ambient color and coefficient
@@ -24,7 +26,7 @@ User can changed the following material properties
 - specular color and coefficient
 - emission color and coefficient (available only in OCC viewer), which simulate light originating from an object.
 - shininess
-- type of material: <b>Physical</b> these materials will not allow modification of color attributes (gold, aluminium, bronze, etc.)
+- type of material: <b>Physical</b> these materials will not allow modification of color attributes (gold, aluminium, bronze, etc.);
                     <b>Artificial</b> these materials will allow modification of color attributes (plastic, satin, metall, etc.)
 
 \n All currently available materials are shown in the left-side list box
