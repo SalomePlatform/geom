@@ -1,0 +1,32 @@
+/*!
+
+\page import_picture_page Import a picture in the OCC viewer
+
+It's possible in GEOM to import a picture file in the OCC view.
+The supported formats are : .bmp, .gif, .pix, .xwd, .rgb, .rs
+
+
+The imported picture (engineering drawing, nautical chart ...) may be used then as a support for 2D shape design. 
+
+You can create a \ref create_sketcher_page "sketch" on the top of this picture or use the 
+\ref shape_recognition_page "Shape recognition" 
+functionnalities to build geometrical shapes out from some elements of the picture (contours, corners ...).
+
+To <b>import a picture</b> in the view:
+
+<ul>
+
+ <li> select <b>New Entity -> Import a picture in the view</b> or click on \image html import_picture.png </li>
+ 
+ <li> Click on <b>...</b> and browse your image files to select one of them</li>
+ 
+ <li> Apply</li>
+ 
+</ul>
+
+A new <b>Picture</b> object is created and pan, zoom and rotation operations are available in the view like for any other object.
+
+
+\image html picture_import_dlg.png
+
+*/

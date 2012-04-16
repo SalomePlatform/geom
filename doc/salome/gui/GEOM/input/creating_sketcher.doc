@@ -8,7 +8,7 @@ The 2D Sketcher allows you to create a profile made of curves of 2 types: line s
 
 \image html sketch_example.png
 
-To create a \b 2D Sketch:
+To create a <b> 2D Sketch</b>:
 
 <ol>
 <li>In the main menu select <em>New Entity -> Basic -> 2D Sketch</em> or click on \image html sketch.png </li>

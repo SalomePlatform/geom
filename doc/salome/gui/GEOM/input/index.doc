@@ -18,7 +18,10 @@ various algorithms;</li>
  \subpage using_measurement_tools_page "measurement tools".</li>
 <li>easily setting parameters via the variables predefined in
  \subpage using_notebook_geom_page "Salome notebook".</li>
+<li>\subpage import_picture_page, such as engeneering drawings or nautical charts as a support for shape design.
+<li>\subpage shape_recognition_page previously imported in the OCC viewer .
 </ul>
+
 
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
