@@ -70,7 +70,6 @@ private:
   bool                  hasShownChildren( const int ) const;
   bool                  compoundOfVertices( const int ) const;
   bool                  topLevel( const int ) const;
-  bool                  isPhysicalMaterial( const int ) const;
 
   bool                  isComponent( const int ) const;
   GEOM::GEOM_Object_ptr getObject( const int ) const;

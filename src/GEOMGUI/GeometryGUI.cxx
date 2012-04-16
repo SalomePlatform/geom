@@ -591,7 +591,10 @@ void GeometryGUI::OnGUIEvent( int id )
       if ( pref ) {
 	Material_ResourceMgr aMatResMgr;
 	QStringList aPerfMatNames = aMatResMgr.getPreferenceMaterialsNames();
-	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true )->id(),
+	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_FRONT_MATERIAL" ), true )->id(),
+			       "strings",
+			       aPerfMatNames );
+	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_BACK_MATERIAL" ), true )->id(),
 			       "strings",
 			       aPerfMatNames );
       }
@@ -1247,7 +1250,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpVectors ), clientOCCorVTK + " and isVectorsMode", QtxPopupMgr::ToggleRule );
   mgr->insert( separator(), -1, -1 );     // -----------
   mgr->insert( action(  GEOMOp::OpColor ), -1, -1 ); // color
-  mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})" + "and isPhysicalMaterial=false", QtxPopupMgr::VisibleRule );
+  mgr->setRule( action( GEOMOp::OpColor ), clientOCCorVTKorOB_AndSomeVisible + " and ($component={'GEOM'})", QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpTransparency ), -1, -1 ); // transparency
   mgr->setRule( action( GEOMOp::OpTransparency ), clientOCCorVTK_AndSomeVisible, QtxPopupMgr::VisibleRule );
   mgr->insert( action(  GEOMOp::OpIsos ), -1, -1 ); // isos
@@ -1716,10 +1719,14 @@ void GeometryGUI::createPreferences()
   int defl = addPreference( tr( "PREF_DEFLECTION" ), genGroup,
                             LightApp_Preferences::DblSpin, "Geometry", "deflection_coeff" );
 
-  int material = addPreference( tr( "PREF_MATERIAL" ), genGroup,
+  int front_material = addPreference( tr( "PREF_FRONT_MATERIAL" ), genGroup,
 				      LightApp_Preferences::Selector,
-				      "Geometry", "material" );
+				      "Geometry", "front_material" );
   
+  int back_material = addPreference( tr( "PREF_BACK_MATERIAL" ), genGroup,
+				     LightApp_Preferences::Selector,
+				     "Geometry", "back_material" );
+
   const int nb = 4;
   int wd[nb];
   int iter=0;
@@ -1809,7 +1816,8 @@ void GeometryGUI::createPreferences()
   // Set property for default material
   Material_ResourceMgr aMatResMgr;
   QStringList aPrefMatNames = aMatResMgr.getPreferenceMaterialsNames();
-  setPreferenceProperty( material, "strings", aPrefMatNames );
+  setPreferenceProperty( front_material, "strings", aPrefMatNames );
+  setPreferenceProperty( back_material, "strings", aPrefMatNames );
 
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;
@@ -2006,10 +2014,16 @@ void GeometryGUI::storeVisualParameters (int savePoint)
           ip->setParameter(entry, param, aProps.value(MARKER_TYPE_PROP).toString().toLatin1().data());
         }
 
-	if(aProps.contains(MATERIAL_PROP)) {
-          param = occParam + MATERIAL_PROP;
-          ip->setParameter(entry, param, aProps.value(MATERIAL_PROP).toString().toLatin1().data());
+	if(aProps.contains(FRONT_MATERIAL_PROP)) {
+          param = occParam + FRONT_MATERIAL_PROP;
+          ip->setParameter(entry, param, aProps.value(FRONT_MATERIAL_PROP).toString().toLatin1().data());
         }
+
+	if(aProps.contains(BACK_MATERIAL_PROP)) {
+          param = occParam + BACK_MATERIAL_PROP;
+          ip->setParameter(entry, param, aProps.value(BACK_MATERIAL_PROP).toString().toLatin1().data());
+	  
+	}
 
 	if(aProps.contains( EDGE_WIDTH_PROP )) {
              param = occParam + EDGE_WIDTH_PROP;
@@ -2130,8 +2144,10 @@ void GeometryGUI::restoreVisualParameters (int savePoint)
         aListOfMap[viewIndex].insert( DEFLECTION_COEFF_PROP, val.toDouble());
       }  else if(paramNameStr == MARKER_TYPE_PROP) {
         aListOfMap[viewIndex].insert( MARKER_TYPE_PROP, val);
-      } else if(paramNameStr == MATERIAL_PROP) {
-        aListOfMap[viewIndex].insert( MATERIAL_PROP, val);
+      } else if(paramNameStr == FRONT_MATERIAL_PROP) {
+        aListOfMap[viewIndex].insert( FRONT_MATERIAL_PROP, val);
+      } else if(paramNameStr == BACK_MATERIAL_PROP) {
+        aListOfMap[viewIndex].insert( BACK_MATERIAL_PROP, val);
       }  else if(paramNameStr == EDGE_WIDTH_PROP) {
 	aListOfMap[viewIndex].insert( EDGE_WIDTH_PROP , val);
       }  else if(paramNameStr == ISOS_WIDTH_PROP) {
