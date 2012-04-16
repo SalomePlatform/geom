@@ -39,8 +39,8 @@ of the <b>Set Material Properties</b> dialog.
 - <b>Global</b> materials are shown in blue color in the list
 - <b>User</b> materials are shown in black color in the list 
 
-\n If user tries to change global material, in in the left-side list box
-creates a new user material basing on selected one.
+\n If user tries to change a global material, it 
+creates a new user material basing on selected one in the left-side list box.
 User materials allow changes without creating a new one.
 Hot keys for the User materials:
 - "Delete" key delete the selected material from list box
