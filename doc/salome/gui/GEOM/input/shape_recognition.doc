@@ -19,6 +19,8 @@ Detection of the cost line on a nautical chart
 
 \image html contour_detection_example2.png 
 
+\n
+
 To use the <b>Shape recogition</b> tool:
 
 <ol> 
@@ -43,21 +45,28 @@ To create <b>Contours</b> :
   
   <li> Find a zone in the picture which color is representative of the zone you want to find the frontier of. Draw a rectangle on it to take a <b>Snapshot</b>.</li>
   
-  <li> Apply </li>
-
-  The \b Result will be a \b Compound of \b Edges or \b Wires from which you can explode the desired edges or wires.
-
-  \image html feature_detection_dlg.png 
+  \b Example:
   
-  <b> Output type </b> :
+  In the example shown above the following snapshot was taken in the middle of the chart
+  
+  \image html feature_detection_dlg3.png
+  
+  All the violet and white areas are thus considered as part of the zone we want to find the frontier of.
+  
+  
+  <li> <b> Output type </b> 
 
   <ul>
 
-  <li> \b Spline : each contour will be a single \b edge based on a B-Spline curve</li>
+  <li> \b Spline : The \b result will be a \b Compound of \b Edges. Each contour will be a single \b edge based on a B-Spline curve (it will be smooth).</li>
 
-  <li> \b Polyline : each contour will be a wire made of lines (i.e. a \b Polygon)</li>
+  <li> \b Polyline : The \b result will be a \b Compound of \b Wires. Each contour will be a wire made of lines (i.e. a \b Polygon)</li>
 
   </ul>
+  
+  In both cases each contour can then be retrieved by an explode operation with the appropriate subshape type.
+  
+  </li>
   
   \note It's better to use the \b Spline output type unless you want to find the frontier of a polygon (rectangle ...)
 
