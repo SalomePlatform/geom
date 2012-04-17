@@ -2,7 +2,13 @@
 
 \page shape_recognition_page Shape recognition from a picture
 
-\note This functionality is not fully operational yet. It is provided for testing purpose and because it might already be helpful in some situations. 
+\note  
+  <ol>
+  <li>This functionality is not fully operational yet. It is provided for testing purpose and because it might already be helpful in some situations. 
+  (Do not hesitate to make feedbacks on possible bugs ...) </li>
+  
+  <li>The functionality is only available if SALOME has been built with the optional prerequisite OpenCV. </li>
+  </ol>
 
 This tool allows you to create geometrical shapes automatically out from pictures elements by performing shape recognition algorithms.
 <b>Contours</b> or <b>Corners</b> can be built.
