@@ -1,282 +1,31 @@
 /*!
 
-\page using_measurement_tools_page Using measurement tools
+\page using_measurement_tools_page Measuring objects properties
 
 \n Measurement tools in GEOM are necessary for getting different data
-concerning created or imported geometrical objects. They are:
+concerning created or imported geometrical objects :
 
 <ul>
-<li>\ref point_coord_anchor "Point coordinates"</li>
-<li>\ref basic_prop_anchor "Basic properties"</li>
-<li>\ref center_mass_anchor "Center of mass"</li>
-<li>\ref vertex_by_index "Get Vertex By Index"</li>
-<li>\ref inertia_anchor "Inertia"</li>
-<li>\ref normale_anchor "Normal to a Face"</li>
-<li>\ref boundaries_anchor "Check Free Boundaries"</li>
-<li>\ref faces_anchor "Check Faces"</li>
-<li>\ref bounding_box_anchor "Bounding box"</li>
-<li>\ref min_distance_anchor "Min. distance"</li>
-<li>\ref angle_anchor "Angle"</li>
-<li>\ref tolerance_anchor "Tolerance"</li>
-<li>\ref whatis_anchor "WhatIs"</li>
-<li>\ref check_anchor "Check"</li>
-<li>\ref check_compound_anchor "Check compound of blocks"</li>
-<li>\ref check_self_intersections_anchor "Detect Self-intersections"</li>
+<li>\subpage point_coordinates_page "Point coordinates"</li>
+<li>\subpage basic_prop_page "Basic properties"</li>
+<li>\subpage center_mass_page "Center of mass"</li>
+<li>\subpage inertia_page "Inertia"</li>
+<li>\subpage normal_page "Normal to a Face"</li>
+<li>\subpage bounding_box_page "Bounding box"</li>
+<li>\subpage min_distance_page "Min. distance"</li>
+<li>\subpage angle_page "Angle"</li>
+<li>\subpage tolerance_page "Tolerance"</li>
+<li>\subpage whatis_page "WhatIs"</li>
 </ul>
 
-\n Our <b>TUI Scripts</b> show how to use
-\ref tui_measurement_tools_page "Measurement Tools" with <b>TUI
-commands</b>.
+\n Or to check their integrity:
 
-\n <em>To use measurement tools:</em>
-\par
-In the <b>Main menu</b> select \b Measures submenu.
-
-\anchor point_coord_anchor
-<br><h2>Point coordinates</h2>
-
-\n Returns the coordinates of a point.
-
-\n <b>Result:</b> Point coordinates (X, Y, Z) in 3D space in the form of Python Tuple.
-\n <b>TUI Command:</b> <em>geompy.PointCoordinates(Point),</em>
-where \em Point is a point whose coordinates are inquired.
-
-\image html measures1.png
-
-\anchor basic_prop_anchor
-<br><h2>Basic properties</h2>
-
-\n Returns the properties (Length, Surface & Volume) for the selected
-geometrical object.
-
-\n <b>Result:</b> Display Length, Surface & Volume in the form of
-Python Tuple.
-\n <b>TUI Command:</b> <em>geompy.BasicProperties(Shape),</em> where
-\em Shape is a shape whose properties are inquired.
-
-\image html neo-basicprop.png
-
-\anchor center_mass_anchor
-<br><h2>Center of mass</h2>
-
-\n Calculates and returns the coordinates of the gravity center for
-the selected geometrical object.
-
-\n <b>Result:</b> GEOM_Object (vertex).
-\n <b>TUI Command:</b> <em> geompy.MakeCDG(Shape),</em> where \em Shape is
-the shape for which a center of gravity is computed.
-
-\image html measures3.png
-
-\anchor vertex_by_index
-<br><h2>Get Vertex by Index</h2>
-
-\n It is possible to get the first or the last vertex from an edge or a wire, depending on 
-its direction (orientation), or to find the vertex by the index inside the wire. 
-The numeration of vertexes starts from 0. This function has only a TUI implementation) 
-
-\n <b>Result:</b> GEOM_Object (vertex).
-\n <b>TUI Command:</b> <em> geompy.GetVertexByIndex(Shape, Index),</em>
-<em> geompy.GetFirstVertex(Shape),</em>
-<em> geompy.GetLastVertex(Shape),</em> where \em Shape must be Wire or Edge.
-
-\anchor inertia_anchor
-<br><h2>Inertia</h2>
-
-Returns the axial moments of inertia for the selected geometrical object.
-
-\n <b>Result:</b> Displays the matrix of the own moments of inertia and
-the relative moments of inertia in the form of Python Tuple
- <center>(I11, I12, I13,</center>
-                     <center>I21, I22, I23,</center>
-                     <center>I31, I32, I33,</center>
-                     <center>Ix, Iy, Iz).</center>
-\n <b>TUI Command:</b> <em>geompy.Inertia(Shape),</em> where \em Shape is
-a shape for which the own matrix of inertia and the relative moments of inertia are
-returned.
-
-\image html measures4.png
-
-\anchor normale_anchor
-<br><h2>Normal to a Face</h2>
-
-\n Calculates the normal vector to the selected \b Face. The \b Point
-is a point of the \b Face, where the Normal should be calculated.
-
-\image html normaletoface.png
-
-\anchor boundaries_anchor
-<br><h2>Check Free Boundaries</h2>
-
-\n Detects and highlights  wires and edges that are not shared between
-two faces and are considered a shape's boundary.
-
-\n <b>TUI Command:</b> <em>(NoError, ClosedWires, OpenWires) =
-geompy.GetFreeBoundary(Shape),</em> where \em Shape is a shape to be
-checked, \em NoError is false if an error occurred while checking free
-boundaries, \em ClosedWires is a list of closed free boundary wires,
-\em OpenWires is a list of open free boundary wires.
-
-\image html repair9.png
-
-\anchor faces_anchor
-<br><h2>Check Free Faces</h2>
-
-\n Highlights all free faces of a given shape. A free
-face is a face which is not shared between two objects of the shape.
-
-\n \b NOTE: This functionality works only in VTK viewer.
-
-\n \b Result: a list of IDs of all free faces, containing in the shape.
-\n <b>TUI Command:</b> <em>GetFreeFacesIDs(Shape),</em> where \em Shape is
-a shape to be checked.
-
-\image html repair10.png
-
-\anchor bounding_box_anchor
-<br><h2>Bounding box</h2>
-
-Returns the dimensions of the bounding box for the selected
-geometrical object.
-
-\b NOTE: In order to take into account any possible distortion of a shape 
-that affects the resulting bounding box, the algorithm enlarges 
-the bounding box to the value of the maximum deflection value of 
-faces (by iterating through all faces of a shape).
-This functionallity is implemented in such a way in order to have 
-satisfactory performance.
-
-<b>Result:</b> Displays the dimensions of the bounding box of a
-geometrical object in the form of Python Tuple (Xmin, Xmax, Ymin,
-Ymax, Zmin, Zmax).
-\n <b>TUI Command:</b> <em>geompy.BoundingBox(Shape),</em> where \em Shape
-is a shape for which a bounding box is computed.
-
-\image html measures5.png
-
-\anchor min_distance_anchor
-<br><h2>Min. distance</h2>
-
-\n Returns the minimum distance between two geometrical objects and
-the coordinates of the vector of distance and shows the vector in the viewer.
-
-\n <b>TUI Command:</b> <em>geompy.MinDistance(Shape1, Shape2),</em>
-where \em Shape1 and \em Shape2 are shapes between which the minimal
-distance is computed.
-
-\image html distance.png
-
-\anchor angle_anchor
-<br><h2>Angle</h2>
-
-\n Returns the angle between two lines or linear edges in degrees.
-
-\note If both arguments are <b>vectors</b>, the angle is computed in
-      accordance with their orientations, otherwise the minimum angle
-      is computed.
-
-\n <b>TUI Command:</b> <em>geompy.GetAngle(shape1, shape2),</em> where
-Shape1 and Shape2 are shapes between which the angle is computed. 
-Another TUI command is <em>geompy.GetAngleRadians(shape1,shape2),</em> 
-which returns the value of angle in radians.
-
-\image html angle.png
-
-\anchor tolerance_anchor
-<br><h2>Tolerance</h2>
-
-\n Returns the maximum and the minimum tolerance for the selected
-geometrical object.
-
-\n <b>Result:</b> Displays the tolerance values (FaceMinTol,
-FaceMaxTol, EgdeMinTol, EgdeMaxTol, VertexMinTol, VertexMaxTol).
-\n <b>TUI Command:</b> <em>geompy.Tolerance(Shape),</em> where \em Shape
-is a shape for which minimal and maximal tolerances are returned.
-
-\image html new-tolerance.png
-
-\anchor whatis_anchor
-<br><h2>WhatIs</h2>
-
-\n General information about the selected geometrical object is the
-list of types and quantities of all topological entities, composing
-the shape.
-
-\n <b>TUI Command:</b> <em>geompy.WhatIs(Shape),</em> where \em Shape is a
-shape from which a description is returned.
-
-\image html measures8.png
-
-\n <b>Kind of Shape</b> field characterises the
-whole shape. If there is no additional information available for the
-shape, <b>Basic Properties</b> button will be disabled, otherwise it
-will show a dialog with information about
-dimensions, position, orientation and other parameters of the shape.
-
-\n <b>TUI Command:</b> <em>geompy.KindOfShape(Shape),</em> where \em Shape is a
-shape from which a description is returned.
-
-\image html measures8a.png
-
-\anchor check_anchor
-<br><h2>Check</h2>
-
-\n Checks the topology of the selected geometrical object and returns
-True if it is valid. Check also geometry checkbox allows to test the
-geometry as well.
-
-\n <b>Result:</b> Boolean.
-\n <b>TUI Command:</b> <em>geompy.CheckShape(theShape, theIsCheckGeom = 0),</em>
-where \em theShape is the shape checked for validity.
-
-\image html measures9.png
-
-\anchor check_compound_anchor
-<br><h2>Check compound of blocks</h2>
-
-\n Checks whether a shape is a compound of glued blocks. To be
-considered as a compound of blocks, the given shape must satisfy the
-following conditions:
 <ul>
-<li>Each element of the compound should be a Block (6 faces and 12 edges);</li>
-<li>A connection between two Blocks should be an entire quadrangle face or an entire edge;</li>
-<li>The compound should be connected;</li>
-<li>Two quadrangle faces should be glued.</li>
+<li>\subpage boundaries_page "Check Free Boundaries"</li>
+<li>\subpage faces_page "Check Free Faces"</li>
+<li>\subpage check_page "Check Shape"</li>
+<li>\subpage check_compound_page "Check compound of blocks"</li>
+<li>\subpage check_self_intersections_page "Detect Self-intersections"</li>
 </ul>
-
-\n Informs of the following possible errors:
-<ul>
-<li>not a block;</li>
-<li>not glued;</li>
-<li>not connected;</li>
-<li>extra or degenerated edge.</li>
-</ul>
-
-\n <b>Result:</b> Boolean; highlight in the viewer.
-\n <b>TUI Command:</b>
-<em>geompy.CheckCompoundOfBlocks(Compound).</em> Checks if the shape
-is a valid compound of blocks. If it is true, then the validity flag
-is returned, and encountered errors are printed in the python console.
-
-\image html measures10.png
-
-\anchor check_self_intersections_anchor
-<br><h2>Detect Self-intersections</h2>
-
-\n Checks the topology of the selected shape to detect self-intersections.
- Returns True if there are no self-intersections. Reports pairs of
- intersected sub-shapes, if there are any.
-
-\note This tool is useful for detection of shapes, not suitable for
-arguments of Boolean operations and Partition algorithm.
-For more information about Partition and Boolean Operations Algorithms
-and their limitations refer to <a href="SALOME_BOA_PA.pdf">this document</a>.
-
-\n <b>Result:</b> Boolean.
-\n <b>TUI Command:</b> <em>geompy.CheckSelfIntersections(theShape),</em>
-where \em theShape is the shape checked for validity.
-
-\image html measures11.png
 
 */
-

@@ -13,13 +13,12 @@ using a wide range of functions;</li>
 <li>\subpage transform_geom_obj_page "transformation of geometrical objects" using
 various algorithms;</li>
 <li>\subpage repairing_operations_page "optimization of geometrical objects";</li>
-<li>viewing \subpage geometrical_obj_prop_page "geometrical object properties".</li>
-<li>and other information about geometrical objects using
+<li>Get information about geometrical objects using
  \subpage using_measurement_tools_page "measurement tools".</li>
+<li>\subpage pictures_page "Design shapes from pictures"
+<li>and viewing \subpage geometrical_obj_prop_page "geometrical object properties".</li>
 <li>easily setting parameters via the variables predefined in
  \subpage using_notebook_geom_page "Salome notebook".</li>
-<li>\subpage import_picture_page, such as engeneering drawings or nautical charts as a support for shape design.
-<li>\subpage shape_recognition_page previously imported in the OCC viewer .
 </ul>
 
 

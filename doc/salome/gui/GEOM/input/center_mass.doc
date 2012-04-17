@@ -1,0 +1,14 @@
+/*!
+
+\page center_mass_page Center of Mass
+
+Calculates and returns the coordinates of the gravity center for
+the selected geometrical object.
+
+<b>Result:</b> GEOM_Object (vertex).
+\n <b>TUI Command:</b> <em> geompy.MakeCDG(Shape),</em> where \em Shape is
+the shape for which a center of gravity is computed.
+
+\image html measures3.png
+
+*/

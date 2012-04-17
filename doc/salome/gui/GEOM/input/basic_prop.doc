@@ -1,0 +1,15 @@
+/*! 
+
+\page basic_prop_page Basic Properties
+
+Returns the properties (Length, Surface & Volume) for the selected
+geometrical object.
+
+<b>Result:</b> Display Length, Surface & Volume in the form of
+Python Tuple.
+\n<b>TUI Command:</b> <em>geompy.BasicProperties(Shape),</em> where
+\em Shape is a shape whose properties are inquired.
+
+\image html neo-basicprop.png
+
+*/

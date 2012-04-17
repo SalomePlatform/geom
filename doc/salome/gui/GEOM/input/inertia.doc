@@ -1,0 +1,19 @@
+/*!
+
+\page inertia_page Inertia
+
+Returns the axial moments of inertia for the selected geometrical object.
+
+\n <b>Result:</b> Displays the matrix of the own moments of inertia and
+the relative moments of inertia in the form of Python Tuple
+ <center>(I11, I12, I13,</center>
+                     <center>I21, I22, I23,</center>
+                     <center>I31, I32, I33,</center>
+                     <center>Ix, Iy, Iz).</center>
+\n <b>TUI Command:</b> <em>geompy.Inertia(Shape),</em> where \em Shape is
+a shape for which the own matrix of inertia and the relative moments of inertia are
+returned.
+
+\image html measures4.png
+
+*/

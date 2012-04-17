@@ -1,0 +1,31 @@
+/*! 
+
+\page check_compound_page Check Compound of Blocks
+
+Checks whether a shape is a compound of glued blocks. To be
+considered as a compound of blocks, the given shape must satisfy the
+following conditions:
+<ul>
+<li>Each element of the compound should be a Block (6 faces and 12 edges);</li>
+<li>A connection between two Blocks should be an entire quadrangle face or an entire edge;</li>
+<li>The compound should be connected;</li>
+<li>Two quadrangle faces should be glued.</li>
+</ul>
+
+\n Informs of the following possible errors:
+<ul>
+<li>not a block;</li>
+<li>not glued;</li>
+<li>not connected;</li>
+<li>extra or degenerated edge.</li>
+</ul>
+
+\n <b>Result:</b> Boolean; highlight in the viewer.
+\n <b>TUI Command:</b>
+<em>geompy.CheckCompoundOfBlocks(Compound).</em> Checks if the shape
+is a valid compound of blocks. If it is true, then the validity flag
+is returned, and encountered errors are printed in the python console.
+
+\image html measures10.png
+
+*/

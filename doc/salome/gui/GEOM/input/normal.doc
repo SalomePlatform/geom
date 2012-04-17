@@ -1,0 +1,10 @@
+/*!
+
+\page normal_page Normal to a Face
+
+\n Calculates the normal vector to the selected \b Face. The \b Point
+is a point of the \b Face, where the Normal should be calculated.
+
+\image html normaletoface.png
+
+*/
