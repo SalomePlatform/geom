@@ -28,4 +28,8 @@ concerning created or imported geometrical objects :
 <li>\subpage check_self_intersections_page "Detect Self-intersections"</li>
 </ul>
 
+\n Our <b>TUI Scripts</b> show how to use
+\ref tui_measurement_tools_page "Measurement Tools" with <b>TUI
+commands</b>.
+
 */
