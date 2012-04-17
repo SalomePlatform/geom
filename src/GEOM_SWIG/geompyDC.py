@@ -2882,8 +2882,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a face on the given wire.
         #  @param theWire closed Wire or Edge to build the face on.
-        #  @param isPlanarWanted If TRUE, only planar face will be built.
-        #                        If impossible, NULL object will be returned.
+        #  @param isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+        #                        If the tolerance of the obtained planar face is less
+        #                        than 1e-06, this face will be returned, otherwise the
+        #                        algorithm tries to build any suitable face on the given
+        #                        wire and prints a warning message.
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -2893,27 +2896,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theWire closed Wire or Edge to build the face on.
-                isPlanarWanted If TRUE, only planar face will be built.
-                               If impossible, NULL object will be returned.
+                isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+                               If the tolerance of the obtained planar face is less
+                               than 1e-06, this face will be returned, otherwise the
+                               algorithm tries to build any suitable face on the given
+                               wire and prints a warning message.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
-            if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                if os.getenv("GEOM_MAKEFACE_ALLOW_NONPLANAR") is not None:
-                    print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
-                else:
-                    RaiseIfFailed("MakeFace", self.ShapesOp)
+            if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
+                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
             return anObj
 
         ## Create a face on the given wires set.
         #  @param theWires List of closed wires or edges to build the face on.
-        #  @param isPlanarWanted If TRUE, only planar face will be built.
-        #                        If impossible, NULL object will be returned.
+        #  @param isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+        #                        If the tolerance of the obtained planar face is less
+        #                        than 1e-06, this face will be returned, otherwise the
+        #                        algorithm tries to build any suitable face on the given
+        #                        wire and prints a warning message.
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -2923,19 +2929,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theWires List of closed wires or edges to build the face on.
-                isPlanarWanted If TRUE, only planar face will be built.
-                               If impossible, NULL object will be returned.
+                isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+                               If the tolerance of the obtained planar face is less
+                               than 1e-06, this face will be returned, otherwise the
+                               algorithm tries to build any suitable face on the given
+                               wire and prints a warning message.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
-            if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                if os.getenv("GEOM_MAKEFACE_ALLOW_NONPLANAR") is not None:
-                    print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
-                else:
-                    RaiseIfFailed("MakeFace", self.ShapesOp)
+            if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
+                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             return anObj
