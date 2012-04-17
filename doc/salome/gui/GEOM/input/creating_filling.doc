@@ -18,12 +18,16 @@ created surface and the reference edge;
 iterations are repeated until the required tolerance is reached. So, a
 greater number of iterations allows producing a better surface. 
 \n <b>Method</b> - Kind of method to perform filling operation
-1. Default - the standard behaviour.
-2. Use edges orientation - the edges orientation is used: if an edge is
+
+<ol>
+<li>Default - the standard behaviour.</li>
+<li>Use edges orientation - the edges orientation is used: if an edge is
 reversed, the curve from this edge is reversed before being used by the filling
-algorithm.
-3. Auto-correct edges orientation - curves orientation is changed to 
-minimize the sum of distances between ends points of edges.
+algorithm.</li>
+<li>Auto-correct edges orientation - curves orientation is changed to 
+minimize the sum of distances between ends points of edges.</li>
+</ol>
+
 \n <b>Approximation</b> - if checked, BSpline curves are generated in
 the process of surface construction (using
 GeomAPI_PointsToBSplineSurface functionality). By default the surface
