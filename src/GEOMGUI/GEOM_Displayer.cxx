@@ -1245,15 +1245,13 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 	}
       }
 
-    if ( HasWidth() )
+      if ( aGeomGActor )
       {
-	aGeomGActor->SetWidth( GetWidth() );
-      }
-    
-    
-    if ( HasIsosWidth() )
-      {
-	aGeomGActor->SetIsosWidth( GetIsosWidth() );
+        if ( HasWidth() )
+          aGeomGActor->SetWidth( GetWidth() );
+
+        if ( HasIsosWidth() )
+          aGeomGActor->SetIsosWidth( GetIsosWidth() );
       }
     
     if ( myToActivate )
