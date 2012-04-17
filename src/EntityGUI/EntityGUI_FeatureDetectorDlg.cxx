@@ -166,6 +166,8 @@ EntityGUI_FeatureDetectorDlg::EntityGUI_FeatureDetectorDlg( GeometryGUI* theGeom
   // Build an instance of detection used to perform image processing operations
   aDetector = new ShapeRec_FeatureDetector();
   
+  setHelpFileName( "shape_recognition_page.html" );
+  
   Init();
   
 }
