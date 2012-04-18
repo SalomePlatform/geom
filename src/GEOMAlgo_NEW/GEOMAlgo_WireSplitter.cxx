@@ -44,15 +44,12 @@
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Iterator.hxx>
 
-
 #include <BRep_Tool.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
-
-
 
 #include <TopTools_SequenceOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
@@ -446,9 +443,8 @@ static
              TColgp_SequenceOfPnt2d& aCoordVa,
              BOPTColStd_ListOfListOfShape& myShapes,
              BOP_IndexedDataMapOfVertexListEdgeInfo& mySmartMap)
-
 {
-  Standard_Integer i,j, aNb, aNbj;
+  Standard_Integer i,j, aNb, aNbj, iCnt;
   Standard_Real aTol, anAngleIn, anAngleOut, anAngle, aMinAngle;
   Standard_Real aTol2D, aTol2D2;
   Standard_Real aTol2, aD2;//, aTolUVb, aTolVVb;
@@ -561,28 +557,33 @@ static
 
   aMinAngle=100.;
   anIsFound=Standard_False;
-
-  Standard_Integer aCurIndexE = 0;
-
+  //
+  //modified by NIZNHY-PKV Fri Apr 13 14:48:47 2012f
+  iCnt=NbWaysOut (aLEInfo); 
+  if (!iCnt) { // no way to go . (Error)
+    return ;
+  }
+  ++iCnt;
+  //modified by NIZNHY-PKV Fri Apr 13 14:48:50 2012t
+  //
   anIt.Initialize(aLEInfo);
   for (; anIt.More(); anIt.Next()) {
     BOP_EdgeInfo& anEI=anIt.Value();
     const TopoDS_Edge& aE=anEI.Edge();
     anIsOut=!anEI.IsIn();
     anIsNotPassed=!anEI.Passed();
-
+    //
     if (anIsOut && anIsNotPassed) {
-      aCurIndexE++;
-      //
-      // Is there one way to go out of the vertex
-      // we have to use it only.
-      Standard_Integer iCnt;
-      iCnt=NbWaysOut (aLEInfo);
-      //
-      if (!iCnt) {
-        // no way to go . (Error)
-        return ;
+      //modified by NIZNHY-PKV Fri Apr 13 14:50:02 2012f
+      //iCnt=NbWaysOut (aLEInfo);
+      //if (!iCnt) { // no way to go . (Error)
+      //  return ;
+      //}
+      --iCnt;
+      if (aE.IsSame(aEOuta)) {
+	continue;
       }
+      //modified by NIZNHY-PKV Fri Apr 13 14:50:06 2012t
       //
       if (iCnt==1) {
         // the one and only way to go out .
@@ -601,7 +602,6 @@ static
         continue;
       }
       //
-      //
       anAngleOut=anEI.Angle();
       //
       anAngle=ClockWiseAngle(anAngleIn, anAngleOut);
@@ -617,7 +617,7 @@ static
     // no way to go . (Error)
     return;
   }
-
+  //
   aEOutb=pEdgeInfo->Edge();
   //
   Path (aGAS, myFace, aVb, aEOutb, *pEdgeInfo, aLS,
@@ -750,11 +750,9 @@ static
   dA=A1-A2;
   if (dA <= 0.) {
     dA=aTwoPi+dA;
-    //modified by NIZNHY-PKV Thu Feb 17 08:26:39 2011f
     if (dA <= 1.e-14) {
       dA=aTwoPi;
     }
-    //modified by NIZNHY-PKV Thu Feb 17 08:26:42 2011t
   }
   //xx
   else if (dA <= 1.e-14) {
@@ -852,7 +850,7 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 
   return anAngle;
 }
-//
+
 //=======================================================================
 // function: NbWaysOut
 // purpose:
