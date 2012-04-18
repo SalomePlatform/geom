@@ -134,7 +134,7 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
       proj.Perform(aPnt);
       if (!proj.IsDone()) {
         Standard_ConstructionError::Raise
-          ("Projection aborted : GeomAPI_ProjectPointOnSurf failed");
+          ("Projection aborted : the algorithm failed");
       }
       int nbPoints = proj.NbPoints();
       if (nbPoints < 1) {
