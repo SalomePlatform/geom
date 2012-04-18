@@ -6938,7 +6938,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return TRUE, if the shape contains no self-intersections.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def CheckSelfIntersections (self, theShape):
+        def CheckSelfIntersections(self, theShape):
             """
             Detect self-intersections in the given shape.
 
@@ -8169,6 +8169,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 return "FILLET_2D"
             if theId == 46:
                 return "FILLET_1D"
+            if theId == 201:
+                return "PIPETSHAPE"
             return "Shape Id not exist."
 
         ## Returns a main shape associated with the group
