@@ -1,0 +1,94 @@
+/*!
+
+\page geometry_preferences_page Geometry preferences
+
+In the \b Geometry module you can set preferences for visualisation of
+geometrical figures which can be used in later sessions with this
+module.
+There is also a special group of preferences controlling input precision for floating-point
+data.
+
+\image html pref15.png
+
+\par
+For all color definitions click on the respective line to access to
+the <b>Select Color</b> dialog box.
+
+<ul>
+<li><b>General</b></li>
+<ul>
+<li><b>Default display mode</b> - allows to choose between wireframe, shading or 
+shading with edges.</li>
+<li><b>Default shading color</b> - allows to select default shading
+color.</li>
+<li><b>Edges in shading</b> - allows to select default edges color in shading mode.</li>
+<li><b> Default wireframe color</b> - allows to select default
+wireframe color (to be applied to any lines not being free boundaries
+or isolated lines).</li>
+<li><b>Color of free boundaries</b> - allows to select default color for free boundaries.</li>
+<li><b>Color of edges, vectors and wires</b> - allows to select
+default color for edges, vectors and wires (isolated lines).</li>
+<li><b>Color of points</b> - allows to select default color for
+vertices.</li>
+<li><b>Color of isolines</b> - allows to select default color for
+isolines.</li>
+<li><b>Step value for spin boxes</b> - allows to define the increment
+of values set in spin boxes.</li>
+<li><b>Deflection coefficient</b> - allows to define default deflection
+coefficient for lines and surfaces. A smaller coefficient provides
+better quality of a shape in the viewer.</li>
+<li><b>Default front material</b> - allows to define default front face material.</li>
+<li><b>Default back material</b> - allows to define default back face material.</li>
+<li><b>Edges width</b> - allows to define default width of the edges.</li>
+<li><b>Isolines width</b> - allows to define default width of the isolines.</li>
+<li><b>Preview edges width</b> - allows to define width of the edges for preview.</li>
+<li><b>Measures line width</b> - allows to define lines width of measurements tools.</li>
+
+</ul>
+</ul>
+
+<ul>
+<li><b>Input fields precision</b></li>
+<ul>
+<li><b>Length precision</b> - allows to ajust input precision of coordinates and dimensions.</li>
+<li><b>Angular precision</b> - allows to ajust input precision of angles.</li>
+<li><b>Length tolerance precision</b> - allows to ajust input precision of tolerance of coordinates and dimensions.</li>
+<li><b>Angular tolerance precision</b> - allows to ajust input precision of tolerance of angles.</li>
+<li><b>Weight precision</b> - allows to ajust input precision of weight and mass.</li>
+<li><b>Density precision</b> - allows to ajust input precision of density.</li>
+<li><b>Parametric precision</b> - allows to ajust input precision of parametric values.</li>
+<li><b>Parametric tolerance precision</b> - allows to ajust input precision of tolerance in parametric space.</li>
+</ul>
+</ul>
+
+<ul>
+<li><b>Marker of Points</b></li>
+<ul>
+<li><b>Type</b> - allows to select the symbol for representation of
+points (cross, asterisk, etc.).</li>
+<li><b>Size</b> - allows to define the size of the marker from 1
+(smallest) to 7 (largest).</li>
+</ul>
+</ul>
+
+<ul>
+<li><b>Origin and base vectors</b></li>
+<ul>
+<li><b>Length of base vectors</b> - allows to define the length
+of base vectors.</li>
+<li><b>Auto create</b> - allows to automatically create a point
+of origin and three base vectors of the rectangular coordinate
+system immediately after the module activation.</li>
+</ul>
+</ul>
+
+
+<ul>
+<li><b>Operations</b></li>
+<ul>
+<li><b>Preview</b> - allows to customize the displaying preview by default.</li>
+</ul>
+</ul>
+
+
+*/
