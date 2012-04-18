@@ -19,7 +19,7 @@
             <source>ICON_DLG_ARC_CENTER</source>
             <translation>arccenter.png</translation>
         </message>
-	<message>
+        <message>
             <source>ICON_DLG_ARC_OF_ELLIPSE</source>
             <translation>arcofellipse.png</translation>
         </message>
@@ -442,6 +442,10 @@
         <message>
             <source>ICON_DLG_QUAD_FACE_4_VERT</source>
             <translation>block_face_4v.png</translation>
+        </message>
+        <message>
+            <source>ICON_DLG_RECTANGLE</source>
+            <translation>rectangle.png</translation>
         </message>
         <message>
             <source>ICON_DLG_REDO</source>

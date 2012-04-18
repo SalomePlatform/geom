@@ -139,6 +139,7 @@ polyline.png			\
 prism.png			\
 prism2.png			\
 prism3.png			\
+rectangle.png			\
 revol.png			\
 rotate.png			\
 rotatepnt.png			\
