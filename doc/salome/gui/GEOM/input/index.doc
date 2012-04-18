@@ -21,6 +21,8 @@ various algorithms;</li>
  \subpage using_notebook_geom_page "Salome notebook".</li>
 </ul>
 
+Geometry module preferences are described in the \subpage geometry_preferences_page section of SALOME Geometry Help.
+
 
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"
