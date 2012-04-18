@@ -489,7 +489,8 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   }
 
   // clear selection
-  if (aCurrFocus != Faces && aCurrFocus != Edges) {
+  if (aCurrFocus != Face1 && aCurrFocus != Face2 &&
+      aCurrFocus != Faces && aCurrFocus != Edges) {
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
