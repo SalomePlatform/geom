@@ -14,6 +14,8 @@ the relative moments of inertia in the form of Python Tuple
 a shape for which the own matrix of inertia and the relative moments of inertia are
 returned.
 
+See also a \ref tui_inertia_page "TUI example".
+
 \image html measures4.png
 
 */

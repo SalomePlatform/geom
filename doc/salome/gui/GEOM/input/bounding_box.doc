@@ -18,6 +18,8 @@ Ymax, Zmin, Zmax).
 \n <b>TUI Command:</b> <em>geompy.BoundingBox(Shape),</em> where \em Shape
 is a shape for which a bounding box is computed.
 
+See also a \ref tui_bounding_box_page "TUI example".
+
 \image html measures5.png
 
 */

@@ -9,6 +9,8 @@ the shape.
 \n <b>TUI Command:</b> <em>geompy.WhatIs(Shape),</em> where \em Shape is a
 shape from which a description is returned.
 
+See also a \ref tui_whatis_page "TUI example".
+
 \image html measures8.png
 
 \n <b>Kind of Shape</b> field characterises the

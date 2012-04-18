@@ -6,6 +6,7 @@
   <li>\subpage tui_test_others_page</li>
   <li>\subpage tui_test_spanner_page</li>
   <li>\subpage tui_test_all_page</li>
+  <li>\subpage tui_test_measures_page</li>
 </ul>
 
 */

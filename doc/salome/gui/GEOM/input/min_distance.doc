@@ -9,6 +9,8 @@ the coordinates of the vector of distance and shows the vector in the viewer.
 where \em Shape1 and \em Shape2 are shapes between which the minimal
 distance is computed.
 
+See also a \ref tui_min_distance_page "TUI example".
+
 \image html distance.png
 
 */

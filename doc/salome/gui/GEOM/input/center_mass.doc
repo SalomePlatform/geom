@@ -9,6 +9,8 @@ the selected geometrical object.
 \n <b>TUI Command:</b> <em> geompy.MakeCDG(Shape),</em> where \em Shape is
 the shape for which a center of gravity is computed.
 
+See also a \ref tui_center_of_mass_page "TUI example".
+
 \image html measures3.png
 
 */

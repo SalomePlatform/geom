@@ -1,6 +1,6 @@
 /*! 
 
-\page faces_page Check Free Faces
+\page free_faces_page Check Free Faces
 
 Highlights all free faces of a given shape. A free
 face is a face which is not shared between two objects of the shape.
@@ -11,6 +11,8 @@ face is a face which is not shared between two objects of the shape.
 
 <b>TUI Command:</b> <em>GetFreeFacesIDs(Shape),</em> where \em Shape is
 a shape to be checked.
+
+See also a \ref tui_free_faces_page "TUI example".
 
 \image html repair10.png
 

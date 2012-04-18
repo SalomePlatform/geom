@@ -1,6 +1,6 @@
 /*!
 
-\page check_page Check Shape
+\page check_shape_page Check Shape
 
 \n Checks the topology of the selected geometrical object and returns
 True if it is valid. Check also geometry checkbox allows to test the
@@ -9,6 +9,8 @@ geometry as well.
 \n <b>Result:</b> Boolean.
 \n <b>TUI Command:</b> <em>geompy.CheckShape(theShape, theIsCheckGeom = 0),</em>
 where \em theShape is the shape checked for validity.
+
+See also a \ref tui_check_shape_page "TUI example".
 
 \image html measures9.png
 

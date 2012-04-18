@@ -13,6 +13,8 @@ Shape1 and Shape2 are shapes between which the angle is computed.
 Another TUI command is <em>geompy.GetAngleRadians(shape1,shape2),</em> 
 which returns the value of angle in radians.
 
+See also a \ref tui_angle_page "TUI example".
+
 \image html angle.png
 
 */
