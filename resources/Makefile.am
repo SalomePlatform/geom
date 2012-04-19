@@ -149,6 +149,7 @@ section.png			\
 select1.png			\
 sewing.png			\
 shading.png			\
+shading_with_edges.png		\
 shapesonshape.png		\
 shared_shapes.png		\
 sketch.png			\
@@ -184,6 +185,7 @@ vector.png			\
 vector_mode.png                 \
 vector2points.png		\
 vectordxyz.png			\
+wireframe.png			\
 whatis.png			\
 ellipse.png			\
 ellipsepointvector.png		\

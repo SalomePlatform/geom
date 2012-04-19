@@ -58,10 +58,12 @@ namespace GEOMOp {
     OpIsosWidth           = 1261,   // POPUP MENU - LINE WIDTH - ISOS WIDTH
 
     // DisplayGUI ----------------//--------------------------------
-    OpDisplayMode         = 2000,   // MENU VIEW  - DISPLAY MODE - WIREFRAME/SHADING/SHADING WITH EDGES
     OpSwitchVectors       = 2001,   // MENU VIEW  - DISPLAY MODE - SHOW/HIDE EDGE DIRECTION
     OpShowAll             = 2002,   // MENU VIEW  - SHOW ALL
     OpHideAll             = 2003,   // MENU VIEW  - HIDE ALL
+    OpDMWireframe         = 2010,   // MENU VIEW  - DISPLAY MODE - WIREFRAME
+    OpDMShading           = 2011,   // MENU VIEW  - DISPLAY MODE - SHADING
+    OpDMShadingWithEdges  = 2012,   // MENU VIEW  - DISPLAY MODE - SHADING WITH EDGES
     OpShow                = 2100,   // POPUP MENU - SHOW
     OpShowOnly            = 2101,   // POPUP MENU - SHOW ONLY
     OpHide                = 2102,   // POPUP MENU - HIDE

@@ -59,11 +59,6 @@ public:
   // DISPLAY MODE methods : 0 - wireframe, 1 - shading
   // Set display mode for the viewer (current viewer if <viewWindow> - 0 )
   void SetDisplayMode( const int, SUIT_ViewWindow* = 0 );
-  // Get display mode of the viewer (current viewer if <viewWindow> - 0 )
-  int  GetDisplayMode( SUIT_ViewWindow* = 0 );
-  // Invert display mode ( shadin <-> wireframe ) for the viewer 
-  // (current viewer if <viewWindow> = 0 )
-  void InvertDisplayMode( SUIT_ViewWindow* = 0 );
 
   // VECTOR MODE methods
   // Set vectror mode for the viewer

@@ -1032,8 +1032,16 @@
             <translation>sewing.png</translation>
         </message>
 	<message>
+            <source>ICO_WIREFRAME</source>
+            <translation>wireframe.png</translation>
+        </message>
+	<message>
             <source>ICO_SHADING</source>
             <translation>shading.png</translation>
+        </message>
+	<message>
+            <source>ICO_SHADING_WITH_EDGES</source>
+            <translation>shading_with_edges.png</translation>
         </message>
 	<message>
             <source>ICO_VECTOR_MODE</source>

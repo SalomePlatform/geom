@@ -430,7 +430,9 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpClsBringToFront:    //
     libName = "GEOMToolsGUI";
     break;
-  case GEOMOp::OpDisplayMode:        // MENU VIEW - WIREFRAME/SHADING
+  case GEOMOp::OpDMWireframe:        // MENU VIEW - WIREFRAME
+  case GEOMOp::OpDMShading:          // MENU VIEW - SHADING
+  case GEOMOp::OpDMShadingWithEdges: // MENU VIEW - SHADING
   case GEOMOp::OpShowAll:            // MENU VIEW - SHOW ALL
   case GEOMOp::OpShowOnly:           // MENU VIEW - DISPLAY ONLY
   case GEOMOp::OpHideAll:            // MENU VIEW - ERASE ALL
@@ -829,7 +831,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createGeomAction( GEOMOp::OpCheckGeom,        "CHECK_GEOMETRY" );
 #endif
 
-  createGeomAction( GEOMOp::OpDisplayMode,      "SHADING" );
+  createGeomAction( GEOMOp::OpDMWireframe,        "WIREFRAME" );
+  createGeomAction( GEOMOp::OpDMShading,          "SHADING" );
+  createGeomAction( GEOMOp::OpDMShadingWithEdges, "SHADING_WITH_EDGES" );
   createGeomAction( GEOMOp::OpShowAll,          "DISPLAY_ALL" );
   createGeomAction( GEOMOp::OpHideAll,          "ERASE_ALL" );
   createGeomAction( GEOMOp::OpShow,             "DISPLAY" );
@@ -1059,9 +1063,11 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(),       viewId, -1 );
 
   int dispmodeId = createMenu( tr( "MEN_DISPLAY_MODE" ), viewId, -1 );
-  createMenu( GEOMOp::OpDisplayMode,   dispmodeId, -1 );
-  createMenu( separator(),             dispmodeId, -1 );
-  createMenu( GEOMOp::OpSwitchVectors, dispmodeId, -1 );
+  createMenu( GEOMOp::OpDMWireframe,        dispmodeId, -1 );
+  createMenu( GEOMOp::OpDMShading,          dispmodeId, -1 );
+  createMenu( GEOMOp::OpDMShadingWithEdges, dispmodeId, -1 );
+  createMenu( separator(),                  dispmodeId, -1 );
+  createMenu( GEOMOp::OpSwitchVectors,      dispmodeId, -1 );
 
   createMenu( separator(),       viewId, -1 );
   createMenu( GEOMOp::OpShowAll, viewId, -1 );
