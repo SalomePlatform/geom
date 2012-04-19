@@ -113,9 +113,14 @@ static
   Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
                             const GeomAdaptor_Surface& aGAS);
 
+
+//modified by NIZNHY-PKV Thu Apr 19 09:04:59 2012f
 static
-  Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
-//
+  Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
+			     const BOP_ListOfEdgeInfo& aLEInfo);
+//static
+//  Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
+//modified by NIZNHY-PKV Thu Apr 19 09:04:53 2012t
 
 //=======================================================================
 // function:
@@ -447,7 +452,7 @@ static
   Standard_Integer i,j, aNb, aNbj, iCnt;
   Standard_Real aTol, anAngleIn, anAngleOut, anAngle, aMinAngle;
   Standard_Real aTol2D, aTol2D2;
-  Standard_Real aTol2, aD2;//, aTolUVb, aTolVVb;
+  Standard_Real aTol2, aD2;
   Standard_Boolean anIsSameV2d, anIsSameV, anIsFound, anIsOut, anIsNotPassed;
   BOP_ListIteratorOfListOfEdgeInfo anIt;
   TopoDS_Vertex aVb;
@@ -479,8 +484,6 @@ static
   GetNextVertex (pVa, aEOuta, aVb);
 
   gp_Pnt2d aPb=Coord2d(aVb, aEOuta, myFace);
-
-  //const BOP_ListOfEdgeInfo& aLEInfoVb=mySmartMap.FindFromKey(aVb);
   //
   aTol=2.*Tolerance2D(aVb, aGAS);
   aTol2=10.*aTol*aTol;
@@ -558,13 +561,13 @@ static
   aMinAngle=100.;
   anIsFound=Standard_False;
   //
-  //modified by NIZNHY-PKV Fri Apr 13 14:48:47 2012f
-  iCnt=NbWaysOut (aLEInfo); 
+  //modified by NIZNHY-PKV Thu Apr 19 09:05:09 2012f
+  iCnt=NbWaysOut (aEOuta, aLEInfo); 
+  //iCnt=NbWaysOut (aLEInfo); 
+  //modified by NIZNHY-PKV Thu Apr 19 09:05:12 2012t
   if (!iCnt) { // no way to go . (Error)
     return ;
   }
-  ++iCnt;
-  //modified by NIZNHY-PKV Fri Apr 13 14:48:50 2012t
   //
   anIt.Initialize(aLEInfo);
   for (; anIt.More(); anIt.Next()) {
@@ -574,16 +577,9 @@ static
     anIsNotPassed=!anEI.Passed();
     //
     if (anIsOut && anIsNotPassed) {
-      //modified by NIZNHY-PKV Fri Apr 13 14:50:02 2012f
-      //iCnt=NbWaysOut (aLEInfo);
-      //if (!iCnt) { // no way to go . (Error)
-      //  return ;
-      //}
-      --iCnt;
       if (aE.IsSame(aEOuta)) {
 	continue;
       }
-      //modified by NIZNHY-PKV Fri Apr 13 14:50:06 2012t
       //
       if (iCnt==1) {
         // the one and only way to go out .
@@ -850,7 +846,33 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 
   return anAngle;
 }
-
+//modified by NIZNHY-PKV Thu Apr 19 09:02:04 2012f
+//=======================================================================
+// function: NbWaysOut
+// purpose:
+//=======================================================================
+Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
+			   const BOP_ListOfEdgeInfo& aLEInfo)
+{
+  Standard_Boolean bIsOut, bIsNotPassed;
+  Standard_Integer iCnt=0;
+  BOP_ListIteratorOfListOfEdgeInfo anIt;
+  //
+  anIt.Initialize(aLEInfo);
+  for (; anIt.More(); anIt.Next()) {
+    BOP_EdgeInfo& aEI=anIt.Value();
+    const TopoDS_Edge& aE=aEI.Edge();
+    bIsOut=!aEI.IsIn();
+    bIsNotPassed=!aEI.Passed();
+    if (bIsOut && bIsNotPassed) {
+      if (!aE.IsSame(aEOuta)) {
+	iCnt++;
+      }
+    }
+  }
+  return iCnt;
+}
+/*
 //=======================================================================
 // function: NbWaysOut
 // purpose:
@@ -873,3 +895,5 @@ Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& aLEInfo)
   }
   return iCnt;
 }
+*/
+//modified by NIZNHY-PKV Thu Apr 19 09:01:57 2012t
