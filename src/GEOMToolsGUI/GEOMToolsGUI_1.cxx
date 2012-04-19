@@ -615,7 +615,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         ic->Redisplay(CurObject);
 
         QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_WIDTH_PROP, anIsos);
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_PROP, anIsos);
       }
     }
     GeometryGUI::Modified();
