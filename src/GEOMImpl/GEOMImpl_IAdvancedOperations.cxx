@@ -689,12 +689,15 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
       v->GetLastFunction()->SetDescription("");
       TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
       gp_Pnt aP = BRep_Tool::Pnt(aVertex);
+//       std::cout << "Coords: " << aP.X() << ", " << aP.Y() << ", " << aP.Z() << std::endl;
       if (Abs(aP.X()) <= Precision::Confusion()) {
-        if (Abs(aP.Y()) - theR2 <= Precision::Confusion())
+        if (Abs(aP.Y()) - theR1 <= Precision::Confusion()) {
           vi1 = v;
+        }
       } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-        if (Abs(aP.X()) - theR1 <= Precision::Confusion())
+        if (Abs(aP.X()) - theR1 <= Precision::Confusion()) {
           vi2 = v;
+        }
       }
     }
 
@@ -740,13 +743,18 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
         v->GetLastFunction()->SetDescription("");
         TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
         gp_Pnt aP = BRep_Tool::Pnt(aVertex);
+//         std::cout << "Coords: " << aP.X() << ", " << aP.Y() << ", " << aP.Z() << std::endl;
         if (Abs(aP.X()) <= Precision::Confusion()) {
-          if (Abs(aP.Y()) - theR2 > Precision::Confusion())
+          if (Abs(aP.Y()) - theR2 > Precision::Confusion()) {
             ve1 = v;
+          }
         } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-          if (Abs(aP.X()) - theR2 > Precision::Confusion())
+          if (Abs(aP.X()) - theR2 > Precision::Confusion()) {
             ve2 = v;
+          }
         }
+        if ( !ve1.IsNull() && !ve2.IsNull())
+          break;
       }
       Handle(GEOM_Object) edge_e1, edge_e2;
       
@@ -782,6 +790,16 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
         return false;
       }
       face_t->GetLastFunction()->SetDescription("");
+      
+      theShapes.push_back(theShape);
+      theShapes.push_back(vi1);
+      theShapes.push_back(vi2);
+      theShapes.push_back(ve1);
+      theShapes.push_back(ve2);
+      theShapes.push_back(edge_e1);
+      theShapes.push_back(edge_e2);
+      theShapes.push_back(wire_t);
+      theShapes.push_back(face_t);
     }
     else {
       Handle(GEOM_Object) P1, P2, P3, P4, P5, P6;
