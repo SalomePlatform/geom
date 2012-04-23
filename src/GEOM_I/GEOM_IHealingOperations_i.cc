@@ -31,6 +31,7 @@
 #include "utilities.h"
 #include "OpUtil.hxx"
 #include "Utils_ExceptHandlers.hxx"
+#include <Basics_Utils.hxx>
 
 #include <TColStd_HSequenceOfTransient.hxx>
 
@@ -109,6 +110,8 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::ProcessShape (GEOM::GEOM_Object
                                                                const GEOM::string_array& theParams,
                                                                const GEOM::string_array& theValues)
 {
+  Kernel_Utils::Localizer loc;
+
   GEOM::GEOM_Object_var aGEOMObject;
 
   // Set a not done flag
