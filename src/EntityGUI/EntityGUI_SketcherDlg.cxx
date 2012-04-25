@@ -38,6 +38,8 @@
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
 
+#include <GeomLib_IsPlanarSurface.hxx>
+
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
 #include <SUIT_MessageBox.h>
@@ -1370,13 +1372,26 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
                      && !aShape.IsNull())
   { 
     QString aName = GEOMBase::GetName( aSelectedObject.get() ); 
-    myEditCurrentArgument->setText(aName);
     if (myEditCurrentArgument==WPlaneLineEdit)  
     { 
-      AddLocalCS(aSelectedObject.get());
-      selButton->setDown(false);
-      WPlaneLineEdit->setEnabled(false);
-      TypeClicked( myConstructorId );
+      // Check if the face is planar
+      Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aShape));
+      GeomLib_IsPlanarSurface aPlanarCheck(aSurf, Precision::Confusion());
+      
+      if (aPlanarCheck.IsPlanar())
+      {
+        myEditCurrentArgument->setText(aName);
+        AddLocalCS(aSelectedObject.get());
+        selButton->setDown(false);
+        WPlaneLineEdit->setEnabled(false);
+        TypeClicked( myConstructorId );
+      }
+      else
+      {
+        myEditCurrentArgument->setText(tr("GEOM_SKETCHER_WPLANE"));
+        // The following leads to crash TODO : find a way to return a warning
+//         Standard_Failure::Raise(tr("GEOM_SKETCHER_NOT_PLANAR").toStdString().c_str()); 
+      }
     }           
     else
     {
@@ -1390,6 +1405,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       gp_Pnt aPnt;
       if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) 
       {
+        myEditCurrentArgument->setText(aName);
         myX = aPnt.X();
         myY = aPnt.Y();       
         double Xcoord = myX;
