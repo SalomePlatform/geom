@@ -51,7 +51,7 @@ ShapeRec_FeatureDetector::ShapeRec_FeatureDetector():
 }
 
 /*!
-  Sets the path of the image file to be proccesed
+  Sets the path of the image file to be processed
   \param thePath - Location of the image file 
 */
 void ShapeRec_FeatureDetector::SetPath( const std::string& thePath )
