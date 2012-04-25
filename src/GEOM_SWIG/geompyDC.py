@@ -6905,11 +6905,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to check validity of.
         #  @param theIsCheckGeom If FALSE, only the shape's topology will be checked, \n
         #                        if TRUE, the shape's geometry will be checked also.
+        #  @param theReturnStatus If FALSE and if theShape is invalid, a description \n
+        #                        of problem is printed.
+        #                        if TRUE and if theShape is invalid, the description 
+        #                        of problem is also returned.
         #  @return TRUE, if the shape "seems to be valid".
-        #  If theShape is invalid, prints a description of problem.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def CheckShape(self,theShape, theIsCheckGeom = 0):
+        def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
             """
             Check a topology of the given shape.
 
@@ -6917,10 +6920,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape to check validity of.
                 theIsCheckGeom If FALSE, only the shape's topology will be checked,
                                if TRUE, the shape's geometry will be checked also.
+                theReturnStatus If FALSE and if theShape is invalid, a description
+                                of problem is printed.
+                                if TRUE and if theShape is invalid, the description 
+                                of problem is returned.
 
             Returns:   
                 TRUE, if the shape "seems to be valid".
                 If theShape is invalid, prints a description of problem.
+                This description can also be returned.
             """
             # Example: see GEOM_TestMeasures.py
             if theIsCheckGeom:
@@ -6930,7 +6938,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 (IsValid, Status) = self.MeasuOp.CheckShape(theShape)
                 RaiseIfFailed("CheckShape", self.MeasuOp)
             if IsValid == 0:
-                print Status
+                if theReturnStatus == 0:
+                    print Status
+            if theReturnStatus == 1:
+              return (IsValid, Status)
             return IsValid
 
         ## Detect self-intersections in the given shape.
