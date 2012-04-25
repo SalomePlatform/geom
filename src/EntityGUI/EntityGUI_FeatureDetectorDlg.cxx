@@ -24,6 +24,7 @@
 // File   : EntityGUI_SketcherDlg.cxx
 // Author : Renaud NEDELEC, Open CASCADE S.A.S.
 
+// SALOME includes
 #include "EntityGUI_FeatureDetectorDlg.h"
 #include <ShapeRec_FeatureDetector.hxx>
 
@@ -51,7 +52,9 @@
 #include <SalomeApp_Study.h>
 
 #include <utilities.h>
+#include <Precision.hxx>
 
+// OCCT includes
 #include <gp_Pnt.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Wire.hxx>
@@ -67,11 +70,11 @@
 
 #include <Graphic3d_MaterialAspect.hxx>
 
-#include <Precision.hxx>
-
+// C++ includes
 #include <set>
 #include <utility>
 
+// boost includes
 #include <boost/utility.hpp>
 
 // Constructors
@@ -440,7 +443,7 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 {
   myEndPnt = theEndPnt;
   MESSAGE("myEndPnt = ("<<theEndPnt.X()<<", "<<theEndPnt.Y()<<")")
-  if (setSelectionRect())
+  if (setSelectionRect() && aDetector->GetImgHeight() > 0)
     showImageSample();
 }
 
@@ -451,8 +454,14 @@ void EntityGUI_FeatureDetectorDlg::setEndPnt(const gp_Pnt& theEndPnt)
 bool EntityGUI_FeatureDetectorDlg::setSelectionRect()
 { 
   // Set detection rectangle in the background image coordinates system
-  QPoint topLeft     = QPoint(myStartPnt.X() - pictureLeft, pictureTop - myStartPnt.Y());
-  QPoint bottomRight = QPoint(myEndPnt.X()   - pictureLeft, pictureTop - myEndPnt.Y());
+  double left    = std::min( myStartPnt.X(), myEndPnt.X() );
+  double top     = std::max( myStartPnt.Y(), myEndPnt.Y() );
+  double right   = std::max( myStartPnt.X(), myEndPnt.X() );
+  double bottom  = std::min( myStartPnt.Y(), myEndPnt.Y() );
+  
+  QPoint topLeft     = QPoint(left  - pictureLeft, pictureTop - top   );
+  QPoint bottomRight = QPoint(right - pictureLeft, pictureTop - bottom);
+  
   myRect = QRect(topLeft, bottomRight);
   
   return (!myRect.isEmpty() && myRect.width() > 1);
