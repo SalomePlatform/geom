@@ -1038,9 +1038,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
               TopAbs_SOLID, false, theMaterials, 0, false);
     if (Te3.IsNull()) {
       SetErrorCode("Impossible to build partition of TShape");
-//       Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
-//       TopoDS_Shape aCompoundShape = aCompound->GetValue();
-//       theShape->GetLastFunction()->SetValue(aCompoundShape);
       return false;
     }
     Te3->GetLastFunction()->SetDescription("");
@@ -1048,9 +1045,25 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     // Last verification: result should be a block
     std::list<GEOMImpl_IBlocksOperations::BCError> errList;
     if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
-      SetErrorCode("TShape is not a block");
+      SetErrorCode("TShape is not a compound of block");
       return false;
     }
+    
+//     // BEGIN Compound of created shapes - Only for debug purpose
+//     theShapes.clear();
+//     theShapes.push_back(theShape);
+//     theShapes.push_back(aPlnOZ);
+//     if (Abs(aR1Ext - aR2Ext) > Precision::Confusion() )
+//       theShapes.push_back(aPlnOXZ);
+//     theShapes.push_back(face_t);
+//     if (!isNormal)
+//       theShapes.push_back(face_t2);
+// 
+//     Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
+//     TopoDS_Shape aCompoundShape = aCompound->GetValue();
+//     theShape->GetLastFunction()->SetValue(aCompoundShape);
+//     // END Compound of created shapes - Only for debug purpose
+    
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
   } catch (Standard_Failure) {
