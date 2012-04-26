@@ -1,3 +1,4 @@
+
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
@@ -20,109 +21,71 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_BuilderFace.hxx
+// Created:
+// Author:      Peter KURNEV
+//
 #ifndef _GEOMAlgo_BuilderFace_HeaderFile
 #define _GEOMAlgo_BuilderFace_HeaderFile
 
-#ifndef _TopoDS_Face_HeaderFile
-#include <TopoDS_Face.hxx>
-#endif
-#ifndef _GEOMAlgo_BuilderArea_HeaderFile
-#include <GEOMAlgo_BuilderArea.hxx>
-#endif
-class TopoDS_Face;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <TopoDS_Face.hxx>
+#include <GEOMAlgo_BuilderArea.hxx>
 
 //! The algorithm to build faces from set of edges <br>
-class GEOMAlgo_BuilderFace  : public GEOMAlgo_BuilderArea {
+//=======================================================================
+//class    : GEOMAlgo_BuilderFace
+//purpose  :
+//=======================================================================
+class GEOMAlgo_BuilderFace  : public GEOMAlgo_BuilderArea
+{
+ public:
 
-public:
+  //!  Empty  constructor <br>
+  Standard_EXPORT
+    GEOMAlgo_BuilderFace();
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    virtual ~GEOMAlgo_BuilderFace();
 
-//!  Empty  constructor <br>
-Standard_EXPORT GEOMAlgo_BuilderFace();
-Standard_EXPORT virtual ~GEOMAlgo_BuilderFace();
+  //! Sets the face generatix <br>
+  Standard_EXPORT
+    void SetFace(const TopoDS_Face& theFace) ;
 
-//! Sets the face generatix <br>
-Standard_EXPORT   void SetFace(const TopoDS_Face& theFace) ;
+  //! Returns the face generatix <br>
+  Standard_EXPORT
+    const TopoDS_Face& Face() const;
 
-//! Returns the face generatix <br>
-Standard_EXPORT  const TopoDS_Face& Face() const;
+  //!  Performs the algorithm <br>
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-//!  Performs the algorithm <br>
-Standard_EXPORT virtual  void Perform() ;
+ protected:
+  //!  Collect the edges that <br>
+  //!           a) are internal <br>
+  //!           b) are the same and have different orientation <br>
+  Standard_EXPORT
+    virtual  void PerformShapesToAvoid() ;
 
+  //! Build draft wires <br>
+  //!          a)myLoops - draft wires that consist of <br>
+  //!                       boundary edges <br>
+  //!          b)myLoopsInternal - draft wires that contains <br>
+  //!                               inner edges <br>
+  Standard_EXPORT
+    virtual  void PerformLoops() ;
 
+  //! Build draft faces that contains boundary edges <br>
+  Standard_EXPORT
+    virtual  void PerformAreas() ;
 
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-//!  Collect the edges that <br>
-//!           a) are internal <br>
-//!           b) are the same and have different orientation <br>
-Standard_EXPORT virtual  void PerformShapesToAvoid() ;
-
-//! Build draft wires <br>
-//!          a)myLoops - draft wires that consist of <br>
-//!                       boundary edges <br>
-//!          b)myLoopsInternal - draft wires that contains <br>
-//!                               inner edges <br>
-Standard_EXPORT virtual  void PerformLoops() ;
-
-//! Build draft faces that contains boundary edges <br>
-Standard_EXPORT virtual  void PerformAreas() ;
-
-//! Build finalized faces with internals <br>
-Standard_EXPORT virtual  void PerformInternalShapes() ;
+  //! Build finalized faces with internals <br>
+  Standard_EXPORT
+    virtual  void PerformInternalShapes() ;
 
 
- // Fields PROTECTED
- //
-TopoDS_Face myFace;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  TopoDS_Face myFace;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

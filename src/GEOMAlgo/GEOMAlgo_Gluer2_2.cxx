@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_Gluer2_2.cxx
-// Created:	
+// Created:
 // Author:	Peter KURNEV
 //		<peter@PREFEX>
 //
@@ -36,25 +36,25 @@
 
 //=======================================================================
 //function : PrepareHistory
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::PrepareHistory()
 {
   //Standard_Boolean bHasImage, bContainsSD;
   //
-  // 1. Clearing 
+  // 1. Clearing
   GEOMAlgo_BuilderShape::PrepareHistory();
-  //  
+  //
   if(myShape.IsNull()) {
     return;
   }
   //
-  GEOMAlgo_Gluer2::MapShapes(myShape, myMapShape);  
+  GEOMAlgo_Gluer2::MapShapes(myShape, myMapShape);
   //
 }
 //=======================================================================
 //function : Generated
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_Gluer2::Generated(const TopoDS_Shape& )
 {
@@ -63,7 +63,7 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer2::Generated(const TopoDS_Shape& )
 }
 //=======================================================================
 //function : Modified
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_Gluer2::Modified(const TopoDS_Shape& theS)
 {
@@ -74,8 +74,8 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer2::Modified(const TopoDS_Shape& theS)
   myHistShapes.Clear();
   //
   aType=theS.ShapeType();
-  if (!(aType==TopAbs_VERTEX || aType==TopAbs_EDGE || 
-	aType==TopAbs_FACE || aType==TopAbs_SOLID)) { 
+  if (!(aType==TopAbs_VERTEX || aType==TopAbs_EDGE ||
+	aType==TopAbs_FACE || aType==TopAbs_SOLID)) {
     return myHistShapes;
   }
   //
@@ -110,7 +110,7 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer2::Modified(const TopoDS_Shape& theS)
 }
 //=======================================================================
 //function : IsDeleted
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Gluer2::IsDeleted(const TopoDS_Shape& theS)
 {
@@ -140,7 +140,7 @@ Standard_Boolean GEOMAlgo_Gluer2::IsDeleted(const TopoDS_Shape& theS)
 }
 //=======================================================================
 //function : MapShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::MapShapes(const TopoDS_Shape& theS,
 				TopTools_MapOfShape& theM)

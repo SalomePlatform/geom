@@ -21,7 +21,7 @@
 // Created:     Tue Feb 20 14:57:28 2007
 // Author:      Peter KURNEV
 
-#include <NMTDS_Tools.ixx>
+#include <NMTDS_Tools.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <gp_Pnt.hxx>
 #include <BRep_Tool.hxx>
@@ -84,7 +84,6 @@ void CopySource(const TopoDS_Shape& aS,
   //
   bFree=aSC.Free();
   aSC.Free(Standard_True);
-  //modified by NIZNHY-PKV Fri Nov 25 10:10:03 2011f
   aSF=aS;
   if (aT==TopAbs_EDGE){
     TopAbs_Orientation aOr;
@@ -95,8 +94,6 @@ void CopySource(const TopoDS_Shape& aS,
     }
   }
   aIt.Initialize(aSF);
-  //aIt.Initialize(aS);
-  //modified by NIZNHY-PKV Fri Nov 25 10:10:05 2011t
   for (; aIt.More();  aIt.Next()) {
     TopoDS_Shape aSCx;
     //

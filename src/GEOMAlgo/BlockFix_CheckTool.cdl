@@ -27,7 +27,7 @@
 class CheckTool from BlockFix
 
     	---Purpose:
-	
+
 uses
 
     Shape from TopoDS,
@@ -37,18 +37,18 @@ is
 
     Create returns CheckTool from BlockFix;
     	---Purpose: Empty constructor
-    
+
     SetShape(me: in out; aShape: Shape from TopoDS);
 
     Perform(me: in out);
-    	---Purpose: 
-	
+    	---Purpose:
+
     NbPossibleBlocks(me) returns Integer;
-    
+
     PossibleBlock(me; num: Integer) returns Shape from TopoDS;
 
     DumpCheckResult(me; S : in out OStream);
-    	---Purpose: Dumps results of checking 
+    	---Purpose: Dumps results of checking
 
 
 fields
@@ -63,5 +63,5 @@ fields
     myNbUE       : Integer;
     myNbUFUE     : Integer;
     myBadRanges  : Integer;
-    
+
 end CheckTool;

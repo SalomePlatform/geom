@@ -25,14 +25,14 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_ShapeSolid.ixx>
+#include <GEOMAlgo_ShapeSolid.hxx>
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_ShapeSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeSolid::GEOMAlgo_ShapeSolid()
 :
@@ -43,14 +43,14 @@ GEOMAlgo_ShapeSolid::GEOMAlgo_ShapeSolid()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeSolid::~GEOMAlgo_ShapeSolid()
 {
 }
 //=======================================================================
 //function : SetFiller
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeSolid::SetFiller(const BOPTools_DSFiller& aDSFiller)
 {
@@ -58,7 +58,7 @@ void GEOMAlgo_ShapeSolid::SetFiller(const BOPTools_DSFiller& aDSFiller)
 }
 //=======================================================================
 // function: Shapes
-// purpose: 
+// purpose:
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const TopAbs_State aState) const
 {
@@ -73,10 +73,10 @@ const TopTools_ListOfShape& GEOMAlgo_ShapeSolid::Shapes(const TopAbs_State aStat
       break;
     case TopAbs_ON:
       pL=&myLSON;
-      break;  
+      break;
     default:
       pL=&myLSON;
-      break; 
+      break;
   }
   return *pL;
 }

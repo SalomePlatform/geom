@@ -18,16 +18,21 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File:    BlockFix_BlockFixAPI.cxx
 //  Created: Tue Dec  7 11:59:05 2004
 //  Author:  Pavel DURANDIN
-//
+
 #include <BlockFix_BlockFixAPI.ixx>
+
 #include <BlockFix.hxx>
 #include <BlockFix_UnionFaces.hxx>
 #include <BlockFix_UnionEdges.hxx>
+
+#include <Basics_OCCTVersion.hxx>
+
+#include <ShapeUpgrade_RemoveLocations.hxx>
+
 #include <Precision.hxx>
 
 //=======================================================================
@@ -52,12 +57,23 @@ void BlockFix_BlockFixAPI::Perform()
   TopoDS_Shape aShape = Shape();
   myShape = BlockFix::RotateSphereSpace(aShape,myTolerance);
 
+  // try to approximate non-canonic surfaces
+  // with singularities on boundaries by filling
+  myShape = BlockFix::RefillProblemFaces(myShape);
+
   // faces unification
   BlockFix_UnionFaces aFaceUnifier;
   aFaceUnifier.GetTolerance() = myTolerance;
   aFaceUnifier.GetOptimumNbFaces() = myOptimumNbFaces;
   TopoDS_Shape aResult = aFaceUnifier.Perform(myShape);
 
+  // avoid problem with degenerated edges appearance
+  // due to shape quality regress
+  ShapeUpgrade_RemoveLocations RemLoc;
+  RemLoc.Remove(aResult);
+  aResult = RemLoc.GetResult();
+
+  // edges unification
   BlockFix_UnionEdges anEdgeUnifier;
   myShape = anEdgeUnifier.Perform(aResult,myTolerance);
 

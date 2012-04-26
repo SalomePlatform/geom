@@ -22,10 +22,11 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTDS_PassKeyShape.ixx>
+#include <NMTDS_PassKeyShape.hxx>
 
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopoDS_Shape.hxx>
 
 
 static 

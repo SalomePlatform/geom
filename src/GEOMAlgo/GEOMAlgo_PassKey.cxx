@@ -20,12 +20,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_Algo.cxx
-// Created:     Sat Dec 04 12:39:47 2004
+// File:        GEOMAlgo_PassKey.cxx
+// Created:
 // Author:      Peter KURNEV
 //              <peter@PREFEX>
 //
-#include <GEOMAlgo_PassKey.ixx>
+#include <GEOMAlgo_PassKey.hxx>
 
 #include <stdio.h>
 #include <string.h>
@@ -33,7 +33,7 @@
 #include <TColStd_ListOfInteger.hxx>
 
 #ifdef WNT
-#pragma warning( disable : 4101) 
+#pragma warning( disable : 4101)
 #endif
 
 static
@@ -42,15 +42,15 @@ static
 
 //=======================================================================
 //function :
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey::GEOMAlgo_PassKey()
 {
- Clear(); 
+ Clear();
 }
 //=======================================================================
 //function :
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey::GEOMAlgo_PassKey(const GEOMAlgo_PassKey& aOther)
 {
@@ -60,7 +60,7 @@ static
 }
 //=======================================================================
 //function :Assign
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey& GEOMAlgo_PassKey::Assign(const GEOMAlgo_PassKey& aOther)
 {
@@ -71,14 +71,14 @@ static
 }
 //=======================================================================
 //function :~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKey::~GEOMAlgo_PassKey()
 {
 }
 //=======================================================================
 //function :Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::Clear()
 {
@@ -88,10 +88,10 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1)
-                               
+
 {
   Clear();
   myNbIds=1;
@@ -100,7 +100,7 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
                                 const Standard_Integer aId2)
@@ -113,7 +113,7 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
                                 const Standard_Integer aId2,
@@ -128,13 +128,13 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const Standard_Integer aId1,
                                 const Standard_Integer aId2,
                                 const Standard_Integer aId3,
                                 const Standard_Integer aId4)
-{ 
+{
   TColStd_ListOfInteger aLI;
   //
   aLI.Append(aId1);
@@ -145,7 +145,7 @@ static
 }
 //=======================================================================
 //function :SetIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::SetIds(const TColStd_ListOfInteger& aLI)
 {
@@ -167,7 +167,7 @@ static
 }
 //=======================================================================
 //function :NbIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::NbIds()const
 {
@@ -175,7 +175,7 @@ static
 }
 //=======================================================================
 //function :Id
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::Id(const Standard_Integer aIndex) const
 {
@@ -186,7 +186,7 @@ static
 }
 //=======================================================================
 //function :IsEqual
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_PassKey::IsEqual(const GEOMAlgo_PassKey& aOther) const
 {
@@ -208,7 +208,7 @@ static
 }
 //=======================================================================
 //function : HashCode
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKey::HashCode(const Standard_Integer aUpper) const
 {
@@ -216,14 +216,14 @@ static
 }
 //=======================================================================
 //function : Dump
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKey::Dump(const Standard_Integer )const
 {
 }
 //=======================================================================
 // function: NormalizedId
-// purpose : 
+// purpose :
 //=======================================================================
 Standard_Integer NormalizedId(const Standard_Integer aId,
                               const Standard_Integer aDiv)

@@ -25,11 +25,11 @@
 // Author:      Peter KURNEV
 //              <peter@PREFEX>
 //
-#include <GEOMAlgo_Algo.ixx>
+#include <GEOMAlgo_Algo.hxx>
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_Algo::GEOMAlgo_Algo()
 :
@@ -39,14 +39,14 @@
 {}
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_Algo::~GEOMAlgo_Algo()
 {
 }
 //=======================================================================
 // function: CheckData
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Algo::CheckData()
 {
@@ -54,7 +54,7 @@
 }
 //=======================================================================
 // function: CheckResult
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Algo::CheckResult()
 {
@@ -62,7 +62,7 @@
 }
 //=======================================================================
 // function: ErrorStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_Algo::ErrorStatus()const
 {
@@ -70,7 +70,7 @@
 }
 //=======================================================================
 // function: WarningStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_Algo::WarningStatus()const
 {
@@ -82,7 +82,7 @@
 
 //=======================================================================
 //function : ComputeInternalShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Algo::ComputeInternalShapes(const Standard_Boolean theFlag)
 {

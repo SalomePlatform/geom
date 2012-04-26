@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -20,78 +17,17 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef _NMTDS_MapIteratorOfMapOfPairBoolean_HeaderFile
-#define _NMTDS_MapIteratorOfMapOfPairBoolean_HeaderFile
+// File:	NMTDS_MapIteratorOfMapOfPairBoolean.hxx
+// Created:	Mon Feb 20 08:22:39 2012
+// Author:	
+//		<pkv@BDEURI37616>
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
+
+#ifndef NMTDS_MapIteratorOfMapOfPairBoolean_HeaderFile
+#define NMTDS_MapIteratorOfMapOfPairBoolean_HeaderFile
+
+#ifndef NMTDS_MapOfPairBoolean_HeaderFile
+#include <NMTDS_MapOfPairBoolean.hxx>  
 #endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-#ifndef _TCollection_BasicMapIterator_HeaderFile
-#include <TCollection_BasicMapIterator.hxx>
-#endif
-#ifndef _Handle_NMTDS_StdMapNodeOfMapOfPairBoolean_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPairBoolean.hxx>
-#endif
-class Standard_NoSuchObject;
-class NMTDS_PairBoolean;
-class NMTDS_PairMapHasher;
-class NMTDS_MapOfPairBoolean;
-class NMTDS_StdMapNodeOfMapOfPairBoolean;
-
-
-
-class NMTDS_MapIteratorOfMapOfPairBoolean  : public TCollection_BasicMapIterator {
-public:
-
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
-
-  
-  Standard_EXPORT   NMTDS_MapIteratorOfMapOfPairBoolean();
-  
-  Standard_EXPORT   NMTDS_MapIteratorOfMapOfPairBoolean(const NMTDS_MapOfPairBoolean& aMap);
-  
-  Standard_EXPORT     void Initialize(const NMTDS_MapOfPairBoolean& aMap) ;
-  
-  Standard_EXPORT    const NMTDS_PairBoolean& Key() const;
-
-
-
-
-
-protected:
-
-
-
-
-
-private:
-
-
-
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-
 
 #endif

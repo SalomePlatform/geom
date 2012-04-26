@@ -20,10 +20,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:        GEOMAlgo_Builder.cxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
-#include <GEOMAlgo_Builder.ixx>
+#include <GEOMAlgo_Builder.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 
@@ -44,8 +44,8 @@
 #include <GEOMAlgo_Tools.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_Builder::GEOMAlgo_Builder()
 :
@@ -57,7 +57,7 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_Builder::~GEOMAlgo_Builder()
 {
@@ -70,7 +70,7 @@
 }
 //=======================================================================
 //function : AddCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::AddCompound(const TopoDS_Shape& theShape)
 {
@@ -84,7 +84,7 @@
 }
 //=======================================================================
 //function : AddShape
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::AddShape(const TopoDS_Shape& theShape)
 {
@@ -94,7 +94,7 @@
 }
 //=======================================================================
 //function : Shapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Shapes()const
 {
@@ -102,7 +102,7 @@
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::Clear()
 {
@@ -111,7 +111,7 @@
 }
 //=======================================================================
 //function : ClearInternals
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::ClearInternals()
 {
@@ -130,7 +130,7 @@
 }
 //=======================================================================
 //function : Prepare
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::Prepare()
 {
@@ -161,7 +161,7 @@
 
 //=======================================================================
 //function : AddShape1
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::AddShape1(const TopoDS_Shape& theShape)
 {
@@ -186,7 +186,7 @@
 }
 //=======================================================================
 //function : BuildResult
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::BuildResult(const TopAbs_ShapeEnum theType)
 {
@@ -222,7 +222,7 @@
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::Perform()
 {
@@ -250,7 +250,7 @@
 }
 //=======================================================================
 //function : PerformWithFiller
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::PerformWithFiller(const NMTTools_PaveFiller& theDSF)
 {
@@ -260,7 +260,7 @@
 }
 //=======================================================================
 //function : PerformInternal
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::PerformInternal(const NMTTools_PaveFiller& pPF)
 {
@@ -303,7 +303,7 @@
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_EDGE);
   if (myErrorStatus) {
     return;
@@ -313,29 +313,29 @@
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_WIRE);
   if (myErrorStatus) {
     return;
   }
-  
+
   // 3.4 Faces
   FillImagesFaces();
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_FACE);
   if (myErrorStatus) {
     return;
   }
   // 3.5 Shells
-  
+
   FillImagesContainers(TopAbs_SHELL);
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_SHELL);
   if (myErrorStatus) {
     return;
@@ -345,7 +345,7 @@
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_SOLID);
   if (myErrorStatus) {
     return;
@@ -355,7 +355,7 @@
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_COMPSOLID);
   if (myErrorStatus) {
     return;
@@ -365,7 +365,7 @@
   if (myErrorStatus) {
     return;
   }
-  
+
   BuildResult(TopAbs_COMPOUND);
   if (myErrorStatus) {
     return;
@@ -374,16 +374,16 @@
   // 4.History
   PrepareHistory();
   //
-  // 5 Post-treatment 
+  // 5 Post-treatment
   PostTreat();
 }
 //
-// static 
+// static
 //   void CorrectWires(const TopoDS_Shape& aS);
 //
 //=======================================================================
 //function : PostTreat
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::PostTreat()
 {
@@ -400,14 +400,14 @@
   if (aNbS==1) {
     myShape=aLS.First();
   }
-  
+
   BRepLib::SameParameter(myShape, 1.e-7, Standard_True);
   //
   GEOMAlgo_Tools::CorrectWires(myShape);
 }
 //
 // myErrorStatus
-// 
+//
 // 0  - Ok
 // 1  - The object is just initialized
 // 2  - PaveFiller is failed

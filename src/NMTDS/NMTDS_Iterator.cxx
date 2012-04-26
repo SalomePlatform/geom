@@ -23,7 +23,7 @@
 // File:        NMTDS_Iterator.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_Iterator.ixx>
+#include <NMTDS_Iterator.hxx>
 //
 #include <Bnd_Box.hxx>
 //
@@ -53,6 +53,7 @@
 #include <NMTDS_Tools.hxx>
 #include <NMTDS_DataMapOfIntegerMapOfInteger.hxx>
 #include <NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger.hxx>
+#include <NMTDS_ShapesDataStructure.hxx>
 
 //=======================================================================
 //function : NMTDS_Iterator

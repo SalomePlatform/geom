@@ -20,6 +20,9 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_PShapesDataStructure.hxx
+// Author:      Peter KURNEV
+
 #ifndef _NMTDS_PShapesDataStructure_HeaderFile
 #define _NMTDS_PShapesDataStructure_HeaderFile
 

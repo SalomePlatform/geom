@@ -22,7 +22,7 @@
 // Author:	Peter KURNEV
 //		<pkv@irinox>
 //
-#include <NMTDS_BndSphere.ixx>
+#include <NMTDS_BndSphere.hxx>
 
 //=======================================================================
 //function : 

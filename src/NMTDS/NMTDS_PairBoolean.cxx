@@ -23,7 +23,7 @@
 // File:        NMTDS_PairBoolean.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_PairBoolean.ixx>
+#include <NMTDS_PairBoolean.hxx>
 
 //=======================================================================
 //function : 

@@ -19,235 +19,206 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
+// File:        GEOMAlgo_Builder.cxx
+// Created:
+// Author:      Peter KURNEV
+//
 #ifndef _GEOMAlgo_Builder_HeaderFile
 #define _GEOMAlgo_Builder_HeaderFile
 
-#ifndef _NMTTools_PPaveFiller_HeaderFile
-#include <NMTTools_PPaveFiller.hxx>
-#endif
-#ifndef _TopTools_ListOfShape_HeaderFile
-#include <TopTools_ListOfShape.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _TopTools_MapOfShape_HeaderFile
-#include <TopTools_MapOfShape.hxx>
-#endif
-#ifndef _BRepAlgo_Image_HeaderFile
-#include <BRepAlgo_Image.hxx>
-#endif
-#ifndef _TopTools_IndexedDataMapOfShapeListOfShape_HeaderFile
-#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
-#endif
-#ifndef _TopTools_IndexedDataMapOfShapeShape_HeaderFile
-#include <TopTools_IndexedDataMapOfShapeShape.hxx>
-#endif
-#ifndef _GEOMAlgo_BuilderShape_HeaderFile
-#include <GEOMAlgo_BuilderShape.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _TopAbs_ShapeEnum_HeaderFile
-#include <TopAbs_ShapeEnum.hxx>
-#endif
-class NMTTools_PaveFiller;
-class TopoDS_Shape;
-class TopTools_ListOfShape;
-class BRepAlgo_Image;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <NMTTools_PPaveFiller.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <Standard_Integer.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <BRepAlgo_Image.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeShape.hxx>
+#include <GEOMAlgo_BuilderShape.hxx>
+#include <NMTTools_PaveFiller.hxx>
+#include <Standard_Boolean.hxx>
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopoDS_Shape.hxx>
+#include <BRepAlgo_Image.hxx>
 
+//=======================================================================
+//function : GEOMAlgo_Builder
+//purpose  :
+//=======================================================================
+class GEOMAlgo_Builder  : public GEOMAlgo_BuilderShape
+{
+ public:
+  //!  Empty constructor <br>
+  Standard_EXPORT
+    GEOMAlgo_Builder();
 
-class GEOMAlgo_Builder  : public GEOMAlgo_BuilderShape {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_Builder();
 
-public:
+  //!  Performs calculations <br>
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  //!  Performs calculations using prepared PaveFiller <br>
+  //!           object theDSF <br>
+  Standard_EXPORT
+    virtual  void PerformWithFiller(const NMTTools_PaveFiller& theDSF) ;
 
-//!  Empty constructor <br>
-Standard_EXPORT GEOMAlgo_Builder();
-Standard_EXPORT virtual ~GEOMAlgo_Builder();
+  //!  Adds argument theShape of the operation <br>
+  Standard_EXPORT
+    virtual  void AddShape(const TopoDS_Shape& theShape) ;
 
-//!  Performs calculations <br>
-Standard_EXPORT virtual  void Perform() ;
+  //!  Clears internal fields and arguments <br>
+  Standard_EXPORT
+    virtual  void Clear() ;
 
-//!  Performs calculations using prepared PaveFiller <br>
-//!           object theDSF <br>
-Standard_EXPORT virtual  void PerformWithFiller(const NMTTools_PaveFiller& theDSF) ;
+  //!  Returns the arguments of the operation <br>
+  Standard_EXPORT
+    const TopTools_ListOfShape& Shapes() const;
 
-//!  Adds argument theShape of the operation <br>
-Standard_EXPORT virtual  void AddShape(const TopoDS_Shape& theShape) ;
+  //! Returns the  list of shapes generated from the <br>
+  //!          shape theS. <br>
+  Standard_EXPORT
+    virtual const TopTools_ListOfShape& Generated(const TopoDS_Shape& theS) ;
 
-//!  Clears internal fields and arguments <br>
-Standard_EXPORT virtual  void Clear() ;
+  //! Returns the list of shapes modified from the shape <br>
+  //!          theS. <br>
+  Standard_EXPORT
+    virtual const TopTools_ListOfShape& Modified(const TopoDS_Shape& theS) ;
 
-//!  Returns the arguments of the operation <br>
-Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
+  //! Returns true if the shape theS has been deleted. <br>
+  Standard_EXPORT
+    virtual  Standard_Boolean IsDeleted(const TopoDS_Shape& theS) ;
 
-//! Returns the  list of shapes generated from the <br>
-//!          shape theS. <br>
-Standard_EXPORT virtual const TopTools_ListOfShape& Generated(const TopoDS_Shape& theS) ;
+  //!  Adds arguments of the operation as <br>
+  //!           shapes of upper level of container shape theShape <br>
+  Standard_EXPORT
+    void AddCompound(const TopoDS_Shape& theShape) ;
 
-//! Returns the list of shapes modified from the shape <br>
-//!          theS. <br>
-Standard_EXPORT virtual const TopTools_ListOfShape& Modified(const TopoDS_Shape& theS) ;
+  //! Returns list of arguments of type theType <br>
+  Standard_EXPORT
+    const TopTools_ListOfShape& Shapes1(const Standard_Integer theType) const;
 
-//! Returns true if the shape theS has been deleted. <br>
-Standard_EXPORT virtual  Standard_Boolean IsDeleted(const TopoDS_Shape& theS) ;
+  //! Returns image shapes <br>
+  Standard_EXPORT
+    const BRepAlgo_Image& Images() const;
 
-//!  Adds arguments of the operation as <br>
-//!           shapes of upper level of container shape theShape <br>
-Standard_EXPORT   void AddCompound(const TopoDS_Shape& theShape) ;
-
-//! Returns list of arguments of type theType <br>
-Standard_EXPORT  const TopTools_ListOfShape& Shapes1(const Standard_Integer theType) const;
-
-//! Returns image shapes <br>
-Standard_EXPORT  const BRepAlgo_Image& Images() const;
-
-//! Returns split-parts of shapes that have <br>
-//!          state IN for the domain of shape theShape <br>
-Standard_EXPORT  const TopTools_ListOfShape& InParts(const TopoDS_Shape& theShape) const;
-
-
-
-
+  //! Returns split-parts of shapes that have <br>
+  //!          state IN for the domain of shape theShape <br>
+  Standard_EXPORT
+    const TopTools_ListOfShape& InParts(const TopoDS_Shape& theShape) const;
 
 protected:
+  //!  Performs calculations using prepared DSFiller <br>
+  //!           object theDSF <br>
+  Standard_EXPORT
+    virtual  void PerformInternal(const NMTTools_PaveFiller& theDSF) ;
 
- // Methods PROTECTED
- // 
+  //!  Prepare information for history support <br>
+  Standard_EXPORT
+    virtual  void PrepareHistory() ;
 
-//!  Performs calculations using prepared DSFiller <br>
-//!           object theDSF <br>
-Standard_EXPORT virtual  void PerformInternal(const NMTTools_PaveFiller& theDSF) ;
+  //!  Clears internal fields <br>
+  Standard_EXPORT
+    virtual  void ClearInternals() ;
 
-//!  Prepare information for history support <br>
-Standard_EXPORT virtual  void PrepareHistory() ;
+  //!  Provides preparing actions <br>
+  Standard_EXPORT
+    virtual  void Prepare() ;
 
-//!  Clears internal fields <br>
-Standard_EXPORT virtual  void ClearInternals() ;
+  //!  Provides post-tratment actions <br>
+  Standard_EXPORT
+    virtual  void PostTreat() ;
 
-//!  Provides preparing actions <br>
-Standard_EXPORT virtual  void Prepare() ;
+  //!  Append the argument theShape to <br>
+  //!           typified lists of arguments myShapes1 <br>
+  Standard_EXPORT
+    void AddShape1(const TopoDS_Shape& theShape) ;
 
-//!  Provides post-tratment actions <br>
-Standard_EXPORT virtual  void PostTreat() ;
+  //! Build the resulting shapes of type theType <br>
+  Standard_EXPORT
+    virtual  void BuildResult(const TopAbs_ShapeEnum theType) ;
 
-//!  Append the argument theShape to <br>
-//!           typified lists of arguments myShapes1 <br>
-Standard_EXPORT   void AddShape1(const TopoDS_Shape& theShape) ;
+  //! Fill Images for vertices <br>
+  Standard_EXPORT
+    void FillImagesVertices() ;
 
-//! Build the resulting shapes of type theType <br>
-Standard_EXPORT virtual  void BuildResult(const TopAbs_ShapeEnum theType) ;
+  //! Fill Images for edges <br>
+  Standard_EXPORT
+    void FillImagesEdges() ;
 
-//! Fill Images for vertices <br>
-Standard_EXPORT   void FillImagesVertices() ;
+  //! Fill Images for faces <br>
+  Standard_EXPORT
+    void FillImagesFaces() ;
 
-//! Fill Images for edges <br>
-Standard_EXPORT   void FillImagesEdges() ;
+  //! For each interferred face find split edges <br>
+  //!          that are in 2-D domain of the face <br>
+  Standard_EXPORT
+    void FillIn2DParts() ;
 
-//! Fill Images for faces <br>
-Standard_EXPORT   void FillImagesFaces() ;
+  //! Build draft faces <br>
+  Standard_EXPORT
+    void BuildSplitFaces() ;
 
-//! For each interferred face find split edges <br>
-//!          that are in 2-D domain of the face <br>
-Standard_EXPORT   void FillIn2DParts() ;
+  //! Among draft faces find same domain faces <br>
+  Standard_EXPORT
+    void FillSameDomainFaces() ;
 
-//! Build draft faces <br>
-Standard_EXPORT   void BuildSplitFaces() ;
+  //! Fill Images for faces <br>
+  //!          taking into account same domain faces <br>
+  Standard_EXPORT
+    void FillImagesFaces1() ;
 
-//! Among draft faces find same domain faces <br>
-Standard_EXPORT   void FillSameDomainFaces() ;
+  //! Update Images for faces by <br>
+  //!          internal vertices <br>
+  Standard_EXPORT
+    void FillInternalVertices() ;
 
-//! Fill Images for faces <br>
-//!          taking into account same domain faces <br>
-Standard_EXPORT   void FillImagesFaces1() ;
+  //!  Fill Images for Wires, Shells, Compsolids, Compounds <br>
+  Standard_EXPORT
+    void FillImagesContainers(const TopAbs_ShapeEnum theType) ;
 
-//! Update Images for faces by <br>
-//!          internal vertices <br>
-Standard_EXPORT   void FillInternalVertices() ;
+  //!  Fill Images for solids <br>
+  Standard_EXPORT
+    void FillImagesSolids() ;
 
-//!  Fill Images for Wires, Shells, Compsolids, Compounds <br>
-Standard_EXPORT   void FillImagesContainers(const TopAbs_ShapeEnum theType) ;
+  //! For each interferred solid find split faces <br>
+  //!          that are in 3-D domain of the solid <br>
+  Standard_EXPORT
+    void FillIn3DParts() ;
 
-//!  Fill Images for solids <br>
-Standard_EXPORT   void FillImagesSolids() ;
+  //! Build draft solids <br>
+  Standard_EXPORT
+    void BuildSplitSolids() ;
 
-//! For each interferred solid find split faces <br>
-//!          that are in 3-D domain of the solid <br>
-Standard_EXPORT   void FillIn3DParts() ;
+  //!  Update draft solids by <br>
+  //!           internal shells, edges, vertices <br>
+  Standard_EXPORT
+    void FillInternalShapes() ;
 
-//! Build draft solids <br>
-Standard_EXPORT   void BuildSplitSolids() ;
-
-//!  Update draft solids by <br>
-//!           internal shells, edges, vertices <br>
-Standard_EXPORT   void FillInternalShapes() ;
-
-//!  Build solid theDraftSolid that consists of <br>
-//!           non-internal split faces of the solid <br>
-//!           theSolid. <br>
-//!           All splits of internal faces of <br>
-//!           theSolid are in the list: theInternalFaces <br>
-Standard_EXPORT   void BuildDraftSolid(const TopoDS_Shape& theSolid,TopoDS_Shape& theDraftSolid,TopTools_ListOfShape& theInternalFaces) ;
-
-
- // Fields PROTECTED
- //
-NMTTools_PPaveFiller myPaveFiller;
-TopTools_ListOfShape myShapes;
-Standard_Integer myNbTypes;
-TopTools_MapOfShape myMapFence;
-TopTools_ListOfShape myShapes1[9];
-BRepAlgo_Image myImages;
-TopTools_IndexedDataMapOfShapeListOfShape myInParts;
-BRepAlgo_Image mySplitFaces;
-TopTools_IndexedDataMapOfShapeShape mySameDomainShapes;
-TopTools_IndexedDataMapOfShapeShape myDraftSolids;
-Standard_Integer myEntryPoint;
-
-
-private: 
-
- // Methods PRIVATE
- // 
+  //!  Build solid theDraftSolid that consists of <br>
+  //!           non-internal split faces of the solid <br>
+  //!           theSolid. <br>
+  //!           All splits of internal faces of <br>
+  //!           theSolid are in the list: theInternalFaces <br>
+  Standard_EXPORT
+    void BuildDraftSolid(const TopoDS_Shape& theSolid,
+			 TopoDS_Shape& theDraftSolid,
+			 TopTools_ListOfShape& theInternalFaces) ;
 
 
- // Fields PRIVATE
- //
-
+  NMTTools_PPaveFiller myPaveFiller;
+  TopTools_ListOfShape myShapes;
+  Standard_Integer myNbTypes;
+  TopTools_MapOfShape myMapFence;
+  TopTools_ListOfShape myShapes1[9];
+  BRepAlgo_Image myImages;
+  TopTools_IndexedDataMapOfShapeListOfShape myInParts;
+  BRepAlgo_Image mySplitFaces;
+  TopTools_IndexedDataMapOfShapeShape mySameDomainShapes;
+  TopTools_IndexedDataMapOfShapeShape myDraftSolids;
+  Standard_Integer myEntryPoint;
 
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

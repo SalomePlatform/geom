@@ -28,109 +28,67 @@ package NMTDS
 
 	---Purpose: 
 
-uses   
-    TCollection, 
-    TColStd,
-    gp,
-    Bnd,
-    TopoDS, 
-    TopAbs, 
-    TopTools, 
-    BooleanOperations, 
-    BOPTools,
-    BOPTColStd 
+--uses   
+    --TCollection, 
+    --TColStd,
+    --gp,
+    --Bnd,
+    --TopoDS, 
+    --TopAbs, 
+    --TopTools, 
+    --BooleanOperations, 
+    --BOPTools,
+    --BOPTColStd 
     
 is  
-    enumeration InterfType is
-    	TI_VV,
-    	TI_VE,
-    	TI_VF,
-    	TI_EE,
-    	TI_EF,
-    	TI_FF,
-    	TI_UNKNOWN
-    end InterfType;      
+    imported InterfType from NMTDS; 
+    imported BndSphere from NMTDS; 
+    imported IndexRange from NMTDS;
+    imported InterfPool from NMTDS;
+    imported Iterator from NMTDS;
+    imported IteratorCheckerSI from NMTDS;
+    imported Pair from NMTDS;
+    imported PairBoolean from NMTDS;
+    imported PairMapHasher from NMTDS;
+    imported PassKey from NMTDS;
+    imported PassKeyBoolean from NMTDS;
+    imported PassKeyMapHasher from NMTDS;
+    imported PassKeyShape from NMTDS;
+    imported PassKeyShapeMapHasher from NMTDS;
+    imported Tools from NMTDS;
+    imported ShapesDataStructure from NMTDS;
+    imported PShapesDataStructure from NMTDS;
+    imported PIterator from NMTDS;
+    imported PInterfPool from NMTDS;  
     --
-    class ShapesDataStructure;
-    class IndexRange;   
-    
-    class Iterator; 
-    
-    class PassKey; 
-    class PassKeyBoolean; 
-    class PassKeyMapHasher; 
-    class PassKeyShape; 
-    class PassKeyShapeMapHasher; 
-    class IteratorCheckerSI; 
-    class Tools; 
-    class InterfPool; 
-    class BndSphere; 
-    --modified by NIZNHY-PKV Mon Dec 12 08:39:27 2011f 
-    class Pair; 
-    class PairBoolean;  
-    class PairMapHasher;
-    --modified by NIZNHY-PKV Mon Dec 12 08:39:30 2011t
-    --     
-    pointer PShapesDataStructure to ShapesDataStructure from NMTDS;
-    pointer PIterator to Iterator from NMTDS;
-    pointer PInterfPool to InterfPool from NMTDS;
-     
-    class CArray1OfIndexRange instantiates 
-	CArray1 from BOPTColStd(IndexRange from NMTDS); 
-     
-    class ListOfIndexedDataMapOfShapeAncestorsSuccessors instantiates 
-	List from TCollection(IndexedDataMapOfShapeAncestorsSuccessors from BooleanOperations); 
-	 
-    class ListOfPassKey  instantiates 
-	List from TCollection(PassKey from NMTDS);  
-     
-    class MapOfPassKey instantiates
-    	Map from TCollection(PassKey from NMTDS, 
-    	    	    	     PassKeyMapHasher from NMTDS);  
-			     
-    class ListOfPassKeyBoolean  instantiates 
-	List from TCollection(PassKeyBoolean from NMTDS); 
-     
-    class MapOfPassKeyBoolean instantiates
-    	Map from TCollection(PassKeyBoolean from NMTDS, 
-    	    	    	     PassKeyMapHasher from NMTDS);   
-
-    class IndexedDataMapOfShapeBox  
-    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
-	    		    		         	 Box from Bnd,
-	    		    		         	 ShapeMapHasher from TopTools);
-    class IndexedDataMapOfIntegerShape  
-    	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
-	    		    		         	 Shape from TopoDS,
-	    		    		         	 MapIntegerHasher from TColStd); 
-							  
-    class DataMapOfIntegerMapOfInteger  
-    	instantiates DataMap from TCollection           (Integer from Standard, 
-	    	    	    	    	    	    	 MapOfInteger from TColStd, 
-							 MapIntegerHasher from TColStd); 
-    
-   
-    class IndexedDataMapOfShapeBndSphere  
-    	instantiates IndexedDataMap from TCollection(Shape from TopoDS,
-	    		    		             BndSphere from NMTDS,
-    	    		    		             ShapeMapHasher from TopTools);
+    imported ListOfPassKey from NMTDS;
+    imported ListIteratorOfListOfPassKey  from NMTDS;
  
+    imported ListOfPassKeyBoolean from NMTDS;
+    imported ListIteratorOfListOfPassKeyBoolean from NMTDS;  
      
-    --modified by NIZNHY-PKV Mon Dec 12 08:41:50 2011f
-    class ListOfPair  instantiates 
-	List from TCollection(Pair from NMTDS);   
-	 
-    class ListOfPairBoolean  instantiates 
-	List from TCollection(PairBoolean from NMTDS);  
+    imported ListOfPair from NMTDS;
+    imported ListIteratorOfListOfPair  from NMTDS; 
+ 
+    imported ListOfPairBoolean from NMTDS;
+    imported ListIteratorOfListOfPairBoolean  from NMTDS; 
      
-    class MapOfPairBoolean instantiates
-    	Map from TCollection(PairBoolean from NMTDS, 
-    	    	    	     PairMapHasher from NMTDS); 
---    class IndexedDataMapOfIntegerIndexedDataMapOfShapeInteger instantiates 
---    	IndexedDataMap from TCollection(Integer        from Standard, 
---	    	    	    	    	IndexedDataMapOfShapeInteger from BooleanOperations, 
---					MapIntegerHasher from TColStd);  
-    --modified by NIZNHY-PKV Mon Dec 12 08:41:54 2011t
-  
-
+    imported ListOfIndexedDataMapOfShapeAncestorsSuccessors from NMTDS; 
+    imported ListIteratorOfListOfIndexedDataMapOfShapeAncestorsSuccessors from NMTDS;  
+    
+    imported MapOfPassKey from NMTDS;
+    imported MapIteratorOfMapOfPassKey from NMTDS; 
+     
+    imported MapOfPairBoolean from NMTDS;
+    imported MapIteratorOfMapOfPairBoolean from NMTDS; 
+    
+    imported IndexedDataMapOfShapeBox from NMTDS;
+    imported IndexedDataMapOfIntegerShape from NMTDS;
+    imported IndexedDataMapOfShapeBndSphere from NMTDS;
+ 
+    imported DataMapOfIntegerMapOfInteger from NMTDS;
+    imported DataMapIteratorOfDataMapOfIntegerMapOfInteger from NMTDS;
+     
+    imported CArray1OfIndexRange from NMTDS;
+	
 end NMTDS;

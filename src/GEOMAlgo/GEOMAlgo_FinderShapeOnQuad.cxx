@@ -89,7 +89,7 @@ GEOMAlgo_FinderShapeOnQuad::GEOMAlgo_FinderShapeOnQuad(const gp_Pnt & theTopLeft
 
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void GEOMAlgo_FinderShapeOnQuad::CheckData()
@@ -101,10 +101,10 @@ void GEOMAlgo_FinderShapeOnQuad::CheckData()
 
 //=======================================================================
 //function : GetPointState
-//purpose  : 
+//purpose  :
 //=======================================================================
 
-TopAbs_State GEOMAlgo_FinderShapeOnQuad::GetPointState(const gp_Pnt& aP) 
+TopAbs_State GEOMAlgo_FinderShapeOnQuad::GetPointState(const gp_Pnt& aP)
 {
   // Return IN if aP has TopAbs_IN with all sides.
   // In the case of concave quadrangle, return IN if

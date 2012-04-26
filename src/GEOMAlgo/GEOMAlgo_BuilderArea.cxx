@@ -21,16 +21,13 @@
 //
 
 // File:        GEOMAlgo_BuilderArea.cxx
+// Created:
 // Author:      Peter KURNEV
-
-#include <GEOMAlgo_BuilderArea.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+//
+#include <GEOMAlgo_BuilderArea.hxx>
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-
 #include <TopoDS_Shape.hxx>
-
 #include <IntTools_Context.hxx>
 
 //=======================================================================
@@ -38,11 +35,9 @@
 //purpose  :
 //=======================================================================
 GEOMAlgo_BuilderArea::GEOMAlgo_BuilderArea()
-  : GEOMAlgo_Algo()
+:
+  GEOMAlgo_Algo()
 {
-#if OCC_VERSION_LARGE <= 0x06050200
-  myContext=NULL;
-#endif
 }
 //=======================================================================
 //function : ~
@@ -55,20 +50,10 @@ GEOMAlgo_BuilderArea::~GEOMAlgo_BuilderArea()
 //function : SetContext
 //purpose  :
 //=======================================================================
-#if OCC_VERSION_LARGE > 0x06050200
 void GEOMAlgo_BuilderArea::SetContext(const Handle(IntTools_Context)& theContext)
-#else
-void GEOMAlgo_BuilderArea::SetContext(const IntTools_Context& theContext)
-#endif
 {
-#if OCC_VERSION_LARGE > 0x06050200
   myContext=theContext;
-#else
-  myContext=(IntTools_Context*)&theContext;
-#endif
 }
-
-#if OCC_VERSION_LARGE > 0x06050200
 //=======================================================================
 //function : Context
 //purpose  :
@@ -87,8 +72,6 @@ void GEOMAlgo_BuilderArea::Perform()
     myContext=new IntTools_Context;
   }
 }
-#endif
-
 //=======================================================================
 //function : SetShapes
 //purpose  :
@@ -156,3 +139,4 @@ void GEOMAlgo_BuilderArea::PerformAreas()
 void GEOMAlgo_BuilderArea::PerformInternalShapes()
 {
 }
+

@@ -20,6 +20,11 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTTools_PPaveFiller.hxx
+// Created:     Tue Dec  9 12:23:29 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _NMTTools_PPaveFiller_HeaderFile
 #define _NMTTools_PPaveFiller_HeaderFile
 

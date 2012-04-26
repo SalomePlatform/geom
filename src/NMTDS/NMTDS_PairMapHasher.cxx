@@ -23,7 +23,7 @@
 // File:        NMTDS_PairMapHasher.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_PairMapHasher.ixx>
+#include <NMTDS_PairMapHasher.hxx>
 
 //=======================================================================
 //function : HashCode

@@ -20,91 +20,42 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTTools_CoupleOfShape.hxx
+// Created:     Wed Jan 28 15:06:11 2004
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _NMTTools_CoupleOfShape_HeaderFile
 #define _NMTTools_CoupleOfShape_HeaderFile
 
-#ifndef _TopoDS_Shape_HeaderFile
-#include <TopoDS_Shape.hxx>
-#endif
-class TopoDS_Shape;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <TopoDS_Shape.hxx>
 
+//=======================================================================
+//class    : NMTTools_CoupleOfShape
+//purpose  :
+//=======================================================================
+class NMTTools_CoupleOfShape
+{
+ public:
+  Standard_EXPORT
+    NMTTools_CoupleOfShape();
 
-class NMTTools_CoupleOfShape  {
+  Standard_EXPORT
+    void SetShape1(const TopoDS_Shape& aS) ;
 
-public:
+  Standard_EXPORT
+    void SetShape2(const TopoDS_Shape& aS) ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    const TopoDS_Shape& Shape1() const;
 
+  Standard_EXPORT
+    const TopoDS_Shape& Shape2() const;
 
-Standard_EXPORT NMTTools_CoupleOfShape();
-
-
-Standard_EXPORT   void SetShape1(const TopoDS_Shape& aS) ;
-
-
-Standard_EXPORT   void SetShape2(const TopoDS_Shape& aS) ;
-
-
-Standard_EXPORT  const TopoDS_Shape& Shape1() const;
-
-
-Standard_EXPORT  const TopoDS_Shape& Shape2() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-TopoDS_Shape myShape1;
-TopoDS_Shape myShape2;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+ protected:
+  TopoDS_Shape myShape1;
+  TopoDS_Shape myShape2;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

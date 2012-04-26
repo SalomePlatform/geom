@@ -23,9 +23,7 @@
 // File:        NMTTools_PaveFiller_7.cxx
 // Author:      Peter KURNEV
 
-#include <NMTTools_PaveFiller.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <Bnd_HArray1OfBox.hxx>
 #include <Bnd_BoundSortBox.hxx>
@@ -60,10 +58,11 @@
 
 #include <TopExp_Explorer.hxx>
 #include <TopExp.hxx>
-
+//
 #include <IntTools_SequenceOfPntOn2Faces.hxx>
 #include <IntTools_PntOnFace.hxx>
 #include <IntTools_PntOn2Faces.hxx>
+#include <IntTools_Context.hxx>
 
 #include <BooleanOperations_AncestorsSeqAndSuccessorsSeq.hxx>
 
@@ -82,6 +81,7 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
 
+#include <NMTTools_ListOfCommonBlock.hxx>
 #include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
 #include <NMTTools_MapOfPaveBlock.hxx>
 
@@ -215,7 +215,7 @@ void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
     for (; aItLCB.More(); aItLCB.Next()) {
       NMTTools_CommonBlock aCBx;
       //
-      NMTTools_CommonBlock& aCB=aItLCB.Value();
+      NMTTools_CommonBlock& aCB=aItLCB.ChangeValue();
       const BOPTools_ListOfPaveBlock &aLPB=aCB.PaveBlocks();
       aItLPB.Initialize(aLPB);
       for (; aItLPB.More(); aItLPB.Next()) {
@@ -246,14 +246,14 @@ void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
     //
     aItLCB.Initialize(aLCBx);
     for (; aItLCB.More(); aItLCB.Next()) {
-      NMTTools_CommonBlock& aCBx=aItLCB.Value();
+      NMTTools_CommonBlock& aCBx=aItLCB.ChangeValue();
       aLCB.Append(aCBx);
     }
     //modified by NIZNHY-PKV Thu Jan 19 09:03:30 2012t
     // 1
     aItLCB.Initialize(aLCB);
     for (; aItLCB.More(); aItLCB.Next()) {
-      NMTTools_CommonBlock& aCB=aItLCB.Value();
+      NMTTools_CommonBlock& aCB=aItLCB.ChangeValue();
       //
       BOPTools_PaveBlock aPBMax;
       aTolExMax=-1.;
@@ -296,11 +296,7 @@ void NMTTools_PaveFiller::UpdateCommonBlocks(const Standard_Integer)
         }
         //
         const TopoDS_Edge& aEx=*((TopoDS_Edge*)&myDS->Shape(nEx));
-#if OCC_VERSION_LARGE > 0x06050200
         GeomAPI_ProjectPointOnCurve& aPPCx=myContext->ProjPC(aEx);
-#else
-        GeomAPI_ProjectPointOnCurve& aPPCx=myContext.ProjPC(aEx);
-#endif
         //
         for (j=0; j<2; ++j) {
           aPPCx.Perform(aPMax[j]);
@@ -384,7 +380,7 @@ void NMTTools_PaveFiller::UpdateCommonBlocks()
     //
     aCBIt.Initialize(aLCB);
     for (; aCBIt.More(); aCBIt.Next()) {
-      NMTTools_CommonBlock& aCB=aCBIt.Value();
+      NMTTools_CommonBlock& aCB=aCBIt.ChangeValue();
       //
       // Among all PBs of aCB the first PB will be one
       // that have max tolerance value

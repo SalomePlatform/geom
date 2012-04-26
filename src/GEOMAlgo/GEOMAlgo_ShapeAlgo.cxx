@@ -23,63 +23,48 @@
 // File:        GEOMAlgo_ShapeAlgo.cxx
 // Created:     Tue Dec  7 12:06:54 2004
 // Author:      Peter KURNEV
-
-#include <GEOMAlgo_ShapeAlgo.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+//              <pkv@irinox>
+//
+#include <GEOMAlgo_ShapeAlgo.hxx>
+#include <IntTools_Context.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_ShapeAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeAlgo::GEOMAlgo_ShapeAlgo()
-  : GEOMAlgo_Algo()
+:
+  GEOMAlgo_Algo()
 {
   myTolerance=0.0001;
 }
-       
+
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_ShapeAlgo::~GEOMAlgo_ShapeAlgo()
 {
 }
-
-#if OCC_VERSION_LARGE > 0x06050200
 //=======================================================================
 //function : SetContext
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::SetContext(const Handle(IntTools_Context)& theContext)
 {
   myContext=theContext;
 }
-
 //=======================================================================
 //function : Context
-//purpose  : 
+//purpose  :
 //=======================================================================
-const Handle(IntTools_Context)& GEOMAlgo_ShapeAlgo::Context()const 
+const Handle(IntTools_Context)& GEOMAlgo_ShapeAlgo::Context()const
 {
   return myContext;
 }
-
-//=======================================================================
-//function : Perform
-//purpose  : 
-//=======================================================================
-void GEOMAlgo_ShapeAlgo::Perform()
-{
-  if (myContext.IsNull()) {
-    myContext=new IntTools_Context;
-  }
-}
-#endif
-
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::SetShape(const TopoDS_Shape& aS)
 {
@@ -87,7 +72,7 @@ void GEOMAlgo_ShapeAlgo::SetShape(const TopoDS_Shape& aS)
 }
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Shape()const
 {
@@ -95,7 +80,7 @@ const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Shape()const
 }
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_ShapeAlgo::SetTolerance(const Standard_Real aT)
 {
@@ -103,7 +88,7 @@ void GEOMAlgo_ShapeAlgo::SetTolerance(const Standard_Real aT)
 }
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Real GEOMAlgo_ShapeAlgo::Tolerance()const
 {
@@ -111,9 +96,19 @@ Standard_Real GEOMAlgo_ShapeAlgo::Tolerance()const
 }
 //=======================================================================
 //function : Result
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_ShapeAlgo::Result()const
 {
   return myResult;
+}
+//=======================================================================
+//function : Perform
+//purpose  :
+//=======================================================================
+void GEOMAlgo_ShapeAlgo::Perform()
+{
+  if (myContext.IsNull()) {
+    myContext=new IntTools_Context;
+  }
 }

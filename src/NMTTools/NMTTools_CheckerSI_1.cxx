@@ -21,7 +21,7 @@
 // Created:     Mon Feb 19 11:32:08 2007
 // Author:      Peter KURNEV
 //
-#include <NMTTools_CheckerSI.ixx>
+#include <NMTTools_CheckerSI.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_IteratorCheckerSI.hxx>
 
@@ -52,16 +52,16 @@ static
 
 //=======================================================================
 // function: PreparePaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_CheckerSI::PreparePaveBlocks(const TopAbs_ShapeEnum aType1, 
+  void NMTTools_CheckerSI::PreparePaveBlocks(const TopAbs_ShapeEnum aType1,
                                              const TopAbs_ShapeEnum aType2)
 {
   NMTTools_PaveFiller::PreparePaveBlocks(aType1, aType2);
 }
 //=======================================================================
 // function: PreparePaveBlocks
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CheckerSI::PreparePaveBlocks(const Standard_Integer nE)
 {
@@ -75,7 +75,7 @@ static
   TopoDS_Vertex aV1, aV2;
   //
   BOPTools_ListOfPaveBlock& aLPB=mySplitShapesPool(myDS->RefEdge(nE));
-  // Edge 
+  // Edge
   aE=TopoDS::Edge(myDS->Shape(nE));
   if (BRep_Tool::Degenerated(aE)) {
     myIsDone=Standard_True;
@@ -83,7 +83,7 @@ static
   }
   //
   BOPTools_PaveSet& aPS=myPavePool(myDS->RefEdge(nE));
-  
+
   BOPTools_PaveBlockIterator aPBIt(nE, aPS);
   for (; aPBIt.More(); aPBIt.Next()) {
     BOPTools_PaveBlock& aPB=aPBIt.Value();
@@ -96,7 +96,7 @@ static
     //
     const BOPTools_Pave& aPave2=aPB.Pave2();
     nV2=aPave2.Index();
-    aV2=TopoDS::Vertex(myDS->Shape(nV2)); 
+    aV2=TopoDS::Vertex(myDS->Shape(nV2));
     aT2=aPave2.Param();
     //
     bIsValid=Standard_True;
@@ -121,13 +121,13 @@ static
     }
     aPB.SetShrunkRange(aSR);
     aLPB.Append(aPB);
-  } //for (; aPBIt.More(); aPBIt.Next()) 
+  } //for (; aPBIt.More(); aPBIt.Next())
   myIsDone=Standard_True;
 }
 
 //=======================================================================
 //function : IsValid
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsValid(const TopoDS_Edge& aE,
                          const TopoDS_Vertex& aV,

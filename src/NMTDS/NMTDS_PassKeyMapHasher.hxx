@@ -20,83 +20,33 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_PassKeyMapHasher.hxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _NMTDS_PassKeyMapHasher_HeaderFile
 #define _NMTDS_PassKeyMapHasher_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-class NMTDS_PassKey;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Integer.hxx>
+#include <NMTDS_PassKey.hxx>
+#include <Standard_Boolean.hxx>
 
 
+//=======================================================================
+//function : NMTDS_PassKeyMapHasher
+//purpose  : 
+//=======================================================================
 class NMTDS_PassKeyMapHasher  {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT static  Standard_Integer HashCode(const NMTDS_PassKey& aPKey,const Standard_Integer Upper) ;
-
-
-Standard_EXPORT static  Standard_Boolean IsEqual(const NMTDS_PassKey& aPKey1,const NMTDS_PassKey& aPKey2) ;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+ public:
+  Standard_EXPORT
+    static  Standard_Integer HashCode(const NMTDS_PassKey& aPKey,
+				      const Standard_Integer Upper) ;
+  
+  Standard_EXPORT   
+    static  Standard_Boolean IsEqual(const NMTDS_PassKey& aPKey1,
+				     const NMTDS_PassKey& aPKey2) ;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

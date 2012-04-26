@@ -20,156 +20,105 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTTools_FaceInfo.hxx
+// Created:     Tue Dec  9 12:23:29 2003
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _NMTTools_FaceInfo_HeaderFile
 #define _NMTTools_FaceInfo_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _NMTTools_MapOfPaveBlock_HeaderFile
-#include <NMTTools_MapOfPaveBlock.hxx>
-#endif
-#ifndef _TColStd_MapOfInteger_HeaderFile
-#include <TColStd_MapOfInteger.hxx>
-#endif
-class NMTTools_MapOfPaveBlock;
-class TColStd_MapOfInteger;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Integer.hxx>
+#include <NMTTools_MapOfPaveBlock.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <NMTTools_MapOfPaveBlock.hxx>
+#include <TColStd_MapOfInteger.hxx>
 
-
+//=======================================================================
+//class    : NMTTools_FaceInfo
+//purpose  :
+//=======================================================================
 class NMTTools_FaceInfo  {
+ public:
 
-public:
+  //! Empty contructor <br>
+  //! <br>
+  NMTTools_FaceInfo();
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  virtual ~NMTTools_FaceInfo();
 
-//! Empty contructor <br>
-//! <br>
-NMTTools_FaceInfo();
-virtual ~NMTTools_FaceInfo();
+  //!  Clears the contents <br>
+      Standard_EXPORT     void Clear() ;
 
-
-//!  Clears the contents <br>
-Standard_EXPORT   void Clear() ;
-
-//! Modifier <br>
-//! Sets the index of the face <theI> <br>
+  //! Modifier <br>
+  //! Sets the index of the face <theI> <br>
   void SetIndex(const Standard_Integer theI) ;
 
-//! Selector <br>
-//! Returns the index of the face <br>
-//! <br>
-//! In <br>
-//! <br>
+  //! Selector <br>
+  //! Returns the index of the face <br>
+  //! <br>
+  //! In <br>
+  //! <br>
   Standard_Integer Index() const;
 
-//! Selector <br>
-//! Returns the pave blocks of the face <br>
-//! that  have state In <br>
- const NMTTools_MapOfPaveBlock& PaveBlocksIn() const;
+  //! Selector <br>
+  //! Returns the pave blocks of the face <br>
+  //! that  have state In <br>
+  const NMTTools_MapOfPaveBlock& PaveBlocksIn() const;
 
 //! Selector/Modifier <br>
-//! Returns the pave blocks <br>
-//!  of the face <br>
-//! that  have state In <br>
+  //! Returns the pave blocks <br>
+  //!  of the face <br>
+  //! that  have state In <br>
   NMTTools_MapOfPaveBlock& ChangePaveBlocksIn() ;
 
-//! Selector <br>
-//! Returns the list of indices for vertices <br>
-//!  of the face <br>
-//! that have state In <br>
- const TColStd_MapOfInteger& VerticesIn() const;
+  //! Selector <br>
+  //! Returns the list of indices for vertices <br>
+  //!  of the face <br>
+  //! that have state In <br>
+  const TColStd_MapOfInteger& VerticesIn() const;
 
-//! Selector/Modifier <br>
-//! Returns the list of indices for vertices <br>
-//!  of the face <br>
-//! that have state In <br>
-//! <br>
-//! On <br>
-//! <br>
+  //! Selector/Modifier <br>
+  //! Returns the list of indices for vertices <br>
+  //!  of the face <br>
+  //! that have state In <br>
+  //! <br>
+  //! On <br>
+  //! <br>
   TColStd_MapOfInteger& ChangeVerticesIn() ;
 
-//! Selector <br>
-//! Returns the pave blocks of the face <br>
-//! that  have state On <br>
- const NMTTools_MapOfPaveBlock& PaveBlocksOn() const;
+  //! Selector <br>
+  //! Returns the pave blocks of the face <br>
+  //! that  have state On <br>
+  const NMTTools_MapOfPaveBlock& PaveBlocksOn() const;
 
-//! Selector/Modifier <br>
-//! Returns the pave blocks <br>
-//!  of the face <br>
-//! that  have state On <br>
+  //! Selector/Modifier <br>
+  //! Returns the pave blocks <br>
+  //!  of the face <br>
+  //! that  have state On <br>
   NMTTools_MapOfPaveBlock& ChangePaveBlocksOn() ;
 
-//! Selector <br>
-//! Returns the list of indices for vertices <br>
-//!  of the face <br>
-//! that have state On <br>
- const TColStd_MapOfInteger& VerticesOn() const;
+  //! Selector <br>
+  //! Returns the list of indices for vertices <br>
+  //!  of the face <br>
+  //! that have state On <br>
+  const TColStd_MapOfInteger& VerticesOn() const;
 
-//! Selector/Modifier <br>
-//! Returns the list of indices for vertices <br>
-//!  of the face <br>
-//! that have state On <br>
+  //! Selector/Modifier <br>
+  //! Returns the list of indices for vertices <br>
+  //!  of the face <br>
+  //! that have state On <br>
   TColStd_MapOfInteger& ChangeVerticesOn() ;
 
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-Standard_Integer myIndex;
-NMTTools_MapOfPaveBlock myPaveBlocksIn;
-TColStd_MapOfInteger myVerticesIn;
-NMTTools_MapOfPaveBlock myPaveBlocksOn;
-TColStd_MapOfInteger myVerticesOn;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+ protected:
+  Standard_Integer myIndex;
+  NMTTools_MapOfPaveBlock myPaveBlocksIn;
+  TColStd_MapOfInteger myVerticesIn;
+  NMTTools_MapOfPaveBlock myPaveBlocksOn;
+      TColStd_MapOfInteger myVerticesOn;
 };
 
-
 #include <NMTTools_FaceInfo.lxx>
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

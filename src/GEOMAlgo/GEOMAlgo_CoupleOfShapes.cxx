@@ -19,22 +19,21 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:        GEOMAlgo_CoupleOfShapes.cxx
 // Created:     Wed Dec 15 13:03:52 2004
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_CoupleOfShapes.ixx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
 //=======================================================================
 //function : GEOMAlgo_CoupleOfShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_CoupleOfShapes::GEOMAlgo_CoupleOfShapes()
 {}
 //=======================================================================
 //function : SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_CoupleOfShapes::SetShapes(const TopoDS_Shape& aS1,
                                         const TopoDS_Shape& aS2)
@@ -44,7 +43,7 @@ void GEOMAlgo_CoupleOfShapes::SetShapes(const TopoDS_Shape& aS1,
 }
 //=======================================================================
 //function : Shapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_CoupleOfShapes::Shapes(TopoDS_Shape& aS1,
                                      TopoDS_Shape& aS2)const
@@ -54,7 +53,7 @@ void GEOMAlgo_CoupleOfShapes::Shapes(TopoDS_Shape& aS1,
 }
 //=======================================================================
 //function : SetShape1
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_CoupleOfShapes::SetShape1(const TopoDS_Shape& aS1)
 {
@@ -62,7 +61,7 @@ void GEOMAlgo_CoupleOfShapes::SetShape1(const TopoDS_Shape& aS1)
 }
 //=======================================================================
 //function : SetShape2
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_CoupleOfShapes::SetShape2(const TopoDS_Shape& aS2)
 {
@@ -70,7 +69,7 @@ void GEOMAlgo_CoupleOfShapes::SetShape2(const TopoDS_Shape& aS2)
 }
 //=======================================================================
 //function : Shape1
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_CoupleOfShapes::Shape1()const
 {
@@ -78,7 +77,7 @@ const TopoDS_Shape& GEOMAlgo_CoupleOfShapes::Shape1()const
 }
 //=======================================================================
 //function : Shape2
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_CoupleOfShapes::Shape2()const
 {

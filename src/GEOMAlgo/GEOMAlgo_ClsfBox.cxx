@@ -20,12 +20,13 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_ClsfSurf.cxx
+// File:        GEOMAlgo_ClsfBox.cxx
 // Created:     Wed Nov 22 10:41:47 2006
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_ClsfBox.ixx>
+#include <GEOMAlgo_ClsfBox.hxx>
+
 #include <GeomAbs_SurfaceType.hxx>
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <TopAbs_ShapeEnum.hxx>
@@ -42,9 +43,12 @@
 #include <gp_Ax1.hxx>
 #include <Geom_Plane.hxx>
 
+IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfBox, GEOMAlgo_Clsf)
+
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfBox::GEOMAlgo_ClsfBox()
 :
@@ -53,14 +57,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfBox::~GEOMAlgo_ClsfBox()
 {
 }
 //=======================================================================
 //function : SetBox
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfBox::SetBox(const TopoDS_Shape& aBox)
 {
@@ -68,7 +72,7 @@
 }
 //=======================================================================
 //function : Box
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_ClsfBox::Box() const
 {
@@ -76,10 +80,10 @@
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfBox::CheckData()
-{ 
+{
   Standard_Integer i, aNbF;
   TopAbs_ShapeEnum aTypeShape;
   TopAbs_Orientation aOr;
@@ -118,7 +122,7 @@
     aS=BRep_Tool::Surface(aF);
     myGAS[i-1].Load(aS);
     aType=myGAS[i-1].GetType();
-    if (!aType==GeomAbs_Plane) { 
+    if (!aType==GeomAbs_Plane) {
       myErrorStatus=13; // unallowed surface type
       return;
     }
@@ -142,7 +146,7 @@
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfBox::Perform()
 {
@@ -158,7 +162,7 @@
   }
   */
   iNext=1;
-  aNbON=0; 
+  aNbON=0;
   aNbIN=0;
   for(i=0; i<aNbS && iNext; i++) {
     GEOMAlgo_SurfaceTools::GetState(myPnt, myGAS[i], myTolerance, aSt);
@@ -177,7 +181,7 @@
       default:
         myState=TopAbs_UNKNOWN;
         iNext=0;
-        break; 
+        break;
     }
   }
   //
@@ -194,7 +198,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfBox::CanBeON(const Handle(Geom_Curve)& aC) const
 {
@@ -202,7 +206,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfBox::CanBeON(const Handle(Geom_Surface)& aS1) const
 {

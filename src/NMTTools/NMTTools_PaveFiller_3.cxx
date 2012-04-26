@@ -23,10 +23,9 @@
 // File:        NMTTools_PaveFiller_3.cxx
 // Created:     Mon Dec  8 16:06:56 2003
 // Author:      Peter KURNEV
-
-#include <NMTTools_PaveFiller.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+//              <pkv@irinox>
+//
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -41,20 +40,18 @@
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
+#include <IntTools_Context.hxx>
 
 
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 static
   Standard_Boolean Contains(const TopoDS_Face& aF,
                             const TopoDS_Vertex& aV);
-// Contribution of Samtech www.samcef.com END
 
 //=======================================================================
 // function: PerformVF
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformVF() 
+  void NMTTools_PaveFiller::PerformVF()
 {
   myIsDone=Standard_False;
   //
@@ -66,7 +63,7 @@ static
   //
   BOPTools_CArray1OfVSInterference& aVSs=myIP->VSInterferences();
   //
-  // V/E Interferences 
+  // V/E Interferences
   myDSIt->Initialize(TopAbs_VERTEX, TopAbs_FACE);
   //
   // BlockLength correction
@@ -101,18 +98,14 @@ static
         //
       aF2=TopoDS::Face(myDS->Shape(aWith));
       //
-      // Modified  Thu Sep 14 14:35:18 2006 
+      // Modified  Thu Sep 14 14:35:18 2006
       // Contribution of Samtech www.samcef.com BEGIN
       if (Contains(aF2, aV1)) {
         continue;
       }
       // Contribution of Samtech www.samcef.com END
       //
-#if OCC_VERSION_LARGE > 0x06050200
       aFlag=myContext->ComputeVS (aV1, aF2, aU, aV);
-#else
-      aFlag=myContext.ComputeVS (aV1, aF2, aU, aV);
-#endif
       //
       if (!aFlag) {
         //
@@ -136,11 +129,11 @@ static
   }
   myIsDone=Standard_True;
 }
-// Modified  Thu Sep 14 14:35:18 2006 
+// Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Face& aF,
                           const TopoDS_Vertex& aV)

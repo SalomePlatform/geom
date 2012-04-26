@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -19,146 +16,27 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	NMTDS_IndexedDataMapOfIntegerShape.hxx
+// Created:	Mon Feb 20 09:20:07 2012
+// Author:	
+//		<pkv@BDEURI37616>
 
-#ifndef _NMTDS_IndexedDataMapOfIntegerShape_HeaderFile
-#define _NMTDS_IndexedDataMapOfIntegerShape_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
+#ifndef NMTDS_IndexedDataMapOfIntegerShape_HeaderFile
+#define NMTDS_IndexedDataMapOfIntegerShape_HeaderFile
+
+#include <TopoDS_Shape.hxx>  
 #include <Standard_Integer.hxx>
-#endif
-#ifndef _Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape_HeaderFile
-#include <Handle_NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
+#include <TColStd_MapIntegerHasher.hxx>
 
-class Standard_DomainError;
-class Standard_OutOfRange;
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class TColStd_MapIntegerHasher;
-class NMTDS_IndexedDataMapNodeOfIndexedDataMapOfIntegerShape;
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-#include <Basics_OCCTVersion.hxx>
-
-class NMTDS_IndexedDataMapOfIntegerShape  : public TCollection_BasicMap {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+#define _NCollection_MapHasher
+#include <NCollection_IndexedDataMap.hxx>
 
 
-Standard_EXPORT NMTDS_IndexedDataMapOfIntegerShape(const Standard_Integer NbBuckets = 1);
+typedef NCollection_IndexedDataMap<Standard_Integer, TopoDS_Shape, TColStd_MapIntegerHasher> NMTDS_IndexedDataMapOfIntegerShape; 
+ 
+#undef _NCollection_MapHasher
 
-
-Standard_EXPORT   NMTDS_IndexedDataMapOfIntegerShape& Assign(const NMTDS_IndexedDataMapOfIntegerShape& Other) ;
-  NMTDS_IndexedDataMapOfIntegerShape& operator =(const NMTDS_IndexedDataMapOfIntegerShape& Other) 
-{
-  return Assign(Other);
-}
-
-
-
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-
-Standard_EXPORT   void Clear() ;
-~NMTDS_IndexedDataMapOfIntegerShape()
-{
-  Clear();
-}
-
-
-
-Standard_EXPORT   Standard_Integer Add(const Standard_Integer& K,const TopoDS_Shape& I) ;
-
-
-Standard_EXPORT   void Substitute(const Standard_Integer I,const Standard_Integer& K,const TopoDS_Shape& T) ;
-
-
-Standard_EXPORT   void RemoveLast() ;
-
-
-Standard_EXPORT   Standard_Boolean Contains(const Standard_Integer& K) const;
-
-
-Standard_EXPORT  const Standard_Integer& FindKey(const Standard_Integer I) const;
-
-
-Standard_EXPORT  const TopoDS_Shape& FindFromIndex(const Standard_Integer I) const;
- const TopoDS_Shape& operator ()(const Standard_Integer I) const
-{
-  return FindFromIndex(I);
-}
-
-
-
-Standard_EXPORT   TopoDS_Shape& ChangeFromIndex(const Standard_Integer I) ;
-  TopoDS_Shape& operator ()(const Standard_Integer I) 
-{
-  return ChangeFromIndex(I);
-}
-
-
-
-Standard_EXPORT   Standard_Integer FindIndex(const Standard_Integer& K) const;
-
-
-Standard_EXPORT  const TopoDS_Shape& FindFromKey(const Standard_Integer& K) const;
-
-
-Standard_EXPORT   TopoDS_Shape& ChangeFromKey(const Standard_Integer& K) ;
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address FindFromKey1 (const Standard_Integer& K) const;
-  Standard_EXPORT Standard_Address ChangeFromKey1 (const Standard_Integer& K);
-#endif
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
-Standard_EXPORT NMTDS_IndexedDataMapOfIntegerShape(const NMTDS_IndexedDataMapOfIntegerShape& Other);
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
 
 
 #endif

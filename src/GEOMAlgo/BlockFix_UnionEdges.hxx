@@ -44,20 +44,20 @@ class BlockFix_UnionEdges  {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
+    void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
  // Methods PUBLIC
- // 
+ //
 Standard_EXPORT BlockFix_UnionEdges();
 Standard_EXPORT   TopoDS_Shape Perform(const TopoDS_Shape& Shape,const Standard_Real Tol) ;
 
@@ -68,17 +68,17 @@ Standard_EXPORT   TopoDS_Shape Perform(const TopoDS_Shape& Shape,const Standard_
 protected:
 
  // Methods PROTECTED
- // 
+ //
 
 
  // Fields PROTECTED
  //
 
 
-private: 
+private:
 
  // Methods PRIVATE
- // 
+ //
 
 
  // Fields PRIVATE

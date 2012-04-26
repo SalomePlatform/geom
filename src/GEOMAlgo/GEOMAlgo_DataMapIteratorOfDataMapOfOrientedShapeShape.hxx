@@ -16,97 +16,17 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape.hxx
+// Created:	Wed Feb 22 11:05:01 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape_HeaderFile
-#define _GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape_HeaderFile
 
-#ifndef _TCollection_BasicMapIterator_HeaderFile
-#include <TCollection_BasicMapIterator.hxx>
+#ifndef GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape_HeaderFile
+#define GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape_HeaderFile
+
+#ifndef GEOMAlgo_DataMapOfOrientedShapeShape_HeaderFile
+#include <GEOMAlgo_DataMapOfOrientedShapeShape.hxx>
 #endif
-#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape.hxx>
-#endif
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class TopTools_OrientedShapeMapHasher;
-class GEOMAlgo_DataMapOfOrientedShapeShape;
-class GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape;
-
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-
-class GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape  : public TCollection_BasicMapIterator {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape();
-
-
-Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape(const GEOMAlgo_DataMapOfOrientedShapeShape& aMap);
-
-
-Standard_EXPORT   void Initialize(const GEOMAlgo_DataMapOfOrientedShapeShape& aMap) ;
-
-
-Standard_EXPORT  const TopoDS_Shape& Key() const;
-
-
-Standard_EXPORT  const TopoDS_Shape& Value() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

@@ -21,13 +21,13 @@
 //
 
 // File:        GEOMAlgo_BuilderShape.cxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
-#include <GEOMAlgo_BuilderShape.ixx>
+#include <GEOMAlgo_BuilderShape.hxx>
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_BuilderShape::GEOMAlgo_BuilderShape()
 :
@@ -39,14 +39,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_BuilderShape::~GEOMAlgo_BuilderShape()
 {
 }
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_BuilderShape::Shape() const
 {
@@ -55,7 +55,7 @@
 //
 //=======================================================================
 //function : Generated
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_BuilderShape::Generated(const TopoDS_Shape& )
 {
@@ -64,7 +64,7 @@
 }
 //=======================================================================
 //function : Modified
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_BuilderShape::Modified(const TopoDS_Shape& )
 {
@@ -73,18 +73,18 @@
 }
 //=======================================================================
 //function : IsDeleted
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderShape::IsDeleted(const TopoDS_Shape& theS)
 {
   Standard_Boolean bRet;
   //
   bRet=!myMapShape.Contains(theS);
-  return bRet;  
+  return bRet;
 }
 //=======================================================================
 //function : HasDeleted
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderShape::HasDeleted()const
 {
@@ -92,7 +92,7 @@
 }
 //=======================================================================
 //function : HasGenerated
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderShape::HasGenerated()const
 {
@@ -100,7 +100,7 @@
 }
 //=======================================================================
 //function : HasModified
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderShape::HasModified()const
 {
@@ -108,7 +108,7 @@
 }
 //=======================================================================
 //function : PrepareHistory
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_BuilderShape::PrepareHistory()
 {
@@ -124,7 +124,7 @@
 //modified by NIZNHY-PKV Thu Dec  7 11:57:00 2006f
 //=======================================================================
 //function : ImagesResult
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_IndexedDataMapOfShapeListOfShape& GEOMAlgo_BuilderShape::ImagesResult()const
 {

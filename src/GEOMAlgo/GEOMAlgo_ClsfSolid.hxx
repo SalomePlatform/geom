@@ -17,90 +17,53 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_ClsfSolid.hxx
+// Created:     Mon Jan 29 10:35:46 2007
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_ClsfSolid_HeaderFile
 #define _GEOMAlgo_ClsfSolid_HeaderFile
 
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_ClsfSolid_HeaderFile
-#include <Handle_GEOMAlgo_ClsfSolid.hxx>
-#endif
-
-#ifndef _TopoDS_Shape_HeaderFile
+#include <Standard_DefineHandle.hxx>
+//#include <Handle_GEOMAlgo_ClsfSolid.hxx>
 #include <TopoDS_Shape.hxx>
-#endif
-#ifndef _Standard_Address_HeaderFile
 #include <Standard_Address.hxx>
-#endif
-#ifndef _GEOMAlgo_Clsf_HeaderFile
 #include <GEOMAlgo_Clsf.hxx>
-#endif
-class TopoDS_Shape;
 
+DEFINE_STANDARD_HANDLE(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
 
+//=======================================================================
+//class : GEOMAlgo_ClsfSolid
+//purpose  :
+//=======================================================================
+class GEOMAlgo_ClsfSolid : public GEOMAlgo_Clsf
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_ClsfSolid();
 
-class GEOMAlgo_ClsfSolid : public GEOMAlgo_Clsf {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_ClsfSolid();
 
-public:
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    void SetShape(const TopoDS_Shape& aS) ;
 
+  Standard_EXPORT
+    const TopoDS_Shape& Shape() const;
 
-Standard_EXPORT GEOMAlgo_ClsfSolid();
-Standard_EXPORT virtual ~GEOMAlgo_ClsfSolid();
+  Standard_EXPORT
+    virtual  void Perform() ;
 
+  Standard_EXPORT
+    virtual  void CheckData() ;
 
-Standard_EXPORT   void SetShape(const TopoDS_Shape& aS) ;
+  DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfSolid)
 
-
-Standard_EXPORT  const TopoDS_Shape& Shape() const;
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT virtual  void CheckData() ;
-//Standard_EXPORT ~GEOMAlgo_ClsfSolid();
-
-
-
-
- // Type management
- //
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-TopoDS_Shape myShape;
-Standard_Address myPClsf;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+  protected:
+    TopoDS_Shape myShape;
+  Standard_Address myPClsf;
 
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

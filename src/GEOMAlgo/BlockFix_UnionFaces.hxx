@@ -42,21 +42,21 @@ class TopoDS_Face;
 class BlockFix_UnionFaces
 {
 public:
-  void* operator new(size_t,void* anAddress) 
+  void* operator new(size_t,void* anAddress)
   {
     return anAddress;
   }
-  void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
   }
-  void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
   }
 
   // Methods PUBLIC
-  // 
+  //
   Standard_EXPORT BlockFix_UnionFaces();
 
   Standard_EXPORT   Standard_Real& GetTolerance();
@@ -80,7 +80,7 @@ public:
   Standard_EXPORT virtual  void MovePCurves(TopoDS_Face& aTarget,
                                             const TopoDS_Face& aSource) const;
 
-private: 
+private:
   // Fields PRIVATE
   //
   Standard_Real myTolerance;

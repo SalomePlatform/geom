@@ -25,11 +25,13 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TColStd_MapOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
+
+#include <TopTools_ListOfShape.hxx>
 
 #include <BooleanOperations_ShapesDataStructure.hxx>
 #include <BooleanOperations_OnceExplorer.hxx>
@@ -46,7 +48,7 @@
 #include <NMTTools_CommonBlockAPI.hxx>
 
 
-// Modified  to add new method Thu Sep 14 14:35:18 2006 
+// Modified  to add new method Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 // function:  SharedEdges
@@ -68,7 +70,7 @@
     nE1=aExp.Current();
     aM1.Add(nE1);
   }
-  
+
   aExp.Init(nF2, TopAbs_EDGE);
   for (; aExp.More(); aExp.Next()) {
     nE2=aExp.Current();
@@ -101,7 +103,7 @@
   if (aCBAPI.IsCommonBlock(aPB)) {
     NMTTools_CommonBlock& aCB=aCBAPI.CommonBlock(aPB);
     //
-    aIsCommonBlock=1;   
+    aIsCommonBlock=1;
     //
     const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
     aItPBx.Initialize(aLPBx);
@@ -254,7 +256,7 @@
   //
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);
     const BOPTools_PaveBlock& aPB1R=RealPaveBlock(aPB1);
 
@@ -285,7 +287,7 @@
 
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);
     const BOPTools_PaveBlock& aPB1R=RealPaveBlock(aPB1);
     //
@@ -424,7 +426,7 @@
   //
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);
 
     const TColStd_ListOfInteger& aLFCB=aCB.Faces();
@@ -463,7 +465,7 @@
 
   anItCB.Initialize(aLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1(nE1);//XXX
     //
     const BOPTools_ListOfPaveBlock& aLPBx=aCB.PaveBlocks();
@@ -688,13 +690,13 @@
   return 0; //Ok
 }
 //modified by NIZNHY-PKV Mon Oct 17 12:07:48 2011f
-static 
+static
   void SortPaveBlocks(BOPTools_ListOfPaveBlock &);
 static
-  void SortShell(const Standard_Integer, 
+  void SortShell(const Standard_Integer,
 		 BOPTools_PaveBlock *);
 static
-  Standard_Boolean Less(const BOPTools_PaveBlock &, 
+  Standard_Boolean Less(const BOPTools_PaveBlock &,
 			const BOPTools_PaveBlock &);
 
 //=======================================================================
@@ -705,7 +707,7 @@ static
                                              BOPTools_ListOfPaveBlock& aLPBIn)
 {
   Standard_Integer j, aNbCBP, nSpIn;
-  TColStd_MapOfInteger aMFence; 
+  TColStd_MapOfInteger aMFence;
   BOPTools_ListOfPaveBlock aLPB;
   BOPTools_ListIteratorOfListOfPaveBlock aItPB;
   NMTTools_ListIteratorOfListOfCommonBlock aItCB;
@@ -717,7 +719,7 @@ static
     NMTTools_ListOfCommonBlock& aLCB=aCBP(j);
     aItCB.Initialize(aLCB);
     for (; aItCB.More(); aItCB.Next()) {
-      NMTTools_CommonBlock& aCB=aItCB.Value();
+      NMTTools_CommonBlock& aCB=aItCB.ChangeValue();
       if (aCB.IsPaveBlockOnFace(nF)) {
 	const BOPTools_PaveBlock& aPB1=aCB.PaveBlock1();
 	nSpIn=aPB1.Edge();
@@ -770,10 +772,10 @@ void SortPaveBlocks(BOPTools_ListOfPaveBlock &aLPBIn)
 }
 //=======================================================================
 //function : SortShell
-//purpose  : 
+//purpose  :
 //=======================================================================
-void SortShell(const Standard_Integer n, 
-	       BOPTools_PaveBlock *a) 
+void SortShell(const Standard_Integer n,
+	       BOPTools_PaveBlock *a)
 {
   Standard_Integer nd, i, j, l, d=1;
   BOPTools_PaveBlock x;
@@ -798,15 +800,15 @@ void SortShell(const Standard_Integer n,
 	j-=d;
 	if (j > -1) goto m30;
       }//if (a[l] < a[j]){
-    }//for (i=0; i<nd; ++i) 
+    }//for (i=0; i<nd; ++i)
   }//while (1)
 }
 
 //=======================================================================
 //function : Less
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean Less(const BOPTools_PaveBlock &aPB1, 
+Standard_Boolean Less(const BOPTools_PaveBlock &aPB1,
 		      const BOPTools_PaveBlock &aPB2)
 {
   Standard_Boolean bRet;

@@ -20,125 +20,65 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_WireSplitter.hxx
+// Author:      Peter KURNEV
+
 #ifndef _GEOMAlgo_WireSplitter_HeaderFile
 #define _GEOMAlgo_WireSplitter_HeaderFile
 
-#ifndef _TopoDS_Face_HeaderFile
-#include <TopoDS_Face.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _BOPTColStd_ListOfListOfShape_HeaderFile
-#include <BOPTColStd_ListOfListOfShape.hxx>
-#endif
-#ifndef _BOP_IndexedDataMapOfVertexListEdgeInfo_HeaderFile
-#include <BOP_IndexedDataMapOfVertexListEdgeInfo.hxx>
-#endif
-#ifndef _TopTools_ListOfShape_HeaderFile
-#include <TopTools_ListOfShape.hxx>
-#endif
-#ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
-#endif
-class TopoDS_Face;
-class TopTools_ListOfShape;
-class BOPTColStd_ListOfListOfShape;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
-
+#include <TopoDS_Face.hxx>
+#include <Standard_Boolean.hxx>
+#include <BOPTColStd_ListOfListOfShape.hxx>
+#include <BOP_IndexedDataMapOfVertexListEdgeInfo.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <GEOMAlgo_Algo.hxx>
 
 //!  the algorithm to split multiconnexed set of edges <br>
 //!  wires on a face onto simple connexed wires <br>
 //!  . <br>
-class GEOMAlgo_WireSplitter  : public GEOMAlgo_Algo {
-
+//=======================================================================
+//class    : GEOMAlgo_WireSplitter
+//purpose  :
+//=======================================================================
+class GEOMAlgo_WireSplitter  : public GEOMAlgo_Algo
+{
 public:
+  Standard_EXPORT
+    GEOMAlgo_WireSplitter();
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    virtual ~GEOMAlgo_WireSplitter();
 
+  Standard_EXPORT
+    void SetFace(const TopoDS_Face& aF) ;
 
-Standard_EXPORT GEOMAlgo_WireSplitter();
-Standard_EXPORT virtual ~GEOMAlgo_WireSplitter();
+  Standard_EXPORT
+    void SetEdges(const TopTools_ListOfShape& aLE) ;
 
+  Standard_EXPORT
+    const TopTools_ListOfShape& Edges() const;
 
-Standard_EXPORT   void SetFace(const TopoDS_Face& aF) ;
+  Standard_EXPORT
+    virtual  void Perform() ;
 
+  Standard_EXPORT
+    Standard_Boolean IsNothingToDo() const;
 
-Standard_EXPORT   void SetEdges(const TopTools_ListOfShape& aLE) ;
+  Standard_EXPORT
+    const TopoDS_Face& Face() const;
 
-
-Standard_EXPORT  const TopTools_ListOfShape& Edges() const;
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT   Standard_Boolean IsNothingToDo() const;
-
-
-Standard_EXPORT  const TopoDS_Face& Face() const;
-
-
-Standard_EXPORT  const BOPTColStd_ListOfListOfShape& Shapes() const;
-
-
-
-
+  Standard_EXPORT
+    const BOPTColStd_ListOfListOfShape& Shapes() const;
 
 protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-TopoDS_Face myFace;
-Standard_Boolean myIsDone;
-Standard_Boolean myNothingToDo;
-BOPTColStd_ListOfListOfShape myShapes;
-BOP_IndexedDataMapOfVertexListEdgeInfo mySmartMap;
-TopTools_ListOfShape myEdges;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  TopoDS_Face myFace;
+  Standard_Boolean myIsDone;
+  Standard_Boolean myNothingToDo;
+  BOPTColStd_ListOfListOfShape myShapes;
+  BOP_IndexedDataMapOfVertexListEdgeInfo mySmartMap;
+  TopTools_ListOfShape myEdges;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

@@ -20,86 +20,39 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_WireSolid.hxx
+// Created:     Wed Jan 12 10:19:31 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+
 #ifndef _GEOMAlgo_WireSolid_HeaderFile
 #define _GEOMAlgo_WireSolid_HeaderFile
 
-#ifndef _GEOMAlgo_ShapeSolid_HeaderFile
-#include <GEOMAlgo_ShapeSolid.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <GEOMAlgo_ShapeSolid.hxx>
 
+//=======================================================================
+//class    : GEOMAlgo_WireSolid
+//purpose  :
+//=======================================================================
+class GEOMAlgo_WireSolid  : public GEOMAlgo_ShapeSolid
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_WireSolid();
 
-class GEOMAlgo_WireSolid  : public GEOMAlgo_ShapeSolid {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_WireSolid();
 
-public:
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+ protected:
+  Standard_EXPORT
+    virtual  void Prepare() ;
 
-
-Standard_EXPORT GEOMAlgo_WireSolid();
-Standard_EXPORT virtual ~GEOMAlgo_WireSolid();
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT virtual  void Prepare() ;
-
-
-Standard_EXPORT virtual  void BuildResult() ;
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_EXPORT
+    virtual  void BuildResult() ;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

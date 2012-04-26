@@ -26,8 +26,8 @@
 //
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
 inline NMTTools_FaceInfo::NMTTools_FaceInfo()
 :
@@ -36,7 +36,7 @@ inline NMTTools_FaceInfo::NMTTools_FaceInfo()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 inline NMTTools_FaceInfo::~NMTTools_FaceInfo()
 {
@@ -44,7 +44,7 @@ inline NMTTools_FaceInfo::~NMTTools_FaceInfo()
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
 inline void NMTTools_FaceInfo::Clear()
 {
@@ -56,7 +56,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : SetIndex
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline void NMTTools_FaceInfo::SetIndex(const Standard_Integer theI)
 {
@@ -64,7 +64,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : Index
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline Standard_Integer NMTTools_FaceInfo::Index()const
 {
@@ -72,7 +72,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : PaveBlockIn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline const NMTTools_MapOfPaveBlock& NMTTools_FaceInfo::PaveBlocksIn()const
 {
@@ -80,7 +80,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : ChangePaveBlocksIn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline NMTTools_MapOfPaveBlock& NMTTools_FaceInfo::ChangePaveBlocksIn()
 {
@@ -88,7 +88,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : VerticesIn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline const TColStd_MapOfInteger& NMTTools_FaceInfo::VerticesIn()const
 {
@@ -96,7 +96,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : ChangeVerticesIn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline  TColStd_MapOfInteger& NMTTools_FaceInfo::ChangeVerticesIn()
 {
@@ -104,7 +104,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : PaveBlockOn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline const NMTTools_MapOfPaveBlock& NMTTools_FaceInfo::PaveBlocksOn()const
 {
@@ -112,7 +112,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : ChangePaveBlocksOn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline NMTTools_MapOfPaveBlock& NMTTools_FaceInfo::ChangePaveBlocksOn()
 {
@@ -120,7 +120,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : VerticesOn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline const TColStd_MapOfInteger& NMTTools_FaceInfo::VerticesOn()const
 {
@@ -128,7 +128,7 @@ inline void NMTTools_FaceInfo::Clear()
 }
 //=======================================================================
 //function : ChangeVerticesOn
-//purpose  : 
+//purpose  :
 //=======================================================================
   inline  TColStd_MapOfInteger& NMTTools_FaceInfo::ChangeVerticesOn()
 {

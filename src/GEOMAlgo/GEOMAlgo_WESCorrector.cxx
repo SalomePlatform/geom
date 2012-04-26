@@ -23,7 +23,7 @@
 // File:        NMTAlgo_WESCorrector.cxx
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_WESCorrector.ixx>
+#include <GEOMAlgo_WESCorrector.hxx>
 
 #include <Geom_Surface.hxx>
 
@@ -404,6 +404,7 @@ Standard_Boolean IsToScale(const TopoDS_Face& aF,
                            Standard_Real& aScale)
 {
   Standard_Boolean bRet;
+  Standard_Real aV1, aV2, dV, aTr;
   GeomAbs_SurfaceType aType;
   BRepAdaptor_Surface aBAS;
   //
@@ -413,8 +414,6 @@ Standard_Boolean IsToScale(const TopoDS_Face& aF,
   aBAS.Initialize(aF);
   aType=aBAS.GetType();
   if (aType==GeomAbs_Cylinder) {
-    Standard_Real aV1, aV2, dV, dU, aTr, aC;
-    //
     aTr=1.e5;
     aV1=aBAS.FirstVParameter();
     aV2=aBAS.LastVParameter();
@@ -425,16 +424,6 @@ Standard_Boolean IsToScale(const TopoDS_Face& aF,
       aScale=1./aTr;
       return bRet;
     }
-    //modified by NIZNHY-PKV Fri Mar 30 10:54:34 2012f
-    dU=M_PI;
-    aC=dV/dU;
-    aTr=25.;
-    if(aC>aTr){
-      bRet=!bRet;
-      aScale=1./aC;
-      return bRet;
-    }
-    //modified by NIZNHY-PKV Fri Mar 30 10:54:35 2012t
   }
   return bRet;
 }

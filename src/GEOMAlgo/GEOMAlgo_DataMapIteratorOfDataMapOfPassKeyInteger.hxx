@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -19,100 +16,16 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx
+// Created:	Wed Feb 22 10:58:14 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
-#define _GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
 
-#ifndef _TCollection_BasicMapIterator_HeaderFile
-#include <TCollection_BasicMapIterator.hxx>
+#ifndef GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
+#define GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger_HeaderFile
+
+#ifndef GEOMAlgo_DataMapOfPassKeyInteger_HeaderFile
+#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
 #endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger.hxx>
-#endif
-class Standard_NoSuchObject;
-class GEOMAlgo_PassKey;
-class GEOMAlgo_PassKeyMapHasher;
-class GEOMAlgo_DataMapOfPassKeyInteger;
-class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyInteger;
-
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-
-class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger  : public TCollection_BasicMapIterator {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger();
-
-
-Standard_EXPORT GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger(const GEOMAlgo_DataMapOfPassKeyInteger& aMap);
-
-
-Standard_EXPORT   void Initialize(const GEOMAlgo_DataMapOfPassKeyInteger& aMap) ;
-
-
-Standard_EXPORT  const GEOMAlgo_PassKey& Key() const;
-
-
-Standard_EXPORT  const Standard_Integer& Value() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

@@ -21,7 +21,7 @@
 // Author:	Peter KURNEV
 //		<pkv@irinox>
 
-#include <GEOMAlgo_Tools.ixx>
+#include <GEOMAlgo_Tools.hxx>
 //
 #include <NCollection_DataMap.hxx>
 
@@ -57,8 +57,8 @@
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <BRepTools.hxx>
 
-static 
-  inline Standard_Boolean IsEqual(const TopoDS_Shape& aS1, 
+static
+  inline Standard_Boolean IsEqual(const TopoDS_Shape& aS1,
 				  const TopoDS_Shape& aS2) {
   return TopTools_ShapeMapHasher::IsEqual(aS1, aS2);
 }
@@ -69,7 +69,7 @@ static
 
 //=======================================================================
 //function : CorrectWires
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Tools::CorrectWires(const TopoDS_Shape& aShape)
 {
@@ -79,7 +79,7 @@ static
   TopTools_MapOfShape aMF;
   GeomAdaptor_Surface aGAS;
   GeomAbs_SurfaceType aTS;
-  TopLoc_Location aLoc; 
+  TopLoc_Location aLoc;
   //
   bRet=Standard_False;
   //
@@ -105,7 +105,7 @@ static
 }
 //=======================================================================
 //class: GEOMAlgo_InfoEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
 class GEOMAlgo_InfoEdge {
  public:
@@ -118,7 +118,7 @@ class GEOMAlgo_InfoEdge {
   ~GEOMAlgo_InfoEdge(){
   };
   //
-  void Init(const TopoDS_Edge& aE, 
+  void Init(const TopoDS_Edge& aE,
 	    const TopoDS_Face& aF);
   //
   void SetTolInt(const Standard_Real aTolInt) {
@@ -158,14 +158,14 @@ class GEOMAlgo_InfoEdge {
   Handle(Geom_Curve) myC3D;
 };
 //
-typedef NCollection_DataMap<TopoDS_Shape, GEOMAlgo_InfoEdge> GEOMAlgo_DataMapOfShapeInfoEdge; 
-typedef GEOMAlgo_DataMapOfShapeInfoEdge::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfShapeInfoEdge; 
+typedef NCollection_DataMap<TopoDS_Shape, GEOMAlgo_InfoEdge> GEOMAlgo_DataMapOfShapeInfoEdge;
+typedef GEOMAlgo_DataMapOfShapeInfoEdge::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfShapeInfoEdge;
 
 //=======================================================================
 //function : Init
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_InfoEdge::Init(const TopoDS_Edge& aE, 
+  void GEOMAlgo_InfoEdge::Init(const TopoDS_Edge& aE,
 			       const TopoDS_Face& aF)
 {
   Standard_Real aT1, aT2, aT1x, aT2x;
@@ -198,7 +198,7 @@ typedef GEOMAlgo_DataMapOfShapeInfoEdge::Iterator GEOMAlgo_DataMapIteratorOfData
 }
 //=======================================================================
 //function : CorrectWire
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
 			     const TopoDS_Face& aF)
@@ -218,7 +218,7 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
   aItW.Initialize(aW);
   for (; aItW.More(); aItW.Next()) {
     const TopoDS_Edge& aE=*((TopoDS_Edge*)&aItW.Value());
-    
+
     aItE.Initialize(aE);
     for (aNbV=0; aItE.More(); aItE.Next(), ++aNbV) {
     }
@@ -275,17 +275,17 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
     aTolV=BRep_Tool::Tolerance(aV);
     //
     const TopoDS_Edge& aE1=*((TopoDS_Edge*)&aLE.First());
-    const GEOMAlgo_InfoEdge& aIE1=aDMEIE.Find(aE1); 
+    const GEOMAlgo_InfoEdge& aIE1=aDMEIE.Find(aE1);
     const Geom2dAdaptor_Curve& aGAC1=aIE1.Adaptor();
     const IntRes2d_Domain& aDomain1=aIE1.Domain();
     //
-    const TopoDS_Edge& aE2=*((TopoDS_Edge*)&aLE.Last()); 
+    const TopoDS_Edge& aE2=*((TopoDS_Edge*)&aLE.Last());
     const GEOMAlgo_InfoEdge& aIE2=aDMEIE.Find(aE2);
     const Geom2dAdaptor_Curve& aGAC2=aIE2.Adaptor();
     const IntRes2d_Domain& aDomain2=aIE2.Domain();
     //
     aInter.Perform(aGAC1, aDomain1,aGAC2, aDomain2, aTolInt, aTolInt);
-    if(!aInter.IsDone()) { 
+    if(!aInter.IsDone()) {
       continue;
     }
     //
@@ -314,7 +314,7 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
 	  aS->D0(aP2D1.X(), aP2D1.Y(), aP3D1);
 	}
 	//
-	const Handle(Geom_Curve)& aC3D2=aIE2.Curve();   
+	const Handle(Geom_Curve)& aC3D2=aIE2.Curve();
 	if (!aC3D2.IsNull()) {
 	  aP3D2=aC3D2->Value(aIP_ParamOnSecond);
 	}

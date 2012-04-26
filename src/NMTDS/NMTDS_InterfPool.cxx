@@ -20,7 +20,7 @@
 // File:        NMTDS_InterfPool.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_InterfPool.ixx>
+#include <NMTDS_InterfPool.hxx>
 
 #include <NMTDS_PairBoolean.hxx>
 #include <NMTDS_ListOfPairBoolean.hxx>

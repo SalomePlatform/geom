@@ -26,6 +26,7 @@
 #ifndef _Standard_Real_HeaderFile
 #include <Standard_Real.hxx>
 #endif
+
 class TopoDS_Shape;
 class BlockFix_SphereSpaceModifier;
 class BlockFix_UnionFaces;
@@ -33,7 +34,6 @@ class BlockFix_UnionEdges;
 class BlockFix_BlockFixAPI;
 class BlockFix_PeriodicSurfaceModifier;
 class BlockFix_CheckTool;
-
 
 #ifndef _Standard_HeaderFile
 #include <Standard.hxx>
@@ -46,45 +46,26 @@ class BlockFix  {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-Standard_EXPORT static  TopoDS_Shape RotateSphereSpace(const TopoDS_Shape& S,const Standard_Real Tol) ;
-Standard_EXPORT static  TopoDS_Shape FixRanges(const TopoDS_Shape& S,const Standard_Real Tol) ;
+  void* operator new(size_t,void* anAddress)
+  {
+    return anAddress;
+  }
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
+  }
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
+  }
 
-
-
-
+  Standard_EXPORT static  TopoDS_Shape RotateSphereSpace(const TopoDS_Shape& S,const Standard_Real Tol);
+  Standard_EXPORT static  TopoDS_Shape RefillProblemFaces(const TopoDS_Shape& S);
+  Standard_EXPORT static  TopoDS_Shape FixRanges(const TopoDS_Shape& S,const Standard_Real Tol);
 
 protected:
 
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
+private:
 
 friend class BlockFix_SphereSpaceModifier;
 friend class BlockFix_UnionFaces;
@@ -95,12 +76,6 @@ friend class BlockFix_CheckTool;
 
 };
 
-
-
-
-
 // other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

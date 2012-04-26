@@ -20,104 +20,84 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_Iterator.hxx
+// Author:      Peter KURNEV
+
 #ifndef _NMTDS_Iterator_HeaderFile
 #define _NMTDS_Iterator_HeaderFile
 
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
 
-#ifndef _NMTDS_PShapesDataStructure_HeaderFile
-#include <NMTDS_PShapesDataStructure.hxx>
-#endif
-#ifndef _NMTDS_ListOfPairBoolean_HeaderFile
-#include <NMTDS_ListOfPairBoolean.hxx>
-#endif
-#ifndef _NMTDS_ListIteratorOfListOfPairBoolean_HeaderFile
-#include <NMTDS_ListIteratorOfListOfPairBoolean.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
-#endif
-#ifndef _TColStd_DataMapOfIntegerListOfInteger_HeaderFile
 #include <TColStd_DataMapOfIntegerListOfInteger.hxx>
-#endif
-#ifndef _TopAbs_ShapeEnum_HeaderFile
 #include <TopAbs_ShapeEnum.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
-#endif
-class NMTDS_ShapesDataStructure;
-class TColStd_DataMapOfIntegerListOfInteger;
+#include <NMTDS_PShapesDataStructure.hxx>
+#include <NMTDS_ListOfPairBoolean.hxx>
+#include <NMTDS_ListIteratorOfListOfPairBoolean.hxx>
+#include <NMTDS_ShapesDataStructure.hxx>
 
-
-
+//=======================================================================
+//class : NMTDS_Iterator
+//purpose  : 
+//=======================================================================
 class NMTDS_Iterator  {
-public:
+ public:
+  Standard_EXPORT   
+    NMTDS_Iterator();
 
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
-
+  Standard_EXPORT 
+    virtual ~NMTDS_Iterator();
   
-  Standard_EXPORT   NMTDS_Iterator();
-Standard_EXPORT virtual ~NMTDS_Iterator();
+  Standard_EXPORT
+    void SetDS(const NMTDS_PShapesDataStructure& pDS) ;
   
-  Standard_EXPORT     void SetDS(const NMTDS_PShapesDataStructure& pDS) ;
+  Standard_EXPORT 
+    const NMTDS_ShapesDataStructure& DS() const;
   
-  Standard_EXPORT    const NMTDS_ShapesDataStructure& DS() const;
+  Standard_EXPORT 
+    void Initialize(const TopAbs_ShapeEnum aType1,
+		    const TopAbs_ShapeEnum aType2) ;
   
-  Standard_EXPORT     void Initialize(const TopAbs_ShapeEnum aType1,const TopAbs_ShapeEnum aType2) ;
+  Standard_EXPORT 
+    Standard_Boolean More() const;
   
-  Standard_EXPORT     Standard_Boolean More() const;
+  Standard_EXPORT
+    void Next() ;
   
-  Standard_EXPORT     void Next() ;
+  Standard_EXPORT
+    void Current(Standard_Integer& aIndex1,
+		 Standard_Integer& aIndex2,
+		 Standard_Boolean& aWithSubShape) const;
   
-  Standard_EXPORT     void Current(Standard_Integer& aIndex1,Standard_Integer& aIndex2,Standard_Boolean& aWithSubShape) const;
+  Standard_EXPORT
+    virtual  void Prepare() ;
   
-  Standard_EXPORT   virtual  void Prepare() ;
+  Standard_EXPORT
+    Standard_Integer ExpectedLength() const;
   
-  Standard_EXPORT     Standard_Integer ExpectedLength() const;
+  Standard_EXPORT 
+    Standard_Integer BlockLength() const;
   
-  Standard_EXPORT     Standard_Integer BlockLength() const;
+  Standard_EXPORT 
+    const TColStd_DataMapOfIntegerListOfInteger& SDVertices() const;
   
-  Standard_EXPORT    const TColStd_DataMapOfIntegerListOfInteger& SDVertices() const;
-  
-  Standard_EXPORT   static  void FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD1,TColStd_DataMapOfIntegerListOfInteger& aMVSD2) ;
-
+  Standard_EXPORT 
+    static  void FillMVSD(const TColStd_DataMapOfIntegerListOfInteger& aMVSD1,
+			  TColStd_DataMapOfIntegerListOfInteger& aMVSD2) ;
 
 protected:
-
+  Standard_EXPORT  
+    virtual  void Intersect() ;
+  //
   
-  Standard_EXPORT   virtual  void Intersect() ;
-
-
-NMTDS_PShapesDataStructure myDS;
-NMTDS_ListOfPairBoolean myLists[6];
-NMTDS_ListIteratorOfListOfPairBoolean myIterator;
-NMTDS_ListOfPairBoolean myEmptyList;
-Standard_Integer myLength;
-TColStd_DataMapOfIntegerListOfInteger myMVSD;
-
-
-private:
-
+  NMTDS_PShapesDataStructure myDS;
+  NMTDS_ListOfPairBoolean myLists[6];
+  NMTDS_ListIteratorOfListOfPairBoolean myIterator;
+  NMTDS_ListOfPairBoolean myEmptyList;
+  Standard_Integer myLength;
+  TColStd_DataMapOfIntegerListOfInteger myMVSD;
 };
-
-// other Inline functions and methods (like "C++: function call" methods)
-
 
 #endif

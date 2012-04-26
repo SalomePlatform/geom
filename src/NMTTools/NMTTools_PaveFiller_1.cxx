@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TColStd_DataMapOfIntegerListOfInteger.hxx>
 #include <TColStd_ListOfInteger.hxx>
@@ -51,9 +51,9 @@
 
 //=======================================================================
 // function: PerformVV
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformVV() 
+  void NMTTools_PaveFiller::PerformVV()
 {
   myIsDone=Standard_False;
   //
@@ -131,7 +131,7 @@
           //
           BOPTools_VVInterference aVV(n1, n2);
           aVV.SetNewShape(nVnew);
-          aVVs.Append(aVV);    
+          aVVs.Append(aVV);
         }
       }
     }
@@ -140,7 +140,7 @@
 }
 //=======================================================================
 // function: FindSDVertex
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::FindSDVertex(const Standard_Integer nV)const
 {
@@ -155,9 +155,9 @@
 /*
 //=======================================================================
 // function: PerformNewVertices
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformNewVertices() 
+  void NMTTools_PaveFiller::PerformNewVertices()
 {
 }
 */

@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTDS_PassKeyBoolean.ixx>
+#include <NMTDS_PassKeyBoolean.hxx>
 
 //=======================================================================
 //function : 

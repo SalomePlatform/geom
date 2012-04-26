@@ -23,10 +23,9 @@
 // File:        GEOMAlgo_VertexSolid.cxx
 // Created:     Wed Jan 12 16:36:40 2005
 // Author:      Peter KURNEV
-
-#include <GEOMAlgo_VertexSolid.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+//              <pkv@irinox>
+//
+#include <GEOMAlgo_VertexSolid.hxx>
 
 #include <gp_Pnt.hxx>
 
@@ -61,7 +60,7 @@
 
 //=======================================================================
 //function : GEOMAlgo_VertexSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_VertexSolid::GEOMAlgo_VertexSolid()
 :
@@ -70,14 +69,14 @@ GEOMAlgo_VertexSolid::GEOMAlgo_VertexSolid()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_VertexSolid::~GEOMAlgo_VertexSolid()
 {
 }
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_VertexSolid::Perform()
 {
@@ -105,7 +104,7 @@ void GEOMAlgo_VertexSolid::Perform()
     myRank=(aNbF) ? 2 : 1;
     //
     bIsNewFiller=myDSFiller->IsNewFiller();
-    
+
     if (bIsNewFiller) {
       Prepare();
       myDSFiller->SetNewFiller(!bIsNewFiller);
@@ -116,10 +115,10 @@ void GEOMAlgo_VertexSolid::Perform()
   catch (Standard_Failure) {
     myErrorStatus = 12;
   }
-} 
+}
 //=======================================================================
 // function: Prepare
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_VertexSolid::Prepare()
 {
@@ -136,23 +135,15 @@ void GEOMAlgo_VertexSolid::Prepare()
   BOPTools_InterferencePool* pIP=(BOPTools_InterferencePool*) &aIP;
   BOPTools_CArray1OfVVInterference& aVVs=pIP->VVInterferences();
   const BOPTools_PaveFiller& aPF=myDSFiller->PaveFiller();
-  BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)&aPF; 
-#if OCC_VERSION_LARGE > 0x06050200
+  BOPTools_PaveFiller* pPF=(BOPTools_PaveFiller*)&aPF;
   const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
   //
   const TopoDS_Shape& aObj=aDS.Object();
   const TopoDS_Shape& aTool=aDS.Tool();
   //
   const TopoDS_Solid& aSolid=(myRank==1) ? TopoDS::Solid(aTool) : TopoDS::Solid(aObj);
   //
-#if OCC_VERSION_LARGE > 0x06050200
   BRepClass3d_SolidClassifier& aSC=aCtx->SolidClassifier(aSolid);
-#else
-  BRepClass3d_SolidClassifier& aSC=aCtx.SolidClassifier(aSolid);
-#endif
   //
   iBeg=1;
   iEnd=aDS.NumberOfShapesOfTheObject();
@@ -186,12 +177,12 @@ void GEOMAlgo_VertexSolid::Prepare()
         pDS->SetState (n2, BooleanOperations_ON);
         iFound=1;
         break;
-      } 
+      }
     }
     if (iFound) {
       continue;
     }
-    // 
+    //
     aP3D=BRep_Tool::Pnt(aV);
     aTol=1.E-7;
     aSC.Perform(aP3D, aTol);
@@ -206,7 +197,7 @@ void GEOMAlgo_VertexSolid::Prepare()
 }
 //=======================================================================
 // function: BuildResult
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_VertexSolid::BuildResult()
 {

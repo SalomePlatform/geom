@@ -35,7 +35,7 @@
 
 //=======================================================================
 //function : Shapes1
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::Shapes1(const Standard_Integer theType)const
 {
@@ -43,7 +43,7 @@
 }
 //=======================================================================
 //function : Images
-//purpose  : 
+//purpose  :
 //=======================================================================
   const BRepAlgo_Image& GEOMAlgo_Builder::Images()const
 {
@@ -51,7 +51,7 @@
 }
 //=======================================================================
 //function : InParts
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_Builder::InParts(const TopoDS_Shape& theS)const
 {

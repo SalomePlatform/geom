@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTDS_PassKeyMapHasher.ixx>
+#include <NMTDS_PassKeyMapHasher.hxx>
 
 //=======================================================================
 //function : HashCode

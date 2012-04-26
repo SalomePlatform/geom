@@ -16,100 +16,17 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger.hxx
+// Created:	Mon Feb 20 09:31:43 2012
+// Author:	
+//		<pkv@BDEURI37616>
 
-#ifndef _NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger_HeaderFile
-#define _NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger_HeaderFile
 
-#ifndef _TCollection_BasicMapIterator_HeaderFile
-#include <TCollection_BasicMapIterator.hxx>
+#ifndef NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger_HeaderFile
+#define NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger_HeaderFile
+
+#ifndef NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
+#include <NMTDS_DataMapOfIntegerMapOfInteger.hxx>
 #endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger_HeaderFile
-#include <Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx>
-#endif
-class Standard_NoSuchObject;
-class TColStd_MapOfInteger;
-class TColStd_MapIntegerHasher;
-class NMTDS_DataMapOfIntegerMapOfInteger;
-class NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger;
-
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-
-class NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger  : public TCollection_BasicMapIterator {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger();
-
-
-Standard_EXPORT NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger(const NMTDS_DataMapOfIntegerMapOfInteger& aMap);
-
-
-Standard_EXPORT   void Initialize(const NMTDS_DataMapOfIntegerMapOfInteger& aMap) ;
-
-
-Standard_EXPORT  const Standard_Integer& Key() const;
-
-
-Standard_EXPORT  const TColStd_MapOfInteger& Value() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

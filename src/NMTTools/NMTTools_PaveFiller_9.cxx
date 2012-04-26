@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <Geom_Surface.hxx>
 
@@ -56,9 +56,9 @@
 
 //=======================================================================
 // function: PrepareFace
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PrepareFace(const Standard_Integer nF, 
+  void NMTTools_PaveFiller::PrepareFace(const Standard_Integer nF,
                                         TopoDS_Face& newFace)
 {
   Standard_Boolean bToReverse, bIsDegenerated;

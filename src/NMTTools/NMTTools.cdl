@@ -25,76 +25,105 @@
 -- Author:	Peter KURNEV
 --		<pkv@irinox>
 --
-package NMTTools 
+package NMTTools
 
-	---Purpose: 
+	---Purpose:
 
-uses  
-    
+uses
+
     TCollection,
     TColStd,
-    gp, 
-    TopAbs, 
-    TopoDS, 
-    TopTools, 
+    gp,
+    TopAbs,
+    TopoDS,
+    TopTools,
     Geom2d,
     BooleanOperations,
     BOPTColStd,
     IntTools,
-    BOPTools, 
-    
+    BOPTools,
     NMTDS
 
-is 
-    class PaveFiller; 
-    class Tools; 
-    class CommonBlock; 
-    class CommonBlockAPI; 
-    class DEProcessor; 
-    class CoupleOfShape;  
-    class CheckerSI;
-    class FaceInfo;
+is
+    imported CoupleOfShape from NMTTools;
+    imported CommonBlock from NMTTools;
+    imported CommonBlockAPI from NMTTools;
+    imported FaceInfo from NMTTools;
+    imported Tools from NMTTools;
+    imported PaveFiller from NMTTools;
+    imported PPaveFiller from NMTTools;
+    imported DEProcessor from NMTTools;
+    imported CheckerSI from NMTTools;
+    --
+    imported ListOfCommonBlock from NMTTools;
+    imported ListIteratorOfListOfCommonBlock from NMTTools;
 
-    pointer PPaveFiller to PaveFiller from NMTTools;
+    imported ListOfCoupleOfShape from NMTTools;
+    imported ListIteratorOfListOfCoupleOfShape from NMTTools;
 
-    class ListOfCommonBlock  instantiates  
-    	List from TCollection(CommonBlock from NMTTools); 
-	 
-    class CommonBlockPool    instantiates  
-    	CArray1 from BOPTColStd (ListOfCommonBlock from NMTTools); 
+    imported MapOfPaveBlock from NMTTools;
+    imported MapIteratorOfMapOfPaveBlock from NMTTools;
 
-    class IndexedDataMapOfIndexedMapOfInteger instantiates  
-    	IndexedDataMap from TCollection  (Integer from Standard, 
-	    	    	    	    	  IndexedMapOfInteger from TColStd,
-	    	    	    	    	  MapIntegerHasher from TColStd); 
-	 
-    class IndexedDataMapOfShapePaveBlock instantiates  
-    	IndexedDataMap from TCollection  (Shape from TopoDS, 
-	    	    	    	    	  PaveBlock from BOPTools,
-	    	    	    	    	  ShapeMapHasher from TopTools); 
-    
-    class IndexedDataMapOfShapeIndexedMapOfShape instantiates  
-    	IndexedDataMap from TCollection  (Shape from TopoDS, 
-	    	    	    	    	  IndexedMapOfShape from TopTools,
-	    	    	    	    	  ShapeMapHasher from TopTools);   
-					   
-    class ListOfCoupleOfShape  instantiates  
-    	List from TCollection(CoupleOfShape from NMTTools); 	 
+    imported IndexedDataMapOfIndexedMapOfInteger from NMTTools;
+    imported IndexedDataMapOfShapePaveBlock from NMTTools;
+    imported IndexedDataMapOfShapeIndexedMapOfShape from NMTTools;
+
+    imported DataMapOfIntegerListOfPaveBlock from NMTTools;
+    imported DataMapIteratorOfDataMapOfIntegerListOfPaveBlock from NMTTools;
+
+    imported DataMapOfIntegerFaceInfo from NMTTools;
+    imported DataMapIteratorOfDataMapOfIntegerFaceInfo from NMTTools;
+
+    imported CommonBlockPool from NMTTools;
+
+    --
+    --class PaveFiller;
+    --class Tools;
+    --class CommonBlock;
+    --class CommonBlockAPI;
+    --class FaceInfo;
+    --class CoupleOfShape;
+    --class CheckerSI;
+    --class DEProcessor;
+    --pointer PPaveFiller to PaveFiller from NMTTools;
+    --
+    --class ListOfCommonBlock  instantiates
+    --	List from TCollection(CommonBlock from NMTTools);
+
+    --class ListOfCoupleOfShape  instantiates
+    --	List from TCollection(CoupleOfShape from NMTTools);
+--
+    --class  MapOfPaveBlock  instantiates
+    --	Map from TCollection   (PaveBlock from BOPTools,
+    --	    	    	    	PaveBlockMapHasher from BOPTools);
+--
+    --class IndexedDataMapOfIndexedMapOfInteger instantiates
+    --	IndexedDataMap from TCollection  (Integer from Standard,
+    --	    	    	    	    	  IndexedMapOfInteger from TColStd,
+    --	    	    	    	    	  MapIntegerHasher from TColStd);
+
+    --class IndexedDataMapOfShapePaveBlock instantiates
+    --	IndexedDataMap from TCollection  (Shape from TopoDS,
+    --	    	    	    	    	  PaveBlock from BOPTools,
+    --	    	    	    	    	  ShapeMapHasher from TopTools);
+
+    --class IndexedDataMapOfShapeIndexedMapOfShape instantiates
+    --	IndexedDataMap from TCollection  (Shape from TopoDS,
+    --	    	    	    	    	  IndexedMapOfShape from TopTools,
+    --	    	    	    	    	  ShapeMapHasher from TopTools);
 
 --
-    class DataMapOfIntegerListOfPaveBlock instantiates 
-    	DataMap from TCollection(Integer from  Standard,
-	    	    	    	 ListOfPaveBlock from BOPTools,
-				 MapIntegerHasher from TColStd); 
-				 
-    class  MapOfPaveBlock  instantiates 
-    	Map from TCollection   (PaveBlock from BOPTools, 
-    	    	    	    	PaveBlockMapHasher from BOPTools); 
-				 
-    class DataMapOfIntegerFaceInfo instantiates 
-    	DataMap from TCollection(Integer from  Standard, 
-                                 FaceInfo from  NMTTools,
-				 MapIntegerHasher from TColStd); 
- 
+    --class DataMapOfIntegerListOfPaveBlock instantiates
+    --	DataMap from TCollection(Integer from  Standard,
+    --	    	    	    	 ListOfPaveBlock from BOPTools,
+    --				 MapIntegerHasher from TColStd);
+
+    --class DataMapOfIntegerFaceInfo instantiates
+    --	DataMap from TCollection(Integer from  Standard,
+    --                             FaceInfo from  NMTTools,
+    --				 MapIntegerHasher from TColStd);
+--
+    --class CommonBlockPool    instantiates
+    --	CArray1 from BOPTColStd (ListOfCommonBlock from NMTTools);
 --
 end NMTTools;

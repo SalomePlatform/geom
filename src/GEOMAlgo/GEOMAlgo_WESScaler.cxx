@@ -17,12 +17,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_WESScaler.cxx
-// Created:	
-// Author:	
+// Created:
+// Author:
 //		<pkv@VORTEX>
 
 
-#include <GEOMAlgo_WESScaler.ixx>
+#include <GEOMAlgo_WESScaler.hxx>
 
 #include <gp_Pnt.hxx>
 #include <gp_Trsf.hxx>
@@ -39,10 +39,10 @@
 
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
-  GEOMAlgo_WESScaler::GEOMAlgo_WESScaler() 
+  GEOMAlgo_WESScaler::GEOMAlgo_WESScaler()
 :
   GEOMAlgo_Algo()
 {
@@ -50,14 +50,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
-  GEOMAlgo_WESScaler::~GEOMAlgo_WESScaler() 
+  GEOMAlgo_WESScaler::~GEOMAlgo_WESScaler()
 {
 }
 //=======================================================================
 // function: SetScale
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESScaler::SetScale (const Standard_Real aScale)
 {
@@ -65,15 +65,15 @@
 }
 //=======================================================================
 // function: Scale
-// purpose: 
+// purpose:
 //=======================================================================
-  Standard_Real GEOMAlgo_WESScaler::Scale()const 
+  Standard_Real GEOMAlgo_WESScaler::Scale()const
 {
   return myScale;
 }
 //=======================================================================
 // function: SetFace
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESScaler::SetFace(const TopoDS_Face& aF)
 {
@@ -81,7 +81,7 @@
 }
 //=======================================================================
 // function: Face
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Face& GEOMAlgo_WESScaler::Face()const
 {
@@ -89,7 +89,7 @@
 }
 //=======================================================================
 // function: SetEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESScaler::SetEdges(const TopTools_ListOfShape& aLE)
 {
@@ -97,7 +97,7 @@
 }
 //=======================================================================
 // function: Edges
-// purpose: 
+// purpose:
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_WESScaler::Edges()const
 {
@@ -105,7 +105,7 @@
 }
 //=======================================================================
 // function: FaceScaled
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Face& GEOMAlgo_WESScaler::FaceScaled()const
 {
@@ -113,7 +113,7 @@
 }
 //=======================================================================
 // function: EdgesScaled
-// purpose: 
+// purpose:
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_WESScaler::EdgesScaled()const
 {
@@ -121,7 +121,7 @@
 }
 //=======================================================================
 // function: Image
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_WESScaler::Image (const TopoDS_Shape& aS) const
 {
@@ -132,7 +132,7 @@
 }
 //=======================================================================
 // function: Origin
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_WESScaler::Origin (const TopoDS_Shape& aS) const
 {
@@ -143,7 +143,7 @@
 }
 //=======================================================================
 // function: Images
-// purpose: 
+// purpose:
 //=======================================================================
   const GEOMAlgo_DataMapOfOrientedShapeShape& GEOMAlgo_WESScaler::Images () const
 {
@@ -151,7 +151,7 @@
 }
 //=======================================================================
 // function: Origins
-// purpose: 
+// purpose:
 //=======================================================================
   const GEOMAlgo_DataMapOfOrientedShapeShape& GEOMAlgo_WESScaler::Origins () const
 {
@@ -159,7 +159,7 @@
 }
 //=======================================================================
 // function: CheckData
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESScaler::CheckData()
 {
@@ -179,7 +179,7 @@
 }
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_WESScaler::Perform()
 {
@@ -235,7 +235,7 @@
   //
   const TopoDS_Shape& aSR=aBT.Shape();
   //
-  // Refined image face FR 
+  // Refined image face FR
   aFR=aSR.EmptyCopied();
   aItS.Initialize(aSR);
   for (i=0; aItS.More(); aItS.Next(),++i) {

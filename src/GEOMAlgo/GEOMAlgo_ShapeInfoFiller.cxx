@@ -17,7 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <GEOMAlgo_ShapeInfoFiller.ixx>
+#include <GEOMAlgo_ShapeInfoFiller.hxx>
 
 #include <Precision.hxx>
 
@@ -57,7 +57,7 @@
 
 
 
-static 
+static
   Standard_Boolean IsAllowedType(const GeomAbs_CurveType aCT);
 static
   Standard_Boolean IsAllowedType(const GeomAbs_SurfaceType aST);
@@ -67,8 +67,8 @@ static
   Standard_Integer NbShells(const TopoDS_Solid& aS);
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ShapeInfoFiller::GEOMAlgo_ShapeInfoFiller()
 :
@@ -78,14 +78,14 @@ static
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ShapeInfoFiller::~GEOMAlgo_ShapeInfoFiller()
 {
 }
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::SetTolerance(const Standard_Real aT)
 {
@@ -93,7 +93,7 @@ static
 }
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_ShapeInfoFiller::Tolerance()const
 {
@@ -101,15 +101,15 @@ static
 }
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::SetShape(const TopoDS_Shape& aS) 
+  void GEOMAlgo_ShapeInfoFiller::SetShape(const TopoDS_Shape& aS)
 {
   myShape=aS;
 }
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_ShapeInfoFiller::Shape() const
 {
@@ -117,15 +117,15 @@ static
 }
 //=======================================================================
 //function : Info
-//purpose  : 
+//purpose  :
 //=======================================================================
   const GEOMAlgo_ShapeInfo& GEOMAlgo_ShapeInfoFiller::Info() const
 {
-  return Info(myShape); 
+  return Info(myShape);
 }
 //=======================================================================
 //function : Info
-//purpose  : 
+//purpose  :
 //=======================================================================
   const GEOMAlgo_ShapeInfo& GEOMAlgo_ShapeInfoFiller::Info(const TopoDS_Shape& aS) const
 {
@@ -135,12 +135,12 @@ static
       return aInfo;
     }
   }
-  return myEmptyInfo; 
+  return myEmptyInfo;
 }
 
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::CheckData()
 {
@@ -153,9 +153,9 @@ static
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::Perform() 
+  void GEOMAlgo_ShapeInfoFiller::Perform()
 {
   myErrorStatus=0;
   //
@@ -169,8 +169,8 @@ static
   FillShape(myShape);
 }
 //=======================================================================
-//function :FillShape 
-//purpose  : 
+//function :FillShape
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillShape(const TopoDS_Shape& aS)
 {
@@ -182,7 +182,7 @@ static
     case TopAbs_VERTEX:
       FillVertex(aS);
       break;
-    //  
+    //
     case TopAbs_EDGE:
       FillEdge(aS);
       break;
@@ -201,14 +201,14 @@ static
     case TopAbs_COMPOUND:
       FillContainer(aS);
       break;
-    // 
+    //
     default:
       break;
   }
 }
 //=======================================================================
-//function :FillSubShapes 
-//purpose  : 
+//function :FillSubShapes
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillSubShapes(const TopoDS_Shape& aS)
 {
@@ -222,9 +222,9 @@ static
 }
 //=======================================================================
 //function : FillContainer
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillContainer(const TopoDS_Shape& aS) 
+  void GEOMAlgo_ShapeInfoFiller::FillContainer(const TopoDS_Shape& aS)
 {
   myErrorStatus=0;
   //
@@ -267,9 +267,9 @@ static
 }
 //=======================================================================
 //function : FillSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillSolid(const TopoDS_Shape& aS) 
+  void GEOMAlgo_ShapeInfoFiller::FillSolid(const TopoDS_Shape& aS)
 {
   Standard_Integer aNbShells;
   TopoDS_Solid aSd;
@@ -299,18 +299,18 @@ static
   FillDetails(aSd);
 }
 //=======================================================================
-//function :FillFace 
-//purpose  : 
+//function :FillFace
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillFace(const TopoDS_Shape& aS) 
+  void GEOMAlgo_ShapeInfoFiller::FillFace(const TopoDS_Shape& aS)
 {
   myErrorStatus=0;
   //
   Standard_Boolean bIsAllowedType;
-  Standard_Integer aNbWires;//, iRet 
+  Standard_Integer aNbWires;//, iRet
   Standard_Boolean bInf, bInfU1, bInfU2, bInfV1, bInfV2;
   Standard_Real aUMin, aUMax, aVMin, aVMax, aR1, aR2;
-  gp_Pnt aP0; 
+  gp_Pnt aP0;
   gp_Dir aDN;
   gp_Ax3 aAx3;
   GeomAbs_SurfaceType aST;
@@ -399,7 +399,7 @@ static
     //
     FillDetails(aF, aSphere);
   }// else if (aST==GeomAbs_Sphere) {
-  // 
+  //
   // 3. Cylinder
   else if (aST==GeomAbs_Cylinder) {
     gp_Cylinder aCyl;
@@ -431,7 +431,7 @@ static
     }
     FillDetails(aF, aCyl);
   }
-  // 
+  //
   // 4. Cone
   else if (aST==GeomAbs_Cone) {
     gp_Cone aCone;
@@ -463,7 +463,7 @@ static
     }
     FillDetails(aF, aCone);
   }
-  // 
+  //
   // 5. Torus
   else if (aST==GeomAbs_Torus) {
     gp_Torus aTorus;
@@ -488,10 +488,10 @@ static
   }
 }
 //=======================================================================
-//function :FillEdge 
-//purpose  : 
+//function :FillEdge
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillEdge(const TopoDS_Shape& aS) 
+  void GEOMAlgo_ShapeInfoFiller::FillEdge(const TopoDS_Shape& aS)
 {
   myErrorStatus=0;
   //
@@ -616,7 +616,7 @@ static
       aInfo.SetKindOfName(GEOMAlgo_KN_ARCCIRCLE);
       //
       gp_Vec aVecX(aP, aP1);
-      gp_Dir aDirX(aVecX); 
+      gp_Dir aDirX(aVecX);
       gp_Ax2 aAx2new(aP, aAx2.Direction(), aDirX);
       aInfo.SetPosition(aAx2new);
     }
@@ -658,7 +658,7 @@ static
       aInfo.SetKindOfName(GEOMAlgo_KN_ARCELLIPSE);
       //
       gp_Vec aVecX(aP, aP1);
-      gp_Dir aDirX(aVecX); 
+      gp_Dir aDirX(aVecX);
       gp_Ax2 aAx2new(aP, aAx2.Direction(), aDirX);
       aInfo.SetPosition(aAx2new);
     }
@@ -667,10 +667,10 @@ static
   FillSubShapes(aS);
 }
 //=======================================================================
-//function :FillVertex 
-//purpose  : 
+//function :FillVertex
+//purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillVertex(const TopoDS_Shape& aS) 
+  void GEOMAlgo_ShapeInfoFiller::FillVertex(const TopoDS_Shape& aS)
 {
   myErrorStatus=0;
   //
@@ -695,7 +695,7 @@ static
 }
 //=======================================================================
 //function : FillNbSubshapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeInfoFiller::FillNbSubShapes(const TopoDS_Shape& aS,
                                                  GEOMAlgo_ShapeInfo& aInfo)
@@ -704,7 +704,7 @@ static
   //
   Standard_Integer i, aNb, aNbS;
   TopTools_IndexedMapOfShape aM;
-  TopAbs_ShapeEnum aST; 
+  TopAbs_ShapeEnum aST;
   TopAbs_ShapeEnum aTypes[]= {
     //TopAbs_FACE, TopAbs_EDGE, TopAbs_VERTEX
     TopAbs_COMPOUND,
@@ -716,7 +716,7 @@ static
     TopAbs_EDGE,
     TopAbs_VERTEX
   };
-  
+
   //
   aST=aS.ShapeType();
   aNb=sizeof(aTypes)/sizeof(aTypes[0]);
@@ -731,8 +731,8 @@ static
   }
 }
 //=======================================================================
-//function :NbShells 
-//purpose  : 
+//function :NbShells
+//purpose  :
 //=======================================================================
 Standard_Integer NbShells(const TopoDS_Solid& aSd)
 {
@@ -750,7 +750,7 @@ Standard_Integer NbShells(const TopoDS_Solid& aSd)
 }
 //=======================================================================
 //function : NbWires
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer NbWires(const TopoDS_Face& aF)
 {
@@ -768,7 +768,7 @@ Standard_Integer NbWires(const TopoDS_Face& aF)
 }
 //=======================================================================
 //function : IsAllowedType
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsAllowedType(const GeomAbs_CurveType aCT)
 {
@@ -788,14 +788,14 @@ Standard_Boolean IsAllowedType(const GeomAbs_CurveType aCT)
 }
 //=======================================================================
 //function : IsAllowedType
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsAllowedType(const GeomAbs_SurfaceType aST)
 {
   Standard_Boolean bRet;
   Standard_Integer i, aNb;
   GeomAbs_SurfaceType aTypes[]={
-    GeomAbs_Plane, GeomAbs_Cylinder, 
+    GeomAbs_Plane, GeomAbs_Cylinder,
     GeomAbs_Cone,  GeomAbs_Sphere,
     GeomAbs_Torus
   };
@@ -810,9 +810,9 @@ Standard_Boolean IsAllowedType(const GeomAbs_SurfaceType aST)
 }
 //
 // myErrorStatus
-// 
+//
 // 0  - Ok
 // 1  - The object is just initialized
 //
-// 10 - Null shape 
+// 10 - Null shape
 // 11 - circle/ellipse edge without vertices

@@ -24,12 +24,12 @@
 --  Created:	Wed Dec 15 10:03:50 2004
 --  Author:	Sergey KUUL
 --
-class PeriodicSurfaceModifier from BlockFix inherits Modification from BRepTools 
+class PeriodicSurfaceModifier from BlockFix inherits Modification from BRepTools
 
-	---Purpose: 
+	---Purpose:
 
 uses
-    Vertex   from TopoDS, 
+    Vertex   from TopoDS,
     Edge     from TopoDS,
     Face     from TopoDS,
     Location from TopLoc,
@@ -42,9 +42,9 @@ uses
     DataMapOfShapeInteger from TopTools
 
 is
-    
+
     Create returns mutable PeriodicSurfaceModifier from BlockFix;
-    
+
     SetTolerance(me: mutable; Toler: Real);
     	---Purpose: Sets the tolerance for recognition of geometry
 
@@ -61,7 +61,7 @@ is
 	--          the new tolerance.  Otherwise, returns
 	--          Standard_False, and <S>, <L>, <Tol> are  not
 	--          significant.
-	
+
     NewCurve(me: mutable; E  :     Edge     from TopoDS;
                           C  : out Curve    from Geom;
 		          L  : out Location from TopLoc;
@@ -95,10 +95,10 @@ is
 	--          curve on surface on the face <F>.In this case, <C>
 	--          is the new geometric support of  the edge, <L> the
 	--          new location, <Tol> the new tolerance.
-	--          
+	--
 	--          Otherwise, returns  Standard_False, and <C>,  <L>,
 	--          <Tol> are not significant.
-	--          
+	--
 	--          <NewE> is the new  edge created from  <E>.  <NewF>
 	--          is the new face created from <F>. They may be usefull.
 
@@ -120,14 +120,14 @@ is
     returns Shape from GeomAbs;
 	---Purpose: Returns the  continuity of  <NewE> between <NewF1>
 	--          and <NewF2>.
-	--          
+	--
 	--          <NewE> is the new  edge created from <E>.  <NewF1>
 	--          (resp. <NewF2>) is the new  face created from <F1>
 	--          (resp. <F2>).
-    
 
-fields 
-    
+
+fields
+
     myTolerance    : Real;
     myMapOfFaces   : DataMapOfShapeInteger from TopTools;
     myMapOfSurfaces: IndexedMapOfTransient from TColStd;

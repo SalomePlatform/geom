@@ -24,7 +24,7 @@
 
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 inline void BlockFix_BlockFixAPI::SetShape(const TopoDS_Shape& Shape)
@@ -34,7 +34,7 @@ inline void BlockFix_BlockFixAPI::SetShape(const TopoDS_Shape& Shape)
 
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 inline TopoDS_Shape BlockFix_BlockFixAPI::Shape() const
@@ -44,7 +44,7 @@ inline TopoDS_Shape BlockFix_BlockFixAPI::Shape() const
 
 //=======================================================================
 //function : Context
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 inline Handle(ShapeBuild_ReShape)& BlockFix_BlockFixAPI::Context()
@@ -54,7 +54,7 @@ inline Handle(ShapeBuild_ReShape)& BlockFix_BlockFixAPI::Context()
 
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 inline Standard_Real& BlockFix_BlockFixAPI::Tolerance()
@@ -64,7 +64,7 @@ inline Standard_Real& BlockFix_BlockFixAPI::Tolerance()
 
 //=======================================================================
 //function : OptimumNbFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 inline Standard_Integer& BlockFix_BlockFixAPI::OptimumNbFaces()

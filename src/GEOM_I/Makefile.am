@@ -79,7 +79,7 @@ libGEOMEngine_la_CPPFLAGS =		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(srcdir)/../GEOMImpl		\
-	-I$(srcdir)/../$(GEOMAlgo_VAR)	\
+	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../GEOM		\
 	-I$(top_builddir)/idl
 

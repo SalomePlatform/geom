@@ -19,172 +19,118 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
+// File:        GEOMAlgo_FinderShapeOn2.hxx
+// Created:     Fri Mar  4 10:31:06 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_FinderShapeOn2_HeaderFile
 #define _GEOMAlgo_FinderShapeOn2_HeaderFile
 
-#ifndef _TopAbs_ShapeEnum_HeaderFile
-#include <TopAbs_ShapeEnum.hxx>
-#endif
-#ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_Clsf_HeaderFile
-#include <Handle_GEOMAlgo_Clsf.hxx>
-#endif
-#ifndef _TopTools_ListOfShape_HeaderFile
-#include <TopTools_ListOfShape.hxx>
-#endif
-#ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
-#endif
-#ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
-#endif
-class GEOMAlgo_Clsf;
-class TopTools_ListOfShape;
-class TopoDS_Face;
-class GEOMAlgo_ListOfPnt;
-class TopoDS_Edge;
-class GEOMAlgo_IndexedDataMapOfShapeState;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <TopAbs_ShapeEnum.hxx>
+#include <GEOMAlgo_State.hxx>
+#include <Standard_Integer.hxx>
+//#include <Handle_GEOMAlgo_Clsf.hxx>
+#include <GEOMAlgo_Clsf.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include <GEOMAlgo_ShapeAlgo.hxx>
+#include <GEOMAlgo_Clsf.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Edge.hxx>
+#include <GEOMAlgo_ListOfPnt.hxx>
 
+//=======================================================================
+//function : GEOMAlgo_FinderShapeOn2
+//purpose  :
+//=======================================================================
+class GEOMAlgo_FinderShapeOn2  : public GEOMAlgo_ShapeAlgo
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_FinderShapeOn2();
 
-class GEOMAlgo_FinderShapeOn2  : public GEOMAlgo_ShapeAlgo {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_FinderShapeOn2();
 
-public:
+  Standard_EXPORT
+    void SetClsf(const Handle(GEOMAlgo_Clsf)& aClsf) ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    const Handle_GEOMAlgo_Clsf& Clsf() const;
 
+  Standard_EXPORT
+    void SetShapeType(const TopAbs_ShapeEnum aST) ;
 
-Standard_EXPORT GEOMAlgo_FinderShapeOn2();
-Standard_EXPORT virtual ~GEOMAlgo_FinderShapeOn2();
+  Standard_EXPORT
+    TopAbs_ShapeEnum ShapeType() const;
 
+  Standard_EXPORT
+    void SetState(const GEOMAlgo_State aSF) ;
 
-Standard_EXPORT   void SetClsf(const Handle(GEOMAlgo_Clsf)& aClsf) ;
+  Standard_EXPORT
+    GEOMAlgo_State State() const;
 
+  Standard_EXPORT
+    void SetNbPntsMin(const Standard_Integer aNb) ;
 
-Standard_EXPORT  const Handle_GEOMAlgo_Clsf& Clsf() const;
+  Standard_EXPORT
+    Standard_Integer NbPntsMin() const;
 
+  Standard_EXPORT
+    void SetNbPntsMax(const Standard_Integer aNb) ;
 
-Standard_EXPORT   void SetShapeType(const TopAbs_ShapeEnum aST) ;
+  Standard_EXPORT
+    Standard_Integer NbPntsMax() const;
 
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-Standard_EXPORT   TopAbs_ShapeEnum ShapeType() const;
+  Standard_EXPORT
+    const TopTools_ListOfShape& Shapes() const;
 
-
-Standard_EXPORT   void SetState(const GEOMAlgo_State aSF) ;
-
-
-Standard_EXPORT   GEOMAlgo_State State() const;
-
-
-Standard_EXPORT   void SetNbPntsMin(const Standard_Integer aNb) ;
-
-
-Standard_EXPORT   Standard_Integer NbPntsMin() const;
-
-
-Standard_EXPORT   void SetNbPntsMax(const Standard_Integer aNb) ;
-
-
-Standard_EXPORT   Standard_Integer NbPntsMax() const;
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
-
-
-Standard_EXPORT  const GEOMAlgo_IndexedDataMapOfShapeState& MSS() const;
-
-
-
-
+  Standard_EXPORT
+    const GEOMAlgo_IndexedDataMapOfShapeState& MSS() const;
 
 protected:
+  Standard_EXPORT
+    virtual  void CheckData() ;
 
- // Methods PROTECTED
- // 
+  Standard_EXPORT
+    void ProcessVertices() ;
 
+  Standard_EXPORT
+    void ProcessEdges() ;
 
-Standard_EXPORT virtual  void CheckData() ;
+  Standard_EXPORT
+    void ProcessFaces() ;
 
+  Standard_EXPORT
+    void ProcessSolids() ;
 
-Standard_EXPORT   void ProcessVertices() ;
+  Standard_EXPORT
+    void InnerPoints(const TopoDS_Face& aF,
+		     GEOMAlgo_ListOfPnt& aLP) ;
 
+  Standard_EXPORT
+    void InnerPoints(const TopoDS_Edge& aE,
+		     GEOMAlgo_ListOfPnt& aLP) ;
 
-Standard_EXPORT   void ProcessEdges() ;
-
-
-Standard_EXPORT   void ProcessFaces() ;
-
-
-Standard_EXPORT   void ProcessSolids() ;
-
-
-Standard_EXPORT   void InnerPoints(const TopoDS_Face& aF,GEOMAlgo_ListOfPnt& aLP) ;
-
-
-Standard_EXPORT   void InnerPoints(const TopoDS_Edge& aE,GEOMAlgo_ListOfPnt& aLP) ;
-
-
-Standard_EXPORT   void InnerPoints(const TopoDS_Edge& aE,const Standard_Integer aNbPnts,GEOMAlgo_ListOfPnt& aLP) ;
-
-
- // Fields PROTECTED
- //
-TopAbs_ShapeEnum myShapeType;
-GEOMAlgo_State myState;
-Standard_Integer myNbPntsMin;
-Standard_Integer myNbPntsMax;
-Handle_GEOMAlgo_Clsf myClsf;
-TopTools_ListOfShape myLS;
-GEOMAlgo_IndexedDataMapOfShapeState myMSS;
+  Standard_EXPORT
+    void InnerPoints(const TopoDS_Edge& aE,
+		     const Standard_Integer aNbPnts,
+		     GEOMAlgo_ListOfPnt& aLP) ;
 
 
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  TopAbs_ShapeEnum myShapeType;
+  GEOMAlgo_State myState;
+  Standard_Integer myNbPntsMin;
+  Standard_Integer myNbPntsMax;
+  Handle_GEOMAlgo_Clsf myClsf;
+  TopTools_ListOfShape myLS;
+  GEOMAlgo_IndexedDataMapOfShapeState myMSS;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

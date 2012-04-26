@@ -21,15 +21,15 @@
 //
 
 // File:        GEOMAlgo_PassKeyMapHasher.cxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_PassKeyShapeMapHasher.ixx>
+#include <GEOMAlgo_PassKeyShapeMapHasher.hxx>
 
 //=======================================================================
 //function : HashCode
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKeyShapeMapHasher::HashCode(const GEOMAlgo_PassKeyShape& aPK,
                                                             const Standard_Integer Upper)
@@ -38,7 +38,7 @@
 }
 //=======================================================================
 //function :IsEqual
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_PassKeyShapeMapHasher::IsEqual(const GEOMAlgo_PassKeyShape& aPK1,
                                                            const GEOMAlgo_PassKeyShape& aPK2)

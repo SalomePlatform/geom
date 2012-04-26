@@ -25,4 +25,4 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_FaceInfo.ixx>
+#include <NMTTools_FaceInfo.hxx>

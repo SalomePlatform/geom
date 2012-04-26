@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_WireSolid.ixx>
+#include <GEOMAlgo_WireSolid.hxx>
 
 #include <Standard_Failure.hxx>
 
@@ -47,23 +47,23 @@
 
 //=======================================================================
 //function : GEOMAlgo_WireSolid
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_WireSolid::GEOMAlgo_WireSolid()
-: 
+:
   GEOMAlgo_ShapeSolid()
 {
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_WireSolid::~GEOMAlgo_WireSolid()
 {
 }
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::Perform()
 {
@@ -82,7 +82,7 @@ void GEOMAlgo_WireSolid::Perform()
     Standard_Boolean bIsNewFiller;
     //
     bIsNewFiller=myDSFiller->IsNewFiller();
-    
+
     if (bIsNewFiller) {
       Prepare();
       myDSFiller->SetNewFiller(!bIsNewFiller);
@@ -93,10 +93,10 @@ void GEOMAlgo_WireSolid::Perform()
   catch (Standard_Failure) {
     myErrorStatus= 12;
   }
-} 
+}
 //=======================================================================
 // function: Prepare
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::Prepare()
 {
@@ -108,7 +108,7 @@ void GEOMAlgo_WireSolid::Prepare()
 }
 //=======================================================================
 // function: BuildResult
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_WireSolid::BuildResult()
 {
@@ -166,7 +166,7 @@ void GEOMAlgo_WireSolid::BuildResult()
         }
         else if (aState==BooleanOperations_ON) {
           myLSON.Append(aE);
-        } 
+        }
       }
     }
   }

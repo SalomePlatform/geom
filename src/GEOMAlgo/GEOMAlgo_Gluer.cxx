@@ -23,22 +23,11 @@
 // File:	GEOMAlgo_Gluer.cxx
 // Created:	Sat Dec 04 12:45:53 2004
 // Author:	Peter KURNEV
-
-#include <GEOMAlgo_Gluer.ixx>
-
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx> 
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
+//		<peter@PREFEX>
+//
+#include <GEOMAlgo_Gluer.hxx>
 
 #include <NMTDS_BoxBndTree.hxx>
-#include <NMTDS_BndSphereTree.hxx>
-#include <NMTDS_BndSphere.hxx>
-#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
 #include <NCollection_UBTreeFiller.hxx>
 
 #include <TColStd_MapIteratorOfMapOfInteger.hxx>
@@ -93,13 +82,25 @@
 #include <BOPTools_Tools2D.hxx>
 #include <BOP_CorrectTolerances.hxx>
 
-static 
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
+//
+
+#include <NMTDS_BndSphereTree.hxx>
+#include <NMTDS_BndSphere.hxx>
+#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
+
+//
+static
   void GetSubShapes(const TopoDS_Shape& aS,
 		    TopTools_IndexedMapOfShape& aMSS);
 
 //=======================================================================
 //function : GEOMAlgo_Gluer
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_Gluer::GEOMAlgo_Gluer()
 :
@@ -113,14 +114,14 @@ GEOMAlgo_Gluer::GEOMAlgo_Gluer()
 }
 //=======================================================================
 //function : ~GEOMAlgo_Gluer
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_Gluer::~GEOMAlgo_Gluer()
 {
 }
 //=======================================================================
 //function : SetCheckGeometry
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::SetCheckGeometry(const Standard_Boolean aFlag)
 {
@@ -128,7 +129,7 @@ void GEOMAlgo_Gluer::SetCheckGeometry(const Standard_Boolean aFlag)
 }
 //=======================================================================
 //function : CheckGeometry
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Gluer::CheckGeometry() const
 {
@@ -136,7 +137,7 @@ Standard_Boolean GEOMAlgo_Gluer::CheckGeometry() const
 }
 //=======================================================================
 //function : SetKeepNonSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::SetKeepNonSolids(const Standard_Boolean aFlag)
 {
@@ -144,15 +145,15 @@ void GEOMAlgo_Gluer::SetKeepNonSolids(const Standard_Boolean aFlag)
 }
 //=======================================================================
 //function : KeepNonSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
-//Standard_Boolean GEOMAlgo_Gluer::KeepNonSolids()const 
-//{
-//  return myKeepNonSolids;
-//}
+Standard_Boolean GEOMAlgo_Gluer::KeepNonSolids()const
+{
+  return myKeepNonSolids;
+}
 //=======================================================================
 //function : AloneShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer GEOMAlgo_Gluer::AloneShapes()const
 {
@@ -160,7 +161,7 @@ Standard_Integer GEOMAlgo_Gluer::AloneShapes()const
 }
 //=======================================================================
 //function : Images
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer::Images()const
 {
@@ -168,7 +169,7 @@ const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer::Images()const
 }
 //=======================================================================
 //function : Origins
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeShape& GEOMAlgo_Gluer::Origins()const
 {
@@ -176,7 +177,7 @@ const TopTools_DataMapOfShapeShape& GEOMAlgo_Gluer::Origins()const
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::Perform()
 {
@@ -186,10 +187,8 @@ void GEOMAlgo_Gluer::Perform()
   myErrorStatus=0;
   myWarningStatus=0;
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_ShapeAlgo::Perform();
-#endif
   //
   void (GEOMAlgo_Gluer::* pF[aNb])()={
     &GEOMAlgo_Gluer::CheckData,       &GEOMAlgo_Gluer::InnerTolerance,
@@ -208,7 +207,7 @@ void GEOMAlgo_Gluer::Perform()
 
 //=======================================================================
 //function : MakeVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeVertices()
 {
@@ -255,7 +254,7 @@ void GEOMAlgo_Gluer::MakeVertices()
     aTreeFiller.Add(i, aBox);
     //
     aMIS.Add(i, aV);
-    aMSB.Add(aV, aBox); 
+    aMSB.Add(aV, aBox);
   }
   //
   aTreeFiller.Fill();
@@ -295,7 +294,7 @@ void GEOMAlgo_Gluer::MakeVertices()
 	//
 	aNbVSD=aBBTree.Select(aSelector);
 	if (!aNbVSD) {
-	  continue;  // it must not be 
+	  continue;  // it must not be
 	}
 	//
 	const TColStd_ListOfInteger& aLI=aSelector.Indices();
@@ -399,7 +398,7 @@ void GEOMAlgo_Gluer::MakeVertices()
 }
 //=======================================================================
 //function : MakeSubShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeSubShapes (const TopoDS_Shape&  theShape,
                                     TopTools_MapOfShape& theMS,
@@ -504,7 +503,7 @@ void GEOMAlgo_Gluer::MakeSubShapes (const TopoDS_Shape&  theShape,
 }
 //=======================================================================
 //function : MakeSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeSolids()
 {
@@ -528,7 +527,7 @@ void GEOMAlgo_Gluer::MakeSolids()
 }
 //=======================================================================
 //function : MakeShells
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeShells()
 {
@@ -576,7 +575,7 @@ void GEOMAlgo_Gluer::MakeShells()
 }
 //=======================================================================
 //function : MakeFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeFaces()
 {
@@ -584,7 +583,7 @@ void GEOMAlgo_Gluer::MakeFaces()
 }
 //=======================================================================
 //function : MakeEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeEdges()
 {
@@ -592,7 +591,7 @@ void GEOMAlgo_Gluer::MakeEdges()
 }
 //=======================================================================
 //function : MakeShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
 {
@@ -611,7 +610,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   aNbF=aMF.Extent();
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
-    // 
+    //
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=TopoDS::Face(aS);
       FacePassKey(aF, aPKF);
@@ -638,7 +637,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
   }
   // check geometric coincidence
   if (myCheckGeometry) {
-    iErr=GEOMAlgo_Tools::RefineSDShapes(aMPKLF, myTol, myContext); 
+    iErr=GEOMAlgo_Tools::RefineSDShapes(aMPKLF, myTol, myContext);
     if (iErr) {
       myErrorStatus=200;
       return;
@@ -668,7 +667,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
       }
     }
     //
-    if (bHasNewSubShape) { 
+    if (bHasNewSubShape) {
       if (aType==TopAbs_FACE) {
 	TopoDS_Face aNewFace;
 	//
@@ -698,7 +697,7 @@ void GEOMAlgo_Gluer::MakeShapes(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : CheckResult
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::CheckResult()
 {
@@ -706,9 +705,9 @@ void GEOMAlgo_Gluer::CheckResult()
   //
   if (myResult.IsNull()) {
     myErrorStatus=6;
-    return; 
+    return;
   }
-  // 
+  //
   Standard_Boolean bFound;
   Standard_Integer i, j, aNbS, aNbFS, aNbSx;
   TopTools_IndexedMapOfShape aMS, aMFS;
@@ -717,7 +716,7 @@ void GEOMAlgo_Gluer::CheckResult()
   TopExp::MapShapesAndAncestors(myResult, TopAbs_FACE, TopAbs_SOLID, aMFR);
   TopExp::MapShapes(myResult, TopAbs_SOLID, aMS);
   //
-  
+
   myNbAlone=0;
   aNbS=aMS.Extent();
   for (i=1; i<=aNbS; ++i) {
@@ -749,7 +748,7 @@ void GEOMAlgo_Gluer::CheckResult()
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::CheckData()
 {
@@ -757,12 +756,12 @@ void GEOMAlgo_Gluer::CheckData()
   //
   if (myShape.IsNull()) {
     myErrorStatus=5;
-    return; 
+    return;
   }
 }
 //=======================================================================
 //function : InnerTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer::InnerTolerance()
 {
@@ -795,9 +794,9 @@ void GEOMAlgo_Gluer::InnerTolerance()
 }
 //=======================================================================
 //function : FacePassKey
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF, 
+void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF,
 				 GEOMAlgo_PassKeyShape& aPK)
 {
   Standard_Integer i, aNbE;
@@ -820,9 +819,9 @@ void GEOMAlgo_Gluer::FacePassKey(const TopoDS_Face& aF,
 }
 //=======================================================================
 //function : EdgePassKey
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer::EdgePassKey(const TopoDS_Edge& aE, 
+void GEOMAlgo_Gluer::EdgePassKey(const TopoDS_Edge& aE,
 				 GEOMAlgo_PassKeyShape& aPK)
 {
   TopoDS_Vertex aV1, aV2;
@@ -839,9 +838,9 @@ void GEOMAlgo_Gluer::EdgePassKey(const TopoDS_Edge& aE,
 }
 //=======================================================================
 //function : MakeVertex
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer::MakeVertex(const TopTools_ListOfShape& aLV, 
+void GEOMAlgo_Gluer::MakeVertex(const TopTools_ListOfShape& aLV,
 				TopoDS_Vertex& aNewVertex)
 {
   Standard_Integer aNbV;
@@ -885,9 +884,9 @@ void GEOMAlgo_Gluer::MakeVertex(const TopTools_ListOfShape& aLV,
 }
 //=======================================================================
 //function : MakeEdge
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE, 
+void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE,
 			      TopoDS_Edge& aNewEdge)
 {
   myErrorStatus=0;
@@ -934,14 +933,14 @@ void GEOMAlgo_Gluer::MakeEdge(const TopoDS_Edge& aE,
   }
   //
   else {
-    BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge); 
+    BOPTools_Tools::MakeSplitEdge(aEx, aVR1, aT1, aVR2, aT2, aNewEdge);
   }
 }
 //=======================================================================
 //function : MakeFace
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF, 
+void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
 			      TopoDS_Face& aNewFace)
 {
   myErrorStatus=0;
@@ -983,8 +982,8 @@ void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
 	  GEOMAlgo_Tools::RefinePCurveForEdgeOnFace(aER, aFFWD, aUMin, aUMax);
 	}
 	BOPTools_Tools2D::BuildPCurveForEdgeOnFace(aER, aFFWD);
-	
-	// orient image 
+
+	// orient image
 	bIsToReverse=BOPTools_Tools3D::IsSplitToReverse1(aER, aE, myContext);
 	if (bIsToReverse) {
 	  aER.Reverse();
@@ -1009,7 +1008,7 @@ void GEOMAlgo_Gluer::MakeFace(const TopoDS_Face& aF,
 }
 //=======================================================================
 //function : IsToReverse
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
 					     const TopoDS_Face& aF)
@@ -1036,11 +1035,7 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
     aC3D=BRep_Tool::Curve(aE, aT1, aT2);
     aT=BOPTools_Tools2D::IntermediatePoint(aT1, aT2);
     aC3D->D0(aT, aP);
-#if OCC_VERSION_LARGE > 0x06050200
     myContext->ProjectPointOnEdge(aP, aER, aTR);
-#else
-    myContext.ProjectPointOnEdge(aP, aER, aTR);
-#endif
     //
     BOPTools_Tools3D::GetNormalToFaceOnEdge (aE, aF, aT, aDNF);
     if (aF.Orientation()==TopAbs_REVERSED) {
@@ -1059,7 +1054,7 @@ Standard_Boolean GEOMAlgo_Gluer::IsToReverse(const TopoDS_Face& aFR,
 }
 //=======================================================================
 //function : HasNewSubShape
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Gluer::HasNewSubShape(const TopoDS_Shape& aS)const
 {
@@ -1092,7 +1087,7 @@ Standard_Boolean GEOMAlgo_Gluer::HasNewSubShape(const TopoDS_Shape& aS)const
 }
 //=======================================================================
 //function : GetSubShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GetSubShapes(const TopoDS_Shape& aS,
 		  TopTools_IndexedMapOfShape& aMSS)
@@ -1116,9 +1111,9 @@ void GetSubShapes(const TopoDS_Shape& aS,
 }
 //=======================================================================
 //function : Modified
-//purpose  : 
+//purpose  :
 //=======================================================================
-const TopTools_ListOfShape& GEOMAlgo_Gluer::Modified (const TopoDS_Shape& aS) 
+const TopTools_ListOfShape& GEOMAlgo_Gluer::Modified (const TopoDS_Shape& aS)
 {
   TopAbs_ShapeEnum aType;
   //
@@ -1126,11 +1121,11 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer::Modified (const TopoDS_Shape& aS)
   //
   aType=aS.ShapeType();
   if (aType==TopAbs_VERTEX ||
-      aType==TopAbs_EDGE   || 
-      aType==TopAbs_WIRE   || 
-      aType==TopAbs_FACE   || 
-      aType==TopAbs_SHELL  || 
-      aType==TopAbs_SOLID) {  
+      aType==TopAbs_EDGE   ||
+      aType==TopAbs_WIRE   ||
+      aType==TopAbs_FACE   ||
+      aType==TopAbs_SHELL  ||
+      aType==TopAbs_SOLID) {
     if(myOrigins.IsBound(aS)) {
       const TopoDS_Shape& aSnew=myOrigins.Find(aS);
       if (!aSnew.IsSame(aS)) {
@@ -1143,7 +1138,7 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer::Modified (const TopoDS_Shape& aS)
 }
 //=======================================================================
 //function : Generated
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_Gluer::Generated(const TopoDS_Shape& )
 {
@@ -1152,7 +1147,7 @@ const TopTools_ListOfShape& GEOMAlgo_Gluer::Generated(const TopoDS_Shape& )
 }
 //=======================================================================
 //function : IsDeleted
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Gluer::IsDeleted (const TopoDS_Shape& aS)
 {
@@ -1167,7 +1162,7 @@ Standard_Boolean GEOMAlgo_Gluer::IsDeleted (const TopoDS_Shape& aS)
 //
 // ErrorStatus
 //
-// 1   - the object is just initialized 
+// 1   - the object is just initialized
 // 2   - no vertices found in source shape
 // 3   - nb same domain vertices for the vertex Vi =0
 // 4   - nb same domain edges(faces) for the edge Ei(face Fi)  =0

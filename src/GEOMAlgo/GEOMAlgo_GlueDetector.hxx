@@ -19,49 +19,82 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+
 // File:        GEOMAlgo_GlueDetector.hxx
-// Created:     
 // Author:      Peter KURNEV
-//              <pkv@irinox>
-//
+
 #ifndef _GEOMAlgo_GlueDetector_HeaderFile
 #define _GEOMAlgo_GlueDetector_HeaderFile
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
-#include <GEOMAlgo_GluerAlgo.hxx>
+
 #include <TopAbs_ShapeEnum.hxx>
-#include <GEOMAlgo_PassKeyShape.hxx>
+
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+
+#include <GEOMAlgo_GluerAlgo.hxx>
 #include <GEOMAlgo_Algo.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_GlueDetector
-//purpose  : 
+//purpose  :
 //=======================================================================
-class GEOMAlgo_GlueDetector  : public GEOMAlgo_GluerAlgo, 
-                               public GEOMAlgo_Algo {
+class GEOMAlgo_GlueDetector  : public GEOMAlgo_GluerAlgo,
+                               public GEOMAlgo_Algo
+{
 public:
-  Standard_EXPORT   GEOMAlgo_GlueDetector();
-  
-  Standard_EXPORT virtual ~GEOMAlgo_GlueDetector();
-  
-  Standard_EXPORT virtual  void Perform() ;
+  Standard_EXPORT
+    GEOMAlgo_GlueDetector();
 
+  Standard_EXPORT virtual
+    ~GEOMAlgo_GlueDetector();
+
+  Standard_EXPORT virtual
+    void Perform() ;
+
+//modified by NIZNHY-PKV Tue Mar 13 12:23:20 2012f
+  Standard_EXPORT
+    const TopTools_IndexedDataMapOfShapeListOfShape& StickedShapes();
+//modified by NIZNHY-PKV Tue Mar 13 12:23:26 2012t
+//------------------------------------------------
 protected:
-  Standard_EXPORT void DetectVertices() ;
-  
-  Standard_EXPORT void DetectEdges() ;
-  
-  Standard_EXPORT void DetectFaces() ;
-  
-  Standard_EXPORT void DetectShapes(const TopAbs_ShapeEnum aType) ;
-  
-  Standard_EXPORT void EdgePassKey(const TopoDS_Edge& aE,
-				   GEOMAlgo_PassKeyShape& aPK) ;
-  
-  Standard_EXPORT void FacePassKey(const TopoDS_Face& aF,
-				   GEOMAlgo_PassKeyShape& aPK) ;
+  Standard_EXPORT
+    void DetectVertices() ;
 
-private:
+  Standard_EXPORT
+    void DetectEdges() ;
+
+  Standard_EXPORT
+    void DetectFaces() ;
+
+  Standard_EXPORT
+    void DetectShapes(const TopAbs_ShapeEnum aType) ;
+
+  Standard_EXPORT
+    void EdgePassKey(const TopoDS_Edge& aE,
+                     GEOMAlgo_PassKeyShape& aPK) ;
+
+  Standard_EXPORT
+    void FacePassKey(const TopoDS_Face& aF,
+                     GEOMAlgo_PassKeyShape& aPK) ;
+
+  //modified by NIZNHY-PKV Tue Mar 13 09:53:03 2012f
+  Standard_EXPORT
+    void CheckDetected();
+  //
+  Standard_EXPORT
+    void CheckDetected
+      (const TopTools_ListOfShape& aLVSD,
+       const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
+       const TopTools_IndexedDataMapOfShapeListOfShape& aMEV);
+
+
+ protected:
+  TopTools_IndexedDataMapOfShapeListOfShape myStickedShapes;
+  //modified by NIZNHY-PKV Tue Mar 13 09:53:08 2012t
+
 };
 #endif

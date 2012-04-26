@@ -16,157 +16,28 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-#ifndef _GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
-#define _GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
-
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo_HeaderFile
-#include <Handle_GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-class Standard_DomainError;
-class Standard_OutOfRange;
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class GEOMAlgo_ShapeInfo;
-class TopTools_ShapeMapHasher;
-class GEOMAlgo_IndexedDataMapNodeOfIndexedDataMapOfShapeShapeInfo;
+// File:	GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx
+// Created:	Wed Feb 22 11:16:54 2012
+// Author:
+//		<pkv@BDEURI37616>
 
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-#include <Basics_OCCTVersion.hxx>
-
-class GEOMAlgo_IndexedDataMapOfShapeShapeInfo  : public TCollection_BasicMap {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+#ifndef GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
+#define GEOMAlgo_IndexedDataMapOfShapeShapeInfo_HeaderFile
 
 
-Standard_EXPORT GEOMAlgo_IndexedDataMapOfShapeShapeInfo(const Standard_Integer NbBuckets = 1);
+#include <TopoDS_Shape.hxx>
+#include <TopTools_ShapeMapHasher.hxx>
+#include <GEOMAlgo_ShapeInfo.hxx>
+
+#define _NCollection_MapHasher
+#include <NCollection_IndexedDataMap.hxx>
+
+typedef NCollection_IndexedDataMap<TopoDS_Shape, GEOMAlgo_ShapeInfo, TopTools_ShapeMapHasher> GEOMAlgo_IndexedDataMapOfShapeShapeInfo;
+
+#undef _NCollection_MapHasher
 
 
-Standard_EXPORT   GEOMAlgo_IndexedDataMapOfShapeShapeInfo& Assign(const GEOMAlgo_IndexedDataMapOfShapeShapeInfo& Other) ;
-  GEOMAlgo_IndexedDataMapOfShapeShapeInfo& operator =(const GEOMAlgo_IndexedDataMapOfShapeShapeInfo& Other) 
-{
-  return Assign(Other);
-}
-
-
-
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-
-Standard_EXPORT   void Clear() ;
-~GEOMAlgo_IndexedDataMapOfShapeShapeInfo()
-{
-  Clear();
-}
-
-
-
-Standard_EXPORT   Standard_Integer Add(const TopoDS_Shape& K,const GEOMAlgo_ShapeInfo& I) ;
-
-
-Standard_EXPORT   void Substitute(const Standard_Integer I,const TopoDS_Shape& K,const GEOMAlgo_ShapeInfo& T) ;
-
-
-Standard_EXPORT   void RemoveLast() ;
-
-
-Standard_EXPORT   Standard_Boolean Contains(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT  const TopoDS_Shape& FindKey(const Standard_Integer I) const;
-
-
-Standard_EXPORT  const GEOMAlgo_ShapeInfo& FindFromIndex(const Standard_Integer I) const;
- const GEOMAlgo_ShapeInfo& operator ()(const Standard_Integer I) const
-{
-  return FindFromIndex(I);
-}
-
-
-
-Standard_EXPORT   GEOMAlgo_ShapeInfo& ChangeFromIndex(const Standard_Integer I) ;
-  GEOMAlgo_ShapeInfo& operator ()(const Standard_Integer I) 
-{
-  return ChangeFromIndex(I);
-}
-
-
-
-Standard_EXPORT   Standard_Integer FindIndex(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT  const GEOMAlgo_ShapeInfo& FindFromKey(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT   GEOMAlgo_ShapeInfo& ChangeFromKey(const TopoDS_Shape& K) ;
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address FindFromKey1 (const TopoDS_Shape& K) const;
-  Standard_EXPORT Standard_Address ChangeFromKey1 (const TopoDS_Shape& K);
-#endif
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
-Standard_EXPORT GEOMAlgo_IndexedDataMapOfShapeShapeInfo(const GEOMAlgo_IndexedDataMapOfShapeShapeInfo& Other);
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
 
 
 #endif

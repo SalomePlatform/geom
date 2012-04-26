@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_SurfaceTools.ixx>
+#include <GEOMAlgo_SurfaceTools.hxx>
 
 #include <math.h>
 
@@ -45,7 +45,7 @@
 
 //=======================================================================
 //function : GetState
-//purpose  : 
+//purpose  :
 //=======================================================================
  Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
                                                   const GeomAdaptor_Surface& aGAS,
@@ -69,19 +69,19 @@
     aR=0.;
     aDp=GEOMAlgo_SurfaceTools::Distance(aP, aPln);
     break;
-  
-  case GeomAbs_Cylinder: 
+
+  case GeomAbs_Cylinder:
     aCyl=aGAS.Cylinder();
     aR=aCyl.Radius();
     aDp=GEOMAlgo_SurfaceTools::Distance(aP, aCyl);
-    break; 
+    break;
 
-  case GeomAbs_Sphere: 
+  case GeomAbs_Sphere:
     aSph=aGAS.Sphere();
     aR=aSph.Radius();
     aDp=GEOMAlgo_SurfaceTools::Distance(aP, aSph);
     break;
-    
+
   default:
     iErr=1; // unprocessed surface type
     break;
@@ -101,7 +101,7 @@
 }
 //=======================================================================
 //function : GetState
-//purpose  : 
+//purpose  :
 //=======================================================================
  Standard_Integer GEOMAlgo_SurfaceTools::GetState(const gp_Pnt& aP,
                                                   const Handle(Geom_Surface)& aSurf,
@@ -120,7 +120,7 @@
 }
 //=======================================================================
 //function : ReverseState
-//purpose  : 
+//purpose  :
 //=======================================================================
  TopAbs_State GEOMAlgo_SurfaceTools::ReverseState(const TopAbs_State aState)
 {
@@ -141,9 +141,9 @@
 }
 //=======================================================================
 //function : Distance
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
+Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
                                               const gp_Sphere& aSph)
 {
   Standard_Real aD;
@@ -155,9 +155,9 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 }
 //=======================================================================
 //function : Distance
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
+Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
                                               const gp_Cylinder& aCyl)
 {
   Standard_Real aD;
@@ -170,9 +170,9 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 }
 //=======================================================================
 //function : Distance
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP, 
+Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
                                               const gp_Pln& aPL)
 {
   Standard_Real aD;
@@ -188,7 +188,7 @@ Standard_Real GEOMAlgo_SurfaceTools::Distance(const gp_Pnt& aP,
 }
 //=======================================================================
 //function : IsCoaxial
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
                                                   const gp_Pnt& aP2,
@@ -213,7 +213,7 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsCoaxial(const gp_Pnt& aP1,
 }
 //=======================================================================
 //function : IsAnalytic
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic(const Handle(Geom_Surface)& aSurf)
 {
@@ -223,14 +223,14 @@ Standard_Boolean GEOMAlgo_SurfaceTools::IsAnalytic(const Handle(Geom_Surface)& a
   //
   aGAS.Load(aSurf);
   aType=aGAS.GetType();
-  bRet=(aType==GeomAbs_Plane || 
+  bRet=(aType==GeomAbs_Plane ||
         aType==GeomAbs_Cylinder ||
         aType==GeomAbs_Sphere);
   return bRet;
 }
 //=======================================================================
 //function : IsConformState
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_SurfaceTools::IsConformState(const TopAbs_State aST1,
                                                        const GEOMAlgo_State aST2)

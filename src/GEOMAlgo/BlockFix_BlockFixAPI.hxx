@@ -50,21 +50,21 @@ class TopoDS_Shape;
 class BlockFix_BlockFixAPI : public MMgt_TShared
 {
 public:
-  void* operator new(size_t,void* anAddress) 
+  void* operator new(size_t,void* anAddress)
   {
     return anAddress;
   }
-  void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
+  void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
   }
-  void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
   }
 
   // Methods PUBLIC
-  // 
+  //
   Standard_EXPORT BlockFix_BlockFixAPI();
   void SetShape(const TopoDS_Shape& Shape);
   Standard_EXPORT   void Perform();
@@ -80,7 +80,7 @@ public:
   Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
   Standard_EXPORT Standard_Boolean             IsKind(const Handle(Standard_Type)&) const;
 
-private: 
+private:
   // Fields PRIVATE
   //
   Handle_ShapeBuild_ReShape myContext;

@@ -20,89 +20,42 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_ShellSolid.hxx
+// Created:     Wed Jan 12 12:49:45 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_ShellSolid_HeaderFile
 #define _GEOMAlgo_ShellSolid_HeaderFile
 
-#ifndef _GEOMAlgo_ShapeSolid_HeaderFile
-#include <GEOMAlgo_ShapeSolid.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <GEOMAlgo_ShapeSolid.hxx>
 
+//=======================================================================
+//class    : GEOMAlgo_ShellSolid
+//purpose  :
+//=======================================================================
+class GEOMAlgo_ShellSolid  : public GEOMAlgo_ShapeSolid
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_ShellSolid();
 
-class GEOMAlgo_ShellSolid  : public GEOMAlgo_ShapeSolid {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_ShellSolid();
 
-public:
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+ protected:
+  Standard_EXPORT
+    virtual  void Prepare() ;
 
+  Standard_EXPORT
+    virtual  void BuildResult() ;
 
-Standard_EXPORT GEOMAlgo_ShellSolid();
-Standard_EXPORT virtual ~GEOMAlgo_ShellSolid();
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT virtual  void Prepare() ;
-
-
-Standard_EXPORT virtual  void BuildResult() ;
-
-
-Standard_EXPORT   void DetectSDFaces() ;
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_EXPORT
+    void DetectSDFaces() ;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

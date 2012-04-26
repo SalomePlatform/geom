@@ -1,5 +1,8 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
+// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
+// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -21,8 +24,8 @@
 #define _GEOMAlgo_KindOfName_HeaderFile
 
 
-enum GEOMAlgo_KindOfName { 
- GEOMAlgo_KN_UNKNOWN,
+enum GEOMAlgo_KindOfName {
+GEOMAlgo_KN_UNKNOWN,
 GEOMAlgo_KN_SPHERE,
 GEOMAlgo_KN_CYLINDER,
 GEOMAlgo_KN_TORUS,
@@ -43,7 +46,6 @@ GEOMAlgo_KN_TRIANGLE,
 GEOMAlgo_KN_QUADRANGLE,
 GEOMAlgo_KN_ARCELLIPSE
 };
-
 
 #ifndef _Standard_PrimitiveTypes_HeaderFile
 #include <Standard_PrimitiveTypes.hxx>

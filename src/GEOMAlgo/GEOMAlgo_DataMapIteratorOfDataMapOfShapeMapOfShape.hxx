@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -19,82 +16,16 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape.hxx
+// Created:	Wed Feb 22 11:08:26 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape_HeaderFile
-#define _GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape_HeaderFile
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
+#ifndef GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape_HeaderFile
+#define GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape_HeaderFile
+
+#ifndef GEOMAlgo_DataMapOfShapeMapOfShape_HeaderFile
+#include <GEOMAlgo_DataMapOfShapeMapOfShape.hxx>
 #endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-#ifndef _TCollection_BasicMapIterator_HeaderFile
-#include <TCollection_BasicMapIterator.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape.hxx>
-#endif
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class TopTools_MapOfShape;
-class TopTools_ShapeMapHasher;
-class GEOMAlgo_DataMapOfShapeMapOfShape;
-class GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape;
-
-
-
-class GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape  : public TCollection_BasicMapIterator {
-public:
-
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
-
-  
-  Standard_EXPORT   GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape();
-  
-  Standard_EXPORT   GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape(const GEOMAlgo_DataMapOfShapeMapOfShape& aMap);
-  
-  Standard_EXPORT     void Initialize(const GEOMAlgo_DataMapOfShapeMapOfShape& aMap) ;
-  
-  Standard_EXPORT    const TopoDS_Shape& Key() const;
-  
-  Standard_EXPORT    const TopTools_MapOfShape& Value() const;
-
-
-
-
-
-protected:
-
-
-
-
-
-private:
-
-
-
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-
-
 #endif

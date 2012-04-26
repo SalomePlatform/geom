@@ -19,23 +19,11 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 //  File    : GEOMAlgo_Builder_3.cxx
+//  Created :
 //  Author  : Peter KURNEV
 
 #include <GEOMAlgo_Builder.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-#include <GEOMAlgo_BuilderSolid.hxx>
-#include <GEOMAlgo_ShapeSet.hxx>
-#include <GEOMAlgo_DataMapOfShapeShapeSet.hxx>
-#include <GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet.hxx>
-
-#include <NMTTools_PaveFiller.hxx>
-
-#include <NMTDS_ShapesDataStructure.hxx>
 
 #include <TopAbs_State.hxx>
 
@@ -69,6 +57,16 @@
 
 #include <IntTools_Context.hxx>
 
+#include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTTools_PaveFiller.hxx>
+
+#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_BuilderSolid.hxx>
+#include <GEOMAlgo_ShapeSet.hxx>
+#include <GEOMAlgo_DataMapOfShapeShapeSet.hxx>
+#include <GEOMAlgo_DataMapIteratorOfDataMapOfShapeShapeSet.hxx>
+
+
 
 static
   void OwnInternalShapes(const TopoDS_Shape& ,
@@ -97,11 +95,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
   myErrorStatus=0;
   //
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
-  const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
+  const Handle(IntTools_Context)& aCtx= pPF->Context();
   //
   Standard_Boolean bToReverse;
   Standard_Integer  iFlag;
@@ -194,11 +188,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
   //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
-  const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
+  const Handle(IntTools_Context)& aCtx= pPF->Context();
   //
   Standard_Boolean bIsIN, bHasImage;
   Standard_Integer aNbS, aNbSolids, i, j, aNbFaces, aNbFP, aNbFPx, aNbFIN, aNbLIF;
@@ -431,11 +421,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
   //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
-  const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
+  const Handle(IntTools_Context)& aCtx= pPF->Context();
   //
   Standard_Integer i, aNbS, iErr;
   TopExp_Explorer aExp;
@@ -534,9 +520,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
     //modified by NIZNHY-PKV Wed Oct 27 09:53:18 2010t
     //
     // 1.3 Build new solids
-#if OCC_VERSION_LARGE > 0x06050200
     aSB.SetContext(aCtx);
-#endif
     aSB.SetShapes(aSFS1);
     aSB.Perform();
     iErr=aSB.ErrorStatus();
@@ -580,11 +564,7 @@ void GEOMAlgo_Builder::BuildDraftSolid (const TopoDS_Shape& theSolid,
   //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx= pPF->Context();
-#else
-  IntTools_Context& aCtx= pPF->ChangeContext();
-#endif
   //
   //Standard_Boolean bHasImage;
   Standard_Integer i, j, jT, aNbS, aNbSI, aNbSx, aNbSd;

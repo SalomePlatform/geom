@@ -19,66 +19,58 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:	GEOMAlgo_GluerAlgo.cxx
+// Created:
 // Author:	Peter KURNEV
-
+//		<peter@PREFEX>
+//
 #include <GEOMAlgo_GluerAlgo.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
-#if OCC_VERSION_LARGE > 0x06050200
 #include <IntTools_Context.hxx>
-#endif
+
 
 //=======================================================================
 //function : GEOMAlgo_GluerAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_GluerAlgo::GEOMAlgo_GluerAlgo()
 {
   myTolerance=0.0001;
   myCheckGeometry=Standard_True;
 }
-
 //=======================================================================
 //function : ~GEOMAlgo_GluerAlgo
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_GluerAlgo::~GEOMAlgo_GluerAlgo()
 {
 }
-
 //=======================================================================
 //function : SetArgument
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GluerAlgo::SetArgument(const TopoDS_Shape& theShape)
 {
   myArgument=theShape;
 }
-
 //=======================================================================
 //function : Argument
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopoDS_Shape& GEOMAlgo_GluerAlgo::Argument()const
 {
   return myArgument;
 }
-
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GluerAlgo::SetTolerance(const Standard_Real aT)
 {
   myTolerance=aT;
 }
-
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Real GEOMAlgo_GluerAlgo::Tolerance()const
 {
@@ -87,83 +79,68 @@ Standard_Real GEOMAlgo_GluerAlgo::Tolerance()const
 
 //=======================================================================
 //function : SetCheckGeometry
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GluerAlgo::SetCheckGeometry(const Standard_Boolean aFlag)
 {
   myCheckGeometry=aFlag;
 }
-
 //=======================================================================
 //function : CheckGeometry
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_GluerAlgo::CheckGeometry() const
 {
   return myCheckGeometry;
 }
-
-#if OCC_VERSION_LARGE > 0x06050200
 //=======================================================================
 //function : SetContext
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GluerAlgo::SetContext(const Handle(IntTools_Context)& theContext)
 {
   myContext=theContext;
 }
-#endif
-
 //=======================================================================
 //function : Context
-//purpose  : 
+//purpose  :
 //=======================================================================
-#if OCC_VERSION_LARGE > 0x06050200
 const Handle(IntTools_Context)& GEOMAlgo_GluerAlgo::Context()
-#else
-IntTools_Context& GEOMAlgo_GluerAlgo::Context()
-#endif
 {
   return myContext;
 }
-
 //=======================================================================
 //function : Images
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_GluerAlgo::Images()const
 {
   return myImages;
 }
-
 //=======================================================================
 //function : Origins
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeShape& GEOMAlgo_GluerAlgo::Origins()const
 {
   return myOrigins;
 }
-
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GluerAlgo::Clear()
 {
   myImages.Clear();
   myOrigins.Clear();
 }
-
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GluerAlgo::Perform()
 {
-#if OCC_VERSION_LARGE > 0x06050200
   if (myContext.IsNull()) {
     myContext=new IntTools_Context;
   }
-#endif
 }

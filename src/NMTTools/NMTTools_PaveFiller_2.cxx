@@ -26,7 +26,7 @@
 
 #include <Standard_Version.hxx>
 
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -57,16 +57,16 @@
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
 
-// Modified  Thu Sep 14 14:35:18 2006
-// Contribution of Samtech www.samcef.com BEGIN
+
 #include <BOPTools_IndexedMapOfCoupleOfInteger.hxx>
 #include <BOPTools_CoupleOfInteger.hxx>
 #include <BooleanOperations_OnceExplorer.hxx>
 
+#include <IntTools_Context.hxx>
+
 static
   Standard_Boolean Contains(const TopoDS_Edge& aE,
                             const TopoDS_Vertex& aV);
-// Contribution of Samtech www.samcef.com END
 
 //=======================================================================
 // function: PerformVE
@@ -155,14 +155,11 @@ void NMTTools_PaveFiller::PerformVE()
       }
       //
       //modified by NIZNHY-PKV Mon Dec 28 08:58:05 2009f
-#if OCC_VERSION_LARGE > 0x06050200
-      // In OCCT6.5.3 class IntTools_Context become a handle
-      aFlag = myContext->ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
-#elif OCC_VERSION_LARGE > 0x06030008
+#if OCC_VERSION_LARGE > 0x06030008
       // In OCCT6.3.0sp9 is changed a signature of IntTools_Context::ComputeVE() method
-      aFlag = myContext.ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
+      aFlag = myContext->ComputeVE (aV1, aE2, aT, bToUpdateVertex, aDist);
 #else
-      aFlag = myContext.ComputeVE (aV1, aE2, aT);
+      aFlag = myContext->ComputeVE (aV1, aE2, aT);
 #endif
       //modified by NIZNHY-PKV Mon Dec 28 08:58:13 2009t
       //

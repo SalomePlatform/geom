@@ -21,22 +21,22 @@
 //
 
 // File:        GEOMAlgo_PassKeyShape.cxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_PassKeyShape.ixx>
+#include <GEOMAlgo_PassKeyShape.hxx>
 
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 
 
-static 
+static
   Standard_Integer NormalizedId(const Standard_Integer aId,
                                 const Standard_Integer aDiv);
 //=======================================================================
 //function :
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKeyShape::GEOMAlgo_PassKeyShape()
 {
@@ -44,7 +44,7 @@ static
 }
 //=======================================================================
 //function :
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKeyShape::GEOMAlgo_PassKeyShape(const GEOMAlgo_PassKeyShape& aOther)
 {
@@ -55,14 +55,14 @@ static
 }
 //=======================================================================
 //function :~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKeyShape::~GEOMAlgo_PassKeyShape()
 {
 }
 //=======================================================================
 //function :Assign
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_PassKeyShape& GEOMAlgo_PassKeyShape::Assign(const GEOMAlgo_PassKeyShape& aOther)
 {
@@ -74,7 +74,7 @@ static
 }
 //=======================================================================
 //function :Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::Clear()
 {
@@ -84,10 +84,10 @@ static
 }
 //=======================================================================
 //function :SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::SetShapes(const TopoDS_Shape& aS1)
-                               
+
 {
   Standard_Integer aHC;
   //
@@ -99,7 +99,7 @@ static
 }
 //=======================================================================
 //function :SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
                                         const TopoDS_Shape& aS2)
@@ -112,7 +112,7 @@ static
 }
 //=======================================================================
 //function :SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
                                         const TopoDS_Shape& aS2,
@@ -127,7 +127,7 @@ static
 }
 //=======================================================================
 //function :SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::SetShapes(const TopoDS_Shape& aS1,
                                         const TopoDS_Shape& aS2,
@@ -144,7 +144,7 @@ static
 }
 //=======================================================================
 //function :SetShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::SetShapes(const TopTools_ListOfShape& aLS)
 {
@@ -167,7 +167,7 @@ static
 }
 //=======================================================================
 //function :NbIds
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKeyShape::NbIds()const
 {
@@ -175,7 +175,7 @@ static
 }
 //=======================================================================
 //function :IsEqual
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_PassKeyShape::IsEqual(const GEOMAlgo_PassKeyShape& aOther) const
 {
@@ -197,7 +197,7 @@ static
 }
 //=======================================================================
 //function : HashCode
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKeyShape::HashCode(const Standard_Integer aUpper) const
 {
@@ -205,14 +205,14 @@ static
 }
 //=======================================================================
 //function : Dump
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_PassKeyShape::Dump(const Standard_Integer)const
 {
 }
 //=======================================================================
 // function: NormalizedId
-// purpose : 
+// purpose :
 //=======================================================================
 Standard_Integer NormalizedId(const Standard_Integer aId,
                               const Standard_Integer aDiv)

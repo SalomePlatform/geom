@@ -240,17 +240,17 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(BOOST_CPPFLAGS)		\
         $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
-	-I$(srcdir)/../$(NMTDS_VAR)		\
-	-I$(srcdir)/../$(NMTTools_VAR)		\
+	-I$(srcdir)/../NMTDS		\
+	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
-	-I$(srcdir)/../$(GEOMAlgo_VAR)		\
+	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
 	../GEOM/libGEOMbasic.la			\
-	../$(GEOMAlgo_VAR)/libGEOMAlgo.la		\
+	../GEOMAlgo/libGEOMAlgo.la		\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\

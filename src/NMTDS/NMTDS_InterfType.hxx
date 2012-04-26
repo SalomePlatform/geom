@@ -17,12 +17,18 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:	NMTDS_InterfType.hxx
+// Created:	
+// Author:	Peter KURNEV
+//		<pkv@irinox>
+
+
 #ifndef _NMTDS_InterfType_HeaderFile
 #define _NMTDS_InterfType_HeaderFile
 
 
-enum NMTDS_InterfType { 
- NMTDS_TI_VV,
+enum NMTDS_InterfType {
+NMTDS_TI_VV,
 NMTDS_TI_VE,
 NMTDS_TI_VF,
 NMTDS_TI_EE,
@@ -30,7 +36,6 @@ NMTDS_TI_EF,
 NMTDS_TI_FF,
 NMTDS_TI_UNKNOWN
 };
-
 
 #ifndef _Standard_PrimitiveTypes_HeaderFile
 #include <Standard_PrimitiveTypes.hxx>

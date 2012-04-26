@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -19,157 +16,32 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
-#ifndef _NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
-#define _NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
-
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
-#include <Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-
-class Standard_DomainError;
-class Standard_OutOfRange;
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class TopTools_IndexedMapOfShape;
-class TopTools_ShapeMapHasher;
-class NMTTools_IndexedDataMapNodeOfIndexedDataMapOfShapeIndexedMapOfShape;
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-#include <Basics_OCCTVersion.hxx>
-
-class NMTTools_IndexedDataMapOfShapeIndexedMapOfShape  : public TCollection_BasicMap {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+// File:	NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx
+// Created:	Mon Feb 20 09:20:07 2012
+// Author:
+//		<pkv@BDEURI37616>
+// File:	NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx
+// Created:	Mon Feb 20 11:59:23 2012
+// Author:
+//		<pkv@BDEURI37616>
 
 
-Standard_EXPORT NMTTools_IndexedDataMapOfShapeIndexedMapOfShape(const Standard_Integer NbBuckets = 1);
+#ifndef NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
+#define NMTTools_IndexedDataMapOfShapeIndexedMapOfShape_HeaderFile
 
 
-Standard_EXPORT   NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Assign(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Other) ;
-  NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& operator =(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Other) 
-{
-  return Assign(Other);
-}
+#include <TopoDS_Shape.hxx>
+#include <TopTools_ShapeMapHasher.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#define _NCollection_MapHasher
+#include <NCollection_IndexedDataMap.hxx>
 
 
+typedef NCollection_IndexedDataMap <TopoDS_Shape, TopTools_IndexedMapOfShape, TopTools_ShapeMapHasher> NMTTools_IndexedDataMapOfShapeIndexedMapOfShape;
 
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-
-Standard_EXPORT   void Clear() ;
-~NMTTools_IndexedDataMapOfShapeIndexedMapOfShape()
-{
-  Clear();
-}
-
-
-
-Standard_EXPORT   Standard_Integer Add(const TopoDS_Shape& K,const TopTools_IndexedMapOfShape& I) ;
-
-
-Standard_EXPORT   void Substitute(const Standard_Integer I,const TopoDS_Shape& K,const TopTools_IndexedMapOfShape& T) ;
-
-
-Standard_EXPORT   void RemoveLast() ;
-
-
-Standard_EXPORT   Standard_Boolean Contains(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT  const TopoDS_Shape& FindKey(const Standard_Integer I) const;
-
-
-Standard_EXPORT  const TopTools_IndexedMapOfShape& FindFromIndex(const Standard_Integer I) const;
- const TopTools_IndexedMapOfShape& operator ()(const Standard_Integer I) const
-{
-  return FindFromIndex(I);
-}
-
-
-
-Standard_EXPORT   TopTools_IndexedMapOfShape& ChangeFromIndex(const Standard_Integer I) ;
-  TopTools_IndexedMapOfShape& operator ()(const Standard_Integer I) 
-{
-  return ChangeFromIndex(I);
-}
-
-
-
-Standard_EXPORT   Standard_Integer FindIndex(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT  const TopTools_IndexedMapOfShape& FindFromKey(const TopoDS_Shape& K) const;
-
-
-Standard_EXPORT   TopTools_IndexedMapOfShape& ChangeFromKey(const TopoDS_Shape& K) ;
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address FindFromKey1 (const TopoDS_Shape& K) const;
-  Standard_EXPORT Standard_Address ChangeFromKey1 (const TopoDS_Shape& K);
-#endif
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
-Standard_EXPORT NMTTools_IndexedDataMapOfShapeIndexedMapOfShape(const NMTTools_IndexedDataMapOfShapeIndexedMapOfShape& Other);
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
+#undef _NCollection_MapHasher
 
 
 #endif
+

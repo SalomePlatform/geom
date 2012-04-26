@@ -23,54 +23,56 @@
 // File:        NMTTools_Tools.cxx
 // Created:     Mon Dec  8 10:35:15 2003
 // Author:      Peter KURNEV
-
-#include <NMTTools_Tools.ixx>
-
-#include <Basics_OCCTVersion.hxx>
-
-#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
-#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
-#include <NMTTools_CoupleOfShape.hxx>
-
-#include <TopoDS.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TopoDS_Edge.hxx>
-#include <TopoDS_Iterator.hxx>
-
-#include <TopExp.hxx>
-#include <TopExp_Explorer.hxx>
-
-#include <TopTools_MapOfShape.hxx>
-#include <TopTools_MapIteratorOfMapOfShape.hxx>
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopTools_ListIteratorOfListOfShape.hxx>
-
-#include <BRep_Tool.hxx>
-#include <BRep_Builder.hxx>
-#include <BRepTools.hxx>
-#include <BRepLib.hxx>
-
-#include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
-#include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
-
-#include <BOPTools_VVInterference.hxx>
-#include <BOPTools_SSInterference.hxx>
-#include <BOPTools_Tools2D.hxx>
-#include <BOPTools_Tools3D.hxx>
-#include <BOPTools_Tools.hxx>
-
-#include <Geom_Curve.hxx>
-#include <Geom_TrimmedCurve.hxx>
-#include <Geom_Surface.hxx>
-#include <GeomAPI_ProjectPointOnSurf.hxx>
-#include <Geom2d_Curve.hxx>
+//              <pkv@irinox>
+//
+#include <NMTTools_Tools.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
 #include <gp_Pnt.hxx>
 #include <gp_XYZ.hxx>
 #include <gp_Pnt2d.hxx>
+
+#include <Geom_Surface.hxx>
+#include <GeomAPI_ProjectPointOnSurf.hxx>
+
+#include <TopoDS.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+
+#include <TopExp.hxx>
+
+#include <TopTools_ListIteratorOfListOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+
+#include <BRep_Tool.hxx>
+#include <BRep_Builder.hxx>
+#include <BRepTools.hxx>
+
+#include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
+#include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
+
+#include <BOPTools_VVInterference.hxx>
+#include <BOPTools_SSInterference.hxx>
+
+#include <BOPTools_Tools2D.hxx>
+#include <BOPTools_Tools.hxx>
+#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
+#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
+#include <NMTTools_CoupleOfShape.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <Geom2d_Curve.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_TrimmedCurve.hxx>
+#include <BOPTools_Tools2D.hxx>
+#include <BRepLib.hxx>
+#include <BOPTools_Tools3D.hxx>
+#include <TopExp_Explorer.hxx>
+//
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_MapIteratorOfMapOfShape.hxx>
+#include <TopoDS_Iterator.hxx>
 
 static
   void ProcessBlock(const Standard_Integer iV,
@@ -115,6 +117,7 @@ static
   void  NMTTools_Tools::MakePCurve(const TopoDS_Edge& aE,
                                     const TopoDS_Face& aF,
                                     const Handle(Geom2d_Curve)& aC2Dx1)
+
 {
   Standard_Real aTolE, aT1, aT2, aOutFirst, aOutLast, aOutTol;
   Handle(Geom2d_Curve) aC2D, aC2DA;
@@ -212,11 +215,7 @@ static
 //=======================================================================
   Standard_Boolean NMTTools_Tools::IsSplitInOnFace(const TopoDS_Edge& aE,
                                                    const TopoDS_Face& aF,
-#if OCC_VERSION_LARGE > 0x06050200
                                                    const Handle(IntTools_Context)& aContext)
-#else
-                                                   IntTools_Context& aContext)
-#endif
 {
   Standard_Boolean bFlag;
   Standard_Real aT, aTolE, aTolF, aTol, aDist, aU, aV;
@@ -227,11 +226,7 @@ static
   aTolF=BRep_Tool::Tolerance(aF);
   aTol=aTolE+aTolF;
   //
-#if OCC_VERSION_LARGE > 0x06050200
   GeomAPI_ProjectPointOnSurf& aProjector=aContext->ProjPS(aF);
-#else
-  GeomAPI_ProjectPointOnSurf& aProjector=aContext.ProjPS(aF);
-#endif
   //
   aT=BOPTools_Tools2D::IntermediatePoint(aE);
   BOPTools_Tools::PointOnEdge(aE, aT, aP);
@@ -250,11 +245,7 @@ static
   //
   aProjector.LowerDistanceParameters(aU, aV);
   aP2D.SetCoord(aU, aV);
-#if OCC_VERSION_LARGE > 0x06050200
   bFlag=aContext->IsPointInOnFace (aF, aP2D);
-#else
-  bFlag=aContext.IsPointInOnFace (aF, aP2D);
-#endif
   return bFlag;
 }
 //=======================================================================
@@ -450,11 +441,7 @@ void ProcessBlock(const Standard_Integer iV,
 //=======================================================================
   Standard_Boolean NMTTools_Tools::AreFacesSameDomain(const TopoDS_Face& aF1x,
                                                       const TopoDS_Face& aF2y,
-#if OCC_VERSION_LARGE > 0x06050200
                                                       const Handle(IntTools_Context)& aCtx)
-#else
-                                                      IntTools_Context& aCtx)
-#endif
 {
   Standard_Boolean bFlag;
   // Modified  Thu Sep 14 14:35:18 2006
@@ -521,11 +508,7 @@ void ProcessBlock(const Standard_Integer iV,
   for (; aIt.More(); aIt.Next()) {
     const TopoDS_Edge& aE=TopoDS::Edge(aIt.Key());
     BOPTools_Tools3D::PointNearEdge(aE, aF1, aP2D, aP);
-#if OCC_VERSION_LARGE > 0x06050200
     bFlag=aCtx->IsValidPointForFace(aP, aF2, aTol);
-#else
-    bFlag=aCtx.IsValidPointForFace(aP, aF2, aTol);
-#endif
     break;
   }
   //

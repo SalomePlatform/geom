@@ -42,24 +42,24 @@ Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(BlockFix_PeriodicSurfaceModi
 
 class Handle(BlockFix_PeriodicSurfaceModifier) : public Handle(BRepTools_Modification) {
   public:
-    void* operator new(size_t,void* anAddress) 
+    void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
-    Handle(BlockFix_PeriodicSurfaceModifier)():Handle(BRepTools_Modification)() {} 
-    Handle(BlockFix_PeriodicSurfaceModifier)(const Handle(BlockFix_PeriodicSurfaceModifier)& aHandle) : Handle(BRepTools_Modification)(aHandle) 
+    Handle(BlockFix_PeriodicSurfaceModifier)():Handle(BRepTools_Modification)() {}
+    Handle(BlockFix_PeriodicSurfaceModifier)(const Handle(BlockFix_PeriodicSurfaceModifier)& aHandle) : Handle(BRepTools_Modification)(aHandle)
      {
      }
 
-    Handle(BlockFix_PeriodicSurfaceModifier)(const BlockFix_PeriodicSurfaceModifier* anItem) : Handle(BRepTools_Modification)((BRepTools_Modification *)anItem) 
+    Handle(BlockFix_PeriodicSurfaceModifier)(const BlockFix_PeriodicSurfaceModifier* anItem) : Handle(BRepTools_Modification)((BRepTools_Modification *)anItem)
      {
      }
 
@@ -75,18 +75,18 @@ class Handle(BlockFix_PeriodicSurfaceModifier) : public Handle(BRepTools_Modific
       return *this;
      }
 
-    BlockFix_PeriodicSurfaceModifier* operator->() 
+    BlockFix_PeriodicSurfaceModifier* operator->()
      {
       return (BlockFix_PeriodicSurfaceModifier *)ControlAccess();
      }
 
-    BlockFix_PeriodicSurfaceModifier* operator->() const 
+    BlockFix_PeriodicSurfaceModifier* operator->() const
      {
       return (BlockFix_PeriodicSurfaceModifier *)ControlAccess();
      }
 
    Standard_EXPORT ~Handle(BlockFix_PeriodicSurfaceModifier)();
- 
+
    Standard_EXPORT static const Handle(BlockFix_PeriodicSurfaceModifier) DownCast(const Handle(Standard_Transient)& AnObject);
 };
 #endif

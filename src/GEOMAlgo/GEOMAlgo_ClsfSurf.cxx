@@ -25,14 +25,17 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_ClsfSurf.ixx>
+#include <GEOMAlgo_ClsfSurf.hxx>
 #include <GeomAbs_SurfaceType.hxx>
 #include <GEOMAlgo_SurfaceTools.hxx>
 #include <GeomAdaptor_Curve.hxx>
 
+IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf);
+
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSurf::GEOMAlgo_ClsfSurf()
 :
@@ -41,14 +44,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSurf::~GEOMAlgo_ClsfSurf()
 {
 }
 //=======================================================================
 //function : SetSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::SetSurface(const Handle(Geom_Surface)& aS)
 {
@@ -56,7 +59,7 @@
 }
 //=======================================================================
 //function : Surface
-//purpose  : 
+//purpose  :
 //=======================================================================
   const Handle(Geom_Surface)& GEOMAlgo_ClsfSurf::Surface() const
 {
@@ -64,7 +67,7 @@
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::CheckData()
 {
@@ -79,7 +82,7 @@
   //
   myGAS.Load(myS);
   aType=myGAS.GetType();
-  if (!(aType==GeomAbs_Plane || 
+  if (!(aType==GeomAbs_Plane ||
         aType==GeomAbs_Cylinder ||
         aType==GeomAbs_Sphere)) {
     myErrorStatus=11; // unallowed surface type
@@ -87,7 +90,7 @@
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSurf::Perform()
 {
@@ -102,7 +105,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfSurf::CanBeON(const Handle(Geom_Curve)& aC) const
 {
@@ -121,7 +124,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ClsfSurf::CanBeON(const Handle(Geom_Surface)& aS1) const
 {

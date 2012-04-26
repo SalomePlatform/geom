@@ -25,17 +25,17 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_CoupleOfShape.ixx>
+#include <NMTTools_CoupleOfShape.hxx>
 
 //=======================================================================
 // function: NMTTools_CoupleOfShape::NMTTools_CoupleOfShape
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CoupleOfShape::NMTTools_CoupleOfShape()
 {}
 //=======================================================================
 // function: SetShape1
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CoupleOfShape::SetShape1(const TopoDS_Shape& aS)
 {
@@ -43,7 +43,7 @@
 }
 //=======================================================================
 // function: SetShape2
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_CoupleOfShape::SetShape2(const TopoDS_Shape& aS)
 {
@@ -51,7 +51,7 @@
 }
 //=======================================================================
 // function: Shape1
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& NMTTools_CoupleOfShape::Shape1()const
 {
@@ -59,7 +59,7 @@
 }
 //=======================================================================
 // function: Shape2
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& NMTTools_CoupleOfShape::Shape2()const
 {

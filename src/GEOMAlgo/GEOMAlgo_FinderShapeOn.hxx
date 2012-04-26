@@ -1,3 +1,4 @@
+
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
@@ -20,127 +21,101 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_FinderShapeOn.hxx
+// Created:     Tue Jan 11 14:44:31 2005
+// Author:      Peter KURNEV
+
 #ifndef _GEOMAlgo_FinderShapeOn_HeaderFile
 #define _GEOMAlgo_FinderShapeOn_HeaderFile
 
-#ifndef _Handle_Geom_Surface_HeaderFile
-#include <Handle_Geom_Surface.hxx>
-#endif
-#ifndef _TopAbs_ShapeEnum_HeaderFile
-#include <TopAbs_ShapeEnum.hxx>
-#endif
-#ifndef _GEOMAlgo_State_HeaderFile
-#include <GEOMAlgo_State.hxx>
-#endif
-#ifndef _TopoDS_Shape_HeaderFile
-#include <TopoDS_Shape.hxx>
-#endif
-#ifndef _TopTools_ListOfShape_HeaderFile
-#include <TopTools_ListOfShape.hxx>
-#endif
-#ifndef _TopTools_DataMapOfShapeShape_HeaderFile
-#include <TopTools_DataMapOfShapeShape.hxx>
-#endif
-#ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
-#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
-#include <GEOMAlgo_ShapeAlgo.hxx>
-#endif
-class Geom_Surface;
-class TopTools_ListOfShape;
-class TopoDS_Shape;
-class TopTools_DataMapOfShapeShape;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Handle_Geom_Surface.hxx>
+#include <TopAbs_ShapeEnum.hxx>
+#include <GEOMAlgo_State.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopTools_ListOfShape.hxx>
+#include <TopTools_DataMapOfShapeShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
+#include <Standard_Boolean.hxx>
+#include <GEOMAlgo_ShapeAlgo.hxx>
+#include <Geom_Surface.hxx>
+#include <TopoDS_Shape.hxx>
 
+//=======================================================================
+//function : GEOMAlgo_FinderShapeOn
+//purpose  :
+//=======================================================================
+class GEOMAlgo_FinderShapeOn  : public GEOMAlgo_ShapeAlgo
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_FinderShapeOn();
 
-class GEOMAlgo_FinderShapeOn  : public GEOMAlgo_ShapeAlgo {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_FinderShapeOn();
 
-public:
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
+  Standard_EXPORT
+    void SetSurface(const Handle(Geom_Surface)& aS) ;
 
+  Standard_EXPORT
+    void SetShapeType(const TopAbs_ShapeEnum aST) ;
 
-  Standard_EXPORT GEOMAlgo_FinderShapeOn();
-  Standard_EXPORT virtual ~GEOMAlgo_FinderShapeOn();
+  Standard_EXPORT
+    void SetState(const GEOMAlgo_State aSF) ;
 
-  Standard_EXPORT virtual void Perform();
+  Standard_EXPORT
+    const Handle_Geom_Surface& Surface() const;
 
-  Standard_EXPORT   void SetSurface(const Handle(Geom_Surface)& aS) ;
+  Standard_EXPORT
+    TopAbs_ShapeEnum ShapeType() const;
 
-  Standard_EXPORT   void SetShapeType(const TopAbs_ShapeEnum aST) ;
+  Standard_EXPORT
+    GEOMAlgo_State State() const;
 
-  Standard_EXPORT   void SetState(const GEOMAlgo_State aSF) ;
+  Standard_EXPORT
+    const TopTools_ListOfShape& Shapes() const;
 
-  Standard_EXPORT  const Handle_Geom_Surface& Surface() const;
+  Standard_EXPORT
+    static  void CopySource(const TopoDS_Shape& aS,
+			    TopTools_DataMapOfShapeShape& aImages,
+			    TopTools_DataMapOfShapeShape& aOriginals,
+			    TopoDS_Shape& aSC) ;
 
-  Standard_EXPORT   TopAbs_ShapeEnum ShapeType() const;
-
-  Standard_EXPORT   GEOMAlgo_State State() const;
-
-  Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
-
-  Standard_EXPORT static void CopySource (const TopoDS_Shape& aS,
-                                          TopTools_DataMapOfShapeShape& aImages,
-                                          TopTools_DataMapOfShapeShape& aOriginals,
-                                          TopoDS_Shape& aSC) ;
-
-  Standard_EXPORT static Standard_Boolean BuildTriangulation (const TopoDS_Shape& theShape);
-
+  Standard_EXPORT
+    static  Standard_Boolean BuildTriangulation(const TopoDS_Shape& aS) ;
 
 protected:
+  Standard_EXPORT
+    virtual  void CheckData() ;
+
+  Standard_EXPORT
+    void MakeArgument1() ;
+
+  Standard_EXPORT
+    void MakeArgument2() ;
+
+  Standard_EXPORT
+    void Find() ;
+
+  Standard_EXPORT
+    void Find(const TopoDS_Shape& aS) ;
+
+  Standard_EXPORT
+    void FindVertices() ;
 
 
-  Standard_EXPORT virtual  void CheckData() ;
-
-  Standard_EXPORT   void MakeArgument1() ;
-
-  Standard_EXPORT   void MakeArgument2() ;
-
-  Standard_EXPORT   void Find() ;
-
-  Standard_EXPORT   void Find(const TopoDS_Shape& aS) ;
-
-  Standard_EXPORT   void FindVertices() ;
-
-
-Handle_Geom_Surface mySurface;
-TopAbs_ShapeEnum myShapeType;
-GEOMAlgo_State myState;
-TopoDS_Shape myArg1;
-TopoDS_Shape myArg2;
-TopTools_ListOfShape myLS;
-TopTools_DataMapOfShapeShape myImages;
-GEOMAlgo_IndexedDataMapOfShapeState myMSS;
-Standard_Boolean myIsAnalytic;
-
-
-private: 
-
-
+  Handle_Geom_Surface mySurface;
+  TopAbs_ShapeEnum myShapeType;
+  GEOMAlgo_State myState;
+  TopoDS_Shape myArg1;
+  TopoDS_Shape myArg2;
+  TopTools_ListOfShape myLS;
+  TopTools_DataMapOfShapeShape myImages;
+  GEOMAlgo_IndexedDataMapOfShapeState myMSS;
+  Standard_Boolean myIsAnalytic;
 };
-
-// other Inline functions and methods (like "C++: function call" methods)
-
 #endif

@@ -23,9 +23,7 @@
 //  Created:     Mon Dec  8 17:08:58 2003
 //  Author:      Peter KURNEV
 
-#include <NMTTools_PaveFiller.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <stdio.h>
 #include <Precision.hxx>
@@ -67,6 +65,7 @@
 #include <IntTools_EdgeEdge.hxx>
 #include <IntTools_SequenceOfCommonPrts.hxx>
 #include <IntTools_Tools.hxx>
+#include <IntTools_Context.hxx>
 
 #include <BOPTools_Pave.hxx>
 #include <BOPTools_PaveSet.hxx>
@@ -481,11 +480,7 @@ void NMTTools_PaveFiller::TreatPaveBlocks (NMTTools_ListOfCommonBlock& theLCB)
           // Append Pave of nV to rhe edge nE
           const TopoDS_Edge& aE=*(TopoDS_Edge*)(&myDS->Shape(nE));
           const TopoDS_Vertex& aV= *(TopoDS_Vertex*)(&myDS->Shape(nV));
-#if OCC_VERSION_LARGE > 0x06050200
           iFlag=myContext->ComputeVE (aV, aE, aT);
-#else
-          iFlag=myContext.ComputeVE (aV, aE, aT);
-#endif
           if (!iFlag) {
             BOPTools_Pave aPave;
             //
@@ -575,11 +570,7 @@ void NMTTools_PaveFiller::EENewVertices (const BooleanOperations_IndexedDataMapO
       for (j=0; j<2; ++j) {
         if (aMFence.Add(nE[j])) {
           aE=TopoDS::Edge(myDS->Shape(nE[j]));
-#if OCC_VERSION_LARGE > 0x06050200
           iFlag=myContext->ComputeVE (aVnew, aE, aT);
-#else
-          iFlag=myContext.ComputeVE (aVnew, aE, aT);
-#endif
           if (!iFlag) {
             aPave.SetInterference(-1);
             aPave.SetType (BooleanOperations_EdgeEdge);
@@ -1201,7 +1192,7 @@ void NMTTools_PaveFiller::SplitCommonBlocks(const NMTTools_ListOfCommonBlock& aL
     //
     anIt.Initialize(aLCBE);
     for (; anIt.More(); anIt.Next()) {
-      NMTTools_CommonBlock& aCBE=anIt.Value();
+      NMTTools_CommonBlock& aCBE=anIt.ChangeValue();
       const BOPTools_ListOfPaveBlock& aLPBE=aCBE.PaveBlocks();
       //
       aTolMax=-1.;
@@ -1563,11 +1554,7 @@ void ProcessBlock(const BOPTools_PaveBlock& aPB,
       }
       //
       anIndexIn=0;
-#if OCC_VERSION_LARGE > 0x06050200
       aFlag=myContext->ComputeVS (aVnew, aF, aU, aV);
-#else
-      aFlag=myContext.ComputeVS (aVnew, aF, aU, aV);
-#endif
       if (!aFlag) {
         BOPTools_VSInterference anInterf (nNewShape, nF, aU, aV);
         //
@@ -1606,11 +1593,7 @@ Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock&
   nE2=aPB2.OriginalEdge();
   const TopoDS_Edge& aE2=(*(TopoDS_Edge*)(&myDS->Shape(nE2)));
   //
-#if OCC_VERSION_LARGE > 0x06050200
   GeomAPI_ProjectPointOnCurve& aPPC=myContext->ProjPC(aE2);
-#else
-  GeomAPI_ProjectPointOnCurve& aPPC=myContext.ProjPC(aE2);
-#endif
   aPPC.Perform(aP1m);
   aNbPoints=aPPC.NbPoints();
   if (aNbPoints) {

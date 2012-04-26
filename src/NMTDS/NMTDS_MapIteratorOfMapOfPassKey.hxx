@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -20,93 +17,17 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#ifndef _NMTDS_MapIteratorOfMapOfPassKey_HeaderFile
-#define _NMTDS_MapIteratorOfMapOfPassKey_HeaderFile
+// File:	NMRCol_MapIteratorOfMapOfPassKey.hxx
+// Created:	Mon Feb 20 08:22:39 2012
+// Author:	
+//		<pkv@BDEURI37616>
 
-#ifndef _TCollection_BasicMapIterator_HeaderFile
-#include <TCollection_BasicMapIterator.hxx>
+
+#ifndef NMRCol_MapIteratorOfMapOfPassKey_HeaderFile
+#define NMRCol_MapIteratorOfMapOfPassKey_HeaderFile
+
+#ifndef NMTDS_MapOfPassKey_HeaderFile
+#include <NMTDS_MapOfPassKey.hxx>  
 #endif
-#ifndef _Handle_NMTDS_StdMapNodeOfMapOfPassKey_HeaderFile
-#include <Handle_NMTDS_StdMapNodeOfMapOfPassKey.hxx>
-#endif
-class Standard_NoSuchObject;
-class NMTDS_PassKey;
-class NMTDS_PassKeyMapHasher;
-class NMTDS_MapOfPassKey;
-class NMTDS_StdMapNodeOfMapOfPassKey;
-
-
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
-
-
-class NMTDS_MapIteratorOfMapOfPassKey  : public TCollection_BasicMapIterator {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT NMTDS_MapIteratorOfMapOfPassKey();
-
-
-Standard_EXPORT NMTDS_MapIteratorOfMapOfPassKey(const NMTDS_MapOfPassKey& aMap);
-
-
-Standard_EXPORT   void Initialize(const NMTDS_MapOfPassKey& aMap) ;
-
-
-Standard_EXPORT  const NMTDS_PassKey& Key() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

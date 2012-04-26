@@ -23,7 +23,7 @@
 // File:        GEOMAlgo_BuilderTools.cxx
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_BuilderTools.ixx>
+#include <GEOMAlgo_BuilderTools.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -64,7 +64,7 @@
 #include <Bnd_Box.hxx>
 #include <BRepAdaptor_Curve2d.hxx>
 
-static 
+static
   Standard_Integer ComputeProps(const TopoDS_Face& aF,
                                 Standard_Real& aA,
                                 Standard_Real& aV);
@@ -73,7 +73,7 @@ static
 
 //=======================================================================
 //function : IsHole
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderTools::IsHole(const TopoDS_Shape& aW,
                                                  const TopoDS_Shape& aFace)
@@ -84,7 +84,7 @@ static
   Standard_Real aU1, aU2, aU, dU;
   Standard_Real aX1, aY1, aX0, aY0;
   TopAbs_Orientation aOr;
-  
+
   gp_Pnt2d aP2D0, aP2D1;
   Handle(Geom2d_Curve) aC2D;
   TopoDS_Face aF, aFF;
@@ -98,10 +98,10 @@ static
   //
   aS=0.;
   aItW.Initialize(aW);
-  for (; aItW.More(); aItW.Next()) { 
+  for (; aItW.More(); aItW.Next()) {
     const TopoDS_Edge& aE=TopoDS::Edge(aItW.Value());
     aOr=aE.Orientation();
-    if (!(aOr==TopAbs_FORWARD || 
+    if (!(aOr==TopAbs_FORWARD ||
           aOr==TopAbs_REVERSED)) {
       continue;
     }
@@ -135,17 +135,17 @@ static
       aP2D0.Coord(aX0, aY0);
       aP2D1.Coord(aX1, aY1);
       //
-      aS=aS+(aY0+aY1)*(aX1-aX0); 
+      aS=aS+(aY0+aY1)*(aX1-aX0);
       //
       aP2D0=aP2D1;
     }
-  }//for (; aItW.More(); aItW.Next()) { 
+  }//for (; aItW.More(); aItW.Next()) {
   bIsHole=(aS>0.);
   return bIsHole;
 }
 //=======================================================================
 //function : IsHole
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_BuilderTools::IsHole(const TopoDS_Shape& aShell)
 {
@@ -171,7 +171,7 @@ static
 }
 //=======================================================================
 //function : ComputeProps
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer ComputeProps(const TopoDS_Face& aF,
                               Standard_Real& aA,
@@ -244,7 +244,7 @@ Standard_Integer ComputeProps(const TopoDS_Face& aF,
 }
 //=======================================================================
 //function : BuildTriangulation
-//purpose  : 
+//purpose  :
 //=======================================================================
 void BuildTriangulation(const TopoDS_Face& aF)
 {

@@ -20,103 +20,62 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_ClsfSurf.hxx
+// Created:     Wed Nov 22 10:41:47 2006
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_ClsfSurf_HeaderFile
 #define _GEOMAlgo_ClsfSurf_HeaderFile
 
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_ClsfSurf_HeaderFile
-#include <Handle_GEOMAlgo_ClsfSurf.hxx>
-#endif
-
-#ifndef _Handle_Geom_Surface_HeaderFile
+#include <Standard_DefineHandle.hxx>
+//#include <Handle_GEOMAlgo_ClsfSurf.hxx>
 #include <Handle_Geom_Surface.hxx>
-#endif
-#ifndef _GeomAdaptor_Surface_HeaderFile
 #include <GeomAdaptor_Surface.hxx>
-#endif
-#ifndef _GEOMAlgo_Clsf_HeaderFile
 #include <GEOMAlgo_Clsf.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
-#endif
-#ifndef _Handle_Geom_Curve_HeaderFile
 #include <Handle_Geom_Curve.hxx>
-#endif
-class Geom_Surface;
-class Geom_Curve;
+#include <Geom_Surface.hxx>
+#include <Geom_Curve.hxx>
 
+DEFINE_STANDARD_HANDLE(GEOMAlgo_ClsfSurf, GEOMAlgo_Clsf)
 
+//=======================================================================
+// class   : GEOMAlgo_ClsfSurf
+//purpose  :
+//=======================================================================
+class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_ClsfSurf();
 
-class GEOMAlgo_ClsfSurf : public GEOMAlgo_Clsf {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_ClsfSurf();
 
-public:
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    void SetSurface(const Handle(Geom_Surface)& aS) ;
 
+  Standard_EXPORT
+    const Handle_Geom_Surface& Surface() const;
 
-Standard_EXPORT GEOMAlgo_ClsfSurf();
-Standard_EXPORT virtual ~GEOMAlgo_ClsfSurf();
+  Standard_EXPORT
+    virtual  void Perform() ;
 
+  Standard_EXPORT
+    virtual  void CheckData() ;
 
-Standard_EXPORT   void SetSurface(const Handle(Geom_Surface)& aS) ;
+  Standard_EXPORT
+    virtual  Standard_Boolean CanBeON(const Handle(Geom_Curve)& aC) const;
 
+  Standard_EXPORT
+    virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
 
-Standard_EXPORT  const Handle_Geom_Surface& Surface() const;
+  DEFINE_STANDARD_RTTI(GEOMAlgo_ClsfSurf);
 
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT virtual  void CheckData() ;
-
-
-Standard_EXPORT virtual  Standard_Boolean CanBeON(const Handle(Geom_Curve)& aC) const;
-
-
-Standard_EXPORT virtual  Standard_Boolean CanBeON(const Handle(Geom_Surface)& aST) const;
-//Standard_EXPORT ~GEOMAlgo_ClsfSurf();
-
-
-
-
- // Type management
- //
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-Handle_Geom_Surface myS;
-GeomAdaptor_Surface myGAS;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+ protected:
+  Handle_Geom_Surface myS;
+  GeomAdaptor_Surface myGAS;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

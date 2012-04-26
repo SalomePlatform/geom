@@ -20,98 +20,58 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_BuilderSolid.hxx
+// Created:
+// Author:      Peter KURNEV
+//
 #ifndef _GEOMAlgo_BuilderSolid_HeaderFile
 #define _GEOMAlgo_BuilderSolid_HeaderFile
 
-#ifndef _GEOMAlgo_BuilderArea_HeaderFile
-#include <GEOMAlgo_BuilderArea.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <GEOMAlgo_BuilderArea.hxx>
 
 //! The algorithm to build solids from set of faces <br>
-class GEOMAlgo_BuilderSolid  : public GEOMAlgo_BuilderArea {
+//=======================================================================
+//function : GEOMAlgo_BuilderSolid
+//purpose  :
+//=======================================================================
+class GEOMAlgo_BuilderSolid  : public GEOMAlgo_BuilderArea
+{
+ public:
+  //!  Empty  constructor <br>
+  Standard_EXPORT
+    GEOMAlgo_BuilderSolid();
 
-public:
+  Standard_EXPORT
+    virtual ~GEOMAlgo_BuilderSolid();
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  //!  Performs the algorithm <br>
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-//!  Empty  constructor <br>
-Standard_EXPORT GEOMAlgo_BuilderSolid();
-Standard_EXPORT virtual ~GEOMAlgo_BuilderSolid();
+ protected:
+  //!  Collect the faces that <br>
+  //!           a) are internal <br>
+  //!           b) are the same and have different orientation <br>
+  Standard_EXPORT
+    virtual  void PerformShapesToAvoid() ;
 
-//!  Performs the algorithm <br>
-Standard_EXPORT virtual  void Perform() ;
+  //! Build draft shells <br>
+  //!          a)myLoops - draft shells that consist of <br>
+  //!                       boundary faces <br>
+  //!          b)myLoopsInternal - draft shells that contains <br>
+  //!                               inner faces <br>
+  Standard_EXPORT
+    virtual  void PerformLoops() ;
 
+  //! Build draft solids that contains boundary faces <br>
+  Standard_EXPORT
+    virtual  void PerformAreas() ;
 
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-//!  Collect the faces that <br>
-//!           a) are internal <br>
-//!           b) are the same and have different orientation <br>
-Standard_EXPORT virtual  void PerformShapesToAvoid() ;
-
-//! Build draft shells <br>
-//!          a)myLoops - draft shells that consist of <br>
-//!                       boundary faces <br>
-//!          b)myLoopsInternal - draft shells that contains <br>
-//!                               inner faces <br>
-Standard_EXPORT virtual  void PerformLoops() ;
-
-//! Build draft solids that contains boundary faces <br>
-Standard_EXPORT virtual  void PerformAreas() ;
-
-//! Build finalized solids with internal shells <br>
-Standard_EXPORT virtual  void PerformInternalShapes() ;
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+  //! Build finalized solids with internal shells <br>
+  Standard_EXPORT
+    virtual  void PerformInternalShapes() ;
 
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

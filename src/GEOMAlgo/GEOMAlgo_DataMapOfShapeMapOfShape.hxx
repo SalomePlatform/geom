@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -19,102 +16,29 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	GEOMAlgo_DataMapOfShapeMapOfShape.hxx
+// Created:	Wed Feb 22 11:07:16 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _GEOMAlgo_DataMapOfShapeMapOfShape_HeaderFile
-#define _GEOMAlgo_DataMapOfShapeMapOfShape_HeaderFile
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
+#ifndef GEOMAlgo_DataMapOfShapeMapOfShape_HeaderFile
+#define GEOMAlgo_DataMapOfShapeMapOfShape_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
 
-class Standard_DomainError;
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class TopTools_MapOfShape;
-class TopTools_ShapeMapHasher;
-class GEOMAlgo_DataMapNodeOfDataMapOfShapeMapOfShape;
-class GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape;
+#include <TopoDS_Shape.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TopTools_ShapeMapHasher.hxx>
 
-#include <Basics_OCCTVersion.hxx>
+#define _NCollection_MapHasher
+#include <NCollection_DataMap.hxx>
 
-class GEOMAlgo_DataMapOfShapeMapOfShape  : public TCollection_BasicMap {
-public:
 
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
+typedef NCollection_DataMap<TopoDS_Shape, TopTools_MapOfShape, TopTools_ShapeMapHasher> GEOMAlgo_DataMapOfShapeMapOfShape;
+typedef GEOMAlgo_DataMapOfShapeMapOfShape::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfShapeMapOfShape;
 
-  
-  Standard_EXPORT   GEOMAlgo_DataMapOfShapeMapOfShape(const Standard_Integer NbBuckets = 1);
-  
-  Standard_EXPORT     GEOMAlgo_DataMapOfShapeMapOfShape& Assign(const GEOMAlgo_DataMapOfShapeMapOfShape& Other) ;
-    GEOMAlgo_DataMapOfShapeMapOfShape& operator =(const GEOMAlgo_DataMapOfShapeMapOfShape& Other) 
-{
-  return Assign(Other);
-}
-  
-  Standard_EXPORT     void ReSize(const Standard_Integer NbBuckets) ;
-  
-  Standard_EXPORT     void Clear() ;
-~GEOMAlgo_DataMapOfShapeMapOfShape()
-{
-  Clear();
-}
-  
-  Standard_EXPORT     Standard_Boolean Bind(const TopoDS_Shape& K,const TopTools_MapOfShape& I) ;
-  
-  Standard_EXPORT     Standard_Boolean IsBound(const TopoDS_Shape& K) const;
-  
-  Standard_EXPORT     Standard_Boolean UnBind(const TopoDS_Shape& K) ;
-  
-  Standard_EXPORT    const TopTools_MapOfShape& Find(const TopoDS_Shape& K) const;
-   const TopTools_MapOfShape& operator()(const TopoDS_Shape& K) const
-{
-  return Find(K);
-}
-  
-  Standard_EXPORT     TopTools_MapOfShape& ChangeFind(const TopoDS_Shape& K) ;
-    TopTools_MapOfShape& operator()(const TopoDS_Shape& K) 
-{
-  return ChangeFind(K);
-}
+#undef _NCollection_MapHasher
 
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address Find1 (const TopoDS_Shape& K) const;
-  Standard_EXPORT Standard_Address ChangeFind1 (const TopoDS_Shape& K);
-#endif
 
-private:
-  
-  Standard_EXPORT   GEOMAlgo_DataMapOfShapeMapOfShape(const GEOMAlgo_DataMapOfShapeMapOfShape& Other);
-
-};
-
-// other Inline functions and methods (like "C++: function call" methods)
 
 #endif

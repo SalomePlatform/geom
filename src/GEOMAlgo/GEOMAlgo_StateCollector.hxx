@@ -20,89 +20,37 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_StateCollector.hxx
+// Created:     Thu Mar 10 09:42:11 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_StateCollector_HeaderFile
 #define _GEOMAlgo_StateCollector_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _TopAbs_State_HeaderFile
-#include <TopAbs_State.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Integer.hxx>
+#include <Standard_Boolean.hxx>
+#include <TopAbs_State.hxx>
 
+//=======================================================================
+// class   : GEOMAlgo_StateCollector
+//purpose  :
+//=======================================================================
+class GEOMAlgo_StateCollector
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_StateCollector();
 
-class GEOMAlgo_StateCollector  {
+  Standard_EXPORT
+    Standard_Boolean AppendState(const TopAbs_State aSt) ;
 
-public:
+  Standard_EXPORT
+    TopAbs_State State() const;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT GEOMAlgo_StateCollector();
-
-
-Standard_EXPORT   Standard_Boolean AppendState(const TopAbs_State aSt) ;
-
-
-Standard_EXPORT   TopAbs_State State() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-Standard_Integer myCounter[3];
-
-
+ protected:
+  Standard_Integer myCounter[3];
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

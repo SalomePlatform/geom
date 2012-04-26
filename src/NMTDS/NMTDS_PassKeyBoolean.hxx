@@ -20,88 +20,41 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_PassKeyBoolean.hxx
+// Created:     
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _NMTDS_PassKeyBoolean_HeaderFile
 #define _NMTDS_PassKeyBoolean_HeaderFile
 
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-#ifndef _NMTDS_PassKey_HeaderFile
-#include <NMTDS_PassKey.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Boolean.hxx>
+#include <NMTDS_PassKey.hxx>
 
-
+//=======================================================================
+//class    : NMTDS_PassKeyBoolean
+//purpose  : 
+//=======================================================================
 class NMTDS_PassKeyBoolean  : public NMTDS_PassKey {
+ public:
+  Standard_EXPORT 
+    NMTDS_PassKeyBoolean();
 
-public:
+  Standard_EXPORT
+    virtual ~NMTDS_PassKeyBoolean();
+  
+  Standard_EXPORT
+    void SetFlag(const Standard_Boolean aFlag) ;
+  
+  Standard_EXPORT
+    NMTDS_PassKeyBoolean& operator =(const NMTDS_PassKeyBoolean& Other);
+  
+  Standard_EXPORT
+    Standard_Boolean Flag() const;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT NMTDS_PassKeyBoolean();
-Standard_EXPORT virtual ~NMTDS_PassKeyBoolean();
-
-
-Standard_EXPORT   void SetFlag(const Standard_Boolean aFlag) ;
- Standard_EXPORT NMTDS_PassKeyBoolean& operator =(const NMTDS_PassKeyBoolean& Other);
-
-
-Standard_EXPORT   Standard_Boolean Flag() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-Standard_Boolean myFlag;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+ protected:
+  Standard_Boolean myFlag;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

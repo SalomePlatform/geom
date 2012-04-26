@@ -24,19 +24,7 @@
 // Created:     Fri Mar  4 10:31:06 2005
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_FinderShapeOn1.ixx>
-
-#include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
-
-#include <GEOMAlgo_SurfaceTools.hxx>
-#include <GEOMAlgo_StateCollector.hxx>
-#include <GEOMAlgo_FinderShapeOn.hxx>
-
-#include <GEOMAlgo_PassKey.hxx>
-#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
-#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
-
-#include <Basics_OCCTVersion.hxx>
+#include <GEOMAlgo_FinderShapeOn1.hxx>
 
 #include <math.h>
 
@@ -79,6 +67,16 @@
 
 #include <BRep_Tool.hxx>
 #include <BRepLib_MakeEdge.hxx>
+
+#include <GEOMAlgo_ListIteratorOfListOfPnt.hxx>
+
+#include <GEOMAlgo_SurfaceTools.hxx>
+#include <GEOMAlgo_StateCollector.hxx>
+#include <GEOMAlgo_FinderShapeOn.hxx>
+
+#include <GEOMAlgo_PassKey.hxx>
+#include <GEOMAlgo_DataMapOfPassKeyInteger.hxx>
+#include <GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyInteger.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn1
@@ -226,10 +224,8 @@ void GEOMAlgo_FinderShapeOn1::Perform()
     return;
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_ShapeAlgo::Perform();
-#endif
   //
   // 1
   ProcessVertices();

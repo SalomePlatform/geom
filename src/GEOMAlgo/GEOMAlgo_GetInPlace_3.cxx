@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_GetInPlaceIterator.cxx
-// Created:	
+// Created:
 // Author:	Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
@@ -32,8 +32,8 @@ static
 				 const TopAbs_ShapeEnum aType2);
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
 GEOMAlgo_GetInPlaceIterator::GEOMAlgo_GetInPlaceIterator()
 {
@@ -41,14 +41,14 @@ GEOMAlgo_GetInPlaceIterator::GEOMAlgo_GetInPlaceIterator()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_GetInPlaceIterator::~GEOMAlgo_GetInPlaceIterator()
 {
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlaceIterator::Clear()
 {
@@ -60,7 +60,7 @@ void GEOMAlgo_GetInPlaceIterator::Clear()
 }
 //=======================================================================
 //function : AppendPair
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlaceIterator::AppendPair(const NMTTools_CoupleOfShape& theCS)
 {
@@ -79,7 +79,7 @@ void GEOMAlgo_GetInPlaceIterator::AppendPair(const NMTTools_CoupleOfShape& theCS
 }
 //=======================================================================
 //function : ShapeWhere
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlaceIterator::Initialize(const TopAbs_ShapeEnum aType1,
 					     const TopAbs_ShapeEnum aType2)
@@ -96,7 +96,7 @@ void GEOMAlgo_GetInPlaceIterator::Initialize(const TopAbs_ShapeEnum aType1,
 }
 //=======================================================================
 // function: More
-// purpose: 
+// purpose:
 //=======================================================================
 Standard_Boolean GEOMAlgo_GetInPlaceIterator::More()const
 {
@@ -104,7 +104,7 @@ Standard_Boolean GEOMAlgo_GetInPlaceIterator::More()const
 }
 //=======================================================================
 // function: Next
-// purpose: 
+// purpose:
 //=======================================================================
 void GEOMAlgo_GetInPlaceIterator::Next()
 {
@@ -112,7 +112,7 @@ void GEOMAlgo_GetInPlaceIterator::Next()
 }
 //=======================================================================
 // function: Value
-// purpose: 
+// purpose:
 //=======================================================================
 const NMTTools_CoupleOfShape& GEOMAlgo_GetInPlaceIterator::Value()const
 {
@@ -120,7 +120,7 @@ const NMTTools_CoupleOfShape& GEOMAlgo_GetInPlaceIterator::Value()const
 }
 //=======================================================================
 //function : TypeToInteger
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
 			       const TopAbs_ShapeEnum aType2)
@@ -168,5 +168,5 @@ Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType1,
       iRet=9;
     }
   }
-  return iRet; 
+  return iRet;
 }

@@ -17,10 +17,10 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        NMTDS_IteratorChecker.cxx
+// File:        NMTDS_IteratorChecker.hxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_IteratorCheckerSI.ixx>
+#include <NMTDS_IteratorCheckerSI.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <gp_Pnt.hxx>

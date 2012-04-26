@@ -42,24 +42,24 @@ Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(BlockFix_BlockFixAPI);
 
 class Handle(BlockFix_BlockFixAPI) : public Handle(MMgt_TShared) {
   public:
-    void* operator new(size_t,void* anAddress) 
+    void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
-    Handle(BlockFix_BlockFixAPI)():Handle(MMgt_TShared)() {} 
-    Handle(BlockFix_BlockFixAPI)(const Handle(BlockFix_BlockFixAPI)& aHandle) : Handle(MMgt_TShared)(aHandle) 
+    Handle(BlockFix_BlockFixAPI)():Handle(MMgt_TShared)() {}
+    Handle(BlockFix_BlockFixAPI)(const Handle(BlockFix_BlockFixAPI)& aHandle) : Handle(MMgt_TShared)(aHandle)
      {
      }
 
-    Handle(BlockFix_BlockFixAPI)(const BlockFix_BlockFixAPI* anItem) : Handle(MMgt_TShared)((MMgt_TShared *)anItem) 
+    Handle(BlockFix_BlockFixAPI)(const BlockFix_BlockFixAPI* anItem) : Handle(MMgt_TShared)((MMgt_TShared *)anItem)
      {
      }
 
@@ -75,18 +75,18 @@ class Handle(BlockFix_BlockFixAPI) : public Handle(MMgt_TShared) {
       return *this;
      }
 
-    BlockFix_BlockFixAPI* operator->() 
+    BlockFix_BlockFixAPI* operator->()
      {
       return (BlockFix_BlockFixAPI *)ControlAccess();
      }
 
-    BlockFix_BlockFixAPI* operator->() const 
+    BlockFix_BlockFixAPI* operator->() const
      {
       return (BlockFix_BlockFixAPI *)ControlAccess();
      }
 
    Standard_EXPORT ~Handle(BlockFix_BlockFixAPI)();
- 
+
    Standard_EXPORT static const Handle(BlockFix_BlockFixAPI) DownCast(const Handle(Standard_Transient)& AnObject);
 };
 #endif

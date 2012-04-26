@@ -20,16 +20,19 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_Algo.cxx
+// File:        GEOMAlgo_Hlgo.cxx
 // Created:     Sat Dec 04 12:39:47 2004
 // Author:      Peter KURNEV
 //              <peter@PREFEX>
 //
-#include <GEOMAlgo_HAlgo.ixx>
+#include <GEOMAlgo_HAlgo.hxx>
+
+IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_HAlgo, MMgt_TShared);
 
 //=======================================================================
-// function: 
-// purpose: 
+// function:
+// purpose:
 //=======================================================================
   GEOMAlgo_HAlgo::GEOMAlgo_HAlgo()
 :
@@ -38,14 +41,14 @@
 {}
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   GEOMAlgo_HAlgo::~GEOMAlgo_HAlgo()
 {
 }
 //=======================================================================
 // function: CheckData
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_HAlgo::CheckData()
 {
@@ -53,7 +56,7 @@
 }
 //=======================================================================
 // function: CheckResult
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_HAlgo::CheckResult()
 {
@@ -61,7 +64,7 @@
 }
 //=======================================================================
 // function: ErrorStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_HAlgo::ErrorStatus()const
 {
@@ -69,7 +72,7 @@
 }
 //=======================================================================
 // function: WarningStatus
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer GEOMAlgo_HAlgo::WarningStatus()const
 {

@@ -23,7 +23,7 @@
 // File:        NMTDS_Pair.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_Pair.ixx>
+#include <NMTDS_Pair.hxx>
 
 #include <stdio.h>
 #include <string.h>

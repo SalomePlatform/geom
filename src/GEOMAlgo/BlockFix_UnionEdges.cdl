@@ -26,24 +26,24 @@
 --
 class UnionEdges from BlockFix
 
-    	---Purpose: 
-	
+    	---Purpose:
+
 uses
-    
+
     Shape           from TopoDS,
     ReShape         from ShapeBuild
 
 is
 
     Create returns UnionEdges from BlockFix;
-    
+
     Perform(me: in out; Shape: Shape from TopoDS;
                         Tol  : Real)
-    returns Shape from TopoDS;    
-    
+    returns Shape from TopoDS;
+
 fields
 
     myTolerance : Real;
     myContext   : ReShape from ShapeBuild;
-    
+
 end UnionEdges;

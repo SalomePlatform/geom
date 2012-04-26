@@ -17,7 +17,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-#include <GEOMAlgo_ShapeInfoFiller.ixx>
+#include <GEOMAlgo_ShapeInfoFiller.hxx>
 
 #include <Precision.hxx>
 

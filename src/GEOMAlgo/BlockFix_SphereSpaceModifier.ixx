@@ -27,7 +27,7 @@
 #endif
 
 BlockFix_SphereSpaceModifier::~BlockFix_SphereSpaceModifier() {}
- 
+
 
 
 Standard_EXPORT Handle_Standard_Type& BlockFix_SphereSpaceModifier_Type_()
@@ -39,7 +39,7 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_SphereSpaceModifier_Type_()
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("BlockFix_SphereSpaceModifier",
@@ -55,7 +55,7 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_SphereSpaceModifier_Type_()
 // DownCast method
 //   allow safe downcasting
 //
-const Handle(BlockFix_SphereSpaceModifier) Handle(BlockFix_SphereSpaceModifier)::DownCast(const Handle(Standard_Transient)& AnObject) 
+const Handle(BlockFix_SphereSpaceModifier) Handle(BlockFix_SphereSpaceModifier)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(BlockFix_SphereSpaceModifier) _anOtherObject;
 
@@ -67,13 +67,13 @@ const Handle(BlockFix_SphereSpaceModifier) Handle(BlockFix_SphereSpaceModifier):
 
   return _anOtherObject ;
 }
-const Handle(Standard_Type)& BlockFix_SphereSpaceModifier::DynamicType() const 
-{ 
-  return STANDARD_TYPE(BlockFix_SphereSpaceModifier) ; 
+const Handle(Standard_Type)& BlockFix_SphereSpaceModifier::DynamicType() const
+{
+  return STANDARD_TYPE(BlockFix_SphereSpaceModifier) ;
 }
-Standard_Boolean BlockFix_SphereSpaceModifier::IsKind(const Handle(Standard_Type)& AType) const 
-{ 
-  return (STANDARD_TYPE(BlockFix_SphereSpaceModifier) == AType || BRepTools_Modification::IsKind(AType)); 
+Standard_Boolean BlockFix_SphereSpaceModifier::IsKind(const Handle(Standard_Type)& AType) const
+{
+  return (STANDARD_TYPE(BlockFix_SphereSpaceModifier) == AType || BRepTools_Modification::IsKind(AType));
 }
 Handle_BlockFix_SphereSpaceModifier::~Handle_BlockFix_SphereSpaceModifier() {}
 

@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_CommonBlockAPI.ixx>
+#include <NMTTools_CommonBlockAPI.hxx>
 
 #include <BOPTools_PaveBlock.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
@@ -37,7 +37,7 @@
 
 //=======================================================================
 // function:  NMTTools_CommonBlockAPI::NMTTools_CommonBlockAPI
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlockAPI::NMTTools_CommonBlockAPI (const NMTTools_ListOfCommonBlock& aLCB)
 {
@@ -45,7 +45,7 @@
 }
 //=======================================================================
 // function:  List
-// purpose: 
+// purpose:
 //=======================================================================
   const NMTTools_ListOfCommonBlock& NMTTools_CommonBlockAPI::List () const
 {
@@ -85,7 +85,7 @@
 }
 //=======================================================================
 // function:  IsCommonBlock
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_CommonBlockAPI::IsCommonBlock(const BOPTools_PaveBlock& aPB) const
 {
@@ -107,7 +107,7 @@
 
 //=======================================================================
 // function:  CommonBlock
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlock& NMTTools_CommonBlockAPI::CommonBlock(const BOPTools_PaveBlock& aPB)const
 {
@@ -120,7 +120,7 @@
   //
   anItCB.Initialize(*pLCB);
   for (; anItCB.More(); anItCB.Next()) {
-    NMTTools_CommonBlock& aCB=anItCB.Value();
+    NMTTools_CommonBlock& aCB=anItCB.ChangeValue();
     //
     const BOPTools_ListOfPaveBlock& aLPB=aCB.PaveBlocks();
     anItPB.Initialize(aLPB);

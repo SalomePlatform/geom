@@ -1,3 +1,4 @@
+
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
@@ -20,130 +21,85 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_PassKeyShape.hxx
+// Created:
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_PassKeyShape_HeaderFile
 #define _GEOMAlgo_PassKeyShape_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _TopTools_IndexedMapOfShape_HeaderFile
-#include <TopTools_IndexedMapOfShape.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-class TopoDS_Shape;
-class TopTools_ListOfShape;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Integer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <Standard_Boolean.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopTools_ListOfShape.hxx>
 
 
+//=======================================================================
+//class    : GEOMAlgo_PassKeyShape
+//purpose  :
+//=======================================================================
 class GEOMAlgo_PassKeyShape  {
+ public:
+  Standard_EXPORT
+    GEOMAlgo_PassKeyShape();
 
-public:
+  Standard_EXPORT
+    virtual ~GEOMAlgo_PassKeyShape();
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    GEOMAlgo_PassKeyShape(const GEOMAlgo_PassKeyShape& Other);
 
+  Standard_EXPORT
+    GEOMAlgo_PassKeyShape& Assign(const GEOMAlgo_PassKeyShape& Other) ;
 
-Standard_EXPORT GEOMAlgo_PassKeyShape();
-Standard_EXPORT virtual ~GEOMAlgo_PassKeyShape();
+  GEOMAlgo_PassKeyShape& operator =(const GEOMAlgo_PassKeyShape& Other) {
+    return Assign(Other);
+  }
 
+  Standard_EXPORT
+    void SetShapes(const TopoDS_Shape& aS) ;
 
-Standard_EXPORT GEOMAlgo_PassKeyShape(const GEOMAlgo_PassKeyShape& Other);
+  Standard_EXPORT
+    void SetShapes(const TopoDS_Shape& aS1,
+		   const TopoDS_Shape& aS2) ;
 
+  Standard_EXPORT
+    void SetShapes(const TopoDS_Shape& aS1,
+		   const TopoDS_Shape& aS2,
+		   const TopoDS_Shape& aS3) ;
 
-Standard_EXPORT   GEOMAlgo_PassKeyShape& Assign(const GEOMAlgo_PassKeyShape& Other) ;
-  GEOMAlgo_PassKeyShape& operator =(const GEOMAlgo_PassKeyShape& Other) 
-{
-  return Assign(Other);
-}
+  Standard_EXPORT
+    void SetShapes(const TopoDS_Shape& aS1,
+		   const TopoDS_Shape& aS2,
+		   const TopoDS_Shape& aS3,
+		   const TopoDS_Shape& aS4) ;
 
+  Standard_EXPORT
+    void SetShapes(const TopTools_ListOfShape& aLS) ;
 
+  Standard_EXPORT
+    void Clear() ;
 
-Standard_EXPORT   void SetShapes(const TopoDS_Shape& aS) ;
+  Standard_EXPORT
+    Standard_Integer NbIds() const;
 
+  Standard_EXPORT
+    Standard_Boolean IsEqual(const GEOMAlgo_PassKeyShape& aOther) const;
 
-Standard_EXPORT   void SetShapes(const TopoDS_Shape& aS1,const TopoDS_Shape& aS2) ;
+  Standard_EXPORT
+    Standard_Integer HashCode(const Standard_Integer Upper) const;
 
-
-Standard_EXPORT   void SetShapes(const TopoDS_Shape& aS1,const TopoDS_Shape& aS2,const TopoDS_Shape& aS3) ;
-
-
-Standard_EXPORT   void SetShapes(const TopoDS_Shape& aS1,const TopoDS_Shape& aS2,const TopoDS_Shape& aS3,const TopoDS_Shape& aS4) ;
-
-
-Standard_EXPORT   void SetShapes(const TopTools_ListOfShape& aLS) ;
-
-
-Standard_EXPORT   void Clear() ;
-
-
-Standard_EXPORT   Standard_Integer NbIds() const;
-
-
-Standard_EXPORT   Standard_Boolean IsEqual(const GEOMAlgo_PassKeyShape& aOther) const;
-
-
-Standard_EXPORT   Standard_Integer HashCode(const Standard_Integer Upper) const;
-
-
-Standard_EXPORT   void Dump(const Standard_Integer aHex = 0) const;
-
-
-
-
+  Standard_EXPORT
+    void Dump(const Standard_Integer aHex = 0) const;
 
 protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-Standard_Integer myNbIds;
-Standard_Integer mySum;
-Standard_Integer myUpper;
-TopTools_IndexedMapOfShape myMap;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_Integer myNbIds;
+  Standard_Integer mySum;
+  Standard_Integer myUpper;
+  TopTools_IndexedMapOfShape myMap;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

@@ -71,20 +71,20 @@ class BlockFix_SphereSpaceModifier : public BRepTools_Modification {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
+    void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
  // Methods PUBLIC
- // 
+ //
 Standard_EXPORT BlockFix_SphereSpaceModifier();
 Standard_EXPORT   void SetTolerance(const Standard_Real Toler) ;
 Standard_EXPORT   Standard_Boolean NewSurface(const TopoDS_Face& F,Handle(Geom_Surface)& S,TopLoc_Location& L,Standard_Real& Tol,Standard_Boolean& RevWires,Standard_Boolean& RevFace) ;
@@ -108,17 +108,17 @@ Standard_EXPORT ~BlockFix_SphereSpaceModifier();
 protected:
 
  // Methods PROTECTED
- // 
+ //
 
 
  // Fields PROTECTED
  //
 
 
-private: 
+private:
 
  // Methods PRIVATE
- // 
+ //
 
 
  // Fields PRIVATE

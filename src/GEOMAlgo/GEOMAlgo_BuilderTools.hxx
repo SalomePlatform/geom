@@ -20,80 +20,29 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_BuilderTools.hxx
+// Author:      Peter KURNEV
+
 #ifndef _GEOMAlgo_BuilderTools_HeaderFile
 #define _GEOMAlgo_BuilderTools_HeaderFile
 
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
-class TopoDS_Shape;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Boolean.hxx>
+#include <TopoDS_Shape.hxx>
 
+//=======================================================================
+//class    : GEOMAlgo_BuilderTools
+//purpose  :
+//=======================================================================
+class GEOMAlgo_BuilderTools
+{
+ public:
+  Standard_EXPORT
+    static  Standard_Boolean IsHole(const TopoDS_Shape& aW,
+				    const TopoDS_Shape& aF) ;
 
-class GEOMAlgo_BuilderTools  {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT static  Standard_Boolean IsHole(const TopoDS_Shape& aW,const TopoDS_Shape& aF) ;
-
-
-Standard_EXPORT static  Standard_Boolean IsHole(const TopoDS_Shape& aShell) ;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_EXPORT
+    static  Standard_Boolean IsHole(const TopoDS_Shape& aShell) ;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

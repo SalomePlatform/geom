@@ -27,7 +27,7 @@
 #endif
 
 BlockFix_BlockFixAPI::~BlockFix_BlockFixAPI() {}
- 
+
 
 
 Standard_EXPORT Handle_Standard_Type& BlockFix_BlockFixAPI_Type_()
@@ -37,7 +37,7 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_BlockFixAPI_Type_()
   if ( aType1.IsNull()) aType1 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType2 = STANDARD_TYPE(Standard_Transient);
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("BlockFix_BlockFixAPI",
@@ -53,7 +53,7 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_BlockFixAPI_Type_()
 // DownCast method
 //   allow safe downcasting
 //
-const Handle(BlockFix_BlockFixAPI) Handle(BlockFix_BlockFixAPI)::DownCast(const Handle(Standard_Transient)& AnObject) 
+const Handle(BlockFix_BlockFixAPI) Handle(BlockFix_BlockFixAPI)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(BlockFix_BlockFixAPI) _anOtherObject;
 
@@ -65,13 +65,13 @@ const Handle(BlockFix_BlockFixAPI) Handle(BlockFix_BlockFixAPI)::DownCast(const 
 
   return _anOtherObject ;
 }
-const Handle(Standard_Type)& BlockFix_BlockFixAPI::DynamicType() const 
-{ 
-  return STANDARD_TYPE(BlockFix_BlockFixAPI) ; 
+const Handle(Standard_Type)& BlockFix_BlockFixAPI::DynamicType() const
+{
+  return STANDARD_TYPE(BlockFix_BlockFixAPI) ;
 }
-Standard_Boolean BlockFix_BlockFixAPI::IsKind(const Handle(Standard_Type)& AType) const 
-{ 
-  return (STANDARD_TYPE(BlockFix_BlockFixAPI) == AType || MMgt_TShared::IsKind(AType)); 
+Standard_Boolean BlockFix_BlockFixAPI::IsKind(const Handle(Standard_Type)& AType) const
+{
+  return (STANDARD_TYPE(BlockFix_BlockFixAPI) == AType || MMgt_TShared::IsKind(AType));
 }
 Handle_BlockFix_BlockFixAPI::~Handle_BlockFix_BlockFixAPI() {}
 

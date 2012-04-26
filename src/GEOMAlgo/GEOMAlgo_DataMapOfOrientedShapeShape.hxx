@@ -16,105 +16,27 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	GEOMAlgo_DataMapOfOrientedShapeShape.hxx
+// Created:	Wed Feb 22 11:03:36 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _GEOMAlgo_DataMapOfOrientedShapeShape_HeaderFile
-#define _GEOMAlgo_DataMapOfOrientedShapeShape_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
+#ifndef GEOMAlgo_DataMapOfOrientedShapeShape_HeaderFile
+#define GEOMAlgo_DataMapOfOrientedShapeShape_HeaderFile
 
-class Standard_DomainError;
-class Standard_NoSuchObject;
-class TopoDS_Shape;
-class TopTools_OrientedShapeMapHasher;
-class GEOMAlgo_DataMapNodeOfDataMapOfOrientedShapeShape;
-class GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape;
+#include <TopoDS_Shape.hxx>
+#include <TopTools_OrientedShapeMapHasher.hxx>
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
+#define _NCollection_MapHasher
+#include <NCollection_DataMap.hxx>
 
-#include <Basics_OCCTVersion.hxx>
 
-class GEOMAlgo_DataMapOfOrientedShapeShape  : public TCollection_BasicMap
-{
-public:
+typedef NCollection_DataMap<TopoDS_Shape, TopoDS_Shape, TopTools_OrientedShapeMapHasher> GEOMAlgo_DataMapOfOrientedShapeShape;
+typedef GEOMAlgo_DataMapOfOrientedShapeShape::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfOrientedShapeShape;
 
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  { 
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  { 
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
+#undef _NCollection_MapHasher
 
-  // Methods PUBLIC
-  // 
 
-  Standard_EXPORT GEOMAlgo_DataMapOfOrientedShapeShape(const Standard_Integer NbBuckets = 1);
-
-  Standard_EXPORT   GEOMAlgo_DataMapOfOrientedShapeShape& Assign(const GEOMAlgo_DataMapOfOrientedShapeShape& Other) ;
-  GEOMAlgo_DataMapOfOrientedShapeShape& operator =(const GEOMAlgo_DataMapOfOrientedShapeShape& Other) 
-  {
-    return Assign(Other);
-  }
-
-  Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-  Standard_EXPORT   void Clear() ;
-  ~GEOMAlgo_DataMapOfOrientedShapeShape()
-  {
-    Clear();
-  }
-
-  Standard_EXPORT   Standard_Boolean Bind(const TopoDS_Shape& K,const TopoDS_Shape& I) ;
-  Standard_EXPORT   Standard_Boolean IsBound(const TopoDS_Shape& K) const;
-  Standard_EXPORT   Standard_Boolean UnBind(const TopoDS_Shape& K) ;
-
-  Standard_EXPORT  const TopoDS_Shape& Find(const TopoDS_Shape& K) const;
-  const TopoDS_Shape& operator()(const TopoDS_Shape& K) const
-  {
-    return Find(K);
-  }
-
-  Standard_EXPORT   TopoDS_Shape& ChangeFind(const TopoDS_Shape& K) ;
-  TopoDS_Shape& operator()(const TopoDS_Shape& K) 
-  {
-    return ChangeFind(K);
-  }
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address Find1 (const TopoDS_Shape& K) const;
-  Standard_EXPORT Standard_Address ChangeFind1 (const TopoDS_Shape& K);
-#endif
-
-private: 
-
- // Methods PRIVATE
- // 
-Standard_EXPORT GEOMAlgo_DataMapOfOrientedShapeShape(const GEOMAlgo_DataMapOfOrientedShapeShape& Other);
-
-};
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
 
 #endif

@@ -20,89 +20,56 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_HAlgo.hxx
+// Created:     Sat Dec 04 12:39:47 2004
+// Author:      Peter KURNEV
+//              <peter@PREFEX>
+//
+
 #ifndef _GEOMAlgo_HAlgo_HeaderFile
 #define _GEOMAlgo_HAlgo_HeaderFile
 
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_HAlgo_HeaderFile
-#include <Handle_GEOMAlgo_HAlgo.hxx>
-#endif
-
-#ifndef _Standard_Integer_HeaderFile
+#include <Standard_DefineHandle.hxx>
+//#include <Handle_GEOMAlgo_HAlgo.hxx>
 #include <Standard_Integer.hxx>
-#endif
-#ifndef _MMgt_TShared_HeaderFile
 #include <MMgt_TShared.hxx>
-#endif
 
+DEFINE_STANDARD_HANDLE(GEOMAlgo_HAlgo, MMgt_TShared);
 
+//=======================================================================
+//class    : GEOMAlgo_HAlgo
+//purpose  :
+//=======================================================================
+class GEOMAlgo_HAlgo : public MMgt_TShared
+{
+ public:
+  Standard_EXPORT
+    virtual  void Perform()  = 0;
 
-class GEOMAlgo_HAlgo : public MMgt_TShared {
+  Standard_EXPORT
+    virtual  void CheckData() ;
 
-public:
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    virtual  void CheckResult() ;
 
+  Standard_EXPORT
+    Standard_Integer ErrorStatus() const;
 
-Standard_EXPORT virtual  void Perform()  = 0;
+  Standard_EXPORT
+    Standard_Integer WarningStatus() const;
 
+  DEFINE_STANDARD_RTTI(GEOMAlgo_HAlgo);
 
-Standard_EXPORT virtual  void CheckData() ;
+ protected:
+  Standard_EXPORT
+    GEOMAlgo_HAlgo();
 
+  Standard_EXPORT
+    virtual ~GEOMAlgo_HAlgo();
 
-Standard_EXPORT virtual  void CheckResult() ;
-
-
-Standard_EXPORT   Standard_Integer ErrorStatus() const;
-
-
-Standard_EXPORT   Standard_Integer WarningStatus() const;
-//Standard_EXPORT ~GEOMAlgo_HAlgo();
-
-
-
-
- // Type management
- //
- Standard_EXPORT const Handle(Standard_Type)& DynamicType() const;
- //Standard_EXPORT Standard_Boolean            IsKind(const Handle(Standard_Type)&) const;
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT GEOMAlgo_HAlgo();
-Standard_EXPORT virtual ~GEOMAlgo_HAlgo();
-
-
- // Fields PROTECTED
- //
-Standard_Integer myErrorStatus;
-Standard_Integer myWarningStatus;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
+  Standard_Integer myErrorStatus;
+  Standard_Integer myWarningStatus;
 
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

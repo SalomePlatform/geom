@@ -42,19 +42,19 @@ uses
 is
 
     class SphereSpaceModifier;
-    
+
     class UnionFaces;
-    
+
     class UnionEdges;
-    
+
     class BlockFixAPI;
     	---Purpose: API class to perform the fixing of the
 	--          block
-    
+
     class PeriodicSurfaceModifier;
 
     class CheckTool;
-    
+
     RotateSphereSpace (S: Shape from TopoDS; Tol: Real)
     returns Shape from TopoDS;
 

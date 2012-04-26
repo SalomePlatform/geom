@@ -23,7 +23,7 @@
 //  File:   GEOMAlgo_Splitter.cxx
 //  Author: Peter KURNEV
 //
-#include <GEOMAlgo_Splitter.ixx>
+#include <GEOMAlgo_Splitter.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 

@@ -17,102 +17,53 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+//  File:       NMTTools_CheckerSI.hxx
+//  Created:    Mon Feb 19 11:32:08 2007
+//  Author:     Peter KURNEV
+//
 #ifndef _NMTTools_CheckerSI_HeaderFile
 #define _NMTTools_CheckerSI_HeaderFile
 
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _NMTTools_PaveFiller_HeaderFile
-#include <NMTTools_PaveFiller.hxx>
-#endif
-#ifndef _TopAbs_ShapeEnum_HeaderFile
-#include <TopAbs_ShapeEnum.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Integer.hxx>
+#include <NMTTools_PaveFiller.hxx>
+#include <TopAbs_ShapeEnum.hxx>
+
+//=======================================================================
+//class    : NMTTools_CheckerSI
+//purpose  :
+//=======================================================================
+class NMTTools_CheckerSI  : public NMTTools_PaveFiller
+{
+ public:
+  Standard_EXPORT
+    NMTTools_CheckerSI();
+
+  Standard_EXPORT
+    virtual ~NMTTools_CheckerSI();
+
+  Standard_EXPORT
+    virtual  void Perform() ;
+
+  Standard_EXPORT
+    Standard_Integer StopStatus() const;
+
+ protected:
+  Standard_EXPORT
+    virtual  void Init() ;
+
+  Standard_EXPORT
+    virtual  void Clear() ;
+
+  Standard_EXPORT
+    virtual  void PreparePaveBlocks(const Standard_Integer nE) ;
+
+  Standard_EXPORT
+    virtual  void PreparePaveBlocks(const TopAbs_ShapeEnum aType1,
+				    const TopAbs_ShapeEnum aType2) ;
 
 
-class NMTTools_CheckerSI  : public NMTTools_PaveFiller {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT NMTTools_CheckerSI();
-Standard_EXPORT virtual ~NMTTools_CheckerSI();
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT   Standard_Integer StopStatus() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT virtual  void Init() ;
-
-
-Standard_EXPORT virtual  void Clear() ;
-
-
-Standard_EXPORT virtual  void PreparePaveBlocks(const Standard_Integer nE) ;
-
-
-Standard_EXPORT virtual  void PreparePaveBlocks(const TopAbs_ShapeEnum aType1,const TopAbs_ShapeEnum aType2) ;
-
-
- // Fields PROTECTED
- //
-Standard_Integer myStopStatus;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_Integer myStopStatus;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

@@ -20,16 +20,19 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        GEOMAlgo_Classifier.cxx
+// File:        GEOMAlgo_Clsf.cxx
 // Created:     Wed Nov 22 10:23:04 2006
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_Clsf.ixx>
+#include <GEOMAlgo_Clsf.hxx>
+
+IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_Clsf, GEOMAlgo_HAlgo);
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_Clsf::GEOMAlgo_Clsf()
 :
@@ -41,14 +44,14 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_Clsf::~GEOMAlgo_Clsf()
 {
 }
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Clsf::SetTolerance(const Standard_Real aT)
 {
@@ -56,7 +59,7 @@
 }
 //=======================================================================
 //function : Tolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Real GEOMAlgo_Clsf::Tolerance()const
 {
@@ -64,7 +67,7 @@
 }
 //=======================================================================
 //function : SetPnt
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Clsf::SetPnt(const gp_Pnt& aP)
 {
@@ -72,7 +75,7 @@
 }
 //=======================================================================
 //function : Pnt
-//purpose  : 
+//purpose  :
 //=======================================================================
   const gp_Pnt& GEOMAlgo_Clsf::Pnt()const
 {
@@ -80,7 +83,7 @@
 }
 //=======================================================================
 //function : State
-//purpose  : 
+//purpose  :
 //=======================================================================
   TopAbs_State GEOMAlgo_Clsf::State() const
 {
@@ -88,7 +91,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Clsf::CanBeON(const Handle(Geom_Curve)& ) const
 {
@@ -96,7 +99,7 @@
 }
 //=======================================================================
 //function : CanBeON
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_Clsf::CanBeON(const Handle(Geom_Surface)& ) const
 {

@@ -22,7 +22,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_ClsfSolid.ixx>
+#include <GEOMAlgo_ClsfSolid.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <TopoDS.hxx>
@@ -30,9 +30,12 @@
 #include <BRep_Builder.hxx>
 #include <BRepClass3d_SolidClassifier.hxx>
 
+IMPLEMENT_STANDARD_HANDLE(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
+IMPLEMENT_STANDARD_RTTIEXT(GEOMAlgo_ClsfSolid, GEOMAlgo_Clsf)
+
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSolid::GEOMAlgo_ClsfSolid()
 :
@@ -42,7 +45,7 @@
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
   GEOMAlgo_ClsfSolid::~GEOMAlgo_ClsfSolid()
 {
@@ -55,7 +58,7 @@
 }
 //=======================================================================
 //function : SetShape
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSolid::SetShape(const TopoDS_Shape& aS)
 {
@@ -63,7 +66,7 @@
 }
 //=======================================================================
 //function : Shape
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopoDS_Shape& GEOMAlgo_ClsfSolid::Shape()const
 {
@@ -71,7 +74,7 @@
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSolid::CheckData()
 {
@@ -89,7 +92,7 @@
   //
   aType=myShape.ShapeType();
   if (!(aType==TopAbs_SOLID || aType==TopAbs_SHELL)) {
-    myErrorStatus=12; 
+    myErrorStatus=12;
     return;
   }
   //
@@ -112,7 +115,7 @@
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ClsfSolid::Perform()
 {

@@ -1,3 +1,4 @@
+
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
@@ -19,119 +20,68 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
+// File:        NMTAlgo_WESCorrector.hxx
+// Created:
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_WESCorrector_HeaderFile
 #define _GEOMAlgo_WESCorrector_HeaderFile
 
-#ifndef _GEOMAlgo_PWireEdgeSet_HeaderFile
-#include <GEOMAlgo_PWireEdgeSet.hxx>
-#endif
-#ifndef _GEOMAlgo_WireEdgeSet_HeaderFile
-#include <GEOMAlgo_WireEdgeSet.hxx>
-#endif
-#ifndef _BOP_ListOfConnexityBlock_HeaderFile
-#include <BOP_ListOfConnexityBlock.hxx>
-#endif
-#ifndef _GEOMAlgo_Algo_HeaderFile
-#include <GEOMAlgo_Algo.hxx>
-#endif
-class GEOMAlgo_WireEdgeSet;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <GEOMAlgo_PWireEdgeSet.hxx>
+#include <GEOMAlgo_WireEdgeSet.hxx>
+#include <BOP_ListOfConnexityBlock.hxx>
+#include <GEOMAlgo_Algo.hxx>
 
 
 //!  The algorithm to change the Wire Edges Set (WES) contents. <br>
 //!   The NewWES will contain only wires instead of wires and edges. <br>
-class GEOMAlgo_WESCorrector  : public GEOMAlgo_Algo {
+//=======================================================================
+//class    : GEOMAlgo_WESCorrector
+//purpose  :
+//=======================================================================
+class GEOMAlgo_WESCorrector  : public GEOMAlgo_Algo
+{
+ public:
+  //! Empty constructor; <br>
+  //! <br>
+  Standard_EXPORT
+    GEOMAlgo_WESCorrector();
 
-public:
+  Standard_EXPORT
+    virtual ~GEOMAlgo_WESCorrector();
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  //! Modifier <br>
+  Standard_EXPORT
+    void SetWES(const GEOMAlgo_WireEdgeSet& aWES) ;
 
+  //! Performs the algorithm that  consists  of  two  steps <br>
+  //! 1. Make conexity blocks (  DoConnexityBlocks()  ) <br>
+  //! 2. Make corrections     (  DoCorrections()  ) <br>
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-//! Empty constructor; <br>
-//! <br>
-Standard_EXPORT GEOMAlgo_WESCorrector();
-Standard_EXPORT virtual ~GEOMAlgo_WESCorrector();
+  //! Selector <br>
+  Standard_EXPORT
+    GEOMAlgo_WireEdgeSet& WES() ;
 
-
-//! Modifier <br>
-Standard_EXPORT   void SetWES(const GEOMAlgo_WireEdgeSet& aWES) ;
-
-
-//! Performs the algorithm that  consists  of  two  steps <br>
-//! 1. Make conexity blocks (  DoConnexityBlocks()  ) <br>
-//! 2. Make corrections     (  DoCorrections()  ) <br>
-Standard_EXPORT virtual  void Perform() ;
-
-
-//! Selector <br>
-Standard_EXPORT   GEOMAlgo_WireEdgeSet& WES() ;
-
-
-//! Selector <br>
-Standard_EXPORT   GEOMAlgo_WireEdgeSet& NewWES() ;
-
-
-
-
+  //! Selector <br>
+  Standard_EXPORT
+    GEOMAlgo_WireEdgeSet& NewWES() ;
 
 protected:
+  Standard_EXPORT
+    void DoConnexityBlocks() ;
 
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT   void DoConnexityBlocks() ;
-
-
-Standard_EXPORT   void DoCorrections() ;
+  Standard_EXPORT
+    void DoCorrections() ;
 
 
- // Fields PROTECTED
- //
-GEOMAlgo_PWireEdgeSet myWES;
-GEOMAlgo_WireEdgeSet myNewWES;
-BOP_ListOfConnexityBlock myConnexityBlocks;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  GEOMAlgo_PWireEdgeSet myWES;
+  GEOMAlgo_WireEdgeSet myNewWES;
+  BOP_ListOfConnexityBlock myConnexityBlocks;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

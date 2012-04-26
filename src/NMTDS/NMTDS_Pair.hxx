@@ -20,83 +20,54 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_Pair.hxx
+// Author:      Peter KURNEV
+
 #ifndef _NMTDS_Pair_HeaderFile
 #define _NMTDS_Pair_HeaderFile
 
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
-
-#ifndef _Standard_Integer_HeaderFile
 #include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
-#endif
 
-
-
+//=======================================================================
+//function : NMTDS_Pair
+//purpose  : 
+//=======================================================================
 class NMTDS_Pair  {
-public:
+ public:
+  Standard_EXPORT   
+    NMTDS_Pair();
 
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
+  Standard_EXPORT
+    virtual ~NMTDS_Pair();
+  
+  Standard_EXPORT   
+    NMTDS_Pair(const NMTDS_Pair& Other);
 
+  Standard_EXPORT
+    NMTDS_Pair& operator =(const NMTDS_Pair& Other);
   
-  Standard_EXPORT   NMTDS_Pair();
-Standard_EXPORT virtual ~NMTDS_Pair();
+  Standard_EXPORT
+    void Clear() ;
   
-  Standard_EXPORT   NMTDS_Pair(const NMTDS_Pair& Other);
-Standard_EXPORT NMTDS_Pair& operator =(const NMTDS_Pair& Other);
+  Standard_EXPORT
+    void SetIds(const Standard_Integer aI1,
+		const Standard_Integer aI2) ;
   
-  Standard_EXPORT     void Clear() ;
+  Standard_EXPORT
+    void Ids(Standard_Integer& aI1,
+	     Standard_Integer& aI2) const;
   
-  Standard_EXPORT     void SetIds(const Standard_Integer aI1,const Standard_Integer aI2) ;
+  Standard_EXPORT
+    Standard_Boolean IsEqual(const NMTDS_Pair& aOther) const;
   
-  Standard_EXPORT     void Ids(Standard_Integer& aI1,Standard_Integer& aI2) const;
-  
-  Standard_EXPORT     Standard_Boolean IsEqual(const NMTDS_Pair& aOther) const;
-  
-  Standard_EXPORT     Standard_Integer HashCode(const Standard_Integer Upper) const;
-
-
-
-
+  Standard_EXPORT
+    Standard_Integer HashCode(const Standard_Integer Upper) const;
 
 protected:
-
-
-
 Standard_Integer myId1;
 Standard_Integer myId2;
-
-
-private:
-
-
-
-
-
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-
-
 #endif

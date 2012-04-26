@@ -21,17 +21,10 @@
 //
 
 // File:        GEOMAlgo_Builder_4.cxx
+// Created:
 // Author:      Peter KURNEV
-
+//
 #include <GEOMAlgo_Builder.hxx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-
-#include <NMTTools_PaveFiller.hxx>
-
-#include <NMTDS_ShapesDataStructure.hxx>
-
-#include <Basics_OCCTVersion.hxx>
 
 #include <TopoDS_Iterator.hxx>
 
@@ -41,6 +34,12 @@
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 
 #include <IntTools_Context.hxx>
+
+#include <NMTDS_ShapesDataStructure.hxx>
+
+#include <NMTTools_PaveFiller.hxx>
+
+#include <GEOMAlgo_Tools3D.hxx>
 
 static
   void MapShapes(const TopoDS_Shape& aS,
@@ -53,11 +52,7 @@ static
   const TopTools_ListOfShape& GEOMAlgo_Builder::Generated(const TopoDS_Shape& theS)
 {
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
   //
   Standard_Boolean bHasImage, bToReverse;
   TopAbs_ShapeEnum aType;
@@ -111,11 +106,7 @@ static
   const TopTools_ListOfShape& GEOMAlgo_Builder::Modified(const TopoDS_Shape& theS)
 {
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
   //
   Standard_Boolean bHasImage, bToReverse;
   TopAbs_ShapeEnum aType;
@@ -306,6 +297,7 @@ static
       }
     }
   }
+
 }
 //=======================================================================
 //function : MapShapes

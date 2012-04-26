@@ -20,182 +20,127 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_FinderShapeOn1.hxx
+// Created:     Fri Mar  4 10:31:06 2005
+// Author:      Peter KURNEV
+
 #ifndef _GEOMAlgo_FinderShapeOn1_HeaderFile
 #define _GEOMAlgo_FinderShapeOn1_HeaderFile
 
-#ifndef _Handle_Geom_Surface_HeaderFile
-#include <Handle_Geom_Surface.hxx>
-#endif
-#ifndef _TopAbs_ShapeEnum_HeaderFile
-#include <TopAbs_ShapeEnum.hxx>
-#endif
-#ifndef _GEOMAlgo_State_HeaderFile
 #include <GEOMAlgo_State.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _GeomAdaptor_Surface_HeaderFile
-#include <GeomAdaptor_Surface.hxx>
-#endif
-#ifndef _TopTools_ListOfShape_HeaderFile
-#include <TopTools_ListOfShape.hxx>
-#endif
-#ifndef _GEOMAlgo_IndexedDataMapOfShapeState_HeaderFile
 #include <GEOMAlgo_IndexedDataMapOfShapeState.hxx>
-#endif
-#ifndef _GEOMAlgo_ShapeAlgo_HeaderFile
 #include <GEOMAlgo_ShapeAlgo.hxx>
-#endif
-#ifndef _TopAbs_State_HeaderFile
+#include <GEOMAlgo_ListOfPnt.hxx>
+
 #include <TopAbs_State.hxx>
-#endif
-class Geom_Surface;
-class TopTools_ListOfShape;
-class TopoDS_Face;
-class GEOMAlgo_ListOfPnt;
-class TopoDS_Edge;
-class GEOMAlgo_IndexedDataMapOfShapeState;
-class gp_Pnt;
+#include <TopAbs_ShapeEnum.hxx>
+#include <TopoDS_Face.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TopTools_ListOfShape.hxx>
 
+#include <Geom_Surface.hxx>
+#include <Handle_Geom_Surface.hxx>
+#include <GeomAdaptor_Surface.hxx>
 
-#ifndef _Standard_HeaderFile
+#include <gp_Pnt.hxx>
+
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <Standard_Integer.hxx>
 
+//=======================================================================
+//function : GEOMAlgo_FinderShapeOn1
+//purpose  :
+//=======================================================================
+class GEOMAlgo_FinderShapeOn1  : public GEOMAlgo_ShapeAlgo
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_FinderShapeOn1();
 
-class GEOMAlgo_FinderShapeOn1  : public GEOMAlgo_ShapeAlgo {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_FinderShapeOn1();
 
-public:
+  Standard_EXPORT
+    void SetSurface(const Handle(Geom_Surface)& aS) ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    void SetShapeType(const TopAbs_ShapeEnum aST) ;
 
+  Standard_EXPORT
+    void SetState(const GEOMAlgo_State aSF) ;
 
-Standard_EXPORT GEOMAlgo_FinderShapeOn1();
-Standard_EXPORT virtual ~GEOMAlgo_FinderShapeOn1();
+  Standard_EXPORT
+    void SetNbPntsMin(const Standard_Integer aNb) ;
 
+  Standard_EXPORT
+    Standard_Integer NbPntsMin() const;
 
-Standard_EXPORT   void SetSurface(const Handle(Geom_Surface)& aS) ;
+  Standard_EXPORT
+    void SetNbPntsMax(const Standard_Integer aNb) ;
 
+  Standard_EXPORT
+    Standard_Integer NbPntsMax() const;
 
-Standard_EXPORT   void SetShapeType(const TopAbs_ShapeEnum aST) ;
+  Standard_EXPORT
+    const Handle_Geom_Surface& Surface() const;
 
+  Standard_EXPORT
+    TopAbs_ShapeEnum ShapeType() const;
 
-Standard_EXPORT   void SetState(const GEOMAlgo_State aSF) ;
+  Standard_EXPORT
+    GEOMAlgo_State State() const;
 
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-Standard_EXPORT   void SetNbPntsMin(const Standard_Integer aNb) ;
+  Standard_EXPORT
+    const TopTools_ListOfShape& Shapes() const;
 
+  Standard_EXPORT
+    const GEOMAlgo_IndexedDataMapOfShapeState& MSS() const;
 
-Standard_EXPORT   Standard_Integer NbPntsMin() const;
+ protected:
+  Standard_EXPORT
+    virtual  void CheckData() ;
 
+  Standard_EXPORT
+    void ProcessVertices() ;
 
-Standard_EXPORT   void SetNbPntsMax(const Standard_Integer aNb) ;
+  Standard_EXPORT
+    void ProcessEdges() ;
 
+  Standard_EXPORT
+    void ProcessFaces() ;
 
-Standard_EXPORT   Standard_Integer NbPntsMax() const;
+  Standard_EXPORT
+    void ProcessSolids() ;
 
+  Standard_EXPORT
+    void InnerPoints(const TopoDS_Face& aF,
+                     GEOMAlgo_ListOfPnt& aLP) ;
 
-Standard_EXPORT  const Handle_Geom_Surface& Surface() const;
+  Standard_EXPORT
+    void InnerPoints(const TopoDS_Edge& aE,
+                     GEOMAlgo_ListOfPnt& aLP) ;
 
+  Standard_EXPORT
+    void InnerPoints(const TopoDS_Edge& aE,
+                     const Standard_Integer aNbPnts,
+                     GEOMAlgo_ListOfPnt& aLP) ;
 
-Standard_EXPORT   TopAbs_ShapeEnum ShapeType() const;
+  Standard_EXPORT
+    virtual  TopAbs_State GetPointState(const gp_Pnt& aP) ;
 
 
-Standard_EXPORT   GEOMAlgo_State State() const;
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT  const TopTools_ListOfShape& Shapes() const;
-
-
-Standard_EXPORT  const GEOMAlgo_IndexedDataMapOfShapeState& MSS() const;
-
-
-
-
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT virtual  void CheckData() ;
-
-
-Standard_EXPORT   void ProcessVertices() ;
-
-
-Standard_EXPORT   void ProcessEdges() ;
-
-
-Standard_EXPORT   void ProcessFaces() ;
-
-
-Standard_EXPORT   void ProcessSolids() ;
-
-
-Standard_EXPORT   void InnerPoints(const TopoDS_Face& aF,GEOMAlgo_ListOfPnt& aLP) ;
-
-
-Standard_EXPORT   void InnerPoints(const TopoDS_Edge& aE,GEOMAlgo_ListOfPnt& aLP) ;
-
-
-Standard_EXPORT   void InnerPoints(const TopoDS_Edge& aE,const Standard_Integer aNbPnts,GEOMAlgo_ListOfPnt& aLP) ;
-
-
-Standard_EXPORT virtual  TopAbs_State GetPointState(const gp_Pnt& aP) ;
-
-
- // Fields PROTECTED
- //
-Handle_Geom_Surface mySurface;
-TopAbs_ShapeEnum myShapeType;
-GEOMAlgo_State myState;
-Standard_Integer myNbPntsMin;
-Standard_Integer myNbPntsMax;
-GeomAdaptor_Surface myGAS;
-TopTools_ListOfShape myLS;
-GEOMAlgo_IndexedDataMapOfShapeState myMSS;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Handle_Geom_Surface mySurface;
+  TopAbs_ShapeEnum myShapeType;
+  GEOMAlgo_State myState;
+  Standard_Integer myNbPntsMin;
+  Standard_Integer myNbPntsMax;
+  GeomAdaptor_Surface myGAS;
+  TopTools_ListOfShape myLS;
+  GEOMAlgo_IndexedDataMapOfShapeState myMSS;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
 
 #endif

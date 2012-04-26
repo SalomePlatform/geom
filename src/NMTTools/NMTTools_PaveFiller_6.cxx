@@ -23,7 +23,7 @@
 //  Created:     Fri Dec 19 10:27:31 2003
 //  Author:      Peter KURNEV
 
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -36,6 +36,7 @@
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <TColStd_DataMapIteratorOfDataMapOfIntegerListOfInteger.hxx>
+
 
 #include <Geom_TrimmedCurve.hxx>
 #include <Geom2d_TrimmedCurve.hxx>
@@ -91,6 +92,7 @@
 #include <BOPTools_PaveBlockIterator.hxx>
 #include <BOPTools_Tools2D.hxx>
 #include <BOPTools_Tools3D.hxx>
+#include <BOPTools_Curve.hxx>
 
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
@@ -112,11 +114,7 @@
 
 static
   Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE,
-#if OCC_VERSION_LARGE > 0x06050200
                                const Handle(IntTools_Context)& aCtx);
-#else
-                               IntTools_Context& aCtx);
-#endif
 
 //=======================================================================
 // function: PerformFF
@@ -245,7 +243,7 @@ void NMTTools_PaveFiller::MakeBlocks()
   //
   BOPTools_CArray1OfSSInterference& aFFs=myIP->SSInterferences();
   //
-  
+
   //
   // 1. Make Section Edges from intersection curves
   //    between each pair of faces
@@ -417,11 +415,7 @@ void NMTTools_PaveFiller::MakeBlocks()
 	//
         // Checking of validity in 2D
         //
-#if OCC_VERSION_LARGE > 0x06050200
         bIsValidIn2D=myContext->IsValidBlockForFaces(aT1, aT2, aIC, aF1, aF2, aTol2D);
-#else
-        bIsValidIn2D=myContext.IsValidBlockForFaces(aT1, aT2, aIC, aF1, aF2, aTol2D);
-#endif
         if (!bIsValidIn2D) {
           continue;
         }
@@ -436,18 +430,10 @@ void NMTTools_PaveFiller::MakeBlocks()
         {
           Standard_Real aT;
           //
-#if OCC_VERSION_LARGE > 0x06050200
           myContext->IsVertexOnLine(aV1, aIC, aTolR3D, aT);
-#else
-          myContext.IsVertexOnLine(aV1, aIC, aTolR3D, aT);
-#endif
           BOPTools_Tools::UpdateVertex (aIC, aT, aV1);
           //
-#if OCC_VERSION_LARGE > 0x06050200
           myContext->IsVertexOnLine(aV2, aIC, aTolR3D, aT);
-#else
-          myContext.IsVertexOnLine(aV2, aIC, aTolR3D, aT);
-#endif
           BOPTools_Tools::UpdateVertex (aIC, aT, aV2);
         }
         //
@@ -945,11 +931,7 @@ Standard_Integer NMTTools_PaveFiller::CheckIntermediatePoint(const BOPTools_Pave
   //
   aBB.MakeVertex (aVM, aPM, aTolC);
   //
-#if OCC_VERSION_LARGE > 0x06050200
   iVM=myContext->ComputeVE(aVM, aE2, aTmp);
-#else
-  iVM=myContext.ComputeVE(aVM, aE2, aTmp);
-#endif
   //
   return iVM;
 }
@@ -982,20 +964,12 @@ void NMTTools_PaveFiller::PutBoundPaveOnCurve(BOPTools_Curve& aBC,
   const TopoDS_Face aF1=TopoDS::Face(myDS->GetShape(nF1));//mpv
   const TopoDS_Face aF2=TopoDS::Face(myDS->GetShape(nF2));//mpv
   //
-#if OCC_VERSION_LARGE > 0x06050200
   bVF=myContext->IsValidPointForFaces (aP1, aF1, aF2, aTolR3D);
-#else
-  bVF=myContext.IsValidPointForFaces (aP1, aF1, aF2, aTolR3D);
-#endif
   if (bVF) {
     PutBoundPaveOnCurve (aP1, aT1, aBC, aFFi);
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   bVF=myContext->IsValidPointForFaces (aP2, aF1, aF2, aTolR3D);
-#else
-  bVF=myContext.IsValidPointForFaces (aP2, aF1, aF2, aTolR3D);
-#endif
   if (bVF) {
     PutBoundPaveOnCurve (aP2, aT2, aBC, aFFi);
   }
@@ -1187,11 +1161,7 @@ Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock&
     }
     // VE
     if (!iV) {
-#if OCC_VERSION_LARGE > 0x06050200
       iVE=myContext->ComputeVE (aV11, aE2, aTE);
-#else
-      iVE=myContext.ComputeVE (aV11, aE2, aTE);
-#endif
       if (!iVE) {
         iCount++;
         if (iCount>iCountExt) {
@@ -1220,11 +1190,7 @@ Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock&
     }
     // VE
     if (!iV) {
-#if OCC_VERSION_LARGE > 0x06050200
       iVE=myContext->ComputeVE (aV12, aE2, aTE);
-#else
-      iVE=myContext.ComputeVE (aV12, aE2, aTE);
-#endif
       if (!iVE) {
         iCount++;
         if (iCount>iCountExt) {
@@ -1242,11 +1208,7 @@ Standard_Boolean NMTTools_PaveFiller::CheckCoincidence(const BOPTools_PaveBlock&
 //purpose  :
 //=======================================================================
 Standard_Boolean IsMicroEdge(const TopoDS_Edge& aE,
-#if OCC_VERSION_LARGE > 0x06050200
                              const Handle(IntTools_Context)& aCtx)
-#else
-                             IntTools_Context& aCtx)
-#endif
 {
   Standard_Boolean bRet;
   Standard_Integer iErr;
@@ -1313,11 +1275,7 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
       continue;
     }
     //
-#if OCC_VERSION_LARGE > 0x06050200
     bIsVertexOnLine=myContext->IsVertexOnLine(aV, aC, aTolR3D, aT);
-#else
-    bIsVertexOnLine=myContext.IsVertexOnLine(aV, aC, aTolR3D, aT);
-#endif
     //
     //
     if (bIsVertexOnLine) {
@@ -1331,14 +1289,14 @@ void NMTTools_PaveFiller::PutPaveOnCurve(const BOPTools_PaveSet& aPaveSet,
 //
 //=======================================================================
 //function : FillFaceInfo
-//purpose  : 
+//purpose  :
 //=======================================================================
 void NMTTools_PaveFiller::FillFaceInfo()
 {
   Standard_Integer i, aNbS, aNbFFs, nF, aNbVFs, aNbEFs, j, n1, n2, nX, aNbF;
   TopAbs_ShapeEnum aType;
   TopoDS_Shape aS;
-  TColStd_ListIteratorOfListOfInteger aItF; 
+  TColStd_ListIteratorOfListOfInteger aItF;
   BOPTools_ListIteratorOfListOfPaveBlock anItPB;
   NMTTools_DataMapIteratorOfDataMapOfIntegerFaceInfo aItMFI;
   NMTTools_ListIteratorOfListOfCommonBlock aItCB;
@@ -1479,19 +1437,19 @@ void NMTTools_PaveFiller::FillFaceInfo()
 //=======================================================================
 //function : CorrectTolR3D
 //purpose  : Attempt to correct the value of tolerance aTolR3D for
-//           the intersection curve in order to 
+//           the intersection curve in order to
 //           compel it to pass through the sticks.
-//           Prerequisites: 
+//           Prerequisites:
 //             2. The are based on B-Spline surfaces;
 //             1. There is at least the one intersection curve;
 //             2. The faces have stick vertices to catch the curve;
 //             3. The intersection angle is rather small (0.7-7 deg)
-//              
+//
 //=======================================================================
 void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
 					const TColStd_MapOfInteger& aMVStick,
 					Standard_Real& aTolR3D)
-     
+
 {
   Standard_Boolean bHasBounds;
   Standard_Integer i, nF[2], nV, aNbCurves;
@@ -1546,11 +1504,7 @@ void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
   aC3D->D0(aT, aP);
   //
   for (i=0; i<2; ++i) {
-#if OCC_VERSION_LARGE > 0x06050200
     GeomAPI_ProjectPointOnSurf& aPPS=myContext->ProjPS(aF[i]);
-#else
-    GeomAPI_ProjectPointOnSurf& aPPS=myContext.ProjPS(aF[i]);
-#endif
     aPPS.Perform(aP);
     aPPS.LowerDistanceParameters(aU, aV);
     BOPTools_Tools3D::GetNormalToSurface(aS[i], aU, aV, aDN[i]);
@@ -1577,7 +1531,7 @@ void NMTTools_PaveFiller::CorrectTolR3D(const BOPTools_SSInterference& aFF,
     }
   }
   //
-  
+
   aTolR=aTolVmax/aA;
   if (aTolR<aTolTresh) {
     aTolR3D=aTolR;
@@ -1596,7 +1550,7 @@ void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
   Standard_Boolean bIsClosed, bHasBounds, bAdded;
   Standard_Integer nVC, j;
   Standard_Real aT[2], aTolR3D, aTC, dT, aTx;
-  gp_Pnt aP[2] ; 
+  gp_Pnt aP[2] ;
   BOPTools_Pave aPVx;
   BOPTools_ListIteratorOfListOfPave aItLP;
   //
@@ -1615,7 +1569,7 @@ void NMTTools_PaveFiller::PutClosingPaveOnCurve(BOPTools_Curve& aBC,
   if (!bHasBounds){
     return;
   }
-  // 
+  //
   bAdded=Standard_False;
   dT=Precision::PConfusion();
   aTolR3D=aFFi.TolR3D();

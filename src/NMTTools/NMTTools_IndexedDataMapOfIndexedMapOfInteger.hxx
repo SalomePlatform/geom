@@ -1,8 +1,5 @@
 // Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
-// Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
-// CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
-//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -19,156 +16,27 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx
+// Created:	Mon Feb 20 09:20:07 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
-#define _NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
+#ifndef NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
+#define NMTTools_IndexedDataMapOfIndexedMapOfInteger_HeaderFile
+
+
 #include <Standard_Integer.hxx>
-#endif
-#ifndef _Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger_HeaderFile
-#include <Handle_NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
+#include <TColStd_MapIntegerHasher.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
-class Standard_DomainError;
-class Standard_OutOfRange;
-class Standard_NoSuchObject;
-class TColStd_IndexedMapOfInteger;
-class TColStd_MapIntegerHasher;
-class NMTTools_IndexedDataMapNodeOfIndexedDataMapOfIndexedMapOfInteger;
+#define _NCollection_MapHasher
+#include <NCollection_IndexedDataMap.hxx>
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
+typedef NCollection_IndexedDataMap <Standard_Integer, TColStd_IndexedMapOfInteger, TColStd_MapIntegerHasher> NMTTools_IndexedDataMapOfIndexedMapOfInteger;
 
-#include <Basics_OCCTVersion.hxx>
+#undef _NCollection_MapHasher
 
-class NMTTools_IndexedDataMapOfIndexedMapOfInteger  : public TCollection_BasicMap {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT NMTTools_IndexedDataMapOfIndexedMapOfInteger(const Standard_Integer NbBuckets = 1);
-
-
-Standard_EXPORT   NMTTools_IndexedDataMapOfIndexedMapOfInteger& Assign(const NMTTools_IndexedDataMapOfIndexedMapOfInteger& Other) ;
-  NMTTools_IndexedDataMapOfIndexedMapOfInteger& operator =(const NMTTools_IndexedDataMapOfIndexedMapOfInteger& Other) 
-{
-  return Assign(Other);
-}
-
-
-
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-
-Standard_EXPORT   void Clear() ;
-~NMTTools_IndexedDataMapOfIndexedMapOfInteger()
-{
-  Clear();
-}
-
-
-
-Standard_EXPORT   Standard_Integer Add(const Standard_Integer& K,const TColStd_IndexedMapOfInteger& I) ;
-
-
-Standard_EXPORT   void Substitute(const Standard_Integer I,const Standard_Integer& K,const TColStd_IndexedMapOfInteger& T) ;
-
-
-Standard_EXPORT   void RemoveLast() ;
-
-
-Standard_EXPORT   Standard_Boolean Contains(const Standard_Integer& K) const;
-
-
-Standard_EXPORT  const Standard_Integer& FindKey(const Standard_Integer I) const;
-
-
-Standard_EXPORT  const TColStd_IndexedMapOfInteger& FindFromIndex(const Standard_Integer I) const;
- const TColStd_IndexedMapOfInteger& operator ()(const Standard_Integer I) const
-{
-  return FindFromIndex(I);
-}
-
-
-
-Standard_EXPORT   TColStd_IndexedMapOfInteger& ChangeFromIndex(const Standard_Integer I) ;
-  TColStd_IndexedMapOfInteger& operator ()(const Standard_Integer I) 
-{
-  return ChangeFromIndex(I);
-}
-
-
-
-Standard_EXPORT   Standard_Integer FindIndex(const Standard_Integer& K) const;
-
-
-Standard_EXPORT  const TColStd_IndexedMapOfInteger& FindFromKey(const Standard_Integer& K) const;
-
-
-Standard_EXPORT   TColStd_IndexedMapOfInteger& ChangeFromKey(const Standard_Integer& K) ;
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address FindFromKey1 (const Standard_Integer& K) const;
-  Standard_EXPORT Standard_Address ChangeFromKey1 (const Standard_Integer& K);
-#endif
-
-protected:
-
- // Methods PROTECTED
- // 
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
-Standard_EXPORT NMTTools_IndexedDataMapOfIndexedMapOfInteger(const NMTTools_IndexedDataMapOfIndexedMapOfInteger& Other);
-
-
- // Fields PRIVATE
- //
-
-
-};
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
 
 
 #endif

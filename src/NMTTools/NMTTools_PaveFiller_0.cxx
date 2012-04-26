@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 #include <TopAbs_ShapeEnum.hxx>
@@ -36,7 +36,7 @@
 
 //=======================================================================
 // function:IsSuccesstorsComputed
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::IsSuccessorsComputed(const Standard_Integer aN1,
                                                              const Standard_Integer aN2)const
@@ -59,7 +59,7 @@
   aNbS=aMSuc.Extent();
   for (i=1; i<=aNbS; ++i) {
     nSuc=aMSuc(i);
-    bComputed=myIP->Contains(n1, nSuc); 
+    bComputed=myIP->Contains(n1, nSuc);
     if (bComputed) {
       break;
     }
@@ -69,13 +69,13 @@
 /*
 //=======================================================================
 // function:  ExpectedPoolLength
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Integer NMTTools_PaveFiller::ExpectedPoolLength()const
 {
   Standard_Integer aNbIIs;
   Standard_Real aCfPredict=.5;
-  // Modified  Thu Sep 14 14:35:18 2006 
+  // Modified  Thu Sep 14 14:35:18 2006
   // Contribution of Samtech www.samcef.com BEGIN
   //const BOPTools_ListOfCoupleOfInteger& aLC=myDSIt.ListOfCouple();
   //aNbIIs=aLC.Extent();
@@ -87,18 +87,18 @@
   }
   //
   aNbIIs=(Standard_Integer) (aCfPredict*(Standard_Real)aNbIIs);
-  
+
   return aNbIIs;
 }
 */
 /*
 //=======================================================================
 //function : SortTypes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void NMTTools_PaveFiller::SortTypes(Standard_Integer& theWhat,
-                                      Standard_Integer& theWith)const 
-{ 
+                                      Standard_Integer& theWith)const
+{
   Standard_Integer aWhat, aWith;
   Standard_Boolean aReverseFlag;
   TopAbs_ShapeEnum aType1, aType2;
@@ -114,7 +114,7 @@
   if (aType1==TopAbs_EDGE && aType2==TopAbs_FACE) {
     aReverseFlag=Standard_False;
   }
-  if (aType1==TopAbs_VERTEX && 
+  if (aType1==TopAbs_VERTEX &&
       (aType2==TopAbs_FACE || aType2==TopAbs_EDGE)) {
     aReverseFlag=Standard_False;
   }

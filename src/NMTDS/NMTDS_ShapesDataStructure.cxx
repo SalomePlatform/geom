@@ -23,7 +23,7 @@
 // File:        NMTDS_ShapesDataStructure.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_ShapesDataStructure.ixx>
+#include <NMTDS_ShapesDataStructure.hxx>
 #include <TopoDS_Iterator.hxx>
 #include <TopoDS_Shape.hxx>
 #include <BooleanOperations_IndexedDataMapOfShapeAncestorsSuccessors.hxx>

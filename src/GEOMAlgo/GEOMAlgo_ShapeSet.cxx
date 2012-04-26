@@ -21,10 +21,10 @@
 //
 
 // File:        GEOMAlgo_ShapeSet.cxx
-// Created:     
-// Author:      Peter KURNEV 
+// Created:
+// Author:      Peter KURNEV
 //
-#include <GEOMAlgo_ShapeSet.ixx>
+#include <GEOMAlgo_ShapeSet.hxx>
 
 #include <TopExp_Explorer.hxx>
 
@@ -32,15 +32,15 @@
 #include <TopTools_MapIteratorOfMapOfOrientedShape.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_ShapeSet::GEOMAlgo_ShapeSet()
 {
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeSet::Clear()
 {
@@ -49,7 +49,7 @@
 }
 //=======================================================================
 //function : Add
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeSet::Add(const TopoDS_Shape& theShape)
 {
@@ -59,7 +59,7 @@
 }
 //=======================================================================
 //function : Add
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeSet::Add(const TopoDS_Shape& theShape,
                               const TopAbs_ShapeEnum theType)
@@ -76,7 +76,7 @@
 }
 //=======================================================================
 //function : Add
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeSet::Add(const TopTools_ListOfShape& theLS)
 {
@@ -91,8 +91,8 @@
   }
 }
 //=======================================================================
-//function :GetSet 
-//purpose  : 
+//function :GetSet
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_ShapeSet::GetSet()const
 {
@@ -100,7 +100,7 @@
 }
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ShapeSet::Contains(const GEOMAlgo_ShapeSet& theOther)const
 {
@@ -125,7 +125,7 @@
 }
 //=======================================================================
 //function : Subtract
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_ShapeSet::Subtract(const GEOMAlgo_ShapeSet& theOther)
 {
@@ -148,7 +148,7 @@
 //modified by NIZNHY-PKV Wed Oct 28 13:51:36 2010f
 //=======================================================================
 //function : IsEqual
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_ShapeSet::IsEqual(const GEOMAlgo_ShapeSet& theOther)const
 {

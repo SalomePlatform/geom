@@ -21,15 +21,15 @@
 //
 
 // File:        GEOMAlgo_WireEdgeSet.cxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_WireEdgeSet.ixx>
+#include <GEOMAlgo_WireEdgeSet.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
   GEOMAlgo_WireEdgeSet::GEOMAlgo_WireEdgeSet()
 {
@@ -38,7 +38,7 @@
 
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_WireEdgeSet::Clear()
 {
@@ -47,7 +47,7 @@
 }
 //=======================================================================
 //function : SetFace
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_WireEdgeSet::SetFace(const TopoDS_Face& aF)
 {
@@ -55,15 +55,15 @@
 }
 //=======================================================================
 //function : Face
-//purpose  : 
+//purpose  :
 //=======================================================================
-  const TopoDS_Face& GEOMAlgo_WireEdgeSet::Face()const 
+  const TopoDS_Face& GEOMAlgo_WireEdgeSet::Face()const
 {
   return myFace;
 }
 //=======================================================================
 //function : AddStartElement
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_WireEdgeSet::AddStartElement(const TopoDS_Shape& aE)
 {
@@ -71,7 +71,7 @@
 }
 //=======================================================================
 //function : StartElements
-//purpose  : 
+//purpose  :
 //=======================================================================
   const  TopTools_ListOfShape& GEOMAlgo_WireEdgeSet::StartElements()const
 {
@@ -79,7 +79,7 @@
 }
 //=======================================================================
 //function : AddShape
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_WireEdgeSet::AddShape(const TopoDS_Shape& aW)
 {
@@ -87,7 +87,7 @@
 }
 //=======================================================================
 //function : Shapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   const  TopTools_ListOfShape& GEOMAlgo_WireEdgeSet::Shapes()const
 {

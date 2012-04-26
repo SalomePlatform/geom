@@ -25,7 +25,8 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTDS_IndexRange.ixx>
+#include <NMTDS_IndexRange.hxx>
+
 //=======================================================================
 //function :NMTDS_IndexRange::NMTDS_IndexRange
 //purpose  : 

@@ -23,22 +23,20 @@
 // File:        NMTTools_PaveFiller.cxx
 // Created:     Fri Dec  5 14:58:54 2003
 // Author:      Peter KURNEV
-
-#include <NMTTools_PaveFiller.ixx>
-
-#include <Basics_OCCTVersion.hxx>
-
-#include <NMTTools_DEProcessor.hxx>
-
+//              <pkv@irinox>
+//
+#include <NMTTools_PaveFiller.hxx>
+//
+#include <BOPTColStd_Failure.hxx>
+#include <IntTools_Context.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTTools_DEProcessor.hxx>
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_InterfPool.hxx>
 
-#include <BOPTColStd_Failure.hxx>
-
 //=======================================================================
 // function: NMTTools_PaveFiller::NMTTools_PaveFiller
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_PaveFiller::NMTTools_PaveFiller()
 {
@@ -51,7 +49,7 @@
 }
 //=======================================================================
 // function: ~
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_PaveFiller::~NMTTools_PaveFiller()
 {
@@ -59,19 +57,19 @@
 }
 //=======================================================================
 // function: Clear
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Clear()
 {
   if (myDSIt) {
     delete myDSIt;
-  } 
+  }
   if (myDS) {
     delete myDS;
   }
   myDSIt=NULL;
   myDS=NULL;
-  
+
   if (myIP) {
     delete myIP;
   }
@@ -79,7 +77,7 @@
 }
 //=======================================================================
 // function: SetCompositeShape
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::SetCompositeShape(const TopoDS_Shape& aS)
 {
@@ -87,7 +85,7 @@
 }
 //=======================================================================
 // function: CompositeShape
-// purpose: 
+// purpose:
 //=======================================================================
   const TopoDS_Shape& NMTTools_PaveFiller::CompositeShape()const
 {
@@ -95,7 +93,7 @@
 }
 //=======================================================================
 // function:  DS
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PShapesDataStructure NMTTools_PaveFiller::DS()
 {
@@ -103,7 +101,7 @@
 }
 //=======================================================================
 // function: DSIt
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PIterator NMTTools_PaveFiller::DSIt()
 {
@@ -111,7 +109,7 @@
 }
 //=======================================================================
 // function:  IP
-// purpose: 
+// purpose:
 //=======================================================================
   NMTDS_PInterfPool NMTTools_PaveFiller::IP()
 {
@@ -119,7 +117,7 @@
 }
 //=======================================================================
 // function:IsDone
-// purpose: 
+// purpose:
 //=======================================================================
   Standard_Boolean NMTTools_PaveFiller::IsDone() const
 {
@@ -127,31 +125,15 @@
 }
 //=======================================================================
 // function: Context
-// purpose: 
+// purpose:
 //=======================================================================
-#if OCC_VERSION_LARGE > 0x06050200
-const Handle(IntTools_Context)& NMTTools_PaveFiller::Context() const
-#else
-const IntTools_Context& NMTTools_PaveFiller::Context() const
-#endif
+  const Handle(IntTools_Context)& NMTTools_PaveFiller::Context() const
 {
   return myContext;
 }
-
-#if OCC_VERSION_LARGE <= 0x06050200
-//=======================================================================
-// function: ChangeContext
-// purpose: 
-//=======================================================================
-IntTools_Context& NMTTools_PaveFiller::ChangeContext() 
-{
-  return myContext;
-}
-#endif
-
 //=======================================================================
 // function: PavePool
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_PavePool& NMTTools_PaveFiller::PavePool() const
 {
@@ -159,7 +141,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function: ChangePavePool
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePool()
 {
@@ -167,7 +149,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function: ChangePavePoolNew
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_PavePool& NMTTools_PaveFiller::ChangePavePoolNew()
 {
@@ -175,7 +157,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function:  CommonBlockPool
-// purpose: 
+// purpose:
 //=======================================================================
   const NMTTools_CommonBlockPool& NMTTools_PaveFiller::CommonBlockPool() const
 {
@@ -183,7 +165,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function:  ChangeCommonBlockPool
-// purpose: 
+// purpose:
 //=======================================================================
   NMTTools_CommonBlockPool& NMTTools_PaveFiller::ChangeCommonBlockPool()
 {
@@ -191,7 +173,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function:  SplitShapesPool
-// purpose: 
+// purpose:
 //=======================================================================
   const BOPTools_SplitShapesPool& NMTTools_PaveFiller::SplitShapesPool() const
 {
@@ -199,7 +181,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function:  ChangeSplitShapesPool
-// purpose: 
+// purpose:
 //=======================================================================
   BOPTools_SplitShapesPool& NMTTools_PaveFiller::ChangeSplitShapesPool()
 {
@@ -207,7 +189,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
 }
 //=======================================================================
 // function: Init
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Init()
 {
@@ -232,18 +214,16 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
               myDS->NumberOfShapesOfTheTool();
   myNbEdges=myDS->NbEdges();
   //
-  // 4.
+  // 4
   myIP=new NMTDS_InterfPool;
-#if OCC_VERSION_LARGE > 0x06050200
   //
-  // 5.
+  // 5
   myContext=new IntTools_Context;
-#endif
 }
 
 //=======================================================================
 // function: Perform
-// purpose: 
+// purpose:
 //=======================================================================
   void NMTTools_PaveFiller::Perform()
 {
@@ -259,7 +239,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
     //
     // 2.VE
     myPavePool.Resize (myNbEdges);
-    
+
     PrepareEdges();
 
     PerformVE();
@@ -293,7 +273,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
     RefinePavePool();
     //
     myPavePoolNew.Destroy();
-    
+
     MakeSplitEdges();
 
     UpdateCommonBlocks();
@@ -305,7 +285,7 @@ IntTools_Context& NMTTools_PaveFiller::ChangeContext()
     //
     MakePCurves();
     //
-    // 7.Postprocessing 
+    // 7.Postprocessing
     UpdatePaveBlocks();
     //
     NMTTools_DEProcessor aDEP(*this);

@@ -21,18 +21,10 @@
 //
 
 // File:        GEOMAlgo_BuilderSolid.cxx
+// Created:
 // Author:      Peter KURNEV
-
-#include <GEOMAlgo_BuilderSolid.ixx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-#include <GEOMAlgo_BuilderTools.hxx>
-
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-#include <NMTTools_CoupleOfShape.hxx>
-#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
-
-#include <Basics_OCCTVersion.hxx>
+//
+#include <GEOMAlgo_BuilderSolid.hxx>
 
 #include <gp_Pnt2d.hxx>
 #include <gp_Pln.hxx>
@@ -81,27 +73,24 @@
 #include <BOPTools_Tools2D.hxx>
 #include <BOPTools_Tools3D.hxx>
 
+#include <NMTTools_ListOfCoupleOfShape.hxx>
+#include <NMTTools_CoupleOfShape.hxx>
+#include <NMTTools_ListIteratorOfListOfCoupleOfShape.hxx>
+
+#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_BuilderTools.hxx>
+
 //
 static
   Standard_Boolean IsGrowthShell(const TopoDS_Shape& ,
                                  const TopTools_IndexedMapOfShape& );
 static
   Standard_Boolean IsHole(const TopoDS_Shape& ,
-#if OCC_VERSION_LARGE > 0x06050200
                           const Handle(IntTools_Context)& );
-#else
-                          IntTools_PContext& );
-#endif
-
 static
   Standard_Boolean IsInside(const TopoDS_Shape& ,
                             const TopoDS_Shape& ,
-#if OCC_VERSION_LARGE > 0x06050200
                             const Handle(IntTools_Context)& );
-#else
-                            IntTools_PContext& );
-#endif
-
 static
   void MakeInternalShells(const TopTools_MapOfShape& ,
                           TopTools_ListOfShape& );
@@ -111,7 +100,7 @@ static
 
 static
   Standard_Boolean RefineShell(const TopoDS_Shell& ,
-                               TopoDS_Shell& );
+			       TopoDS_Shell& );
 
 //=======================================================================
 //function :
@@ -137,10 +126,8 @@ void GEOMAlgo_BuilderSolid::Perform()
 {
   myErrorStatus=0;
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_BuilderArea::Perform();
-#endif
   //
   TopoDS_Compound aC;
   BRep_Builder aBB;
@@ -152,13 +139,6 @@ void GEOMAlgo_BuilderSolid::Perform()
     const TopoDS_Shape& aF=aIt.Value();
     aBB.Add(aC, aF);
   }
-  //
-#if OCC_VERSION_LARGE <= 0x06050200
-  if (myContext==NULL) {
-    myErrorStatus=11;// Null Context
-    return;
-  }
-#endif
   //
   PerformShapesToAvoid();
   if (myErrorStatus) {
@@ -209,7 +189,7 @@ void GEOMAlgo_BuilderSolid::PerformShapesToAvoid()
       }
       /*
       else {
-        int a=0;
+	int a=0;
       }
       */
     }
@@ -410,17 +390,15 @@ void GEOMAlgo_BuilderSolid::PerformLoops()
     if (IsClosedShell(aShell)) {
       myLoops.Append(aShell);
     }
-    //modified by NIZNHY-PKV Wed Oct 27 07:10:41 2010f
     else {
       Standard_Boolean bRefine;
       TopoDS_Shell aShx;
       //
       bRefine=RefineShell(aShell, aShx);
       if (bRefine) {
-        myLoops.Append(aShx);
+	myLoops.Append(aShx);
       }
     }
-    //modified by NIZNHY-PKV Wed Oct 27 07:10:44 2010t
   } // for (; aItF.More(); aItF.Next()) {
   //
   // Post Treatment
@@ -631,10 +609,11 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
     return;
   }
   //
+  Standard_Integer bFlag;
   BRep_Builder aBB;
   TopTools_ListIteratorOfListOfShape aShellIt, aSolidIt;
   TopoDS_Iterator aIt;
-  TopTools_MapOfShape aMF, aMFP;
+  TopTools_MapOfShape aMF, aMFP, aMFS;
   TopTools_MapIteratorOfMapOfShape aItMF;
   TopTools_IndexedDataMapOfShapeListOfShape aMEF;
   TopTools_ListOfShape aLSI;
@@ -656,6 +635,16 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
   for ( ; aSolidIt.More(); aSolidIt.Next()) {
     TopoDS_Solid& aSolid=*((TopoDS_Solid*)(&aSolidIt.Value()));
     //
+    //modified by NIZNHY-PKV Wed Mar 07 08:52:18 2012f
+    aMFS.Clear();
+    {
+      TopExp_Explorer aExp(aSolid, TopAbs_FACE);
+      while (aExp.More()) {
+	aMFS.Add(aExp.Current());
+	aExp.Next();
+      }
+    }
+    //modified by NIZNHY-PKV Wed Mar 07 08:52:20 2012t
     aMEF.Clear();
     TopExp::MapShapesAndAncestors(aSolid, TopAbs_EDGE, TopAbs_FACE, aMEF);
     //
@@ -664,13 +653,17 @@ void GEOMAlgo_BuilderSolid::PerformInternalShapes()
     aItMF.Initialize(aMF);
     for (; aItMF.More(); aItMF.Next()) {
       const TopoDS_Face& aF=*((TopoDS_Face*)(&aItMF.Key()));
-#if OCC_VERSION_LARGE > 0x06050200
-      if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext)) {
-#else
-      if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, *myContext)) {
-#endif
-        aMFP.Add(aF);
+      //modified by NIZNHY-PKV Wed Mar 07 08:54:56 2012f
+      if (!aMFS.Contains(aF)) {
+	bFlag=GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext);
+	if (bFlag) {
+	  aMFP.Add(aF);
+	}
       }
+      //if (GEOMAlgo_Tools3D::IsInternalFace(aF, aSolid, aMEF, 1.e-14, myContext)) {
+      //  aMFP.Add(aF);
+      //}
+      //modified by NIZNHY-PKV Wed Mar 07 08:56:07 2012t
     }
     //
     // 2.2 Make Internal Shells
@@ -756,11 +749,7 @@ void MakeInternalShells(const TopTools_MapOfShape& theMF,
 //purpose  :
 //=======================================================================
 Standard_Boolean IsHole(const TopoDS_Shape& theS2,
-#if OCC_VERSION_LARGE > 0x06050200
                         const Handle(IntTools_Context)& theContext)
-#else
-                        IntTools_PContext& theContext)
-#endif
 {
   TopoDS_Solid *pS2=(TopoDS_Solid *)&theS2;
   BRepClass3d_SolidClassifier& aClsf=theContext->SolidClassifier(*pS2);
@@ -775,11 +764,7 @@ Standard_Boolean IsHole(const TopoDS_Shape& theS2,
 //=======================================================================
 Standard_Boolean IsInside(const TopoDS_Shape& theS1,
                           const TopoDS_Shape& theS2,
-#if OCC_VERSION_LARGE > 0x06050200
                           const Handle(IntTools_Context)& theContext)
-#else
-                          IntTools_PContext& theContext)
-#endif
 {
   TopExp_Explorer aExp;
   TopAbs_State aState;
@@ -795,11 +780,7 @@ Standard_Boolean IsInside(const TopoDS_Shape& theS1,
   else {
     TopTools_IndexedMapOfShape aBounds;
     const TopoDS_Face& aF = TopoDS::Face(aExp.Current());
-#if OCC_VERSION_LARGE > 0x06050200
     aState=GEOMAlgo_Tools3D::ComputeState(aF, *pS2, 1.e-14, aBounds, theContext);
-#else
-    aState=GEOMAlgo_Tools3D::ComputeState(aF, *pS2, 1.e-14, aBounds, *theContext);
-#endif
   }
   return (aState==TopAbs_IN);
 }
@@ -864,13 +845,13 @@ Standard_Boolean IsClosedShell(const TopoDS_Shell& theShell)
   }
   return bRet;
 }
-
 //=======================================================================
 //function : RefineShell
 //purpose  :
 //=======================================================================
-Standard_Boolean RefineShell (const TopoDS_Shell& aShell,
-                              TopoDS_Shell& aShx)
+Standard_Boolean RefineShell(const TopoDS_Shell& aShell,
+			     TopoDS_Shell& aShx)
+
 {
   Standard_Boolean bRet;
   Standard_Integer i, aNbE, aNbF;
@@ -900,7 +881,7 @@ Standard_Boolean RefineShell (const TopoDS_Shell& aShell,
     const TopoDS_Face& aF1=*((TopoDS_Face*)(&aLF.First()));
     if (aNbF==1) {
       if (aOrE==TopAbs_INTERNAL) {
-        continue;
+	continue;
       }
       aMFx.Add(aF1);
     }
@@ -908,14 +889,14 @@ Standard_Boolean RefineShell (const TopoDS_Shell& aShell,
     else if (aNbF==2) {
       const TopoDS_Face& aF2=*((TopoDS_Face*)(&aLF.Last()));
       if (aF2.IsSame(aF1)) {
-        if (BRep_Tool::IsClosed(aE, aF1)) {
-          continue;
-        }
-        if (aOrE==TopAbs_INTERNAL) {
-          continue;
-        }
-        aMFx.Add(aF1);
-        aMFx.Add(aF2);
+	if (BRep_Tool::IsClosed(aE, aF1)) {
+	  continue;
+	}
+	if (aOrE==TopAbs_INTERNAL) {
+	  continue;
+	}
+	aMFx.Add(aF1);
+	aMFx.Add(aF2);
       }
     }
   }
@@ -945,6 +926,6 @@ Standard_Boolean RefineShell (const TopoDS_Shell& aShell,
   //
   return bRet;
 }
-
+//
 //  ErrorStatus :
 // 11 - Null Context

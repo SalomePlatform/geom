@@ -25,13 +25,13 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_StateCollector.ixx>
+#include <GEOMAlgo_StateCollector.hxx>
 
 //=======================================================================
 //function : GEOMAlgo_StateCollector
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMAlgo_StateCollector::GEOMAlgo_StateCollector() 
+GEOMAlgo_StateCollector::GEOMAlgo_StateCollector()
 {
   myCounter[0]=0;
   myCounter[1]=0;
@@ -39,9 +39,9 @@ GEOMAlgo_StateCollector::GEOMAlgo_StateCollector()
 }
 //=======================================================================
 //function : AppendState
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_StateCollector::AppendState(const TopAbs_State aSt) 
+Standard_Boolean GEOMAlgo_StateCollector::AppendState(const TopAbs_State aSt)
 {
   Standard_Boolean bIsToBreak;
   //
@@ -51,7 +51,7 @@ Standard_Boolean GEOMAlgo_StateCollector::AppendState(const TopAbs_State aSt)
       break;
     case TopAbs_OUT:
       ++myCounter[1];
-      break; 
+      break;
     case TopAbs_ON:
       ++myCounter[2];
       break;
@@ -64,9 +64,9 @@ Standard_Boolean GEOMAlgo_StateCollector::AppendState(const TopAbs_State aSt)
 }
 //=======================================================================
 //function : State
-//purpose  : 
+//purpose  :
 //=======================================================================
-TopAbs_State GEOMAlgo_StateCollector::State()const 
+TopAbs_State GEOMAlgo_StateCollector::State()const
 {
   TopAbs_State aSt;
   //

@@ -23,241 +23,320 @@
 -- Created:	Sat Dec 04 12:36:22 2004
 -- Author:	Peter KURNEV
 
-package GEOMAlgo 
+package GEOMAlgo
 
-	---Purpose: 
+	---Purpose:
 
-uses  
-    TCollection, 
-    
-    TColgp, 
-    Geom,     
-    Bnd, 
-    gp,	  
+uses
+    TCollection,
+
+    TColgp,
+    Geom,
+    Bnd,
+    gp,
     GeomAdaptor,
     TopAbs,
-    TopoDS, 
-    TopTools, 
-    IntTools, 
-    BOPTools, 
-    BOP, 
-    
-    TColStd, 
-    BOPTColStd,  
-    BRepAlgo, 
-    NMTDS, 
-    NMTTools 
-    
-is   
-    --
-    -- enumerations 
-    --
-    enumeration State is 
-    	ST_UNKNOWN, 
-	ST_IN,
-	ST_OUT,
-	ST_ON, 
-	ST_ONIN, 
-	ST_ONOUT, 
-	ST_INOUT    
-    end State; 
-    --
-    enumeration KindOfShape is 
-    	KS_UNKNOWN, 
-    	KS_SPHERE,
-    	KS_CYLINDER,
-    	KS_BOX,
-    	KS_TORUS,
-    	KS_CONE,
-    	KS_ELLIPSE,
-    	KS_PLANE,
-    	KS_CIRCLE, 
-    	KS_LINE, 
-    	KS_DEGENERATED 
-    end KindOfShape;   
-    --  
-    enumeration KindOfName is 
-    	KN_UNKNOWN, 
-    	KN_SPHERE,
-    	KN_CYLINDER,
-    	KN_TORUS,
-    	KN_CONE,
-    	KN_ELLIPSE, 
-    	KN_CIRCLE,
-    	KN_PLANE,
-    	KN_LINE, 
-    	KN_BOX, 
-	KN_SEGMENT, 
-	KN_ARCCIRCLE, 
-        KN_POLYGON, 
-	KN_POLYHEDRON,
-    	KN_DISKCIRCLE, 
-    	KN_DISKELLIPSE, 
-	KN_RECTANGLE, 
-	KN_TRIANGLE, 
-	KN_QUADRANGLE, 
-	KN_ARCELLIPSE       	 
-    end KindOfName;   
-    --
-    enumeration KindOfBounds is  
-    	KB_UNKNOWN, 
-	KB_TRIMMED, 
-    	KB_INFINITE
-    end KindOfBounds;  
-    --
-    enumeration KindOfClosed is  
-    	KC_UNKNOWN, 
-	KC_CLOSED, 
-    	KC_NOTCLOSED
-    end KindOfClosed;  
-    --
-    deferred class HAlgo;
-    deferred class Clsf;
-    class ClsfSurf; 
-    class ClsfBox; 
-    --class FinderShapeOn2; 
-    class PassKeyShapeMapHasher; 
-    -- 
-    --  classes 
-    --  
-    deferred class Algo;  
-    deferred class ShapeAlgo;  
-    -- 
-    class ShapeInfo;
-    class ShapeInfoFiller;
-    -- 
-    --  Gluer / GetInPlace 
---modified by NIZNHY-PKV Mon Feb 21 10:07:22 2011f    	     
---    class Gluer1;  
-    class Gluer; 
+    TopoDS,
+    TopTools,
+    IntTools,
+    BOPTools,
+    BOP,
 
-    imported Gluer2 from GEOMAlgo;   
-    imported GlueDetector from GEOMAlgo; 
-    imported GluerAlgo from GEOMAlgo; 
-    imported GetInPlace from GEOMAlgo; 
---modified by NIZNHY-PKV Mon Feb 21 10:07:27 2011t     
-  
-    class GlueAnalyser;  
-    
-    class CoupleOfShapes; 
-    class PassKey;  
-    class PassKeyMapHasher; 
-    class PassKeyShape;  
-    class SurfaceTools; 
-    class Tools;  
-    --	     
-    --  finder on 
-    deferred class ShapeSolid;
-    class WireSolid; 
-    class ShellSolid; 
-    class VertexSolid; 
-    class SolidSolid; 
-    --class FinderShapeOn; 
-    -- 
-    --class FinderShapeOn1;
-    class StateCollector; 
+    TColStd,
+    BOPTColStd,
+    BRepAlgo,
+    NMTDS,
+    NMTTools
 
-    class ClsfSolid;  
-    -- class FinderShapeOn2; 
-    -- class PassKeyShapeMapHasher;
+is
+    --  Enumerations
+    imported State from GEOMAlgo;
+    imported KindOfShape from GEOMAlgo;
+    imported KindOfName from GEOMAlgo;
+    imported KindOfBounds from GEOMAlgo;
+    imported KindOfClosed from GEOMAlgo;
     --
-    -- Builder/Splitter 
-    deferred class BuilderShape; 
-     
-    class Builder; 
-    class Splitter; 
-    class Tools3D; 
-    class BuilderTools; 
-    class ShapeSet;  
-     
-    deferred class BuilderArea;
-    class BuilderFace; 
-    class BuilderSolid;  
-    
-    class WireSplitter; 
-    class WireEdgeSet; 
-    class WESCorrector; 
-    class WESScaler; 
-    -- 
-    --  Pointers
-    --     
-    pointer PWireEdgeSet to WireEdgeSet from GEOMAlgo;  
-    --	   
-    -- 
-    --  Instantiations	
-    class DataMapOfShapeShapeSet instantiates 
-    	DataMap from TCollection(Shape from TopoDS, 
-	                         ShapeSet from GEOMAlgo, 
-	                         ShapeMapHasher from TopTools); 
-	 
-    class DataMapOfShapeReal instantiates 
-    	DataMap from TCollection(Shape from TopoDS, 
-	                         Real from Standard, 
-	                         ShapeMapHasher from TopTools);		 
-				  
-    
-    class DataMapOfRealListOfShape instantiates  
-    	DataMap from TCollection(Real from Standard, 
-    	    	    	    	 ListOfShape from TopTools,  
-	                         MapRealHasher from TColStd);	   
-    --
-    --  instantiations
-    
-     
-    class IndexedDataMapOfShapeBox  
-    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
-	    		    		         	 Box from Bnd,
-	    		    		         	 ShapeMapHasher from TopTools);
-    class IndexedDataMapOfIntegerShape  
-    	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
-	    		    		         	 Shape from TopoDS,
-	    		    		         	 MapIntegerHasher from TColStd); 
-							  
-    class ListOfCoupleOfShapes  
-    	instantiates List from TCollection  (CoupleOfShapes from GEOMAlgo);
+    --  Gluer / GetInPlace
+    imported Gluer2 from GEOMAlgo;
+    imported GlueDetector from GEOMAlgo;
+    imported GluerAlgo from GEOMAlgo;
+    imported GetInPlace from GEOMAlgo;
+    -- Algos
+    imported WireSplitter from GEOMAlgo;
+    imported WESScaler from GEOMAlgo;
+    imported WESCorrector from GEOMAlgo;
+    imported WireEdgeSet from GEOMAlgo;
+    imported GlueAnalyser from GEOMAlgo;
+    imported Gluer from GEOMAlgo;
+    imported FinderShapeOn2 from GEOMAlgo;
+    imported FinderShapeOn1 from GEOMAlgo;
+    imported FinderShapeOn from GEOMAlgo;
+    imported ShapeAlgo from GEOMAlgo;
+    imported SolidSolid from GEOMAlgo;
+    imported ShellSolid from GEOMAlgo;
+    imported VertexSolid from GEOMAlgo;
+    imported WireSolid from GEOMAlgo;
+    imported ShapeSolid from GEOMAlgo;
+    imported Splitter from GEOMAlgo;
+    imported Builder from GEOMAlgo;
+    imported BuilderShape from GEOMAlgo;
+    imported BuilderSolid from GEOMAlgo;
+    imported BuilderFace from GEOMAlgo;
+    imported BuilderArea from GEOMAlgo;
+    imported ShapeInfoFiller from GEOMAlgo;
+    imported Algo from GEOMAlgo;
+    -- Data /  Tools
+    imported ShapeSet from GEOMAlgo;
+    imported SurfaceTools from GEOMAlgo;
+    imported ShapeInfo from GEOMAlgo;
+    imported CoupleOfShapes from GEOMAlgo;
+    imported BuilderTools from GEOMAlgo;
+    imported Tools3D from GEOMAlgo;
+    imported Tools from GEOMAlgo;
+    imported PWireEdgeSet from GEOMAlgo;
+    imported StateCollector from GEOMAlgo;
+    imported PassKey from GEOMAlgo;
+    imported PassKeyMapHasher from GEOMAlgo;
+    imported PassKeyShape from GEOMAlgo;
+    imported PassKeyShapeMapHasher from GEOMAlgo;
+    imported ClsfBox from GEOMAlgo;
+    imported ClsfSurf from GEOMAlgo;
+    imported ClsfSolid from GEOMAlgo;
+    imported Clsf from GEOMAlgo;
+    imported HAlgo from GEOMAlgo;
+
+    imported ListOfCoupleOfShapes from GEOMAlgo;
+    imported ListIteratorOfListOfCoupleOfShapes from GEOMAlgo;
+    imported ListOfPnt from GEOMAlgo;
+    imported ListIteratorOfListOfPnt from GEOMAlgo;
+    imported DataMapOfShapeShapeSet from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfShapeShapeSet from GEOMAlgo;
+    imported DataMapOfShapeReal from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfShapeReal from GEOMAlgo;
+    imported DataMapOfRealListOfShape from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfRealListOfShape from GEOMAlgo;
+    imported DataMapOfPassKeyInteger from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfPassKeyInteger from GEOMAlgo;
+    imported DataMapOfPassKeyShapeShape from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfPassKeyShapeShape from GEOMAlgo;
+    imported DataMapOfOrientedShapeShape from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfOrientedShapeShape from GEOMAlgo;
+    imported DataMapOfShapeMapOfShape from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfShapeMapOfShape from GEOMAlgo;
+    imported DataMapOfShapePnt from GEOMAlgo;
+    imported DataMapIteratorOfDataMapOfShapePnt from GEOMAlgo;
+    imported IndexedDataMapOfShapeBox from GEOMAlgo;
+    imported IndexedDataMapOfShapeShapeInfo from GEOMAlgo;
+    imported IndexedDataMapOfShapeState from GEOMAlgo;
+    imported IndexedDataMapOfIntegerShape from GEOMAlgo;
+    imported IndexedDataMapOfPassKeyShapeListOfShape from GEOMAlgo;
 
 
-    class IndexedDataMapOfShapeState
-    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
-	    		    		         	 State from TopAbs,  
-	    	    	    	    	    	    	 ShapeMapHasher from TopTools);
-    class ListOfPnt
-    	instantiates List from TCollection  (Pnt from gp);
+    --  Instantiations
 
-    class DataMapOfPassKeyInteger
-	instantiates DataMap from TCollection (PassKey from GEOMAlgo, 
-					       Integer from Standard, 
-                                               PassKeyMapHasher from GEOMAlgo); 
-     
-    class IndexedDataMapOfPassKeyShapeListOfShape
-	instantiates IndexedDataMap from TCollection (PassKeyShape from GEOMAlgo, 
-						      ListOfShape from TopTools, 
-                                                      PassKeyShapeMapHasher from GEOMAlgo); 
+    --class ListOfCoupleOfShapes
+    --	instantiates List from TCollection  (CoupleOfShapes from GEOMAlgo);
 
-    class IndexedDataMapOfShapeShapeInfo
-    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
-	    		    		         	 ShapeInfo from GEOMAlgo,
-	    		    		         	 ShapeMapHasher from TopTools);
+    --class ListOfPnt
+    --	instantiates List from TCollection  (Pnt from gp);
+    --
 
-    class DataMapOfPassKeyShapeShape   
-	instantiates DataMap from TCollection (PassKeyShape from GEOMAlgo, 
-					       Shape from TopoDS, 
-     	    	    	    	    	       PassKeyShapeMapHasher from GEOMAlgo); 
+    --class DataMapOfShapeShapeSet instantiates
+    --	DataMap from TCollection(Shape from TopoDS,
+    --	                         ShapeSet from GEOMAlgo,
+    --	                         ShapeMapHasher from TopTools);
 
-    class DataMapOfOrientedShapeShape instantiates
-        DataMap from TCollection (Shape                  from TopoDS,
-                                  Shape                  from TopoDS,
-                                  OrientedShapeMapHasher from TopTools); 
- 
-    --modified by NIZNHY-PKV Thu Apr 28 08:25:36 2011f 
-    class DataMapOfShapeMapOfShape instantiates
-        DataMap from TCollection (Shape          from TopoDS,
-                                  MapOfShape     from TopTools,
-                                  ShapeMapHasher from TopTools); 
-    class DataMapOfShapePnt instantiates
-        DataMap from TCollection (Shape          from TopoDS,
-                                  Pnt            from gp,
-                                  ShapeMapHasher from TopTools);			  
-    --modified by NIZNHY-PKV Thu Apr 28 08:25:39 2011t     
-    
+    --class DataMapOfShapeReal instantiates
+    --	DataMap from TCollection(Shape from TopoDS,
+    --	                         Real from Standard,
+    --	                         ShapeMapHasher from TopTools);
+
+
+    --class DataMapOfRealListOfShape instantiates
+    --	DataMap from TCollection(Real from Standard,
+    --	    	    	    	 ListOfShape from TopTools,
+    --	                         MapRealHasher from TColStd);
+
+
+    --class DataMapOfPassKeyInteger
+    --	instantiates DataMap from TCollection (PassKey from GEOMAlgo,
+    --					       Integer from Standard,
+    --                                         PassKeyMapHasher from GEOMAlgo);
+
+    --class DataMapOfPassKeyShapeShape
+    --	instantiates DataMap from TCollection (PassKeyShape from GEOMAlgo,
+    --					       Shape from TopoDS,
+    --     	    	    	    	    	       PassKeyShapeMapHasher from GEOMAlgo);
+
+    --class DataMapOfOrientedShapeShape instantiates
+    --    DataMap from TCollection (Shape                  from TopoDS,
+     --                             Shape                  from TopoDS,
+     --                             OrientedShapeMapHasher from TopTools);
+
+
+    --class DataMapOfShapeMapOfShape instantiates
+    --    DataMap from TCollection (Shape          from TopoDS,
+    --                              MapOfShape     from TopTools,
+     --                             ShapeMapHasher from TopTools);
+
+    --class DataMapOfShapePnt instantiates
+    --    DataMap from TCollection (Shape          from TopoDS,
+    --                              Pnt            from gp,
+    --                              ShapeMapHasher from TopTools);
+
+    --
+    --class IndexedDataMapOfShapeBox
+    --	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+--	    		    		         	 Box from Bnd,
+--	    		    		         	 ShapeMapHasher from TopTools);
+
+--    class IndexedDataMapOfShapeShapeInfo
+--    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+--	    		    		         	 ShapeInfo from GEOMAlgo,
+--	    		    		         	 ShapeMapHasher from TopTools);
+--    class IndexedDataMapOfShapeState
+--    	instantiates IndexedDataMap from TCollection   	(Shape from TopoDS,
+--	    		    		         	 State from TopAbs,
+--	    	    	    	    	    	    	 ShapeMapHasher from TopTools);
+
+
+--
+--    class IndexedDataMapOfIntegerShape
+--    	instantiates IndexedDataMap from TCollection   	(Integer from Standard,
+--	    		    		         	 Shape from TopoDS,
+--	    		    		         	 MapIntegerHasher from TColStd);
+
+
+--    class IndexedDataMapOfPassKeyShapeListOfShape
+--	instantiates IndexedDataMap from TCollection (PassKeyShape from GEOMAlgo,
+--						      ListOfShape from TopTools,
+--                                                      PassKeyShapeMapHasher from GEOMAlgo);
+
+
+
+
+
+
 end GEOMAlgo;
+    --
+    -- enumerations
+    --
+    --enumeration State is
+    --	ST_UNKNOWN,
+--	ST_IN,
+--	ST_OUT,
+--	ST_ON,
+--	ST_ONIN,
+--	ST_ONOUT,
+--	ST_INOUT
+--    end State;
+    --
+--    enumeration KindOfShape is
+--    	KS_UNKNOWN,
+--    	KS_SPHERE,
+--    	KS_CYLINDER,
+--    	KS_BOX,
+--    	KS_TORUS,
+--    	KS_CONE,
+--    	KS_ELLIPSE,
+--    	KS_PLANE,
+--    	KS_CIRCLE,
+--    	KS_LINE,
+--    	KS_DEGENERATED
+--    end KindOfShape;
+    --
+--    enumeration KindOfName is
+--    	KN_UNKNOWN,
+--    	KN_SPHERE,
+--    	KN_CYLINDER,
+--    	KN_TORUS,
+--    	KN_CONE,
+--    	KN_ELLIPSE,
+--    	KN_CIRCLE,
+--    	KN_PLANE,
+--    	KN_LINE,
+--    	KN_BOX,
+--	KN_SEGMENT,
+--	KN_ARCCIRCLE,
+--        KN_POLYGON,
+--	KN_POLYHEDRON,
+--    	KN_DISKCIRCLE,
+--    	KN_DISKELLIPSE,
+--	KN_RECTANGLE,
+--	KN_TRIANGLE,
+--	KN_QUADRANGLE,
+--	KN_ARCELLIPSE
+--    end KindOfName;
+    --
+ --   enumeration KindOfBounds is
+ --   	KB_UNKNOWN,
+--	KB_TRIMMED,
+ --   	KB_INFINITE
+--    end KindOfBounds;
+    --
+--    enumeration KindOfClosed is
+--    	KC_UNKNOWN,
+--	KC_CLOSED,
+--    	KC_NOTCLOSED
+--    end KindOfClosed;
+    --
+
+    --deferred class HAlgo;
+    --deferred class Clsf;
+    --class ClsfSurf;
+    --class ClsfBox;
+    --class ClsfSolid;
+
+    --
+    --  classes
+    --
+    --deferred class Algo;
+    --deferred class ShapeAlgo;
+    --
+    --class ShapeInfo;
+    --class ShapeInfoFiller;
+    --class CoupleOfShapes;
+    --class SurfaceTools;
+    --class Tools;
+    --class PassKey;
+    --class PassKeyMapHasher;
+    --class PassKeyShape;
+    --class PassKeyShapeMapHasher;
+    --
+    --  finder on
+    --deferred class ShapeSolid;
+    --class WireSolid;
+    --class ShellSolid;
+    --class VertexSolid;
+    --class SolidSolid;
+    --class StateCollector;
+
+    --
+    --class Gluer;
+    --class GlueAnalyser;
+    --class FinderShapeOn;
+    --class FinderShapeOn1;
+    --class FinderShapeOn2;
+    --
+    -- Builder/Splitter
+    --deferred class BuilderShape;
+    --class Builder;
+    --class Splitter;
+    --class Tools3D;
+    --class BuilderTools;
+    --class ShapeSet;
+
+    --deferred class BuilderArea;
+    --class BuilderFace;
+    --class BuilderSolid;
+
+    --class WireSplitter;
+    --class WireEdgeSet;
+    --class WESCorrector;
+    --class WESScaler;
+    --
+    --  Pointers
+    --
+    --pointer PWireEdgeSet to WireEdgeSet from GEOMAlgo;
+    --
+    --

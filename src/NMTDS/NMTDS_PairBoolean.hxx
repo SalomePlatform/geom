@@ -20,74 +20,39 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_PairBoolean.hxx
+// Author:      Peter KURNEV
+
 #ifndef _NMTDS_PairBoolean_HeaderFile
 #define _NMTDS_PairBoolean_HeaderFile
 
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
-
-#ifndef _Standard_Boolean_HeaderFile
 #include <Standard_Boolean.hxx>
-#endif
-#ifndef _NMTDS_Pair_HeaderFile
 #include <NMTDS_Pair.hxx>
-#endif
 
-
-
+//=======================================================================
+//class    : NMTDS_PairBoolean
+//purpose  : 
+//=======================================================================
 class NMTDS_PairBoolean  : public NMTDS_Pair {
-public:
-
-  void* operator new(size_t,void* anAddress) 
-  {
-    return anAddress;
-  }
-  void* operator new(size_t size) 
-  {
-    return Standard::Allocate(size); 
-  }
-  void  operator delete(void *anAddress) 
-  {
-    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-  }
-
+ public:
+  Standard_EXPORT
+    NMTDS_PairBoolean();
   
-  Standard_EXPORT   NMTDS_PairBoolean();
-Standard_EXPORT virtual ~NMTDS_PairBoolean();
+  Standard_EXPORT
+    virtual ~NMTDS_PairBoolean();
   
-  Standard_EXPORT     void SetFlag(const Standard_Boolean aFlag) ;
- Standard_EXPORT NMTDS_PairBoolean& operator =(const NMTDS_PairBoolean& Other);
+  Standard_EXPORT
+    void SetFlag(const Standard_Boolean aFlag) ;
+ 
+  Standard_EXPORT
+    NMTDS_PairBoolean& operator =(const NMTDS_PairBoolean& Other);
   
-  Standard_EXPORT     Standard_Boolean Flag() const;
-
-
-
-
+  Standard_EXPORT
+    Standard_Boolean Flag() const;
 
 protected:
-
-
-
-Standard_Boolean myFlag;
-
-
-private:
-
-
-
-
-
+  Standard_Boolean myFlag;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-
-
 #endif

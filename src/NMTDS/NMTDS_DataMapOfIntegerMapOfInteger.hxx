@@ -16,100 +16,25 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	NMTDS_DataMapOfIntegerMapOfInteger.hxx
+// Created:	Mon Feb 20 09:27:40 2012
+// Author:	
+//		<pkv@BDEURI37616>
 
-#ifndef _NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
-#define _NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger_HeaderFile
-#include <Handle_NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
+#ifndef NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
+#define NMTDS_DataMapOfIntegerMapOfInteger_HeaderFile
 
-class Standard_DomainError;
-class Standard_NoSuchObject;
-class TColStd_MapOfInteger;
-class TColStd_MapIntegerHasher;
-class NMTDS_DataMapNodeOfDataMapOfIntegerMapOfInteger;
-class NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger;
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_MapIntegerHasher.hxx>
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
+#define _NCollection_MapHasher
+#include <NCollection_DataMap.hxx>
 
-#include <Basics_OCCTVersion.hxx>
+typedef NCollection_DataMap<Standard_Integer, TColStd_MapOfInteger, TColStd_MapIntegerHasher> NMTDS_DataMapOfIntegerMapOfInteger; 
+typedef NMTDS_DataMapOfIntegerMapOfInteger::Iterator NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger; 
+ 
+#undef _NCollection_MapHasher
 
-class NMTDS_DataMapOfIntegerMapOfInteger : public TCollection_BasicMap
-{
-public:
-
-  void* operator new(size_t,void* anAddress)
-  { return anAddress; }
-  void* operator new(size_t size)
-  { return Standard::Allocate(size); }
-  void  operator delete(void *anAddress)
-  { if (anAddress) Standard::Free((Standard_Address&)anAddress); }
-
-  // Methods PUBLIC
-  //
-
-  Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger(const Standard_Integer NbBuckets = 1);
-
-  Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger& Assign(const NMTDS_DataMapOfIntegerMapOfInteger& Other);
-  NMTDS_DataMapOfIntegerMapOfInteger& operator =(const NMTDS_DataMapOfIntegerMapOfInteger& Other)
-  {
-    return Assign(Other);
-  }
-
-  Standard_EXPORT void ReSize(const Standard_Integer NbBuckets);
-
-  Standard_EXPORT void Clear();
-  ~NMTDS_DataMapOfIntegerMapOfInteger()
-  {
-    Clear();
-  }
-
-  Standard_EXPORT Standard_Boolean Bind (const Standard_Integer& K,const TColStd_MapOfInteger& I);
-  Standard_EXPORT Standard_Boolean IsBound (const Standard_Integer& K) const;
-  Standard_EXPORT Standard_Boolean UnBind (const Standard_Integer& K);
-
-  Standard_EXPORT const TColStd_MapOfInteger& Find (const Standard_Integer& K) const;
-  const TColStd_MapOfInteger& operator()(const Standard_Integer& K) const
-  {
-    return Find(K);
-  }
-
-  Standard_EXPORT TColStd_MapOfInteger& ChangeFind(const Standard_Integer& K);
-  TColStd_MapOfInteger& operator()(const Standard_Integer& K)
-  {
-    return ChangeFind(K);
-  }
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address Find1 (const Standard_Integer& K) const;
-  Standard_EXPORT Standard_Address ChangeFind1 (const Standard_Integer& K);
-#endif
-
-private:
-
- // Methods PRIVATE
- //
-
-  Standard_EXPORT NMTDS_DataMapOfIntegerMapOfInteger(const NMTDS_DataMapOfIntegerMapOfInteger& Other);
-
-};
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
 
 #endif

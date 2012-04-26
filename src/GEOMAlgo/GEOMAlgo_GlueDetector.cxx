@@ -25,17 +25,7 @@
 
 #include <GEOMAlgo_GlueDetector.hxx>
 
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
-
-#include <NMTDS_BndSphereTree.hxx>
-#include <NMTDS_BndSphere.hxx>
-#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
+#include <Bnd_Box.hxx>
 #include <NCollection_UBTreeFiller.hxx>
 
 #include <TColStd_ListOfInteger.hxx>
@@ -58,50 +48,89 @@
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
 
 #include <TopExp.hxx>
-
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
 #include <BRepBndLib.hxx>
 
-#include <Bnd_Box.hxx>
+#include <NMTDS_BndSphereTree.hxx>
+#include <NMTDS_BndSphere.hxx>
+#include <NMTDS_IndexedDataMapOfShapeBndSphere.hxx>
+
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
+//
+#include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_MapOfShape.hxx>
+
+//modified by NIZNHY-PKV Tue Mar 13 10:25:47 2012f
+static
+  Standard_Integer CheckAncesstors
+  (const TopoDS_Shape& aVSD,
+   const TopTools_MapOfShape& aMVSD,
+   const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
+   const TopTools_IndexedDataMapOfShapeListOfShape& aMEV,
+   TopTools_IndexedDataMapOfShapeListOfShape& aMEVZ);
+//modified by NIZNHY-PKV Tue Mar 13 10:25:50 2012t
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
 GEOMAlgo_GlueDetector::GEOMAlgo_GlueDetector()
-  : GEOMAlgo_GluerAlgo(),
-    GEOMAlgo_Algo()
+:
+  GEOMAlgo_GluerAlgo(),
+  GEOMAlgo_Algo()
 {}
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_GlueDetector::~GEOMAlgo_GlueDetector()
 {}
+//modified by NIZNHY-PKV Tue Mar 13 12:26:50 2012f
+//=======================================================================
+//function : StickedShapes
+//purpose  :
+//=======================================================================
+const TopTools_IndexedDataMapOfShapeListOfShape&
+  GEOMAlgo_GlueDetector::StickedShapes()
+{
+  return myStickedShapes;
+}
+//modified by NIZNHY-PKV Tue Mar 13 12:26:54 2012t
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GlueDetector::Perform()
 {
   myErrorStatus=0;
   myWarningStatus=0;
+  myStickedShapes.Clear();
   //
   CheckData();
   if (myErrorStatus) {
     return;
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_GluerAlgo::Perform();
-#endif
   //
   DetectVertices();
   if (myErrorStatus) {
     return;
   }
+  //
+  //modified by NIZNHY-PKV Wed Mar 14 08:00:09 2012f
+  CheckDetected();
+  if (myErrorStatus) {
+    return;
+  }
+  //modified by NIZNHY-PKV Wed Mar 14 08:00:12 2012t
   //
   DetectEdges();
   if (myErrorStatus) {
@@ -115,7 +144,7 @@ void GEOMAlgo_GlueDetector::Perform()
 }
 //=======================================================================
 //function : DetectVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GlueDetector::DetectVertices()
 {
@@ -131,7 +160,6 @@ void GEOMAlgo_GlueDetector::DetectVertices()
   TopTools_DataMapOfShapeListOfShape aMVV;
   GEOMAlgo_IndexedDataMapOfIntegerShape aMIS;
   NMTDS_IndexedDataMapOfShapeBndSphere aMSB;
-  //
   NMTDS_BndSphereTreeSelector aSelector;
   NMTDS_BndSphereTree aBBTree;
   NCollection_UBTreeFiller <Standard_Integer, NMTDS_BndSphere> aTreeFiller(aBBTree);
@@ -159,7 +187,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
     aTreeFiller.Add(i, aBox);
     //
     aMIS.Add(i, aV);
-    aMSB.Add(aV, aBox); 
+    aMSB.Add(aV, aBox);
   }
   //
   aTreeFiller.Fill();
@@ -183,49 +211,49 @@ void GEOMAlgo_GlueDetector::DetectVertices()
       aNbIP=aMIP.Extent();
       aIt1.Initialize(aMIP);
       for(; aIt1.More(); aIt1.Next()) {
-	aIP=aIt1.Key();
-	if (aMIPC.Contains(aIP)) {
-	  continue;
-	}
-	//
-	const TopoDS_Shape& aVP=aMIS.FindFromKey(aIP);
-	const NMTDS_BndSphere& aBoxVP=aMSB.FindFromKey(aVP);
-	//
-	aSelector.Clear();
-	aSelector.SetBox(aBoxVP);
-	//
-	aNbVSD=aBBTree.Select(aSelector);
-	if (!aNbVSD) {
-	  continue;  // it shoild not be so [at least IP itself]    
-	}
-	//
-	const TColStd_ListOfInteger& aLI=aSelector.Indices();
-	aIt.Initialize(aLI);
-	for (; aIt.More(); aIt.Next()) {
-	  aIP1=aIt.Value();
-	  if (aMIP.Contains(aIP1)) {
-	    continue;
-	  }
-	  aMIP1.Add(aIP1);
-	} //for (; aIt.More(); aIt.Next()) {
+        aIP=aIt1.Key();
+        if (aMIPC.Contains(aIP)) {
+          continue;
+        }
+        //
+        const TopoDS_Shape& aVP=aMIS.FindFromKey(aIP);
+        const NMTDS_BndSphere& aBoxVP=aMSB.FindFromKey(aVP);
+        //
+        aSelector.Clear();
+        aSelector.SetBox(aBoxVP);
+        //
+        aNbVSD=aBBTree.Select(aSelector);
+        if (!aNbVSD) {
+          continue;  // it shoild not be so [at least IP itself]
+        }
+        //
+        const TColStd_ListOfInteger& aLI=aSelector.Indices();
+        aIt.Initialize(aLI);
+        for (; aIt.More(); aIt.Next()) {
+          aIP1=aIt.Value();
+          if (aMIP.Contains(aIP1)) {
+            continue;
+          }
+          aMIP1.Add(aIP1);
+        } //for (; aIt.More(); aIt.Next()) {
       }//for(; aIt1.More(); aIt1.Next()) {
       //
       aNbIP1=aMIP1.Extent();
       if (!aNbIP1) {
-	break;
+        break;
       }
       //
       aIt1.Initialize(aMIP);
       for(; aIt1.More(); aIt1.Next()) {
-	aIP=aIt1.Key();
-	aMIPC.Add(aIP);
+        aIP=aIt1.Key();
+        aMIPC.Add(aIP);
       }
       //
       aMIP.Clear();
       aIt1.Initialize(aMIP1);
       for(; aIt1.More(); aIt1.Next()) {
-	aIP=aIt1.Key();
-	aMIP.Add(aIP);
+        aIP=aIt1.Key();
+        aMIP.Add(aIP);
       }
       aMIP1.Clear();
     }// while(1)
@@ -243,7 +271,7 @@ void GEOMAlgo_GlueDetector::DetectVertices()
       aIP=aIt1.Key();
       const TopoDS_Shape& aVP=aMIS.FindFromKey(aIP);
       if (!j) {
-	aVF=aVP;
+        aVF=aVP;
       }
       aLVSD.Append(aVP);
       aMVProcessed.Add(aVP);
@@ -261,14 +289,14 @@ void GEOMAlgo_GlueDetector::DetectVertices()
     for (; aItS.More(); aItS.Next()) {
       const TopoDS_Shape& aVSD=aItS.Value();
       if (!myOrigins.IsBound(aVSD)) {
-	myOrigins.Bind(aVSD, aV);
+        myOrigins.Bind(aVSD, aV);
       }
     }
   }
 }
 //=======================================================================
 //function : DetectFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GlueDetector::DetectFaces()
 {
@@ -276,7 +304,7 @@ void GEOMAlgo_GlueDetector::DetectFaces()
 }
 //=======================================================================
 //function : DetectEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GlueDetector::DetectEdges()
 {
@@ -284,7 +312,7 @@ void GEOMAlgo_GlueDetector::DetectEdges()
 }
 //=======================================================================
 //function : DetectShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
 {
@@ -302,7 +330,7 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
   aNbF=aMF.Extent();
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
-    // 
+    //
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=*((TopoDS_Face*)&aS);
       FacePassKey(aF, aPKF);
@@ -349,17 +377,18 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
       continue;
     }
     //
-    const TopoDS_Shape& aS1=aLSDF.First();  
+    const TopoDS_Shape& aS1=aLSDF.First();
     //
     if (aType==TopAbs_EDGE) {
       const TopoDS_Edge& aE1=*((TopoDS_Edge*)&aS1);
       bDegenerated=BRep_Tool::Degenerated(aE1);
       if (bDegenerated) {
-	continue;
+        continue;
       }
     }
     //
     myImages.Bind(aS1, aLSDF);
+    //
     // origins
     aItLS.Initialize(aLSDF);
     for (; aItLS.More(); aItLS.Next()) {
@@ -372,10 +401,10 @@ void GEOMAlgo_GlueDetector::DetectShapes(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : FacePassKey
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_GlueDetector::FacePassKey(const TopoDS_Face& aF, 
-					GEOMAlgo_PassKeyShape& aPK)
+void GEOMAlgo_GlueDetector::FacePassKey(const TopoDS_Face& aF,
+                                        GEOMAlgo_PassKeyShape& aPK)
 {
   Standard_Integer i, aNbE;
   TopoDS_Shape aER;
@@ -392,7 +421,7 @@ void GEOMAlgo_GlueDetector::FacePassKey(const TopoDS_Face& aF,
     if (BRep_Tool::Degenerated(aEE)) {
       continue;
     }
-    // 
+    //
     if (myOrigins.IsBound(aE)) {
       aER=myOrigins.Find(aE);
     }
@@ -405,10 +434,10 @@ void GEOMAlgo_GlueDetector::FacePassKey(const TopoDS_Face& aF,
 }
 //=======================================================================
 //function : EdgePassKey
-//purpose  : 
+//purpose  :
 //=======================================================================
-void GEOMAlgo_GlueDetector::EdgePassKey(const TopoDS_Edge& aE, 
-					GEOMAlgo_PassKeyShape& aPK)
+void GEOMAlgo_GlueDetector::EdgePassKey(const TopoDS_Edge& aE,
+                                        GEOMAlgo_PassKeyShape& aPK)
 {
   TopAbs_Orientation aOr;
   TopoDS_Shape aVR;
@@ -421,10 +450,10 @@ void GEOMAlgo_GlueDetector::EdgePassKey(const TopoDS_Edge& aE,
     aOr=aV.Orientation();
     if (aOr==TopAbs_FORWARD || aOr==TopAbs_REVERSED) {
       if (myOrigins.IsBound(aV)) {
-	aVR=myOrigins.Find(aV);
+        aVR=myOrigins.Find(aV);
       }
       else {
-	aVR=aV;
+        aVR=aV;
       }
       aLV.Append(aVR);
     }
@@ -432,3 +461,152 @@ void GEOMAlgo_GlueDetector::EdgePassKey(const TopoDS_Edge& aE,
   //
   aPK.SetShapes(aLV);
 }
+//modified by NIZNHY-PKV Tue Mar 13 09:54:18 2012f
+//=======================================================================
+//function : CheckDetected
+//purpose  :
+//=======================================================================
+void GEOMAlgo_GlueDetector::CheckDetected()
+{
+  TopoDS_Iterator aItA;
+  TopExp_Explorer aExp;
+  TopTools_ListOfShape aLV;
+  TopTools_MapOfShape aMFence;
+  TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItIm;
+  TopTools_IndexedDataMapOfShapeListOfShape aMVE, aMEV;
+  //
+  // 1. aMVE, aMEV
+  TopExp::MapShapesAndAncestors(myArgument, TopAbs_VERTEX, TopAbs_EDGE, aMVE);
+  //
+  aExp.Init(myArgument, TopAbs_EDGE);
+  for (; aExp.More(); aExp.Next()) {
+    const TopoDS_Shape& aE=aExp.Current();
+    //
+    aLV.Clear();
+    aMFence.Clear();
+    aItA.Initialize(aE);
+    for (; aItA.More(); aItA.Next()) {
+      const TopoDS_Shape& aV=aItA.Value();
+      if (aMFence.Add(aV)) {
+        aLV.Append(aV);
+      }
+    }
+    //
+    aMEV.Add(aE, aLV);
+  }
+  // 2. Checking
+  aItIm.Initialize(myImages);
+  for (; aItIm.More(); aItIm.Next()) {
+    //const TopoDS_Shape& aV=aItIm.Key();
+    const TopTools_ListOfShape& aLVSD=aItIm.Value();
+    CheckDetected(aLVSD, aMVE, aMEV);
+  }
+}
+//=======================================================================
+//function : CheckDetected
+//purpose  :
+//=======================================================================
+void GEOMAlgo_GlueDetector::CheckDetected
+  (const TopTools_ListOfShape& aLVSD,
+   const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
+   const TopTools_IndexedDataMapOfShapeListOfShape& aMEV)
+{
+  Standard_Integer i, aNbVSD, aNbA, iRet;
+  TopAbs_ShapeEnum aTypeS, aTypeA[2];
+  TopExp_Explorer aExp, aExpA;
+  TopTools_MapOfShape aMFence, aMVSD;
+  TopTools_ListOfShape aLV;
+  TopTools_ListIteratorOfListOfShape aItLS;
+  //
+  myErrorStatus=0;
+  //
+  aNbVSD=aLVSD.Extent();
+  if (aNbVSD < 2) {
+    return ;
+  }
+  //
+  aItLS.Initialize(aLVSD);
+  for (; aItLS.More(); aItLS.Next()) {
+    const TopoDS_Shape& aVSD=aItLS.Value();
+    aMVSD.Add(aVSD);
+  }
+  //
+  aItLS.Initialize(aLVSD);
+  for (; aItLS.More(); aItLS.Next()) {
+    const TopoDS_Shape& aVSD=aItLS.Value();
+    //
+    iRet=CheckAncesstors(aVSD, aMVSD, aMVE, aMEV, myStickedShapes);
+    if (iRet) {
+      // Sticked shapes detected
+      myWarningStatus=2;
+    }
+  }
+}
+//=======================================================================
+//function : CheckAncesstors
+//purpose  :
+//=======================================================================
+Standard_Integer CheckAncesstors
+  (const TopoDS_Shape& aVSD,
+   const TopTools_MapOfShape& aMVSD,
+   const TopTools_IndexedDataMapOfShapeListOfShape& aMVE,
+   const TopTools_IndexedDataMapOfShapeListOfShape& aMEV,
+   TopTools_IndexedDataMapOfShapeListOfShape& aMEVZ)
+{
+  Standard_Address pLE, pLV, pLVZ;
+  Standard_Integer iRet, aNbVX;
+  TopTools_ListIteratorOfListOfShape aItLE, aItLV;
+  TopTools_MapOfShape aMFence;
+  TopTools_ListOfShape aLVX;
+  //
+  iRet=0;
+  //
+  pLE=aMVE.FindFromKey1(aVSD);
+  if (!pLE) {
+    return iRet;
+  }
+  //
+  const TopTools_ListOfShape& aLE=*((TopTools_ListOfShape*)pLE);
+  aItLE.Initialize(aLE);
+  for (; aItLE.More(); aItLE.Next()) {
+    const TopoDS_Shape& aE=aItLE.Value();
+    //
+    pLV=aMEV.FindFromKey1(aE);
+    if (!pLV) {
+      continue; // it should be not so
+    }
+    //
+    aLVX.Clear();
+    const TopTools_ListOfShape& aLV=*((TopTools_ListOfShape*)pLV);
+    aItLV.Initialize(aLV);
+    for (; aItLV.More(); aItLV.Next()) {
+      const TopoDS_Shape& aV=aItLV.Value();
+      if (!aV.IsSame(aVSD)) {
+        if (aMVSD.Contains(aV)) {
+          if (aMFence.Add(aV)) {
+            aLVX.Append(aV);
+          }
+        }
+      }
+    }
+    //
+    aNbVX=aLVX.Extent();
+    if (!aNbVX) {
+      continue;
+    }
+    //
+    iRet=1;
+    //
+    pLVZ=aMEVZ.FindFromKey1(aE);
+    if (!pLVZ) {
+      aMEVZ.Add(aE, aLVX);
+    }
+    else {
+      TopTools_ListOfShape& aLVZ=*((TopTools_ListOfShape*)pLVZ);
+      aLVZ.Append(aLVX);
+    }
+  }
+  //
+  return iRet;
+}
+//modified by NIZNHY-PKV Tue Mar 13 09:54:59 2012t

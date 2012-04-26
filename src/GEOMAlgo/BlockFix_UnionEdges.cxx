@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // File:      BlockFix_UnionEdges.cxx
 // Created:   07.12.04 15:27:30
@@ -26,30 +25,31 @@
 
 #include <BlockFix_UnionEdges.ixx>
 
-#include <Approx_Curve3d.hxx>
-#include <BRepAdaptor_HCompCurve.hxx>
-#include <BRep_Builder.hxx>
-#include <BRep_Tool.hxx>
-#include <GC_MakeCircle.hxx>
-#include <Geom_BSplineCurve.hxx>
-#include <Geom_Circle.hxx>
-#include <Geom_Curve.hxx>
-#include <Geom_Line.hxx>
-#include <Geom_TrimmedCurve.hxx>
 #include <ShapeAnalysis_Edge.hxx>
+
 #include <ShapeFix_Edge.hxx>
 #include <ShapeFix_Face.hxx>
 #include <ShapeFix_Shell.hxx>
-#include <TColgp_SequenceOfPnt.hxx>
-#include <TColStd_MapOfInteger.hxx>
+
+#include <BRep_Builder.hxx>
+#include <BRep_CurveRepresentation.hxx>
+#include <BRep_ListIteratorOfListOfCurveRepresentation.hxx>
+#include <BRep_TEdge.hxx>
+#include <BRep_Tool.hxx>
+#include <BRepAdaptor_HCompCurve.hxx>
+#include <BRepLib.hxx>
+#include <BRepLib_MakeEdge.hxx>
+
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
+
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_SequenceOfShape.hxx>
+
 #include <TopoDS.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Face.hxx>
@@ -58,17 +58,206 @@
 #include <TopoDS_Vertex.hxx>
 #include <TopoDS_Iterator.hxx>
 
+#include <Approx_Curve3d.hxx>
+
+#include <GC_MakeCircle.hxx>
+
+#include <Geom_BSplineCurve.hxx>
+#include <Geom_Circle.hxx>
+#include <Geom_Curve.hxx>
+#include <Geom_Line.hxx>
+#include <Geom_TrimmedCurve.hxx>
+#include <GeomConvert.hxx>
+#include <GeomConvert_CompCurveToBSplineCurve.hxx>
+
+#include <Geom2dConvert.hxx>
+#include <Geom2dConvert_CompCurveToBSplineCurve.hxx>
+#include <Geom2d_TrimmedCurve.hxx>
+#include <Geom2d_BSplineCurve.hxx>
+
+#include <TColGeom_SequenceOfSurface.hxx>
+#include <TColGeom_Array1OfBSplineCurve.hxx>
+#include <TColGeom_HArray1OfBSplineCurve.hxx>
+#include <TColGeom2d_Array1OfBSplineCurve.hxx>
+#include <TColGeom2d_HArray1OfBSplineCurve.hxx>
+#include <TColGeom2d_SequenceOfBoundedCurve.hxx>
+#include <TColgp_SequenceOfPnt.hxx>
+#include <TColStd_Array1OfReal.hxx>
+#include <TColStd_MapOfInteger.hxx>
+
 #include "utilities.h"
 
 //=======================================================================
 //function : BlockFix_UnionEdges()
 //purpose  : Constructor
 //=======================================================================
-
 BlockFix_UnionEdges::BlockFix_UnionEdges (  )
 {
 }
 
+//=======================================================================
+//function : GlueEdgesWithPCurves
+//purpose  : Glues the pcurves of the sequence of edges
+//           and glues their 3d curves
+//=======================================================================
+static TopoDS_Edge GlueEdgesWithPCurves(const TopTools_SequenceOfShape& aChain,
+                                        const TopoDS_Vertex& FirstVertex,
+                                        const TopoDS_Vertex& LastVertex)
+{
+  Standard_Integer i, j;
+
+  TopoDS_Edge FirstEdge = TopoDS::Edge(aChain(1));
+  //TColGeom2d_SequenceOfCurve PCurveSeq;
+  TColGeom_SequenceOfSurface SurfSeq;
+  //TopTools_SequenceOfShape LocSeq;
+  
+  BRep_ListIteratorOfListOfCurveRepresentation itr( (Handle(BRep_TEdge)::DownCast(FirstEdge.TShape()))->Curves() );
+  for (; itr.More(); itr.Next())
+  {
+    Handle(BRep_CurveRepresentation) CurveRep = itr.Value();
+    if (CurveRep->IsCurveOnSurface())
+    {
+      //PCurveSeq.Append(CurveRep->PCurve());
+      SurfSeq.Append(CurveRep->Surface());
+      /*
+      TopoDS_Shape aLocShape;
+      aLocShape.Location(CurveRep->Location());
+      LocSeq.Append(aLocShape);
+      */
+    }
+  }
+
+  Standard_Real fpar, lpar;
+  BRep_Tool::Range(FirstEdge, fpar, lpar);
+  TopoDS_Edge PrevEdge = FirstEdge;
+  TopoDS_Vertex CV;
+  Standard_Real MaxTol = 0.;
+  
+  TopoDS_Edge ResEdge;
+  BRep_Builder BB;
+
+  Standard_Integer nb_curve = aChain.Length();   //number of curves
+  TColGeom_Array1OfBSplineCurve tab_c3d(0,nb_curve-1);                    //array of the curves
+  TColStd_Array1OfReal tabtolvertex(0,nb_curve-1); //(0,nb_curve-2);  //array of the tolerances
+    
+  TopoDS_Vertex PrevVertex = FirstVertex;
+  for (i = 1; i <= nb_curve; i++)
+  {
+    TopoDS_Edge anEdge = TopoDS::Edge(aChain(i));
+    TopoDS_Vertex VF, VL;
+    TopExp::Vertices(anEdge, VF, VL);
+    Standard_Boolean ToReverse = (!VF.IsSame(PrevVertex));
+    
+    Standard_Real Tol1 = BRep_Tool::Tolerance(VF);
+    Standard_Real Tol2 = BRep_Tool::Tolerance(VL);
+    if (Tol1 > MaxTol)
+      MaxTol = Tol1;
+    if (Tol2 > MaxTol)
+      MaxTol = Tol2;
+    
+    if (i > 1)
+    {
+      TopExp::CommonVertex(PrevEdge, anEdge, CV);
+      Standard_Real Tol = BRep_Tool::Tolerance(CV);
+      tabtolvertex(i-2) = Tol;
+    }
+    
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve(anEdge, fpar, lpar);
+    Handle(Geom_TrimmedCurve) aTrCurve = new Geom_TrimmedCurve(aCurve, fpar, lpar);
+    tab_c3d(i-1) = GeomConvert::CurveToBSplineCurve(aTrCurve);
+    GeomConvert::C0BSplineToC1BSplineCurve(tab_c3d(i-1), Precision::Confusion());
+    if (ToReverse)
+      tab_c3d(i-1)->Reverse();
+    PrevVertex = (ToReverse)? VF : VL;
+    PrevEdge = anEdge;
+  }
+  Handle(TColGeom_HArray1OfBSplineCurve)  concatcurve;     //array of the concatenated curves
+  Handle(TColStd_HArray1OfInteger)        ArrayOfIndices;  //array of the remining Vertex
+  GeomConvert::ConcatC1(tab_c3d,
+                        tabtolvertex,
+                        ArrayOfIndices,
+                        concatcurve,
+                        Standard_False,
+                        Precision::Confusion());   //C1 concatenation
+  
+  if (concatcurve->Length() > 1)
+  {
+    GeomConvert_CompCurveToBSplineCurve Concat(concatcurve->Value(concatcurve->Lower()));
+    
+    for (i = concatcurve->Lower()+1; i <= concatcurve->Upper(); i++)
+      Concat.Add( concatcurve->Value(i), MaxTol, Standard_True );
+    
+    concatcurve->SetValue(concatcurve->Lower(), Concat.BSplineCurve());
+  }
+  Handle(Geom_BSplineCurve) ResCurve = concatcurve->Value(concatcurve->Lower());
+  
+  TColGeom2d_SequenceOfBoundedCurve ResPCurves;
+  TopLoc_Location aLoc;
+  for (j = 1; j <= SurfSeq.Length(); j++)
+  {
+    TColGeom2d_Array1OfBSplineCurve tab_c2d(0,nb_curve-1); //array of the pcurves
+    
+    PrevVertex = FirstVertex;
+    PrevEdge = FirstEdge;
+    //TopLoc_Location theLoc = LocSeq(j).Location();
+    for (i = 1; i <= nb_curve; i++)
+    {
+      TopoDS_Edge anEdge = TopoDS::Edge(aChain(i));
+      TopoDS_Vertex VF, VL;
+      TopExp::Vertices(anEdge, VF, VL);
+      Standard_Boolean ToReverse = (!VF.IsSame(PrevVertex));
+
+      /*
+      Handle(Geom2d_Curve) aPCurve =
+        BRep_Tool::CurveOnSurface(anEdge, SurfSeq(j), anEdge.Location()*theLoc, fpar, lpar);
+      */
+      Handle(Geom2d_Curve) aPCurve =
+        BRep_Tool::CurveOnSurface(anEdge, SurfSeq(j), aLoc, fpar, lpar);
+      Handle(Geom2d_TrimmedCurve) aTrPCurve = new Geom2d_TrimmedCurve(aPCurve, fpar, lpar);
+      tab_c2d(i-1) = Geom2dConvert::CurveToBSplineCurve(aTrPCurve);
+      Geom2dConvert::C0BSplineToC1BSplineCurve(tab_c2d(i-1), Precision::Confusion());
+      if (ToReverse)
+        tab_c2d(i-1)->Reverse();
+      PrevVertex = (ToReverse)? VF : VL;
+      PrevEdge = anEdge;
+    }
+    Handle(TColGeom2d_HArray1OfBSplineCurve)  concatc2d;     //array of the concatenated curves
+    Handle(TColStd_HArray1OfInteger)        ArrayOfInd2d;  //array of the remining Vertex
+    Geom2dConvert::ConcatC1(tab_c2d,
+                            tabtolvertex,
+                            ArrayOfInd2d,
+                            concatc2d,
+                            Standard_False,
+                            Precision::Confusion());   //C1 concatenation
+    
+    if (concatc2d->Length() > 1)
+    {
+      Geom2dConvert_CompCurveToBSplineCurve Concat2d(concatc2d->Value(concatc2d->Lower()));
+      
+      for (i = concatc2d->Lower()+1; i <= concatc2d->Upper(); i++)
+        Concat2d.Add( concatc2d->Value(i), MaxTol, Standard_True );
+      
+      concatc2d->SetValue(concatc2d->Lower(), Concat2d.BSplineCurve());
+    }
+    Handle(Geom2d_BSplineCurve) aResPCurve = concatc2d->Value(concatc2d->Lower());
+    ResPCurves.Append(aResPCurve);
+  }
+  
+  ResEdge = BRepLib_MakeEdge(ResCurve,
+                             FirstVertex, LastVertex,
+                             ResCurve->FirstParameter(), ResCurve->LastParameter());
+  BB.SameRange(ResEdge, Standard_False);
+  BB.SameParameter(ResEdge, Standard_False);
+  for (j = 1; j <= ResPCurves.Length(); j++)
+  {
+    BB.UpdateEdge(ResEdge, ResPCurves(j), SurfSeq(j), aLoc, MaxTol);
+    BB.Range(ResEdge, SurfSeq(j), aLoc, ResPCurves(j)->FirstParameter(), ResPCurves(j)->LastParameter());
+  }
+
+  BRepLib::SameParameter(ResEdge, MaxTol, Standard_True);
+  
+  return ResEdge;
+}
 
 //=======================================================================
 //function : MergeEdges
@@ -142,9 +331,9 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       Handle(Geom_Line) L2 = Handle(Geom_Line)::DownCast(c3d2);
       gp_Dir Dir1 = L1->Position().Direction();
       gp_Dir Dir2 = L2->Position().Direction();
-      //if(!Dir1.IsEqual(Dir2,Precision::Angular())) { 
-      //if(!Dir1.IsParallel(Dir2,Precision::Angular())) { 
-      if(!Dir1.IsParallel(Dir2,Tol)) { 
+      //if(!Dir1.IsEqual(Dir2,Precision::Angular())) {
+      //if(!Dir1.IsParallel(Dir2,Precision::Angular())) {
+      if(!Dir1.IsParallel(Dir2,Tol)) {
         continue;
       }
       // can union lines => create new edge
@@ -252,6 +441,8 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
     }
     if(NeedUnion) {
       MESSAGE ("can not make analitical union => make approximation");
+      TopoDS_Edge E = GlueEdgesWithPCurves(aChain, VF, VL);
+      /*
       TopoDS_Wire W;
       B.MakeWire(W);
       for(j=1; j<=aChain.Length(); j++) {
@@ -265,6 +456,7 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
       B.MakeEdge (E,bc,Precision::Confusion());
       B.Add (E,VF);
       B.Add (E,VL);
+      */
       aChain.SetValue(1,E);
     }
     else {
@@ -277,12 +469,10 @@ static Standard_Boolean MergeEdges(const TopTools_SequenceOfShape& SeqEdges,
   return Standard_True;
 }
 
-
 //=======================================================================
 //function : Perform
 //purpose  :
 //=======================================================================
-
 TopoDS_Shape BlockFix_UnionEdges::Perform(const TopoDS_Shape& Shape,
                                           const Standard_Real Tol)
 {

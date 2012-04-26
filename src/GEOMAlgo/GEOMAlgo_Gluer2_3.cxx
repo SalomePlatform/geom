@@ -19,9 +19,9 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Gluer2_3.cxx
-// Created:	
-// Author:	Peter KURNEV
+
+// File:   GEOMAlgo_Gluer2_3.cxx
+// Author: Peter KURNEV
 
 #include <GEOMAlgo_Gluer2.hxx>
 
@@ -55,12 +55,12 @@
 
 static
   void MapShapes1(const TopoDS_Shape& aS,
-		  const TopAbs_ShapeEnum aType,
-		  TopTools_IndexedMapOfShape& aM);
+                  const TopAbs_ShapeEnum aType,
+                  TopTools_IndexedMapOfShape& aM);
 
 //=======================================================================
 //function : Detect
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::Detect()
 {
@@ -68,7 +68,7 @@ void GEOMAlgo_Gluer2::Detect()
   Standard_Integer iErr, aNbSD;
   TopTools_ListIteratorOfListOfShape aItLS;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS;
-  GEOMAlgo_GlueDetector aDetector;
+  //GEOMAlgo_GlueDetector aDetector;
   //
   myErrorStatus=0;
   myWarningStatus=0;
@@ -77,18 +77,31 @@ void GEOMAlgo_Gluer2::Detect()
   myOriginsDetected.Clear();
   //
   bCheckGeometry=Standard_True;
-  aDetector.SetArgument(myArgument);
-  aDetector.SetTolerance(myTolerance);
-  aDetector.SetCheckGeometry(bCheckGeometry);
   //
-  aDetector.Perform();
-  iErr=aDetector.ErrorStatus();
+  //modified by NIZNHY-PKV Tue Mar 13 13:33:35 2012f
+  myDetector.Clear();
+  myDetector.SetContext(myContext);
+  //modified by NIZNHY-PKV Tue Mar 13 13:33:38 2012t
+  myDetector.SetArgument(myArgument);
+  myDetector.SetTolerance(myTolerance);
+  myDetector.SetCheckGeometry(bCheckGeometry);
+  //
+  myDetector.Perform();
+  iErr=myDetector.ErrorStatus();
   if (iErr) {
-    myErrorStatus=11;// Detector failed
+    // Detector is failed
+    myErrorStatus=11;
     return;
   }
+  //modified by NIZNHY-PKV Tue Mar 13 13:40:36 2012f
+  iErr=myDetector.WarningStatus();
+  if (iErr) {
+    // Sticked shapes are detected
+    myWarningStatus=2;
+  }
+  //modified by NIZNHY-PKV Tue Mar 13 13:40:39 2012t
   //
-  const TopTools_DataMapOfShapeListOfShape& aImages=aDetector.Images();
+  const TopTools_DataMapOfShapeListOfShape& aImages=myDetector.Images();
   aItDMSLS.Initialize(aImages);
   for (; aItDMSLS.More(); aItDMSLS.Next()) {
     const TopoDS_Shape& aSkey=aItDMSLS.Key();
@@ -110,16 +123,16 @@ void GEOMAlgo_Gluer2::Detect()
 }
 //=======================================================================
 //function : PerformShapesToWork
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::PerformShapesToWork()
-{ 
-  Standard_Integer aNbSG, i, j, aNbC, aNb, aNbSD;
+{
+  Standard_Integer aNbSG, i, j, k, aNbC, aNb, aNbSD;
   TopTools_ListIteratorOfListOfShape aItLS1, aItLS2;
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS;
   NMTTools_CoupleOfShape aCS;
   NMTTools_ListOfCoupleOfShape aLCS;
-  NMTTools_ListIteratorOfListOfCoupleOfShape aItCS; 
+  NMTTools_ListIteratorOfListOfCoupleOfShape aItCS;
   //
   myErrorStatus=0;
   myWarningStatus=0;
@@ -144,8 +157,8 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
       const TopTools_ListOfShape& aLSD=aItDMSLS.Value();
       aItLS1.Initialize(aLSD);
       for (; aItLS1.More(); aItLS1.Next()) {
-	const TopoDS_Shape& aSx=aItLS1.Value();
-	myOriginsToWork.Bind(aSx, aSkey);
+        const TopoDS_Shape& aSx=aItLS1.Value();
+        myOriginsToWork.Bind(aSx, aSkey);
       }
     }
     return;
@@ -153,20 +166,20 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
   //
   // 1. Make pairs
   aItDMSLS.Initialize(myShapesToGlue);
-  for (; aItDMSLS.More(); aItDMSLS.Next()) {
+  for (k=0; aItDMSLS.More(); aItDMSLS.Next(), ++k) {
     //const TopoDS_Shape& aSkey=aItDMSLS.Key();
     const TopTools_ListOfShape& aLSG=aItDMSLS.Value();
     aItLS1.Initialize(aLSG);
     for (i=0; aItLS1.More(); aItLS1.Next(), ++i) {
       aItLS2.Initialize(aLSG);
       for (j=0; aItLS2.More(); aItLS2.Next(), ++j) {
-	if (j>i) {
-	  const TopoDS_Shape& aSG1=aItLS1.Value();
-	  const TopoDS_Shape& aSG2=aItLS2.Value();
-	  aCS.SetShape1(aSG1);
-	  aCS.SetShape2(aSG2);
-	  TreatPair(aCS, aLCS);
-	}
+        if (j>i) {
+          const TopoDS_Shape& aSG1=aItLS1.Value();
+          const TopoDS_Shape& aSG2=aItLS2.Value();
+          aCS.SetShape1(aSG1);
+          aCS.SetShape2(aSG2);
+          TreatPair(aCS, aLCS);
+        }
       }
     }
   }
@@ -194,10 +207,10 @@ void GEOMAlgo_Gluer2::PerformShapesToWork()
 }
 //=======================================================================
 //function : TreatPair
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::TreatPair(const NMTTools_CoupleOfShape& aCS,
-				NMTTools_ListOfCoupleOfShape& aLCS)
+                                NMTTools_ListOfCoupleOfShape& aLCS)
 {
   if (myErrorStatus) {
     return;
@@ -325,47 +338,23 @@ void GEOMAlgo_Gluer2::TreatPair(const NMTTools_CoupleOfShape& aCS,
 }
 //=======================================================================
 //function : MapShapes1
-//purpose  : 
+//purpose  :
 //=======================================================================
 void MapShapes1(const TopoDS_Shape& aS,
-	       const TopAbs_ShapeEnum aType,
-	       TopTools_IndexedMapOfShape& aM)
+               const TopAbs_ShapeEnum aType,
+               TopTools_IndexedMapOfShape& aM)
 {
   TopExp_Explorer aExp;
-  
+
   aExp.Init (aS, aType);
   for ( ;aExp.More(); aExp.Next()) {
     const TopoDS_Shape aSx=aExp.Current();
     if (aType==TopAbs_EDGE) {
       const TopoDS_Edge& aEx=*((TopoDS_Edge*)&aSx);
       if (BRep_Tool::Degenerated(aEx)) {
-	continue;
+        continue;
       }
     }
     aM.Add(aSx);
   }
 }
-/*
-//=======================================================================
-//function : MapShapes1
-//purpose  : 
-//=======================================================================
-void MapShapes1(const TopoDS_Shape& aS,
-	       const TopAbs_ShapeEnum aType,
-	       TopTools_IndexedMapOfShape& aM)
-{
-  TopExp_Explorer aExp (aS, aType);
-  while (aExp.More()) {
-    const TopoDS_Shape aSx=aExp.Current();
-    if (aType==TopAbs_EDGE) {
-      const TopoDS_Edge& aEx=*((TopoDS_Edge*)&aSx);
-      if (BRep_Tool::Degenerated(aEx)) {
-	aExp.Next();
-	continue;
-      }
-    }
-    aM.Add(aSx);
-    aExp.Next();
-  }
-}
-*/

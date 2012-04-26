@@ -24,77 +24,75 @@
 // Created:     Wed Dec 15 11:08:09 2004
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_GlueAnalyser.ixx>
-
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-#include <GEOMAlgo_Tools.hxx>
-#include <GEOMAlgo_CoupleOfShapes.hxx>
-#include <GEOMAlgo_Gluer.hxx>
-#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
-
-#include <Basics_OCCTVersion.hxx>
+#include <GEOMAlgo_GlueAnalyser.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Face.hxx>
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Compound.hxx>
-#include <TopoDS_Vertex.hxx>
 
 #include <BRep_Builder.hxx>
 
 #include <TopExp.hxx>
 
-#include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_IndexedDataMapOfShapeListOfShape.hxx>
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
+#include <GEOMAlgo_CoupleOfShapes.hxx>
+#include <GEOMAlgo_ListOfCoupleOfShapes.hxx>
+
+#include <GEOMAlgo_Gluer.hxx>
 #include <Bnd_HArray1OfBox.hxx>
 #include <Bnd_BoundSortBox.hxx>
+#include <TopoDS_Vertex.hxx>
+#include <GEOMAlgo_IndexedDataMapOfIntegerShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeBox.hxx>
 #include <Bnd_Box.hxx>
-
+#include <TColStd_ListOfInteger.hxx>
+#include <TopTools_MapOfShape.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
 #include <BRepBndLib.hxx>
 
-#include <TColStd_ListOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
-
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
-GEOMAlgo_GlueAnalyser::GEOMAlgo_GlueAnalyser()
-  : GEOMAlgo_Gluer()
+  GEOMAlgo_GlueAnalyser::GEOMAlgo_GlueAnalyser()
+:
+  GEOMAlgo_Gluer()
 {}
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
-GEOMAlgo_GlueAnalyser::~GEOMAlgo_GlueAnalyser()
+  GEOMAlgo_GlueAnalyser::~GEOMAlgo_GlueAnalyser()
 {}
 //=======================================================================
 //function : HasSolidsToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsToGlue()const
+  Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsToGlue()const
 {
   return !mySolidsToGlue.IsEmpty();
 }
 //=======================================================================
 //function : HasSolidsAlone
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
+  Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 {
   return !mySolidsAlone.IsEmpty();
 }
 //=======================================================================
 //function : SolidsToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
   const GEOMAlgo_ListOfCoupleOfShapes& GEOMAlgo_GlueAnalyser::SolidsToGlue()const
 {
@@ -102,7 +100,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : SolidsAlone
-//purpose  : 
+//purpose  :
 //=======================================================================
   const TopTools_ListOfShape& GEOMAlgo_GlueAnalyser::SolidsAlone()const
 {
@@ -110,7 +108,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::Perform()
 {
@@ -125,10 +123,8 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
     return;
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_ShapeAlgo::Perform();
-#endif
   //
   InnerTolerance();
   if (myErrorStatus) {
@@ -157,7 +153,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : DetectVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectVertices()
 {
@@ -188,11 +184,11 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
     const TopoDS_Shape& aV=aMV(i);
     Bnd_Box aBox;
     //
-    aBox.SetGap(myTol); 
+    aBox.SetGap(myTol);
     BRepBndLib::Add(aV, aBox);
     aHAB->SetValue(i, aBox);
     aMIS.Add(i, aV);
-    aMSB.Add(aV, aBox); 
+    aMSB.Add(aV, aBox);
   }
   //
   aBSB.Initialize(aHAB);
@@ -208,7 +204,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
     const TColStd_ListOfInteger& aLI=aBSB.Compare(aBoxV);
     aNbVSD=aLI.Extent();
     if (!aNbVSD) {
-      myErrorStatus=3; // it must not be 
+      myErrorStatus=3; // it must not be
       return;
     }
     //
@@ -244,7 +240,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : DetectFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectFaces()
 {
@@ -252,7 +248,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : DetectEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectEdges()
 {
@@ -260,7 +256,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : DetectShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectShapes(const TopAbs_ShapeEnum aType)
 {
@@ -278,7 +274,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
   aNbF=aMF.Extent();
   for (i=1; i<=aNbF; ++i) {
     const TopoDS_Shape& aS=aMF(i);
-    // 
+    //
     //aPKF.Clear();//qft
     if (aType==TopAbs_FACE) {
       const TopoDS_Face& aF=TopoDS::Face(aS);
@@ -338,7 +334,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
 }
 //=======================================================================
 //function : DetectSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_GlueAnalyser::DetectSolids()
 {
@@ -411,7 +407,7 @@ Standard_Boolean GEOMAlgo_GlueAnalyser::HasSolidsAlone()const
   //
   mySolidsToGlue.Clear();
   mySolidsAlone.Clear();
-  
+
   //
   aNbC=aMPKLS.Extent();
   if (!aNbC) {

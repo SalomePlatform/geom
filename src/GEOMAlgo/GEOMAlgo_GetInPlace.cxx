@@ -19,20 +19,13 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-
 // File:     GEOMAlgo_GetInPlace.cxx
+// Created:
 // Author:   Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
 
-#include <GEOMAlgo_Tools.hxx>
-
-#include <NMTTools_CoupleOfShape.hxx>
-
 #include <NMTDS_BoxBndTree.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
 #include <NCollection_UBTreeFiller.hxx>
 
 #include <Bnd_Box.hxx>
@@ -64,6 +57,10 @@
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
+
+
+#include <NMTTools_CoupleOfShape.hxx>
+#include <GEOMAlgo_Tools.hxx>
 
 
 static
@@ -200,10 +197,8 @@ void GEOMAlgo_GetInPlace::Perform()
     return;
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_GluerAlgo::Perform();
-#endif
   //
   Intersect();
   if (myErrorStatus) {

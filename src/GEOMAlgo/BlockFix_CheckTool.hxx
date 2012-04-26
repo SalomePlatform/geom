@@ -52,20 +52,20 @@ class BlockFix_CheckTool  {
 
 public:
 
-    void* operator new(size_t,void* anAddress) 
+    void* operator new(size_t,void* anAddress)
       {
         return anAddress;
       }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
+    void* operator new(size_t size)
+      {
+        return Standard::Allocate(size);
       }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+    void  operator delete(void *anAddress)
+      {
+        if (anAddress) Standard::Free((Standard_Address&)anAddress);
       }
  // Methods PUBLIC
- // 
+ //
 Standard_EXPORT BlockFix_CheckTool();
 Standard_EXPORT   void SetShape(const TopoDS_Shape& aShape) ;
 Standard_EXPORT   void Perform() ;
@@ -80,17 +80,17 @@ Standard_EXPORT   void DumpCheckResult(Standard_OStream& S) const;
 protected:
 
  // Methods PROTECTED
- // 
+ //
 
 
  // Fields PROTECTED
  //
 
 
-private: 
+private:
 
  // Methods PRIVATE
- // 
+ //
 
 
  // Fields PRIVATE

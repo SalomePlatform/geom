@@ -16,106 +16,25 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
+// File:	GEOMAlgo_DataMapOfPassKeyShapeShape.hxx
+// Created:	Wed Feb 22 11:00:16 2012
+// Author:
+//		<pkv@BDEURI37616>
 
-#ifndef _GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
-#define _GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
 
-#ifndef _TCollection_BasicMap_HeaderFile
-#include <TCollection_BasicMap.hxx>
-#endif
-#ifndef _Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape_HeaderFile
-#include <Handle_GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape.hxx>
-#endif
-#ifndef _Standard_Integer_HeaderFile
-#include <Standard_Integer.hxx>
-#endif
-#ifndef _Standard_Boolean_HeaderFile
-#include <Standard_Boolean.hxx>
-#endif
+#ifndef GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
+#define GEOMAlgo_DataMapOfPassKeyShapeShape_HeaderFile
 
-class Standard_DomainError;
-class Standard_NoSuchObject;
-class GEOMAlgo_PassKeyShape;
-class TopoDS_Shape;
-class GEOMAlgo_PassKeyShapeMapHasher;
-class GEOMAlgo_DataMapNodeOfDataMapOfPassKeyShapeShape;
-class GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape;
+#include <GEOMAlgo_PassKey.hxx>
+#include <TopoDS_Shape.hxx>
+#include <GEOMAlgo_PassKeyMapHasher.hxx>
 
-#ifndef _Standard_HeaderFile
-#include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
-#include <Standard_Macro.hxx>
-#endif
+#define _NCollection_MapHasher
+#include <NCollection_DataMap.hxx>
 
-#include <Basics_OCCTVersion.hxx>
 
-class GEOMAlgo_DataMapOfPassKeyShapeShape  : public TCollection_BasicMap {
+typedef NCollection_DataMap<GEOMAlgo_PassKey, TopoDS_Shape, GEOMAlgo_PassKeyMapHasher> GEOMAlgo_DataMapOfPassKeyShapeShape;
+typedef GEOMAlgo_DataMapOfPassKeyShapeShape::Iterator GEOMAlgo_DataMapIteratorOfDataMapOfPassKeyShapeShape;
 
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
-
- // Methods PUBLIC
- // 
-
-Standard_EXPORT GEOMAlgo_DataMapOfPassKeyShapeShape(const Standard_Integer NbBuckets = 1);
-
-Standard_EXPORT   GEOMAlgo_DataMapOfPassKeyShapeShape& Assign(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other) ;
-  GEOMAlgo_DataMapOfPassKeyShapeShape& operator =(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other) 
-{
-  return Assign(Other);
-}
-
-Standard_EXPORT   void ReSize(const Standard_Integer NbBuckets) ;
-
-Standard_EXPORT   void Clear() ;
-~GEOMAlgo_DataMapOfPassKeyShapeShape()
-{
-  Clear();
-}
-
-Standard_EXPORT   Standard_Boolean Bind(const GEOMAlgo_PassKeyShape& K,const TopoDS_Shape& I) ;
-Standard_EXPORT   Standard_Boolean IsBound(const GEOMAlgo_PassKeyShape& K) const;
-Standard_EXPORT   Standard_Boolean UnBind(const GEOMAlgo_PassKeyShape& K) ;
-
-Standard_EXPORT  const TopoDS_Shape& Find(const GEOMAlgo_PassKeyShape& K) const;
- const TopoDS_Shape& operator()(const GEOMAlgo_PassKeyShape& K) const
-{
-  return Find(K);
-}
-
-Standard_EXPORT   TopoDS_Shape& ChangeFind(const GEOMAlgo_PassKeyShape& K) ;
-  TopoDS_Shape& operator()(const GEOMAlgo_PassKeyShape& K) 
-{
-  return ChangeFind(K);
-}
-
-#if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
-  Standard_EXPORT Standard_Address Find1 (const GEOMAlgo_PassKeyShape& K) const;
-  Standard_EXPORT Standard_Address ChangeFind1 (const GEOMAlgo_PassKeyShape& K);
-#endif
-
-private: 
-
- // Methods PRIVATE
- //
-Standard_EXPORT GEOMAlgo_DataMapOfPassKeyShapeShape(const GEOMAlgo_DataMapOfPassKeyShapeShape& Other);
-
-};
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
 
 #endif

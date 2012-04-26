@@ -20,20 +20,18 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+
 #ifndef _GEOMAlgo_State_HeaderFile
 #define _GEOMAlgo_State_HeaderFile
-
-
-enum GEOMAlgo_State { 
- GEOMAlgo_ST_UNKNOWN,
-GEOMAlgo_ST_IN,
-GEOMAlgo_ST_OUT,
-GEOMAlgo_ST_ON,
-GEOMAlgo_ST_ONIN,
-GEOMAlgo_ST_ONOUT,
-GEOMAlgo_ST_INOUT
+enum GEOMAlgo_State {
+  GEOMAlgo_ST_UNKNOWN,
+  GEOMAlgo_ST_IN,
+  GEOMAlgo_ST_OUT,
+  GEOMAlgo_ST_ON,
+  GEOMAlgo_ST_ONIN,
+  GEOMAlgo_ST_ONOUT,
+  GEOMAlgo_ST_INOUT
 };
-
 
 #ifndef _Standard_PrimitiveTypes_HeaderFile
 #include <Standard_PrimitiveTypes.hxx>

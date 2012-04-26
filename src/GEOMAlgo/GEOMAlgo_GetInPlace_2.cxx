@@ -20,7 +20,7 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 // File:	GEOMAlgo_GetInPlace_2.cxx
-// Created:	
+// Created:
 // Author:	Peter KURNEV
 
 #include <GEOMAlgo_GetInPlace.hxx>
@@ -50,12 +50,12 @@
 static
   Standard_Integer Dimension(const TopAbs_ShapeEnum aType);
 static
-  void PointProperties(const TopoDS_Shape& aS, 
+  void PointProperties(const TopoDS_Shape& aS,
 		       GProp_GProps& aGProps);
 
 //=======================================================================
 //function : CheckGProps
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::CheckGProps()
 {
@@ -64,7 +64,7 @@ void GEOMAlgo_GetInPlace::CheckGProps()
 }
 //=======================================================================
 //function : CheckGProps
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_GetInPlace::CheckGProps(const TopoDS_Shape& aS1)
 {
@@ -154,7 +154,7 @@ void GEOMAlgo_GetInPlace::CheckGProps(const TopoDS_Shape& aS1)
 }
 //=======================================================================
 //function : Dimension
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Integer Dimension(const TopAbs_ShapeEnum aType)
 {
@@ -184,10 +184,10 @@ Standard_Integer Dimension(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //class : GEOMAlgo_GProps
-//purpose  : 
+//purpose  :
 //=======================================================================
 class GEOMAlgo_GProps : public GProp_GProps {
- public: 
+ public:
   GEOMAlgo_GProps() : GProp_GProps() {
   };
   //
@@ -207,10 +207,10 @@ class GEOMAlgo_GProps : public GProp_GProps {
 };
 //=======================================================================
 //function : PointProperties
-//purpose  : 
+//purpose  :
 //=======================================================================
 void PointProperties(const TopoDS_Shape& aS, GProp_GProps& aGProps)
-{ 
+{
   Standard_Integer i, aNbS;
   Standard_Real aDensity;
   gp_Pnt aPX;

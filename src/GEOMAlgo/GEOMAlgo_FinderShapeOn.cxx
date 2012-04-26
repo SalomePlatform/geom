@@ -24,7 +24,7 @@
 // Created:     Tue Jan 11 14:44:31 2005
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_FinderShapeOn.ixx>
+#include <GEOMAlgo_FinderShapeOn.hxx>
 
 #include <Basics_OCCTVersion.hxx>
 
@@ -76,7 +76,7 @@
 
 //=======================================================================
 //function : GEOMAlgo_FinderShapeOn
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_FinderShapeOn::GEOMAlgo_FinderShapeOn()
 :
@@ -89,14 +89,14 @@ GEOMAlgo_FinderShapeOn::GEOMAlgo_FinderShapeOn()
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_FinderShapeOn::~GEOMAlgo_FinderShapeOn()
 {
 }
 //=======================================================================
 //function : SetSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::SetSurface(const Handle(Geom_Surface)& aS)
 {
@@ -104,7 +104,7 @@ void GEOMAlgo_FinderShapeOn::SetSurface(const Handle(Geom_Surface)& aS)
 }
 //=======================================================================
 //function : Surface
-//purpose  : 
+//purpose  :
 //=======================================================================
 const Handle(Geom_Surface)& GEOMAlgo_FinderShapeOn::Surface() const
 {
@@ -112,7 +112,7 @@ const Handle(Geom_Surface)& GEOMAlgo_FinderShapeOn::Surface() const
 }
 //=======================================================================
 //function : SetShapeType
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::SetShapeType(const TopAbs_ShapeEnum aType)
 {
@@ -120,7 +120,7 @@ void GEOMAlgo_FinderShapeOn::SetShapeType(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : ShapeType
-//purpose  : 
+//purpose  :
 //=======================================================================
 TopAbs_ShapeEnum GEOMAlgo_FinderShapeOn::ShapeType()const
 {
@@ -128,7 +128,7 @@ TopAbs_ShapeEnum GEOMAlgo_FinderShapeOn::ShapeType()const
 }
 //=======================================================================
 //function : SetState
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::SetState(const GEOMAlgo_State aState)
 {
@@ -136,7 +136,7 @@ void GEOMAlgo_FinderShapeOn::SetState(const GEOMAlgo_State aState)
 }
 //=======================================================================
 //function : State
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_State GEOMAlgo_FinderShapeOn::State() const
 {
@@ -144,7 +144,7 @@ GEOMAlgo_State GEOMAlgo_FinderShapeOn::State() const
 }
 //=======================================================================
 // function: Shapes
-// purpose: 
+// purpose:
 //=======================================================================
 const TopTools_ListOfShape& GEOMAlgo_FinderShapeOn::Shapes() const
 {
@@ -170,7 +170,7 @@ const TopTools_ListOfShape& GEOMAlgo_FinderShapeOn::Shapes() const
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::Perform()
 {
@@ -188,10 +188,8 @@ void GEOMAlgo_FinderShapeOn::Perform()
     return;
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_ShapeAlgo::Perform();
-#endif
   //
   myIsAnalytic=GEOMAlgo_SurfaceTools::IsAnalytic(mySurface);
   //
@@ -218,10 +216,10 @@ void GEOMAlgo_FinderShapeOn::Perform()
 }
 //=======================================================================
 //function : FindVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::FindVertices()
-{ 
+{
   Standard_Integer i, aNb, iErr;
   TopAbs_State aSt;
   TopAbs_Orientation aOr;
@@ -253,7 +251,7 @@ void GEOMAlgo_FinderShapeOn::FindVertices()
 }
 //=======================================================================
 //function : Find
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::Find()
 {
@@ -295,7 +293,7 @@ void GEOMAlgo_FinderShapeOn::Find()
 }
 //=======================================================================
 //function : Find
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
 {
@@ -320,7 +318,7 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
     myErrorStatus=31; // DSFiller failed
     return;
   }
-  // 
+  //
   // 2. Find shapes
   GEOMAlgo_ShapeSolid* pSS;
   GEOMAlgo_VertexSolid aVXS;
@@ -361,21 +359,21 @@ void GEOMAlgo_FinderShapeOn::Find(const TopoDS_Shape& aS)
     const TopTools_ListOfShape& aLS=pSS->Shapes(aSts[i]);
     aIt.Initialize(aLS);
     for (; aIt.More(); aIt.Next()) {
-      const TopoDS_Shape& aSImage=aIt.Value(); 
-      if (myImages.IsBound(aSImage)) { 
-        const TopoDS_Shape& aSx=myImages.Find(aSImage); 
+      const TopoDS_Shape& aSImage=aIt.Value();
+      if (myImages.IsBound(aSImage)) {
+        const TopoDS_Shape& aSx=myImages.Find(aSImage);
         myMSS.Add(aSx, aSts[i]);
       }
       else {
         myErrorStatus=33;// can not find original shape
-        return; 
+        return;
       }
     }
   }
 }
 //=======================================================================
 //function : MakeArgument1
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::MakeArgument1()
 {
@@ -435,7 +433,7 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
         break;
       }
     }
-  } //  
+  } //
   else {
     aBB.MakeFace(aFace, mySurface, myTolerance);
   }
@@ -449,7 +447,7 @@ void GEOMAlgo_FinderShapeOn::MakeArgument1()
 }
 //=======================================================================
 //function : MakeArgument2
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::MakeArgument2()
 {
@@ -466,7 +464,7 @@ void GEOMAlgo_FinderShapeOn::MakeArgument2()
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::CheckData()
 {
@@ -490,7 +488,7 @@ void GEOMAlgo_FinderShapeOn::CheckData()
     return;
   }
   //
-  if (myState==GEOMAlgo_ST_UNKNOWN || 
+  if (myState==GEOMAlgo_ST_UNKNOWN ||
       myState==GEOMAlgo_ST_INOUT) {
     myErrorStatus=13; // unallowed state type
     return;
@@ -499,7 +497,7 @@ void GEOMAlgo_FinderShapeOn::CheckData()
 //
 //=======================================================================
 //function : CopySource
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_FinderShapeOn::CopySource(const TopoDS_Shape& aE,
                                         TopTools_DataMapOfShapeShape& aImages,
@@ -539,7 +537,7 @@ void GEOMAlgo_FinderShapeOn::CopySource(const TopoDS_Shape& aE,
     const TopoDS_Shape& aV=aIt.Value();
     TopoDS_Shape aVx;
     //
-    CopySource (aV, aImages, aOriginals, aVx);  
+    CopySource (aV, aImages, aOriginals, aVx);
     //
     aVx.Orientation(aV.Orientation());
     BB.Add(aEx, aVx);
@@ -552,7 +550,8 @@ void GEOMAlgo_FinderShapeOn::CopySource(const TopoDS_Shape& aE,
 //function : BuildTriangulation
 //purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape& theShape)
+Standard_Boolean
+  GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape& theShape)
 {
   // calculate deflection
   Standard_Real aDeviationCoefficient = 0.001;
@@ -605,8 +604,8 @@ Standard_Boolean GEOMAlgo_FinderShapeOn::BuildTriangulation (const TopoDS_Shape&
 //
 // 10 -mySurface=NULL
 // 11 -myShape=NULL
-// 12 -unallowed type of sub-shapes 
-// 13 -unallowed state  
+// 12 -unallowed type of sub-shapes
+// 13 -unallowed state
 // 20 -can not build the face
 // 30 -wrong args are used for DSFiller
 // 31 -DSFiller failed

@@ -20,94 +20,46 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        GEOMAlgo_SolidSolid.hxx
+// Created:     Wed Jan 26 12:06:26 2005
+// Author:      Peter KURNEV
+//              <pkv@irinox>
+//
 #ifndef _GEOMAlgo_SolidSolid_HeaderFile
 #define _GEOMAlgo_SolidSolid_HeaderFile
 
-#ifndef _TopoDS_Shape_HeaderFile
-#include <TopoDS_Shape.hxx>
-#endif
-#ifndef _GEOMAlgo_ShellSolid_HeaderFile
-#include <GEOMAlgo_ShellSolid.hxx>
-#endif
-class TopoDS_Shape;
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <TopoDS_Shape.hxx>
+#include <GEOMAlgo_ShellSolid.hxx>
 
+//=======================================================================
+//function : GEOMAlgo_SolidSolid
+//purpose  :
+//=======================================================================
+class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid
+{
+ public:
+  Standard_EXPORT
+    GEOMAlgo_SolidSolid();
 
-class GEOMAlgo_SolidSolid  : public GEOMAlgo_ShellSolid {
+  Standard_EXPORT
+    virtual ~GEOMAlgo_SolidSolid();
 
-public:
+  Standard_EXPORT
+    virtual  void Perform() ;
 
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
+  Standard_EXPORT
+    void SetShape2(const TopoDS_Shape& aS) ;
 
-
-Standard_EXPORT GEOMAlgo_SolidSolid();
-Standard_EXPORT virtual ~GEOMAlgo_SolidSolid();
-
-
-Standard_EXPORT virtual  void Perform() ;
-
-
-Standard_EXPORT   void SetShape2(const TopoDS_Shape& aS) ;
-
-
-Standard_EXPORT  const TopoDS_Shape& Shape2() const;
-
-
-
-
+  Standard_EXPORT
+    const TopoDS_Shape& Shape2() const;
 
 protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT virtual  void BuildResult() ;
+  Standard_EXPORT
+    virtual  void BuildResult() ;
 
 
- // Fields PROTECTED
- //
-TopoDS_Shape myS2;
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  TopoDS_Shape myS2;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

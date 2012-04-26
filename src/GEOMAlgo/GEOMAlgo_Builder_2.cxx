@@ -24,27 +24,8 @@
 
 #include <GEOMAlgo_Builder.hxx>
 
-#include <Basics_OCCTVersion.hxx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-#include <GEOMAlgo_WireEdgeSet.hxx>
-#include <GEOMAlgo_BuilderFace.hxx>
-#include <GEOMAlgo_ShapeSet.hxx>
-
-#include <NMTTools_PaveFiller.hxx>
-#include <NMTTools_ListOfCoupleOfShape.hxx>
-#include <NMTTools_Tools.hxx>
-#include <NMTTools_CoupleOfShape.hxx>
-#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
-#include <NMTTools_Tools.hxx>
-#include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
-#include <NMTTools_ListOfCommonBlock.hxx>
-#include <NMTTools_CommonBlock.hxx>
-#include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
-
-#include <NMTDS_BoxBndTree.hxx>
-#include <NMTDS_ShapesDataStructure.hxx>
-#include <NMTDS_InterfPool.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
+#include <TColStd_ListOfInteger.hxx>
 
 #include <TopAbs_Orientation.hxx>
 
@@ -58,8 +39,6 @@
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-#include <TopTools_DataMapOfIntegerShape.hxx>
-#include <TopTools_DataMapOfShapeInteger.hxx>
 
 #include <TopExp.hxx>
 #include <TopExp_Explorer.hxx>
@@ -72,13 +51,8 @@
 #include <IntTools_Context.hxx>
 #include <IntTools_FClass2d.hxx>
 
-#include <Bnd_Box.hxx>
-#include <BRepBndLib.hxx>
-
 #include <BooleanOperations_OnceExplorer.hxx>
-
 #include <BOPTColStd_IndexedDataMapOfIntegerIndexedMapOfInteger.hxx>
-
 #include <BOPTools_ListOfPaveBlock.hxx>
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
 #include <BOPTools_CArray1OfSSInterference.hxx>
@@ -93,11 +67,34 @@
 #include <BOPTools_ESInterference.hxx>
 #include <BOPTools_CArray1OfESInterference.hxx>
 
-#include <NCollection_UBTreeFiller.hxx>
+#include <NMTDS_ShapesDataStructure.hxx>
+#include <NMTDS_InterfPool.hxx>
 
-#include <TColStd_IndexedMapOfInteger.hxx>
+#include <NMTTools_PaveFiller.hxx>
+#include <NMTTools_ListOfCoupleOfShape.hxx>
+#include <NMTTools_Tools.hxx>
+#include <NMTTools_CoupleOfShape.hxx>
+#include <NMTTools_IndexedDataMapOfShapeIndexedMapOfShape.hxx>
+#include <NMTTools_Tools.hxx>
+#include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
+#include <NMTTools_ListOfCommonBlock.hxx>
+#include <NMTTools_CommonBlock.hxx>
+#include <NMTTools_IndexedDataMapOfIndexedMapOfInteger.hxx>
+//
+#include <GEOMAlgo_Tools3D.hxx>
+#include <GEOMAlgo_WireEdgeSet.hxx>
+#include <GEOMAlgo_BuilderFace.hxx>
+
+#include <GEOMAlgo_ShapeSet.hxx>
+//
+#include <NMTDS_BoxBndTree.hxx>
+#include <NCollection_UBTreeFiller.hxx>
+#include <Bnd_Box.hxx>
+#include <BRepBndLib.hxx>
+#include <TopTools_DataMapOfIntegerShape.hxx>
 #include <TColStd_ListOfInteger.hxx>
 #include <TColStd_ListIteratorOfListOfInteger.hxx>
+#include <TopTools_DataMapOfShapeInteger.hxx>
 
 static
   void UpdateCandidates(const Standard_Integer ,
@@ -106,8 +103,8 @@ static
 
 //modified by NIZNHY-PKV Thu Feb 16 12:24:52 2012f
 static
-  Standard_Boolean IsClosed(const TopoDS_Edge& aE,
-			    const TopoDS_Face& aF);
+  Standard_Boolean IsClosed(const TopoDS_Edge& ,
+			    const TopoDS_Face& );
 //modified by NIZNHY-PKV Thu Feb 16 12:24:56 2012t
 
 //=======================================================================
@@ -216,11 +213,7 @@ void GEOMAlgo_Builder::BuildSplitFaces()
   NMTTools_PaveFiller* pPF=myPaveFiller;
   NMTDS_InterfPool* pIP=pPF->IP();
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx= pPF->Context();
-#else
-  IntTools_Context& aCtx= pPF->ChangeContext();
-#endif
   //
   Standard_Boolean bToReverse, bIsClosed, bIsDegenerated;
   Standard_Integer i, aNb, aNbF, nF;
@@ -319,10 +312,10 @@ void GEOMAlgo_Builder::BuildSplitFaces()
       }
       //
       bIsDegenerated=BRep_Tool::Degenerated(aE);
-      //modified by NIZNHY-PKV Thu Feb 16 12:25:04 2012f
+      //modified by NIZNHY-PKV Wed Mar 07 07:46:09 2012f
       bIsClosed=IsClosed(aE, aF);
       //bIsClosed=BRep_Tool::IsClosed(aE, aF);
-      //modified by NIZNHY-PKV Thu Feb 16 12:25:09 2012t
+      //modified by NIZNHY-PKV Wed Mar 07 07:46:13 2012t
       //
       const TopTools_ListOfShape& aLIE=myImages.Image(aE);
       aIt.Initialize(aLIE);
@@ -435,11 +428,7 @@ void GEOMAlgo_Builder::FillSameDomainFaces()
   NMTTools_PaveFiller* pPF=myPaveFiller;
   NMTDS_InterfPool* pIP=pPF->IP();
   BOPTools_CArray1OfSSInterference& aFFs=pIP->SSInterferences();
-#if OCC_VERSION_LARGE > 0x06050200
-  const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
+  const Handle(IntTools_Context)& aCtx= pPF->Context();
   //
   //
   //mySameDomainShapes.Clear();
@@ -600,7 +589,7 @@ void GEOMAlgo_Builder::FillSameDomainFaces()
   // 2. Find Chains
   NMTTools_IndexedDataMapOfShapeIndexedMapOfShape aMC;
   //
-  NMTTools_Tools::FindChains(aLCS, aMC); 
+  NMTTools_Tools::FindChains(aLCS, aMC);
   //
   Standard_Boolean bIsImage;
   Standard_Integer aIx, aIxMin, aNbMSDF, k, aNbMFj;
@@ -726,11 +715,7 @@ void GEOMAlgo_Builder::FillInternalVertices()
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   NMTDS_InterfPool* pIP=pPF->IP();
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx= pPF->Context();
-#else
-  IntTools_Context& aCtx= pPF->ChangeContext();
-#endif
   //
   BOPTools_CArray1OfVSInterference& aVFs=pIP->VSInterferences();
   BOPTools_CArray1OfESInterference& aEFs=pIP->ESInterferences();
@@ -903,18 +888,10 @@ void GEOMAlgo_Builder::FillInternalVertices()
           for (; aIt.More(); aIt.Next()) {
             TopoDS_Face aFx=TopoDS::Face(aIt.Value());
             // update classifier
-#if OCC_VERSION_LARGE > 0x06050200
             IntTools_FClass2d& aClsf=aCtx->FClass2d(aFx);
-#else
-            IntTools_FClass2d& aClsf=aCtx.FClass2d(aFx);
-#endif
             aClsf.Init(aFx, aTol);
             //
-#if OCC_VERSION_LARGE > 0x06050200
             iFlag=aCtx->ComputeVS (aV, aFx, aU1, aU2);
-#else
-            iFlag=aCtx.ComputeVS (aV, aFx, aU1, aU2);
-#endif
             if (!iFlag) {
               aBB.Add(aFx, aV);
               break;
@@ -924,18 +901,10 @@ void GEOMAlgo_Builder::FillInternalVertices()
         else {
           const TopoDS_Face& aFx=TopoDS::Face(aF);
           // update classifier
-#if OCC_VERSION_LARGE > 0x06050200
           IntTools_FClass2d& aClsf=aCtx->FClass2d(aFx);
-#else
-          IntTools_FClass2d& aClsf=aCtx.FClass2d(aFx);
-#endif
           aClsf.Init(aFx, aTol);
           //
-#if OCC_VERSION_LARGE > 0x06050200
           iFlag=aCtx->ComputeVS (aV, aFx, aU1, aU2);
-#else
-          iFlag=aCtx.ComputeVS (aV, aFx, aU1, aU2);
-#endif
           if (!iFlag) {
             TopoDS_Face aFz;
             //
@@ -971,7 +940,7 @@ void UpdateCandidates(const Standard_Integer theNF,
 //modified by NIZNHY-PKV Thu Feb 16 12:25:16 2012f
 //=======================================================================
 //function : IsClosed
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean IsClosed(const TopoDS_Edge& aE,
 			  const TopoDS_Face& aF)
@@ -986,12 +955,12 @@ Standard_Boolean IsClosed(const TopoDS_Edge& aE,
       const TopoDS_Shape& aEx=aExp.Current();
       //
       if (aM.Add(aEx)) {
-	if (aEx.IsSame(aE)) {
+	bRet=aEx.IsSame(aE);
+	if (bRet) {
 	  break;
 	}
       }
     }
-    bRet=!bRet;
   }
   return bRet;
 }

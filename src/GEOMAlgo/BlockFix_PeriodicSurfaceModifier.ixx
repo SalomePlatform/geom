@@ -27,7 +27,7 @@
 #endif
 
 BlockFix_PeriodicSurfaceModifier::~BlockFix_PeriodicSurfaceModifier() {}
- 
+
 
 
 Standard_EXPORT Handle_Standard_Type& BlockFix_PeriodicSurfaceModifier_Type_()
@@ -39,7 +39,7 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_PeriodicSurfaceModifier_Type_()
   if ( aType2.IsNull()) aType2 = STANDARD_TYPE(MMgt_TShared);
   static Handle_Standard_Type aType3 = STANDARD_TYPE(Standard_Transient);
   if ( aType3.IsNull()) aType3 = STANDARD_TYPE(Standard_Transient);
- 
+
 
   static Handle_Standard_Transient _Ancestors[]= {aType1,aType2,aType3,NULL};
   static Handle_Standard_Type _aType = new Standard_Type("BlockFix_PeriodicSurfaceModifier",
@@ -55,7 +55,7 @@ Standard_EXPORT Handle_Standard_Type& BlockFix_PeriodicSurfaceModifier_Type_()
 // DownCast method
 //   allow safe downcasting
 //
-const Handle(BlockFix_PeriodicSurfaceModifier) Handle(BlockFix_PeriodicSurfaceModifier)::DownCast(const Handle(Standard_Transient)& AnObject) 
+const Handle(BlockFix_PeriodicSurfaceModifier) Handle(BlockFix_PeriodicSurfaceModifier)::DownCast(const Handle(Standard_Transient)& AnObject)
 {
   Handle(BlockFix_PeriodicSurfaceModifier) _anOtherObject;
 
@@ -67,13 +67,13 @@ const Handle(BlockFix_PeriodicSurfaceModifier) Handle(BlockFix_PeriodicSurfaceMo
 
   return _anOtherObject ;
 }
-const Handle(Standard_Type)& BlockFix_PeriodicSurfaceModifier::DynamicType() const 
-{ 
-  return STANDARD_TYPE(BlockFix_PeriodicSurfaceModifier) ; 
+const Handle(Standard_Type)& BlockFix_PeriodicSurfaceModifier::DynamicType() const
+{
+  return STANDARD_TYPE(BlockFix_PeriodicSurfaceModifier) ;
 }
-Standard_Boolean BlockFix_PeriodicSurfaceModifier::IsKind(const Handle(Standard_Type)& AType) const 
-{ 
-  return (STANDARD_TYPE(BlockFix_PeriodicSurfaceModifier) == AType || BRepTools_Modification::IsKind(AType)); 
+Standard_Boolean BlockFix_PeriodicSurfaceModifier::IsKind(const Handle(Standard_Type)& AType) const
+{
+  return (STANDARD_TYPE(BlockFix_PeriodicSurfaceModifier) == AType || BRepTools_Modification::IsKind(AType));
 }
 Handle_BlockFix_PeriodicSurfaceModifier::~Handle_BlockFix_PeriodicSurfaceModifier() {}
 
