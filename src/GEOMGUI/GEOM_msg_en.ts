@@ -311,11 +311,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGES</source>
-        <translation>Chamfer On Edges From Shape</translation>
+        <translation>Chamfer On Selected Edges</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_FACES</source>
-        <translation>Chamfer On Faces From Shape</translation>
+        <translation>Chamfer On Selected Faces</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_TITLE</source>
@@ -704,19 +704,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_FILLET_EDGES</source>
-        <translation>Fillet On Edges From Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_FILLET_WIRES</source>
-        <translation>Fillet On Wires From Shape</translation>
+        <translation>Fillet On Selected Edges</translation>
     </message>
     <message>
         <source>GEOM_FILLET_FACES</source>
-        <translation>Fillet On Faces From Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_FILLET_VERTEXES</source>
-        <translation>Fillet On Vertexes From Face</translation>
+        <translation>Fillet On Selected Faces</translation>
     </message>
     <message>
         <source>GEOM_FILLET_TITLE</source>
@@ -4168,7 +4160,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGE</source>
-        <translation>Chamfer On Selected Edges</translation>
+        <translation>Chamfer On Edge common with 2 Faces</translation>
     </message>
     <message>
         <source>SELECTED_EDGE</source>

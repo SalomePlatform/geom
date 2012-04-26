@@ -91,7 +91,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   // Create second group
 
-  myGrp2 = new QGroupBox(tr("GEOM_CHAMFER_EDGES"), centralWidget());
+  myGrp2 = new QGroupBox(tr("GEOM_CHAMFER_EDGE"), centralWidget());
 
   aLayout = new QGridLayout(myGrp2);
   aLayout->setMargin(9); aLayout->setSpacing(6);
@@ -122,7 +122,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   // Create fourth group
 
-  myGrp4 = new QGroupBox(tr("GEOM_CHAMFER_EDGE"), centralWidget());
+  myGrp4 = new QGroupBox(tr("GEOM_CHAMFER_EDGES"), centralWidget());
 
   aLayout = new QGridLayout(myGrp4);
   aLayout->setMargin(9); aLayout->setSpacing(6);

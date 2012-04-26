@@ -307,15 +307,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_ALL</source>
-        <translation>Chanfrein sur l&apos;objet tout entier</translation>
+        <translation>Chanfrein sur l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGES</source>
-        <translation>Chanfrein sur les arêtes d&apos;un objet</translation>
+        <translation>Chanfrein sur des arêtes</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_FACES</source>
-        <translation>Chanfrein sur les faces d&apos;un objet</translation>
+        <translation>Chanfrein sur des faces</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_TITLE</source>
@@ -700,23 +700,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FILLET_ALL</source>
-        <translation>Congé sur l&apos;objet tout entier</translation>
+        <translation>Congé sur l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_FILLET_EDGES</source>
-        <translation>Congé sur les arêtes de l&apos;objet</translation>
-    </message>
-    <message>
-        <source>GEOM_FILLET_WIRES</source>
-        <translation>Congé sur les contours de l&apos;objet</translation>
+        <translation>Congé sur des arêtes</translation>
     </message>
     <message>
         <source>GEOM_FILLET_FACES</source>
-        <translation>Congé sur les faces de l&apos;objet</translation>
-    </message>
-    <message>
-        <source>GEOM_FILLET_VERTEXES</source>
-        <translation>Congé sur les sommets de l&apos;objet</translation>
+        <translation>Congé sur des faces</translation>
     </message>
     <message>
         <source>GEOM_FILLET_TITLE</source>
@@ -2508,7 +2500,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_HEX_SOLID</source>
-        <translation>Solid hexaédrique</translation>
+        <translation>Solide hexaédrique</translation>
     </message>
     <message>
         <source>MEN_IMPORT</source>
@@ -2908,7 +2900,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PREF_len_tol_precision</source>
-        <translation>Tolérance de précision de longueur</translation>
+        <translation>Précision de la tolérance sur la longueur</translation>
     </message>
     <message>
         <source>GEOM_PREF_ang_tol_precision</source>
@@ -2928,7 +2920,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_PREF_param_tol_precision</source>
-        <translation>Tolérance de précision paramétrique</translation>
+        <translation>Précision de la tolérance paramétrique</translation>
     </message>
     <message>
         <source>PREF_AUTO_CREATE</source>
@@ -2936,7 +2928,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_DISPLAY_MODE</source>
-        <translation>Mode de visualisation par défaut</translation>
+        <translation>Mode de visualisation</translation>
     </message>
     <message>
         <source>PREF_FREE_BOUND_COLOR</source>
@@ -2988,7 +2980,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_SHADING_COLOR</source>
-        <translation>Couleur d&apos;ombrage par défaut</translation>
+        <translation>Couleur d&apos;ombrage</translation>
     </message>
     <message>
         <source>PREF_EDGES_IN_SHADING</source>
@@ -3012,11 +3004,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>PREF_WIREFRAME_COLOR</source>
-        <translation>Couleur des contours par défaut</translation>
+        <translation>Couleur des contours</translation>
     </message>
     <message>
         <source>PREF_MATERIAL</source>
-        <translation>Matériau par défaut</translation>
+        <translation>Matériau</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
@@ -4168,11 +4160,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGE</source>
-        <translation>Chanfrein sur les arêtes choisies</translation>
+        <translation>Chanfrein sur des arêtes communes à 2 faces</translation>
     </message>
     <message>
         <source>SELECTED_EDGE</source>
-        <translation>Arêtes choisies</translation>
+        <translation>Arêtes</translation>
     </message>
     <message>
         <source>GEOM_NORMALE_TITLE</source>
@@ -5062,18 +5054,18 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>SELECTED_FACES</source>
-        <translation>Faces sélectionnées</translation>
+        <translation>Faces</translation>
     </message>
 </context>
 <context>
     <name>OperationGUI_FilletDlg</name>
     <message>
         <source>SELECTED_EDGES</source>
-        <translation>Arêtes sélectionnées</translation>
+        <translation>Arêtes</translation>
     </message>
     <message>
         <source>SELECTED_FACES</source>
-        <translation>Faces sélectionnées</translation>
+        <translation>Faces</translation>
     </message>
 </context>
 <context>
