@@ -396,10 +396,3 @@ bool OperationGUI_ExtrudedFeatureDlg::execute (ObjectList& objects)
 // {
 //   GEOMBase::PublishSubObject( myObject2.get() );
 // }
-
-
-
-
-  
-
-     

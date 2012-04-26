@@ -715,4 +715,3 @@ void Material_Model::setPhysical( bool theFlag)
 {
   myIsPhysical = theFlag;
 }
- 
