@@ -72,6 +72,6 @@ libGEOMbasic_la_CPPFLAGS =	\
 libGEOMbasic_la_LDFLAGS  =			\
 	$(KERNEL_LDFLAGS) -lSALOMELocalTrace -lSALOMEBasics	\
 	$(STDLIB)				\
-	$(CAS_LDPATH) -lTKXSBase		\
+	$(CAS_LDPATH) -lTKXSBase -lTKG3d  	\
 	$(CAS_OCAF)				\
 	$(CAS_OCAFVIS) 
