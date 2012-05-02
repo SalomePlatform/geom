@@ -2052,7 +2052,21 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetSharedShapes
   // Make a Python command
   anAsciiList.Trunc(anAsciiList.Length() - 1);
 
-  GEOM::TPythonDump pd (aMainShape, /*append=*/true);
+  // IPAL22904: TC6.5.0: order of python commands is wrong after dump study
+  Handle(TColStd_HSequenceOfTransient) anObjects = new TColStd_HSequenceOfTransient;
+  for( it = theShapes.begin(); it != theShapes.end(); it++ )
+  {
+    Handle(GEOM_Object) anObj = *it;
+    if( !anObj.IsNull() )
+      anObjects->Append( anObj );
+  }
+
+  // Get the function of the latest published object
+  Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast( anObjects )->GetLastFunction();
+  if( aFunction.IsNull() ) // just in case
+    aFunction = aMainShape;
+
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "[" << anAsciiList.ToCString()
      << "] = geompy.GetSharedShapesMulti([";
 
