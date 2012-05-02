@@ -47,7 +47,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source> iErr : 12</source>
-        <translation>Type d&apos;objet non autoriqé</translation>
+        <translation>Type d&apos;objet non autorisé</translation>
     </message>
     <message>
         <source> iErr : 13</source>
@@ -219,7 +219,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_BOX_OBJ</source>
-        <translation>Dimensions à l&apos;oigine</translation>
+        <translation>Dimensions à l&apos;origine</translation>
     </message>
     <message>
         <source>GEOM_BOX_TITLE</source>
@@ -335,7 +335,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND</source>
-        <translation>Controler un assemblage de blocs</translation>
+        <translation>Contrôler un assemblage de blocs</translation>
     </message>
     <message>
         <source>GEOM_CHECK_BLOCKS_COMPOUND_FAILED</source>
@@ -796,7 +796,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_FixShape</source>
-        <translation>Repare l&apos;objet</translation>
+        <translation>Répare l&apos;objet</translation>
     </message>
     <message>
         <source>GEOM_GLUE</source>
@@ -812,7 +812,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GLUE_ERROR_STICKED_SHAPES</source>
-        <translation>La valeur de la tolérance est trop importante. Détection de shapes "sticked".</translation>
+        <translation>La valeur de la tolérance est trop importante. Détection de shapes &quot;sticked&quot;.</translation>
     </message>
     <message>
         <source>GEOM_LIMIT_TOLERANCE_TITLE</source>
@@ -1196,7 +1196,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_WRN_PARTITION_RESULT_EMPTY</source>
-        <translation>Le résultat de la partition est vide, verifiez le paramètre "Type résultant"</translation>
+        <translation>Le résultat de la partition est vide, vérifiez le paramètre &quot;Type résultant&quot;</translation>
     </message>
     <message>
         <source>GEOM_PARTITION_HALFSPACE</source>
@@ -1560,7 +1560,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SET_MATERIALS</source>
-        <translation>Définir les materiaux</translation>
+        <translation>Définir les matériaux</translation>
     </message>
     <message>
         <source>GEOM_SEWING</source>
@@ -2371,7 +2371,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Afficher au premier plan</translation>
     </message>
     <message>
-	<source>TOP_BRING_TO_FRONT</source>
+        <source>TOP_BRING_TO_FRONT</source>
         <translation>Afficher au premier plan</translation>
     </message>
     <message>
@@ -2544,7 +2544,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_MODIFY_LOCATION</source>
-        <translation>Modifer la position</translation>
+        <translation>Modifier la position</translation>
     </message>
     <message>
         <source>MEN_MUL_ROTATION</source>
@@ -3068,7 +3068,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_FEATURE_DETECTION</source>
-        <translation>Reconnaisance de formes</translation>
+        <translation>Reconnaissance de formes</translation>
     </message>
     <message>
         <source>STB_PICTURE_IMPORT</source>
@@ -3088,7 +3088,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_CHECK_COMPOUND</source>
-        <translation>Contrôler un assemlage de blocs</translation>
+        <translation>Contrôler un assemblage de blocs</translation>
     </message>
     <message>
         <source>STB_CHECK_SELF_INTERSECTIONS</source>
@@ -3272,7 +3272,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_INERTIA</source>
-        <translation>Calculer les moments d&apos;intertie de l&apos;objet</translation>
+        <translation>Calculer les moments d&apos;inertie de l&apos;objet</translation>
     </message>
     <message>
         <source>STB_ISOS</source>
@@ -3324,11 +3324,11 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_PROJECTION</source>
-        <translation>Projetter un point, une arête ou un contour sur une face</translation>
+        <translation>Projeter un point, une arête ou un contour sur une face</translation>
     </message>
     <message>
         <source>STB_ORIGIN_AND_VECTORS</source>
-        <translation>Créer les vecterurs de base et l&apos;origine</translation>
+        <translation>Créer les vecteurs de base et l&apos;origine</translation>
     </message>
     <message>
         <source>STB_PARTITION</source>
@@ -3880,7 +3880,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_MODIFY_LOCATION</source>
-        <translation>Modifer la position</translation>
+        <translation>Modifier la position</translation>
     </message>
     <message>
         <source>TOP_MUL_ROTATION</source>
@@ -3900,7 +3900,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_FEATURE_DETECTION</source>
-        <translation>Reconnaisance de formes</translation>
+        <translation>Reconnaissance de formes</translation>
     </message>
     <message>
         <source>TOP_OFFSET</source>
@@ -4020,7 +4020,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_SEWING</source>
-        <translation>Effecture une couture</translation>
+        <translation>Effectuer une couture</translation>
     </message>
     <message>
         <source>TOP_SHADING</source>
@@ -4208,7 +4208,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_REMOVE_EXTRA_EDGES</source>
-        <translation>Objet dont on suppime les arêtes inutiles</translation>
+        <translation>Objet dont on supprime les arêtes inutiles</translation>
     </message>
     <message>
         <source>GEOM_RMEE_UNION_FACES</source>
@@ -4220,15 +4220,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>TOP_REMOVE_EXTRA_EDGES</source>
-        <translation>Suppimer les arêtes inutiles</translation>
+        <translation>Supprimer les arêtes inutiles</translation>
     </message>
     <message>
         <source>MEN_REMOVE_EXTRA_EDGES</source>
-        <translation>Suppimer les arêtes inutiles</translation>
+        <translation>Supprimer les arêtes inutiles</translation>
     </message>
     <message>
         <source>STB_REMOVE_EXTRA_EDGES</source>
-        <translation>Suppimer les arêtes inutiles</translation>
+        <translation>Supprimer les arêtes inutiles</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>
@@ -4400,15 +4400,15 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>GEOM_SCALE_FACTOR_X</source>
-        <translation>Facteur de redimensionnnement suivant X :</translation>
+        <translation>Facteur de redimensionnement suivant X :</translation>
     </message>
     <message>
         <source>GEOM_SCALE_FACTOR_Y</source>
-        <translation>Facteur de redimensionnnement suivant Y :</translation>
+        <translation>Facteur de redimensionnement suivant Y :</translation>
     </message>
     <message>
         <source>GEOM_SCALE_FACTOR_Z</source>
-        <translation>Facteur de redimensionnnement suivant Z :</translation>
+        <translation>Facteur de redimensionnement suivant Z :</translation>
     </message>
     <message>
         <source>GEOM_STATE_IN</source>
@@ -4494,8 +4494,8 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <source>EXPORT_IGES_HETEROGENEOUS_COMPOUND</source>
         <translation>Cet assemblage ne peut pas être exporté au format IGES
 sans perte car il contient des entités qui doivent être sauvegardées
-dans des modes différents. Les sommets, arêtes et contours d'un côté et
-les coques et solides d'un autre.</translation>
+dans des modes différents. Les sommets, arêtes et contours d&apos;un côté et
+les coques et solides d&apos;un autre.</translation>
     </message>
     <message>
         <source>GEOM_PUBLISH_NAMED_SHAPES</source>
@@ -4904,7 +4904,7 @@ Le nombre de points n&apos;est pas suffisant</translation>
     </message>
     <message>
         <source>GEOM_FILE</source>
-        <translation>Nom du ficheir</translation>
+        <translation>Nom du fichier</translation>
     </message>
     <message>
         <source>GEOM_IMPORT_PICT_TITLE</source>
@@ -5232,7 +5232,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>MATERIAL_BACK_CHK</source>
-        <translation>Activer l'arrière du matériau</translation>
+        <translation>Activer l&apos;arrière du matériau</translation>
     </message>
     <message>
         <source>AMBIENT_GRP</source>
