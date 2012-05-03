@@ -58,6 +58,7 @@
 #include <TCollection_AsciiString.hxx>
 
 #include <AIS_DisplayMode.hxx>
+#include <Graphic3d_MaterialAspect.hxx>
 
 class PrsMgr_PresentationManager3d;
 class Prs3d_Presentation;
@@ -149,8 +150,10 @@ protected:
 
 private: 
   TCollection_AsciiString myName;
-  bool                    myDisplayVectors;
-  Standard_Boolean        myTopLevel;
+  bool                     myDisplayVectors;
+  Standard_Boolean         myTopLevel;
+  Graphic3d_MaterialAspect myCurrentMaterial;
+
 };
 
 
