@@ -468,7 +468,7 @@ def TestOtherOperations (geompy, math):
   geompy.addToStudy(freeFacesWithoutExtra, "freeFacesWithoutExtra")
 
   # GetSharedShapes
-  sharedFaces = geompy.GetSharedShapes(part, freeFacesWithoutExtra,
+  sharedFaces = geompy.GetSharedShapes(part, freeFaces,
                                        geompy.ShapeType["FACE"])
   ind = 1
   for shFace in sharedFaces:
@@ -476,7 +476,7 @@ def TestOtherOperations (geompy, math):
     ind = ind + 1
     pass
 
-  sharedEdges = geompy.GetSharedShapesMulti([part, freeFacesWithoutExtra],
+  sharedEdges = geompy.GetSharedShapesMulti([part, freeFaces],
                                              geompy.ShapeType["EDGE"])
   ind = 1
   for shEdge in sharedEdges:
