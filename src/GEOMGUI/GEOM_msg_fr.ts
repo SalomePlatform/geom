@@ -5228,47 +5228,68 @@ Voulez-vous continuer?</translation>
     <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
     <message>
         <source>MATERIAL_PROPERTIES_TLT</source>
-        <translation>Définir une propriétés des matériaux</translation>
+        <translation>Color and Material Properties</translation>
     </message>
     <message>
-        <source>MATERIAL_BACK_CHK</source>
-        <translation>Activer l&apos;arrière du matériau</translation>
+        <source>REFLECTION_0</source>
+        <translation>Ambient</translation>
     </message>
     <message>
-        <source>AMBIENT_GRP</source>
-        <translation>Ambiante</translation>
-    </message>
-    <message>
-        <source>DIFFUSE_GRP</source>
+        <source>REFLECTION_1</source>
         <translation>Diffuse</translation>
     </message>
     <message>
-        <source>SPECULAR_GRP</source>
-        <translation>Spéculaire</translation>
+        <source>REFLECTION_2</source>
+        <translation>Specular</translation>
     </message>
     <message>
-        <source>EMISSION_GRP</source>
-        <translation>Emission</translation>
+        <source>REFLECTION_3</source>
+        <translation>Emissive</translation>
     </message>
     <message>
-        <source>COLOR</source>
-        <translation>Couleurs:</translation>
-    </message>
-    <message>
-        <source>COEFFICIENT</source>
-        <translation>Coefficient:</translation>
+        <source>ENABLED</source>
+        <translation>Enabled</translation>
     </message>
     <message>
         <source>SHININESS</source>
-        <translation>Brillance:</translation>
+        <translation>Shininess:</translation>
     </message>
     <message>
         <source>PHYSICAL</source>
-        <translation>Matériau physique (couleur imposée):</translation>
+        <translation>Physical</translation>
+    </message>
+    <message>
+        <source>ADD_MATERIAL</source>
+        <translation>Add Material</translation>
+    </message>
+    <message>
+        <source>DELETE_MATERIAL</source>
+        <translation>Remove material</translation>
+    </message>
+    <message>
+        <source>RENAME_MATERIAL</source>
+        <translation>Rename material</translation>
+    </message>
+    <message>
+        <source>CURRENT_MATERIAL</source>
+        <translation>[ Current ]</translation>
+    </message>
+    <message>
+        <source>CURRENT_COLOR</source>
+        <translation>Color</translation>
     </message>
     <message>
         <source>CUSTOM_MATERIAL</source>
-        <translation>Matériau personnalisé</translation>
+        <translation>Custom material</translation>
+    </message>
+    <message>
+        <source>QUE_CREATE_NEW_MATERIAL</source>
+        <translation>Changing properties of pre-defined material is not allowed.
+Do you want to create new material?</translation>
+    </message>
+    <message>
+        <source>QUE_REMOVE_MATERIAL</source>
+        <translation>Remove material %1?</translation>
     </message>
     <message>
         <source>OK_BTN</source>

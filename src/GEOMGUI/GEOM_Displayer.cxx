@@ -961,31 +961,20 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
 
           // get material properties, set material
-          Material_Model* aModelF = 0;
+          Material_Model material;
           if ( useStudy ) {
             // Get material property from study and construct material model
-            QString aMaterialF = aPropMap.value(MATERIAL_PROP).toString();
-            QStringList aProps =  aMaterialF.split(DIGIT_SEPARATOR);
-            aModelF = Material_Model::getMaterialModel( aProps );
+            material.fromProperties( aPropMap.value(MATERIAL_PROP).toString() );
           } else {
             // Get material property from study and construct material model
-            aModelF = new Material_Model();
-            aModelF->fromResources( aResMgr, "Geometry" );
+	    QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
+            material.fromResources( mname );
           }
 
-          // Set material property
-          QString aMaterialPropF = aModelF->getMaterialProperty();
-          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), MATERIAL_PROP, aMaterialPropF );
-
-          // Get material properties from the model
-          Graphic3d_MaterialAspect aMatF = aModelF->getMaterialOCCAspect();
+          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), MATERIAL_PROP, material.toProperties() );
 
           // Set material for the selected shape
-           AISShape->SetMaterial(aMatF);
-
-          // Release memory
-          if ( aModelF )
-            delete aModelF;
+	  AISShape->SetMaterial( material.getMaterialOCCAspect() );
 
 	  if(HasWidth())
 	    aStudy->setObjectProperty( aMgrId, anIO->getEntry(), EDGE_WIDTH_PROP, GetWidth() );
@@ -1174,24 +1163,16 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
           aGeomGActor->setDisplayMode(aDispModeId);
           aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble());
 
-	  // Get material property of the object stored in the study
-	  QString aMaterialF = aPropMap.value(MATERIAL_PROP).toString();
-	  QStringList aPropsF =  aMaterialF.split(DIGIT_SEPARATOR);
 	  // Create material model
-	  Material_Model* aModelF = Material_Model::getMaterialModel( aPropsF );	  
+	  Material_Model material;
+	  material.fromProperties( aPropMap.value(MATERIAL_PROP).toString() );	  
 	  // Set material properties for the object
-	  QString aMaterialPropF = aModelF->getMaterialProperty();
-	  aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, aMaterialPropF );	  
-	  // Get material properties from the model
-	  GEOM_VTKPropertyMaterial* aMatPropF = aModelF->getMaterialVTKProperty();
+	  aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );	  
 	  // Set the same front and back materials for the selected shape
-    std::vector<vtkProperty*> aProps;
-    aProps.push_back( (vtkProperty*) aMatPropF );
+	  std::vector<vtkProperty*> aProps;
+	  aProps.push_back( material.getMaterialVTKProperty() );
 	  aGeomGActor->SetMaterial(aProps);
 	  
-	  // Release memory
-	  delete aModelF;
-
           vtkFloatingPointType aColor[3] = {1.,0.,0.};
           if(aPropMap.contains(COLOR_PROP)) {
             QColor c = aPropMap.value(COLOR_PROP).value<QColor>();
@@ -1222,26 +1203,24 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
               }
             }
           }
-          if ( !aMatPropF->GetPhysical() )
+          if ( !material.isPhysical() )
             aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
         }
 	else {
 	  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
 	  if ( aResMgr ) {
 	    // Create material model
-	    Material_Model aModelF;
+	    Material_Model material;
 	    // Get material name from resources
-	    aModelF.fromResources( aResMgr, "Geometry" );
+	    QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
+	    material.fromResources( mname );
 	    // Set material properties for the object
-	    QString aMaterialPropF = aModelF.getMaterialProperty();
-	    aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, aMaterialPropF );	    
-	    // Get material properties from the model
-	    GEOM_VTKPropertyMaterial* aMatPropF = aModelF.getMaterialVTKProperty();
-
+	    aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );
 	    // Set material for the selected shape
-      std::vector<vtkProperty*> aProps;
-      aProps.push_back( (vtkProperty*) aMatPropF );
-	    aGeomGActor->SetMaterial(aProps);	  }
+	    std::vector<vtkProperty*> aProps;
+	    aProps.push_back( material.getMaterialVTKProperty() );
+	    aGeomGActor->SetMaterial(aProps);
+	  }
 	}
       }
 
@@ -1935,10 +1914,10 @@ PropMap GEOM_Displayer::getDefaultPropertyMap(const QString& viewer_type) {
   aDefaultMap.insert( DEFLECTION_COEFF_PROP , aDC);
 
   //8. Material
-  Material_Model aModelF;
-  aModelF.fromResources( aResMgr, "Geometry" );
-  QString aMaterialF = aModelF.getMaterialProperty();
-  aDefaultMap.insert( MATERIAL_PROP , aMaterialF );  
+  Material_Model material;
+  QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
+  material.fromResources( mname );
+  aDefaultMap.insert( MATERIAL_PROP, material.toProperties() );  
 
   //9. Width of the edges
   aDefaultMap.insert( EDGE_WIDTH_PROP , aResMgr->integerValue("Geometry", "edge_width", 1));

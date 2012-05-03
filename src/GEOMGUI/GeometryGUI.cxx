@@ -592,10 +592,9 @@ void GeometryGUI::OnGUIEvent( int id )
       LightApp_Preferences* pref = preferences();
       if ( pref ) {
 	Material_ResourceMgr aMatResMgr;
-	QStringList aPerfMatNames = aMatResMgr.getPreferenceMaterialsNames();
 	setPreferenceProperty( pref->rootItem()->findItem( tr( "PREF_MATERIAL" ), true )->id(),
 			       "strings",
-			       aPerfMatNames );
+			       aMatResMgr.materials() );
       }
     }
   }
@@ -1814,8 +1813,7 @@ void GeometryGUI::createPreferences()
 
   // Set property for default material
   Material_ResourceMgr aMatResMgr;
-  QStringList aPrefMatNames = aMatResMgr.getPreferenceMaterialsNames();
-  setPreferenceProperty( material, "strings", aPrefMatNames );
+  setPreferenceProperty( material, "strings", aMatResMgr.materials() );
 
   // Set property vertex marker type
   QList<QVariant> aMarkerTypeIndicesList;

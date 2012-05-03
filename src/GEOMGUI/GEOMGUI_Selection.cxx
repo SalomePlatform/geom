@@ -569,8 +569,9 @@ bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const{
    bool found = false;
    QVariant v = visibleProperty( entry( idx ), MATERIAL_PROP );
    if ( v.canConvert<QString>() ) {
-     Material_Model* aModel = Material_Model::getMaterialModel( v.toString().split(DIGIT_SEPARATOR) );
-     res = aModel->isPhysical();
+     Material_Model material;
+     material.fromProperties( v.toString() );
+     res = material.isPhysical();
      found = true;
    }
 

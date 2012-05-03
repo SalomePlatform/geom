@@ -294,18 +294,11 @@ void GEOMToolsGUI::OnColor()
           if ( c.isValid() ) {
             SUIT_OverrideCursor();
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-              QString defMatProp;
-              QVariant mp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, defMatProp);
-              QString matProp = mp.value<QString>();
-              QStringList aProps =  matProp.split(DIGIT_SEPARATOR);
-              Material_Model* aModelF = Material_Model::getMaterialModel( aProps );
-              bool aPhys = false;
-              if ( aModelF ) {
-                aPhys = aModelF->isPhysical();
-                // Release memory
-                delete aModelF;
-              }
-              if ( !aPhys ) {
+              QString matProp;
+              matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
+              Material_Model material;
+	      material.fromProperties( matProp );
+              if ( !material.isPhysical() ) {
                 aView->SetColor( It.Value(), c );
                 appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
               }
@@ -332,19 +325,12 @@ void GEOMToolsGUI::OnColor()
               OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
               Handle (AIS_InteractiveContext) ic = vm->getAISContext();
               for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-                QString defMatProp;
-                QVariant mp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, defMatProp);
-                QString matProp = mp.value<QString>();
-                QStringList aProps =  matProp.split(DIGIT_SEPARATOR);
-                Material_Model* aModelF = Material_Model::getMaterialModel( aProps );
-                bool aPhys = false;
-                if ( aModelF ) {
-                  aPhys = aModelF->isPhysical();
-                  // Release memory
-                  delete aModelF;
-                }
+                QString matProp;
+                matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
+		Material_Model material;
+		material.fromProperties( matProp );
                 io = GEOMBase::GetAIS( It.Value(), true );
-                if ( !io.IsNull()  && !aPhys ) { // change color only for shapes with not physical type of material
+                if ( !io.IsNull()  && !material.isPhysical() ) { // change color only for shapes with not physical type of material
                   
                   if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
                     TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
