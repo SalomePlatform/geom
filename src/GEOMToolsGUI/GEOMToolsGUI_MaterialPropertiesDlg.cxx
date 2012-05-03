@@ -454,7 +454,6 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
 
     SUIT_OverrideCursor wc();
 
-    printf("material prop:%s\n", qPrintable(prop));
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
       Handle(GEOM_AISShape) aisShape = GEOMBase::ConvertIOinGEOMAISShape( It.Value(), true );
       if ( !aisShape.IsNull() ) {

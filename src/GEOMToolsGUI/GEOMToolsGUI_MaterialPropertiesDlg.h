@@ -25,37 +25,24 @@
 
 #include "GEOM_ToolsGUI.hxx"
 
+#include <QListWidget>
 #include <QtxDialog.h>
-#include <QFrame>
-#include <QMap>
+#include "Material_Model.h"
+#include "Material_ResourceMgr.h"
 
 class QCheckBox;
-class QGroupBox;
 class QLabel;
-class QListWidget;
-class QListWidgetItem;
 class QPushButton;
-class QSpinBox;
-class QTabWidget;
-
+class QSlider;
 class QtxColorButton;
-class QtxDoubleSpinBox;
-
-class Material_Model;
-class Material_ResourceMgr;
+class GEOMToolsGUI_MaterialList;
 
 class GEOMTOOLSGUI_EXPORT GEOMToolsGUI_MaterialPropertiesDlg : public QtxDialog
 {
   Q_OBJECT
 
-  enum { Current, Default, Global, User };
+  enum { Current, Global, User };
   enum { TypeRole = Qt::UserRole + 123, NameRole  };
-
-  //! Enumeration of viewer types
-  typedef enum {
-    OCC,  //!< OCC viewer
-    VTK  //!< VTK viewer
-  } ViewerType;
 
 public:
   GEOMToolsGUI_MaterialPropertiesDlg( QWidget* = 0 );
@@ -66,66 +53,56 @@ public:
   bool                  eventFilter( QObject*, QEvent* );
 
 private:
-  Material_ResourceMgr* resourceMgr();
-
-  void                  fromModel( Material_Model* );
-  void                  toModel( Material_Model* ) const;
-  
+  void                  updateState();
+  void                  toModel( Material_Model& ) const;
+  void                  fromModel( const Material_Model& );
   QString               findUniqueName( const QString&,
-					QListWidgetItem* = 0,
-					bool = false );
+ 					QListWidgetItem* = 0,
+ 					bool = false );
 
 signals:
-  void                  materialChanged();
   void                  changed();
 
 private slots:
-
+  void                  onChanged();
+  void                  onMaterialChanged();
+  void                  onItemChanged( QListWidgetItem* );
+  void                  onContextMenu( QContextMenuEvent* );
+  void                  onDeleteMaterial();
+  void                  onAddMaterial();
   void                  onApply();
   void                  onHelp();
 
-  void                  onMaterialChanged();
-  void                  onChanged();
-  void                  onItemChanged( QListWidgetItem* );
-  void                  onReflectionTypeToggled( bool );
-
 private:
-  
-  Material_ResourceMgr* myResMgr;
+  typedef struct
+  {
+    QLabel*         label;
+    QtxColorButton* color;
+    QSlider*        coef;
+    QCheckBox*      enabled;
+  } Reflection;
 
-  QCheckBox*            myMaterialPhysicalCheck;
+  GEOMToolsGUI_MaterialList* myMaterials;
+  QCheckBox*                 myPhysical;
+  QList<Reflection>          myReflection;
+  QSlider*                   myShininess;
+  QLabel*                    myColorLab;
+  QtxColorButton*            myColor;
+  QPushButton*               myAddButton;
+  QPushButton*               myDelButton;
+  Material_ResourceMgr       myResourceMgr;
+  Material_Model             myCurrentModel;
+};
 
-  //! Current material model for material
-  Material_Model*       myCurrentModelF;
-
-  QListWidget*          myMaterialList;
-  int                   myMaterialListFId;
-
-  QTabWidget*           myMaterialTab;
-
-  //! Controls defining material properties
-  QGroupBox*            myAmbientGroupF;
-  QtxColorButton*       myAmbientColorF;
-  QtxDoubleSpinBox*     myAmbientCoefntF;
-
-  QGroupBox*            myDiffuseGroupF;
-  QtxColorButton*       myDiffuseColorF;
-  QtxDoubleSpinBox*     myDiffuseCoefntF;
-
-  QGroupBox*            mySpecularGroupF;
-  QtxColorButton*       mySpecularColorF;
-  QtxDoubleSpinBox*     mySpecularCoefntF;
-
-  QGroupBox*            myEmissionGroupF;
-  QtxColorButton*       myEmissionColorF;
-  QtxDoubleSpinBox*     myEmissionCoefntF;
-
-  QtxDoubleSpinBox*     myShininessF;
-
-  QString               myHelpFileName;
-
-  ViewerType            myViewerType;
-  
+class GEOMToolsGUI_MaterialList : public QListWidget
+{
+Q_OBJECT
+public:
+  GEOMToolsGUI_MaterialList( QWidget* parent );
+protected:
+  void contextMenuEvent( QContextMenuEvent* e );
+signals:
+  void contextMenu( QContextMenuEvent* );
 };
 
 #endif // GEOMTOOLSGUI_MATERIALPROPERTIESDLG_H

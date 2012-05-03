@@ -41,8 +41,6 @@ public:
   ~Material_ResourceMgr();
 
   QStringList materials( MaterialType = All, bool = true );
-
-  QStringList getPreferenceMaterialsNames();
   
 };
 
