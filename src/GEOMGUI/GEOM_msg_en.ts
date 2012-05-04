@@ -2947,10 +2947,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>General</translation>
     </message>
     <message>
-        <source>PREF_GROUP_OCCVIEWER</source>
-        <translation>OCC Viewer 3d</translation>
-    </message>
-    <message>
         <source>GEOM_PREF_GROUP_PRECISION</source>
         <translation>Input fields precision</translation>
     </message>

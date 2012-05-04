@@ -2947,10 +2947,6 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Général</translation>
     </message>
     <message>
-        <source>PREF_GROUP_OCCVIEWER</source>
-        <translation>Visualiseur OCC 3d</translation>
-    </message>
-    <message>
         <source>GEOM_PREF_GROUP_PRECISION</source>
         <translation>Précision des champs d&apos;entrée</translation>
     </message>
