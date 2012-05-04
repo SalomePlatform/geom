@@ -3536,7 +3536,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>STB_POP_MATERIAL_PROPERTIES</source>
-        <translation>Définir un propriétés des matériaux</translation>
+        <translation>Définir les propriétés du matériau</translation>
     </message>
     <message>
         <source>SUPPRESS_RESULT</source>
@@ -5224,11 +5224,11 @@ Voulez-vous continuer?</translation>
     <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
     <message>
         <source>MATERIAL_PROPERTIES_TLT</source>
-        <translation>Color and Material Properties</translation>
+        <translation>Couleur et propriétés des matériaux</translation>
     </message>
     <message>
         <source>REFLECTION_0</source>
-        <translation>Ambient</translation>
+        <translation>Ambiante</translation>
     </message>
     <message>
         <source>REFLECTION_1</source>
@@ -5236,7 +5236,7 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>REFLECTION_2</source>
-        <translation>Specular</translation>
+        <translation>Spéculaire</translation>
     </message>
     <message>
         <source>REFLECTION_3</source>
@@ -5244,48 +5244,48 @@ Voulez-vous continuer?</translation>
     </message>
     <message>
         <source>ENABLED</source>
-        <translation>Enabled</translation>
+        <translation>Activée</translation>
     </message>
     <message>
         <source>SHININESS</source>
-        <translation>Shininess:</translation>
+        <translation>Brillance:</translation>
     </message>
     <message>
         <source>PHYSICAL</source>
-        <translation>Physical</translation>
+        <translation>Couleur imposée</translation>
     </message>
     <message>
         <source>ADD_MATERIAL</source>
-        <translation>Add material</translation>
+        <translation>Ajouter un matériau</translation>
     </message>
     <message>
         <source>DELETE_MATERIAL</source>
-        <translation>Remove material</translation>
+        <translation>Supprimer un matériau</translation>
     </message>
     <message>
         <source>RENAME_MATERIAL</source>
-        <translation>Rename material</translation>
+        <translation>Renommer un matériau</translation>
     </message>
     <message>
         <source>CURRENT_MATERIAL</source>
-        <translation>[ Current ]</translation>
+        <translation>[ En cours ]</translation>
     </message>
     <message>
         <source>CURRENT_COLOR</source>
-        <translation>Color</translation>
+        <translation>Couleur</translation>
     </message>
     <message>
         <source>CUSTOM_MATERIAL</source>
-        <translation>Custom material</translation>
+        <translation>matériau personnalisé</translation>
     </message>
     <message>
         <source>QUE_CREATE_NEW_MATERIAL</source>
-        <translation>Changing properties of pre-defined material is not allowed.
-Do you want to create new material?</translation>
+        <translation>Il n'est pas possible de changer les propriétés d'un matériau pré-défini.
+Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>
         <source>QUE_REMOVE_MATERIAL</source>
-        <translation>Remove material %1?</translation>
+        <translation>Supprimer le matériau %1?</translation>
     </message>
     <message>
         <source>OK_BTN</source>

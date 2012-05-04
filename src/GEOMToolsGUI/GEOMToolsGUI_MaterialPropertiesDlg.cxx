@@ -180,7 +180,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   propLayout->addWidget( myColorLab, 0, 0 );
   propLayout->addWidget( myColor,    0, 1 );
   propLayout->addWidget( line1, 1, 0, 1, 4 );
-  propLayout->addWidget( myPhysical,     2, 0 );
+  propLayout->addWidget( myPhysical,     2, 0, 1, 2 );
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
     propLayout->addWidget( myReflection[i].label,   i+3, 0 );
     propLayout->addWidget( myReflection[i].color,   i+3, 1 );
