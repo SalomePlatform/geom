@@ -398,8 +398,12 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
       //a4bis->SetInteriorColor(myShadingColor);
   if( isTopLevel() )
     myDrawer->ShadingAspect()->SetColor( topLevelColor() );
-  else if(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().MaterialType( Graphic3d_MATERIAL_ASPECT ))
-    myDrawer->ShadingAspect()->SetColor(myShadingColor);
+  else { 
+    if(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().MaterialType( Graphic3d_MATERIAL_ASPECT ))
+      myDrawer->ShadingAspect()->SetColor(myShadingColor);
+    else
+      myDrawer->ShadingAspect()->SetColor(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().AmbientColor());
+  }
 
   // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
   //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);

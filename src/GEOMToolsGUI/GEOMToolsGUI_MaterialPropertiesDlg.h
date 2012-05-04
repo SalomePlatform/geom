@@ -33,7 +33,7 @@
 class QCheckBox;
 class QLabel;
 class QPushButton;
-class QSlider;
+class QtxDoubleSpinBox;
 class QtxColorButton;
 class GEOMToolsGUI_MaterialList;
 
@@ -76,16 +76,16 @@ private slots:
 private:
   typedef struct
   {
-    QLabel*         label;
-    QtxColorButton* color;
-    QSlider*        coef;
-    QCheckBox*      enabled;
+    QLabel*           label;
+    QtxColorButton*   color;
+    QtxDoubleSpinBox* coef;
+    QCheckBox*        enabled;
   } Reflection;
 
   GEOMToolsGUI_MaterialList* myMaterials;
   QCheckBox*                 myPhysical;
   QList<Reflection>          myReflection;
-  QSlider*                   myShininess;
+  QtxDoubleSpinBox*          myShininess;
   QLabel*                    myColorLab;
   QtxColorButton*            myColor;
   QPushButton*               myAddButton;

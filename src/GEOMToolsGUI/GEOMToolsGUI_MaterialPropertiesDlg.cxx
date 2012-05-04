@@ -28,6 +28,7 @@
 #include "GEOMBase.h"
 
 #include <QtxColorButton.h>
+#include <QtxDoubleSpinBox.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
@@ -52,16 +53,10 @@
 #include <QMap>
 #include <QMenu>
 #include <QPushButton>
-#include <QSlider>
 #include <QVBoxLayout>
 
 #define MARGIN  9  // layout spacing
 #define SPACING 6  // layout margin
-
-// convert floating point value to the integer equivalent
-#define COEF2INT(val) (int)(val*100.)
-// convert integer value to the floating point equivalent
-#define INT2COEF(val) (val/100.)
 
 /*!
   \class GEOMToolsGUI_MaterialList
@@ -145,10 +140,11 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
     refl.color = new QtxColorButton( propWidget );
     //refl.color->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
 
-    refl.coef = new QSlider( Qt::Horizontal, propWidget );
-    refl.coef->setRange( 0, 100 );
-    refl.coef->setSingleStep( 1 );
-    refl.coef->setPageStep( 10 );
+    refl.coef = new QtxDoubleSpinBox( propWidget );
+    refl.coef->setPrecision( 4 );
+    refl.coef->setDecimals( 4 ); 
+    refl.coef->setRange( 0., 1. );
+    refl.coef->setSingleStep( 0.05 );
 
     refl.enabled = new QCheckBox( tr( "ENABLED" ), propWidget );
 
@@ -157,10 +153,11 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
 
   // shininess widgets
   QLabel* shininessLab = new QLabel( tr( "SHININESS" ), propWidget );
-  myShininess = new QSlider( Qt::Horizontal, propWidget );
-  myShininess->setRange( 0, 100 );
-  myShininess->setSingleStep( 1 );
-  myShininess->setPageStep( 10 );
+  myShininess = new QtxDoubleSpinBox( propWidget );
+  myShininess->setPrecision( 4 );
+  myShininess->setDecimals( 4 ); 
+  myShininess->setRange( 0., 1. );
+  myShininess->setSingleStep( 0.05 );
 
   // separator widgets
   QFrame* line1 = new QFrame( propWidget );
@@ -236,10 +233,10 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
   connect( myPhysical, SIGNAL( toggled( bool ) ), this, SIGNAL( changed() ) ); 
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
     connect( myReflection[i].color,   SIGNAL( changed( QColor ) ),   this, SIGNAL( changed() ) );
-    connect( myReflection[i].coef,    SIGNAL( valueChanged( int ) ), this, SIGNAL( changed() ) );
+    connect( myReflection[i].coef,    SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
     connect( myReflection[i].enabled, SIGNAL( toggled( bool ) ),     this, SIGNAL( changed() ) );
   }
-  connect( myShininess, SIGNAL( valueChanged( int ) ), this, SIGNAL( changed() ) );
+  connect( myShininess, SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
   connect( myMaterials, SIGNAL( itemSelectionChanged() ),
            this,        SLOT( onMaterialChanged() ) );
   connect( myMaterials, SIGNAL( itemChanged( QListWidgetItem* ) ),
@@ -326,12 +323,12 @@ void GEOMToolsGUI_MaterialPropertiesDlg::fromModel( const Material_Model& model 
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
   {
     myReflection[i].color->setColor( model.color( (Material_Model::ReflectionType)i ) );
-    myReflection[i].coef->setValue( COEF2INT( model.reflection( (Material_Model::ReflectionType)i ) ) );
+    myReflection[i].coef->setValue( model.reflection( (Material_Model::ReflectionType)i ) );
     myReflection[i].enabled->setChecked( model.hasReflection( (Material_Model::ReflectionType)i ) );
   }
   
   // shininess
-  myShininess->setValue( COEF2INT( model.shininess() ) );
+  myShininess->setValue( model.shininess() );
 
   // type (physical or no)
   myPhysical->setChecked( model.isPhysical() );
@@ -347,13 +344,13 @@ void GEOMToolsGUI_MaterialPropertiesDlg::toModel( Material_Model& model ) const
   model.setPhysical( myPhysical->isChecked() );
 
   // shininess
-  model.setShininess( INT2COEF( myShininess->value() ) );
+  model.setShininess( myShininess->value() );
 
   // reflection components
   for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
   {
     model.setColor     ( (Material_Model::ReflectionType)i, myReflection[i].color->color() );
-    model.setReflection( (Material_Model::ReflectionType)i, INT2COEF( myReflection[i].coef->value() ) );
+    model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].coef->value() );
     model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].enabled->isChecked() );
   }
 }
