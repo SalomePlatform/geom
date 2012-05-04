@@ -5256,7 +5256,7 @@ Would you like to continue?</translation>
     </message>
     <message>
         <source>ADD_MATERIAL</source>
-        <translation>Add Material</translation>
+        <translation>Add material</translation>
     </message>
     <message>
         <source>DELETE_MATERIAL</source>
