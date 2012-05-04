@@ -145,6 +145,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
     refl.coef->setDecimals( 4 ); 
     refl.coef->setRange( 0., 1. );
     refl.coef->setSingleStep( 0.05 );
+    refl.coef->setMinimumWidth( 80 );
 
     refl.enabled = new QCheckBox( tr( "ENABLED" ), propWidget );
 
