@@ -200,6 +200,15 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
       }
 
       aShape = OrtProj.Shape();
+
+      // check that the result shape is an empty compound
+      // (IPAL22905: TC650: Projection on face dialog problems)
+      if( !aShape.IsNull() && aShape.ShapeType() == TopAbs_COMPOUND )
+      {
+        TopoDS_Iterator anIter( aShape );
+        if( !anIter.More() )
+          Standard_ConstructionError::Raise("Projection aborted : empty compound produced");
+      }
     }
 
     if (aShape.IsNull()) return 0;
