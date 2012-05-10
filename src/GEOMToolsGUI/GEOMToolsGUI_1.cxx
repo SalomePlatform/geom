@@ -414,7 +414,7 @@ void GEOMToolsGUI::OnTexture()
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
         if ( isOCC ) {
-          QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_IMAGE_FILES"));
+          QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_TEXTURE_FILES"));
           if( !aTexture.isEmpty() )
           {
             SUIT_OverrideCursor();
@@ -425,8 +425,8 @@ void GEOMToolsGUI::OnTexture()
               io = GEOMBase::GetAIS( It.Value(), true );
               if ( !io.IsNull() ) {
                 if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-		  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str()));
-		io->Redisplay( Standard_True );
+                  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str()));
+                io->Redisplay( Standard_True );
               } // if ( !io.IsNull() )
             } // for
             ic->UpdateCurrentViewer();

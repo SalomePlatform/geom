@@ -2692,7 +2692,7 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     </message>
     <message>
         <source>MEN_POP_VECTORS</source>
-        <translation>Montrer l&apos;orientation de l&apos;arête</translation>
+        <translation>Afficher l&apos;orientation des arêtes</translation>
     </message>
     <message>
         <source>MEN_PREFERENCES</source>
@@ -3395,6 +3395,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ombrage avec arêtes</translation>
     </message>
     <message>
+        <source>STB_POP_TEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
+        <source>STB_POP_VECTORS</source>
+        <translation>Afficher l&apos;orientation des arêtes</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Ajoute une texture</translation>
     </message>
@@ -3435,8 +3443,16 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Effectuer la couture</translation>
     </message>
     <message>
+        <source>STB_WIREFRAME</source>
+        <translation>Contours</translation>
+    </message>
+    <message>
         <source>STB_SHADING</source>
         <translation>Ombrage</translation>
+    </message>
+    <message>
+        <source>STB_SHADING_WITH_EDGES</source>
+        <translation>Ombrage avec arêtes</translation>
     </message>
     <message>
         <source>STB_VECTOR_MODE</source>
@@ -4521,7 +4537,7 @@ le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translati
     </message>
     <message>
         <source>STB_PIPETSHAPE</source>
-        <translation>Créer un nouveau tuyau en T</translation>
+        <translation>Créer un tuyau en T</translation>
     </message>
     <message>
         <source>GEOM_ADVANCED_201</source>

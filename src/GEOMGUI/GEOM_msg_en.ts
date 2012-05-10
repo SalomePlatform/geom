@@ -3395,6 +3395,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading With Edges</translation>
     </message>
     <message>
+        <source>STB_POP_TEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
+        <source>STB_POP_VECTORS</source>
+        <translation>Show Edge Direction</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Add a texture</translation>
     </message>
@@ -3435,8 +3443,16 @@ Please, select face, shell or solid and try again</translation>
         <translation>Perform sewing</translation>
     </message>
     <message>
+        <source>STB_WIREFRAME</source>
+        <translation>Wireframe</translation>
+    </message>
+    <message>
         <source>STB_SHADING</source>
         <translation>Shading</translation>
+    </message>
+    <message>
+        <source>STB_SHADING_WITH_EDGES</source>
+        <translation>Shading with edges</translation>
     </message>
     <message>
         <source>STB_VECTOR_MODE</source>
