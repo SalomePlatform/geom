@@ -1834,23 +1834,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
             return anObj
 
-        ## Create a face with specified dimensions along OX-OY coordinate axes,
-        #  with edges, parallel to this coordinate axes.
+        ## Create a face with specified dimensions with edges parallel to coordinate axes.
         #  @param theH height of Face.
         #  @param theW width of Face.
-        #  @param theOrientation orientation belong axis OXY OYZ OZX
+        #  @param theOrientation face orientation: 1-OXY, 2-OYZ, 3-OZX
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
         def MakeFaceHW(self,theH, theW, theOrientation):
             """
-            Create a face with specified dimensions along OX-OY coordinate axes,
-            with edges, parallel to this coordinate axes.
+            Create a face with specified dimensions with edges parallel to coordinate axes.
 
             Parameters:
                 theH height of Face.
                 theW width of Face.
-                theOrientation orientation belong axis OXY OYZ OZX
+                theOrientation face orientation: 1-OXY, 2-OYZ, 3-OZX
 
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
