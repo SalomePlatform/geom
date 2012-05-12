@@ -358,24 +358,77 @@ echo Summary
 echo ---------------------------------------------
 echo
 
-echo Configure
-
-if test "${gui_ok}" = "yes"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok OpenGL_ok qt_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok opencv_ok Kernel_ok gui_ok"
-elif test "${SalomeGUI_need}" != "no"; then
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok opencv_ok Kernel_ok gui_ok"
+if test "${SalomeGUI_need}" == "no"; then
+  echo "* Configuration options (without GUI):"
 else
-  variables="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok opencv_ok Kernel_ok"
+  echo "* Configuration options:"
+fi
+echo
+
+obligatory_vars="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok Kernel_ok"
+optional_vars="opencv_ok"
+gui_vars="OpenGL_ok qt_ok"
+
+###
+# mandatory products
+###
+
+echo "--- Mandatory products:"
+
+missing_obligatory=no
+for var in $obligatory_vars
+do
+  eval toto=\$$var
+  if test x$toto == "x"; then toto="no" ; fi
+  if test x$toto == "xno"; then missing_obligatory=yes ; fi
+    printf "   %10s : " `echo \$var | sed -e "s,_ok,,"`
+    eval echo \$$var
+  #fi
+done
+if test x$missing_obligatory == "xyes"; then 
+  AC_MSG_ERROR([one or more obligatory product is missing])
 fi
 
-for var in $variables
+###
+# gui products
+###
+
+if test "${SalomeGUI_need}" == "yes"; then
+  # SALOME GUI is mandatory
+  if test "${gui_ok}" != "yes"; then
+    AC_MSG_ERROR([SALOME GUI is missing])
+  fi
+fi
+
+if test "${SalomeGUI_need}" != "no"; then
+  echo "--- GUI products (optional):"
+  
+  for var in $gui_vars
+  do
+    eval toto=\$$var
+    if test x$toto == "x"; then toto="no"; fi
+    printf "   %10s : " `echo \$var | sed -e "s,_ok,,"`
+    eval echo \$toto
+  done
+fi
+
+###
+# optional products
+###
+
+echo "--- Other products (optional):"
+
+for var in $optional_vars
 do
-   printf "   %10s : " `echo \$var | sed -e "s,_ok,,"`
-   eval echo \$$var
+   eval toto=\$$var
+   if test x$toto != "x"; then
+     printf "   %10s : " `echo \$var | sed -e "s,_ok,,"`
+     eval echo \$$var
+   fi
 done
 
 echo
-echo "Default ORB   : $DEFAULT_ORB"
+echo "* Default ORB : $DEFAULT_ORB"
 echo
 
 dnl We don t need to say when we re entering directories if we re using
