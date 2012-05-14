@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -2354,7 +2353,37 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     }
 
     // Make pipe
-    aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase);
+    if (aShapeBase.ShapeType() == TopAbs_EDGE ||
+        aShapeBase.ShapeType() == TopAbs_WIRE)
+    {
+      TopoDS_Wire Profile;
+      if (aShapeBase.ShapeType() == TopAbs_WIRE)
+        Profile = TopoDS::Wire(aShapeBase);
+      else
+      {
+        BRep_Builder BB;
+        BB.MakeWire(Profile);
+        BB.Add(Profile, aShapeBase);
+      }
+
+      BRepOffsetAPI_MakePipeShell Sweep (aWirePath);
+      BRepBuilderAPI_MakeFace FaceBuilder (aWirePath, Standard_True); //to find the plane of spine
+      if (FaceBuilder.IsDone())
+        Sweep.SetMode(FaceBuilder.Face());
+      Sweep.Add(Profile);
+      Sweep.Build();
+      
+      if (!Sweep.IsDone())
+      {
+        if (aCI) delete aCI;
+        Standard_ConstructionError::Raise("MakePipeShell failed");
+      }
+      else
+        aShape = Sweep.Shape(); //result is good
+      
+    }
+    else
+      aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase);
   }
 
   //building pipe with different sections
