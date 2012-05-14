@@ -12,9 +12,10 @@ To produce the <b>extruded boss</b>:
 <li>Draw the \b profile of the extrusion. It can be:
  
  <ul>
- <li> a <a href="create_sketcher_page.html">\b Sketch </a> drawn on a planar face of the object you want to boss.</li>
+ <li> a <a href="create_sketcher_page.html">\b Sketch </a> drawn on a
+ planar face of the initial shape you want to boss.</li>
  
- <li> any closed edge or wire of the desired shape (circle, ellipse ...).</li>
+ <li> any closed edge or wire of this shape (circle, ellipse ...).</li>
  </ul>
  
 </li>
@@ -34,7 +35,7 @@ The input arguments are:
 
 - The \b profile. It must be a \b closed edge or wire and it must be \b planar.
 
-- The \b height of extrusion. It's calculated from the <b>base profile</b> along the normal to its plane.
+- The \b height of extrusion. It is calculated from the <b>base profile</b> along the normal to its plane.
 
 And optionnaly:
 

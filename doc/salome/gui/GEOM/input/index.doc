@@ -5,24 +5,24 @@
 \image html geomscreen.png
 
 \b Geometry module of SALOME is destined for: 
-<ul>
-<li>\subpage import_export_geom_obj_page "import and export of geometrical models" in IGES, BREP and STEP formats;</li>
-<li>\subpage create_geom_obj_page "construction of geometrical objects"
-using a wide range of functions;</li>
-<li>\subpage view_geom_obj_page "viewing geometrical objects" in the OCC viewer;</li>
-<li>\subpage transform_geom_obj_page "transformation of geometrical objects" using
-various algorithms;</li>
-<li>\subpage repairing_operations_page "optimization of geometrical objects";</li>
-<li>Get information about geometrical objects using
- \subpage using_measurement_tools_page "measurement tools".</li>
-<li>\subpage pictures_page "Design shapes from pictures"
-<li>and viewing \subpage geometrical_obj_prop_page "geometrical object properties".</li>
-<li>easily setting parameters via the variables predefined in
- \subpage using_notebook_geom_page "Salome notebook".</li>
-</ul>
+- \subpage import_export_geom_obj_page "import and export of geometrical models"
+  in IGES, BREP and STEP formats;
+- \subpage create_geom_obj_page "construction of geometrical objects"
+  using a wide range of functions; 
+- \subpage view_geom_obj_page "viewing geometrical objects" in the OCC
+  viewer; 
+- \subpage transform_geom_obj_page "transformation of geometrical objects"
+  using various algorithms;
+- \subpage repairing_operations_page "optimization of geometrical objects";
+- viewing \subpage geometrical_obj_prop_page "geometrical object properties"
+  and other information about geometrical objects using 
+  \subpage using_measurement_tools_page "measurement tools";
+- \subpage pictures_page "designing shapes from pictures";
+- easily setting parameters via the variables predefined in
+  \subpage using_notebook_geom_page "SALOME notebook".
 
-Geometry module preferences are described in the \subpage geometry_preferences_page section of SALOME Geometry Help.
-
+Geometry module preferences are described in the
+\subpage geometry_preferences_page section of SALOME Geometry Help.
 
 Almost all geometry module functionalities are accessible via
 \subpage geompy_page "Geometry module Python Interface"

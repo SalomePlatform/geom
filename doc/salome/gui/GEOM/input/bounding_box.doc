@@ -5,18 +5,18 @@
 Returns the dimensions of the bounding box for the selected
 geometrical object.
 
-\note In order to take into account any possible distortion of a shape 
+\note To take into account any possible shape distortion  
 that affects the resulting bounding box, the algorithm enlarges 
-the bounding box to the value of the maximum deflection value of 
+the bounding box to the maximum deflection value of 
 faces (by iterating through all faces of a shape).
-This functionallity is implemented in such a way in order to have 
-satisfactory performance.
+This functionallity is implemented in such a way to have 
+a satisfactory performance.
 
-<b>Result:</b> Displays the dimensions of the bounding box of a
-geometrical object in the form of Python Tuple (Xmin, Xmax, Ymin,
+<b>Result:</b> Displays the bounding box dimensions of a
+geometrical object in form of a Python Tuple (Xmin, Xmax, Ymin,
 Ymax, Zmin, Zmax).
 \n <b>TUI Command:</b> <em>geompy.BoundingBox(Shape),</em> where \em Shape
-is a shape for which a bounding box is computed.
+is the shape for which a bounding box is computed.
 
 See also a \ref tui_bounding_box_page "TUI example".
 

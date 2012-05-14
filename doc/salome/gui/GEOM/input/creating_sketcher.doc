@@ -2,14 +2,15 @@
 
 \page create_sketcher_page 2D Sketcher
 
-The 2D Sketcher allows you to draw 2D shapes on a working plane. You can create on this plane:
+The 2D Sketcher allows you to draw 2D shapes on a working plane. You
+can create sketches of two types:
 
 <ul>
-<li> A \b profile made of connected curves of 2 types: <b>line segments</b> and \b arcs.
+<li> \b Profile made of connected curves of 2 types: <b>line segments</b> and \b arcs.
 
 \b or
 
-<li> A \b rectangle
+<li>  \b Rectangle
 </ul>
 
 The \b Result is a \b Wire
@@ -25,7 +26,8 @@ To create a <b> 2D Sketch</b>:
 
 <li> Select the \b plane or the <b>planar face</b> on which to create the sketch. 
 \note By default the sketch is created on the XOY plane of the global coordinate system.
-If Local Coordinate Systems have been created in the study they appear in the combobox and can be selected as reference coordinate system.</li>
+If Local Coordinate Systems have been created in the study they appear
+in the combobox and can be selected as a reference coordinate system.</li>
 
 <li> Choose a \b segment or an \b arc element to start a \b profile or choose \b rectangle to draw a rectangle.
 
@@ -46,7 +48,7 @@ origin of the reference coordinate system.</li>
 
 \image html line_icon.png </li>
 
-<li> You can define the segment by either it's <b>end point</b> or a \b direction and a \b length. The direction is defined relatively to the tangent at the last point of the sketch. It can be:
+<li> You can define the segment by either its <b>end point</b> or \b direction and \b length. The direction is defined relatively to the tangent at the last point of the sketch. It can be:
   <ul>
     <li> Tangent (colinear to the tangent at the last point)</li>
     <li> Perpendicular</li>
@@ -63,7 +65,7 @@ origin of the reference coordinate system.</li>
 <ol>
 <li> In the <b>Element Type</b> part of the dialog box select \image html arc_icon.png </li>
 
-<li> You can define the segment by either it's <b>end point</b> or a \b direction a \b radius and an \b angle. </li>
+<li> You can define the segment by either its <b>end point</b> or \b direction \b radius and \b angle. </li>
 
 <ul>
   <li>In case of an end point the arc can be built in three different ways:</li>
@@ -107,7 +109,7 @@ origin of the reference coordinate system.</li>
 <li>Destination direction by means of:</li>
 <ul>
 <li>angle between the new segment and the previous one;</li>
-<li>perpendicular to the previous segment (same as previous, but angle
+<li>perpendicular to the previous segment (same as previous, but the angle
 is predefined and is equal to 90 degrees);</li>
 <li>tangent to the previous segment;</li>
 <li>vector components DX, DY.</li>
@@ -119,7 +121,8 @@ is predefined and is equal to 90 degrees);</li>
 
 <b>"Restore"</b> button orientates the viewer correspondingly to the chosen working plane and fits the scene to show all its objects. 
 \n <b>"Close"</b> button applies the wire, only the red part will be built.
-\n <b>"Sketch Closure"</b> will close the Sketch by straight line from last red part and apply it.
+\n <b>"Sketch Closure"</b> will close the Sketch by a straight line
+from the last red part and apply it.
 
 \n To draw a \b rectangle:
 

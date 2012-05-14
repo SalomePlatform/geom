@@ -3,15 +3,14 @@
 \page geometry_preferences_page Geometry preferences
 
 In the \b Geometry module you can set preferences for visualisation of
-geometrical figures which can be used in later sessions with this
-module.
-There is also a special group of preferences controlling input precision for floating-point
-data.
+geometrical figures, which can be used in later sessions with this module.
+There is also a special group of preferences controlling input
+precision for floating-point data.
 
 \image html pref15.png
 
 \par
-For all color definitions click on the respective line to access to
+To redefine any color click on the corresponding line to access to
 the <b>Select Color</b> dialog box.
 
 <ul>

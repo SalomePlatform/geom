@@ -22,9 +22,9 @@ viewer and from the Object Browser.</li>
 <li>\subpage display_mode_page "Display Mode" - allows to select between
 Wireframe and Shading presentation.</li>
 <li>\subpage bring_to_front_page "Bring To Front" - allows to bring to 
-front of the viewer selected geometrical object.</li>
-<li><b>Clear Top Level State</b> - allows to remove from foregroung of the viewer 
-geometrical objects which were added there via <b>Bring To Front</b> command.</li>
+front of the viewer the selected geometrical object.</li>
+<li><b>Clear Top Level State</b> - allows to remove from the viewer foreground 
+geometrical objects that have been placed there via <b>Bring To Front</b> command.</li>
 <li>\subpage color_page "Color" - allows to change the filling color in
 the standard <b>Select Color</b> menu.</li>
 <li>\subpage transparency_page "Transparency" - allows to change the
@@ -38,7 +38,7 @@ material properties of a shape.</li>
 <li>\subpage point_marker_page "Point Marker" - allows to change the
 representation of geometrical vertices.</li>
 <li>\subpage line_width_page "Line Width" - allows to change the
-width of the edges and isolines.</li>
+width of edges and isolines.</li>
 <li><b>Auto color</b> / <b>Disable auto color</b> - activates the auto color
 mode. When the auto color mode is enabled, the groups created on the
 sub-shapes of the selected geometrical object are automatically
