@@ -367,7 +367,7 @@ echo
 
 obligatory_vars="cc_ok lex_yacc_ok python_ok swig_ok threads_ok vtk_ok hdf5_ok omniORB_ok boost_ok occ_ok doxygen_ok graphviz_ok sphinx_ok Kernel_ok"
 optional_vars="opencv_ok"
-gui_vars="OpenGL_ok qt_ok"
+gui_vars="OpenGL_ok qt_ok gui_ok"
 
 ###
 # mandatory products
