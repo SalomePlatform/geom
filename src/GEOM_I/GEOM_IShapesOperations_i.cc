@@ -1832,3 +1832,34 @@ GEOM::GEOM_Object_ptr GEOM_IShapesOperations_i::GetSame
 
   return GetObject(anObject);
 }
+
+//=============================================================================
+/*!
+ *  GetSameIDs
+ */
+//=============================================================================
+GEOM::ListOfLong* GEOM_IShapesOperations_i::GetSameIDs
+                                          (GEOM::GEOM_Object_ptr theShapeWhere,
+                                           GEOM::GEOM_Object_ptr theShapeWhat) {
+  GEOM::ListOfLong_var aSeq = new GEOM::ListOfLong;
+
+  //Get the reference objects
+  Handle(GEOM_Object) aShapeWhere = GetObjectImpl(theShapeWhere);
+  Handle(GEOM_Object) aShapeWhat = GetObjectImpl(theShapeWhat);
+
+  if (aShapeWhere.IsNull() ||
+      aShapeWhat.IsNull()) return aSeq._retn();
+
+
+  Handle(TColStd_HSequenceOfInteger) aHSeq =
+    GetOperations()->GetSameIDs(aShapeWhere, aShapeWhat);
+
+  if (!GetOperations()->IsDone() || aHSeq.IsNull()) return aSeq._retn();
+
+  Standard_Integer aLength = aHSeq->Length();
+  aSeq->length(aLength);
+  for (Standard_Integer i = 1; i <= aLength; i++)
+    aSeq[i-1] = aHSeq->Value(i);
+
+  return aSeq._retn();
+}

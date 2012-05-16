@@ -3870,6 +3870,31 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetSame", self.ShapesOp)
             return anObj
 
+
+        ## Get sub-shape indices of theShapeWhere, which is
+        #  equal to \a theShapeWhat.
+        #  @param theShapeWhere Shape to find sub-shape of.
+        #  @param theShapeWhat Shape, specifying what to find.
+        #  @return List of all found sub-shapes indices. 
+        #
+        #  @ref swig_GetSame "Example"
+        def GetSameIDs(self,theShapeWhere, theShapeWhat):
+            """
+            Get sub-shape indices of theShapeWhere, which is
+            equal to theShapeWhat.
+
+            Parameters:
+                theShapeWhere Shape to find sub-shape of.
+                theShapeWhat Shape, specifying what to find.
+
+            Returns:
+                List of all found sub-shapes indices.
+            """
+            anObj = self.ShapesOp.GetSameIDs(theShapeWhere, theShapeWhat)
+            RaiseIfFailed("GetSameIDs", self.ShapesOp)
+            return anObj
+
+
         # end of l4_obtain
         ## @}
 

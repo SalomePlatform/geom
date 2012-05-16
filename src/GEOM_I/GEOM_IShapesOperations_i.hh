@@ -264,6 +264,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
   GEOM::GEOM_Object_ptr GetSame (GEOM::GEOM_Object_ptr theShapeWhere,
                                  GEOM::GEOM_Object_ptr theShapeWhat);
 
+  GEOM::ListOfLong* GetSameIDs  (GEOM::GEOM_Object_ptr theShapeWhere,
+                                 GEOM::GEOM_Object_ptr theShapeWhat);
+
   ::GEOMImpl_IShapesOperations* GetOperations()
   { return (::GEOMImpl_IShapesOperations*)GetImpl(); }
 };

@@ -306,6 +306,15 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
                                               const Handle(GEOM_Object)& theShapeWhat);
 
   /*!
+   * \brief Searches a shape equal to theWhat in the context of theWhere
+   * \param theShapeWhere - a context shap
+   * \param theShapeWhat - a sample shape
+   * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetSameIDs(const Handle(GEOM_Object)& theShapeWhere,
+                                                                 const Handle(GEOM_Object)& theShapeWhat);
+
+  /*!
    * \brief Find IDs of sub-shapes complying with given status about surface
     * \param theBox - the box to check state of sub-shapes against
     * \param theShape - the shape to explore

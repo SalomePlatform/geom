@@ -4914,3 +4914,109 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
 
   return aResult;
 }
+
+
+//=======================================================================
+//function : GetSameIDs
+//purpose  :
+//=======================================================================
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs(const Handle(GEOM_Object)& theShapeWhere,
+                                                        const Handle(GEOM_Object)& theShapeWhat)
+{
+  SetErrorCode(KO);
+  if (theShapeWhere.IsNull() || theShapeWhat.IsNull()) return NULL;
+
+  TopoDS_Shape aWhere = theShapeWhere->GetValue();
+  TopoDS_Shape aWhat  = theShapeWhat->GetValue();
+
+  if (aWhere.IsNull() || aWhat.IsNull()) return NULL;
+
+  int anIndex = -1;
+  bool isFound = false;
+  TopTools_ListOfShape listShape;
+  TopTools_MapOfShape aMap;
+
+  if (aWhat.ShapeType() == TopAbs_COMPOUND || aWhat.ShapeType() == TopAbs_COMPSOLID) {
+    TopoDS_Iterator It (aWhat, Standard_True, Standard_True);
+    if (It.More()) aWhat = It.Value();
+    It.Next();
+    if (It.More()) {
+      SetErrorCode("Compounds of two or more shapes are not allowed for aWhat argument");
+      return NULL;
+    }
+  }
+
+  switch (aWhat.ShapeType()) {
+    case TopAbs_VERTEX: {
+      gp_Pnt P = BRep_Tool::Pnt(TopoDS::Vertex(aWhat));
+      TopExp_Explorer E(aWhere, TopAbs_VERTEX);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        gp_Pnt P2 = BRep_Tool::Pnt(TopoDS::Vertex(E.Current()));
+        if(P.Distance(P2) <= MAX_TOLERANCE) {
+          listShape.Append(E.Current());
+        }
+      }
+      break;
+                        }
+    case TopAbs_EDGE: {
+      TopoDS_Edge anEdge = TopoDS::Edge(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_EDGE);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        if(isSameEdge(anEdge, TopoDS::Edge(E.Current()))) {
+          listShape.Append(E.Current());
+        }
+      }
+      break;
+                      }
+    case TopAbs_FACE: {
+      TopoDS_Face aFace = TopoDS::Face(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_FACE);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        if(isSameFace(aFace, TopoDS::Face(E.Current()))) {
+          listShape.Append(E.Current());
+        }
+      }
+      break;
+                      }
+    case TopAbs_SOLID: {
+      TopoDS_Solid aSolid = TopoDS::Solid(aWhat);
+      TopExp_Explorer E(aWhere, TopAbs_SOLID);
+      for(; E.More(); E.Next()) {
+        if(!aMap.Add(E.Current())) continue;
+        if(isSameSolid(aSolid, TopoDS::Solid(E.Current()))) {
+          listShape.Append(E.Current());
+        }
+      }
+      break;
+                       }
+    default:
+      return NULL;
+  }
+
+  if ( !listShape.IsEmpty() ) {
+    TopTools_IndexedMapOfShape anIndices;
+    TopExp::MapShapes(aWhere, anIndices);
+    TopTools_ListIteratorOfListOfShape itSub (listShape);
+    Handle(TColStd_HSequenceOfInteger) aSeq = new TColStd_HSequenceOfInteger;
+    for (; itSub.More(); itSub.Next()) {
+      if (anIndices.Contains(itSub.Value()))
+        aSeq->Append(anIndices.FindIndex(itSub.Value()));
+    }
+    SetErrorCode(OK);
+    // The GetSameIDs() doesn't change object so no new function is required.
+    Handle(GEOM_Function) aFunction = GEOM::GetCreatedLast(theShapeWhere,theShapeWhat)->GetLastFunction();
+
+  // Make a Python command
+  GEOM::TPythonDump(aFunction)
+    << "listSameIDs = geompy.GetSameIDs("
+    << theShapeWhere << ", "
+    << theShapeWhat << ")";
+    return aSeq;
+  } else {
+    SetErrorCode(NOT_FOUND_ANY);
+    return NULL; 
+  }
+}
