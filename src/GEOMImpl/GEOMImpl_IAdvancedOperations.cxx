@@ -1937,12 +1937,19 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (1)
+// the following block, when enabled, leads to partitioning problems
+#if 0
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (1)
   // BEGIN: Limit tolerances (debug)
   Handle(GEOM_Object) aCorr1 = myHealingOperations->LimitTolerance(aShape, 1e-07);
   TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
   aShape->GetLastFunction()->SetValue(aCorr1Shape);
   aCorr1->GetLastFunction()->SetDescription("");
   // END: Limit tolerances (debug)
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (2)
+#endif
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (2)
 
   if (theHexMesh) {
     if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
@@ -2137,12 +2144,19 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (3)
+// the following block, when enabled, leads to partitioning problems
+#if 0
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (3)
   // BEGIN: Limit tolerances (debug)
   Handle(GEOM_Object) aCorr1 = myHealingOperations->LimitTolerance(aShape, 1e-07);
   TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
   aShape->GetLastFunction()->SetValue(aCorr1Shape);
   aCorr1->GetLastFunction()->SetDescription("");
   // END: Limit tolerances (debug)
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (4)
+#endif
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (4)
 
   if (theHexMesh) {
     if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))

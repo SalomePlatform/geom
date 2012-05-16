@@ -1361,7 +1361,13 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
 
   // 12.04.2006 for PAL12149 begin
   Handle(Geom_Surface) aGS = BRep_Tool::Surface(TopoDS::Face(aFace));
-#if OCC_VERSION_LARGE > 0x06050200
+
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN
+// the following block, when enabled, leads to extra vertices generation by partition algorithm
+// in some cases, for example when fillet is made on a PipeTShape
+//#if OCC_VERSION_LARGE > 0x06050200
+#if 0
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END
   BRep_Builder BB;
   TopoDS_Iterator itw(theWire);
   for (; itw.More(); itw.Next())
@@ -1375,6 +1381,7 @@ TCollection_AsciiString GEOMImpl_Block6Explorer::MakeAnyFace (const TopoDS_Wire&
     BB.UpdateEdge(anEdge, NewPCurve, aGS, aLoc, NewTol);
   }
 #endif
+
   BRepBuilderAPI_MakeFace MK1 (aGS, theWire);
   if (MK1.IsDone()) {
     TopoDS_Shape aFace1 = MK1.Shape();
