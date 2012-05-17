@@ -644,12 +644,6 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         PropMap aPropMap;
         PropMap aDefPropMap;
 
-        if(useStudy){
-          aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
-          aDefPropMap = getDefaultPropertyMap(SOCC_Viewer::Type());
-          MergePropertyMaps(aPropMap, aDefPropMap);
-        }
-
         //Handle(GEOM_AISShape) AISShape = new GEOM_AISShape( myShape, "" );
         Handle(GEOM_AISShape) AISShape;
         if (myType == GEOM_VECTOR)
@@ -663,23 +657,30 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         // Temporary staff: vertex must be infinite for correct visualization
         AISShape->SetInfiniteState( myShape.Infinite() ); // || myShape.ShapeType() == TopAbs_VERTEX // VSR: 05/04/2010: Fix 20668 (Fit All for points & lines)
 
-        // Setup shape properties here ..., e.g. display mode, color, transparency, etc
-        if(useStudy) {
-          AISShape->SetDisplayMode( aPropMap.value(DISPLAY_MODE_PROP).toInt() );
-          AISShape->SetDisplayVectors(aPropMap.value(VECTOR_MODE_PROP).toInt());
-
-	  if(aPropMap.contains(TOP_LEVEL_PROP)) {
-	    AISShape->setTopLevel( aPropMap.value(TOP_LEVEL_PROP).value<Standard_Boolean>() );
-	  } 
-	  
-	  if(aPropMap.contains(COLOR_PROP)) {
-            Quantity_Color  quant_col = SalomeApp_Tools::color( aPropMap.value(COLOR_PROP).value<QColor>());
+        if(useStudy){
+          aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
+          aDefPropMap = getDefaultPropertyMap(SOCC_Viewer::Type());
+          Quantity_Color  quant_col;
+          if(aPropMap.contains(COLOR_PROP)) {
+            quant_col = SalomeApp_Tools::color( aPropMap.value(COLOR_PROP).value<QColor>());
             AISShape->SetShadingColor( quant_col );
           } else
             useObjColor = true;
+          MergePropertyMaps(aPropMap, aDefPropMap);
+          if(!useObjColor && aPropMap.contains(COLOR_PROP)) {
+            quant_col = SalomeApp_Tools::color( aPropMap.value(COLOR_PROP).value<QColor>());
+            AISShape->SetShadingColor( quant_col );
+          }
+
+          // Setup shape properties here ..., e.g. display mode, color, transparency, etc
+          AISShape->SetDisplayMode( aPropMap.value(DISPLAY_MODE_PROP).toInt() );
+          AISShape->SetDisplayVectors(aPropMap.value(VECTOR_MODE_PROP).toInt());
+          if(aPropMap.contains(TOP_LEVEL_PROP)) {
+            AISShape->setTopLevel( aPropMap.value(TOP_LEVEL_PROP).value<Standard_Boolean>() );
+          } 
         }else {
           MESSAGE("myDisplayMode = "<< myDisplayMode)
-	    AISShape->SetDisplayMode( myDisplayMode );
+          AISShape->SetDisplayMode( myDisplayMode );
           AISShape->SetShadingColor( myShadingColor );
         }
 
@@ -705,15 +706,14 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
         Handle(Prs3d_IsoAspect) anAspect = AISShape->Attributes()->UIsoAspect();
         anAspect->SetNumber( anUIsoNumber );
         anAspect->SetColor( aColor );
-	if(HasIsosWidth())
-	  anAspect->SetWidth( GetIsosWidth() );
+
+        if(HasIsosWidth())
+          anAspect->SetWidth( GetIsosWidth() );
         AISShape->Attributes()->SetUIsoAspect( anAspect );
-
-
         anAspect = AISShape->Attributes()->VIsoAspect();
         anAspect->SetNumber( aVIsoNumber );
-	if(HasIsosWidth())
-	  anAspect->SetWidth( GetIsosWidth() );
+        if(HasIsosWidth())
+          anAspect->SetWidth( GetIsosWidth() );
         anAspect->SetColor( aColor );
         AISShape->Attributes()->SetVIsoAspect( anAspect );
 
