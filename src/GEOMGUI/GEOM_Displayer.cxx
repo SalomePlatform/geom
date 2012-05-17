@@ -904,6 +904,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
                   anAspect->SetTypeOfMarker( myTypeOfMarker );
                   AISShape->Attributes()->SetPointAspect( anAspect );
                 }
+                aStudy->setObjectProperty( aMgrId, anIO->getEntry(), COLOR_PROP, SalomeApp_Tools::color( aQuanColor ) );
               } else if( !hasColor ) {
                 //In case if color wasn't defined in the property map of the object
                 //and GEOM_Object color also wasn't defined get default color from Resource Mgr.
