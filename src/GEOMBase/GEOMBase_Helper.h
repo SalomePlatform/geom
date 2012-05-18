@@ -117,7 +117,7 @@ protected:
   SalomeApp_Study* getStudy  () const;
   bool checkViewWindow ();
 
-  bool onAccept( const bool publish = true, const bool useTransaction = true );
+  bool onAccept( const bool publish = true, const bool useTransaction = true, bool erasePreviewFlag = true);
   // This method should be called from "OK" button handler.
   // <publish> == true means that objects returned by execute() 
   // should be published in a study.
@@ -190,6 +190,9 @@ protected:
   
   virtual void                setIsWaitCursorEnabled( const bool theFlag ) {myIsWaitCursorEnabled = theFlag;}
   virtual bool                isWaitCursorEnabled() const {return myIsWaitCursorEnabled ;}
+  virtual void                setIsDisableBrowsing( const bool theFlag ) { myIsDisableBrowsing = theFlag; }
+  virtual bool                isDisableBrowsing() const { return myIsDisableBrowsing; }
+  
 
 private:
   QString                     getEntry( GEOM::GEOM_Object_ptr ) const;
@@ -210,6 +213,8 @@ private:
   bool                        myIsApplyAndClose;
   bool                        myIsOptimizedBrowsing;
   bool                        myIsWaitCursorEnabled;
+  bool                        myIsDisableBrowsing;  //This flag enable/disable selection 
+                                                    //in the Object Browser newly created objects.
 
 };
 

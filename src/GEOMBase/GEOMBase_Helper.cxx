@@ -89,7 +89,8 @@ GEOM::GEOM_Gen_ptr GEOMBase_Helper::getGeomEngine()
 //================================================================
 GEOMBase_Helper::GEOMBase_Helper( SUIT_Desktop* desktop )
   : myDesktop( desktop ), myViewWindow( 0 ), myDisplayer( 0 ), myCommand( 0 ), isPreview( false ),
-    myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true )
+    myIsApplyAndClose( false ), myIsOptimizedBrowsing( false ), myIsWaitCursorEnabled( true ),
+    myIsDisableBrowsing(false)
 {
 }
 
@@ -812,7 +813,7 @@ bool GEOMBase_Helper::checkViewWindow()
 //            It perfroms user input validation, then it
 //            performs a proper operation and manages transactions, etc.
 //================================================================
-bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
+bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction, bool erasePreviewFlag )
 {
   SalomeApp_Study* appStudy = dynamic_cast<SalomeApp_Study*>( SUIT_Session::session()->activeApplication()->activeStudy() );
   if ( !appStudy ) 
@@ -837,8 +838,9 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
     showError( msg );
     return false;
   }
-
-  erasePreview( false );
+  
+  if(erasePreviewFlag)
+    erasePreview( false );
 
   bool result = false;
 
@@ -899,7 +901,8 @@ bool GEOMBase_Helper::onAccept( const bool publish, const bool useTransaction )
           commitCommand();
           updateObjBrowser();
           if( SUIT_Application* anApp = SUIT_Session::session()->activeApplication() ) {
-            if( LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp ) )
+            LightApp_Application* aLightApp = dynamic_cast<LightApp_Application*>( anApp );
+            if(aLightApp && !isDisableBrowsing() )
               aLightApp->browseObjects( anEntryList, isApplyAndClose(), isOptimizedBrowsing() );
             anApp->putInfo( QObject::tr("GEOM_PRP_DONE") );
           }

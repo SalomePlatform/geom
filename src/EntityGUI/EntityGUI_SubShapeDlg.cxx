@@ -259,8 +259,10 @@ bool EntityGUI_SubShapeDlg::ClickOnApply()
         return false;  /* aborted */
     }
   }
-
-  bool isOk = onAccept();
+  
+  setIsDisableBrowsing( true );
+  bool isOk = onAccept( true, true, false );
+  setIsDisableBrowsing( false );
 
   // restore selection, corresponding to current selection mode
   SubShapeToggled();
@@ -667,7 +669,10 @@ int EntityGUI_SubShapeDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& th
 //=================================================================================
 void EntityGUI_SubShapeDlg::activateSelection()
 {
-  erasePreview(false);
+  bool isApply = ((QPushButton*)sender() == buttonApply());
+  
+  if(!isApply)
+    erasePreview(false);
 
   // local selection
   if (!myObject->_is_nil() && !isAllSubShapes())
@@ -692,44 +697,46 @@ void EntityGUI_SubShapeDlg::activateSelection()
       }
     }
 
-    int prevDisplayMode = aDisplayer->SetDisplayMode(0);
+    if(!isApply) {
+      int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
-    SUIT_ViewWindow* aViewWindow = 0;
-    SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
-    if (activeStudy)
-      aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-    if (aViewWindow == 0) return;
+      SUIT_ViewWindow* aViewWindow = 0;
+      SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
+      if (activeStudy)
+        aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+      if (aViewWindow == 0) return;
 
-    SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
-    if (aViewManager->getType() != OCCViewer_Viewer::Type() &&
-        aViewManager->getType() != SVTK_Viewer::Type())
-      return;
+      SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+      if (aViewManager->getType() != OCCViewer_Viewer::Type() &&
+          aViewManager->getType() != SVTK_Viewer::Type())
+        return;
 
-    SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
-    SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
-    if (aView == 0) return;
+      SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+      SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+      if (aView == 0) return;
 
-    //TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myObject);
+      //TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myObject);
 
-    TopTools_IndexedMapOfShape aSubShapesMap;
-    TopExp::MapShapes(myShape, aSubShapesMap);
-    CORBA::String_var aMainEntry = myObject->GetStudyEntry();
-    QString anEntryBase = aMainEntry.in();
+      TopTools_IndexedMapOfShape aSubShapesMap;
+      TopExp::MapShapes(myShape, aSubShapesMap);
+      CORBA::String_var aMainEntry = myObject->GetStudyEntry();
+      QString anEntryBase = aMainEntry.in();
 
-    TopExp_Explorer anExp (myShape, (TopAbs_ShapeEnum)shapeType());
-    for (; anExp.More(); anExp.Next())
-    {
-      TopoDS_Shape aSubShape = anExp.Current();
-      int index = aSubShapesMap.FindIndex(aSubShape);
-      QString anEntry = anEntryBase + QString("_%1").arg(index);
+      TopExp_Explorer anExp (myShape, (TopAbs_ShapeEnum)shapeType());
+      for (; anExp.More(); anExp.Next())
+      {
+        TopoDS_Shape aSubShape = anExp.Current();
+        int index = aSubShapesMap.FindIndex(aSubShape);
+        QString anEntry = anEntryBase + QString("_%1").arg(index);
 
-      SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
-      if (aPrs) {
-        displayPreview(aPrs, true, false); // append, do not update
+        SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
+        if (aPrs) {
+          displayPreview(aPrs, true, false); // append, do not update
+        }
       }
+      aDisplayer->UpdateViewer();
+      aDisplayer->SetDisplayMode(prevDisplayMode);
     }
-    aDisplayer->UpdateViewer();
-    aDisplayer->SetDisplayMode(prevDisplayMode);
   }
 
   globalSelection(GEOM_ALLSHAPES);
