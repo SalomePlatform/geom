@@ -297,11 +297,22 @@ void GEOMToolsGUI::OnColor()
               QString matProp;
               matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
               Material_Model material;
-	      material.fromProperties( matProp );
+              material.fromProperties( matProp );
               if ( !material.isPhysical() ) {
                 aView->SetColor( It.Value(), c );
                 appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
               }
+              // store color to GEOM_Object
+              _PTR(Study) aStudy = appStudy->studyDS();
+              _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
+              GEOM::GEOM_Object_var anObject =
+              GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+              SALOMEDS::Color aSColor;
+              aSColor.R = (double)c.red() / 255.0;
+              aSColor.G = (double)c.green() / 255.0;
+              aSColor.B = (double)c.blue() / 255.0;
+              anObject->SetColor( aSColor );
+              anObject->SetAutoColor( false );		 
             }
             GeometryGUI::Modified();
           }

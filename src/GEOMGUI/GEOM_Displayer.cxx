@@ -1041,6 +1041,7 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
     return;
 
   bool useStudy = false;
+  bool useObjCol = false;
   PropMap aPropMap;
 
   vtkActorCollection* theActors = 0;
@@ -1092,6 +1093,8 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
     if(useStudy) {
       aPropMap = aStudy->getObjectPropMap(aMgrId,anEntry);
+      if(!aPropMap.contains(COLOR_PROP))
+        useObjCol = true;
       MergePropertyMaps(aPropMap, aDefPropMap);
     }
   }
@@ -1128,111 +1131,111 @@ void GEOM_Displayer::Update( SALOME_VTKPrs* prs )
 
     GEOM_Actor* aGeomGActor = GEOM_Actor::SafeDownCast( anActor );
     if ( aGeomGActor != 0 )
-      {
-        if ( aProp ) {
-          aGeomGActor->SetShadingProperty( aProp );
-          aGeomGActor->SetWireframeProperty( aProp );
-        }
+    {
+      if ( aProp ) {
+        aGeomGActor->SetShadingProperty( aProp );
+        aGeomGActor->SetWireframeProperty( aProp );
+      }
 
-	// Set color for edges in shading
-	SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-	if(aResMgr) {
-	  QColor c = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
-	  aGeomGActor->SetEdgesInShadingColor( c.red()/255., c.green()/255., c.blue()/255. );
-	}
+      // Set color for edges in shading
+      SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+      if(aResMgr) {
+        QColor c = aResMgr->colorValue( "Geometry", "edges_in_shading_color", QColor( 255, 255, 0 ) );
+        aGeomGActor->SetEdgesInShadingColor( c.red()/255., c.green()/255., c.blue()/255. );
+      }
 
-        int aIsos[2]= { 1, 1 };
-        if(useStudy) {
-          QString anIsos = aPropMap.value(ISOS_PROP).toString();
-          QStringList uv =  anIsos.split(DIGIT_SEPARATOR);
-          aIsos[0] = uv[0].toInt(); aIsos[1] = uv[1].toInt();
-          aGeomGActor->SetNbIsos(aIsos);
-          aGeomGActor->SetOpacity(1.0 - aPropMap.value(TRANSPARENCY_PROP).toDouble());
-	  SetWidth(aPropMap.value(EDGE_WIDTH_PROP).toInt());
-	  SetIsosWidth(aPropMap.value(ISOS_WIDTH_PROP).toInt());
-          aGeomGActor->SetVectorMode(aPropMap.value(VECTOR_MODE_PROP).toInt());
-	  int aDispModeId = aPropMap.value(DISPLAY_MODE_PROP).toInt();
-	  // Specially processing of 'Shading with edges' mode from preferences,
-	  // because there is the following enum in VTK viewer:
-	  // Points - 0, Wireframe - 1, Surface - 2, Insideframe - 3, SurfaceWithEdges - 4
-	  // (see VTKViewer::Representation enum) and the following enum in GEOM_Actor:
-	  // eWireframe - 0, eShading - 1, eShadingWithEdges - 3
-	  if ( aDispModeId == 2 )
-	    // this is 'Shading with edges' mode => do the correct mapping to EDisplayMode
-	    // enum in GEOM_Actor (and further to VTKViewer::Representation enum)
-	    aDispModeId++;
-          aGeomGActor->setDisplayMode(aDispModeId);
-          aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble());
+      int aIsos[2]= { 1, 1 };
+      if(useStudy) {
+        QString anIsos = aPropMap.value(ISOS_PROP).toString();
+        QStringList uv =  anIsos.split(DIGIT_SEPARATOR);
+        aIsos[0] = uv[0].toInt(); aIsos[1] = uv[1].toInt();
+        aGeomGActor->SetNbIsos(aIsos);
+        aGeomGActor->SetOpacity(1.0 - aPropMap.value(TRANSPARENCY_PROP).toDouble());
+        SetWidth(aPropMap.value(EDGE_WIDTH_PROP).toInt());
+        SetIsosWidth(aPropMap.value(ISOS_WIDTH_PROP).toInt());
+        aGeomGActor->SetVectorMode(aPropMap.value(VECTOR_MODE_PROP).toInt());
+        int aDispModeId = aPropMap.value(DISPLAY_MODE_PROP).toInt();
+        // Specially processing of 'Shading with edges' mode from preferences,
+        // because there is the following enum in VTK viewer:
+        // Points - 0, Wireframe - 1, Surface - 2, Insideframe - 3, SurfaceWithEdges - 4
+        // (see VTKViewer::Representation enum) and the following enum in GEOM_Actor:
+        // eWireframe - 0, eShading - 1, eShadingWithEdges - 3
+        if ( aDispModeId == 2 )
+          // this is 'Shading with edges' mode => do the correct mapping to EDisplayMode
+          // enum in GEOM_Actor (and further to VTKViewer::Representation enum)
+          aDispModeId++;
+        aGeomGActor->setDisplayMode(aDispModeId);
+        aGeomGActor->SetDeflection(aPropMap.value(DEFLECTION_COEFF_PROP).toDouble());
 
-	  // Create material model
-	  Material_Model material;
-	  material.fromProperties( aPropMap.value(MATERIAL_PROP).toString() );	  
-	  // Set material properties for the object
-	  aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );	  
-	  // Set the same front and back materials for the selected shape
-	  std::vector<vtkProperty*> aProps;
-	  aProps.push_back( material.getMaterialVTKProperty() );
-	  aGeomGActor->SetMaterial(aProps);
-	  
-          vtkFloatingPointType aColor[3] = {1.,0.,0.};
-          if(aPropMap.contains(COLOR_PROP)) {
-            QColor c = aPropMap.value(COLOR_PROP).value<QColor>();
-            aColor[0] = c.red()/255.; aColor[1] = c.green()/255.; aColor[2] = c.blue()/255.;
-          } else { //Get Color from geom object
-            Handle( SALOME_InteractiveObject ) anIO = aGeomGActor->getIO();
-            if ( !anIO.IsNull() ) {
-              _PTR(SObject) SO ( aStudy->studyDS()->FindObjectID( anIO->getEntry() ) );
-              if ( SO ) {
-                // get CORBA reference to data object
-                CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
-                if ( !CORBA::is_nil( object ) ) {
-                  // downcast to GEOM object
-                  GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
-                  bool hasColor = false;
-                  SALOMEDS::Color aSColor = getColor(aGeomObject,hasColor);
-                  if(hasColor) {
-                    aColor[0] = aSColor.R; aColor[1] = aSColor.G; aColor[2] = aSColor.B;
-                  } else {
-                    SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-                    if(aResMgr) {
-                      QColor c = aResMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
-                      aColor[0] = c.red()/255.; aColor[1] = c.green()/255.; aColor[2] = c.blue()/255.;
-                      aStudy->setObjectProperty( aMgrId, anIO->getEntry(), COLOR_PROP, c );
-                    }
+        // Create material model
+        Material_Model material;
+        material.fromProperties( aPropMap.value(MATERIAL_PROP).toString() );	  
+        // Set material properties for the object
+        aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );	  
+        // Set the same front and back materials for the selected shape
+        std::vector<vtkProperty*> aProps;
+        aProps.push_back( material.getMaterialVTKProperty() );
+        aGeomGActor->SetMaterial(aProps);
+      	  
+        vtkFloatingPointType aColor[3] = {1.,0.,0.};
+        if ( useObjCol ) { //Get Color from geom object
+          Handle( SALOME_InteractiveObject ) anIO = aGeomGActor->getIO();
+          if ( !anIO.IsNull() ) {
+            _PTR(SObject) SO ( aStudy->studyDS()->FindObjectID( anIO->getEntry() ) );
+            if ( SO ) {
+              // get CORBA reference to data object
+              CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
+              if ( !CORBA::is_nil( object ) ) {
+                // downcast to GEOM object
+                GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
+                bool hasColor = false;
+                SALOMEDS::Color aSColor = getColor(aGeomObject,hasColor);
+                if(hasColor) {
+                  aColor[0] = aSColor.R; aColor[1] = aSColor.G; aColor[2] = aSColor.B;
+                } else {
+                  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+                  if(aResMgr) {
+                    QColor c = aResMgr->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) );
+                    aColor[0] = c.red()/255.; aColor[1] = c.green()/255.; aColor[2] = c.blue()/255.;
                   }
                 }
+                aStudy->setObjectProperty( aMgrId, anIO->getEntry(), COLOR_PROP, QColor( aColor[0] *255, aColor[1] * 255, aColor[2]* 255) );
               }
             }
           }
-          if ( !material.isPhysical() )
-            aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
+        } else {
+          QColor c = aPropMap.value(COLOR_PROP).value<QColor>();
+          aColor[0] = c.red()/255.; aColor[1] = c.green()/255.; aColor[2] = c.blue()/255.;
+        } 
+
+        if ( !material.isPhysical() )
+          aGeomGActor->SetColor(aColor[0],aColor[1],aColor[2]);
+      }
+      else {
+        SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
+        if ( aResMgr ) {
+	         // Create material model
+	         Material_Model material;
+	         // Get material name from resources
+	         QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
+	         material.fromResources( mname );
+	         // Set material properties for the object
+	         aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );
+	         // Set material for the selected shape
+	         std::vector<vtkProperty*> aProps;
+	         aProps.push_back( material.getMaterialVTKProperty() );
+	         aGeomGActor->SetMaterial(aProps);
         }
-	else {
-	  SUIT_ResourceMgr* aResMgr = SUIT_Session::session()->resourceMgr();
-	  if ( aResMgr ) {
-	    // Create material model
-	    Material_Model material;
-	    // Get material name from resources
-	    QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
-	    material.fromResources( mname );
-	    // Set material properties for the object
-	    aStudy->setObjectProperty( aMgrId, anEntry, MATERIAL_PROP, material.toProperties() );
-	    // Set material for the selected shape
-	    std::vector<vtkProperty*> aProps;
-	    aProps.push_back( material.getMaterialVTKProperty() );
-	    aGeomGActor->SetMaterial(aProps);
-	  }
-	}
       }
+    }
+    if ( aGeomGActor )
+    {
+      if ( HasWidth() )
+        aGeomGActor->SetWidth( GetWidth() );
 
-      if ( aGeomGActor )
-      {
-        if ( HasWidth() )
-          aGeomGActor->SetWidth( GetWidth() );
-
-        if ( HasIsosWidth() )
-          aGeomGActor->SetIsosWidth( GetIsosWidth() );
-      }
+      if ( HasIsosWidth() )
+        aGeomGActor->SetIsosWidth( GetIsosWidth() );
+    }
     
     if ( myToActivate )
       GActor->PickableOn();

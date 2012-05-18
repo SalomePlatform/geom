@@ -269,22 +269,7 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
           QString matProp = propMap.value(MATERIAL_PROP).toString();	    
           if ( !matProp.isEmpty() )
             myCurrentModel.fromProperties( matProp );
-          QColor c;
-          if(propMap.contains(COLOR_PROP)) 
-            c = propMap.value(COLOR_PROP).value<QColor>();
-          else {
-            _PTR(SObject) SO ( study->studyDS()->FindObjectID( io->getEntry() ) );
-            if ( SO ) {
-              // get CORBA reference to data object
-              CORBA::Object_var object = GeometryGUI::ClientSObjectToObject(SO);
-              if ( !CORBA::is_nil( object ) ) {
-                // downcast to GEOM object
-                GEOM::GEOM_Object_var aGeomObject = GEOM::GEOM_Object::_narrow( object );
-                SALOMEDS::Color aSColor = aGeomObject->GetColor();
-                c.setRgb( 255.*aSColor.R, 255.*aSColor.G, 255.*aSColor.B );
-              }
-            }
-          }
+          QColor c = propMap.value(COLOR_PROP).value<QColor>();
           if ( c.isValid() )
             myColor->setColor( c );
         }
