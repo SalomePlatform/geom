@@ -15,7 +15,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-#
 
 #  GEOM GEOM : implementaion of GEOM_Gen.idl
 #  File   : Makefile.in
@@ -28,7 +27,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Libraries targets
 lib_LTLIBRARIES = libGEOMimpl.la
 
-# header files 
+# header files
 salomeinclude_HEADERS =				\
 	GEOMImpl_Gen.hxx			\
 	GEOMImpl_IBasicOperations.hxx		\
@@ -103,12 +102,6 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_MirrorDriver.hxx		\
 	GEOMImpl_ProjectionDriver.hxx		\
 	GEOMImpl_OffsetDriver.hxx		\
-	BRepBuilderAPI_GTransform_21423.hxx		\
-	BRepBuilderAPI_ModifyShape_21423.hxx		\
-	BRepBuilderAPI_NurbsConvert_21423.hxx		\
-	BRepTools_Modifier_21423.hxx			\
-	BRepTools_NurbsConvertModification_21423.hxx	\
-	Handle_BRepTools_NurbsConvertModification_21423.hxx	\
 	GEOMImpl_ScaleDriver.hxx		\
 	GEOMImpl_PositionDriver.hxx		\
 	GEOMImpl_BoxDriver.hxx			\
@@ -179,11 +172,6 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_MirrorDriver.cxx		\
 	GEOMImpl_ProjectionDriver.cxx		\
 	GEOMImpl_OffsetDriver.cxx		\
-	BRepBuilderAPI_GTransform_21423.cxx		\
-	BRepBuilderAPI_ModifyShape_21423.cxx		\
-	BRepBuilderAPI_NurbsConvert_21423.cxx		\
-	BRepTools_Modifier_21423.cxx			\
-	BRepTools_NurbsConvertModification_21423.cxx	\
 	GEOMImpl_ScaleDriver.cxx		\
 	GEOMImpl_PositionDriver.cxx		\
 	GEOMImpl_BoxDriver.cxx			\

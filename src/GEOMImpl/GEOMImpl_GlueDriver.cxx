@@ -339,6 +339,12 @@ TopoDS_Shape GEOMImpl_GlueDriver::GlueFaces (const TopoDS_Shape& theShape,
 
   // 2. Detect interferred shapes
   aGA.Detect();
+
+  //Standard_Integer iWrnDetect = aGA.WarningStatus();
+  //if (iWrnDetect == 2) {
+  //  Standard_Failure::Raise("GLUE_ERROR_STICKED_SHAPES");
+  //}
+
   Standard_Integer iErr = aGA.ErrorStatus();
   if (iErr) {
     switch (iErr) {

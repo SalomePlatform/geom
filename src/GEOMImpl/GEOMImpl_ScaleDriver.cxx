@@ -31,7 +31,7 @@
 #include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRepBuilderAPI_Transform.hxx>
-#include <BRepBuilderAPI_GTransform_21423.hxx>
+#include <BRepBuilderAPI_GTransform.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
 #include <BRepCheck_Analyzer.hxx>
@@ -165,7 +165,7 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
       }
     }
 
-    BRepBuilderAPI_GTransform_21423 aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
+    BRepBuilderAPI_GTransform aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
     if (!aBRepGTrsf.IsDone())
       Standard_ConstructionError::Raise("Scaling not done");
     aShape = aBRepGTrsf.Shape();
