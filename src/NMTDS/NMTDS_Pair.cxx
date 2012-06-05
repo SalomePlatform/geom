@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,11 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        NMTDS_Pair.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_Pair.ixx>
+#include <NMTDS_Pair.hxx>
 
 #include <stdio.h>
 #include <string.h>

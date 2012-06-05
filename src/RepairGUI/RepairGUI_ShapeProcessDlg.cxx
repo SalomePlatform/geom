@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : RepairGUI_ShapeProcessDlg.cxx
@@ -39,6 +40,8 @@
 #include <SUIT_MessageBox.h>
 #include <SALOME_ListIteratorOfListIO.hxx>
 #include <SALOME_ListIO.hxx>
+
+#include <Basics_Utils.hxx>
 
 #include <TCollection_AsciiString.hxx>
 #include <TColStd_MapOfInteger.hxx>
@@ -459,14 +462,14 @@ const char* get_convert( const char* theParam, const QString& theValue )
 // function : set_convert
 // purpose  : conversion of angle values to degrees (non-angle values are not converted)
 //=================================================================================
-const char* set_convert( const char* theParam, const char* theValue )
+QString set_convert( const char* theParam, const char* theValue )
 {
   if ( !strcmp( theParam, "SplitAngle.Angle" ) ) {
+    Kernel_Utils::Localizer loc;
     double doubleValue = atof( theValue ) * 180. / M_PI;
-    TCollection_AsciiString str( doubleValue );
-    return CORBA::string_dup( str.ToCString() );
+    return QString::number( doubleValue );
   }
-  return CORBA::string_dup( theValue );
+  return QString( theValue );
 }
 
 //=================================================================================
@@ -498,8 +501,7 @@ void RepairGUI_ShapeProcessDlg::loadDefaults()
 
     for ( int j = 0; j < aParams->length(); j++ ) {
       QWidget* aCtrl = getControl( (const char*)aParams[j] );
-      const char* aValue = set_convert( (const char*)aParams[j], aValues[j] );
-      setValue( aCtrl, aValue );
+      setValue( aCtrl, set_convert( (const char*)aParams[j], aValues[j] ) );
     }
   }
 }

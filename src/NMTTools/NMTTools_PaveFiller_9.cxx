@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -25,7 +25,7 @@
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <NMTTools_PaveFiller.ixx>
+#include <NMTTools_PaveFiller.hxx>
 
 #include <Geom_Surface.hxx>
 
@@ -56,9 +56,9 @@
 
 //=======================================================================
 // function: PrepareFace
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PrepareFace(const Standard_Integer nF, 
+  void NMTTools_PaveFiller::PrepareFace(const Standard_Integer nF,
                                         TopoDS_Face& newFace)
 {
   Standard_Boolean bToReverse, bIsDegenerated;

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -137,11 +137,13 @@ class StructuralElementPart:
         self.name = name
         self.geom = getGeompy(studyId)
         self.baseShapesSet = set()
-        mainShape = self.geom.GetMainShape(groupGeomObj)
-        listIDs = self.geom.GetObjectIDs(groupGeomObj)
-        if mainShape is not None and listIDs is not None:
-            for id in listIDs:
-                self.baseShapesSet.add(SubShapeID(mainShape, id))
+        self.isMainShape = groupGeomObj.IsMainShape()
+        if not self.isMainShape:
+            mainShape = self.geom.GetMainShape(groupGeomObj)
+            listIDs = self.geom.GetObjectIDs(groupGeomObj)
+            if mainShape is not None and listIDs is not None:
+                for id in listIDs:
+                    self.baseShapesSet.add(SubShapeID(mainShape, id))
         self.color = color
         if self.color is None:
             self.color = self._groupGeomObj.GetColor()
@@ -235,6 +237,8 @@ class StructuralElementPart:
         """
         Find and return the base sub-shapes in the structural element part.
         """
+        if self.isMainShape:
+            return [self._groupGeomObj]
         subShapes = []
         for subShapeID in self.baseShapesSet:
             subShape = subShapeID.getObj(self.geom)

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -134,7 +134,7 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
       proj.Perform(aPnt);
       if (!proj.IsDone()) {
         Standard_ConstructionError::Raise
-          ("Projection aborted : GeomAPI_ProjectPointOnSurf failed");
+          ("Projection aborted : the algorithm failed");
       }
       int nbPoints = proj.NbPoints();
       if (nbPoints < 1) {
@@ -200,6 +200,15 @@ Standard_Integer GEOMImpl_ProjectionDriver::Execute(TFunction_Logbook& log) cons
       }
 
       aShape = OrtProj.Shape();
+
+      // check that the result shape is an empty compound
+      // (IPAL22905: TC650: Projection on face dialog problems)
+      if( !aShape.IsNull() && aShape.ShapeType() == TopAbs_COMPOUND )
+      {
+        TopoDS_Iterator anIter( aShape );
+        if( !anIter.More() )
+          Standard_ConstructionError::Raise("Projection aborted : empty compound produced");
+      }
     }
 
     if (aShape.IsNull()) return 0;

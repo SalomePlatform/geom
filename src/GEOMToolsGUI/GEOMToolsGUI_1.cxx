@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GEOMToolsGUI_1.cxx
@@ -33,6 +34,7 @@
 #include "GEOMToolsGUI_PublishDlg.h"
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 #include "GEOMToolsGUI_LineWidthDlg.h"
+#include "Material_Model.h"
 
 #include <GeometryGUI.h>
 #include <GeometryGUI_Operations.h>
@@ -292,22 +294,39 @@ void GEOMToolsGUI::OnColor()
           if ( c.isValid() ) {
             SUIT_OverrideCursor();
             for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-              aView->SetColor( It.Value(), c );
-              appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+              QString matProp;
+              matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
+              Material_Model material;
+              material.fromProperties( matProp );
+              if ( !material.isPhysical() ) {
+                aView->SetColor( It.Value(), c );
+                appStudy->setObjectProperty(mgrId,It.Value()->getEntry(),COLOR_PROP, c);
+              }
+              // store color to GEOM_Object
+              _PTR(Study) aStudy = appStudy->studyDS();
+              _PTR(SObject) aSObject( aStudy->FindObjectID( It.Value()->getEntry() ) );
+              GEOM::GEOM_Object_var anObject =
+              GEOM::GEOM_Object::_narrow(GeometryGUI::ClientSObjectToObject(aSObject));
+              SALOMEDS::Color aSColor;
+              aSColor.R = (double)c.red() / 255.0;
+              aSColor.G = (double)c.green() / 255.0;
+              aSColor.B = (double)c.blue() / 255.0;
+              anObject->SetColor( aSColor );
+              anObject->SetAutoColor( false );		 
             }
             GeometryGUI::Modified();
           }
         } // if ( isVTK )
         else if ( isOCC ) {
-	  Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
+	        Handle(AIS_InteractiveObject) io = GEOMBase::GetAIS( selected.First() );
           if ( !io.IsNull() ) {
             Quantity_Color aColor;
             io->Color( aColor ); 
-	    QColor ic = QColor((int )( aColor.Red() * 255.0 ),
+            QColor ic = QColor((int )( aColor.Red() * 255.0 ),
 			      (int)( aColor.Green() * 255.0 ),
 			      (int)( aColor.Blue() * 255.0 ));	    
 
-	    QVariant v = appStudy->getObjectProperty(mgrId,selected.First()->getEntry(), COLOR_PROP, ic);
+			      QVariant v = appStudy->getObjectProperty(mgrId,selected.First()->getEntry(), COLOR_PROP, ic);
 
             QColor initcolor = v.value<QColor>();
             QColor c =  QColorDialog::getColor( initcolor, app->desktop() );
@@ -317,8 +336,12 @@ void GEOMToolsGUI::OnColor()
               OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*> ( window->getViewManager()->getViewModel() );
               Handle (AIS_InteractiveContext) ic = vm->getAISContext();
               for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
+                QString matProp;
+                matProp = appStudy->getObjectProperty(mgrId,It.Value()->getEntry(), MATERIAL_PROP, matProp).toString();
+		Material_Model material;
+		material.fromProperties( matProp );
                 io = GEOMBase::GetAIS( It.Value(), true );
-                if ( !io.IsNull() ) {
+                if ( !io.IsNull()  && !material.isPhysical() ) { // change color only for shapes with not physical type of material
                   
                   if ( io->IsKind( STANDARD_TYPE(AIS_Shape) ) ) {
                     TopoDS_Shape theShape = Handle(AIS_Shape)::DownCast( io )->Shape();
@@ -350,14 +373,14 @@ void GEOMToolsGUI::OnColor()
                       ic->SetLocalAttributes(io, aCurDrawer, Standard_False);
                     }
                   }
-		  
+
                   io->SetColor( aColor );
                   if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) ) {
                     Handle(GEOM_AISShape) aGAISShape = Handle(GEOM_AISShape)::DownCast( io );
-		    aGAISShape->SetShadingColor( aColor );
-		    aGAISShape->storeBoundaryColors();
-		  }
-		  
+                    aGAISShape->SetShadingColor( aColor );
+                    aGAISShape->storeBoundaryColors();
+                  }
+
                   appStudy->setObjectProperty(mgrId,It.Value()->getEntry(), COLOR_PROP, c);
 		  
                   io->Redisplay( Standard_True );
@@ -374,7 +397,7 @@ void GEOMToolsGUI::OnColor()
                   aSColor.G = (double)c.green() / 255.0;
                   aSColor.B = (double)c.blue() / 255.0;
                   anObject->SetColor( aSColor );
-                  anObject->SetAutoColor( false );		  
+                  anObject->SetAutoColor( false );		 
                 }
               } // for
               ic->UpdateCurrentViewer();
@@ -402,7 +425,7 @@ void GEOMToolsGUI::OnTexture()
         SUIT_ViewWindow* window = app->desktop()->activeWindow();
         bool isOCC = ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() );
         if ( isOCC ) {
-          QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_IMAGE_FILES"));
+          QString aTexture = QFileDialog::getOpenFileName(window,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_TEXTURE_FILES"));
           if( !aTexture.isEmpty() )
           {
             SUIT_OverrideCursor();
@@ -413,8 +436,8 @@ void GEOMToolsGUI::OnTexture()
               io = GEOMBase::GetAIS( It.Value(), true );
               if ( !io.IsNull() ) {
                 if ( io->IsKind( STANDARD_TYPE(GEOM_AISShape) ) )
-		  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str()));
-		io->Redisplay( Standard_True );
+                  Handle(GEOM_AISShape)::DownCast( io )->SetTextureFileName(TCollection_AsciiString(aTexture.toStdString().c_str()));
+                io->Redisplay( Standard_True );
               } // if ( !io.IsNull() )
             } // for
             ic->UpdateCurrentViewer();
@@ -589,7 +612,7 @@ void GEOMToolsGUI::OnNbIsos( ActionType actionType )
         ic->Redisplay(CurObject);
 
         QString anIsos("%1%2%3");anIsos = anIsos.arg(newNbUIso);anIsos = anIsos.arg(DIGIT_SEPARATOR);anIsos = anIsos.arg(newNbVIso);
-        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_WIDTH_PROP, anIsos);
+        aStudy->setObjectProperty(aMgrId ,CurObject->getIO()->getEntry(), ISOS_PROP, anIsos);
       }
     }
     GeometryGUI::Modified();

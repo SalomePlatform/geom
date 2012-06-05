@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,11 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        NMTDS_Iterator.cxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_Iterator.ixx>
+#include <NMTDS_Iterator.hxx>
 //
 #include <Bnd_Box.hxx>
 //
@@ -52,6 +53,7 @@
 #include <NMTDS_Tools.hxx>
 #include <NMTDS_DataMapOfIntegerMapOfInteger.hxx>
 #include <NMTDS_DataMapIteratorOfDataMapOfIntegerMapOfInteger.hxx>
+#include <NMTDS_ShapesDataStructure.hxx>
 
 //=======================================================================
 //function : NMTDS_Iterator

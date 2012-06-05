@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_ChamferDlg.cxx
@@ -90,7 +91,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   // Create second group
 
-  myGrp2 = new QGroupBox(tr("GEOM_CHAMFER_EDGES"), centralWidget());
+  myGrp2 = new QGroupBox(tr("GEOM_CHAMFER_EDGE"), centralWidget());
 
   aLayout = new QGridLayout(myGrp2);
   aLayout->setMargin(9); aLayout->setSpacing(6);
@@ -121,7 +122,7 @@ OperationGUI_ChamferDlg::OperationGUI_ChamferDlg (GeometryGUI* theGeometryGUI, Q
 
   // Create fourth group
 
-  myGrp4 = new QGroupBox(tr("GEOM_CHAMFER_EDGE"), centralWidget());
+  myGrp4 = new QGroupBox(tr("GEOM_CHAMFER_EDGES"), centralWidget());
 
   aLayout = new QGridLayout(myGrp4);
   aLayout->setMargin(9); aLayout->setSpacing(6);
@@ -488,7 +489,8 @@ void OperationGUI_ChamferDlg::SelectionIntoArgument()
   }
 
   // clear selection
-  if (aCurrFocus != Faces && aCurrFocus != Edges) {
+  if (aCurrFocus != Face1 && aCurrFocus != Face2 &&
+      aCurrFocus != Faces && aCurrFocus != Edges) {
     disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
     myGeomGUI->getApp()->selectionMgr()->clearSelected();
     connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),

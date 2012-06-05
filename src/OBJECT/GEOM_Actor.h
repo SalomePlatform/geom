@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -127,8 +127,7 @@ public:
 
   // Material
   void SetMaterial(std::vector<vtkProperty*> theProps);
-  vtkProperty* GetFrontMaterial();
-  vtkProperty* GetBackMaterial();
+  vtkProperty* GetMaterial();
 
   virtual bool IsInfinitive();
 
@@ -244,7 +243,6 @@ private:
   vtkSmartPointer<vtkProperty>  myHighlightProp;
   vtkSmartPointer<vtkProperty>  myPreHighlightProp;
   vtkSmartPointer<vtkProperty>  myShadingFaceProp;
-  vtkSmartPointer<vtkProperty>  myShadingBackFaceProp;
 
   PAppendFilter myAppendFilter;
   PPolyGeomPainterDataMapper myPolyDataMapper;

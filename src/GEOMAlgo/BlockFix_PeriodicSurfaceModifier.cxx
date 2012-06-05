@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:      BlockFix_PeriodicSurfaceModifier.cxx
 // Created:   15.12.04 10:08:50
@@ -48,7 +49,7 @@ BlockFix_PeriodicSurfaceModifier::BlockFix_PeriodicSurfaceModifier (  )
 
 //=======================================================================
 //function : SetTolerance
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 void BlockFix_PeriodicSurfaceModifier::SetTolerance(const Standard_Real Tol)
@@ -69,7 +70,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
   Handle(Geom_Surface) S = aSurface;
 
   if(S->IsKind(STANDARD_TYPE(Geom_CylindricalSurface))) {
-    Handle(Geom_CylindricalSurface) aCyl = 
+    Handle(Geom_CylindricalSurface) aCyl =
       Handle(Geom_CylindricalSurface)::DownCast(S);
     Standard_Real Umin, Umax, Vmin, Vmax;
     BRepTools::UVBounds(aFace, Umin, Umax, Vmin, Vmax);
@@ -83,7 +84,7 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
       return Standard_True;
     }
   }
-  
+
   if(S->IsKind(STANDARD_TYPE(Geom_SphericalSurface))) {
     Handle(Geom_SphericalSurface) aSphere = Handle(Geom_SphericalSurface)::DownCast(S);
     Standard_Real Umin, Umax, Vmin, Vmax;
@@ -100,30 +101,30 @@ static Standard_Boolean ModifySurface(const TopoDS_Face& aFace,
 
   return Standard_False;
 }
-                                      
+
 
 //=======================================================================
 //function : NewSurface
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewSurface(const TopoDS_Face& F,
                                                               Handle(Geom_Surface)& S,
                                                               TopLoc_Location& L,Standard_Real& Tol,
                                                               Standard_Boolean& RevWires,
-                                                              Standard_Boolean& RevFace) 
+                                                              Standard_Boolean& RevFace)
 {
   TopLoc_Location LS;
   Handle(Geom_Surface) SIni = BRep_Tool::Surface(F, LS);
-  
+
   if(ModifySurface(F, SIni, S)) {
-  
+
     RevWires = Standard_False;
     RevFace = Standard_False;
-    
+
     L = LS;
     Tol = BRep_Tool::Tolerance(F);
-     
+
     Standard_Integer anIndex = myMapOfSurfaces.Add(S);
     myMapOfFaces.Bind(F,anIndex);
     return Standard_True;
@@ -135,13 +136,13 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewSurface(const TopoDS_Face&
 
 //=======================================================================
 //function : NewCurve
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewCurve(const TopoDS_Edge& /*E*/,
                                                             Handle(Geom_Curve)& /*C*/,
                                                             TopLoc_Location& /*L*/,
-                                                            Standard_Real& /*Tol*/) 
+                                                            Standard_Real& /*Tol*/)
 {
   return Standard_False;
 }
@@ -149,12 +150,12 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewCurve(const TopoDS_Edge& /
 
 //=======================================================================
 //function : NewPoint
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewPoint(const TopoDS_Vertex& /*V*/,
                                                             gp_Pnt& /*P*/,
-                                                            Standard_Real& /*Tol*/) 
+                                                            Standard_Real& /*Tol*/)
 {
   return Standard_False;
 }
@@ -162,7 +163,7 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewPoint(const TopoDS_Vertex&
 
 //=======================================================================
 //function : NewCurve2d
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewCurve2d(const TopoDS_Edge& E,
@@ -170,47 +171,47 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewCurve2d(const TopoDS_Edge&
                                                               const TopoDS_Edge& /*NewE*/,
                                                               const TopoDS_Face& /*NewF*/,
                                                               Handle(Geom2d_Curve)& C,
-                                                              Standard_Real& Tol) 
+                                                              Standard_Real& Tol)
 {
   //check if undelying surface of the face was modified
   if(myMapOfFaces.IsBound(F)) {
     Standard_Integer anIndex = myMapOfFaces.Find(F);
-    
+
     Handle(Geom_Surface) aNewSurf = Handle(Geom_Surface)::DownCast(myMapOfSurfaces.FindKey(anIndex));
-    
+
     Standard_Real f,l;
     TopLoc_Location LC, LS;
     Handle(Geom_Curve) C3d = BRep_Tool::Curve ( E, LC, f, l );
     Handle(Geom_Surface) S = BRep_Tool::Surface(F, LS);
-  
+
     //taking into accound the orientation of the seam
     C = BRep_Tool::CurveOnSurface(E,F,f,l);
     Tol = BRep_Tool::Tolerance(E);
-     
+
     BRep_Builder B;
     TopoDS_Edge TempE;
     B.MakeEdge(TempE);
     B.Add(TempE, TopExp::FirstVertex(E));
     B.Add(TempE, TopExp::LastVertex(E));
 
-    if(!C3d.IsNull()) 
+    if(!C3d.IsNull())
       B.UpdateEdge(TempE, Handle(Geom_Curve)::DownCast(C3d->Transformed(LC.Transformation())), Precision::Confusion());
     B.Range(TempE, f, l);
-    
+
     Handle(ShapeFix_Edge) sfe = new ShapeFix_Edge;
     Handle(Geom_Surface) STemp = Handle(Geom_Surface)::DownCast(aNewSurf->Transformed(LS.Transformation()));
     TopLoc_Location LTemp;
     LTemp.Identity();
-    
+
     Standard_Boolean isClosed = BRep_Tool::IsClosed (E, F);
     Standard_Real aWorkTol = 2*myTolerance+Tol;
     sfe->FixAddPCurve(TempE, STemp, LTemp, isClosed, Max(Precision::Confusion(), aWorkTol));
     sfe->FixSameParameter(TempE);
-      
+
     //keep the orientation of original edge
     TempE.Orientation(E.Orientation());
     C = BRep_Tool::CurveOnSurface(TempE, STemp, LTemp, f, l);
-    
+
     //surface was modified
     return Standard_True;
   }
@@ -221,13 +222,13 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewCurve2d(const TopoDS_Edge&
 
 //=======================================================================
 //function : NewParameter
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewParameter(const TopoDS_Vertex& /*V*/,
                                                                 const TopoDS_Edge& /*E*/,
                                                                 Standard_Real& /*P*/,
-                                                                Standard_Real& /*Tol*/) 
+                                                                Standard_Real& /*Tol*/)
 {
   return Standard_False;
 }
@@ -235,7 +236,7 @@ Standard_Boolean BlockFix_PeriodicSurfaceModifier::NewParameter(const TopoDS_Ver
 
 //=======================================================================
 //function : Continuity
-//purpose  : 
+//purpose  :
 //=======================================================================
 
 GeomAbs_Shape BlockFix_PeriodicSurfaceModifier::Continuity(const TopoDS_Edge& E,
@@ -243,7 +244,7 @@ GeomAbs_Shape BlockFix_PeriodicSurfaceModifier::Continuity(const TopoDS_Edge& E,
                                                            const TopoDS_Face& F2,
                                                            const TopoDS_Edge& /*NewE*/,
                                                            const TopoDS_Face& /*NewF1*/,
-                                                           const TopoDS_Face& /*NewF2*/) 
+                                                           const TopoDS_Face& /*NewF2*/)
 {
   return BRep_Tool::Continuity(E,F1,F2);
 }

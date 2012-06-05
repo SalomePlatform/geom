@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,26 +15,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 # File    : Makefile.am
 # Author  : Alexander BORODIN, Open CASCADE S.A.S. (alexander.borodin@opencascade.com)
 # Package : src (source files directory)
 
-SUBDIRS = ARCHIMEDE $(NMTDS_VAR) $(NMTTools_VAR) $(GEOMAlgo_VAR) SKETCHER OCC2VTK GEOM	\
+SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo SKETCHER OCC2VTK GEOM	\
           BREPExport BREPImport IGESExport IGESImport STEPExport	\
           STEPImport STLExport VTKExport ShHealOper GEOMImpl GEOM_I	\
           GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
-
-#if PARTITION_OLD_PACKAGING
-#  SUBDIRS += NMTDS NMTTools GEOMAlgo
-#else
-#  SUBDIRS += NMTDS_NEW NMTTools_NEW GEOMAlgo_NEW
-#endif
-#
-#  SUBDIRS += SKETCHER OCC2VTK GEOM	\
-#          BREPExport BREPImport IGESExport IGESImport STEPExport	\
-#          STEPImport STLExport VTKExport ShHealOper GEOMImpl GEOM_I	\
-#          GEOMClient GEOM_I_Superv GEOM_SWIG GEOM_PY
 
 if WITH_OPENCV
   SUBDIRS += ShapeRecognition
@@ -47,8 +37,8 @@ if GEOM_ENABLE_GUI
              GroupGUI BlocksGUI AdvancedGUI GEOM_SWIG_WITHIHM
 endif
 
-DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo NMTDS_NEW NMTTools_NEW GEOMAlgo_NEW \
-               SKETCHER OCC2VTK GEOM BREPExport\
+DIST_SUBDIRS = ARCHIMEDE NMTDS NMTTools GEOMAlgo \
+               SKETCHER OCC2VTK GEOM BREPExport \
                BREPImport IGESExport IGESImport STEPExport STEPImport STLExport \
                VTKExport ShHealOper GEOMImpl GEOM_I GEOMClient GEOM_I_Superv	\
                GEOM_SWIG OBJECT DlgRef GEOMFiltersSelection Material GEOMGUI GEOMBase	\

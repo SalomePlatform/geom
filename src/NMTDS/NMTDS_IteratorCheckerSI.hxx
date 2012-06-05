@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -17,80 +17,30 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
+// File:        NMTDS_IteratorChecker.cxx
+// Author:      Peter KURNEV
+
 #ifndef _NMTDS_IteratorCheckerSI_HeaderFile
 #define _NMTDS_IteratorCheckerSI_HeaderFile
 
-#ifndef _NMTDS_Iterator_HeaderFile
-#include <NMTDS_Iterator.hxx>
-#endif
-
-
-#ifndef _Standard_HeaderFile
 #include <Standard.hxx>
-#endif
-#ifndef _Standard_Macro_HeaderFile
 #include <Standard_Macro.hxx>
-#endif
+#include <NMTDS_Iterator.hxx>
 
-
+//=======================================================================
+//class    : NMTDS_IteratorCheckerSI
+//purpose  : 
+//=======================================================================
 class NMTDS_IteratorCheckerSI  : public NMTDS_Iterator {
-
-public:
-
-    void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
- // Methods PUBLIC
- // 
-
-
-Standard_EXPORT NMTDS_IteratorCheckerSI();
-Standard_EXPORT virtual ~NMTDS_IteratorCheckerSI();
-
-
-
-
+ public:
+  
+  Standard_EXPORT
+    NMTDS_IteratorCheckerSI();
+  Standard_EXPORT 
+    virtual ~NMTDS_IteratorCheckerSI();
 
 protected:
-
- // Methods PROTECTED
- // 
-
-
-Standard_EXPORT virtual  void Intersect() ;
-
-
- // Fields PROTECTED
- //
-
-
-private: 
-
- // Methods PRIVATE
- // 
-
-
- // Fields PRIVATE
- //
-
-
+  Standard_EXPORT   
+    virtual  void Intersect() ;
 };
-
-
-
-
-
-// other Inline functions and methods (like "C++: function call" methods)
-//
-
-
 #endif

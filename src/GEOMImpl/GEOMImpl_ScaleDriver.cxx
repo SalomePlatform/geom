@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 #include <Standard_Stream.hxx>
 
@@ -30,7 +31,7 @@
 #include <ShapeFix_ShapeTolerance.hxx>
 
 #include <BRepBuilderAPI_Transform.hxx>
-#include <BRepBuilderAPI_GTransform_21423.hxx>
+#include <BRepBuilderAPI_GTransform.hxx>
 #include <BRep_Tool.hxx>
 #include <BRepAlgo.hxx>
 #include <BRepCheck_Analyzer.hxx>
@@ -164,7 +165,7 @@ Standard_Integer GEOMImpl_ScaleDriver::Execute(TFunction_Logbook& log) const
       }
     }
 
-    BRepBuilderAPI_GTransform_21423 aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
+    BRepBuilderAPI_GTransform aBRepGTrsf (aShapeBase, aGTrsf, Standard_False);
     if (!aBRepGTrsf.IsDone())
       Standard_ConstructionError::Raise("Scaling not done");
     aShape = aBRepGTrsf.Shape();

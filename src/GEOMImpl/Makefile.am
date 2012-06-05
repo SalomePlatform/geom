@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ include $(top_srcdir)/adm_local/unix/make_common_starter.am
 # Libraries targets
 lib_LTLIBRARIES = libGEOMimpl.la
 
-# header files 
+# header files
 salomeinclude_HEADERS =				\
 	GEOMImpl_Gen.hxx			\
 	GEOMImpl_IBasicOperations.hxx		\
@@ -102,12 +102,6 @@ salomeinclude_HEADERS =				\
 	GEOMImpl_MirrorDriver.hxx		\
 	GEOMImpl_ProjectionDriver.hxx		\
 	GEOMImpl_OffsetDriver.hxx		\
-	BRepBuilderAPI_GTransform_21423.hxx		\
-	BRepBuilderAPI_ModifyShape_21423.hxx		\
-	BRepBuilderAPI_NurbsConvert_21423.hxx		\
-	BRepTools_Modifier_21423.hxx			\
-	BRepTools_NurbsConvertModification_21423.hxx	\
-	Handle_BRepTools_NurbsConvertModification_21423.hxx	\
 	GEOMImpl_ScaleDriver.hxx		\
 	GEOMImpl_PositionDriver.hxx		\
 	GEOMImpl_BoxDriver.hxx			\
@@ -178,11 +172,6 @@ dist_libGEOMimpl_la_SOURCES =			\
 	GEOMImpl_MirrorDriver.cxx		\
 	GEOMImpl_ProjectionDriver.cxx		\
 	GEOMImpl_OffsetDriver.cxx		\
-	BRepBuilderAPI_GTransform_21423.cxx		\
-	BRepBuilderAPI_ModifyShape_21423.cxx		\
-	BRepBuilderAPI_NurbsConvert_21423.cxx		\
-	BRepTools_Modifier_21423.cxx			\
-	BRepTools_NurbsConvertModification_21423.cxx	\
 	GEOMImpl_ScaleDriver.cxx		\
 	GEOMImpl_PositionDriver.cxx		\
 	GEOMImpl_BoxDriver.cxx			\
@@ -239,17 +228,17 @@ libGEOMimpl_la_CPPFLAGS =		\
 	$(BOOST_CPPFLAGS)		\
         $(PYTHON_INCLUDES)              \
 	-I$(srcdir)/../ShHealOper	\
-	-I$(srcdir)/../$(NMTDS_VAR)		\
-	-I$(srcdir)/../$(NMTTools_VAR)		\
+	-I$(srcdir)/../NMTDS		\
+	-I$(srcdir)/../NMTTools		\
 	-I$(srcdir)/../GEOM		\
-	-I$(srcdir)/../$(GEOMAlgo_VAR)		\
+	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(top_builddir)/idl
 
 libGEOMimpl_la_LDFLAGS  =			\
 	../GEOM/libGEOMbasic.la			\
-	../$(GEOMAlgo_VAR)/libGEOMAlgo.la		\
+	../GEOMAlgo/libGEOMAlgo.la		\
 	../ShHealOper/libShHealOper.la		\
 	../ARCHIMEDE/libGEOMArchimede.la	\
 	../SKETCHER/libGEOMSketcher.la		\

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,11 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_WireSplitter.cxx
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_WireSplitter.ixx>
+#include <GEOMAlgo_WireSplitter.hxx>
 
 #include <TColStd_SequenceOfReal.hxx>
 #include <Precision.hxx>
@@ -112,9 +113,14 @@ static
   Standard_Real Tolerance2D (const TopoDS_Vertex& aV,
                             const GeomAdaptor_Surface& aGAS);
 
+
+//modified by NIZNHY-PKV Thu Apr 19 09:04:59 2012f
 static
-  Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
-//
+  Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
+			     const BOP_ListOfEdgeInfo& aLEInfo);
+//static
+//  Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& );
+//modified by NIZNHY-PKV Thu Apr 19 09:04:53 2012t
 
 //=======================================================================
 // function:
@@ -443,10 +449,10 @@ static
              BOPTColStd_ListOfListOfShape& myShapes,
              BOP_IndexedDataMapOfVertexListEdgeInfo& mySmartMap)
 {
-  Standard_Integer i,j, aNb, aNbj;
+  Standard_Integer i,j, aNb, aNbj, iCnt;
   Standard_Real aTol, anAngleIn, anAngleOut, anAngle, aMinAngle;
   Standard_Real aTol2D, aTol2D2;
-  Standard_Real aTol2, aD2;//, aTolUVb, aTolVVb;
+  Standard_Real aTol2, aD2;
   Standard_Boolean anIsSameV2d, anIsSameV, anIsFound, anIsOut, anIsNotPassed;
   BOP_ListIteratorOfListOfEdgeInfo anIt;
   TopoDS_Vertex aVb;
@@ -478,8 +484,6 @@ static
   GetNextVertex (pVa, aEOuta, aVb);
 
   gp_Pnt2d aPb=Coord2d(aVb, aEOuta, myFace);
-
-  //const BOP_ListOfEdgeInfo& aLEInfoVb=mySmartMap.FindFromKey(aVb);
   //
   aTol=2.*Tolerance2D(aVb, aGAS);
   aTol2=10.*aTol*aTol;
@@ -556,27 +560,25 @@ static
 
   aMinAngle=100.;
   anIsFound=Standard_False;
-
-  Standard_Integer aCurIndexE = 0;
-
+  //
+  //modified by NIZNHY-PKV Thu Apr 19 09:05:09 2012f
+  iCnt=NbWaysOut (aEOuta, aLEInfo); 
+  //iCnt=NbWaysOut (aLEInfo); 
+  //modified by NIZNHY-PKV Thu Apr 19 09:05:12 2012t
+  if (!iCnt) { // no way to go . (Error)
+    return ;
+  }
+  //
   anIt.Initialize(aLEInfo);
   for (; anIt.More(); anIt.Next()) {
     BOP_EdgeInfo& anEI=anIt.Value();
     const TopoDS_Edge& aE=anEI.Edge();
     anIsOut=!anEI.IsIn();
     anIsNotPassed=!anEI.Passed();
-
+    //
     if (anIsOut && anIsNotPassed) {
-      aCurIndexE++;
-      //
-      // Is there one way to go out of the vertex
-      // we have to use it only.
-      Standard_Integer iCnt;
-      iCnt=NbWaysOut (aLEInfo);
-      //
-      if (!iCnt) {
-        // no way to go . (Error)
-        return ;
+      if (aE.IsSame(aEOuta)) {
+	continue;
       }
       //
       if (iCnt==1) {
@@ -596,7 +598,6 @@ static
         continue;
       }
       //
-      //
       anAngleOut=anEI.Angle();
       //
       anAngle=ClockWiseAngle(anAngleIn, anAngleOut);
@@ -612,7 +613,7 @@ static
     // no way to go . (Error)
     return;
   }
-
+  //
   aEOutb=pEdgeInfo->Edge();
   //
   Path (aGAS, myFace, aVb, aEOutb, *pEdgeInfo, aLS,
@@ -745,11 +746,9 @@ static
   dA=A1-A2;
   if (dA <= 0.) {
     dA=aTwoPi+dA;
-    //modified by NIZNHY-PKV Thu Feb 17 08:26:39 2011f
     if (dA <= 1.e-14) {
       dA=aTwoPi;
     }
-    //modified by NIZNHY-PKV Thu Feb 17 08:26:42 2011t
   }
   //xx
   else if (dA <= 1.e-14) {
@@ -847,7 +846,33 @@ Standard_Real Angle (const gp_Dir2d& aDir2D)
 
   return anAngle;
 }
-
+//modified by NIZNHY-PKV Thu Apr 19 09:02:04 2012f
+//=======================================================================
+// function: NbWaysOut
+// purpose:
+//=======================================================================
+Standard_Integer NbWaysOut(const TopoDS_Edge& aEOuta,
+			   const BOP_ListOfEdgeInfo& aLEInfo)
+{
+  Standard_Boolean bIsOut, bIsNotPassed;
+  Standard_Integer iCnt=0;
+  BOP_ListIteratorOfListOfEdgeInfo anIt;
+  //
+  anIt.Initialize(aLEInfo);
+  for (; anIt.More(); anIt.Next()) {
+    BOP_EdgeInfo& aEI=anIt.Value();
+    const TopoDS_Edge& aE=aEI.Edge();
+    bIsOut=!aEI.IsIn();
+    bIsNotPassed=!aEI.Passed();
+    if (bIsOut && bIsNotPassed) {
+      if (!aE.IsSame(aEOuta)) {
+	iCnt++;
+      }
+    }
+  }
+  return iCnt;
+}
+/*
 //=======================================================================
 // function: NbWaysOut
 // purpose:
@@ -870,3 +895,5 @@ Standard_Integer NbWaysOut(const BOP_ListOfEdgeInfo& aLEInfo)
   }
   return iCnt;
 }
+*/
+//modified by NIZNHY-PKV Thu Apr 19 09:01:57 2012t

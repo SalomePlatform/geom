@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,60 +15,58 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //  File:       NMTTools_CheckerSI.cxx
 //  Created:    Mon Feb 19 11:32:08 2007
 //  Author:     Peter KURNEV
-
-#include <NMTTools_CheckerSI.ixx>
-
-#include <NMTTools_DEProcessor.hxx>
+//
+#include <NMTTools_CheckerSI.hxx>
 
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_IteratorCheckerSI.hxx>
 #include <NMTDS_InterfPool.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
+#include <NMTTools_DEProcessor.hxx>
 #include <IntTools_Context.hxx>
 
 //=======================================================================
-//function : 
-//purpose  : 
+//function :
+//purpose  :
 //=======================================================================
-NMTTools_CheckerSI::NMTTools_CheckerSI()
-  : NMTTools_PaveFiller()
+  NMTTools_CheckerSI::NMTTools_CheckerSI()
+:
+  NMTTools_PaveFiller()
 {
   myStopStatus=0;
 }
 //=======================================================================
 //function : ~
-//purpose  : 
+//purpose  :
 //=======================================================================
-NMTTools_CheckerSI::~NMTTools_CheckerSI()
+  NMTTools_CheckerSI::~NMTTools_CheckerSI()
 {
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
-void NMTTools_CheckerSI::Clear()
+  void NMTTools_CheckerSI::Clear()
 {
   NMTTools_PaveFiller::Clear();
 }
 //=======================================================================
 //function : StopStatus
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Integer NMTTools_CheckerSI::StopStatus()const
+  Standard_Integer NMTTools_CheckerSI::StopStatus()const
 {
   return myStopStatus;
 }
 //=======================================================================
 //function : Init
-//purpose  : 
+//purpose  :
 //=======================================================================
-void NMTTools_CheckerSI::Init()
+  void NMTTools_CheckerSI::Init()
 {
   myIsDone=Standard_False;
   if (myCompositeShape.IsNull()) {
@@ -90,20 +88,17 @@ void NMTTools_CheckerSI::Init()
   myNbSources=myDS->NumberOfShapesOfTheObject()+
               myDS->NumberOfShapesOfTheTool();
   myNbEdges=myDS->NbEdges();
-  // 4.
+  // 4
   myIP=new NMTDS_InterfPool;
   //
-  // 5.
-#if OCC_VERSION_LARGE > 0x06050200
-      // In OCCT6.5.3 class IntTools_Context become a handle
+  // 5
   myContext=new IntTools_Context;
-#endif
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
-void NMTTools_CheckerSI::Perform()
+  void NMTTools_CheckerSI::Perform()
 {
   myIsDone=Standard_False;
   myStopStatus=0;
@@ -173,7 +168,7 @@ void NMTTools_CheckerSI::Perform()
   //
   MakePCurves();
   //
-  // 7. Postprocessing 
+  // 7. Postprocessing
   UpdatePaveBlocks();
   //
   NMTTools_DEProcessor aDEP(*this);

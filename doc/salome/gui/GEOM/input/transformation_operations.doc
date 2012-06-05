@@ -18,14 +18,6 @@ which allow to:
 <li>Create a \subpage projection_operation_page "Projection" of an object on a face.</li>
 <li>Create a simultaneous \subpage multi_translation_operation_page "Translation in several directions".</li>
 <li>Create a simultaneous \subpage multi_rotation_operation_page</li> "Rotation in several directions".</li>
-<li>Produce a \subpage fillet_operation_page "Fillet" on the selected
-            edges of an object.</li>
-<li>Produce a \subpage fillet1d_operation_page "1D Fillet" on the
-            corners of a Wire with Planar Edges.</li>
-<li>Produce a \subpage fillet2d_operation_page "2D Fillet" on the corners of a Planar Face.</li>
-<li>Produce a \subpage chamfer_operation_page "Chamfer" on the selected edges of an object.</li>
-<li>Remove matter from an object by producing an \subpage extruded_cut_operation_page "Extruded Cut".</li>
-<li>Add matter to an object by producing an \subpage extruded_boss_operation_page "Extruded Boss".</li>
 </ul>
 
 */

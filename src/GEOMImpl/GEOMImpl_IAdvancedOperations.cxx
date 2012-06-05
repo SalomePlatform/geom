@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -689,12 +689,15 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
       v->GetLastFunction()->SetDescription("");
       TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
       gp_Pnt aP = BRep_Tool::Pnt(aVertex);
+//       std::cout << "Coords: " << aP.X() << ", " << aP.Y() << ", " << aP.Z() << std::endl;
       if (Abs(aP.X()) <= Precision::Confusion()) {
-        if (Abs(aP.Y()) - theR2 <= Precision::Confusion())
+        if (Abs(aP.Y()) - theR1 <= Precision::Confusion()) {
           vi1 = v;
+        }
       } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-        if (Abs(aP.X()) - theR1 <= Precision::Confusion())
+        if (Abs(aP.X()) - theR1 <= Precision::Confusion()) {
           vi2 = v;
+        }
       }
     }
 
@@ -740,13 +743,18 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
         v->GetLastFunction()->SetDescription("");
         TopoDS_Vertex aVertex = TopoDS::Vertex(v->GetValue());
         gp_Pnt aP = BRep_Tool::Pnt(aVertex);
+//         std::cout << "Coords: " << aP.X() << ", " << aP.Y() << ", " << aP.Z() << std::endl;
         if (Abs(aP.X()) <= Precision::Confusion()) {
-          if (Abs(aP.Y()) - theR2 > Precision::Confusion())
+          if (Abs(aP.Y()) - theR2 > Precision::Confusion()) {
             ve1 = v;
+          }
         } else if (Abs(aP.Y()) <= Precision::Confusion()) {
-          if (Abs(aP.X()) - theR2 > Precision::Confusion())
+          if (Abs(aP.X()) - theR2 > Precision::Confusion()) {
             ve2 = v;
+          }
         }
+        if ( !ve1.IsNull() && !ve2.IsNull())
+          break;
       }
       Handle(GEOM_Object) edge_e1, edge_e2;
       
@@ -782,6 +790,16 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
         return false;
       }
       face_t->GetLastFunction()->SetDescription("");
+      
+      theShapes.push_back(theShape);
+      theShapes.push_back(vi1);
+      theShapes.push_back(vi2);
+      theShapes.push_back(ve1);
+      theShapes.push_back(ve2);
+      theShapes.push_back(edge_e1);
+      theShapes.push_back(edge_e2);
+      theShapes.push_back(wire_t);
+      theShapes.push_back(face_t);
     }
     else {
       Handle(GEOM_Object) P1, P2, P3, P4, P5, P6;
@@ -1020,9 +1038,6 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
               TopAbs_SOLID, false, theMaterials, 0, false);
     if (Te3.IsNull()) {
       SetErrorCode("Impossible to build partition of TShape");
-//       Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
-//       TopoDS_Shape aCompoundShape = aCompound->GetValue();
-//       theShape->GetLastFunction()->SetValue(aCompoundShape);
       return false;
     }
     Te3->GetLastFunction()->SetDescription("");
@@ -1030,9 +1045,25 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     // Last verification: result should be a block
     std::list<GEOMImpl_IBlocksOperations::BCError> errList;
     if (!myBlocksOperations->CheckCompoundOfBlocks(Te3,errList)) {
-      SetErrorCode("TShape is not a block");
+      SetErrorCode("TShape is not a compound of block");
       return false;
     }
+    
+//     // BEGIN Compound of created shapes - Only for debug purpose
+//     theShapes.clear();
+//     theShapes.push_back(theShape);
+//     theShapes.push_back(aPlnOZ);
+//     if (Abs(aR1Ext - aR2Ext) > Precision::Confusion() )
+//       theShapes.push_back(aPlnOXZ);
+//     theShapes.push_back(face_t);
+//     if (!isNormal)
+//       theShapes.push_back(face_t2);
+// 
+//     Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
+//     TopoDS_Shape aCompoundShape = aCompound->GetValue();
+//     theShape->GetLastFunction()->SetValue(aCompoundShape);
+//     // END Compound of created shapes - Only for debug purpose
+    
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
   } catch (Standard_Failure) {
@@ -1906,12 +1937,19 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFillet(double theR1, double theW1, d
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (1)
+// the following block, when enabled, leads to partitioning problems
+#if 0
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (1)
   // BEGIN: Limit tolerances (debug)
   Handle(GEOM_Object) aCorr1 = myHealingOperations->LimitTolerance(aShape, 1e-07);
   TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
   aShape->GetLastFunction()->SetValue(aCorr1Shape);
   aCorr1->GetLastFunction()->SetDescription("");
   // END: Limit tolerances (debug)
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (2)
+#endif
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (2)
 
   if (theHexMesh) {
     if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))
@@ -2106,12 +2144,19 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
   aFunction->SetValue(aFilletShape);
   // END of fillet
 
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (3)
+// the following block, when enabled, leads to partitioning problems
+#if 0
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (3)
   // BEGIN: Limit tolerances (debug)
   Handle(GEOM_Object) aCorr1 = myHealingOperations->LimitTolerance(aShape, 1e-07);
   TopoDS_Shape aCorr1Shape = aCorr1->GetValue();
   aShape->GetLastFunction()->SetValue(aCorr1Shape);
   aCorr1->GetLastFunction()->SetDescription("");
   // END: Limit tolerances (debug)
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - BEGIN (4)
+#endif
+// VSR: debug issues 0021568 and 0021550 (15/05/2012) - END (4)
 
   if (theHexMesh) {
     if (!MakePipeTShapePartition(aShape, theR1, theW1, theL1, theR2, theW2, theL2, 0, 0, theRF, false))

@@ -1,5 +1,5 @@
 #  -*- coding: iso-8859-1 -*-
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -1834,23 +1834,21 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("MakeBoxTwoPnt", self.PrimOp)
             return anObj
 
-        ## Create a face with specified dimensions along OX-OY coordinate axes,
-        #  with edges, parallel to this coordinate axes.
+        ## Create a face with specified dimensions with edges parallel to coordinate axes.
         #  @param theH height of Face.
         #  @param theW width of Face.
-        #  @param theOrientation orientation belong axis OXY OYZ OZX
+        #  @param theOrientation face orientation: 1-OXY, 2-OYZ, 3-OZX
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
         def MakeFaceHW(self,theH, theW, theOrientation):
             """
-            Create a face with specified dimensions along OX-OY coordinate axes,
-            with edges, parallel to this coordinate axes.
+            Create a face with specified dimensions with edges parallel to coordinate axes.
 
             Parameters:
                 theH height of Face.
                 theW width of Face.
-                theOrientation orientation belong axis OXY OYZ OZX
+                theOrientation face orientation: 1-OXY, 2-OYZ, 3-OZX
 
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
@@ -2882,8 +2880,11 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
         ## Create a face on the given wire.
         #  @param theWire closed Wire or Edge to build the face on.
-        #  @param isPlanarWanted If TRUE, only planar face will be built.
-        #                        If impossible, NULL object will be returned.
+        #  @param isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+        #                        If the tolerance of the obtained planar face is less
+        #                        than 1e-06, this face will be returned, otherwise the
+        #                        algorithm tries to build any suitable face on the given
+        #                        wire and prints a warning message.
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -2893,27 +2894,30 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theWire closed Wire or Edge to build the face on.
-                isPlanarWanted If TRUE, only planar face will be built.
-                               If impossible, NULL object will be returned.
+                isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+                               If the tolerance of the obtained planar face is less
+                               than 1e-06, this face will be returned, otherwise the
+                               algorithm tries to build any suitable face on the given
+                               wire and prints a warning message.
 
             Returns:
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFace(theWire, isPlanarWanted)
-            if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                if os.getenv("GEOM_MAKEFACE_ALLOW_NONPLANAR") is not None:
-                    print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
-                else:
-                    RaiseIfFailed("MakeFace", self.ShapesOp)
+            if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
+                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFace", self.ShapesOp)
             return anObj
 
         ## Create a face on the given wires set.
         #  @param theWires List of closed wires or edges to build the face on.
-        #  @param isPlanarWanted If TRUE, only planar face will be built.
-        #                        If impossible, NULL object will be returned.
+        #  @param isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+        #                        If the tolerance of the obtained planar face is less
+        #                        than 1e-06, this face will be returned, otherwise the
+        #                        algorithm tries to build any suitable face on the given
+        #                        wire and prints a warning message.
         #  @return New GEOM.GEOM_Object, containing the created face.
         #
         #  @ref tui_creation_face "Example"
@@ -2923,19 +2927,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
 
             Parameters:
                 theWires List of closed wires or edges to build the face on.
-                isPlanarWanted If TRUE, only planar face will be built.
-                               If impossible, NULL object will be returned.
+                isPlanarWanted If TRUE, the algorithm tries to build a planar face.
+                               If the tolerance of the obtained planar face is less
+                               than 1e-06, this face will be returned, otherwise the
+                               algorithm tries to build any suitable face on the given
+                               wire and prints a warning message.
 
             Returns: 
                 New GEOM.GEOM_Object, containing the created face.
             """
             # Example: see GEOM_TestAll.py
             anObj = self.ShapesOp.MakeFaceWires(theWires, isPlanarWanted)
-            if anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
-                if os.getenv("GEOM_MAKEFACE_ALLOW_NONPLANAR") is not None:
-                    print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
-                else:
-                    RaiseIfFailed("MakeFace", self.ShapesOp)
+            if isPlanarWanted and anObj is not None and self.ShapesOp.GetErrorCode() == "MAKE_FACE_TOLERANCE_TOO_BIG":
+                print "WARNING: Cannot build a planar face: required tolerance is too big. Non-planar face is built."
             else:
                 RaiseIfFailed("MakeFaceWires", self.ShapesOp)
             return anObj
@@ -3865,6 +3869,31 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj = self.ShapesOp.GetSame(theShapeWhere, theShapeWhat)
             RaiseIfFailed("GetSame", self.ShapesOp)
             return anObj
+
+
+        ## Get sub-shape indices of theShapeWhere, which is
+        #  equal to \a theShapeWhat.
+        #  @param theShapeWhere Shape to find sub-shape of.
+        #  @param theShapeWhat Shape, specifying what to find.
+        #  @return List of all found sub-shapes indices. 
+        #
+        #  @ref swig_GetSame "Example"
+        def GetSameIDs(self,theShapeWhere, theShapeWhat):
+            """
+            Get sub-shape indices of theShapeWhere, which is
+            equal to theShapeWhat.
+
+            Parameters:
+                theShapeWhere Shape to find sub-shape of.
+                theShapeWhat Shape, specifying what to find.
+
+            Returns:
+                List of all found sub-shapes indices.
+            """
+            anObj = self.ShapesOp.GetSameIDs(theShapeWhere, theShapeWhat)
+            RaiseIfFailed("GetSameIDs", self.ShapesOp)
+            return anObj
+
 
         # end of l4_obtain
         ## @}
@@ -6899,11 +6928,14 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theShape Shape to check validity of.
         #  @param theIsCheckGeom If FALSE, only the shape's topology will be checked, \n
         #                        if TRUE, the shape's geometry will be checked also.
+        #  @param theReturnStatus If FALSE and if theShape is invalid, a description \n
+        #                        of problem is printed.
+        #                        if TRUE and if theShape is invalid, the description 
+        #                        of problem is also returned.
         #  @return TRUE, if the shape "seems to be valid".
-        #  If theShape is invalid, prints a description of problem.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def CheckShape(self,theShape, theIsCheckGeom = 0):
+        def CheckShape(self,theShape, theIsCheckGeom = 0, theReturnStatus = 0):
             """
             Check a topology of the given shape.
 
@@ -6911,10 +6943,15 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape Shape to check validity of.
                 theIsCheckGeom If FALSE, only the shape's topology will be checked,
                                if TRUE, the shape's geometry will be checked also.
+                theReturnStatus If FALSE and if theShape is invalid, a description
+                                of problem is printed.
+                                if TRUE and if theShape is invalid, the description 
+                                of problem is returned.
 
             Returns:   
                 TRUE, if the shape "seems to be valid".
                 If theShape is invalid, prints a description of problem.
+                This description can also be returned.
             """
             # Example: see GEOM_TestMeasures.py
             if theIsCheckGeom:
@@ -6924,7 +6961,10 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 (IsValid, Status) = self.MeasuOp.CheckShape(theShape)
                 RaiseIfFailed("CheckShape", self.MeasuOp)
             if IsValid == 0:
-                print Status
+                if theReturnStatus == 0:
+                    print Status
+            if theReturnStatus == 1:
+              return (IsValid, Status)
             return IsValid
 
         ## Detect self-intersections in the given shape.
@@ -6932,7 +6972,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return TRUE, if the shape contains no self-intersections.
         #
         #  @ref tui_measurement_tools_page "Example"
-        def CheckSelfIntersections (self, theShape):
+        def CheckSelfIntersections(self, theShape):
             """
             Detect self-intersections in the given shape.
 
@@ -8163,6 +8203,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 return "FILLET_2D"
             if theId == 46:
                 return "FILLET_1D"
+            if theId == 201:
+                return "PIPETSHAPE"
             return "Shape Id not exist."
 
         ## Returns a main shape associated with the group

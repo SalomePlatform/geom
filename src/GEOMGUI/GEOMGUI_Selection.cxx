@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -28,6 +28,8 @@
 #include "GeometryGUI.h"
 #include "GEOM_Displayer.h"
 
+#include "Material_Model.h"
+
 #include <GEOM_Constants.h>
 
 #include <SalomeApp_Application.h>
@@ -54,11 +56,17 @@
 #include <GEOMImpl_Types.hxx>
 
 #include <GEOM_AISShape.hxx>
+#include <GEOM_VTKPropertyMaterial.hxx>
 
 // OCCT Includes
 #include <AIS.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_ListOfInteractive.hxx>
+#include <AIS_GraphicTool.hxx>
+#include <AIS_Drawer.hxx>
+#include <Aspect_TypeOfFacingModel.hxx>
+#include <Prs3d_ShadingAspect.hxx>
+#include<Graphic3d_MaterialAspect.hxx>
 
 // VTK Includes
 #include <vtkActorCollection.h>
@@ -159,6 +167,8 @@ QVariant GEOMGUI_Selection::parameter( const int idx, const QString& p ) const
     v = compoundOfVertices( idx );
   else if ( p == "imported" )
     v = isImported( idx );
+  else if ( p == "isPhysicalMaterial" )
+    v = isPhysicalMaterial(idx);
   else
     v = LightApp_Selection::parameter( idx, p );
 
@@ -313,7 +323,7 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	    }
 	  }
 	}
-        else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+  else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
 	  SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
 	  vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
 	  if ( lst ) {
@@ -550,4 +560,59 @@ bool GEOMGUI_Selection::topLevel( const int index ) const {
     }
   }
   return res;
+}
+
+bool GEOMGUI_Selection::isPhysicalMaterial( const int idx ) const{
+   bool res = false;
+
+#ifdef USE_VISUAL_PROP_MAP
+   bool found = false;
+   QVariant v = visibleProperty( entry( idx ), MATERIAL_PROP );
+   if ( v.canConvert<QString>() ) {
+     Material_Model material;
+     material.fromProperties( v.toString() );
+     res = material.isPhysical();
+     found = true;
+   }
+
+   if ( !found ) {
+#endif
+     SALOME_View* view = GEOM_Displayer::GetActiveView();
+     QString viewType = activeViewType();
+     if ( view ) {
+       SALOME_Prs* prs = view->CreatePrs( entry( idx ).toLatin1().constData() );
+       if ( prs ) {
+         if ( viewType == OCCViewer_Viewer::Type() ) { // assuming OCC
+           SOCC_Prs* occPrs = (SOCC_Prs*) prs;
+           AIS_ListOfInteractive lst;
+           occPrs->GetObjects( lst );
+           if ( lst.Extent() ) {
+             Handle(AIS_InteractiveObject) io = lst.First();
+             if ( !io.IsNull() ) {
+               Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+               if ( !aSh.IsNull() )
+                 res = (bool) aSh->Attributes()->ShadingAspect()->
+			 Material(Aspect_TOFM_BOTH_SIDE).MaterialType( Graphic3d_MATERIAL_PHYSIC );
+             }
+           }
+         }
+         else if ( viewType == SVTK_Viewer::Type() ) { // assuming VTK
+	        SVTK_Prs* vtkPrs = dynamic_cast<SVTK_Prs*>( prs );
+	        vtkActorCollection* lst = vtkPrs ? vtkPrs->GetObjects() : 0;
+	        if ( lst ) {
+	          lst->InitTraversal();
+	          vtkActor* actor = lst->GetNextActor();
+	          if ( actor ) {
+              GEOM_Actor* aGeomGActor = GEOM_Actor::SafeDownCast( actor );
+	            if ( aGeomGActor ) {
+                GEOM_VTKPropertyMaterial* mat  = GEOM_VTKPropertyMaterial::SafeDownCast(aGeomGActor->GetProperty());
+                res = mat->GetPhysical();
+	            } // if ( salome actor )
+	          } // if ( actor )
+          } // if ( lst == vtkPrs->GetObjects() )
+         }
+       }
+     }
+   }
+   return res;
 }

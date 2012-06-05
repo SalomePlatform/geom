@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 # -* Makefile *- 
 # Author : Patrick GOLDBRONN (CEA)
@@ -138,6 +139,7 @@ polyline.png			\
 prism.png			\
 prism2.png			\
 prism3.png			\
+rectangle.png			\
 revol.png			\
 rotate.png			\
 rotatepnt.png			\
@@ -147,6 +149,7 @@ section.png			\
 select1.png			\
 sewing.png			\
 shading.png			\
+shading_with_edges.png		\
 shapesonshape.png		\
 shared_shapes.png		\
 sketch.png			\
@@ -182,6 +185,7 @@ vector.png			\
 vector_mode.png                 \
 vector2points.png		\
 vectordxyz.png			\
+wireframe.png			\
 whatis.png			\
 ellipse.png			\
 ellipsepointvector.png		\

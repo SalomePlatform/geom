@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -15,6 +15,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #
 # See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+#
 
 #  GEOM GEOM : implementaion of GEOM_Gen.idl
 #  File   : Makefile.in
@@ -78,7 +79,7 @@ libGEOMEngine_la_CPPFLAGS =		\
 	-I$(srcdir)/../SKETCHER		\
 	-I$(srcdir)/../ARCHIMEDE	\
 	-I$(srcdir)/../GEOMImpl		\
-	-I$(srcdir)/../$(GEOMAlgo_VAR)	\
+	-I$(srcdir)/../GEOMAlgo		\
 	-I$(srcdir)/../GEOM		\
 	-I$(top_builddir)/idl
 

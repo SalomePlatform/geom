@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -43,8 +43,7 @@
 #define VECTOR_MODE_PROP      "VectorMode"      //Vector mode property
 #define DEFLECTION_COEFF_PROP "DeflectionCoeff" //Deflection coeff property
 #define MARKER_TYPE_PROP      "MarkerType"      //Marker type property
-#define FRONT_MATERIAL_PROP   "FrontMaterial"   //Object front material property
-#define BACK_MATERIAL_PROP    "BackMaterial"    //Object back material property
+#define MATERIAL_PROP         "Material"        //Object material property
 #define EDGE_WIDTH_PROP       "EdgeWidth"       //Width of the edge
 #define ISOS_WIDTH_PROP       "IsosWidth"       //Width of the iso-lines
 #define TOP_LEVEL_PROP        "TopLevelFlag"    //Top level flag

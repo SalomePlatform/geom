@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,12 +15,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        NMTDS_Tools.cxx
 // Created:     Tue Feb 20 14:57:28 2007
 // Author:      Peter KURNEV
 
-#include <NMTDS_Tools.ixx>
+#include <NMTDS_Tools.hxx>
 #include <TopoDS_Vertex.hxx>
 #include <gp_Pnt.hxx>
 #include <BRep_Tool.hxx>
@@ -83,7 +84,6 @@ void CopySource(const TopoDS_Shape& aS,
   //
   bFree=aSC.Free();
   aSC.Free(Standard_True);
-  //modified by NIZNHY-PKV Fri Nov 25 10:10:03 2011f
   aSF=aS;
   if (aT==TopAbs_EDGE){
     TopAbs_Orientation aOr;
@@ -94,8 +94,6 @@ void CopySource(const TopoDS_Shape& aS,
     }
   }
   aIt.Initialize(aSF);
-  //aIt.Initialize(aS);
-  //modified by NIZNHY-PKV Fri Nov 25 10:10:05 2011t
   for (; aIt.More();  aIt.Next()) {
     TopoDS_Shape aSCx;
     //

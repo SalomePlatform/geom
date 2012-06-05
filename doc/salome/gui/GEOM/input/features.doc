@@ -1,0 +1,20 @@
+/*!
+
+\page features_page Features
+
+Geometry module provides the following Features,
+which allow to:
+
+
+<ul>
+<li>Produce a \subpage fillet1d_operation_page "1D Fillet" on the
+            corners of a Wire with Planar Edges.</li>
+<li>Produce a \subpage fillet2d_operation_page "2D Fillet" on the corners of a Planar Face.</li>
+<li>Produce a \subpage fillet_operation_page "3D Fillet" on the selected
+            edges of an object.</li>
+<li>Produce a \subpage chamfer_operation_page "Chamfer" on the selected edges of an object.</li>
+<li>Remove matter from an object by producing an \subpage extruded_cut_operation_page "Extruded Cut".</li>
+<li>Add matter to an object by producing an \subpage extruded_boss_operation_page "Extruded Boss".</li>
+</ul>
+
+*/

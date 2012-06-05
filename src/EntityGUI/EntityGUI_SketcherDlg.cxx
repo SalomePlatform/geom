@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -37,6 +37,8 @@
 #include <GEOMImpl_Types.hxx>
 #include <Geom_Surface.hxx>
 #include <Geom_Plane.hxx>
+
+#include <GeomLib_IsPlanarSurface.hxx>
 
 #include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
@@ -113,12 +115,13 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   MainWidget->buttonClose->setText( tr( "GEOM_BUT_CLOSE_SKETCH" ) );
   MainWidget->buttonHelp->setText( tr( "GEOM_BUT_HELP" ) );
 
-  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT"      ) ) );
-  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO"    ) ) );
-  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_REDO"    ) ) );
-  QPixmap image3( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P" ) ) );
-  QPixmap image4( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC"     ) ) );
-  QPixmap image5 (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
+  QPixmap image0( aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT"        ) ) );
+  QPixmap image1( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO"      ) ) );
+  QPixmap image2( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_REDO"      ) ) );
+  QPixmap image3( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_LINE_2P"   ) ) );
+  QPixmap image4( aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_ARC"       ) ) );
+  QPixmap image5 (aResMgr->loadPixmap( "GEOM", tr( "ICON_SELECT"        ) ) );
+  QPixmap image6 (aResMgr->loadPixmap( "GEOM", tr( "ICON_DLG_RECTANGLE" ) ) );
 
   setWindowTitle( tr( "GEOM_SKETCHER_TITLE" ) );
 
@@ -127,6 +130,8 @@ EntityGUI_SketcherDlg::EntityGUI_SketcherDlg( GeometryGUI* GUI, QWidget* parent,
   MainWidget->RadioButton1->setIcon( image3 );
   MainWidget->RadioButton2->setText( "" );
   MainWidget->RadioButton2->setIcon( image4 );
+  MainWidget->RadioButton3->setText( "" );
+  MainWidget->RadioButton3->setIcon( image6 );
   MainWidget->GroupDest->setTitle( tr( "GEOM_SKETCHER_DEST" ) );
   MainWidget->GroupDest1->setTitle( tr( "GEOM_SKETCHER_TYPE" ) );
   MainWidget->RB_Dest1->setText( tr( "GEOM_SKETCHER_POINT" ) );
@@ -619,6 +624,11 @@ void EntityGUI_SketcherDlg::TypeClicked( int constructorId )
 void EntityGUI_SketcherDlg::RectClicked()
 {
   InitClick();
+  
+  // Connect the selction manager (disconnected in InitClick())
+  connect( myGeometryGUI->getApp()->selectionMgr(),
+       SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+  
   GroupRect->show();
   
   myX1=0;
@@ -859,7 +869,7 @@ void EntityGUI_SketcherDlg::Point2Clicked( int constructorId )
   }
   resize( minimumSizeHint() );
   connect( myGeometryGUI->getApp()->selectionMgr(),
-	   SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
+      SIGNAL( currentSelectionChanged() ), this, SLOT( SelectionIntoArgument() ) );
   
 }
 
@@ -1362,13 +1372,26 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
                      && !aShape.IsNull())
   { 
     QString aName = GEOMBase::GetName( aSelectedObject.get() ); 
-    myEditCurrentArgument->setText(aName);
     if (myEditCurrentArgument==WPlaneLineEdit)  
     { 
-      AddLocalCS(aSelectedObject.get());
-      selButton->setDown(false);
-      WPlaneLineEdit->setEnabled(false);
-      TypeClicked( 0 );
+      // Check if the face is planar
+      Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(aShape));
+      GeomLib_IsPlanarSurface aPlanarCheck(aSurf, Precision::Confusion());
+      
+      if (aPlanarCheck.IsPlanar())
+      {
+        myEditCurrentArgument->setText(aName);
+        AddLocalCS(aSelectedObject.get());
+        selButton->setDown(false);
+        WPlaneLineEdit->setEnabled(false);
+        TypeClicked( myConstructorId );
+      }
+      else
+      {
+        myEditCurrentArgument->setText(tr("GEOM_SKETCHER_WPLANE"));
+        // The following leads to crash TODO : find a way to return a warning
+//         Standard_Failure::Raise(tr("GEOM_SKETCHER_NOT_PLANAR").toStdString().c_str()); 
+      }
     }           
     else
     {
@@ -1382,6 +1405,7 @@ void EntityGUI_SketcherDlg::SelectionIntoArgument()
       gp_Pnt aPnt;
       if ( GEOMBase::VertexToPoint( aShape, aPnt ) ) 
       {
+        myEditCurrentArgument->setText(aName);
         myX = aPnt.X();
         myY = aPnt.Y();       
         double Xcoord = myX;
@@ -1648,11 +1672,14 @@ void EntityGUI_SketcherDlg::closeEvent( QCloseEvent* e )
 void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, const gp_Pnt& thePnt,
                                             bool isStart )
 {
-  SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
-  OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+  // NOTE Basing the autoapply functionnality on the background picture has no sense anymore
+  // The import picture functionnality is now used for drawing on top of a picture
   
-  QString                theImgFileName;
-  vp->background().texture( theImgFileName ); ////////////// VSR: temporarily
+//   SUIT_ViewWindow*      theViewWindow  = getDesktop()->activeWindow();
+//   OCCViewer_ViewPort3d* vp             = ((OCCViewer_ViewWindow*)theViewWindow)->getViewPort();
+//   
+//   QString                theImgFileName;
+//   vp->background().texture( theImgFileName ); ////////////// VSR: temporarily
   
   double x, y;
   x = y = 0;
@@ -1671,7 +1698,8 @@ void EntityGUI_SketcherDlg::OnPointSelected(Qt::KeyboardModifiers modifiers, con
   gp_Pnt aTrsfPnt; 
   GEOMBase::VertexToPoint( aShape, aTrsfPnt );
   
-  autoApply = ( (getPnt2ConstructorId() == 1) && (!theImgFileName.isEmpty()) );  // If no additional argument needed after selection and there is a backgroundimage
+  // NOTE autoapply disabled : doesn't seem useful anymore
+//   autoApply = ( (getPnt2ConstructorId() == 1) && (!theImgFileName.isEmpty()) );  // If no additional argument needed after selection and there is a backgroundimage
                                                                                  // -> apply automatically 
   
   if ( getPnt1ConstructorId() == 0 ){                    // Relative selection mode

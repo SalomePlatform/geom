@@ -1,4 +1,4 @@
-dnl Copyright (C) 2007-2011  CEA/DEN, EDF R&D
+dnl Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 dnl
 dnl This library is free software; you can redistribute it and/or
 dnl modify it under the terms of the GNU Lesser General Public
@@ -81,7 +81,7 @@ fi
 if test "x$opencv_ok" == xno ; then
   AC_MSG_RESULT([for OPENCV: no])
   AC_MSG_WARN([OPENCV includes or libraries are not found or are not properly installed])
-  AC_MSG_WARN([Cannot build without OPENCV. Use --with-opencv option to define OPENCV installation.])
+  AC_MSG_WARN([Use --with-opencv option to define OPENCV installation.])
 else
   OPENCV_INCLUDES=$LOCAL_INCLUDES
   OPENCV_LIBS=$LOCAL_LIBS

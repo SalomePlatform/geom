@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -73,20 +73,6 @@ GetProperty()
   return myActor->GetProperty();
 }
 
-void 
-GEOM_DeviceActor:: 
-SetBackfaceProperty(vtkProperty* theProperty)
-{
-  myActor->SetBackfaceProperty(theProperty);
-}
- 
-vtkProperty* 
-GEOM_DeviceActor:: 
-GetBackfaceProperty()
-{
-  return myActor->GetBackfaceProperty();
-}
- 
 void 
 GEOM_DeviceActor:: 
 SetVisibility(int theVisibility)

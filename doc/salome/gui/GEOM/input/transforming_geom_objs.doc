@@ -6,10 +6,15 @@ The objects created in Salome can be processed with Transformation
 operations, which can be classified into:   
 
 <ul>
-<li>\subpage using_boolean_operations_page  "Boolean operations" using
-Boolean logical operators.</li>
+<li>\subpage using_boolean_operations_page  "Boolean operations", which allow combining objects
+with boolean logical operators.</li>
 <li>\subpage transformation_operations_page "Transformation operations", 
 which modify shape or location of the selected object.</li>
+
+<li>\subpage features_page "Features", 
+which allow adding or removing matter from an object.</li>
+
+<li>Operations with \subpage blocks_operations_page "Blocks".</li>
 
 <li>\subpage partition_page "Partition" operation, which creates a compound
 by intersection of several shapes with a tool object or a plane.</li>
@@ -20,8 +25,6 @@ into water.</li>
 special case of \b Explode operation. </li>
 <li>\subpage shared_shapes_page "Get shared shapes" operation, a
 special case of \b Explode operation. </li>
-
-<li>Operations with \subpage blocks_operations_page "Blocks".</li>
 
 
 <li>\subpage restore_presentation_parameters_page "Restore presentation parameters". 

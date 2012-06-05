@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -304,6 +304,15 @@ class GEOMImpl_IShapesOperations : public GEOM_IOperations
    */
   Standard_EXPORT Handle(GEOM_Object) GetSame(const Handle(GEOM_Object)& theShapeWhere,
                                               const Handle(GEOM_Object)& theShapeWhat);
+
+  /*!
+   * \brief Searches a shape equal to theWhat in the context of theWhere
+   * \param theShapeWhere - a context shap
+   * \param theShapeWhat - a sample shape
+   * \retval Handle(TColStd_HSequenceOfInteger) - IDs of found sub-shapes
+   */
+  Standard_EXPORT Handle(TColStd_HSequenceOfInteger) GetSameIDs(const Handle(GEOM_Object)& theShapeWhere,
+                                                                 const Handle(GEOM_Object)& theShapeWhat);
 
   /*!
    * \brief Find IDs of sub-shapes complying with given status about surface

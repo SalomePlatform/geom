@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -2353,7 +2353,37 @@ Standard_Integer GEOMImpl_PipeDriver::Execute(TFunction_Logbook& log) const
     }
 
     // Make pipe
-    aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase);
+    if (aShapeBase.ShapeType() == TopAbs_EDGE ||
+        aShapeBase.ShapeType() == TopAbs_WIRE)
+    {
+      TopoDS_Wire Profile;
+      if (aShapeBase.ShapeType() == TopAbs_WIRE)
+        Profile = TopoDS::Wire(aShapeBase);
+      else
+      {
+        BRep_Builder BB;
+        BB.MakeWire(Profile);
+        BB.Add(Profile, aShapeBase);
+      }
+
+      BRepOffsetAPI_MakePipeShell Sweep (aWirePath);
+      BRepBuilderAPI_MakeFace FaceBuilder (aWirePath, Standard_True); //to find the plane of spine
+      if (FaceBuilder.IsDone())
+        Sweep.SetMode(FaceBuilder.Face());
+      Sweep.Add(Profile);
+      Sweep.Build();
+      
+      if (!Sweep.IsDone())
+      {
+        if (aCI) delete aCI;
+        Standard_ConstructionError::Raise("MakePipeShell failed");
+      }
+      else
+        aShape = Sweep.Shape(); //result is good
+      
+    }
+    else
+      aShape = BRepOffsetAPI_MakePipe(aWirePath, aShapeBase);
   }
 
   //building pipe with different sections

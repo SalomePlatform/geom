@@ -7,8 +7,18 @@ select <b>Operations - > Transformation - > Multi Translation</b>
 
 \n This operation makes several translations of a shape in \b one or \b
 two directions.
-\n The \b Result will be one or several \b GEOM_Objects (compound).
+\n The \b Result will be one or several \b GEOM_Objects
+(compound). The total number of shapes in the resulting compound (for
+a single initial selected shape) will be equal to:
+- in case of \ref single_multi_translation "Single multi translation":
+\a NbTimes (if \a NbTimes parameter is equal to 1, the result will
+contain only the initial non-translated shape). 
+- in case of \ref double_multi_translation "Double multi translation":
+\a NbTimes1 x \a NbTimes2 (if \a NbTimes1 and \a NbTimes2 parameters
+are both equal to 1, the result will contain a single non-translated
+initial shape). 
 
+\anchor single_multi_translation
 \n To produce a <b>Simple Multi Translation</b> (in one direction) you
 need to indicate an \b Object to be translated, a \b Vector of
 translation, a \b Step of translation and a <b>Number of Times</b> the
@@ -26,6 +36,7 @@ step value + 1 value (repetition).
 
 \image html multi_translation1dsn.png "The result of a simple multi-translation"
 
+\anchor double_multi_translation
 \n To produce a <b>Double Multi Translation</b> (in two directions) you need to
 indicate an \b Object to be translated, and, for both axes, a \b
 Vector of translation, a \b Step of translation and a <b>Number of Times</b> the shape must be duplicated.

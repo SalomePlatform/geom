@@ -311,11 +311,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGES</source>
-        <translation>Chamfer On Edges From Shape</translation>
+        <translation>Chamfer On Selected Edges</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_FACES</source>
-        <translation>Chamfer On Faces From Shape</translation>
+        <translation>Chamfer On Selected Faces</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_TITLE</source>
@@ -704,19 +704,11 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_FILLET_EDGES</source>
-        <translation>Fillet On Edges From Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_FILLET_WIRES</source>
-        <translation>Fillet On Wires From Shape</translation>
+        <translation>Fillet On Selected Edges</translation>
     </message>
     <message>
         <source>GEOM_FILLET_FACES</source>
-        <translation>Fillet On Faces From Shape</translation>
-    </message>
-    <message>
-        <source>GEOM_FILLET_VERTEXES</source>
-        <translation>Fillet On Vertexes From Face</translation>
+        <translation>Fillet On Selected Faces</translation>
     </message>
     <message>
         <source>GEOM_FILLET_TITLE</source>
@@ -2955,10 +2947,6 @@ Please, select face, shell or solid and try again</translation>
         <translation>General</translation>
     </message>
     <message>
-        <source>PREF_GROUP_OCCVIEWER</source>
-        <translation>OCC Viewer 3d</translation>
-    </message>
-    <message>
         <source>GEOM_PREF_GROUP_PRECISION</source>
         <translation>Input fields precision</translation>
     </message>
@@ -3015,12 +3003,8 @@ Please, select face, shell or solid and try again</translation>
         <translation>Default wireframe color</translation>
     </message>
     <message>
-        <source>PREF_FRONT_MATERIAL</source>
-        <translation>Default front material</translation>
-    </message>
-    <message>
-        <source>PREF_BACK_MATERIAL</source>
-        <translation>Default back material</translation>
+        <source>PREF_MATERIAL</source>
+        <translation>Default material</translation>
     </message>
     <message>
         <source>PREF_EDGE_WIDTH</source>
@@ -3411,6 +3395,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Shading With Edges</translation>
     </message>
     <message>
+        <source>STB_POP_TEXTURE</source>
+        <translation>Texture</translation>
+    </message>
+    <message>
+        <source>STB_POP_VECTORS</source>
+        <translation>Show Edge Direction</translation>
+    </message>
+    <message>
         <source>STB_POP_SETTEXTURE</source>
         <translation>Add a texture</translation>
     </message>
@@ -3451,8 +3443,16 @@ Please, select face, shell or solid and try again</translation>
         <translation>Perform sewing</translation>
     </message>
     <message>
+        <source>STB_WIREFRAME</source>
+        <translation>Wireframe</translation>
+    </message>
+    <message>
         <source>STB_SHADING</source>
         <translation>Shading</translation>
+    </message>
+    <message>
+        <source>STB_SHADING_WITH_EDGES</source>
+        <translation>Shading with edges</translation>
     </message>
     <message>
         <source>STB_VECTOR_MODE</source>
@@ -4172,7 +4172,7 @@ Please, select face, shell or solid and try again</translation>
     </message>
     <message>
         <source>GEOM_CHAMFER_EDGE</source>
-        <translation>Chamfer On Selected Edges</translation>
+        <translation>Chamfer On Edge common with 2 Faces</translation>
     </message>
     <message>
         <source>SELECTED_EDGE</source>
@@ -5240,43 +5240,68 @@ Would you like to continue?</translation>
     <name>GEOMToolsGUI_MaterialPropertiesDlg</name>
     <message>
         <source>MATERIAL_PROPERTIES_TLT</source>
-        <translation>Set Material Properties</translation>
+        <translation>Color and Material Properties</translation>
     </message>
     <message>
-        <source>MATERIAL_BACK_CHK</source>
-        <translation>Enable back material</translation>
-    </message>
-    <message>
-        <source>AMBIENT_GRP</source>
+        <source>REFLECTION_0</source>
         <translation>Ambient</translation>
     </message>
     <message>
-        <source>DIFFUSE_GRP</source>
+        <source>REFLECTION_1</source>
         <translation>Diffuse</translation>
     </message>
     <message>
-        <source>SPECULAR_GRP</source>
+        <source>REFLECTION_2</source>
         <translation>Specular</translation>
     </message>
     <message>
-        <source>EMISSION_GRP</source>
-        <translation>Emission</translation>
+        <source>REFLECTION_3</source>
+        <translation>Emissive</translation>
     </message>
     <message>
-        <source>COLOR</source>
-        <translation>Color:</translation>
-    </message>
-    <message>
-        <source>COEFFICIENT</source>
-        <translation>Coefficient:</translation>
+        <source>ENABLED</source>
+        <translation>Enabled</translation>
     </message>
     <message>
         <source>SHININESS</source>
         <translation>Shininess:</translation>
     </message>
     <message>
+        <source>PHYSICAL</source>
+        <translation>Physical</translation>
+    </message>
+    <message>
+        <source>ADD_MATERIAL</source>
+        <translation>Add material</translation>
+    </message>
+    <message>
+        <source>DELETE_MATERIAL</source>
+        <translation>Remove material</translation>
+    </message>
+    <message>
+        <source>RENAME_MATERIAL</source>
+        <translation>Rename material</translation>
+    </message>
+    <message>
+        <source>CURRENT_MATERIAL</source>
+        <translation>[ Current ]</translation>
+    </message>
+    <message>
+        <source>CURRENT_COLOR</source>
+        <translation>Color</translation>
+    </message>
+    <message>
         <source>CUSTOM_MATERIAL</source>
         <translation>Custom material</translation>
+    </message>
+    <message>
+        <source>QUE_CREATE_NEW_MATERIAL</source>
+        <translation>Changing properties of pre-defined material is not allowed.
+Do you want to create new material?</translation>
+    </message>
+    <message>
+        <source>QUE_REMOVE_MATERIAL</source>
+        <translation>Remove material %1?</translation>
     </message>
     <message>
         <source>OK_BTN</source>

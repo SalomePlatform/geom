@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -22,19 +22,8 @@
 //
 
 #include "Material_Model.h"
+#include "GEOM_VTKPropertyMaterial.hxx"
 #include "Material_ResourceMgr.h"
-
-#include <GEOM_Constants.h>
-
-#include <QtxResourceMgr.h>
-#include <SUIT_ResourceMgr.h>
-#include <SUIT_Session.h>
-
-// OCCT Includes
-#include <Graphic3d_AspectFillArea3d.hxx>
-
-// VTK includes
-#include <vtkProperty.h> 
 
 /*!
   \brief Constructor
@@ -42,9 +31,9 @@
   Create new SALOME material model with default properties.
 */
 Material_Model::Material_Model()
-  : myResourceMgr( 0 )
 {
-  myShininess = 0.0;
+  myReflection  = ReflectionList(4);
+  init(); // set default properties
 }
 
 /*!
@@ -55,616 +44,378 @@ Material_Model::~Material_Model()
 }
 
 /*!
-  \brief Construct material model according to the given list of
-  material properties
-  
-  \param theProps the list of material properties
-  \return material model object with correspondent properties
-  \sa getMaterialProperty()
+  \brief Initialize material data from the given properties list
+  \param props material properties
+  \sa toProperties()
 */
-Material_Model* Material_Model::getMaterialModel( QStringList theProps )
+void Material_Model::fromProperties( const QString& props )
 {
-  Material_Model* aModel = new Material_Model();
+  // reset to default values
+  init();
 
-  foreach ( QString aProp, theProps ) {
-    if ( aProp.isNull() ) continue;
+  // parse material properties
+  QStringList propList = props.split( ":", QString::SkipEmptyParts );
+  foreach ( QString prop, propList ) 
+  {
+    QStringList pdata = prop.split( "=" );
+    if ( pdata.count() < 2 ) continue;
+    QString key   = pdata[0].trimmed().toLower();
+    QString data  = pdata[1].trimmed().toLower();
+    bool dblOk, boolOk;
+    double dblValue  = data.toDouble( &dblOk );
+    bool   boolValue = (bool)( data.toInt( &boolOk ) );
+    QColor colorValue;
     
-    // Set current ambient color
-    aModel->setColor( aProp, "AmbientColor=", Material_Model::Ambient );
-    // Set current ambient coefficient
-    aModel->setCoefficient( aProp, "AmbientCoefficient=", Material_Model::Ambient );
-    
-    // Set current diffuse color
-    aModel->setColor( aProp, "DiffuseColor=", Material_Model::Diffuse );
-    // Set current diffuse coefficient
-    aModel->setCoefficient( aProp, "DiffuseCoefficient=", Material_Model::Diffuse );
-    
-    // Set current specular color
-    aModel->setColor( aProp, "SpecularColor=", Material_Model::Specular );
-    // Set current specular coefficient
-    aModel->setCoefficient( aProp, "SpecularCoefficient=", Material_Model::Specular );
-    
-    // Set current emission color
-    aModel->setColor( aProp, "EmissionColor=", Material_Model::Emission );
-    // Set current emission coefficient
-    aModel->setCoefficient( aProp, "EmissionCoefficient=", Material_Model::Emission );
-    
-    // Set current shininess
-    QString aPropName = "Shininess=";
-    int anId = aProp.indexOf(aPropName);
-    if ( anId != -1 ) {
-      bool ok;
-      double aCoef = aProp.right( aProp.length() - (anId+aPropName.length()) ).toDouble(&ok);
-      if ( ok )
-	aModel->setShininess( aCoef );
-    }    
+    if      ( key == "ambientcolor" && Qtx::stringToColor( data, colorValue ) ) {
+      setColor( Ambient, colorValue );
+    }
+    else if ( key == "diffusecolor" && Qtx::stringToColor( data, colorValue ) ) {
+      setColor( Diffuse, colorValue );
+    }
+    else if ( key == "specularcolor" && Qtx::stringToColor( data, colorValue ) ) {
+      setColor( Specular, colorValue );
+    }
+    else if ( key == "emissivecolor" && Qtx::stringToColor( data, colorValue ) ) {
+      setColor( Emissive, colorValue );
+    }
+    else if ( key == "ambientcoefficient" && dblOk ) {
+      setReflection( Ambient, dblValue );
+    }
+    else if ( key == "diffusecoefficient" && dblOk ) {
+      setReflection( Diffuse, dblValue );
+    }
+    else if ( key == "specularcoefficient" && dblOk ) {
+      setReflection( Specular, dblValue );
+    }
+    else if ( key == "emissivecoefficient" && dblOk ) {
+      setReflection( Emissive, dblValue );
+    }
+    else if ( key == "shininess" && dblOk ) {
+      setShininess( dblValue );
+    }
+    else if ( key == "transparency" && dblOk ) {
+      setTransparency( dblValue );
+    }
+    else if ( key == "physical" && boolOk ) {
+      setPhysical( boolValue );
+    }
+    else if ( key == "ambient" && boolOk ) {
+      setReflection( Ambient, boolValue );
+    }
+    else if ( key == "diffuse" && boolOk ) {
+      setReflection( Diffuse, boolValue );
+    }
+    else if ( key == "specular" && boolOk ) {
+      setReflection( Specular, boolValue );
+    }
+    else if ( key == "emissive" && boolOk ) {
+      setReflection( Emissive, boolValue );
+    }
   }
-
-  return aModel;
 }
 
 /*!
-  \brief Construct string of material properties for this model object
-  
-  \return a string representing a set of material properties
-  \sa getMaterialModel()
+  \brief Get material properties string representation
+  \return string representing of material properties
+  \sa fromProperties()
 */
-QString Material_Model::getMaterialProperty()
+QString Material_Model::toProperties()
 {
-  // Parse material properties of the current model and form a string for persistent purpose
-  QString aMaterial;
+  QStringList props;
+  QString fmt = "%1=%2";
 
-  bool isReflectionTypeActive;  
-  QColor c;
-  double coef;
+  // physical
+  props << fmt.arg( "Physical" ).arg( isPhysical() );
 
-  // Ambient reflection
-  isReflectionTypeActive = hasAmbientReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Ambient );
-    coef = coefficient(Material_Model::Ambient);
-    // Insert properties into persistent string
-    aMaterial = "AmbientColor=%1%2AmbientCoefficient=%3";
-    aMaterial = aMaterial.arg( Qtx::colorToString(c) );
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( coef );
-  }
-  // Diffuse reflection
-  isReflectionTypeActive = hasDiffuseReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Diffuse );
-    coef = coefficient(Material_Model::Diffuse);
-    // Insert properties into persistent string
-    aMaterial += "%1DiffuseColor=%2%3DiffuseCoefficient=%4";
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( Qtx::colorToString(c) );
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( coef );
-  }
-  // Specular reflection
-  isReflectionTypeActive = hasSpecularReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Specular );
-    coef = coefficient(Material_Model::Specular);
-    // Insert properties into persistent string
-    aMaterial += "%1SpecularColor=%2%3SpecularCoefficient=%4";
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( Qtx::colorToString(c) );
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( coef );
-  }
-  // Emission reflection
-  isReflectionTypeActive = hasEmissionReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Emission );
-    coef = coefficient(Material_Model::Emission);
-    // Insert properties into persistent string
-    aMaterial += "%1EmissionColor=%2%3EmissionCoefficient=%4";
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( Qtx::colorToString(c) );
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( coef );
-  }
-  if ( !aMaterial.isEmpty() ) {
-    // Shininess
-    // Insert properties into persistent string
-    aMaterial += "%1Shininess=%2";
-    aMaterial = aMaterial.arg( DIGIT_SEPARATOR );
-    aMaterial = aMaterial.arg( shininess() );
-  }
+  // shininess
+  props << fmt.arg( "Shininess" ).arg( shininess() );
 
-  return aMaterial;
-}
+  //transparency
+  props << fmt.arg( "Transparency" ).arg( transparency() );
 
-/*!
-  \brief Construct OCCT material aspect object based on the current model
-  
-  \return material aspect object with correspondent properties
-*/
-Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect()
-{
-  // Get material aspect from the current model
-  Graphic3d_MaterialAspect aMat;
+  // ambient reflection
+  props << fmt.arg( "Ambient" ).arg( hasReflection( Ambient ) );
+  if ( color( Ambient ).isValid() )
+    props << fmt.arg( "AmbientColor" ).arg( Qtx::colorToString( color( Ambient ) ) );
+  props << fmt.arg( "AmbientCoefficient" ).arg( reflection( Ambient ) );
 
-  bool isReflectionTypeActive;
-  QColor c;
-  double coef;
+  // diffuse reflection
+  props << fmt.arg( "Diffuse" ).arg( hasReflection( Diffuse ) );
+  if ( color( Diffuse ).isValid() )
+    props << fmt.arg( "DiffuseColor" ).arg( Qtx::colorToString( color( Diffuse ) ) );
+  props << fmt.arg( "DiffuseCoefficient" ).arg( reflection( Diffuse ) );
 
-  // Ambient reflection
-  isReflectionTypeActive = hasAmbientReflection();
-  if ( isReflectionTypeActive ) {
-    aMat.SetReflectionModeOn( Graphic3d_TOR_AMBIENT );
-    c = color( Material_Model::Ambient );
-    aMat.SetAmbientColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
-    coef = coefficient( Material_Model::Ambient );
-    aMat.SetAmbient( coef );
-  }
-  // Diffuse reflection
-  isReflectionTypeActive = hasDiffuseReflection();
-  if ( isReflectionTypeActive ) {
-    aMat.SetReflectionModeOn( Graphic3d_TOR_DIFFUSE );
-    c = color( Material_Model::Diffuse );
-    aMat.SetDiffuseColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
-    coef = coefficient( Material_Model::Diffuse );
-    aMat.SetDiffuse( coef );	  
-  }
-  // Specular reflection
-  isReflectionTypeActive = hasSpecularReflection();
-  if ( isReflectionTypeActive ) {
-    aMat.SetReflectionModeOn( Graphic3d_TOR_SPECULAR );
-    c = color( Material_Model::Specular );
-    aMat.SetSpecularColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
-    coef = coefficient( Material_Model::Specular );
-    aMat.SetSpecular( coef );
-  }
-  // Emission reflection
-  isReflectionTypeActive = hasEmissionReflection();
-  if ( isReflectionTypeActive ) {
-    aMat.SetReflectionModeOn( Graphic3d_TOR_EMISSION );
-    c = color( Material_Model::Emission );
-    aMat.SetEmissiveColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
-    coef = coefficient( Material_Model::Emission );
-    aMat.SetEmissive( coef );
-  }
-  // Shininess
-  aMat.SetShininess( shininess() );
+  // specular reflection
+  props << fmt.arg( "Specular" ).arg( hasReflection( Specular ) );
+  if ( color( Specular ).isValid() )
+    props << fmt.arg( "SpecularColor" ).arg( Qtx::colorToString( color( Specular ) ) );
+  props << fmt.arg( "SpecularCoefficient" ).arg( reflection( Specular ) );
 
-  return aMat;
-}
+  // emissive reflection
+  props << fmt.arg( "Emissive" ).arg( hasReflection( Emissive ) );
+  if ( color( Emissive ).isValid() )
+    props << fmt.arg( "EmissiveColor" ).arg( Qtx::colorToString( color( Emissive ) ) );
+  props << fmt.arg( "EmissiveCoefficient" ).arg( reflection( Emissive ) );
 
-/*!
-  \brief Construct VTK property with properties of material based on the current model
-  
-  \return VTK property with correspondent material properties
-*/
-vtkProperty* Material_Model::getMaterialVTKProperty()
-{
-  // Get material properties from the current model
-  vtkProperty* aProperty = vtkProperty::New();
-  
-  bool isReflectionTypeActive;
-  QColor c;
-  double coef;
-
-  // Ambient reflection
-  isReflectionTypeActive = hasAmbientReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Ambient );
-    aProperty->SetAmbientColor( c.redF(), c.greenF(), c.blueF() ); //SalomeApp_Tools::color( c )
-    coef = coefficient( Material_Model::Ambient );
-    aProperty->SetAmbient( coef );
-  }
-  // Diffuse reflection
-  isReflectionTypeActive = hasDiffuseReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Diffuse );
-    aProperty->SetDiffuseColor( c.redF(), c.greenF(), c.blueF() );
-    coef = coefficient( Material_Model::Diffuse );
-    aProperty->SetDiffuse( coef );	 
-  }
-  // Specular reflection
-  isReflectionTypeActive = hasSpecularReflection();
-  if ( isReflectionTypeActive ) {
-    c = color( Material_Model::Specular );
-    aProperty->SetSpecularColor( c.redF(), c.greenF(), c.blueF() );
-    coef = coefficient( Material_Model::Specular );
-    aProperty->SetSpecular( coef );
-  }
-  // Shininess
-  aProperty->SetSpecularPower( shininess()*100.0 );
-
-  return aProperty;
-}
-
-/*!
-  \brief Initialize material model with default values
-*/
-void Material_Model::initDefaults()
-{  
-  // Set default ambient color
-  setColor( Ambient, "#333333" );
-  // Set default ambient coefficient
-  setCoefficient( Ambient, 0.3 );
-
-  // Set default diffuse color
-  setColor( Diffuse, "#000000" );
-  // Set default diffuse coefficient
-  setCoefficient( Diffuse, 0.65 );
-
-  // Set default specular color
-  setColor( Specular, "#ffffff" );
-  // Set default specular coefficient
-  setCoefficient( Specular, 0.0 );
-  
-  // Set default shininess
-  setShininess( 0.039 );
-}
-
-/*!
-  \brief Clear current content of this material model
-*/
-void Material_Model::clearModel()
-{
-  myColors.clear();
-  myCoefficients.clear();
-  myShininess = 0.0;
+  return props.join( ":" );
 }
 
 /*!
   \brief Initialize material model from the resources
 
-  This function can be used to retrieve material properties from the resource file(s).
-  Note, that paremeters \a theResMgr and \a theResSection are stored by the model to be used
-  later with save() method.
+  This function can be used to retrieve material properties from the resource file.
 
-  \param theResMgr resources manager
-  \param theResSection resources section name
-  \param theIsFront if True, it is front material, else it is back material
-  \sa save()
+  \param material material name (if not specified, model is initialized by default material)
+  \param resMgr resource manager (if not specified, new resources manager is created)
+  \sa toResources()
 */
-void Material_Model::fromResources( QtxResourceMgr* theResMgr,
-				    const QString& theResSection,
-				    bool theIsFront )
+void Material_Model::fromResources( const QString& material, QtxResourceMgr* resMgr )
 {
-  // Clear current content of the model
-  // before setting properties from resources
-  clearModel();
-
-  myResourceMgr     = theResMgr;
-  myResourceSection = theResSection;
-
-  // init from resource manager
-  if ( !resourceMgr() )
-    return;
-
-  if ( theResSection.compare( "Geometry" ) == 0 ) {
-    if ( theIsFront ) {
-      myResourceSection = theResMgr->stringValue("Geometry", "front_material", "Gold");
-    }
-    else {
-      myResourceSection = theResMgr->stringValue("Geometry", "back_material", "");
-      if ( myResourceSection.isEmpty() )
-	myResourceSection = theResMgr->stringValue("Geometry", "front_material", "Gold");
-    }
-      
-    myResourceMgr = new Material_ResourceMgr();
-  }
+  static QString common = "[common]";
   
-  QString section = resourceSection( theIsFront );
+  // reset to default values
+  init();
 
-  // If there is no material preference in XML files,
-  // use the default material hardcoded in material model
-  if ( section.isEmpty() ) {
-    initDefaults();
-    return;
-  }
+  // material name is not specified: use default values
+  if ( material.isEmpty() ) return;
 
-  // Set ambient color
-  if ( resourceMgr()->hasValue( section, "ambient-color" ) ) {
-    setColor( Ambient, resourceMgr()->colorValue( section, "ambient-color" ) );
-  }
-  // Set ambient coefficient
-  if ( resourceMgr()->hasValue( section, "ambient-coefficient" ) ) {
-    setCoefficient( Ambient, resourceMgr()->doubleValue( section, "ambient-coefficient" ) );
-  }
+  bool ownResourcesMgr = resMgr == 0;
+  
+  if ( ownResourcesMgr )
+    resMgr = new Material_ResourceMgr();
 
-  // Set diffuse color
-  if ( resourceMgr()->hasValue( section, "diffuse-color" ) ) {
-    setColor( Diffuse, resourceMgr()->colorValue( section, "diffuse-color" ) );
-  }
-  // Set diffuse coefficient
-  if ( resourceMgr()->hasValue( section, "diffuse-coefficient" ) ) {
-    setCoefficient( Diffuse, resourceMgr()->doubleValue( section, "diffuse-coefficient" ) );
+  // read common section
+  if ( material != common && resMgr->hasSection( common ) )
+    fromResources( common, resMgr );
+
+  // physical
+  if ( resMgr->hasValue( material, "physical" ) ) {
+    setPhysical( resMgr->booleanValue( material, "physical" ) );
   }
 
-  // Set specular color
-  if ( resourceMgr()->hasValue( section, "specular-color" ) ) {
-    setColor( Specular, resourceMgr()->colorValue( section, "specular-color" ) );
-  }
-  // Set specular coefficient
-  if ( resourceMgr()->hasValue( section, "specular-coefficient" ) ) {
-    setCoefficient( Specular, resourceMgr()->doubleValue( section, "specular-coefficient" ) );
+  // shininess
+  if ( resMgr->hasValue( material, "shininess" ) ) {
+    setShininess( resMgr->doubleValue( material, "shininess" ) );
   }
 
-  // Set emission color
-  if ( resourceMgr()->hasValue( section, "emission-color" ) ) {
-    setColor( Emission, resourceMgr()->colorValue( section, "emission-color" ) );
-  }
-  // Set emission coefficient
-  if ( resourceMgr()->hasValue( section, "emission-coefficient" ) ) {
-    setCoefficient( Emission, resourceMgr()->doubleValue( section, "emission-coefficient" ) );
+  // transparency
+  if ( resMgr->hasValue( material, "transparency" ) ) {
+    setTransparency( resMgr->doubleValue( material, "transparency" ) );
   }
 
-  // Set shininess
-  if ( resourceMgr()->hasValue( section, "shininess" ) ) {
-    setShininess( resourceMgr()->doubleValue( section, "shininess" ) );
+  // ambient reflection
+  if ( resMgr->hasValue( material, "ambient-color" ) ) {
+    setColor( Ambient, resMgr->colorValue( material, "ambient-color" ) );
   }
+  if ( resMgr->hasValue( material, "ambient-coefficient" ) ) {
+    setReflection( Ambient, resMgr->doubleValue( material, "ambient-coefficient" ) );
+  }
+  if ( resMgr->hasValue( material, "ambient" ) ) {
+    setReflection( Ambient, resMgr->booleanValue( material, "ambient" ) );
+  }
+
+  // diffuse reflection
+  if ( resMgr->hasValue( material, "diffuse-color" ) ) {
+    setColor( Diffuse, resMgr->colorValue( material, "diffuse-color" ) );
+  }
+  if ( resMgr->hasValue( material, "diffuse-coefficient" ) ) {
+    setReflection( Diffuse, resMgr->doubleValue( material, "diffuse-coefficient" ) );
+  }
+  if ( resMgr->hasValue( material, "diffuse" ) ) {
+    setReflection( Diffuse, resMgr->booleanValue( material, "diffuse" ) );
+  }
+
+  // specular reflection
+  if ( resMgr->hasValue( material, "specular-color" ) ) {
+    setColor( Specular, resMgr->colorValue( material, "specular-color" ) );
+  }
+  if ( resMgr->hasValue( material, "specular-coefficient" ) ) {
+    setReflection( Specular, resMgr->doubleValue( material, "specular-coefficient" ) );
+  }
+  if ( resMgr->hasValue( material, "specular" ) ) {
+    setReflection( Specular, resMgr->booleanValue( material, "specular" ) );
+  }
+
+  // emissive reflection
+  if ( resMgr->hasValue( material, "emissive-color" ) ) {
+    setColor( Emissive, resMgr->colorValue( material, "emissive-color" ) );
+  }
+  if ( resMgr->hasValue( material, "emissive-coefficient" ) ) {
+    setReflection( Emissive, resMgr->doubleValue( material, "emissive-coefficient" ) );
+  }
+  if ( resMgr->hasValue( material, "emissive" ) ) {
+    setReflection( Emissive, resMgr->booleanValue( material, "emissive" ) );
+  }
+
+  if ( ownResourcesMgr )
+    delete resMgr;
 }
 
 /*!
   \brief Save material properties to the resource file.
-  
-  If paremeters \a theResMgr and \a theResSection are not specified, default ones
-  (those passed to the fromResources() function) are used instead.
-
-  \param theResMgr resources manager
-  \param theResSection resources section name
-  \param theIsFront if True, it is front material, else it is back material
+  \param material material name
+  \param resMgr resource manager
   \sa fromResources()
 */
-void Material_Model::save( QtxResourceMgr* theResMgr,
-			   const QString& theResSection,
-			   bool theIsFront )
+void Material_Model::toResources( const QString& material, QtxResourceMgr* resMgr )
 {
-  if ( !theResMgr )
-    theResMgr = resourceMgr();
-  if ( !theResMgr )
-    return;
+  if ( resMgr && !material.isEmpty() ) {
+    // remove resources section (to clean-up all previous properties)
+    resMgr->remove( material );
 
-  QString section = theResSection.isEmpty() ? resourceSection( theIsFront ) : theResSection;
-  myResourceSection = section;
+    // physical
+    resMgr->setValue( material, "physical", isPhysical() );
 
-  if ( hasAmbientReflection() ) {
-    // Save ambient color
-    theResMgr->setValue( section, "ambient-color", color( Ambient ) );
-    // Save ambient coefficient
-    theResMgr->setValue( section, "ambient-coefficient", coefficient( Ambient ) );
-  }
-  else {
-    // Remove ambient color
-    theResMgr->remove( section, "ambient-color" );
-    // Remove ambient coefficient
-    theResMgr->remove( section, "ambient-coefficient" );
-  }
+    // shininess
+    resMgr->setValue( material, "shininess", shininess() );
 
-  if ( hasDiffuseReflection() ) {
-    // Save diffuse color
-    theResMgr->setValue( section, "diffuse-color", color( Diffuse ) );
-    // Save diffuse coefficient
-    theResMgr->setValue( section, "diffuse-coefficient", coefficient( Diffuse ) );
-  }
-  else {
-    // Remove diffuse color
-    theResMgr->remove( section, "diffuse-color" );
-    // Remove diffuse coefficient
-    theResMgr->remove( section, "diffuse-coefficient" );
-  }
+    // transparency
+    resMgr->setValue( material, "transparency", transparency() );
 
-  if ( hasSpecularReflection() ) {
-    // Save specular color
-    theResMgr->setValue( section, "specular-color", color( Specular ) );
-    // Save specular coefficient
-    theResMgr->setValue( section, "specular-coefficient", coefficient( Specular ) );
-  }
-  else {
-    // Remove specular color
-    theResMgr->remove( section, "specular-color" );
-    // Remove specular coefficient
-    theResMgr->remove( section, "specular-coefficient" );
-  }
+    // ambient reflection
+    if ( color( Ambient ).isValid() )
+      resMgr->setValue( material, "ambient-color", color( Ambient ) );
+    resMgr->setValue( material, "ambient-coefficient", reflection( Ambient ) );
+    resMgr->setValue( material, "ambient", hasReflection( Ambient ) );
 
-  if ( hasEmissionReflection() ) {
-    // Save emission color
-    theResMgr->setValue( section, "emission-color", color( Emission ) );
-    // Save emission coefficient
-    theResMgr->setValue( section, "emission-coefficient", coefficient( Emission ) );
-  }
-  else {
-    // Remove emission color
-    theResMgr->remove( section, "emission-color" );
-    // Remove emission coefficient
-    theResMgr->remove( section, "emission-coefficient" );
-  }
+    // diffuse reflection
+    if ( color( Diffuse ).isValid() )
+      resMgr->setValue( material, "diffuse-color", color( Diffuse ) );
+    resMgr->setValue( material, "diffuse-coefficient", reflection( Diffuse ) );
+    resMgr->setValue( material, "diffuse", hasReflection( Diffuse ) );
 
-  // Save shininess
-  theResMgr->setValue( section, "shininess", shininess() );
+    // Specular reflection
+    if ( color( Specular ).isValid() )
+      resMgr->setValue( material, "specular-color", color( Specular ) );
+    resMgr->setValue( material, "specular-coefficient", reflection( Specular ) );
+    resMgr->setValue( material, "specular", hasReflection( Specular ) );
+
+    // Emissive reflection
+    if ( color( Emissive ).isValid() )
+      resMgr->setValue( material, "emissive-color", color( Emissive ) );
+    resMgr->setValue( material, "emissive-coefficient", reflection( Emissive ) );
+    resMgr->setValue( material, "emissive", hasReflection( Emissive ) );
+  }
 }
 
 /*!
-  \brief Get resource manager used by this material model.
+  \brief Initialize material model from the preferences
 
-  \return pointer to the resource manager passed previously to the fromResources() method
-  \sa fromResources(), resourceSection()
+  The material name is retrieved from the "material" parameter of the "Geometry" section
+  of the specified resources manager.
+
+  \param resMgr resources manager
+  \sa fromResources(), toResources()
 */
-QtxResourceMgr* Material_Model::resourceMgr() const
+// void Material_Model::fromPreferences( QtxResourceMgr* resMgr )
+// {
+//   if ( resMgr ) {
+//     // default material is Plastic
+//     fromResources( resMgr->stringValue( "Geometry", "material", "Plastic" ) );
+//   }
+// }
+
+/*!
+  \brief Get material type
+  \return \c true if material is physical or \c false otherwise
+  \sa setPhysical()
+*/
+bool Material_Model::isPhysical() const
 {
-  return myResourceMgr;
+  return myIsPhysical;
 }
 
 /*!
-  \brief Get resources section name
-
-  If section name is empty, default material name from "Geometry" section
-  is returned ("front_material" or "back_material" is used depending on
-  the parameter value)
-
-  \param theIsFront the flag indicating that section of front or back material
-  is required
-  \return resource section name passed previously to the fromResources() method
-  \sa fromResources(), resourceMgr()
+  \brief Set material type
+  \param value \c true if material is physical or \c false otherwise
+  \sa isPhysical()
 */
-QString Material_Model::resourceSection( bool theIsFront ) const
+void Material_Model::setPhysical( bool value )
 {
-  return !myResourceSection.isEmpty() ? myResourceSection : 
-    SUIT_Session::session()->resourceMgr()->stringValue("Geometry", 
-							( theIsFront ? "front_material" : "back_material" ),
-							"Gold");
+  myIsPhysical = value;
 }
 
 /*!
-  \brief Check if ambient reflection type is defined for this material
-
-  \return true if ambient reflection type is defined for this material,
-  false - otherwise
+  \brief Check if given reflection is enabled
+  \param type reflection type
+  \return \c true if specified reflection type is enabled or \c false otherwise
+  \sa setReflection(ReflectionType, bool)
 */
-bool Material_Model::hasAmbientReflection()
+bool Material_Model::hasReflection( ReflectionType type ) const
 {
-  return ( !myColors.isEmpty() && myColors.contains(Ambient) || !myCoefficients.isEmpty() && myCoefficients.contains(Ambient) );
+  bool value = false;
+  if ( type >= 0 && type < 4 )
+    value = myReflection[ type ].enabled;
+  return value;
 }
 
 /*!
-  \brief Check if diffuse reflection type is defined for this material
-
-  \return true if diffuse reflection type is defined for this material,
-  false - otherwise
+  \brief Enable/disable given reflection type
+  \param type reflection type
+  \param value boolean flag
+  \sa hasReflection()
 */
-bool Material_Model::hasDiffuseReflection()
+void Material_Model::setReflection( ReflectionType type, bool value )
 {
-  return ( !myColors.isEmpty() && myColors.contains(Diffuse) || !myCoefficients.isEmpty() && myCoefficients.contains(Diffuse) );
-}
-
-/*!
-  \brief Check if specular reflection type is defined for this material
-
-  \return true if specular reflection type is defined for this material,
-  false - otherwise
-*/
-bool Material_Model::hasSpecularReflection()
-{
-  return ( !myColors.isEmpty() && myColors.contains(Specular) || !myCoefficients.isEmpty() && myCoefficients.contains(Specular) );
-}
-
-/*!
-  \brief Check if emission reflection type is defined for this material
-
-  \return true if emission reflection type is defined for this material,
-  false - otherwise
-*/
-bool Material_Model::hasEmissionReflection()
-{
-  return ( !myColors.isEmpty() && myColors.contains(Emission) || !myCoefficients.isEmpty() && myCoefficients.contains(Emission) );
+  if ( type >= 0 && type < 4 )
+    myReflection[ type ].enabled = value;
 }
 
 /*!
   \brief Get color value for the given reflection type
-  \param theReflectionType reflection type
-  \return a color which should be used by the given reflection type
+  \param type reflection type
+  \return color associated with the specified reflection type
   \sa setColor()
 */
-QColor Material_Model::color( ReflectionType theReflectionType ) const
+QColor Material_Model::color( ReflectionType type ) const
 {
-  return myColors[ theReflectionType ];
+  QColor value;
+  if ( type >= 0 && type < 4 )
+    value = myReflection[ type ].color;
+  return value;
 }
 
 /*!
   \brief Set color value for the given reflection type
-
-  \param theReflectionType reflection type
-  \param theColor a color to be used by the given reflection type
+  \param type reflection type
+  \param value color to be used for specified reflection type
   \sa color()
 */
-void Material_Model::setColor( ReflectionType theReflectionType,
-			       const QColor& theColor )
+void Material_Model::setColor( ReflectionType type, const QColor& value )
 {
-  myColors[ theReflectionType ] = theColor;
-}
-
-/*!
-  \brief Set color of the current material from the given string
-  \param theProp the considered property
-  \param theColorName the name of the color property
-  \param theReflectionType the type of reflection
-*/
-void Material_Model::setColor( QString theProp,
-			       QString theColorName,
-			       ReflectionType theReflectionType )
-{
-  int anId = theProp.indexOf( theColorName );
-  if ( anId != -1 ) {
-    QColor c;
-    if ( Qtx::stringToColor( theProp.right( theProp.length() - ( anId + theColorName.length() ) ), c ) )
-      setColor( theReflectionType, c );
-  }
-}
-
-/*!
-  \brief Remove color value for the given reflection type
-
-  \param theReflectionType reflection type
-  \sa color(), setColor()
-*/
-void Material_Model::removeColor( ReflectionType theReflectionType )
-{
-  myColors.remove( theReflectionType );
+  if ( type >= 0 && type < 4 )
+    myReflection[ type ].color = value;
 }
 
 /*!
   \brief Get coefficient value for the given reflection type
-  \param theReflectionType reflection type
-  \return a coefficient which should be used by the given reflection type
-  \sa setCoefficient()
+  \param type reflection type
+  \return coefficient value for the specified reflection type
+  \sa setReflection(ReflectionType, double)
 */
-double Material_Model::coefficient( ReflectionType theReflectionType ) const
+double Material_Model::reflection( ReflectionType type ) const
 {
-  return myCoefficients[ theReflectionType ];
+  double value = 0.0;
+  if ( type >= 0 && type < 4 )
+    value = myReflection[ type ].coef;
+  return value;
 }
 
 /*!
   \brief Set coefficient value for the given reflection type
-
-  \param theReflectionType reflection type
-  \param theCoefficient a coefficient to be used by the given reflection type
-  \sa coefficient()
+  \param type reflection type
+  \param value coefficient to be used by the given reflection type
+  \sa reflection()
 */
-void Material_Model::setCoefficient( ReflectionType theReflectionType,
-				     double theCoefficient )
+void Material_Model::setReflection( ReflectionType type, double value )
 {
-  myCoefficients[ theReflectionType ] = theCoefficient;
-}
-
-/*!
-  \brief Set coefficient of the current material from the given string
-  \param theProp the considered property
-  \param theCoefName the name of the color property
-  \param theReflectionType the type of reflection
-*/
-void Material_Model::setCoefficient( QString theProp,
-				     QString theCoefName,
-				     ReflectionType theReflectionType )
-{
-  int anId = theProp.indexOf( theCoefName );
-  if ( anId != -1 ) {
-    bool ok;
-    double aCoef = theProp.right( theProp.length() - ( anId + theCoefName.length() ) ).toDouble( &ok );
-    if ( ok )
-      setCoefficient( theReflectionType, aCoef );
-  }
-}
-
-/*!
-  \brief Remove coefficient value for the given reflection type
-
-  \param theReflectionType reflection type
-  \sa coefficient(), setCoefficient()
-*/
-void Material_Model::removeCoefficient( ReflectionType theReflectionType )
-{
-  myCoefficients.remove( theReflectionType );
+  if ( type >= 0 && type < 4 )
+    myReflection[ type ].coef = value;
 }
 
 /*!
   \brief Get shininess value
-  \return a shininess value of this material
+  \return shininess value of the material
   \sa setShininess()
 */
 double Material_Model::shininess() const
@@ -674,11 +425,186 @@ double Material_Model::shininess() const
 
 /*!
   \brief Set shininess value
-
-  \param theShininess a shininess value of this material
+  \param value new shininess value
   \sa shininess()
 */
-void Material_Model::setShininess( double theShininess)
+void Material_Model::setShininess( double value )
 {
-  myShininess = theShininess;
+  myShininess = value;
 }
+
+/*!
+  \brief Get transparency value
+  \return transparency value of the material
+  \sa setTransparency()
+*/
+double Material_Model::transparency() const
+{
+  return myTransparency;
+}
+
+/*!
+  \brief Set transparency value
+  \param value new transparency value
+  \sa transparency()
+*/
+void Material_Model::setTransparency( double value )
+{
+  myTransparency = value;
+}
+
+/*!
+  \brief Initialize material model with default values
+*/
+void Material_Model::init()
+{  
+  QColor c;
+
+  // non-physical by default
+  setPhysical( false );
+  // shininess
+  setShininess( 0.039 );
+  // transparency
+  setTransparency( 0.0 );
+
+  // ambient reflection (enabled by default)
+  Qtx::stringToColor( "#333333", c );
+  setColor( Ambient, c );
+  setReflection( Ambient, 0.3 );
+  setReflection( Ambient, true );
+
+  // diffuse reflection (enabled by default)
+  Qtx::stringToColor( "#000000", c );
+  setColor( Diffuse, c );
+  setReflection( Diffuse, 0.65 );
+  setReflection( Diffuse, true );
+
+  // specular reflection (enabled by default)
+  Qtx::stringToColor( "#ffffff", c );
+  setColor( Specular, c );
+  setReflection( Specular, 0.0  );
+  setReflection( Specular, true );
+
+  // emissive reflection (disabled by default)
+  Qtx::stringToColor( "#000000", c );
+  setColor( Emissive, c );
+  setReflection( Emissive, 0.0  );
+  setReflection( Emissive, false );
+}
+
+/*!
+  \brief Construct OCCT material aspect from material model
+  \return material aspect object with corresponding properties
+*/
+Graphic3d_MaterialAspect Material_Model::getMaterialOCCAspect()
+{
+  // Get material aspect from the current model
+  Graphic3d_MaterialAspect aspect;
+
+  QColor c;
+  
+  // ambient reflection
+  if ( color( Ambient ).isValid() ) {
+    c = color( Ambient );
+    aspect.SetAmbientColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
+  }
+  aspect.SetAmbient( reflection( Ambient ));
+  if ( hasReflection( Ambient ) )
+    aspect.SetReflectionModeOn( Graphic3d_TOR_AMBIENT );
+  else
+    aspect.SetReflectionModeOff( Graphic3d_TOR_AMBIENT );
+  
+  // diffuse reflection
+  if ( color( Diffuse ).isValid() ) {
+    c = color( Diffuse );
+    aspect.SetDiffuseColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
+  }
+  aspect.SetDiffuse( reflection( Diffuse ));
+  if ( hasReflection( Diffuse ) )
+    aspect.SetReflectionModeOn( Graphic3d_TOR_DIFFUSE );
+  else
+    aspect.SetReflectionModeOff( Graphic3d_TOR_DIFFUSE );
+
+  // specular reflection
+  if ( color( Specular ).isValid() ) {
+    c = color( Specular );
+    aspect.SetSpecularColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
+  }
+  aspect.SetSpecular( reflection( Specular ));
+  if ( hasReflection( Specular ) )
+    aspect.SetReflectionModeOn( Graphic3d_TOR_SPECULAR );
+  else
+    aspect.SetReflectionModeOff( Graphic3d_TOR_SPECULAR );
+
+  // emissive reflection
+  if ( color( Emissive ).isValid() ) {
+    c = color( Emissive );
+    aspect.SetEmissiveColor( Quantity_Color( c.redF(), c.greenF(), c.blueF(), Quantity_TOC_RGB ) );
+  }
+  aspect.SetEmissive( reflection( Emissive ));
+  if ( hasReflection( Emissive ) )
+    aspect.SetReflectionModeOn( Graphic3d_TOR_EMISSION );
+  else
+    aspect.SetReflectionModeOff( Graphic3d_TOR_EMISSION );
+  
+  // shininess
+  aspect.SetShininess( shininess() );
+
+  // transparency
+  aspect.SetTransparency( transparency() );
+
+  // material type
+  aspect.SetMaterialType( isPhysical() ? Graphic3d_MATERIAL_PHYSIC : Graphic3d_MATERIAL_ASPECT );
+
+  return aspect;
+}
+
+/*!
+  \brief Construct VTK property from material model
+  \return VTK property with correspondent material properties
+*/
+GEOM_VTKPropertyMaterial* Material_Model::getMaterialVTKProperty()
+{
+  // NOTE: In VTK it's impossible to switch on/off specific reflection type
+  // NOTE: In VTK emissive reflection type is not supported
+  // NOTE: In VTK shininess is specified via SpecularPower attribute
+  // NOTE: In VTK transparency is specified via Opacity attribute
+
+  // Get material properties from the current model
+  GEOM_VTKPropertyMaterial* prop = GEOM_VTKPropertyMaterial::New();
+
+  QColor c;
+
+  // ambient reflection
+  if ( color( Ambient ).isValid() && hasReflection( Ambient ) ) {
+    c = color( Ambient );
+    prop->SetAmbientColor( c.redF(), c.greenF(), c.blueF() );
+    prop->SetAmbient( reflection( Ambient ) );
+  }
+
+  // diffuse reflection
+  if ( color( Diffuse ).isValid() && hasReflection( Diffuse ) ) {
+    c = color( Diffuse );
+    prop->SetDiffuseColor( c.redF(), c.greenF(), c.blueF() );
+    prop->SetDiffuse( reflection( Diffuse ) );
+  }
+
+  // specular reflection
+  if ( color( Specular ).isValid() && hasReflection( Specular ) ) {
+    c = color( Specular );
+    prop->SetSpecularColor( c.redF(), c.greenF(), c.blueF() );
+    prop->SetSpecular( reflection( Specular ) );
+  }
+
+  // shininess
+  prop->SetSpecularPower( shininess()*100.0 );
+
+  // transparency
+  prop->SetOpacity( 1 - transparency() );
+
+  // material type
+  prop->SetPhysical( isPhysical() );
+
+  return prop;
+}
+

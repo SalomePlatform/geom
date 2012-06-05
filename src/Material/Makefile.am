@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,7 @@ libMaterial_la_CPPFLAGS =		\
 	-I$(srcdir)/../OBJECT
 
 libMaterial_la_LDFLAGS  = -lVTKViewer -lOCCViewer -lsuit -lSalomeApp \
+	../OBJECT/libGEOMObject.la		\
 	$(GUI_LDFLAGS) -lqtx \
 	$(QT_MT_LIBS) \
 	$(CAS_LDFLAGS) -lTKV3d -lTKGeomBase \

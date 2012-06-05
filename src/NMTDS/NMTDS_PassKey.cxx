@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -20,12 +20,12 @@
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
 
-// File:        NMTDS_Algo.cxx
-// Created:     Sat Dec 04 12:39:47 2004
+// File:        NMTDS_PassKey.cxx
+// Created:     
 // Author:      Peter KURNEV
 //              <peter@PREFEX>
 //
-#include <NMTDS_PassKey.ixx>
+#include <NMTDS_PassKey.hxx>
 
 #include <stdio.h>
 #include <string.h>

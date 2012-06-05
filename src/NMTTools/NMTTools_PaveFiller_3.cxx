@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,14 +18,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        NMTTools_PaveFiller_3.cxx
 // Created:     Mon Dec  8 16:06:56 2003
 // Author:      Peter KURNEV
-
-#include <NMTTools_PaveFiller.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+//              <pkv@irinox>
+//
+#include <NMTTools_PaveFiller.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -40,20 +40,18 @@
 #include <NMTDS_Iterator.hxx>
 #include <NMTDS_ShapesDataStructure.hxx>
 #include <NMTDS_InterfPool.hxx>
+#include <IntTools_Context.hxx>
 
 
-// Modified  Thu Sep 14 14:35:18 2006 
-// Contribution of Samtech www.samcef.com BEGIN
 static
   Standard_Boolean Contains(const TopoDS_Face& aF,
                             const TopoDS_Vertex& aV);
-// Contribution of Samtech www.samcef.com END
 
 //=======================================================================
 // function: PerformVF
-// purpose: 
+// purpose:
 //=======================================================================
-  void NMTTools_PaveFiller::PerformVF() 
+  void NMTTools_PaveFiller::PerformVF()
 {
   myIsDone=Standard_False;
   //
@@ -65,7 +63,7 @@ static
   //
   BOPTools_CArray1OfVSInterference& aVSs=myIP->VSInterferences();
   //
-  // V/E Interferences 
+  // V/E Interferences
   myDSIt->Initialize(TopAbs_VERTEX, TopAbs_FACE);
   //
   // BlockLength correction
@@ -100,18 +98,14 @@ static
         //
       aF2=TopoDS::Face(myDS->Shape(aWith));
       //
-      // Modified  Thu Sep 14 14:35:18 2006 
+      // Modified  Thu Sep 14 14:35:18 2006
       // Contribution of Samtech www.samcef.com BEGIN
       if (Contains(aF2, aV1)) {
         continue;
       }
       // Contribution of Samtech www.samcef.com END
       //
-#if OCC_VERSION_LARGE > 0x06050200
       aFlag=myContext->ComputeVS (aV1, aF2, aU, aV);
-#else
-      aFlag=myContext.ComputeVS (aV1, aF2, aU, aV);
-#endif
       //
       if (!aFlag) {
         //
@@ -135,11 +129,11 @@ static
   }
   myIsDone=Standard_True;
 }
-// Modified  Thu Sep 14 14:35:18 2006 
+// Modified  Thu Sep 14 14:35:18 2006
 // Contribution of Samtech www.samcef.com BEGIN
 //=======================================================================
 //function : Contains
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean Contains(const TopoDS_Face& aF,
                           const TopoDS_Vertex& aV)

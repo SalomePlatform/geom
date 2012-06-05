@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -21,15 +21,15 @@
 //
 
 // File:        GEOMAlgo_PassKeyMapHasher.cxx
-// Created:     
+// Created:
 // Author:      Peter KURNEV
 //              <pkv@irinox>
 //
-#include <GEOMAlgo_PassKeyMapHasher.ixx>
+#include <GEOMAlgo_PassKeyMapHasher.hxx>
 
 //=======================================================================
 //function : HashCode
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Integer GEOMAlgo_PassKeyMapHasher::HashCode(const GEOMAlgo_PassKey& aPK,
                                                        const Standard_Integer Upper)
@@ -38,7 +38,7 @@
 }
 //=======================================================================
 //function :IsEqual
-//purpose  : 
+//purpose  :
 //=======================================================================
   Standard_Boolean GEOMAlgo_PassKeyMapHasher::IsEqual(const GEOMAlgo_PassKey& aPK1,
                                                       const GEOMAlgo_PassKey& aPK2)

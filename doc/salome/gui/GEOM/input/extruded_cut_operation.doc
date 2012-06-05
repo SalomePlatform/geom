@@ -8,18 +8,26 @@ The <b>Extruded cut</b> operation allows you to easily remove material from a \b
 
 To produce the <b>extruded cut</b>:
 
-1. Draw the \b profile of the extrusion. It can be:
+<ol>
+  <li> Draw the \b profile of the extrusion. It can be:
+  <ul>
+    <li> a <a href="create_sketcher_page.html">\b Sketch </a> drawn on a planar face of the object you want to cut.</li>
+    <li> any closed edge or wire of the desired shape (circle, ellipse ...).</li>
+  </ul>
+  </li>
 
- - a <a href="create_sketcher_page.html">\b Sketch </a> drawn on a planar face of the object you want to cut.
- 
- - any closed edge or wire of the desired shape (circle, ellipse ...).
+  <li> In the <b>Main Menu</b> select <b>Operations - > Extruded Cut</b> or click on
 
-2. In the <b>Main Menu</b> select <b>Operations - > Extruded Cut</b> or click on 
-\image html extruded_cut.png
+  \image html extruded_cut.png
 
-3. Fill in the dialog box fields:
+  </li>
 
-\image html extruded_cut_dlg.png
+  <li> Fill in the dialog box fields:
+
+  \image html extruded_cut_dlg.png 
+
+  </li> 
+</ol>
 
 The input arguments are:
 

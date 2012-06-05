@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -59,11 +59,6 @@ public:
   // DISPLAY MODE methods : 0 - wireframe, 1 - shading
   // Set display mode for the viewer (current viewer if <viewWindow> - 0 )
   void SetDisplayMode( const int, SUIT_ViewWindow* = 0 );
-  // Get display mode of the viewer (current viewer if <viewWindow> - 0 )
-  int  GetDisplayMode( SUIT_ViewWindow* = 0 );
-  // Invert display mode ( shadin <-> wireframe ) for the viewer 
-  // (current viewer if <viewWindow> = 0 )
-  void InvertDisplayMode( SUIT_ViewWindow* = 0 );
 
   // VECTOR MODE methods
   // Set vectror mode for the viewer

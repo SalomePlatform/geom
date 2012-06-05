@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -262,6 +262,9 @@ class GEOM_I_EXPORT GEOM_IShapesOperations_i :
                                              GEOM::GEOM_Object_ptr theShapeWhat);
 
   GEOM::GEOM_Object_ptr GetSame (GEOM::GEOM_Object_ptr theShapeWhere,
+                                 GEOM::GEOM_Object_ptr theShapeWhat);
+
+  GEOM::ListOfLong* GetSameIDs  (GEOM::GEOM_Object_ptr theShapeWhere,
                                  GEOM::GEOM_Object_ptr theShapeWhat);
 
   ::GEOMImpl_IShapesOperations* GetOperations()

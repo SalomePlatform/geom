@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -92,29 +92,15 @@ bool DisplayGUI::OnGUIEvent(int theCommandID, SUIT_Desktop* parent)
   SALOME_ListIO selected;
   Sel->selectedObjects( selected );
 
-  QString aDispModeName;
-  int aDispMode;
-  if ( theCommandID == GEOMOp::OpDisplayMode )
-    aDispMode = GetDisplayMode();
-
   switch ( theCommandID ) {
-  case GEOMOp::OpDisplayMode:    // MENU VIEW - DISPLAY MODE - WIREFRAME/SHADING/SHADING WITH EDGES
-    //InvertDisplayMode();
-    switch ( aDispMode) {
-    case 0:
-      aDispModeName = tr( "GEOM_MEN_WIREFRAME" );
-      break;
-    case 1:
-      aDispModeName = tr("GEOM_MEN_SHADING");
-      break;
-    case 2:
-      aDispModeName = tr("GEOM_MEN_SHADING_WITH_EDGES");
-      break;
-    default:
-      break;
-    }
-    getGeometryGUI()->action( GEOMOp::OpDisplayMode )->setText( aDispModeName );
-    getGeometryGUI()->menuMgr()->update();
+  case GEOMOp::OpDMWireframe:         // MENU VIEW - DISPLAY MODE - WIREFRAME
+    SetDisplayMode( 0 );
+    break;
+  case GEOMOp::OpDMShading:           // MENU VIEW - DISPLAY MODE - SHADING
+    SetDisplayMode( 1 );
+    break;
+  case GEOMOp::OpDMShadingWithEdges:  // MENU VIEW - DISPLAY MODE - SHADING WITH EDGES
+    SetDisplayMode( 2 );
     break;
   case GEOMOp::OpShowAll:        // MENU VIEW - SHOW ALL
     getGeometryGUI()->EmitSignalDeactivateDialog();
@@ -412,27 +398,6 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
 }
 
 //=====================================================================================
-// function : DisplayGUI::GetDisplayMode()
-// purpose  : Get display mode of the viewer (current viewer if <viewWindow> - 0 )
-//=====================================================================================
-int DisplayGUI::GetDisplayMode( SUIT_ViewWindow* viewWindow )
-{
-  int dispMode = 0;
-  if ( !viewWindow ) 
-    viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
-  if ( viewWindow->getViewManager()->getType() == SVTK_Viewer::Type() ) {
-    SVTK_View* aView = ((SVTK_ViewWindow*)viewWindow)->getView();
-    dispMode = aView->GetDisplayMode();
-  } 
-  else if ( viewWindow->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {
-    OCCViewer_Viewer* v3d = ((OCCViewer_ViewManager*)(viewWindow->getViewManager()))->getOCCViewer();
-    Handle(AIS_InteractiveContext) ic = v3d->getAISContext();    
-    dispMode = ic->DisplayMode();
-  }
-  return dispMode;
-}
-
-//=====================================================================================
 // function : DisplayGUI::SetVectorsMode()
 // purpose  : Set vector mode for the viewer
 //=====================================================================================
@@ -491,16 +456,6 @@ int DisplayGUI::GetVectorMode( SUIT_ViewWindow* viewWindow )
   if ( !viewWindow ) 
     viewWindow = getGeometryGUI()->getApp()->desktop()->activeWindow();
   return viewWindow->property( "VectorsMode" ).toBool();
-}
-
-//=====================================================================================
-// function : DisplayGUI::InvertDisplayMode()
-// purpose  : Invert display mode ( shading <-> wireframe ) for the viewer 
-//            (current viewer if <viewWindow> = 0 )
-//=====================================================================================
-void DisplayGUI::InvertDisplayMode( SUIT_ViewWindow* viewWindow )
-{
-  SetDisplayMode( 1 - GetDisplayMode( viewWindow ) );
 }
 
 //=====================================================================================

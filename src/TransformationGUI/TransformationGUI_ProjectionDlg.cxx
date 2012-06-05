@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -29,11 +29,14 @@
 #include <DlgRef.h>
 #include <GeometryGUI.h>
 #include <GEOMBase.h>
+#include <GEOMImpl_Types.hxx>
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_SelectionMgr.h>
+
+#include <TColStd_MapOfInteger.hxx>
 
 //=================================================================================
 // class    : TransformationGUI_ProjectionDlg()
@@ -205,12 +208,20 @@ void TransformationGUI_ProjectionDlg::SetEditCurrentArgument()
 
     myGroup->PushButton2->setDown(false);
     myGroup->LineEdit2->setEnabled(false);
+
+    TColStd_MapOfInteger aMap;
+    aMap.Add( GEOM_POINT );
+    aMap.Add( GEOM_EDGE );
+    aMap.Add( GEOM_WIRE );
+    globalSelection( aMap );
   }
   else if (send == myGroup->PushButton2) {
     myEditCurrentArgument = myGroup->LineEdit2;
 
     myGroup->PushButton1->setDown(false);
     myGroup->LineEdit1->setEnabled(false);
+
+    globalSelection( GEOM_FACE );
   }
 
   // enable line edit

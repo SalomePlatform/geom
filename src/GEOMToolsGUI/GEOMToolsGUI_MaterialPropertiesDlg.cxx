@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,85 +15,75 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File   : GEOMToolsGUI_MaterialPropertiesDlg.cxx
 // Author : Margarita KARPUNINA, Open CASCADE S.A.S. (margarita.karpunina@opencascade.com)
 
 #include "GEOMToolsGUI_MaterialPropertiesDlg.h"
 
-#include "Material_Model.h"
-#include "Material_ResourceMgr.h"
+#include "GeometryGUI.h"
+#include "GEOM_Constants.h"
+#include "GEOM_VTKPropertyMaterial.hxx"
+#include "GEOMBase.h"
 
-#include <GeometryGUI.h>
-#include <GEOM_Constants.h>
-#include <GEOM_Displayer.h>
-#include <GEOM_Actor.h>
-
-#include <GEOMBase.h>
-
-#include <Basics_OCCTVersion.hxx>
-
-#include <SALOME_ListIO.hxx>
-#include <SALOME_ListIteratorOfListIO.hxx>
-
-#include <SVTK_Functor.h>
-#include <SVTK_Prs.h>
-#include <SVTK_ViewModel.h>
-#include <SVTK_ViewWindow.h>
-#include <SVTK_View.h>
-
-#include <VTKViewer_Algorithm.h>
-
-#include <OCCViewer_ViewModel.h>
-
+#include <QtxColorButton.h>
+#include <QtxDoubleSpinBox.h>
 #include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_OverrideCursor.h>
 #include <SUIT_ResourceMgr.h>
 #include <SUIT_Session.h>
 #include <SUIT_ViewManager.h>
-
+#include <SALOME_ListIteratorOfListIO.hxx>
+#include <OCCViewer_ViewModel.h>
+#include <SVTK_ViewModel.h>
+#include <SVTK_ViewWindow.h>
+#include <SVTK_View.h>
+#include <LightApp_SelectionMgr.h>
 #include <SalomeApp_Application.h>
 #include <SalomeApp_Study.h>
+#include <SalomeApp_Tools.h>
 
-#include <LightApp_SelectionMgr.h>
-
-#include <QtxColorButton.h>
-#include <QtxDoubleSpinBox.h>
-
-// OCCT Includes
-#include <Graphic3d_AspectFillArea3d.hxx>
-
-// VTK includes
-#include <vtkRenderer.h>
-#include <vtkProperty.h>
-
-// QT Includes
-#include <QApplication>
-#include <QButtonGroup>
 #include <QCheckBox>
 #include <QGridLayout>
-#include <QGroupBox>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
-#include <QListWidget>
 #include <QMap>
-#include <QMessageBox>
+#include <QMenu>
 #include <QPushButton>
-#include <QSpinBox>
-#include <QTabWidget>
 #include <QVBoxLayout>
 
-#define MARGIN  9
-#define SPACING 6
+#define MARGIN  9  // layout spacing
+#define SPACING 6  // layout margin
+
+/*!
+  \class GEOMToolsGUI_MaterialList
+  \brief Internal class, used to handle context menu event from materials list
+  \internal
+*/
+
+/*!
+  \brief Contructor
+ */
+GEOMToolsGUI_MaterialList::GEOMToolsGUI_MaterialList( QWidget* parent )
+  : QListWidget( parent )
+{}
+
+/*!
+  \brief Context menu event, emits context menu signal passing event as parameter
+*/
+void GEOMToolsGUI_MaterialList::contextMenuEvent( QContextMenuEvent* e )
+{
+  emit contextMenu( e );
+}
 
 /*!
   \class GEOMToolsGUI_MaterialPropertiesDlg
-  \brief GEOM material properties dialog box class.
+  \brief GEOM material properties dialog box class
 
-  The dialog box lists all GEOM materials available via the application and allows
-  user to create own materials.
+  The dialog box is used to set material properties for the presentation objects.
 */
 
 /*!
@@ -101,453 +91,194 @@
   \param parent parent widget
 */
 GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget* parent )
-  : QtxDialog( parent, true, true, OK | Close | Apply | Help),
-    myResMgr( 0 )
+  : QtxDialog( parent, true, true, OK | Close | Apply | Help )
 {
   // Set title
   setWindowTitle( tr( "MATERIAL_PROPERTIES_TLT" ) );
 
-  // Set viewer type
-  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( app ) {
-    SUIT_ViewWindow* window = app->desktop()->activeWindow();
-    if ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() )
-      myViewerType = OCC;
-    else if ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() )
-      myViewerType = VTK;
-  }
-
-  // Create main layout
+  // main layout
   QVBoxLayout* main = new QVBoxLayout( mainFrame() );
-  main->setMargin( 0 ); main->setSpacing( SPACING );
+  main->setMargin( 0 );
+  main->setSpacing( SPACING );
 
-  // Create main widgets
-  myBackMaterialCheck = new QCheckBox( tr( "MATERIAL_BACK_CHK" ), this );
-  QFrame* fr = new QFrame( this );
+  // add top-level frame box to enclose all main widgets (excluding buttons)
+  QFrame* fr = new QFrame( mainFrame() );
   fr->setFrameStyle( QFrame::Box | QFrame::Sunken );
-
-  main->addWidget( myBackMaterialCheck );
   main->addWidget( fr );
 
-  // Create editor widgets
-  myMaterialList = new QListWidget( fr );
-  myMaterialTab  = new QTabWidget( fr );
+  // materials list widget
+  myMaterials = new GEOMToolsGUI_MaterialList( fr );
+  // properties widget
+  QWidget* propWidget = new QWidget( fr );
 
+  // layout main widgets
   QHBoxLayout* frLayout = new QHBoxLayout( fr );
-  frLayout->setMargin( MARGIN ); frLayout->setSpacing( SPACING );
-  frLayout->addWidget( myMaterialList );
-  frLayout->addWidget( myMaterialTab );
-  frLayout->setStretchFactor( myMaterialList, 1 );
-  frLayout->setStretchFactor( myMaterialTab, 2 );
+  frLayout->setMargin( MARGIN );
+  frLayout->setSpacing( SPACING );
+  frLayout->addWidget( myMaterials );
+  frLayout->addWidget( propWidget );
 
-  // ======================= Create a tab for front material ======================= 
-  QWidget* w1 = new QWidget( myMaterialTab );
-  QVBoxLayout* vLayout1 = new QVBoxLayout( w1 );
+  // layout for material properties widgets
+  QGridLayout* propLayout = new QGridLayout( propWidget );
+  propLayout->setMargin( 0 );
+  propLayout->setSpacing( SPACING );
 
-  QGridLayout* gLayout1 = new QGridLayout( w1 );
-  gLayout1->setMargin( MARGIN ); gLayout1->setSpacing( SPACING );
+  // current color widgets
+  myColorLab = new QLabel( tr( "CURRENT_COLOR" ), propWidget );
+  myColor = new QtxColorButton( propWidget );
 
-  // ----------------- "Ambient" reflection type group box -----------------
-  myAmbientGroupF = new QGroupBox( tr( "AMBIENT_GRP" ), w1 );
-  myAmbientGroupF->setCheckable(true);
-  connect( myAmbientGroupF, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) ); 
+  // "physical" material type widgets
+  myPhysical = new QCheckBox( tr( "PHYSICAL" ), propWidget );
 
-  // Ambient color
-  QLabel* ambColorLab1 = new QLabel( tr( "COLOR" ), myAmbientGroupF );
-  myAmbientColorF = new QtxColorButton( myAmbientGroupF );
-  myAmbientColorF->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( myAmbientColorF, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
+  // reflection components widgets
+  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
+  {
+    Reflection refl;
 
-  // Ambient coefficient
-  QLabel* ambCoefficientLab1 = new QLabel( tr( "COEFFICIENT" ), myAmbientGroupF );
-  myAmbientCoefntF = new QtxDoubleSpinBox( myAmbientGroupF );
-  myAmbientCoefntF->setMaximum(1);
-  myAmbientCoefntF->setSingleStep(0.05);
-  connect( myAmbientCoefntF, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
+    refl.label = new QLabel( tr( QString( "REFLECTION_%1" ).arg( i ).toLatin1().data() ), propWidget );
 
-  // Ambient group box layout
-  QGridLayout* ambientLayout1 = new QGridLayout( myAmbientGroupF );
-  ambientLayout1->setMargin( MARGIN ); ambientLayout1->setSpacing( SPACING );
-  ambientLayout1->addWidget( ambColorLab1,       0, 0 );
-  ambientLayout1->addWidget( myAmbientColorF,    0, 1 );
-  ambientLayout1->addWidget( ambCoefficientLab1, 1, 0 );
-  ambientLayout1->addWidget( myAmbientCoefntF,   1, 1 );
+    refl.color = new QtxColorButton( propWidget );
+    //refl.color->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
 
-  // ----------------- "Diffuse" reflection type group box -----------------
-  myDiffuseGroupF = new QGroupBox( tr( "DIFFUSE_GRP" ), w1 );
-  myDiffuseGroupF->setCheckable(true);
-  connect( myDiffuseGroupF, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) );
+    refl.coef = new QtxDoubleSpinBox( propWidget );
+    refl.coef->setPrecision( 4 );
+    refl.coef->setDecimals( 4 ); 
+    refl.coef->setRange( 0., 1. );
+    refl.coef->setSingleStep( 0.05 );
+    refl.coef->setMinimumWidth( 80 );
 
-  // Diffuse color
-  QLabel* difColorLab1 = new QLabel( tr( "COLOR" ), myDiffuseGroupF );
-  myDiffuseColorF = new QtxColorButton( myDiffuseGroupF );
-  myDiffuseColorF->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( myDiffuseColorF, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
+    refl.enabled = new QCheckBox( tr( "ENABLED" ), propWidget );
 
-  // Diffuse coefficient
-  QLabel* difCoefficientLab1 = new QLabel( tr( "COEFFICIENT" ), myDiffuseGroupF );
-  myDiffuseCoefntF = new QtxDoubleSpinBox( myDiffuseGroupF );
-  myDiffuseCoefntF->setMaximum(1);
-  myDiffuseCoefntF->setSingleStep(0.05);
-  connect( myDiffuseCoefntF, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
+    myReflection << refl;
+  }
 
-  // Diffuse group box layout
-  QGridLayout* diffuseLayout1 = new QGridLayout( myDiffuseGroupF );
-  diffuseLayout1->setMargin( MARGIN ); diffuseLayout1->setSpacing( SPACING );
-  diffuseLayout1->addWidget( difColorLab1,       0, 0 );
-  diffuseLayout1->addWidget( myDiffuseColorF,    0, 1 );
-  diffuseLayout1->addWidget( difCoefficientLab1, 1, 0 );
-  diffuseLayout1->addWidget( myDiffuseCoefntF,   1, 1 );
+  // shininess widgets
+  QLabel* shininessLab = new QLabel( tr( "SHININESS" ), propWidget );
+  myShininess = new QtxDoubleSpinBox( propWidget );
+  myShininess->setPrecision( 4 );
+  myShininess->setDecimals( 4 ); 
+  myShininess->setRange( 0., 1. );
+  myShininess->setSingleStep( 0.05 );
 
-  // ----------------- "Specular" reflection type group box -----------------
-  mySpecularGroupF = new QGroupBox( tr( "SPECULAR_GRP" ), w1 );
-  mySpecularGroupF->setCheckable(true);
-  connect( mySpecularGroupF, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) );
+  // separator widgets
+  QFrame* line1 = new QFrame( propWidget );
+  line1->setFrameStyle( QFrame::HLine | QFrame::Sunken );
+  QFrame* line2 = new QFrame( propWidget );
+  line2->setFrameStyle( QFrame::HLine | QFrame::Sunken );
 
-  // Specular color
-  QLabel* specColorLab1 = new QLabel( tr( "COLOR" ), mySpecularGroupF );
-  mySpecularColorF = new QtxColorButton( mySpecularGroupF );
-  mySpecularColorF->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( mySpecularColorF, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
+  // add / remove material buttons
+  myAddButton = new QPushButton( tr( "ADD_MATERIAL" ),    propWidget );
+  myDelButton = new QPushButton( tr( "DELETE_MATERIAL" ), propWidget );
 
-  // Specular coefficient
-  QLabel* specCoefficientLab1 = new QLabel( tr( "COEFFICIENT" ), mySpecularGroupF );
-  mySpecularCoefntF = new QtxDoubleSpinBox( mySpecularGroupF );
-  mySpecularCoefntF->setMaximum(1);
-  mySpecularCoefntF->setSingleStep(0.05);
-  connect( mySpecularCoefntF, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
+  // buttons layout
+  QHBoxLayout* btnLayout = new QHBoxLayout;
+  btnLayout->setMargin( 0 );
+  btnLayout->setSpacing( SPACING );
+  btnLayout->addWidget( myAddButton );
+  btnLayout->addWidget( myDelButton );
 
-  // Specular group box layout
-  QGridLayout* specularLayout1 = new QGridLayout( mySpecularGroupF );
-  specularLayout1->setMargin( MARGIN ); specularLayout1->setSpacing( SPACING );
-  specularLayout1->addWidget( specColorLab1,       0, 0 );
-  specularLayout1->addWidget( mySpecularColorF,    0, 1 );
-  specularLayout1->addWidget( specCoefficientLab1, 1, 0 );
-  specularLayout1->addWidget( mySpecularCoefntF,   1, 1 );
+  // layout all properties widgets together
+  propLayout->addWidget( myColorLab, 0, 0 );
+  propLayout->addWidget( myColor,    0, 1 );
+  propLayout->addWidget( line1, 1, 0, 1, 4 );
+  propLayout->addWidget( myPhysical,     2, 0, 1, 2 );
+  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
+    propLayout->addWidget( myReflection[i].label,   i+3, 0 );
+    propLayout->addWidget( myReflection[i].color,   i+3, 1 );
+    propLayout->addWidget( myReflection[i].coef,    i+3, 2 );
+    propLayout->addWidget( myReflection[i].enabled, i+3, 3 );
+  }
+  propLayout->addWidget( shininessLab,   7, 0 );
+  propLayout->addWidget( myShininess,    7, 2 );
+  propLayout->addWidget( line2, 8, 0, 1, 4 );
+  propLayout->setRowStretch( 9, 5 );
+  propLayout->addLayout( btnLayout, 10, 0, 1, 4 );
 
-  // ----------------- "Emission" reflection type group box -----------------
-  myEmissionGroupF = new QGroupBox( tr( "EMISSION_GRP" ), w1 );
-  myEmissionGroupF->setCheckable(true);
-  connect( myEmissionGroupF, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) );
-
-  // Emission color
-  QLabel* emisColorLab1 = new QLabel( tr( "COLOR" ), myEmissionGroupF );
-  myEmissionColorF = new QtxColorButton( myEmissionGroupF );
-  myEmissionColorF->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( myEmissionColorF, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
-
-  // Emission coefficient
-  QLabel* emisCoefficientLab1 = new QLabel( tr( "COEFFICIENT" ), myEmissionGroupF );
-  myEmissionCoefntF = new QtxDoubleSpinBox( myEmissionGroupF );
-  myEmissionCoefntF->setMaximum(1);
-  myEmissionCoefntF->setSingleStep(0.05);
-  connect( myEmissionCoefntF, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Emission group box layout
-  QGridLayout* emissionLayout1 = new QGridLayout( myEmissionGroupF );
-  emissionLayout1->setMargin( MARGIN ); emissionLayout1->setSpacing( SPACING );
-  emissionLayout1->addWidget( emisColorLab1,       0, 0 );
-  emissionLayout1->addWidget( myEmissionColorF,    0, 1 );
-  emissionLayout1->addWidget( emisCoefficientLab1, 1, 0 );
-  emissionLayout1->addWidget( myEmissionCoefntF,   1, 1 );
-
-  // Erase emission group in case of VTK viewer
-  if ( myViewerType == VTK )
-    myEmissionGroupF->hide();
-
-  // Add group boxes to the main grid layout of the frame with material properties
-  gLayout1->addWidget( myAmbientGroupF,  0, 0 );
-  gLayout1->addWidget( myDiffuseGroupF,  0, 1 );
-  gLayout1->addWidget( mySpecularGroupF, 1, 0 );
-  gLayout1->addWidget( myEmissionGroupF, 1, 1 );
-
-  // Shininess
-  QLabel* shininessLab1 = new QLabel( tr( "SHININESS" ), w1 );
-  myShininessF = new QtxDoubleSpinBox( w1 );
-  myShininessF->setMaximum(1);
-  myShininessF->setSingleStep(0.05);
-  connect( myShininessF, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Shininess layout
-  QHBoxLayout* shLayout1 = new QHBoxLayout( w1 );
-  shLayout1->setMargin( MARGIN ); shLayout1->setSpacing( SPACING );
-  shLayout1->addWidget( shininessLab1 );
-  shLayout1->addWidget( myShininessF );
-
-  // Fill initial vertical layout of the reflection type group box
-  vLayout1->addLayout( gLayout1 );
-  vLayout1->addLayout( shLayout1 );
-  vLayout1->addStretch();
-
-  // ======================= Create a tab for back material ======================= 
-  myMaterialBWidget = new QWidget( myMaterialTab );
-  QVBoxLayout* vLayout2 = new QVBoxLayout( myMaterialBWidget );
-
-  QGridLayout* gLayout2 = new QGridLayout( myMaterialBWidget );
-  gLayout2->setMargin( MARGIN ); gLayout2->setSpacing( SPACING );
-
-  // ----------------- "Ambient" reflection type group box -----------------
-  myAmbientGroupB = new QGroupBox( tr( "AMBIENT_GRP" ), myMaterialBWidget );
-  myAmbientGroupB->setCheckable(true);
-  connect( myAmbientGroupB, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) ); 
-
-  // Ambient color
-  QLabel* ambColorLab2 = new QLabel( tr( "COLOR" ), myAmbientGroupB );
-  myAmbientColorB = new QtxColorButton( myAmbientGroupB );
-  myAmbientColorB->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( myAmbientColorB, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
-
-  // Ambient coefficient
-  QLabel* ambCoefficientLab2 = new QLabel( tr( "COEFFICIENT" ), myAmbientGroupB );
-  myAmbientCoefntB = new QtxDoubleSpinBox( myAmbientGroupB );
-  myAmbientCoefntB->setMaximum(1);
-  myAmbientCoefntB->setSingleStep(0.05);
-  connect( myAmbientCoefntB, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Ambient group box layout
-  QGridLayout* ambientLayout2 = new QGridLayout( myAmbientGroupB );
-  ambientLayout2->setMargin( MARGIN ); ambientLayout2->setSpacing( SPACING );
-  ambientLayout2->addWidget( ambColorLab2,       0, 0 );
-  ambientLayout2->addWidget( myAmbientColorB,    0, 1 );
-  ambientLayout2->addWidget( ambCoefficientLab2, 1, 0 );
-  ambientLayout2->addWidget( myAmbientCoefntB,   1, 1 );
-
-  // ----------------- "Diffuse" reflection type group box -----------------
-  myDiffuseGroupB = new QGroupBox( tr( "DIFFUSE_GRP" ), myMaterialBWidget );
-  myDiffuseGroupB->setCheckable(true);
-  connect( myDiffuseGroupB, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) );
-
-  // Diffuse color
-  QLabel* difColorLab2 = new QLabel( tr( "COLOR" ), myDiffuseGroupB );
-  myDiffuseColorB = new QtxColorButton( myDiffuseGroupB );
-  myDiffuseColorB->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( myDiffuseColorB, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
-
-  // Diffuse coefficient
-  QLabel* difCoefficientLab2 = new QLabel( tr( "COEFFICIENT" ), myDiffuseGroupB );
-  myDiffuseCoefntB = new QtxDoubleSpinBox( myDiffuseGroupB );
-  myDiffuseCoefntB->setMaximum(1);
-  myDiffuseCoefntB->setSingleStep(0.05);
-  connect( myDiffuseCoefntB, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Diffuse group box layout
-  QGridLayout* diffuseLayout2 = new QGridLayout( myDiffuseGroupB );
-  diffuseLayout2->setMargin( MARGIN ); diffuseLayout2->setSpacing( SPACING );
-  diffuseLayout2->addWidget( difColorLab2,       0, 0 );
-  diffuseLayout2->addWidget( myDiffuseColorB,    0, 1 );
-  diffuseLayout2->addWidget( difCoefficientLab2, 1, 0 );
-  diffuseLayout2->addWidget( myDiffuseCoefntB,   1, 1 );
-
-  // ----------------- "Specular" reflection type group box -----------------
-  mySpecularGroupB = new QGroupBox( tr( "SPECULAR_GRP" ), myMaterialBWidget );
-  mySpecularGroupB->setCheckable(true);
-  connect( mySpecularGroupB, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) );
-
-  // Specular color
-  QLabel* specColorLab2 = new QLabel( tr( "COLOR" ), mySpecularGroupB );
-  mySpecularColorB = new QtxColorButton( mySpecularGroupB );
-  mySpecularColorB->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( mySpecularColorB, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
-
-  // Specular coefficient
-  QLabel* specCoefficientLab2 = new QLabel( tr( "COEFFICIENT" ), mySpecularGroupB );
-  mySpecularCoefntB = new QtxDoubleSpinBox( mySpecularGroupB );
-  mySpecularCoefntB->setMaximum(1);
-  mySpecularCoefntB->setSingleStep(0.05);
-  connect( mySpecularCoefntB, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Specular group box layout
-  QGridLayout* specularLayout2 = new QGridLayout( mySpecularGroupB );
-  specularLayout2->setMargin( MARGIN ); specularLayout2->setSpacing( SPACING );
-  specularLayout2->addWidget( specColorLab2,       0, 0 );
-  specularLayout2->addWidget( mySpecularColorB,    0, 1 );
-  specularLayout2->addWidget( specCoefficientLab2, 1, 0 );
-  specularLayout2->addWidget( mySpecularCoefntB,   1, 1 );
-
-  // ----------------- "Emission" reflection type group box -----------------
-  myEmissionGroupB = new QGroupBox( tr( "EMISSION_GRP" ), myMaterialBWidget );
-  myEmissionGroupB->setCheckable(true);
-  connect( myEmissionGroupB, SIGNAL( toggled( bool ) ), this, SLOT( onReflectionTypeToggled( bool ) ) );
-
-  // Emission color
-  QLabel* emisColorLab2 = new QLabel( tr( "COLOR" ), myEmissionGroupB );
-  myEmissionColorB = new QtxColorButton( myEmissionGroupB );
-  myEmissionColorB->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-  connect( myEmissionColorB, SIGNAL( changed( QColor ) ), this, SIGNAL( changed() ) ); 
-
-  // Emission coefficient
-  QLabel* emisCoefficientLab2 = new QLabel( tr( "COEFFICIENT" ), myEmissionGroupB );
-  myEmissionCoefntB = new QtxDoubleSpinBox( myEmissionGroupB );
-  myEmissionCoefntB->setMaximum(1);
-  myEmissionCoefntB->setSingleStep(0.05);
-  connect( myEmissionCoefntB, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Emission group box layout
-  QGridLayout* emissionLayout2 = new QGridLayout( myEmissionGroupB );
-  emissionLayout2->setMargin( MARGIN ); emissionLayout2->setSpacing( SPACING );
-  emissionLayout2->addWidget( emisColorLab2,       0, 0 );
-  emissionLayout2->addWidget( myEmissionColorB,    0, 1 );
-  emissionLayout2->addWidget( emisCoefficientLab2, 1, 0 );
-  emissionLayout2->addWidget( myEmissionCoefntB,   1, 1 );
-
-  // Erase emission group in case of VTK viewer
-  if ( myViewerType == VTK )
-    myEmissionGroupB->hide();
-
-  // Add group boxes to the main grid layout of the frame with material properties
-  gLayout2->addWidget( myAmbientGroupB,  0, 0 );
-  gLayout2->addWidget( myDiffuseGroupB,  0, 1 );
-  gLayout2->addWidget( mySpecularGroupB, 1, 0 );
-  gLayout2->addWidget( myEmissionGroupB, 1, 1 );
-
-  // Shininess
-  QLabel* shininessLab2 = new QLabel( tr( "SHININESS" ), myMaterialBWidget );
-  myShininessB = new QtxDoubleSpinBox( myMaterialBWidget );
-  myShininessB->setMaximum(1);
-  myShininessB->setSingleStep(0.05);
-  connect( myShininessB, SIGNAL( valueChanged( double ) ), this, SIGNAL( materialChanged() ) );
-
-  // Shininess layout
-  QHBoxLayout* shLayout2 = new QHBoxLayout( myMaterialBWidget );
-  shLayout2->setMargin( MARGIN ); shLayout2->setSpacing( SPACING );
-  shLayout2->addWidget( shininessLab2 );
-  shLayout2->addWidget( myShininessB );
-
-  // Fill initial vertical layout of the reflection type group box
-  vLayout2->addLayout( gLayout2 );
-  vLayout2->addLayout( shLayout2 );
-  vLayout2->addStretch();
-
-  // Add tabs to material tab widget
-  myMaterialTab->addTab( w1, tr( "Front material" ) );
-  myMaterialTab->addTab( myMaterialBWidget, tr( "Back material" ) );
-
-  // Initialize dialog box
-  setFocusProxy( fr );
+  // initialize dialog box
   setButtonPosition( Right, Close );
-  setDialogFlags( AlignOnce );
-  myMaterialList->setEditTriggers( QAbstractItemView::EditKeyPressed );
-  myMaterialList->installEventFilter( this );
 
-  // ! RESOURCES
-  QStringList globalMaterials = resourceMgr()->materials( Material_ResourceMgr::Global );
-  QStringList userMaterials = resourceMgr()->materials( Material_ResourceMgr::User );
+  // fill in the list of materials
+  QStringList globalMaterials = myResourceMgr.materials( Material_ResourceMgr::Global );
+  QStringList userMaterials   = myResourceMgr.materials( Material_ResourceMgr::User );
 
   QListWidgetItem* item;
 
-  // Current material
-  item = new QListWidgetItem( tr( "[ Current ]" ) );
+  // - current material
+  item = new QListWidgetItem( tr( "CURRENT_MATERIAL" ) );
   item->setForeground( QColor( Qt::red ) );
   item->setData( TypeRole, QVariant( Current ) );
-  myMaterialList->addItem( item );
-  // Default material
-  item = new QListWidgetItem( tr( "[ Default ]" ) );
-  item->setForeground( QColor( Qt::green ) );
-  item->setData( TypeRole, QVariant( Default ) );
-  myMaterialList->addItem( item );  
-  // ! RESOURCES
-  // Global materials
-  foreach ( QString sname, globalMaterials ) {
-    item = new QListWidgetItem( sname );
+  myMaterials->addItem( item );
+  // - global materials
+  foreach( QString material, globalMaterials ) {
+    item = new QListWidgetItem( material );
     item->setForeground( QColor( Qt::blue ) );
     item->setData( TypeRole, QVariant( Global ) );
-    item->setData( NameRole, QVariant( sname ) );
-    myMaterialList->addItem( item );
+    item->setData( NameRole, QVariant( material ) );
+    myMaterials->addItem( item );
   }
-  // ! RESOURCES
-  // User materials
-  foreach ( QString sname, userMaterials ) {
-    item = new QListWidgetItem( sname );
+  // - user materials
+  foreach ( QString material, userMaterials ) {
+    item = new QListWidgetItem( material );
     item->setData( TypeRole, QVariant( User ) );
-    item->setData( NameRole, QVariant( sname ) );
+    item->setData( NameRole, QVariant( material ) );
     item->setFlags( item->flags() | Qt::ItemIsEditable );
-    myMaterialList->addItem( item );
+    myMaterials->addItem( item );
   }
-  
-  // Connect signals
-  connect( myMaterialTab,       SIGNAL( currentChanged( int ) ),
-	   this,                SLOT( onCurrentTabChanged( int ) ) );
-  connect( myBackMaterialCheck, SIGNAL( toggled( bool ) ),
-	   this,                SLOT( onBackMaterialChecked( bool ) ) );
+  // install event filter to the materials list to process key press events
+  myMaterials->installEventFilter( this );
 
-  connect( myMaterialList,      SIGNAL( itemSelectionChanged() ),
-	   this,                SLOT( onMaterialChanged() ) );
-  connect( myMaterialList,      SIGNAL( itemChanged( QListWidgetItem* ) ),       
-           this,                SLOT( onItemChanged( QListWidgetItem* ) ) );
-  connect( myMaterialList,      SIGNAL( itemDoubleClicked( QListWidgetItem* ) ), 
-           this,                SLOT( onApply() ) );
-
-  connect( this, SIGNAL( changed() ),      this, SIGNAL( materialChanged() ) );
-  connect( this, SIGNAL( materialChanged() ), this, SLOT( onChanged() ) );
-  
+  // connect signals
+  // note: all widgets, that change material properties, are connected to the common signal
+  // changed(), instead of connecting directly to the slot - this allows easy temporary blocking 
+  // of the change signal
+  connect( myPhysical, SIGNAL( toggled( bool ) ), this, SIGNAL( changed() ) ); 
+  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ ) {
+    connect( myReflection[i].color,   SIGNAL( changed( QColor ) ),   this, SIGNAL( changed() ) );
+    connect( myReflection[i].coef,    SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
+    connect( myReflection[i].enabled, SIGNAL( toggled( bool ) ),     this, SIGNAL( changed() ) );
+  }
+  connect( myShininess, SIGNAL( valueChanged( double ) ), this, SIGNAL( changed() ) );
+  connect( myMaterials, SIGNAL( itemSelectionChanged() ),
+           this,        SLOT( onMaterialChanged() ) );
+  connect( myMaterials, SIGNAL( itemChanged( QListWidgetItem* ) ),
+           this,        SLOT( onItemChanged( QListWidgetItem* ) ) );
+  connect( myMaterials, SIGNAL( contextMenu( QContextMenuEvent* ) ),
+           this,        SLOT( onContextMenu( QContextMenuEvent* ) ) );
+  connect( myAddButton, SIGNAL( clicked() ), this, SLOT( onAddMaterial() ) );
+  connect( myDelButton, SIGNAL( clicked() ), this, SLOT( onDeleteMaterial() ) );
   connect( this, SIGNAL( dlgApply() ), this, SLOT( onApply() ) );
   connect( this, SIGNAL( dlgHelp() ),  this, SLOT( onHelp() ) );
+  connect( this, SIGNAL( changed() ),  this, SLOT( onChanged() ) );
 
-  // Initialize current fornt and back material models of the selected shape
-  if ( app ) {
-    LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-    if ( aSelMgr ) {
-      SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-      if( aStudy ) {
-	SALOME_ListIO selected;
-	aSelMgr->selectedObjects( selected );
-
-	Handle(SALOME_InteractiveObject) FirstIOS =  selected.First();
-	if ( !FirstIOS.IsNull() ) {
-	  SUIT_ViewWindow* window = app->desktop()->activeWindow();
-	  int aMgrId = window->getViewManager()->getGlobalId();
-	  
-	  QString aMaterialF;
-	  QString aMaterialB;
-
-	  for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-
-	    PropMap aPropMap = aStudy->getObjectPropMap( aMgrId, It.Value()->getEntry() );
-	    aMaterialF = aPropMap.value(FRONT_MATERIAL_PROP).toString();	    
-	    aMaterialB = aPropMap.value(BACK_MATERIAL_PROP).toString();
-	      
-	    if ( !aMaterialF.isEmpty() ) {
-	      
-	      QStringList aPropsF = aMaterialF.split(DIGIT_SEPARATOR);
-	      
-	      myCurrentModelF = Material_Model::getMaterialModel( aPropsF );	        
-	      
-	      if ( !aMaterialB.isEmpty() ) {		
-		QStringList aPropsB = aMaterialB.split(DIGIT_SEPARATOR);		
-		myCurrentModelB = Material_Model::getMaterialModel( aPropsB );
-		
-		myBackMaterialCheck->setChecked( true );
-	      }
-	      else {
-		myCurrentModelB = Material_Model::getMaterialModel( aPropsF );
-		
-		myBackMaterialCheck->setChecked( false );
-		myMaterialTab->removeTab( 1 );
-	      }
-	      
-	      break;
-	    }
-	  }
-	    
-	  if ( aMaterialF.isEmpty() ) {
-	    myCurrentModelF = new Material_Model();
-	    myCurrentModelF->fromResources( SUIT_Session::session()->resourceMgr(), "Geometry" );
-
-	    myCurrentModelB = new Material_Model();
-	    myCurrentModelB->fromResources( SUIT_Session::session()->resourceMgr(), "Geometry", false );
-	  }
-	}
+  // initialize current material model according to the selection
+  myColor->setColor( SUIT_Session::session()->resourceMgr()->colorValue( "Geometry", "shading_color", QColor( 255, 0, 0 ) ) );
+  myCurrentModel.fromResources( SUIT_Session::session()->resourceMgr()->stringValue( "Geometry", "material", "Plastic" ) );
+  SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
+  LightApp_SelectionMgr* selMgr = app->selectionMgr();
+  if ( study ) {
+    SALOME_ListIO selected;
+    selMgr->selectedObjects( selected );
+    if ( selected.Extent() > 0 ) {
+      Handle(SALOME_InteractiveObject) io = selected.First();
+      if ( !io.IsNull() ) {
+        SUIT_ViewWindow* window = app->desktop()->activeWindow();
+        if ( window ) {
+          int mgrId = window->getViewManager()->getGlobalId();
+          PropMap propMap = study->getObjectPropMap( mgrId, io->getEntry() );
+          QString matProp = propMap.value(MATERIAL_PROP).toString();	    
+          if ( !matProp.isEmpty() )
+            myCurrentModel.fromProperties( matProp );
+          QColor c = propMap.value(COLOR_PROP).value<QColor>();
+          if ( c.isValid() )
+            myColor->setColor( c );
+        }
       }
     }
   }
-
-  myMaterialList->setCurrentRow( 0 );
-  myMaterialListFId = 0;
-  myMaterialListBId = 0;
-
-  myIsBTabWasActivated = false;
-
-  myHelpFileName = "material_page.html";
+  
+  // finally activate current material properties
+  myMaterials->setCurrentRow( 0 );
 }
 
 /*!
@@ -555,11 +286,6 @@ GEOMToolsGUI_MaterialPropertiesDlg::GEOMToolsGUI_MaterialPropertiesDlg( QWidget*
 */
 GEOMToolsGUI_MaterialPropertiesDlg::~GEOMToolsGUI_MaterialPropertiesDlg()
 {
-  if ( myCurrentModelF )
-    delete myCurrentModelF;
-
-  if ( myCurrentModelB )
-    delete myCurrentModelB;
 }
 
 /*!
@@ -572,270 +298,68 @@ void GEOMToolsGUI_MaterialPropertiesDlg::accept()
 }
 
 /*!
-  \brief Process key press event
+  \brief Event filter
   \param o sender
-  \param e key event
+  \param e event
 */
 bool GEOMToolsGUI_MaterialPropertiesDlg::eventFilter( QObject* o, QEvent* e )
 {
-  if ( o == myMaterialList && e->type() == QEvent::KeyPress ) {
+  // process key press event from materials list
+  if ( o == myMaterials && e->type() == QEvent::KeyPress ) {
     QKeyEvent* ke = (QKeyEvent*)e;
     if ( ke->key() == Qt::Key_Delete ) {
-      QListWidgetItem* item = myMaterialList->currentItem();
-      if ( item && item->data( TypeRole ).toInt() == User ) {
-	if ( QMessageBox::question( this,
-				    tr( "Delete user material" ),
-				    tr( "Remove material %1?" ).arg( item->text() ),
-				    QMessageBox::Yes | QMessageBox::No,
-				    QMessageBox::Yes ) == QMessageBox::Yes ) {
-	  resourceMgr()->remove( item->data( NameRole ).toString() );
-	  resourceMgr()->save();
-	  delete item;
-	}
-      }
+      onDeleteMaterial();
     }
   }
   return QtxDialog::eventFilter( o, e );
 }
 
 /*!
-  \brief Get GEOM materials resource manager
-  \return materials resource manager
-*/
-Material_ResourceMgr* GEOMToolsGUI_MaterialPropertiesDlg::resourceMgr()
-{
-  if ( !myResMgr )
-    myResMgr = new Material_ResourceMgr();
-  return myResMgr;
-}
-
-/*!
-  \brief Initialize dialog box fields from material model
+  \brief Initialize dialog box widgets from material model
   \param model material model
 */
-void GEOMToolsGUI_MaterialPropertiesDlg::fromModel( Material_Model* model)
+void GEOMToolsGUI_MaterialPropertiesDlg::fromModel( const Material_Model& model )
 {
-  if ( !model ) return;
-
-  bool isReflectionTypeActive;
-
-  if ( isFrontTabActive() ) { // Fill in front material tab
-    
-    // Ambient reflection type
-    isReflectionTypeActive = model->hasAmbientReflection();
-    myAmbientGroupF->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load ambient color
-      myAmbientColorF->setColor( model->color(Material_Model::Ambient) );
-      // Load ambient coefficient
-      myAmbientCoefntF->setValue( model->coefficient(Material_Model::Ambient) );
-    }
-    
-    // Diffuse reflection type
-    isReflectionTypeActive = model->hasDiffuseReflection();
-    myDiffuseGroupF->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load diffuse color
-      myDiffuseColorF->setColor( model->color(Material_Model::Diffuse) );
-      // Load diffuse coefficient
-      myDiffuseCoefntF->setValue( model->coefficient(Material_Model::Diffuse) );
-    }
-    
-    // Specular reflection type
-    isReflectionTypeActive = model->hasSpecularReflection();
-    mySpecularGroupF->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load specular color
-      mySpecularColorF->setColor( model->color(Material_Model::Specular) );
-      // Load specular coefficient
-      mySpecularCoefntF->setValue( model->coefficient(Material_Model::Specular) );
-    }
-    
-    // Emission reflection type
-    isReflectionTypeActive = model->hasEmissionReflection();
-    myEmissionGroupF->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load emission color
-      myEmissionColorF->setColor( model->color(Material_Model::Emission) );
-      // Load emission coefficient
-      myEmissionCoefntF->setValue( model->coefficient(Material_Model::Emission) );
-    }
-    
-    // Shininess
-    myShininessF->setValue( model->shininess() );
-    
+  // reflection components
+  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
+  {
+    myReflection[i].color->setColor( model.color( (Material_Model::ReflectionType)i ) );
+    myReflection[i].coef->setValue( model.reflection( (Material_Model::ReflectionType)i ) );
+    myReflection[i].enabled->setChecked( model.hasReflection( (Material_Model::ReflectionType)i ) );
   }
-  else { // Fill in back material tab
-    
-    // Ambient reflection type
-    isReflectionTypeActive = model->hasAmbientReflection();
-    myAmbientGroupB->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load ambient color
-      myAmbientColorB->setColor( model->color(Material_Model::Ambient) );
-      // Load ambient coefficient
-      myAmbientCoefntB->setValue( model->coefficient(Material_Model::Ambient) );
-    }
-    
-    // Diffuse reflection type
-    isReflectionTypeActive = model->hasDiffuseReflection();
-    myDiffuseGroupB->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load diffuse color
-      myDiffuseColorB->setColor( model->color(Material_Model::Diffuse) );
-      // Load diffuse coefficient
-      myDiffuseCoefntB->setValue( model->coefficient(Material_Model::Diffuse) );
-    }
-    
-    // Specular reflection type
-    isReflectionTypeActive = model->hasSpecularReflection();
-    mySpecularGroupB->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load specular color
-      mySpecularColorB->setColor( model->color(Material_Model::Specular) );
-      // Load specular coefficient
-      mySpecularCoefntB->setValue( model->coefficient(Material_Model::Specular) );
-    }
-    
-    // Emission reflection type
-    isReflectionTypeActive = model->hasEmissionReflection();
-    myEmissionGroupB->setChecked( isReflectionTypeActive );
-    if ( isReflectionTypeActive ) {
-      // Load emission color
-      myEmissionColorB->setColor( model->color(Material_Model::Emission) );
-      // Load emission coefficient
-      myEmissionCoefntB->setValue( model->coefficient(Material_Model::Emission) );
-    }
-    
-    // Shininess
-    myShininessB->setValue( model->shininess() );
-    
-  }
+  
+  // shininess
+  myShininess->setValue( model.shininess() );
+
+  // type (physical or no)
+  myPhysical->setChecked( model.isPhysical() );
 }
  
 /*!
-  \brief Save values from dialog box fields to material model
-  \param model material model
+  \brief Save values from dialog box widgets to material model
+  \param model material model to be filled in
 */
-void GEOMToolsGUI_MaterialPropertiesDlg::toModel( Material_Model* model ) const
+void GEOMToolsGUI_MaterialPropertiesDlg::toModel( Material_Model& model ) const
 {
-  if ( !model ) return;
-    
-  if ( isFrontTabActive() )
-    toFrontModel( model );
-  else
-    toBackModel( model );
-}
+  // type (physical or no)
+  model.setPhysical( myPhysical->isChecked() );
 
-/*!
-  \brief Save values from dialog box fields to front material model
-  \param model front material model to be filled
-*/
-void GEOMToolsGUI_MaterialPropertiesDlg::toFrontModel( Material_Model* model ) const
-{
-  if ( !model ) return;
-    
-  // "Ambient" reflection type
-  if ( myAmbientGroupF->isChecked() ) {
-    model->setColor( Material_Model::Ambient, myAmbientColorF->color() );
-    model->setCoefficient( Material_Model::Ambient, myAmbientCoefntF->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Ambient );
-    model->removeCoefficient( Material_Model::Ambient );
-  }
-  
-  // "Diffuse" reflection type
-  if ( myDiffuseGroupF->isChecked() ) {
-    model->setColor( Material_Model::Diffuse, myDiffuseColorF->color() );
-    model->setCoefficient( Material_Model::Diffuse, myDiffuseCoefntF->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Diffuse );
-    model->removeCoefficient( Material_Model::Diffuse );
-  }
-  
-  // "Specular" reflection type
-  if ( mySpecularGroupF->isChecked() ) {
-    model->setColor( Material_Model::Specular, mySpecularColorF->color() );
-    model->setCoefficient( Material_Model::Specular, mySpecularCoefntF->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Specular );
-    model->removeCoefficient( Material_Model::Specular );
-  }
-  
-  // "Emission" reflection type
-  if ( myEmissionGroupF->isChecked() ) {
-    model->setColor( Material_Model::Emission, myEmissionColorF->color() );
-    model->setCoefficient( Material_Model::Emission, myEmissionCoefntF->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Emission );
-    model->removeCoefficient( Material_Model::Emission );
-  }
-  
-  // Shininess
-  model->setShininess( myShininessF->value() );
-}
+  // shininess
+  model.setShininess( myShininess->value() );
 
-/*!
-  \brief Save values from dialog box fields to back material model
-  \param model back material model to be filled
-*/
-void GEOMToolsGUI_MaterialPropertiesDlg::toBackModel( Material_Model* model ) const
-{
-  if ( !model )
-    return;
-
-  // "Ambient" reflection type
-  if ( myAmbientGroupB->isChecked() ) {
-    model->setColor( Material_Model::Ambient, myAmbientColorB->color() );
-    model->setCoefficient( Material_Model::Ambient, myAmbientCoefntB->value() );
+  // reflection components
+  for ( int i = Material_Model::Ambient; i <= Material_Model::Emissive; i++ )
+  {
+    model.setColor     ( (Material_Model::ReflectionType)i, myReflection[i].color->color() );
+    model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].coef->value() );
+    model.setReflection( (Material_Model::ReflectionType)i, myReflection[i].enabled->isChecked() );
   }
-  else {
-    model->removeColor( Material_Model::Ambient );
-    model->removeCoefficient( Material_Model::Ambient );
-  }
-  
-  // "Diffuse" reflection type
-  if ( myDiffuseGroupB->isChecked() ) {
-    model->setColor( Material_Model::Diffuse, myDiffuseColorB->color() );
-    model->setCoefficient( Material_Model::Diffuse, myDiffuseCoefntB->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Diffuse );
-    model->removeCoefficient( Material_Model::Diffuse );
-  }
-  
-  // "Specular" reflection type
-  if ( mySpecularGroupB->isChecked() ) {
-    model->setColor( Material_Model::Specular, mySpecularColorB->color() );
-    model->setCoefficient( Material_Model::Specular, mySpecularCoefntB->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Specular );
-    model->removeCoefficient( Material_Model::Specular );
-  }
-  
-  // "Emission" reflection type
-  if ( myEmissionGroupB->isChecked() ) {
-    model->setColor( Material_Model::Emission, myEmissionColorB->color() );
-    model->setCoefficient( Material_Model::Emission, myEmissionCoefntB->value() );
-  }
-  else {
-    model->removeColor( Material_Model::Emission );
-    model->removeCoefficient( Material_Model::Emission );
-  }
-  
-  // Shininess
-  model->setShininess( myShininessB->value() );
 }
 
 /*!
   \brief Find unique name for the material name
   \param name material name template
-  \param item if not 0, used to be ignored when browsing through items list
+  \param item the item to be ignored when browsing through the materials list
   \param addSuffix if \c true, the integrer suffix is always added to the material name (otherwise
   suffix is added only if item name is not unique)
   \return new unique material name
@@ -844,13 +368,13 @@ QString GEOMToolsGUI_MaterialPropertiesDlg::findUniqueName( const QString& name,
 {
   bool found = false;
   int idx = 0;
-  for( int i = 2; i < myMaterialList->count(); i++ ) {
-    if ( item == myMaterialList->item( i ) ) continue;
-    QString iname = myMaterialList->item( i )->text();
+  for( int i = 1; i < myMaterials->count(); i++ ) {
+    if ( item == myMaterials->item( i ) ) continue;
+    QString iname = myMaterials->item( i )->text();
     if ( iname == name ) {
       found = true;
     }
-    else {
+    else if ( iname.startsWith( name ) ) {
       iname = iname.mid( name.length() ).trimmed();
       bool ok = false;
       int nx = iname.toInt( &ok );
@@ -861,154 +385,93 @@ QString GEOMToolsGUI_MaterialPropertiesDlg::findUniqueName( const QString& name,
 }
 
 /*!
-  \brief Check if tab with front material properties is currently active
-  \return true if front material tab is active
-*/
-bool GEOMToolsGUI_MaterialPropertiesDlg::isFrontTabActive() const
-{
-  return ( myMaterialTab->currentIndex() == 0 ? true : false );
-}
-
-/*!
   \brief Called when "Apply" button is pressed
 */
 void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
 {  
   // save user materials
-  resourceMgr()->save();
+  myResourceMgr.save();
 
-  toFrontModel( myCurrentModelF );
-  if ( myBackMaterialCheck->isChecked() && myIsBTabWasActivated )
-    toBackModel( myCurrentModelB );
+  // store selected material properties in the current model
+  toModel( myCurrentModel );
 
   SalomeApp_Application* app = dynamic_cast< SalomeApp_Application* >( SUIT_Session::session()->activeApplication() );
-  if ( !app )
-    return;
-  LightApp_SelectionMgr* aSelMgr = app->selectionMgr();
-  if ( !aSelMgr )
-    return;
+  LightApp_SelectionMgr* selMgr = app->selectionMgr();
+  SalomeApp_Study* study = dynamic_cast<SalomeApp_Study*>( app->activeStudy() );
   
-  SalomeApp_Study* aStudy = dynamic_cast<SalomeApp_Study*>(app->activeStudy());
-  
-  if(!aStudy)
-    return;
-  
+  if ( !study ) return;
+
+  // get selection
   SALOME_ListIO selected;
-  aSelMgr->selectedObjects( selected );
-  if ( selected.IsEmpty() )
-    return;
+  selMgr->selectedObjects( selected );
+  if ( selected.IsEmpty() ) return;
 
-  Handle(SALOME_InteractiveObject) FirstIOS =  selected.First();
-  if ( FirstIOS.IsNull() )
-    return;
-        
   SUIT_ViewWindow* window = app->desktop()->activeWindow();
-  int aMgrId = window->getViewManager()->getGlobalId();
+  int mgrId = window->getViewManager()->getGlobalId();
 
-  // Parse material properties and form a string for persistent purpose
-  QString aMaterialF = myCurrentModelF->getMaterialProperty();
-  QString aMaterialB;
-  if ( myBackMaterialCheck->isChecked() )
-    aMaterialB = myCurrentModelB->getMaterialProperty();
-  
-  if ( myViewerType == VTK ) {    
-    // Get material properties from the current model
-    /*
-    vtkProperty* aPropertyF;
-    if ( !unsetMaterial )
-      aPropertyF = myCurrentModelF->getMaterialVTKProperty();
-    */
-    vtkProperty* aPropertyF = myCurrentModelF->getMaterialVTKProperty();
-    vtkProperty* aPropertyB = aPropertyF;
-    if ( myBackMaterialCheck->isChecked() )
-      aPropertyB = myCurrentModelB->getMaterialVTKProperty();
-
+  // convert current material properties to the string representation
+  QString prop = myCurrentModel.toProperties();
+ 
+  if ( window && window->getViewManager()->getType() == SVTK_Viewer::Type() ) {
+    // for VTK viewer
     SVTK_ViewWindow* vtkVW = dynamic_cast<SVTK_ViewWindow*>( window );
     if ( !vtkVW )
       return;
+
     SVTK_View* aView = vtkVW->getView();
 
-    SUIT_OverrideCursor();
+    // get VTK material properties from the current model
+    GEOM_VTKPropertyMaterial* vtkProp = myCurrentModel.getMaterialVTKProperty();
+
+    SUIT_OverrideCursor wc();
+
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-
-      /*
-      if ( unsetMaterial || aMaterialF.isEmpty() )
-	// Unset material for the selected shape
-	aisShape->UnsetMaterial();
-      else
-	// Set material for the selected shape
-      */
-	aView->SetMaterial( It.Value(), aPropertyF, aPropertyB );
-
-      // Persistent
-      aStudy->setObjectProperty( aMgrId, It.Value()->getEntry(), FRONT_MATERIAL_PROP, aMaterialF );
-      aStudy->setObjectProperty( aMgrId, It.Value()->getEntry(), BACK_MATERIAL_PROP, aMaterialB );
-    } // for...
+      // set material property to the presentation
+      aView->SetMaterial( It.Value(), vtkProp );
+      // store chosen material in the property map
+      study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+      // set correct color for the non-physical material
+      if ( !myCurrentModel.isPhysical() ) {
+        aView->SetColor( It.Value(), myColor->color() );
+	study->setObjectProperty( mgrId, It.Value()->getEntry(), COLOR_PROP, myColor->color() );
+      }
+    }
     aView->Repaint();
     GeometryGUI::Modified();
-  } // if ( VTK )
-        
-  else if ( myViewerType == OCC ) {
-    // Get material properties from the current model
-    /*
-    Graphic3d_MaterialAspect aMatF;
-    if ( !unsetMaterial )
-      aMatF = myCurrentModelF->getMaterialOCCAspect();
-    */
-    Graphic3d_MaterialAspect aMatF = myCurrentModelF->getMaterialOCCAspect();
-    Graphic3d_MaterialAspect aMatB = aMatF;
-    if ( myBackMaterialCheck->isChecked() )
-      aMatB = myCurrentModelB->getMaterialOCCAspect();
-
-    Handle(GEOM_AISShape) aisShape;
-    
-    SUIT_OverrideCursor();
+  }
+  else if ( window && window->getViewManager()->getType() == OCCViewer_Viewer::Type() ) {    
+    // for OCC viewer
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>( window->getViewManager()->getViewModel() );
     if ( !vm )
       return;
 
-    GEOMBase* gb = new GEOMBase();
-
     Handle(AIS_InteractiveContext) ic = vm->getAISContext();
+
+    // get OCC material aspect from the current model
+    Graphic3d_MaterialAspect occAspect = myCurrentModel.getMaterialOCCAspect();
+
+    SUIT_OverrideCursor wc();
+
     for ( SALOME_ListIteratorOfListIO It( selected ); It.More(); It.Next() ) {
-      aisShape = gb->ConvertIOinGEOMAISShape( It.Value(), true );
+      Handle(GEOM_AISShape) aisShape = GEOMBase::ConvertIOinGEOMAISShape( It.Value(), true );
       if ( !aisShape.IsNull() ) {
-
-	if(!aisShape->HasInteractiveContext())
-	  aisShape->SetContext(ic);
-
-	/*
-	if ( unsetMaterial || aMaterialF.isEmpty() )
-	  // Unset material for the selected shape
-	  aisShape->UnsetMaterial();
-	else
-	*/
-	  if ( myBackMaterialCheck->isChecked() ) {
-	    // Set front material for the selected shape
-	    aisShape->SetCurrentFacingModel(Aspect_TOFM_FRONT_SIDE);
-	    aisShape->SetMaterial(aMatF);
-	    // Set back material for the selected shape
-	    aisShape->SetCurrentFacingModel(Aspect_TOFM_BACK_SIDE);
-	    aisShape->SetMaterial(aMatB);
-	    // Return to the default facing mode
-	    aisShape->SetCurrentFacingModel(Aspect_TOFM_BOTH_SIDE);
-	  }
-	  else {
-	    // Set the same front and back (is equal to front) materials for the selected shape
-	    aisShape->SetMaterial(aMatF);
-	  }
-
-	if (aisShape->DisplayMode() != AIS_Shaded/*aisShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges*/)
+	// set material property to the presentation
+	aisShape->SetMaterial( occAspect );
+	// store chosen material in the property map
+	study->setObjectProperty( mgrId, It.Value()->getEntry(), MATERIAL_PROP, prop );
+	// set correct color for the non-physical material
+	if ( !myCurrentModel.isPhysical() ) {
+	  aisShape->SetShadingColor( SalomeApp_Tools::color( myColor->color() ) );
+	  study->setObjectProperty( mgrId, It.Value()->getEntry(), COLOR_PROP, myColor->color() );
 	  ic->RecomputePrsOnly( aisShape, Standard_False );
-
-	// Persistent	
-	aStudy->setObjectProperty( aMgrId, It.Value()->getEntry(), FRONT_MATERIAL_PROP, aMaterialF );
-	aStudy->setObjectProperty( aMgrId, It.Value()->getEntry(), BACK_MATERIAL_PROP, aMaterialB );
+	}
+	//if ( aisShape->DisplayMode() != AIS_Shaded/*aisShape->DisplayMode() == GEOM_AISShape::ShadingWithEdges*/)
+	ic->Redisplay( aisShape, Standard_False );
       }
-    } // for...    
+    }
     ic->UpdateCurrentViewer();
     GeometryGUI::Modified();
-  } // if ( OCC )
+  }
 }
 
 /*!
@@ -1017,74 +480,7 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onApply()
 void GEOMToolsGUI_MaterialPropertiesDlg::onHelp()
 {
   LightApp_Application* app = (LightApp_Application*)(SUIT_Session::session()->activeApplication());
-  if (app) {
-    GeometryGUI* aGeomGUI = dynamic_cast<GeometryGUI*>( app->module( "Geometry" ) );
-    app->onHelpContextModule(aGeomGUI ? app->moduleName(aGeomGUI->moduleName()) : QString(""), myHelpFileName);
-  }
-  else {
-                QString platform;
-#ifdef WIN32
-                platform = "winapplication";
-#else
-                platform = "application";
-#endif
-    SUIT_MessageBox::warning(0, QObject::tr("WRN_WARNING"),
-                             QObject::tr("EXTERNAL_BROWSER_CANNOT_SHOW_PAGE").
-                             arg(app->resourceMgr()->stringValue("ExternalBrowser", platform)).arg(myHelpFileName),
-                             QObject::tr("BUT_OK"));
-  }  
-}
-
-/*!
-  \brief Called when user check/uncheck "Enable back material" check box
-  \param theIsChecked the check state of the check box
-*/
-void GEOMToolsGUI_MaterialPropertiesDlg::onBackMaterialChecked( bool theIsChecked )
-{
-  if ( theIsChecked ) {
-    // Tab with back material properties is displayed
-    myMaterialTab->addTab( myMaterialBWidget, tr( "Back material" ) );
-
-    // Create a current model of back material
-    if ( !myCurrentModelB ) {
-      myCurrentModelB = new Material_Model();
-      myCurrentModelB->fromResources( SUIT_Session::session()->resourceMgr(), "Geometry", false );
-    }
-    
-    myMaterialListBId = 0;
-  }
-  else {
-    // Tab with back material properties is hidden
-    myMaterialTab->removeTab( 1 );
-    
-    // Remove the current model for back material
-    if ( myCurrentModelB ) {
-      delete myCurrentModelB;
-      myCurrentModelB = 0;
-    }
-  }
-}
-
-/*!
-  \brief Called when user activates material tab
-  \param theIndex the index of the tab which was activated by the user
-*/
-void GEOMToolsGUI_MaterialPropertiesDlg::onCurrentTabChanged(int theIndex)
-{
-  blockSignals( true );
-
-  // Change selection in the list of materials
-  if ( isFrontTabActive() )
-    myMaterialList->setCurrentRow( myMaterialListFId );
-  else if ( myBackMaterialCheck->isChecked() )
-    myMaterialList->setCurrentRow( myMaterialListBId );    
-
-  if ( theIndex == 1 )
-    myIsBTabWasActivated = true;
-
-  blockSignals( false );
-
-  onMaterialChanged();
+  app->onHelpContextModule( "GEOM", "material_page.html" );
 }
 
 /*!
@@ -1092,45 +488,28 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onCurrentTabChanged(int theIndex)
 */
 void GEOMToolsGUI_MaterialPropertiesDlg::onMaterialChanged()
 {
-  blockSignals( true );
+  // get currently selected item
+  QListWidgetItem* item = myMaterials->currentItem();
+  if ( !item ) return;
 
-  QListWidgetItem* item = myMaterialList->currentItem();
+  bool blocked = blockSignals( true );
+
   int type = item->data( TypeRole ).toInt();
-  
-  Material_Model* model = 0;
-
-  bool isFrontTab = isFrontTabActive();
-
-  if ( isFrontTab )
-    myMaterialListFId = myMaterialList->currentRow();
-  else
-    myMaterialListBId = myMaterialList->currentRow();
-
-  switch ( type ) {    
-  case Current:
-    // current material
-    model = ( isFrontTab ? myCurrentModelF : myCurrentModelB );
-    break;    
-  case Default:
-    // default material
-    model = new Material_Model();
-    model->fromResources( SUIT_Session::session()->resourceMgr(), "Geometry", ( isFrontTab ? true : false ) );
-    break;    
-  case Global:
-  case User:
-    // global material, user material
-    model = new Material_Model();
-    model->fromResources( resourceMgr(), item->data( NameRole ).toString() );
-    break;
-  default:
-    break;
+  if ( type == Current ) {
+    // initialize widgets from current material model
+    fromModel( myCurrentModel );
+  }
+  else {
+    // initialize widgets from chosen material model (using resources manager)
+    Material_Model model;
+    model.fromResources( item->data( NameRole ).toString(), &myResourceMgr );
+    fromModel( model );
   }
 
-  fromModel( model );
-  if ( type != Current )
-    delete model;
+  blockSignals( blocked );
 
-  blockSignals( false );
+  // update buttons state
+  updateState();
 }
 
 /*!
@@ -1138,58 +517,55 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onMaterialChanged()
 */
 void GEOMToolsGUI_MaterialPropertiesDlg::onChanged()
 {
-  QListWidgetItem* item = myMaterialList->currentItem();
+  // get currently selected item
+  QListWidgetItem* item = myMaterials->currentItem();
   int type = item->data( TypeRole ).toInt();
+  if ( !item ) return;
 
-  bool isFrontTab = isFrontTabActive();
-
-  // for the current and user schemas do not perform any actions
   if ( type == Current ) {    
-    Material_Model model = ( isFrontTab ? *( myCurrentModelF ) : *( myCurrentModelB ) );
-    toModel( &model );
-    model.save( 0, QString(), isFrontTab );
-    blockSignals( true );
-    fromModel( &model );
-    blockSignals( false );    
+    // for the current model do not perform any actions except store changed values
+    toModel( myCurrentModel );
   }
   else if ( type == User ) {    
+    // for the user model, simply store the changes in the resource manager
     Material_Model model;
-    toModel( &model );
+    toModel( model );
+    // check if the user model is renamed
     QString oldName = item->data( NameRole ).toString(), newName = item->text();
     if ( oldName == newName ) {
-      model.save( resourceMgr(), oldName, isFrontTab );
+      // model is not renamed: store data using current name
+      model.toResources( oldName, &myResourceMgr );
     }
     else {
-      resourceMgr()->remove( oldName );
-      model.save( resourceMgr(), newName, isFrontTab );
+      // model is renamed: remove model with old name and store model using new name
+      myResourceMgr.remove( oldName );
+      model.toResources( newName, &myResourceMgr );
       item->setData( NameRole, newName );
     }
-    blockSignals( true );
-    fromModel( &model );
-    blockSignals( false );    
   }
   else {
-    // if user tries to change global (or default, or no material) material,
-    // we create a new user material basing on selected one
-    QString newName = findUniqueName( tr( "CUSTOM_MATERIAL" ), 0, true );
-    item = new QListWidgetItem( newName );
-    item->setData( TypeRole, QVariant( User ) );
-    item->setData( NameRole, QVariant( newName ) );
-    item->setFlags( item->flags() | Qt::ItemIsEditable );
-    myMaterialList->addItem( item );
-    
-    Material_Model model;
-    toModel( &model );
-    model.save( resourceMgr(), newName, isFrontTab );
-    
-    myMaterialList->setCurrentItem( item );
-
-    if ( isFrontTab )
-      myMaterialListFId = myMaterialList->currentRow();
-    else
-      myMaterialListBId = myMaterialList->currentRow();
-
+    // it is no allowed to change global material
+    // user is asked about creating of a new user material model based on the currently selected one
+    if ( SUIT_MessageBox::question( this,
+				    tr( "GEOM_WRN_WARNING" ),
+				    tr( "QUE_CREATE_NEW_MATERIAL" ),
+				    QMessageBox::Yes | QMessageBox::No,
+				    QMessageBox::Yes ) == QMessageBox::Yes ) {
+      // user has chosen creation of new user model
+      onAddMaterial();
+    }
+    else {
+      // user has rejected creation of new user model: revert changes
+      bool blocked = blockSignals( true );
+      Material_Model model;
+      model.fromResources( item->data( NameRole ).toString(), &myResourceMgr );
+      fromModel( model );
+      blockSignals( blocked );
+    }
   }
+
+  // update buttons state
+  updateState();
 }
 
 /*!
@@ -1197,63 +573,100 @@ void GEOMToolsGUI_MaterialPropertiesDlg::onChanged()
 */
 void GEOMToolsGUI_MaterialPropertiesDlg::onItemChanged( QListWidgetItem* item )
 {
+  // check new name to be unique (add suffix if necessary)
   QString newName = item->text();
   QString uniqueName = findUniqueName( newName, item );
   if ( uniqueName != newName ) {
-    myMaterialList->blockSignals( true );
+    bool blocked = myMaterials->blockSignals( true );
     item->setText( uniqueName );
-    myMaterialList->blockSignals( false );
+    myMaterials->blockSignals( blocked );
   }
   onChanged();
 }                               
 
 /*!
-  \brief Called when widget effect is changed
+  \brief Process context menu event from materials list
 */
-void GEOMToolsGUI_MaterialPropertiesDlg::onReflectionTypeToggled( bool theIsOn )
+void GEOMToolsGUI_MaterialPropertiesDlg::onContextMenu( QContextMenuEvent* e )
 {
-  QGroupBox* anObj = (QGroupBox*)sender();
+  QListWidgetItem* item = myMaterials->itemAt( e->pos() );
+  QMap<QAction*, int> actionMap;
+  QMenu m;
+  // rename
+  if ( item && item->data( TypeRole ).toInt() == User ) {
+    actionMap[ m.addAction( tr( "RENAME_MATERIAL" ) ) ] = 0;
+    m.addSeparator();
+  }
+  // add user material
+  actionMap[ m.addAction( tr( "ADD_MATERIAL" ) ) ] = 1;
+  // delete user material
+  if ( item && item->data( TypeRole ).toInt() == User ) {
+    actionMap[ m.addAction( tr( "DELETE_MATERIAL" ) ) ] = 2;
+  }
+  QAction* a = m.exec( e->globalPos() );
+  switch( actionMap[ a ] ) {
+  case 0:
+    // rename
+    myMaterials->editItem( item );
+    break;
+  case 1:
+    // add user material
+    onAddMaterial();
+    break;
+  case 2:
+    // delete user material
+    onDeleteMaterial();
+    break;
+  default:
+    break;
+  }
+}
 
-  // Set an empty values for color and coefficient
-  // of the checked/unchecked reflection type
-  QColor c;
+/*!
+  \brief Delete currently selected user model
+*/
+void GEOMToolsGUI_MaterialPropertiesDlg::onDeleteMaterial()
+{
+  QListWidgetItem* item = myMaterials->currentItem();
+  if ( item && item->data( TypeRole ).toInt() == User ) {
+    if ( SUIT_MessageBox::question( this,
+				    tr( "GEOM_WRN_WARNING" ),
+				    tr( "QUE_REMOVE_MATERIAL" ).arg( item->text() ),
+				    QMessageBox::Yes | QMessageBox::No,
+				    QMessageBox::Yes ) == QMessageBox::Yes ) {
+      myResourceMgr.remove( item->data( NameRole ).toString() );
+      delete item;
+    }
+  }
+}
 
-
-  // Make changes on front material tab
-  if ( anObj == myAmbientGroupF ) {    
-    myAmbientColorF->setColor( c );
-    myAmbientCoefntF->setValue( 0.0 );
-  }
-  else if ( anObj == myDiffuseGroupF ) {
-    myDiffuseColorF->setColor( c );
-    myDiffuseCoefntF->setValue( 0.0 );
-  }
-  else if ( anObj == mySpecularGroupF ) {
-    mySpecularColorF->setColor( c );
-    mySpecularCoefntF->setValue( 0.0 );
-  }
-  else if ( anObj == myEmissionGroupF ) {
-    myEmissionColorF->setColor( c );
-    myEmissionCoefntF->setValue( 0.0 );
-  }
-
-  // Make changes on back material tab    
-  if ( anObj == myAmbientGroupB ) {    
-    myAmbientColorB->setColor( c );
-    myAmbientCoefntB->setValue( 0.0 );
-  }
-  else if ( anObj == myDiffuseGroupB ) {
-    myDiffuseColorB->setColor( c );
-    myDiffuseCoefntB->setValue( 0.0 );
-  }
-  else if ( anObj == mySpecularGroupB ) {
-    mySpecularColorB->setColor( c );
-    mySpecularCoefntB->setValue( 0.0 );
-  }
-  else if ( anObj == myEmissionGroupB ) {
-    myEmissionColorB->setColor( c );
-    myEmissionCoefntB->setValue( 0.0 );
-  }
+/*!
+  \brief Add new user material model
+*/
+void GEOMToolsGUI_MaterialPropertiesDlg::onAddMaterial()
+{
+  QString newName = findUniqueName( tr( "CUSTOM_MATERIAL" ), 0, true );
+  QListWidgetItem* item = new QListWidgetItem( newName );
+  item->setData( TypeRole, QVariant( User ) );
+  item->setData( NameRole, QVariant( newName ) );
+  item->setFlags( item->flags() | Qt::ItemIsEditable );
+  myMaterials->addItem( item );
   
-  emit( changed() );
+  Material_Model model;
+  toModel( model );
+  model.toResources( newName, &myResourceMgr );
+  myMaterials->setCurrentItem( item );
+  myMaterials->editItem( item );
+}
+
+/*!
+  \brief Update buttons state
+*/
+void GEOMToolsGUI_MaterialPropertiesDlg::updateState()
+{
+  QListWidgetItem* item = myMaterials->currentItem();
+  myDelButton->setEnabled( item && item->data( TypeRole ).toInt() == User );
+  myColorLab->setEnabled( !myPhysical->isChecked() );
+  myColor->setEnabled( !myPhysical->isChecked() );
+  myReflection[0].color->setEnabled( myPhysical->isChecked() );
 }

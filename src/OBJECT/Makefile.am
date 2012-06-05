@@ -1,4 +1,4 @@
-# Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+# Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,7 @@ salomeinclude_HEADERS =				\
 	Handle_GEOM_InteractiveObject.hxx	\
 	GEOM_AISTrihedron.hxx			\
 	GEOM_VTKTrihedron.hxx			\
+	GEOM_VTKPropertyMaterial.hxx		\
 	GEOM_AISVector.hxx			\
 	GEOM_OBJECT_defs.hxx			\
 	GEOM_OCCReader.h			\
@@ -56,6 +57,7 @@ dist_libGEOMObject_la_SOURCES =		\
 	GEOM_InteractiveObject.cxx	\
 	GEOM_AISTrihedron.cxx		\
 	GEOM_VTKTrihedron.cxx		\
+	GEOM_VTKPropertyMaterial.cxx	\
 	GEOM_AISVector.cxx		\
 	GEOM_PainterPolyDataMapper.cxx	\
 	GEOM_DeviceActor.cxx

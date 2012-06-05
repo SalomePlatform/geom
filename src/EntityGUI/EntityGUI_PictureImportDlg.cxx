@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -78,7 +78,7 @@ EntityGUI_PictureImportDlg::EntityGUI_PictureImportDlg( GeometryGUI* theGeometry
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupFileSel );
 
-//   setHelpFileName( "import_picture_page.html" );
+  setHelpFileName( "import_picture_page.html" );
 
   Init();
 }
@@ -123,7 +123,7 @@ void EntityGUI_PictureImportDlg::Init()
 // =================================================================================
 void EntityGUI_PictureImportDlg::FileSelectionClicked()
 {
-  QString selFile = QFileDialog::getOpenFileName(this,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_IMAGE_FILES"));
+  QString selFile = QFileDialog::getOpenFileName(this,tr( "GEOM_SELECT_IMAGE"),QString(), tr("OCC_TEXTURE_FILES"));
   if ( ! selFile.isEmpty() )
     myLineEdit->setText(selFile);
 }

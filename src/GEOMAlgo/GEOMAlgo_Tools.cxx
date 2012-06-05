@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,17 +18,13 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_Tools.cxx
 // Created:     Mon Dec  6 11:35:29 2004
 // Author:      Peter KURNEV
 
-#include <GEOMAlgo_Tools.ixx>
-
-#include <GEOMAlgo_PassKeyShape.hxx>
-#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
-
-#include <Basics_OCCTVersion.hxx>
+#include <GEOMAlgo_Tools.hxx>
 
 #include <gp.hxx>
 #include <gp_Pnt.hxx>
@@ -64,6 +60,9 @@
 
 #include <BOPTools_Tools2D.hxx>
 #include <IntTools_Context.hxx>
+
+#include <GEOMAlgo_PassKeyShape.hxx>
+#include <GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape.hxx>
 
 static
   void GetCount(const TopoDS_Shape& aS,
@@ -117,13 +116,9 @@ void GetCount(const TopoDS_Shape& aS,
 //function : RefineSDShapes
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMAlgo_Tools::RefineSDShapes (GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMPKLE,
-                                                 const Standard_Real aTol,
-#if OCC_VERSION_LARGE > 0x06050200
-                                                 const Handle(IntTools_Context)& aCtx)
-#else
-                                                 IntTools_Context& aCtx)
-#endif
+  Standard_Integer GEOMAlgo_Tools::RefineSDShapes(GEOMAlgo_IndexedDataMapOfPassKeyShapeListOfShape& aMPKLE,
+                                                  const Standard_Real aTol,
+                                                  const Handle(IntTools_Context)& aCtx)
 {
   Standard_Integer i, aNbE, iErr, j, aNbEE, aNbToAdd;
   TopTools_IndexedDataMapOfShapeListOfShape aMEE, aMSDE, aMEToAdd;
@@ -183,14 +178,10 @@ Standard_Integer GEOMAlgo_Tools::RefineSDShapes (GEOMAlgo_IndexedDataMapOfPassKe
 //function : FindSDShapes
 //purpose  :
 //=======================================================================
-Standard_Integer GEOMAlgo_Tools::FindSDShapes (const TopTools_ListOfShape& aLE,
-                                               const Standard_Real aTol,
-                                               TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
-#if OCC_VERSION_LARGE > 0x06050200
-                                               const Handle(IntTools_Context)& aCtx)
-#else
-                                               IntTools_Context& aCtx)
-#endif
+Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopTools_ListOfShape& aLE,
+                                              const Standard_Real aTol,
+                                              TopTools_IndexedDataMapOfShapeListOfShape& aMEE,
+                                              const Handle(IntTools_Context)& aCtx)
 {
   Standard_Integer aNbE, aNbEProcessed, aNbESD, iErr;
   TopTools_ListOfShape aLESD;
@@ -263,11 +254,7 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
                                               const TopTools_ListOfShape& aLE,
                                               const Standard_Real aTol,
                                               TopTools_ListOfShape& aLESD,
-#if OCC_VERSION_LARGE > 0x06050200
                                               const Handle(IntTools_Context)& aCtx)
-#else
-                                              IntTools_Context& aCtx)
-#endif
 {
   Standard_Boolean bIsDone;
   Standard_Real aTol2, aD2;
@@ -305,11 +292,7 @@ Standard_Integer GEOMAlgo_Tools::FindSDShapes(const TopoDS_Shape& aE1,
 Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
                                                      const TopoDS_Shape& aS,
                                                      gp_Pnt& aP2,
-#if OCC_VERSION_LARGE > 0x06050200
                                                      const Handle(IntTools_Context)& aCtx)
-#else
-                                                     IntTools_Context& aCtx)
-#endif
 {
   Standard_Boolean bIsDone = Standard_False;
   Standard_Real aT2;
@@ -331,11 +314,7 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
           if (aC3D.IsNull()) {
             return Standard_True;
           }
-#if OCC_VERSION_LARGE > 0x06050200
           bIsDone = aCtx->ProjectPointOnEdge(aP1, aE2, aT2);
-#else
-          bIsDone = aCtx.ProjectPointOnEdge(aP1, aE2, aT2);
-#endif
         }
         if (!bIsDone) {
           return bIsDone;
@@ -348,11 +327,7 @@ Standard_Boolean GEOMAlgo_Tools::ProjectPointOnShape(const gp_Pnt& aP1,
     case TopAbs_FACE:
       {
         const TopoDS_Face& aF2 = TopoDS::Face(aS);
-#if OCC_VERSION_LARGE > 0x06050200
         GeomAPI_ProjectPointOnSurf& aProj = aCtx->ProjPS(aF2);
-#else
-        GeomAPI_ProjectPointOnSurf& aProj = aCtx.ProjPS(aF2);
-#endif
         //
         aProj.Perform(aP1);
         bIsDone = aProj.IsDone();
@@ -514,11 +489,7 @@ Standard_Integer
   GEOMAlgo_Tools::BuildPCurveForEdgeOnFace(const TopoDS_Edge& aEold,
                                            const TopoDS_Edge& aEnew,
                                            const TopoDS_Face& aF,
-#if OCC_VERSION_LARGE > 0x06050200
                                            const Handle(IntTools_Context)& aCtx)
-#else
-                                           IntTools_Context& aCtx)
-#endif
 {
   Standard_Boolean bIsClosed, bUClosed, bHasOld;
   Standard_Integer iRet, aNbPoints;
@@ -583,11 +554,7 @@ Standard_Integer
   aS=BRep_Tool::Surface(aF);
   aS->D0(aUS1, aVS1, aP);
   //
-#if OCC_VERSION_LARGE > 0x06050200
   GeomAPI_ProjectPointOnCurve& aProjPC=aCtx->ProjPC(aEnew);
-#else
-  GeomAPI_ProjectPointOnCurve& aProjPC=aCtx.ProjPC(aEnew);
-#endif
   //
   aProjPC.Perform(aP);
   aNbPoints=aProjPC.NbPoints();

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //  GEOM OBJECT : interactive object for Geometry entities visualization
 //  File   : GEOM_AISShape.cxx
@@ -146,6 +147,18 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   myVIsoNumber = -1;
 
   myTopLevel = Standard_False;
+  Graphic3d_MaterialAspect aMatAspect;
+  if ( !HasMaterial() ) {
+  	aMatAspect.SetAmbient( 0.5 );
+  	aMatAspect.SetDiffuse( 0.5 );
+  	aMatAspect.SetEmissive( 0.5 );
+  	aMatAspect.SetShininess(0.5 );
+  	aMatAspect.SetSpecular( 0.5 );
+	
+  	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
+  	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
+  }
+  myCurrentMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -197,7 +210,6 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
 
       if(isTopLevel()) {
 	SetColor(topLevelColor());
-
 	Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
 	anAspect->SetColor( topLevelColor() );
 	Attributes()->SetWireAspect( anAspect );
@@ -315,10 +327,10 @@ void GEOM_AISShape::SetTransparency(const Standard_Real aValue)
     }
 
   Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
-  Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
-  FMat.SetTransparency(aValue); BMat.SetTransparency(aValue);
+  FMat.SetTransparency(aValue);
   myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(FMat);
-  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(BMat);
+  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(FMat);
+  myCurrentMaterial = FMat;
   myTransparency = aValue;
 }
 
@@ -374,33 +386,28 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
 {
   myDrawer->ShadingAspect()->Aspect()->SetDistinguishOn();
 
-      Graphic3d_MaterialAspect aMatAspect;
-      if ( !HasMaterial() ) {
-	aMatAspect.SetAmbient( 0.5 );
-	aMatAspect.SetDiffuse( 0.5 );
-	aMatAspect.SetEmissive( 0.5 );
-	aMatAspect.SetShininess(0.5 );
-	aMatAspect.SetSpecular( 0.5 );
-	
-	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
-	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(Graphic3d_NOM_JADE);
-      }
-      
-      Graphic3d_MaterialAspect FMat = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
-      Graphic3d_MaterialAspect BMat = myDrawer->ShadingAspect()->Aspect()->BackMaterial();
-      FMat.SetTransparency(myTransparency); BMat.SetTransparency(myTransparency);
-      myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(FMat);
-      myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(BMat);
+  Graphic3d_MaterialAspect aMatAspect(Graphic3d_NOM_PLASTIC);
+  aMatAspect.SetTransparency(myTransparency);
+  myCurrentMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
+  myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial( isTopLevel() ? aMatAspect : myCurrentMaterial );
+  myDrawer->ShadingAspect()->Aspect()->SetBackMaterial( isTopLevel() ? aMatAspect : myCurrentMaterial );
 
       //Handle(Graphic3d_AspectFillArea3d) a4bis = myDrawer->ShadingAspect()->Aspect();
       //       P->SetPrimitivesAspect(a4bis);
       //        G->SetGroupPrimitivesAspect(a4bis);
       //a4bis->SetInteriorColor(myShadingColor);
-      myDrawer->ShadingAspect()->SetColor(isTopLevel() ? topLevelColor() : myShadingColor);
+  if( isTopLevel() )
+    myDrawer->ShadingAspect()->SetColor( topLevelColor() );
+  else { 
+    if(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().MaterialType( Graphic3d_MATERIAL_ASPECT ))
+      myDrawer->ShadingAspect()->SetColor(myShadingColor);
+    else
+      myDrawer->ShadingAspect()->SetColor(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().AmbientColor());
+  }
 
-      // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
-      //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
-      AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
+  // PAL12113: AIS_Shape::Compute() works correctly with shapes containing no faces
+  //StdPrs_ShadedShape::Add(aPrs,myshape,myDrawer);
+  AIS_Shape::Compute(aPresentationManager, aPrs, aMode);
 }
 
 void GEOM_AISShape::storeIsoNumbers()

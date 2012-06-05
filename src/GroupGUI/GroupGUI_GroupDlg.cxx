@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 //  GEOM GEOMGUI : GUI for Geometry component
 //  File   : GroupGUI_GroupDlg.cxx
@@ -426,14 +427,27 @@ void GroupGUI_GroupDlg::setInPlaceObj(GEOM::GEOM_Object_var theObj, const bool i
     GEOM::GEOM_ILocalOperations_var aLocOp = getGeomEngine()->GetILocalOperations(getStudyId());
 
     GEOM::ListOfGO_var aSubObjects = aShapesOp->MakeExplode(myInPlaceObj, getShapeType(), false);
-    for (int i = 0; i < aSubObjects->length(); i++)
+    for ( int i = 0; i < aSubObjects->length(); i++ )
     {
-      GEOM::GEOM_Object_var aSS = aShapesOp->GetSame(myMainObj, aSubObjects[i]);
-      if (!CORBA::is_nil(aSS)) {
-        CORBA::Long aMainIndex = aLocOp->GetSubShapeIndex(myMainObj, aSS);
-        CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex(myInPlaceObj, aSubObjects[i]);
-        if (aMainIndex >= 0 && aPlaceIndex > 0)
-          myMain2InPlaceIndices.Bind(aMainIndex, aPlaceIndex);
+      GEOM::ListOfLong_var aCurrList = aShapesOp->GetSameIDs( myMainObj, aSubObjects[i] );
+      if( aCurrList->length() > 1 ) {
+        //rnv : To Fix the 21561: EDF 2184 GEOM: Group with second shape restriction.
+        //      In case if GetSameIDs(...) method return more then one ID use 
+        //      GetSharedShapes(...) method to get sub-shapes of the second shape.
+        GEOM::ListOfGO_var aSubObjects2 = aShapesOp->GetSharedShapes( myMainObj, aSubObjects[i], getShapeType() );
+        for( int j = 0; j < aSubObjects2->length(); j++ ) {
+          CORBA::Long aMainIndex =  aLocOp->GetSubShapeIndex( myMainObj, aSubObjects2[j] );
+          CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex( myInPlaceObj, aSubObjects[i]);
+          if ( aMainIndex >= 0 && aPlaceIndex > 0 ) {
+            myMain2InPlaceIndices.Bind( aMainIndex, aPlaceIndex );
+          }
+        }
+      } else if(aCurrList->length() > 0 ) {
+        CORBA::Long aMainIndex = aCurrList[0];
+        CORBA::Long aPlaceIndex = aLocOp->GetSubShapeIndex( myInPlaceObj, aSubObjects[i] );
+        if ( aMainIndex >= 0 && aPlaceIndex > 0) {
+          myMain2InPlaceIndices.Bind( aMainIndex, aPlaceIndex );
+        }
       }
     }
   }
@@ -673,7 +687,7 @@ int GroupGUI_GroupDlg::getSelectedSubshapes (TColStd_IndexedMapOfInteger& theMap
         anEntry.remove(0, index+1);
         int anIndex = anEntry.toInt();
         if (anIndex)
-          theMapIndex.Add(anIndex);
+        theMapIndex.Add(anIndex);
       }
       else // selection among published shapes
       {

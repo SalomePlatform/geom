@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,28 +18,15 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_Builder_1.cxx
-// Author:      Peter KURNEV 
-
+// Created:
+// Author:      Peter KURNEV
+//
 #include <GEOMAlgo_Builder.hxx>
-
-#include <Basics_OCCTVersion.hxx>
-
-#include <GEOMAlgo_Tools3D.hxx>
-
-#include <NMTTools_PaveFiller.hxx>
-#include <NMTTools_CommonBlockPool.hxx>
-#include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
-#include <NMTTools_CommonBlock.hxx>
-#include <NMTTools_CommonBlockPool.hxx>
-#include <NMTTools_ListOfCommonBlock.hxx>
-#include <NMTTools_CommonBlockAPI.hxx>
-
-#include <NMTDS_ShapesDataStructure.hxx>
-
+//
 #include <TColStd_ListOfInteger.hxx>
-#include <TColStd_ListIteratorOfListOfInteger.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Shape.hxx>
@@ -47,20 +34,33 @@
 #include <TopoDS_Edge.hxx>
 #include <TopoDS_Shell.hxx>
 #include <TopoDS_Iterator.hxx>
-
+//
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_ListOfShape.hxx>
 #include <TopTools_ListIteratorOfListOfShape.hxx>
 #include <TopTools_MapIteratorOfMapOfShape.hxx>
-
+//
 #include <BRep_Tool.hxx>
 #include <BRep_Builder.hxx>
-
+//
 #include <IntTools_Context.hxx>
-
 #include <BOPTools_ListIteratorOfListOfPaveBlock.hxx>
 #include <BOPTools_ListOfPaveBlock.hxx>
 #include <BOPTools_PaveBlock.hxx>
+//
+#include <NMTDS_ShapesDataStructure.hxx>
+//
+#include <NMTTools_PaveFiller.hxx>
+#include <NMTTools_CommonBlockPool.hxx>
+#include <NMTTools_ListIteratorOfListOfCommonBlock.hxx>
+#include <NMTTools_CommonBlock.hxx>
+#include <NMTTools_CommonBlockPool.hxx>
+#include <NMTTools_ListOfCommonBlock.hxx>
+#include <NMTTools_CommonBlockAPI.hxx>
+//
+#include <GEOMAlgo_Tools3D.hxx>
+#include <TColStd_ListIteratorOfListOfInteger.hxx>
+
 
 
 static
@@ -74,7 +74,7 @@ static
 
 //=======================================================================
 //function : FillImagesVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesVertices()
 {
@@ -103,7 +103,7 @@ static
 }
 //=======================================================================
 // function: FillImagesEdges
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesEdges()
 {
@@ -112,11 +112,7 @@ static
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
   const BOPTools_SplitShapesPool& aSSP=pPF->SplitShapesPool();
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx=pPF->Context();
-#else
-  IntTools_Context& aCtx=pPF->ChangeContext();
-#endif
   //
   Standard_Boolean bToReverse;
   Standard_Integer i, aNb, aNbSp, nSp, nSpR, nSpx, aIsCB, aNbLB;
@@ -208,12 +204,12 @@ static
     }
     //
     myImages.Bind(aE, aLSp);
-    
+
   }//for (i=1; i<=aNb; ++i)
 }
 //=======================================================================
 // function: FillImagesContainers
-// purpose: 
+// purpose:
 //=======================================================================
   void GEOMAlgo_Builder::FillImagesContainers(const TopAbs_ShapeEnum theType)
 {
@@ -224,17 +220,13 @@ static
   TopAbs_ShapeEnum aType;
   BRep_Builder aBB;
   TopoDS_Iterator aIt;
-  TopTools_ListIteratorOfListOfShape aItIm; 
+  TopTools_ListIteratorOfListOfShape aItIm;
   TopTools_MapOfShape aMS;
   TopTools_MapIteratorOfMapOfShape aItS;
   //
   const NMTDS_ShapesDataStructure& aDS=*myPaveFiller->DS();
   NMTTools_PaveFiller* pPF=myPaveFiller;
-#if OCC_VERSION_LARGE > 0x06050200
   const Handle(IntTools_Context)& aCtx= pPF->Context();
-#else
-  IntTools_Context& aCtx= pPF->ChangeContext();
-#endif
   //
   aNbS=aDS.NumberOfShapesOfTheObject();
   for (i=1; i<=aNbS; ++i) {
@@ -290,12 +282,12 @@ static
         aBB.Add(aCIm, aF);
       }
     }
-    myImages.Bind(aC, aCIm); 
+    myImages.Bind(aC, aCIm);
   }// for (; aItS.More(); aItS.Next()) {
 }
 //=======================================================================
 // function: FillImagesCompounds
-// purpose: 
+// purpose:
 //=======================================================================
 void FillImagesCompounds(const TopTools_MapOfShape& theMS,
                          BRepAlgo_Image& theImages)
@@ -311,18 +303,18 @@ void FillImagesCompounds(const TopTools_MapOfShape& theMS,
 }
 //=======================================================================
 //function : FillImagesCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
 void FillImagesCompound(const TopoDS_Shape& theS,
                         BRepAlgo_Image& theImages,
                         TopTools_MapOfShape& theMFP)
-{ 
+{
   Standard_Boolean bInterferred;
   TopAbs_ShapeEnum aTypeX;
   TopAbs_Orientation aOrX;
   TopoDS_Iterator aIt;
   BRep_Builder aBB;
-  TopTools_ListIteratorOfListOfShape aItIm; 
+  TopTools_ListIteratorOfListOfShape aItIm;
   //
   if (!theMFP.Add(theS)) {
     return;
@@ -364,5 +356,5 @@ void FillImagesCompound(const TopoDS_Shape& theS,
       aBB.Add(aCIm, aSX);
     }
   }
-  theImages.Bind(theS, aCIm); 
+  theImages.Bind(theS, aCIm);
 }

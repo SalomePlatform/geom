@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -15,11 +15,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
-// File:        NMTDS_IteratorChecker.cxx
+// File:        NMTDS_IteratorChecker.hxx
 // Author:      Peter KURNEV
 
-#include <NMTDS_IteratorCheckerSI.ixx>
+#include <NMTDS_IteratorCheckerSI.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 #include <gp_Pnt.hxx>

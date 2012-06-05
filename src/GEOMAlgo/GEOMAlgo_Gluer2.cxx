@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,16 +18,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_Gluer2.cxx
 // Author:      Peter KURNEV
 
 #include <GEOMAlgo_Gluer2.hxx>
-
-#include <GEOMAlgo_GlueDetector.hxx>
-#include <GEOMAlgo_Tools3D.hxx>
-
-#include <Basics_OCCTVersion.hxx>
 
 #include <TopAbs_ShapeEnum.hxx>
 
@@ -36,9 +32,8 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
-#include <TopExp.hxx>
-
 #include <BRep_Builder.hxx>
+#include <TopExp.hxx>
 #include <BRepLib.hxx>
 
 #include <TopTools_MapOfShape.hxx>
@@ -49,9 +44,12 @@
 #include <TopTools_DataMapIteratorOfDataMapOfShapeListOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
 
+#include <GEOMAlgo_GlueDetector.hxx>
+#include <GEOMAlgo_Tools3D.hxx>
+
 //=======================================================================
 //function : GEOMAlgo_Gluer2
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_Gluer2::GEOMAlgo_Gluer2()
 :
@@ -62,14 +60,14 @@ GEOMAlgo_Gluer2::GEOMAlgo_Gluer2()
 }
 //=======================================================================
 //function : ~GEOMAlgo_Gluer2
-//purpose  : 
+//purpose  :
 //=======================================================================
 GEOMAlgo_Gluer2::~GEOMAlgo_Gluer2()
 {
 }
 //=======================================================================
 //function : Clear
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::Clear()
 {
@@ -84,10 +82,24 @@ void GEOMAlgo_Gluer2::Clear()
   myImagesToWork.Clear();
   myOriginsToWork.Clear();
   myKeepNonSolids=Standard_False;
+  //modified by NIZNHY-PKV Tue Mar 13 13:38:28 2012f
+  myDetector.Clear();
+  //modified by NIZNHY-PKV Tue Mar 13 13:38:30 2012t
 }
+//modified by NIZNHY-PKV Tue Mar 13 12:26:50 2012f
+//=======================================================================
+//function : StickedShapes
+//purpose  :
+//=======================================================================
+const TopTools_IndexedDataMapOfShapeListOfShape&
+  GEOMAlgo_Gluer2::StickedShapes()
+{
+  return myDetector.StickedShapes();
+}
+//modified by NIZNHY-PKV Tue Mar 13 12:26:54 2012t
 //=======================================================================
 //function : SetShapesToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::SetShapesToGlue(const TopTools_DataMapOfShapeListOfShape& aM)
 {
@@ -95,7 +107,7 @@ void GEOMAlgo_Gluer2::SetShapesToGlue(const TopTools_DataMapOfShapeListOfShape& 
 }
 //=======================================================================
 //function : ShapesToGlue
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer2::ShapesToGlue()const
 {
@@ -103,7 +115,7 @@ const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer2::ShapesToGlue()const
 }
 //=======================================================================
 //function : SetKeepNonSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::SetKeepNonSolids(const Standard_Boolean aFlag)
 {
@@ -111,15 +123,15 @@ void GEOMAlgo_Gluer2::SetKeepNonSolids(const Standard_Boolean aFlag)
 }
 //=======================================================================
 //function : KeepNonSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
-Standard_Boolean GEOMAlgo_Gluer2::KeepNonSolids()const 
+Standard_Boolean GEOMAlgo_Gluer2::KeepNonSolids()const
 {
   return myKeepNonSolids;
 }
 //=======================================================================
 //function : ShapesDetected
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer2::ShapesDetected()const
 {
@@ -127,7 +139,7 @@ const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer2::ShapesDetected()const
 }
 //=======================================================================
 //function : ImagesToWork
-//purpose  : 
+//purpose  :
 //=======================================================================
 const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer2::ImagesToWork()const
 {
@@ -135,28 +147,27 @@ const TopTools_DataMapOfShapeListOfShape& GEOMAlgo_Gluer2::ImagesToWork()const
 }
 //=======================================================================
 //function : Perform
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::Perform()
 {
   myErrorStatus=0;
   myWarningStatus=0;
-  // 
+  //
   CheckData();
   if (myErrorStatus) {
     return;
   }
   //
-#if OCC_VERSION_LARGE > 0x06050200
   // Initialize the context
   GEOMAlgo_GluerAlgo::Perform();
-#endif
   //
   PerformShapesToWork();
   if (myErrorStatus) {
     return;
   }
-  if (myWarningStatus==1) {// no shapes to glue
+  if (myWarningStatus==1) {
+    // no shapes to glue
     myShape=myArgument;
     return;
   }
@@ -215,7 +226,7 @@ void GEOMAlgo_Gluer2::Perform()
 }
 //=======================================================================
 //function : CheckData
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::CheckData()
 {
@@ -240,8 +251,8 @@ void GEOMAlgo_Gluer2::CheckData()
         aTypeX=aSG.ShapeType();
         if (!i) {
           aType=aTypeX;
-          if (!(aType==TopAbs_VERTEX || 
-                aType==TopAbs_EDGE || 
+          if (!(aType==TopAbs_VERTEX ||
+                aType==TopAbs_EDGE ||
                 aType==TopAbs_FACE)) {
             myErrorStatus=21;// non-brep shapes
             return;
@@ -258,15 +269,15 @@ void GEOMAlgo_Gluer2::CheckData()
 }
 //=======================================================================
 //function : FillEdges
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillEdges()
 {
   FillBRepShapes(TopAbs_EDGE);
-} 
+}
 //=======================================================================
 //function : FillFaces
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillFaces()
 {
@@ -274,7 +285,7 @@ void GEOMAlgo_Gluer2::FillFaces()
 }
 //=======================================================================
 //function : FillWires
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillWires()
 {
@@ -282,7 +293,7 @@ void GEOMAlgo_Gluer2::FillWires()
 }
 //=======================================================================
 //function : FillShells
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillShells()
 {
@@ -290,23 +301,23 @@ void GEOMAlgo_Gluer2::FillShells()
 }
 //=======================================================================
 //function : FillSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillSolids()
 {
   FillContainers(TopAbs_SOLID);
-} 
+}
 //=======================================================================
 //function : FillCompSolids
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillCompSolids()
 {
   FillContainers(TopAbs_COMPSOLID);
-} 
+}
 //=======================================================================
 //function : FillVertices
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillVertices()
 {
@@ -341,10 +352,10 @@ void GEOMAlgo_Gluer2::FillVertices()
 }
 //=======================================================================
 //function : FillBRepShapes
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillBRepShapes(const TopAbs_ShapeEnum theType)
-{ 
+{
   Standard_Boolean bHasImage, bIsToWork;
   Standard_Integer i, aNbE;
   TopoDS_Iterator aItS;
@@ -400,7 +411,7 @@ void GEOMAlgo_Gluer2::FillBRepShapes(const TopAbs_ShapeEnum theType)
 }
 //=======================================================================
 //function : FillContainers
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
 {
@@ -431,9 +442,7 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
     }
     //
     GEOMAlgo_Tools3D::MakeContainer(aType, aWnew);
-    //modified by NIZNHY-PKV Tue May 10 13:46:30 2011f
     aWnew.Orientation(aW.Orientation());
-    //modified by NIZNHY-PKV Tue May 10 13:46:32 2011t
     //
     aItS.Initialize(aW);
     for (; aItS.More(); aItS.Next()) {
@@ -453,10 +462,6 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
       }
     }
     //
-    //modified by NIZNHY-PKV Tue May 10 13:46:19 2011f
-    //aWnew.Orientation(aW.Orientation());
-    //modified by NIZNHY-PKV Tue May 10 13:46:22 2011t
-    //
     //myImages / myOrigins
     TopTools_ListOfShape aLSD;
     //
@@ -468,7 +473,7 @@ void GEOMAlgo_Gluer2::FillContainers(const TopAbs_ShapeEnum aType)
 }
 //=======================================================================
 //function : FillCompounds
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillCompounds()
 {
@@ -489,7 +494,7 @@ void GEOMAlgo_Gluer2::FillCompounds()
 }
 //=======================================================================
 //function : FillCompound
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::FillCompound(const TopoDS_Shape& aC)
 {
@@ -534,7 +539,7 @@ void GEOMAlgo_Gluer2::FillCompound(const TopoDS_Shape& aC)
 }
 //=======================================================================
 //function : HasImage
-//purpose  : 
+//purpose  :
 //=======================================================================
 Standard_Boolean GEOMAlgo_Gluer2::HasImage(const TopoDS_Shape& aC)
 {
@@ -568,7 +573,7 @@ Standard_Boolean GEOMAlgo_Gluer2::HasImage(const TopoDS_Shape& aC)
 }
 //=======================================================================
 //function : BuildResult
-//purpose  : 
+//purpose  :
 //=======================================================================
 void GEOMAlgo_Gluer2::BuildResult()
 {
@@ -617,7 +622,7 @@ void GEOMAlgo_Gluer2::BuildResult()
     GEOMAlgo_Tools3D::MakeContainer(TopAbs_COMPOUND, aCnew1);
     //
     TopExp::MapShapes(aCnew, TopAbs_SOLID, aM);
-    
+
     aNb=aM.Extent();
     for (i=1; i<=aNb; ++i) {
       const TopoDS_Shape& aS=aM(i);
@@ -628,7 +633,6 @@ void GEOMAlgo_Gluer2::BuildResult()
   //
   myShape=aCnew;
 }
-
 //--------------------------------------------------------
 //
 // ErrorStatus
@@ -637,4 +641,10 @@ void GEOMAlgo_Gluer2::BuildResult()
 // 14   - PerformImagesToWork failed
 //
 // WarningStatus
-// 1    - no shapes to glue
+// 1   - no shapes to glue
+// 2  - sticked shapes are detected.
+//      The value of myTolerance is so large that
+//      subshapes of a shape becomes intefere
+//      (e.g. vertices of an edge).
+//      In the case
+//      the result is can not be obtained

@@ -1,0 +1,18 @@
+/*!
+
+\page boundaries_page Check Free Boundaries
+
+Detects and highlights  wires and edges that are not shared between
+two faces and are considered a shape's boundary.
+
+<b>TUI Command:</b> <em>(NoError, ClosedWires, OpenWires) =
+geompy.GetFreeBoundary(Shape),</em> where \em Shape is a shape to be
+checked, \em NoError is false if an error occurred while checking free
+boundaries, \em ClosedWires is a list of closed free boundary wires,
+\em OpenWires is a list of open free boundary wires.
+
+See also a \ref tui_free_boundaries_page "TUI example".
+
+\image html repair9.png
+
+*/

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -18,18 +18,16 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
+//
 
 // File:        GEOMAlgo_BuilderArea.cxx
+// Created:
 // Author:      Peter KURNEV
-
-#include <GEOMAlgo_BuilderArea.ixx>
-
-#include <Basics_OCCTVersion.hxx>
+//
+#include <GEOMAlgo_BuilderArea.hxx>
 
 #include <TopTools_ListIteratorOfListOfShape.hxx>
-
 #include <TopoDS_Shape.hxx>
-
 #include <IntTools_Context.hxx>
 
 //=======================================================================
@@ -37,11 +35,9 @@
 //purpose  :
 //=======================================================================
 GEOMAlgo_BuilderArea::GEOMAlgo_BuilderArea()
-  : GEOMAlgo_Algo()
+:
+  GEOMAlgo_Algo()
 {
-#if OCC_VERSION_LARGE <= 0x06050200
-  myContext=NULL;
-#endif
 }
 //=======================================================================
 //function : ~
@@ -54,20 +50,10 @@ GEOMAlgo_BuilderArea::~GEOMAlgo_BuilderArea()
 //function : SetContext
 //purpose  :
 //=======================================================================
-#if OCC_VERSION_LARGE > 0x06050200
 void GEOMAlgo_BuilderArea::SetContext(const Handle(IntTools_Context)& theContext)
-#else
-void GEOMAlgo_BuilderArea::SetContext(const IntTools_Context& theContext)
-#endif
 {
-#if OCC_VERSION_LARGE > 0x06050200
   myContext=theContext;
-#else
-  myContext=(IntTools_Context*)&theContext;
-#endif
 }
-
-#if OCC_VERSION_LARGE > 0x06050200
 //=======================================================================
 //function : Context
 //purpose  :
@@ -86,8 +72,6 @@ void GEOMAlgo_BuilderArea::Perform()
     myContext=new IntTools_Context;
   }
 }
-#endif
-
 //=======================================================================
 //function : SetShapes
 //purpose  :
@@ -155,3 +139,4 @@ void GEOMAlgo_BuilderArea::PerformAreas()
 void GEOMAlgo_BuilderArea::PerformInternalShapes()
 {
 }
+

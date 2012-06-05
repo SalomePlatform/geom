@@ -1,0 +1,17 @@
+/*!
+
+\page create_topological_obj_page Creating Topological Objects
+
+<b>New Entity -> Build </b> submenu allows to create topological
+entities: 
+
+<ul>
+<li>\subpage create_edge_page</li>
+<li>\subpage create_wire_page</li>
+<li>\subpage create_face_page</li>
+<li>\subpage create_shell_page</li>
+<li>\subpage create_solid_page</li>
+<li>\subpage create_compound_page</li>
+</ul>
+
+*/

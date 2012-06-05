@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // Copyright (C) 2003-2007  OPEN CASCADE, EADS/CCR, LIP6, CEA/DEN,
 // CEDRAT, EDF R&D, LEG, PRINCIPIA R&D, BUREAU VERITAS
@@ -2118,6 +2118,17 @@ module GEOM
      */
     GEOM_Object GetSame (in GEOM_Object theShapeWhere,
                                 in GEOM_Object theShapeWhat);
+
+    /*!
+     *  \brief Get sub-shape Ids of theShapeWhere, which are
+     *   coincident with \a theShapeWhat that can either SOLID, FACE, EDGE or VERTEX.
+     *  \param theShapeWhere Shape to find sub-shapes of.
+     *  \param theShapeWhat Shape, specifying what to find.
+     *  \return found sub-shape Ids.
+     */
+    ListOfLong GetSameIDs (in GEOM_Object theShapeWhere,
+                           in GEOM_Object theShapeWhat);
+
   };
 
  // # GEOM_IBlocksOperations: 

@@ -1,4 +1,4 @@
-// Copyright (C) 2007-2011  CEA/DEN, EDF R&D, OPEN CASCADE
+// Copyright (C) 2007-2012  CEA/DEN, EDF R&D, OPEN CASCADE
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -28,81 +28,69 @@
 #include <QColor>
 #include <QMap>
 #include <QString>
+#include <QVector>
 
-class Graphic3d_MaterialAspect;
-
-class vtkProperty;
+#include <Graphic3d_MaterialAspect.hxx>
 
 class QtxResourceMgr;
+class GEOM_VTKPropertyMaterial;
 
 class MATERIAL_SALOME_EXPORT Material_Model
 {
-
 public:
-
-  //! Enumeration of reflection types of material
+  //! Reflection type
   typedef enum {
     Ambient,  //!< Ambient 
     Diffuse,  //!< Diffuse
     Specular, //!< Specular
-    Emission  //!< Emission
+    Emissive  //!< Emissive
   } ReflectionType;
-
 
   Material_Model();
   virtual ~Material_Model();
 
-  static Material_Model* getMaterialModel( QStringList );
+  void                fromProperties( const QString& );
+  QString             toProperties();
+  void                fromResources( const QString& = QString(), QtxResourceMgr* = 0 );
+  void                toResources( const QString&, QtxResourceMgr* );
 
-  QString                getMaterialProperty();
+  bool                isPhysical() const;
+  void                setPhysical( bool );
 
-  Graphic3d_MaterialAspect getMaterialOCCAspect();
-  vtkProperty*             getMaterialVTKProperty();
-
-  void                initDefaults();
-  void                fromResources( QtxResourceMgr*, const QString& = QString(), bool theIsFront = true );
-  void                save( QtxResourceMgr* = 0, const QString& = QString(), bool theIsFront = true );
-
-  QtxResourceMgr*     resourceMgr() const;
-  QString             resourceSection( bool theIsFront ) const;
-
-  bool                hasAmbientReflection();
-  bool                hasDiffuseReflection();
-  bool                hasSpecularReflection();
-  bool                hasEmissionReflection();
+  bool                hasReflection( ReflectionType ) const;
+  void                setReflection( ReflectionType, bool );
 
   QColor              color( ReflectionType ) const;
   void                setColor( ReflectionType, const QColor& );
-  void                setColor( QString,
-				QString,
-				ReflectionType );
-  void                removeColor( ReflectionType );
 
-  double              coefficient( ReflectionType ) const;
-  void                setCoefficient( ReflectionType, double );  
-  void                setCoefficient( QString,
-				      QString,
-				      ReflectionType );
-  void                removeCoefficient( ReflectionType );
+  double              reflection( ReflectionType ) const;
+  void                setReflection( ReflectionType, double );
 
   double              shininess() const;
-  void                setShininess( double );  
+  void                setShininess( double );
+
+  double              transparency() const;
+  void                setTransparency( double );
+
+  Graphic3d_MaterialAspect  getMaterialOCCAspect();
+  GEOM_VTKPropertyMaterial* getMaterialVTKProperty();
 
 private:
-  void                clearModel();
+  void                init();
 
 private:
-  typedef QMap<ReflectionType, QColor> ColorMap;
-  typedef QMap<ReflectionType, double> CoefficientMap;
+  typedef struct {
+    QColor color;
+    double coef;
+    bool   enabled;
+  } ReflectionData;
 
-  QtxResourceMgr*     myResourceMgr;
-  QString             myResourceSection;
+  typedef QVector<ReflectionData> ReflectionList;
 
-  ColorMap            myColors;
-  CoefficientMap      myCoefficients;
-
+  bool                myIsPhysical;
   double              myShininess;
-
+  double              myTransparency;
+  ReflectionList      myReflection;
 };
 
 #endif // MATERIAL_MODEL_H
