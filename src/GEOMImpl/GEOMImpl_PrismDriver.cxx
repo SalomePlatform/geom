@@ -450,10 +450,11 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
     if (!aWire.Closed())
       Standard_ConstructionError::Raise("The input profile is not closed");
     
-    // Construction of the face if the wire hasn't any support face
-    TopoDS_Face aFaceBase = BRepBuilderAPI_MakeFace(aWire);
+    // Construction of the face if the wire hasn't any support face;
+    // the face must be planar for BRepFeat_MakeDPrism
+    TopoDS_Face aFaceBase = BRepBuilderAPI_MakeFace(aWire, /*OnlyPlane=*/true);
 
-    if(!theSupport.IsNull() && theSupport.ShapeType() == TopAbs_FACE)      // If the wire has a support
+    if(!theSupport.IsNull() && theSupport.ShapeType() == TopAbs_FACE) // If the wire has a support
     {
       Handle(Geom_Surface) aSurf = BRep_Tool::Surface(TopoDS::Face(theSupport));
       TopoDS_Face aTempFace = BRepBuilderAPI_MakeFace(aSurf, aWire);
@@ -481,8 +482,8 @@ TopoDS_Shape GEOMImpl_PrismDriver::MakeDraftPrism ( const TopoDS_Shape& theInitS
       aHeight  = -theHeight;
     }
     
-    BRepFeat_MakeDPrism aPrism(theInitShape, aFaceBase, TopoDS_Face(),
-                              anAngle*M_PI/180., isProtrusion, Standard_True); 
+    BRepFeat_MakeDPrism aPrism(theInitShape, aFaceBase, aFaceBase,
+                               anAngle*M_PI/180., isProtrusion, Standard_True); 
     
     aPrism.Perform(aHeight);
     aPrism.Check();          // Raises NotDone if done is false
