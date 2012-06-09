@@ -297,6 +297,7 @@ void GroupGUI_GroupDlg::ClickOnOk()
   setIsApplyAndClose(true);
   if (ClickOnApply())
     ClickOnCancel();
+  setIsApplyAndClose(false);
 }
 
 //=================================================================================
@@ -305,8 +306,14 @@ void GroupGUI_GroupDlg::ClickOnOk()
 //=================================================================================
 bool GroupGUI_GroupDlg::ClickOnApply()
 {
-  if (!onAccept(myMode == CreateGroup, true))
+  if(!isApplyAndClose())
+    setIsDisableBrowsing( true );
+    
+  if (!onAccept(myMode == CreateGroup, true,isApplyAndClose()))
     return false;
+
+  if(!isApplyAndClose())
+    setIsDisableBrowsing( false );
 
   if (myMode == CreateGroup)
   {
@@ -827,7 +834,9 @@ void GroupGUI_GroupDlg::setShapeType(const TopAbs_ShapeEnum theType)
 //=================================================================================
 void GroupGUI_GroupDlg::activateSelection()
 {
-  erasePreview(false);
+  bool isApply = ((QPushButton*)sender() == buttonApply());
+  if(!isApply)
+    erasePreview(false);
 
   // local selection
   if (!myMainObj->_is_nil() &&
@@ -853,70 +862,71 @@ void GroupGUI_GroupDlg::activateSelection()
         }
       }
     }
+    if(!isApply) {
+      int prevDisplayMode = aDisplayer->SetDisplayMode(0);
 
-    int prevDisplayMode = aDisplayer->SetDisplayMode(0);
+      SUIT_ViewWindow* aViewWindow = 0;
+      SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
+      if (activeStudy)
+        aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+      if (aViewWindow == 0) return;
 
-    SUIT_ViewWindow* aViewWindow = 0;
-    SUIT_Study* activeStudy = SUIT_Session::session()->activeApplication()->activeStudy();
-    if (activeStudy)
-      aViewWindow = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-    if (aViewWindow == 0) return;
+      SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
+      if (aViewManager->getType() != OCCViewer_Viewer::Type() &&
+          aViewManager->getType() != SVTK_Viewer::Type())
+        return;
 
-    SUIT_ViewManager* aViewManager = aViewWindow->getViewManager();
-    if (aViewManager->getType() != OCCViewer_Viewer::Type() &&
-        aViewManager->getType() != SVTK_Viewer::Type())
-      return;
+      SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
+      SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
+      if (aView == 0) return;
 
-    SUIT_ViewModel* aViewModel = aViewManager->getViewModel();
-    SALOME_View* aView = dynamic_cast<SALOME_View*>(aViewModel);
-    if (aView == 0) return;
+      TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
+      TopoDS_Shape aRestrictionShape;
 
-    TopoDS_Shape aMainShape = GEOM_Client::get_client().GetShape(GeometryGUI::GetGeomGen(), myMainObj);
-    TopoDS_Shape aRestrictionShape;
+      if (subSelectionWay() == ALL_SUBSHAPES) {
+        aRestrictionShape = aMainShape;
 
-    if (subSelectionWay() == ALL_SUBSHAPES) {
-      aRestrictionShape = aMainShape;
+        TopTools_IndexedMapOfShape aSubShapesMap;
+        TopExp::MapShapes(aMainShape, aSubShapesMap);
+        CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+        QString anEntryBase = aMainEntry.in();
 
-      TopTools_IndexedMapOfShape aSubShapesMap;
-      TopExp::MapShapes(aMainShape, aSubShapesMap);
-      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
-      QString anEntryBase = aMainEntry.in();
+        TopExp_Explorer anExp (aRestrictionShape, getShapeType());
+        for (; anExp.More(); anExp.Next()) {
+          TopoDS_Shape aSubShape = anExp.Current();
+          int index = aSubShapesMap.FindIndex(aSubShape);
+          QString anEntry = anEntryBase + QString("_%1").arg(index);
 
-      TopExp_Explorer anExp (aRestrictionShape, getShapeType());
-      for (; anExp.More(); anExp.Next()) {
-        TopoDS_Shape aSubShape = anExp.Current();
-        int index = aSubShapesMap.FindIndex(aSubShape);
-        QString anEntry = anEntryBase + QString("_%1").arg(index);
-
-        SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
-        if (aPrs) {
-          displayPreview(aPrs, true, false); // append, do not update
-          // TODO: map or delete Prs
+          SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
+          if (aPrs) {
+            displayPreview(aPrs, true, false); // append, do not update
+            // TODO: map or delete Prs
+          }
         }
       }
-    }
-    else if (!myInPlaceObj->_is_nil()) {
-      TopTools_IndexedMapOfShape aSubShapesMap;
-      TopExp::MapShapes(aMainShape, aSubShapesMap);
-      CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
-      QString anEntryBase = aMainEntry.in();
+      else if (!myInPlaceObj->_is_nil()) {
+        TopTools_IndexedMapOfShape aSubShapesMap;
+        TopExp::MapShapes(aMainShape, aSubShapesMap);
+        CORBA::String_var aMainEntry = myMainObj->GetStudyEntry();
+        QString anEntryBase = aMainEntry.in();
 
-      TColStd_DataMapIteratorOfDataMapOfIntegerInteger aM2IPit (myMain2InPlaceIndices);
-      for (; aM2IPit.More(); aM2IPit.Next()) {
-        int index = aM2IPit.Key();
-        TopoDS_Shape aSubShape = aSubShapesMap.FindKey(index);
-        QString anEntry = anEntryBase + QString("_%1").arg(index);
+        TColStd_DataMapIteratorOfDataMapOfIntegerInteger aM2IPit (myMain2InPlaceIndices);
+        for (; aM2IPit.More(); aM2IPit.Next()) {
+          int index = aM2IPit.Key();
+          TopoDS_Shape aSubShape = aSubShapesMap.FindKey(index);
+          QString anEntry = anEntryBase + QString("_%1").arg(index);
 
-        SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
-        if (aPrs) {
-          displayPreview(aPrs, true, false); // append, do not update
+          SALOME_Prs* aPrs = aDisplayer->buildSubshapePresentation(aSubShape, anEntry, aView);
+          if (aPrs) {
+            displayPreview(aPrs, true, false); // append, do not update
+          }
         }
       }
-    }
-    else ;
+      else ;
 
-    aDisplayer->UpdateViewer();
-    aDisplayer->SetDisplayMode(prevDisplayMode);
+      aDisplayer->UpdateViewer();
+      aDisplayer->SetDisplayMode(prevDisplayMode);
+    }
   }
 
   globalSelection(GEOM_ALLSHAPES);
