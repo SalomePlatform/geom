@@ -1,0 +1,27 @@
+/*!\page partition_explanation Fuse, Partition and Compound usage
+
+It is frequently asked about the difference between the above mentioned operations. It's indeed simple. Lets take the example of a cylinder and a box that you want to join together.
+
+\section Fuse
+
+The \b fuse operation will make a <b>single solid</b> from the two given solids :
+
+\image html fuse.png
+
+\section Partition
+
+The \b partition operation will do basically the same but it will <b>keep a face at the frontier between the two solids</b> (in brown on the picture below). 
+This face is shared by the two solids, which means that this face is present only one time in the resulting shape and is a sub-shape of the box and a sub-shape of the cylinder.
+
+This operation allows you to identify different areas in a shape (e.g. different materials) and to ensure a conformal mesh when meshing it later. Indeed the face at the frontier is meshed only one time. 
+
+\image html partition.png
+
+\section Compound
+
+When you build a \b compound by using the build -> compound operation you just make <b>an object that contains the two separate solids</b> like in a "bag".
+The two solids remain unconnected. The compound is just a set of shapes, no more.
+
+\image html compound2.png
+
+*/

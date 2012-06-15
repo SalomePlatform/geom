@@ -4,6 +4,9 @@
 
 \image html geomscreen.png
 
+If you are a new user some general information about GEOM usage are given here:
+\subpage first_steps_guide
+
 \b Geometry module of SALOME is destined for: 
 - \subpage import_export_geom_obj_page "import and export of geometrical models"
   in IGES, BREP and STEP formats;
