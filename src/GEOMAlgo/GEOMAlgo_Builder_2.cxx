@@ -937,7 +937,6 @@ void UpdateCandidates(const Standard_Integer theNF,
   }
 }
 
-//modified by NIZNHY-PKV Thu Feb 16 12:25:16 2012f
 //=======================================================================
 //function : IsClosed
 //purpose  :
@@ -949,14 +948,23 @@ Standard_Boolean IsClosed(const TopoDS_Edge& aE,
   //
   bRet=BRep_Tool::IsClosed(aE, aF);
   if (bRet) {
-    TopTools_MapOfShape aM;
+    Standard_Integer iCnt;
+    TopoDS_Shape aE1;
+    //
+    bRet=!bRet;
+    iCnt=0;
     TopExp_Explorer aExp(aF, TopAbs_EDGE);
     for (; aExp.More(); aExp.Next()) {
       const TopoDS_Shape& aEx=aExp.Current();
       //
-      if (aM.Add(aEx)) {
-	bRet=aEx.IsSame(aE);
-	if (bRet) {
+      if (aEx.IsSame(aE)) {
+	++iCnt;
+	if (iCnt==1) {
+	  aE1=aEx;
+	}
+	else if (iCnt==2){
+	  aE1.Reverse();
+	  bRet=(aE1==aEx);
 	  break;
 	}
       }
@@ -964,7 +972,6 @@ Standard_Boolean IsClosed(const TopoDS_Edge& aE,
   }
   return bRet;
 }
-//modified by NIZNHY-PKV Thu Feb 16 12:25:25 2012t
 
 /*
     {
