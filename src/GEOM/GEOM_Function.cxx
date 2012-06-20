@@ -137,6 +137,23 @@ GEOM_Function::GEOM_Function(const TDF_Label& theEntry, const Standard_GUID& the
   aRoot->Append(aNode);
 }
 
+//================================================================================
+/*!
+ * \brief Retuns true if this function is the last one in the study
+ */
+//================================================================================
+
+bool GEOM_Function::IsLastFuntion()
+{
+  bool isLast = false;
+
+  Handle(TDataStd_TreeNode) aNode;
+  if (_label.FindAttribute(GetFunctionTreeID(), aNode))
+    isLast = !aNode->HasNext();
+
+  return isLast;
+}
+
 //=============================================================================
 /*!
  *  GetOwner
