@@ -753,12 +753,16 @@ SALOMEDS::SObject_ptr GEOM_Gen_i::AddInStudy (SALOMEDS::Study_ptr theStudy,
   if(aLength < 1) return aResultSO._retn();
 
   //Publish the arguments
+  TCollection_AsciiString aPrevID; // to avoid multiple references to same object
   for(Standard_Integer i = 0; i< aLength; i++) {
     GEOM::GEOM_Object_var anObject = aList[i];
     if(anObject->_is_nil()) continue;
     IOR = _orb->object_to_string(anObject);
     SALOMEDS::SObject_var aSO =  theStudy->FindObjectIOR(IOR.in());
     if(aSO->_is_nil()) continue;
+    CORBA::String_var anID = aSO->GetID();
+    if ( aPrevID == anID.in() ) continue;
+    aPrevID = anID.in();
     SALOMEDS::SObject_var aSubSO = aStudyBuilder->NewObject(aResultSO);
     aStudyBuilder->Addreference(aSubSO, aSO);
     aSO->UnRegister();
