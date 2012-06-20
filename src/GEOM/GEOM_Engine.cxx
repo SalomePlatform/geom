@@ -219,7 +219,7 @@ void GEOM_Engine::SetEngine(GEOM_Engine* theEngine) { TheEngine = theEngine; }
 GEOM_Engine::GEOM_Engine()
 {
   TFunction_DriverTable::Get()->AddDriver(GEOM_Object::GetSubShapeID(), new GEOM_SubShapeDriver());
-
+  
   _OCAFApp = new GEOM_Application();
   _UndoLimit = 10;
 }
@@ -671,7 +671,15 @@ TCollection_AsciiString GEOM_Engine::DumpPython(int theDocID,
         continue;
       // add function description before dump
       if (!aCurScript.IsEmpty())
+      {
+        if ( aFunction->GetDriverGUID() == GEOM_Object::GetSubShapeID() )
+          // avoid repeated SubShape...() command at the end
+          if (aFuncScript.Location( aCurScript,
+                                    aFuncScript.Length() - aCurScript.Length(),
+                                    aFuncScript.Length()))
+              continue;
         aFuncScript += aCurScript;
+      }
       if (isDumpCollected ) {
         // Replace entries by the names
         ReplaceEntriesByNames( aFuncScript, aEntry2ObjData, isPublished,
