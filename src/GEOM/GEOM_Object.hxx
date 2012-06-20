@@ -279,7 +279,9 @@ class GEOM_Object : public MMgt_TShared
 
   //Adds a function with a driver GUID = theGUID and a type theFunctionType
   //to the function tree of this GEOM_Object
-  Standard_EXPORT Handle(GEOM_Function) AddFunction(const Standard_GUID& theGUID, int theFunctionType);
+  Standard_EXPORT Handle(GEOM_Function) AddFunction(const Standard_GUID& theGUID,
+                                                    int                  theFunctionType,
+                                                    bool                 allowSubShape=false);
 
   //Returns a number of functions of this GEOM_Object
   Standard_EXPORT int GetNbFunctions();
