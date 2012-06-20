@@ -114,7 +114,7 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
   SetErrorCode(KO);
   if(theGroup.IsNull()) return;
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if(aFunction.IsNull()) return;
 
   GEOM_ISubShape aSSI (aFunction);
@@ -152,7 +152,15 @@ void GEOMImpl_IGroupOperations::AddObject(Handle(GEOM_Object) theGroup, int theS
       }
     }
     aNewSeq->SetValue(aLength+1, theSubShapeID);
-    aSSI.SetIndices(aNewSeq);
+    if ( aFunction->IsLastFuntion() ) {
+      aSSI.SetIndices(aNewSeq);
+    }
+    else {
+      aFunction = theGroup->AddFunction( GEOM_Object::GetSubShapeID(), 0, true );
+      GEOM_ISubShape aSSI2 (aFunction);
+      aSSI2.SetIndices(aNewSeq);
+      aSSI2.SetMainShape( aSSI.GetMainShape() );
+    }
   }
 
   // As we do not recompute here our group, lets mark it as Modified
@@ -177,7 +185,7 @@ void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int 
   SetErrorCode(KO);
   if(theGroup.IsNull()) return;
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if(aFunction.IsNull()) return;
 
   GEOM_ISubShape aSSI(aFunction);
@@ -219,7 +227,15 @@ void GEOMImpl_IGroupOperations::RemoveObject (Handle(GEOM_Object) theGroup, int 
     }
   }
 
-  aSSI.SetIndices(aNewSeq);
+  if ( aFunction->IsLastFuntion() ) {
+    aSSI.SetIndices(aNewSeq);
+  }
+  else {
+    aFunction = theGroup->AddFunction( GEOM_Object::GetSubShapeID(), 0, true );
+    GEOM_ISubShape aSSI2 (aFunction);
+    aSSI2.SetIndices(aNewSeq);
+    aSSI2.SetMainShape( aSSI.GetMainShape() );
+  }
 
   // As we do not recompute here our group, lets mark it as Modified
   TDF_Label aLabel = aSSI.GetMainShape()->GetOwnerEntry();
@@ -255,7 +271,7 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     return;
   }
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if (aFunction.IsNull()) return;
 
   GEOM_ISubShape aSSI (aFunction);
@@ -361,20 +377,22 @@ void GEOMImpl_IGroupOperations::UnionList (Handle(GEOM_Object) theGroup,
     for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
       aNewSeq->SetValue(k, aNewIDsIter.Value());
     }
-
-    aSSI.SetIndices(aNewSeq);
-
+    if ( aFunction->IsLastFuntion() ) {
+      aSSI.SetIndices(aNewSeq);
+    }
+    else {
+      aFunction = theGroup->AddFunction( GEOM_Object::GetSubShapeID(), 0, true );
+      GEOM_ISubShape aSSI2 (aFunction);
+      aSSI2.SetIndices(aNewSeq);
+      aSSI2.SetMainShape(aMainShapeFunc);
+    }
     // As we do not recompute here our group, lets mark it as Modified
     Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
     theGroup->SetTic(aTic - 1);
   }
 
   //Make a Python command
-  Handle(GEOM_Object) aLatest = GEOM::GetCreatedLast(theSubShapes);
-  aLatest = GEOM::GetCreatedLast(aLatest, theGroup);
-  Handle(GEOM_Function) aLastFunc = aLatest->GetLastFunction();
-
-  GEOM::TPythonDump pd (aLastFunc, /*append=*/true);
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "geompy.UnionList(" << theGroup << ", [";
 
   for (i = 1; i <= aLen; i++) {
@@ -403,7 +421,7 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
     return;
   }
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if (aFunction.IsNull()) return;
 
   GEOM_ISubShape aSSI (aFunction);
@@ -504,19 +522,22 @@ void GEOMImpl_IGroupOperations::DifferenceList (Handle(GEOM_Object) theGroup,
       aNewSeq->SetValue(1, -1);
     }
 
-    aSSI.SetIndices(aNewSeq);
-
+    if ( aFunction->IsLastFuntion() ) {
+      aSSI.SetIndices(aNewSeq);
+    }
+    else {
+      aFunction = theGroup->AddFunction( GEOM_Object::GetSubShapeID(), 0, true );
+      GEOM_ISubShape aSSI2 (aFunction);
+      aSSI2.SetIndices(aNewSeq);
+      aSSI2.SetMainShape(aMainShapeFunc);
+    }
     // As we do not recompute here our group, lets mark it as Modified
     Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
     theGroup->SetTic(aTic - 1);
   }
 
   //Make a Python command
-  Handle(GEOM_Object) aLatest = GEOM::GetCreatedLast(theSubShapes);
-  aLatest = GEOM::GetCreatedLast(aLatest, theGroup);
-  Handle(GEOM_Function) aLastFunc = aLatest->GetLastFunction();
-
-  GEOM::TPythonDump pd (aLastFunc, /*append=*/true);
+  GEOM::TPythonDump pd (aFunction, /*append=*/true);
   pd << "geompy.DifferenceList(" << theGroup << ", [";
 
   for (i = 1; i <= aLen; i++) {
@@ -545,7 +566,7 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
     return;
   }
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if (aFunction.IsNull()) return;
 
   GEOM_ISubShape aSSI (aFunction);
@@ -602,9 +623,15 @@ void GEOMImpl_IGroupOperations::UnionIDs (Handle(GEOM_Object) theGroup,
     for (; aNewIDsIter.More(); aNewIDsIter.Next(), k++) {
       aNewSeq->SetValue(k, aNewIDsIter.Value());
     }
-
-    aSSI.SetIndices(aNewSeq);
-
+    if ( aFunction->IsLastFuntion() ) {
+      aSSI.SetIndices(aNewSeq);
+    }
+    else {
+      aFunction = theGroup->AddFunction( GEOM_Object::GetSubShapeID(), 0, true );
+      GEOM_ISubShape aSSI2 (aFunction);
+      aSSI2.SetIndices(aNewSeq);
+      aSSI2.SetMainShape(aMainShapeFunc);
+    }
     // As we do not recompute here our group, lets mark it as Modified
     Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
     theGroup->SetTic(aTic - 1);
@@ -638,7 +665,7 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
     return;
   }
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if (aFunction.IsNull()) return;
 
   GEOM_ISubShape aSSI (aFunction);
@@ -699,9 +726,15 @@ void GEOMImpl_IGroupOperations::DifferenceIDs (Handle(GEOM_Object) theGroup,
       aNewSeq = new TColStd_HArray1OfInteger(1,1);
       aNewSeq->SetValue(1, -1);
     }
-
-    aSSI.SetIndices(aNewSeq);
-
+    if ( aFunction->IsLastFuntion() ) {
+      aSSI.SetIndices(aNewSeq);
+    }
+    else {
+      aFunction = theGroup->AddFunction( GEOM_Object::GetSubShapeID(), 0, true );
+      GEOM_ISubShape aSSI2 (aFunction);
+      aSSI2.SetIndices(aNewSeq);
+      aSSI2.SetMainShape(aMainShapeFunc);
+    }
     // As we do not recompute here our group, lets mark it as Modified
     Standard_Integer aTic = aMainObj->GetTic(); // tic of main shape
     theGroup->SetTic(aTic - 1);
@@ -775,7 +808,7 @@ Handle(TColStd_HArray1OfInteger) GEOMImpl_IGroupOperations::GetObjects(Handle(GE
 
   if(theGroup.IsNull()) return NULL;
 
-  Handle(GEOM_Function) aFunction = theGroup->GetFunction(1);
+  Handle(GEOM_Function) aFunction = theGroup->GetLastFunction();
   if(aFunction.IsNull()) return NULL;
 
   GEOM_ISubShape aSSI(aFunction);
