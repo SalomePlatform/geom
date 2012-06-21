@@ -27,42 +27,35 @@
 #include "utilities.h"
 
 #include <Basics_Utils.hxx>
-
 #include <Basics_OCCTVersion.hxx>
 
 #include <BRep_Builder.hxx>
-
 #include <IFSelect_ReturnStatus.hxx>
-
+#include <Interface_InterfaceModel.hxx>
+#include <Interface_Static.hxx>
 #include <STEPControl_Reader.hxx>
+#include <StepBasic_Product.hxx>
 #include <StepBasic_ProductDefinition.hxx>
 #include <StepBasic_ProductDefinitionFormation.hxx>
-#include <StepBasic_Product.hxx>
-#include <Interface_InterfaceModel.hxx>
+#include <StepGeom_GeometricRepresentationItem.hxx>
+#include <StepShape_TopologicalRepresentationItem.hxx>
+#include <TCollection_AsciiString.hxx>
+#include <TDF_ChildIDIterator.hxx>
+#include <TDF_Label.hxx>
+#include <TDataStd_Name.hxx>
+#include <TNaming_Builder.hxx>
+#include <TNaming_NamedShape.hxx>
+#include <TopExp.hxx>
+#include <TopExp_Explorer.hxx>
+#include <TopTools_IndexedMapOfShape.hxx>
+#include <TopoDS_Compound.hxx>
+#include <TopoDS_Iterator.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TransferBRep.hxx>
+#include <Transfer_Binder.hxx>
+#include <Transfer_TransientProcess.hxx>
 #include <XSControl_TransferReader.hxx>
 #include <XSControl_WorkSession.hxx>
-#include <StepShape_TopologicalRepresentationItem.hxx>
-#include <StepGeom_GeometricRepresentationItem.hxx>
-
-#include <Transfer_Binder.hxx>
-#include <TNaming_Builder.hxx>
-#include <TDataStd_Name.hxx>
-#include <Transfer_TransientProcess.hxx>
-#include <TransferBRep.hxx>
-
-#include <TCollection_AsciiString.hxx>
-#include <TopoDS_Compound.hxx>
-#include <TopoDS_Shape.hxx>
-#include <TDF_Label.hxx>
-#include <TDF_ChildIDIterator.hxx>
-#include <TNaming_NamedShape.hxx>
-#include <TDF_Tool.hxx>
-#include <Interface_Static.hxx>
-
-#include <TopTools_IndexedMapOfShape.hxx>
-#include <TopExp.hxx>
-#include <TopoDS_Iterator.hxx>
-#include <BRepTools.hxx>
 
 #include <Standard_Failure.hxx>
 #include <Standard_ErrorHandler.hxx> // CAREFUL ! position of this file is critic : see Lucien PIGNOLONI / OCC
@@ -170,6 +163,13 @@ extern "C"
         }
         if (aResShape.IsNull())
           aResShape = compound;
+
+        // Check if any BRep entity has been read, there must be at least a vertex
+        if ( !TopExp_Explorer( aResShape, TopAbs_VERTEX ).More() )
+        {
+          theError = "No geometrical data in the imported file.";
+          return TopoDS_Shape();
+        }
 
         // BEGIN: Store names of sub-shapes from file
         TopTools_IndexedMapOfShape anIndices;
