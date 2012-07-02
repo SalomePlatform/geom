@@ -59,7 +59,7 @@ libGEOM_SupervEngine_la_CPPFLAGS =	\
 	-I$(top_builddir)/idl
 
 libGEOM_SupervEngine_la_LDFLAGS  =	\
-        ../GEOM_I/libGEOMEngine.la      \
+    ../../idl/libSalomeIDLGEOM.la       \
 	$(CORBA_LIBS)			\
 	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -lSalomeDSClient \
 	$(STDLIB)
