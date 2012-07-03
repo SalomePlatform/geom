@@ -27,9 +27,12 @@
 
 // IDL headers
 #include <SALOMEconfig.h>
+#include CORBA_CLIENT_HEADER(GEOM_Gen)
 #include CORBA_SERVER_HEADER(GEOM_Superv)
 
-#include "GEOM_Gen_i.hh"
+#include "SALOME_Component_i.hxx"
+#include "SALOME_NamingService.hxx"
+
 #include "GEOM_List_i.hh"
 
 class GEOM_I_SUPERV_EXPORT GEOM_Superv_i : public virtual POA_GEOM::GEOM_Superv,

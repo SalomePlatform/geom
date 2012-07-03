@@ -29,7 +29,6 @@
 #include <SALOMEconfig.h>
 #include CORBA_SERVER_HEADER(GEOM_Superv)
 
-#include "GEOM_Gen_i.hh"
 #include "utilities.h"
 
 template <class Type>
