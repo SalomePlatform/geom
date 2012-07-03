@@ -60,6 +60,8 @@ libGEOM_SupervEngine_la_CPPFLAGS =	\
 
 libGEOM_SupervEngine_la_LDFLAGS  =	\
     ../../idl/libSalomeIDLGEOM.la       \
+    ../GEOM/libGEOMbasic.la		\
 	$(CORBA_LIBS)			\
-	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSalomeNS -lSalomeLifeCycleCORBA -lSalomeContainer -lSalomeDSClient \
+	$(KERNEL_LDFLAGS) -lSalomeGenericObj -lSalomeNS -lSalomeLifeCycleCORBA -lSALOMELocalTrace -lSalomeContainer -lSalomeDSClient \
+	$(CAS_LDFLAGS) -lTKernel -lTKMath -lTKBRep -lTKTopAlgo \
 	$(STDLIB)
