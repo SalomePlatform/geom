@@ -15,24 +15,30 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
+
 #ifndef _GEOMAlgo_ShapeInfoFiller_HeaderFile
 #define _GEOMAlgo_ShapeInfoFiller_HeaderFile
 
 #include <Standard.hxx>
 #include <Standard_Macro.hxx>
-#include <TopoDS_Shape.hxx>
-#include <GEOMAlgo_ShapeInfo.hxx>
-#include <GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx>
 #include <Standard_Real.hxx>
-#include <GEOMAlgo_Algo.hxx>
-#include <TopoDS_Face.hxx>
+
 #include <gp_Pln.hxx>
 #include <gp_Sphere.hxx>
 #include <gp_Cylinder.hxx>
 #include <gp_Cone.hxx>
 #include <gp_Torus.hxx>
+
+#include <GeomAbs_CurveType.hxx>
+#include <GeomAbs_SurfaceType.hxx>
+
 #include <TopoDS_Solid.hxx>
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Face.hxx>
+
+#include <GEOMAlgo_ShapeInfo.hxx>
+#include <GEOMAlgo_IndexedDataMapOfShapeShapeInfo.hxx>
+#include <GEOMAlgo_Algo.hxx>
 
 //=======================================================================
 //class    : GEOMAlgo_ShapeInfoFiller
@@ -114,10 +120,27 @@ class GEOMAlgo_ShapeInfoFiller  : public GEOMAlgo_Algo
   Standard_EXPORT
     void FillDetails(const TopoDS_Solid& aS) ;
 
+  //modified by NIZNHY-PKV Tue Jul 03 13:31:43 2012f
+  Standard_EXPORT
+    Standard_Boolean TreatStepSphere(const TopoDS_Solid& aS);
+
+  Standard_EXPORT  static
+    Standard_Boolean IsAllowedType(const GeomAbs_CurveType aCT);
+
+  Standard_EXPORT  static
+    Standard_Boolean IsAllowedType(const GeomAbs_SurfaceType aST);
+
+  Standard_EXPORT  static
+    Standard_Integer NbWires(const TopoDS_Face& aF);
+
+  Standard_EXPORT  static
+    Standard_Integer NbShells(const TopoDS_Solid& aS);
+  //modified by NIZNHY-PKV Tue Jul 03 13:31:49 2012t
 
   TopoDS_Shape myShape;
   GEOMAlgo_ShapeInfo myEmptyInfo;
   GEOMAlgo_IndexedDataMapOfShapeShapeInfo myMapInfo;
   Standard_Real myTolerance;
 };
+
 #endif

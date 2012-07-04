@@ -15,11 +15,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMAlgo_ShapeInfoFiller.hxx>
 
 #include <Precision.hxx>
+#include <TColStd_MapOfInteger.hxx>
+#include <TColStd_IndexedMapOfInteger.hxx>
 
 #include <gp_Lin.hxx>
 #include <gp_XYZ.hxx>
@@ -30,6 +31,8 @@
 #include <gp_Ax3.hxx>
 
 #include <ElCLib.hxx>
+
+#include <GeomAdaptor_Surface.hxx>
 
 #include <TopoDS.hxx>
 #include <TopoDS_Vertex.hxx>
@@ -45,18 +48,25 @@
 
 #include <TopTools_MapOfShape.hxx>
 #include <TopTools_IndexedMapOfShape.hxx>
+
 #include <BRepTools_WireExplorer.hxx>
+#include <BRepGProp.hxx>
+#include <GProp_GProps.hxx>
 
 #include <GEOMAlgo_ShapeInfo.hxx>
-#include <TColStd_MapOfInteger.hxx>
-#include <TColStd_IndexedMapOfInteger.hxx>
+
+static
+  Standard_Boolean IsEqual(const gp_Sphere& aSp1,
+                           const gp_Sphere& aSp2,
+                           const Standard_Real aTolDst);
 
 //=======================================================================
 //function : FillDetails
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Solid& aSd)
 {
+  Standard_Boolean bIsStepSphere;
   Standard_Integer i, aNbF, aNbCyl, aNbCon, aNbPgn, aNbRct, aNbCrc, aNbX;
   TopoDS_Shape aFCyl, aFCon;
   TopTools_IndexedMapOfShape aMF;
@@ -88,6 +98,15 @@
       return;
     }
   }
+  //modified by NIZNHY-PKV Tue Jul 03 13:23:55 2012f
+  else if (aNbF==2) {
+    // specific solid that should be treated as a sphere
+    bIsStepSphere=TreatStepSphere(aSd);
+    if (bIsStepSphere) {
+      return;
+    }
+  }
+  //modified by NIZNHY-PKV Tue Jul 03 13:23:57 2012t
   //
   aNbCyl=0;
   aNbCon=0;
@@ -110,8 +129,8 @@
       ++aNbCrc;
     }
     else if (aKNF==GEOMAlgo_KN_POLYGON ||
-            aKNF==GEOMAlgo_KN_TRIANGLE ||
-            aKNF==GEOMAlgo_KN_QUADRANGLE) {
+             aKNF==GEOMAlgo_KN_TRIANGLE ||
+             aKNF==GEOMAlgo_KN_QUADRANGLE) {
       ++aNbPgn;
     }
     else if (aKNF==GEOMAlgo_KN_RECTANGLE) {
@@ -147,11 +166,9 @@
     return;
   }
   //
-  //modified by NIZNHY-PKV Wed Jan 11 11:04:31 2012f
   if (aNbF!=aNbPgn) {
     return;// -> GEOMAlgo_KN_UNKNOWN
   }
-  //modified by NIZNHY-PKV Wed Jan 11 11:04:37 2012t
   if (aNbPgn!=6) {
     aInfo.SetKindOfName(GEOMAlgo_KN_POLYHEDRON);
     return;
@@ -211,6 +228,11 @@
       const gp_Dir& aDNj=aIFj.Position().Direction();
       //
       aDot=aDNi*aDNj;
+      //modified by NIZNHY-PKV Tue Jul 03 10:01:56 2012f
+      if (aDot<0.) {
+        aDot=-aDot;
+      }
+      //modified by NIZNHY-PKV Tue Jul 03 10:01:52 2012t
       if (fabs(1.-aDot)<0.0001) {
         aMp.Add(i);
         aMp.Add(j);
@@ -269,8 +291,8 @@
 //function : FillDetails
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                             const gp_Pln& aPln)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Pln& aPln)
 {
   Standard_Integer aNbV, aNbE, i, j;
   Standard_Real aDot, aD0, aD1, aLength, aWidth;
@@ -456,8 +478,8 @@
 //function : FillDetails
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                             const gp_Sphere& )
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Sphere& )
 {
   Standard_Integer aNbV, aNbE, aNbSE, aNbDE;
   TopoDS_Edge aE;
@@ -506,8 +528,8 @@
 //function : FillDetails
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                             const gp_Cone& )//aCone)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Cone& )//aCone)
 {
   Standard_Integer aNbV, aNbE, aNbCE, aNbSE, aNbDE, i;
   Standard_Real aR[3], aHeight;
@@ -635,8 +657,8 @@
 //function : FillDetails
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                             const gp_Cylinder& aCyl)
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Cylinder& aCyl)
 {
   Standard_Integer i, aNbV, aNbE, aNbCE, aNbSE;
   Standard_Real aT0, aT1, aHeight;
@@ -720,8 +742,8 @@
 //function : FillDetails
 //purpose  :
 //=======================================================================
-  void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
-                                             const gp_Torus& )
+void GEOMAlgo_ShapeInfoFiller::FillDetails(const TopoDS_Face& aF,
+                                           const gp_Torus& )
 {
   Standard_Integer aNbV, aNbE, aNbSE;
   TopoDS_Edge aE;
@@ -748,7 +770,6 @@
   for (; aExp.More(); aExp.Next()) {
     aE=TopoDS::Edge(aExp.Current());
     if (aM.Add(aE)) {
-      //const GEOMAlgo_ShapeInfo& aInfoE=myMapInfo.FindFromKey(aE);
       if (BRep_Tool::IsClosed(aE, aF)) {
         ++aNbSE;
       }
@@ -760,3 +781,121 @@
   }
   aInfo.SetKindOfName(GEOMAlgo_KN_TORUS);
 }
+//modified by NIZNHY-PKV Tue Jul 03 13:29:41 2012f
+//=======================================================================
+//function : TreatStepSphere
+//purpose  :
+//=======================================================================
+Standard_Boolean
+  GEOMAlgo_ShapeInfoFiller::TreatStepSphere(const TopoDS_Solid& aSd)
+{
+  Standard_Boolean bRet, bIsAllowedType, bOnlyClosed, bIsEqual;
+  Standard_Integer j;
+  Standard_Real aTolAng, aTolLin;
+  Standard_Real aVolume, aVolumeS, dV, aArea, aAreaS, dA;
+  gp_Sphere aSphere[2];
+  GeomAbs_SurfaceType aST;
+  Handle(Geom_Surface) aS;
+  GeomAdaptor_Surface aGAS;
+  TopExp_Explorer aExp;
+  //
+  bRet=Standard_False;
+  aTolLin=Precision::Confusion();
+  aTolAng=Precision::Angular();
+  //
+  aExp.Init(aSd, TopAbs_FACE);
+  for (j=0; aExp.More(); aExp.Next(), ++j) {
+    const TopoDS_Face& aF=*((TopoDS_Face*)&aExp.Current());
+    aS=BRep_Tool::Surface(aF);
+    aGAS.Load(aS);
+    aST=aGAS.GetType();
+    bIsAllowedType=GEOMAlgo_ShapeInfoFiller::IsAllowedType(aST);
+    if (!bIsAllowedType) {
+      return bRet;
+    }
+    //
+    if (aST!=GeomAbs_Sphere) {
+      return bRet;
+    }
+    //
+    aSphere[j]=aGAS.Sphere();
+  }
+  //
+  bIsEqual=IsEqual(aSphere[0], aSphere[1], aTolLin);
+  if (!bIsEqual) {
+    return bRet;
+  }
+  //
+  //--------------------------------
+  GProp_GProps aGProps;
+  //
+  bOnlyClosed=Standard_False;
+  //
+  aVolume=aSphere[0].Volume();
+  //
+  BRepGProp::VolumeProperties(aSd, aGProps,  bOnlyClosed);
+  aVolumeS=aGProps.Mass();
+  if (aVolumeS<0.) {
+    aVolumeS=-aVolumeS;
+  }
+  //
+  dV=fabs(aVolumeS-aVolume);
+  if (dV>aTolLin) {
+    return bRet;
+  }
+  //--------------------------------
+  aArea=aSphere[0].Area();
+  //
+  BRepGProp::SurfaceProperties(aSd, aGProps);
+  aAreaS=aGProps.Mass();
+  //
+  dA=fabs(aAreaS-aArea);
+  if (dA>aTolLin) {
+    return bRet;
+  }
+  //
+  //--------------------------------
+  gp_Pnt aP0;
+  gp_Ax3 aAx3;
+  Standard_Real aR1;
+  //
+  aP0=aSphere[0].Location();
+  aAx3=aSphere[0].Position();
+  aR1=aSphere[0].Radius();
+  //
+  GEOMAlgo_ShapeInfo& aInfo=myMapInfo.ChangeFromKey(aSd);
+  //
+  aInfo.SetKindOfName(GEOMAlgo_KN_SPHERE);
+  aInfo.SetLocation(aP0);
+  aInfo.SetPosition(aAx3);
+  aInfo.SetRadius1(aR1);
+  //
+  return !bRet;// true
+}
+//=======================================================================
+//function : IsEqual
+//purpose  :
+//=======================================================================
+Standard_Boolean IsEqual(const gp_Sphere& aSp1,
+                         const gp_Sphere& aSp2,
+                         const Standard_Real aTolLin)
+{
+  Standard_Boolean bRet;
+  Standard_Real aR1, aR2, aD2;
+  //
+  bRet=Standard_False;
+  aR1=aSp1.Radius();
+  aR2=aSp2.Radius();
+  if (fabs(aR1-aR2)>aTolLin) {
+    return bRet;
+  }
+  //
+  const gp_Pnt& aPC1=aSp1.Position().Location();
+  const gp_Pnt& aPC2=aSp2.Position().Location();
+  //
+  aD2=aPC1.SquareDistance(aPC2);
+  bRet=(aD2<aTolLin*aTolLin);
+  //
+  return bRet;
+}
+//modified by NIZNHY-PKV Tue Jul 03 13:29:43 2012t

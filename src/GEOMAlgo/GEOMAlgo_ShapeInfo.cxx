@@ -15,10 +15,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <GEOMAlgo_ShapeInfo.hxx>
-
 
 static
   Standard_Integer TypeToInteger(const TopAbs_ShapeEnum aType);
@@ -848,7 +846,8 @@ void DumpKindOfShape(const GEOMAlgo_KindOfShape aKS)
     "KS_PLANE",
     "KS_CIRCLE",
     "KS_LINE",
-    "KS_DEGENERATED"
+    "KS_DEGENERATED",
+    "KS_BSPLINE"
     };
   int i;
   //
