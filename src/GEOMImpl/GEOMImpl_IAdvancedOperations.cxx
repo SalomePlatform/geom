@@ -56,8 +56,10 @@
 #include <gp_Pnt.hxx>
 #include <gp_Vec.hxx>
 #include <gp_Ax3.hxx>
+
 #include <BRepBuilderAPI_Transform.hxx>
 #include <BRep_Tool.hxx>
+
 #include <cmath>
 
 #include <TFunction_DriverTable.hxx>
@@ -757,13 +759,13 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
           break;
       }
       Handle(GEOM_Object) edge_e1, edge_e2;
-      
+
       edge_e1 = myBasicOperations->MakeLineTwoPnt(ve1, vi1);
       if (edge_e1.IsNull()) {
         SetErrorCode("Edge 1 could not be built");
         return false;
       }
-      
+
       edge_e2 = myBasicOperations->MakeLineTwoPnt(ve2, vi2);
       if (edge_e2.IsNull()) {
         SetErrorCode("Edge 2 could not be built");
@@ -790,7 +792,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
         return false;
       }
       face_t->GetLastFunction()->SetDescription("");
-      
+
       theShapes.push_back(theShape);
       theShapes.push_back(vi1);
       theShapes.push_back(vi2);
@@ -996,7 +998,10 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
       //wire_t2->GetLastFunction()->SetDescription("");
       //         std::cerr << "Creating face 2" << std::endl;
       //face_t2 = myShapesOperations->MakeFace(wire_t2, false);
-      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - 2.0*theR2);
+
+      // Mantis issue 0021682
+      face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - (theR2 + theW2));
+      //face_t2 = my3DPrimOperations->MakePrismVecH(edge_chan_inc, Cote_4, - 2.0*theR2);
       if (face_t2.IsNull()) {
         SetErrorCode("Impossible to build face");
         return false;
@@ -1025,9 +1030,10 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
     Handle(TColStd_HSequenceOfTransient) theKeepInside = new TColStd_HSequenceOfTransient;
     Handle(TColStd_HSequenceOfTransient) theRemoveInside = new TColStd_HSequenceOfTransient;
     Handle(TColStd_HArray1OfInteger) theMaterials;
+
     partitionShapes->Append(theShape);
     theTools->Append(aPlnOZ);
-    if (Abs(aR1Ext - aR2Ext) > Precision::Confusion() )
+    if (Abs(aR1Ext - aR2Ext) > Precision::Confusion())
       theTools->Append(aPlnOXZ);
     theTools->Append(face_t);
     if (!isNormal)
@@ -1048,7 +1054,7 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
       SetErrorCode("TShape is not a compound of block");
       return false;
     }
-    
+
 //     // BEGIN Compound of created shapes - Only for debug purpose
 //     theShapes.clear();
 //     theShapes.push_back(theShape);
@@ -1058,12 +1064,12 @@ bool GEOMImpl_IAdvancedOperations::MakePipeTShapePartition(Handle(GEOM_Object) t
 //     theShapes.push_back(face_t);
 //     if (!isNormal)
 //       theShapes.push_back(face_t2);
-// 
+//
 //     Handle(GEOM_Object) aCompound = myShapesOperations->MakeCompound(theShapes);
 //     TopoDS_Shape aCompoundShape = aCompound->GetValue();
 //     theShape->GetLastFunction()->SetValue(aCompoundShape);
 //     // END Compound of created shapes - Only for debug purpose
-    
+
     TopoDS_Shape aShape = Te3->GetValue();
     theShape->GetLastFunction()->SetValue(aShape);
   } catch (Standard_Failure) {
