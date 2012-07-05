@@ -16,13 +16,12 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 //
-// File:	GEOMAlgo_Tools_1.cxx
-// Created:	Thu May  6 10:46:21 2010
-// Author:	Peter KURNEV
-//		<pkv@irinox>
+// File:    GEOMAlgo_Tools_1.cxx
+// Created: Thu May  6 10:46:21 2010
+// Author:  Peter KURNEV
 
 #include <GEOMAlgo_Tools.hxx>
-//
+
 #include <NCollection_DataMap.hxx>
 
 #include <gp_Pnt2d.hxx>
@@ -59,19 +58,19 @@
 
 static
   inline Standard_Boolean IsEqual(const TopoDS_Shape& aS1,
-				  const TopoDS_Shape& aS2) {
+                                  const TopoDS_Shape& aS2) {
   return TopTools_ShapeMapHasher::IsEqual(aS1, aS2);
 }
 //
 static
   Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
-			       const TopoDS_Face& aF);
+                               const TopoDS_Face& aF);
 
 //=======================================================================
 //function : CorrectWires
 //purpose  :
 //=======================================================================
-  Standard_Boolean GEOMAlgo_Tools::CorrectWires(const TopoDS_Shape& aShape)
+Standard_Boolean GEOMAlgo_Tools::CorrectWires(const TopoDS_Shape& aShape)
 {
   Standard_Boolean bRet;
   TopoDS_Iterator aItF;
@@ -90,19 +89,23 @@ static
       const Handle(Geom_Surface)& aS=BRep_Tool::Surface(aF, aLoc);
       aGAS.Load(aS);
       aTS=aGAS.GetType();
-      if (aTS==GeomAbs_Cylinder || aTS==GeomAbs_Plane) {
-	aItF.Initialize(aF);
-	for (; aItF.More(); aItF.Next()) {
-	  const TopoDS_Wire& aW=*((TopoDS_Wire*)&aItF.Value());
-	  if (CorrectWire(aW, aF)) {
-	   bRet=Standard_True;
-	  }
-	}
+      //modified by NIZNHY-PKV Mon Jul 02 13:58:30 2012f
+      if (aTS==GeomAbs_Cylinder || aTS==GeomAbs_Plane || aTS==GeomAbs_BSplineSurface) {
+    //if (aTS==GeomAbs_Cylinder || aTS==GeomAbs_Plane) {
+        //modified by NIZNHY-PKV Mon Jul 02 13:58:33 2012t
+        aItF.Initialize(aF);
+        for (; aItF.More(); aItF.Next()) {
+          const TopoDS_Wire& aW=*((TopoDS_Wire*)&aItF.Value());
+          if (CorrectWire(aW, aF)) {
+           bRet=Standard_True;
+          }
+        }
       }
     }
   }
   return bRet;
 }
+
 //=======================================================================
 //class: GEOMAlgo_InfoEdge
 //purpose  :
@@ -119,7 +122,7 @@ class GEOMAlgo_InfoEdge {
   };
   //
   void Init(const TopoDS_Edge& aE,
-	    const TopoDS_Face& aF);
+            const TopoDS_Face& aF);
   //
   void SetTolInt(const Standard_Real aTolInt) {
     myTolInt=aTolInt;
@@ -166,7 +169,7 @@ typedef GEOMAlgo_DataMapOfShapeInfoEdge::Iterator GEOMAlgo_DataMapIteratorOfData
 //purpose  :
 //=======================================================================
   void GEOMAlgo_InfoEdge::Init(const TopoDS_Edge& aE,
-			       const TopoDS_Face& aF)
+                               const TopoDS_Face& aF)
 {
   Standard_Real aT1, aT2, aT1x, aT2x;
   gp_Pnt2d aP2D1, aP2D2;
@@ -181,10 +184,10 @@ typedef GEOMAlgo_DataMapOfShapeInfoEdge::Iterator GEOMAlgo_DataMapIteratorOfData
       aT1x=myGAC2D.FirstParameter();
       aT2x=myGAC2D.LastParameter();
       if(aT1x > aT1) {
-	aT1=aT1x;
+        aT1=aT1x;
       }
       if(aT2x < aT2) {
-	aT2=aT2x;
+        aT2=aT2x;
       }
     }
     //
@@ -196,12 +199,13 @@ typedef GEOMAlgo_DataMapOfShapeInfoEdge::Iterator GEOMAlgo_DataMapIteratorOfData
     return;
   }
 }
+
 //=======================================================================
 //function : CorrectWire
 //purpose  :
 //=======================================================================
 Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
-			     const TopoDS_Face& aF)
+                             const TopoDS_Face& aF)
 {
   Standard_Boolean bRet;
   Standard_Real aTolInt;
@@ -232,7 +236,7 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
       aInfoEdge.Init (aE, aF);
       iErr=aInfoEdge.ErrorStatus();
       if (iErr) {
-	return bRet; //
+        return bRet; //
       }
       //
       aDMEIE.Bind(aE, aInfoEdge);
@@ -242,13 +246,13 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
     for (; aItE.More(); aItE.Next()) {
       const TopoDS_Shape& aV=aItE.Value();
       if (aDMVLE.IsBound(aV)) {
-	TopTools_ListOfShape& aLE=aDMVLE.ChangeFind(aV);
-	aLE.Append(aE);
+        TopTools_ListOfShape& aLE=aDMVLE.ChangeFind(aV);
+        aLE.Append(aE);
       }
       else {
-	TopTools_ListOfShape aLE;
-	aLE.Append(aE);
-	aDMVLE.Bind(aV, aLE);
+        TopTools_ListOfShape aLE;
+        aLE.Append(aE);
+        aDMVLE.Bind(aV, aLE);
       }
     }
   }
@@ -290,10 +294,12 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
     }
     //
     Standard_Integer i, aNbP;
-    Standard_Real aIP_ParamOnFirst, aIP_ParamOnSecond;
+    Standard_Real aIP_ParamOnFirst, aIP_ParamOnSecond, aDTresh, aDT;
     gp_Pnt aP3D1, aP3D2;
     gp_Pnt2d aP2D1, aP2D2;
     IntRes2d_Transition aTr1, aTr2;
+    //
+    aDTresh=0.001;
     //
     aNbP=aInter.NbPoints();
     for (i=1; i<=aNbP; ++i) {
@@ -303,39 +309,44 @@ Standard_Boolean CorrectWire(const TopoDS_Wire& aW,
       aTr1 =aIP.TransitionOfFirst();
       aTr2 =aIP.TransitionOfSecond();
       if(aTr1.PositionOnCurve()==IntRes2d_Middle ||
-	 aTr2.PositionOnCurve()==IntRes2d_Middle) {
-	//
-	const Handle(Geom_Curve)& aC3D1=aIE1.Curve();
-	if (!aC3D1.IsNull()) {
-	  aP3D1=aC3D1->Value(aIP_ParamOnFirst);
-	}
-	else {
-	  aP2D1=aGAC1.Value(aIP_ParamOnFirst);
-	  aS->D0(aP2D1.X(), aP2D1.Y(), aP3D1);
-	}
-	//
-	const Handle(Geom_Curve)& aC3D2=aIE2.Curve();
-	if (!aC3D2.IsNull()) {
-	  aP3D2=aC3D2->Value(aIP_ParamOnSecond);
-	}
-	else {
-	  aP2D2=aGAC2.Value(aIP_ParamOnSecond);
-	  aS->D0(aP2D2.X(), aP2D2.Y(), aP3D2);
-	}
-	//
-	aD1=aPV.Distance(aP3D1);
-	aD2=aPV.Distance(aP3D2);
-	aDmax=(aD1>aD2)? aD1 : aD2;
-	if (aDmax>aCoeff*aTolV) {
-	  if (aDmax<10.*aTolV){
-	    aBB.UpdateVertex(aV, aDmax);
-	    bRet=Standard_True;
-	  }
-	}
+         aTr2.PositionOnCurve()==IntRes2d_Middle) {
+        //
+        const Handle(Geom_Curve)& aC3D1=aIE1.Curve();
+        if (!aC3D1.IsNull()) {
+          aP3D1=aC3D1->Value(aIP_ParamOnFirst);
+        }
+        else {
+          aP2D1=aGAC1.Value(aIP_ParamOnFirst);
+          aS->D0(aP2D1.X(), aP2D1.Y(), aP3D1);
+        }
+        //
+        const Handle(Geom_Curve)& aC3D2=aIE2.Curve();
+        if (!aC3D2.IsNull()) {
+          aP3D2=aC3D2->Value(aIP_ParamOnSecond);
+        }
+        else {
+          aP2D2=aGAC2.Value(aIP_ParamOnSecond);
+          aS->D0(aP2D2.X(), aP2D2.Y(), aP3D2);
+        }
+        //
+        aD1=aPV.Distance(aP3D1);
+        aD2=aPV.Distance(aP3D2);
+        aDmax=(aD1>aD2)? aD1 : aD2;
+        if (aDmax>aCoeff*aTolV) {
+          //modified by NIZNHY-PKV Mon Jul 02 13:56:35 2012f
+          aDT=10.*aTolV;
+          if (aDT<aDTresh) {
+            aDT=aDTresh;
+          }
+          if (aDmax<aDT){
+          //if (aDmax<10.*aTolV){
+          //modified by NIZNHY-PKV Mon Jul 02 13:56:40 2012t
+            aBB.UpdateVertex(aV, aDmax);
+            bRet=Standard_True;
+          }
+        }
       }//
     }//for (i=1; i<=aNbP; ++i) {
   }//for(; aItDMVLE.More(); aItDMVLE.Next()) {
   return bRet;
 }
-
-
