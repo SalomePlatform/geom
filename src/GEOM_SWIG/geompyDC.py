@@ -2481,9 +2481,9 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theMethod Kind of method to perform filling operation(see GEOM::filling_oper_method())
         #  @param isApprox if True, BSpline curves are generated in the process
         #                  of surface construction. By default it is False, that means
-        #                  the surface is created using Besier curves. The usage of
+        #                  the surface is created using given curves. The usage of
         #                  Approximation makes the algorithm work slower, but allows
-        #                  building the surface for rather complex cases
+        #                  building the surface for rather complex cases.
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
@@ -2502,7 +2502,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theMethod Kind of method to perform filling operation(see GEOM::filling_oper_method())
                 isApprox if True, BSpline curves are generated in the process
                          of surface construction. By default it is False, that means
-                         the surface is created using Besier curves. The usage of
+                         the surface is created using given curves. The usage of
                          Approximation makes the algorithm work slower, but allows
                          building the surface for rather complex cases
 
@@ -2518,6 +2518,41 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                                             theTol2D, theTol3D, theNbIter,
                                             theMethod, isApprox)
             RaiseIfFailed("MakeFilling", self.PrimOp)
+            anObj.SetParameters(Parameters)
+            return anObj
+
+
+        ## Create a filling from the given compound of contours.
+        #  This method corresponds to MakeFilling with isApprox=True
+        #  @param theShape the compound of contours
+        #  @param theMinDeg a minimal degree of BSpline surface to create
+        #  @param theMaxDeg a maximal degree of BSpline surface to create
+        #  @param theTol3D a 3d tolerance to be reached
+        #  @return New GEOM.GEOM_Object, containing the created filling surface.
+        #
+        #  @ref tui_creation_filling "Example"
+        def MakeFillingNew(self, theShape, theMinDeg, theMaxDeg, theTol3D):
+            """
+            Create a filling from the given compound of contours.
+            This method corresponds to MakeFilling with isApprox=True
+
+            Parameters:
+                theShape the compound of contours
+                theMinDeg a minimal degree of BSpline surface to create
+                theMaxDeg a maximal degree of BSpline surface to create
+                theTol3D a 3d tolerance to be reached
+
+            Returns: 
+                New GEOM.GEOM_Object, containing the created filling surface.
+
+            Example of usage:
+                filling = geompy.MakeFillingNew(compound, 2, 5, 0.0001)
+            """
+            # Example: see GEOM_TestAll.py
+            theMinDeg,theMaxDeg,theTol3D,Parameters = ParseParameters(theMinDeg, theMaxDeg, theTol3D)
+            anObj = self.PrimOp.MakeFilling(theShape, theMinDeg, theMaxDeg,
+                                            0, theTol3D, 0, GEOM.FOM_Default, True)
+            RaiseIfFailed("MakeFillingNew", self.PrimOp)
             anObj.SetParameters(Parameters)
             return anObj
 

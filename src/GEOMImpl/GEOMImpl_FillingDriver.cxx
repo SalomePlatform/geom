@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -98,27 +97,23 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   if (Label().IsNull()) return 0;
   Handle(GEOM_Function) aFunction = GEOM_Function::GetFunction(Label());
   if (aFunction.IsNull()) return 0;
-
   if (aFunction->GetType() != BASIC_FILLING) return 0;
 
   GEOMImpl_IFilling IF (aFunction);
   Handle(GEOM_Function) aShapeFunction = IF.GetShape();
   if (aShapeFunction.IsNull()) return 0;
-  TopoDS_Shape aShape;
 
-  BRepBuilderAPI_Copy Copy(aShapeFunction->GetValue());
-  if( Copy.IsDone() )
+  TopoDS_Shape aShape;
+  BRepBuilderAPI_Copy Copy (aShapeFunction->GetValue());
+  if (Copy.IsDone())
     aShape = Copy.Shape();
 
   if (aShape.IsNull() || aShape.ShapeType() != TopAbs_COMPOUND) return 0;
 
   Standard_Integer mindeg = IF.GetMinDeg();
   Standard_Integer maxdeg = IF.GetMaxDeg();
-  Standard_Real tol3d = IF.GetTol2D();
-  Standard_Real tol2d = IF.GetTol3D();
-  Standard_Integer nbiter = IF.GetNbIter();
+  Standard_Real tol3d = IF.GetTol3D();
   Standard_Boolean isApprox = IF.GetApprox();
-  Standard_Integer aMethod = IF.GetMethod();
 
   if (mindeg > maxdeg) {
     Standard_RangeError::Raise("Minimal degree can not be more than maximal degree");
@@ -134,6 +129,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   BRep_Builder B;
   B.MakeCompound(aComp);
 
+  // 1. Convert argument wires, if any, into BSpline edges
   TopoDS_Iterator It (aShape);
   for (; It.More(); It.Next()) {
     Scurrent = It.Value();
@@ -198,7 +194,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
               Pnts.SetValue(i,PntSeq.Value(i));
             }
           }
-          GeomAPI_PointsToBSpline PTB(Pnts);
+          GeomAPI_PointsToBSpline PTB (Pnts);
           newC = Handle(Geom_BSplineCurve)::DownCast(PTB.Curve());
           // set periodic flag if curve is closed
           //if( newC->IsClosed() ) {
@@ -220,7 +216,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
           Scurrent = newE;
         }
       }
-      if(newC.IsNull()) {
+      if (newC.IsNull()) {
         Standard_ConstructionError::Raise("The argument compound must contain only edges");
       }
     }
@@ -228,8 +224,14 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
   }
   aShape = aComp;
 
+  // 2. The surface construction
   if (!isApprox) {
     // make filling as in old version of SALOME (before 4.1.1)
+
+    Standard_Real tol2d = IF.GetTol2D();
+    Standard_Integer nbiter = IF.GetNbIter();
+    Standard_Integer aMethod = IF.GetMethod();
+
     GeomFill_SectionGenerator Section;
     Standard_Integer i = 0;
     Handle(Geom_Curve) aLastC;
@@ -249,18 +251,18 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
       C->D0(First,P1);
       C->D0(Last,P2);
 
-      if( aMethod==1 && Scurrent.Orientation() == TopAbs_REVERSED ) {
+      if (aMethod == 1 && Scurrent.Orientation() == TopAbs_REVERSED) {
         C->Reverse();
       }
-      else if( aMethod==2 ) {
-        if( i==0 ) {
+      else if (aMethod == 2) {
+        if (i == 0) {
           PL1 = P1;
           PL2 = P2;
         }
         else {
           double d1 = PL1.Distance(P1) + PL2.Distance(P2);
           double d2 = PL1.Distance(P2) + PL2.Distance(P1);
-          if(d2<d1) {
+          if (d2 < d1) {
             C->Reverse();
             PL1 = P2;
             PL2 = P1;
@@ -301,8 +303,10 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     // implemented by skl 20.03.2008 for bug 16568
     // make approximation - try to create bspline surface
     // using GeomAPI_PointsToBSplineSurface
+
     TColGeom_SequenceOfCurve aSeq;
     int MaxNbPoles = 0;
+
     // add curves from edges to sequence and find maximal
     // number of poles if some of them are bsplines
     for (Ex.Init(aShape, TopAbs_EDGE); Ex.More(); Ex.Next()) {
@@ -311,21 +315,21 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
       if (BRep_Tool::Degenerated(TopoDS::Edge(Scurrent))) continue;
       C = BRep_Tool::Curve(TopoDS::Edge(Scurrent), First, Last);
       Handle(Geom_TrimmedCurve) TC = Handle(Geom_TrimmedCurve)::DownCast(C);
-      if(TC.IsNull()) {
+      if (TC.IsNull()) {
         Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(C);
-        if(!BC.IsNull()) {
+        if (!BC.IsNull()) {
           MaxNbPoles = Max(MaxNbPoles,BC->NbPoles());
         }
       }
       else {
         Handle(Geom_BSplineCurve) BC = Handle(Geom_BSplineCurve)::DownCast(TC->BasisCurve());
-        if(BC.IsNull()) {
+        if (BC.IsNull()) {
           Handle(Geom_TrimmedCurve) TC1 = Handle(Geom_TrimmedCurve)::DownCast(TC->BasisCurve());
-          if(!TC1.IsNull()) {
+          if (!TC1.IsNull()) {
             BC = Handle(Geom_BSplineCurve)::DownCast(TC1->BasisCurve());
           }
         }
-        if(!BC.IsNull()) {
+        if (!BC.IsNull()) {
           MaxNbPoles = Max(MaxNbPoles,BC->NbPoles());
         }
       }
@@ -336,23 +340,26 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     // by V parameter - determ using MaxNbPoles but it's
     // value must be between 21(min) and 101(max)
     int nbc = aSeq.Length();
-    int nbp = Max(21,2*MaxNbPoles-1);
-    if(nbp>101) nbp = 101;
-    TColgp_Array2OfPnt Points(1,nbc,1,nbp);
+    int nbp = Max(21, 2*MaxNbPoles-1);
+
+    // commented for Mantis issue 0021541
+    //if (nbp > 101) nbp = 101;
+
+    TColgp_Array2OfPnt Points (1, nbc, 1, nbp);
     int ic = 1;
-    for(; ic<=nbc; ic++) {
+    for (; ic <= nbc; ic++) {
       Handle(Geom_Curve) C = aSeq.Value(ic);
       double fp = C->FirstParameter();
       double lp = C->LastParameter();
       double dp = (lp-fp)/(nbp-1);
       int j = 0;
       gp_Pnt P;
-      for(; j<nbp; j++) {
-        C->D0(fp+dp*j,P);
-        Points.SetValue(ic,j+1,P);
-      }
+      for (; j < nbp; j++) {
+        C->D0(fp+dp*j, P);
+        Points.SetValue(ic, j+1, P);
+     }
     }
-    GeomAPI_PointsToBSplineSurface PTB(Points,mindeg,maxdeg,GeomAbs_C2,tol3d);
+    GeomAPI_PointsToBSplineSurface PTB (Points, mindeg, maxdeg, GeomAbs_C2, tol3d);
     Handle(Geom_BSplineSurface) BS = PTB.Surface();
 #if OCC_VERSION_LARGE > 0x06050100 // for OCC-6.5.2 and higher version
     BRepBuilderAPI_MakeFace BB (BS, Precision::Confusion());
@@ -360,7 +367,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
     BRepBuilderAPI_MakeFace BB (BS);
 #endif
     TopoDS_Face NewF = BB.Face();
-    Handle(ShapeFix_Face) sff = new ShapeFix_Face(NewF);
+    Handle(ShapeFix_Face) sff = new ShapeFix_Face (NewF);
     sff->Perform();
     sff->FixOrientation();
     aShape = sff->Face();
@@ -368,7 +375,7 @@ Standard_Integer GEOMImpl_FillingDriver::Execute(TFunction_Logbook& log) const
 
   /* We test the validity of resulting shape */
   if (!BRepAlgo::IsValid((aShape))) {
-    Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+    Standard_ConstructionError::Raise("Algorithm has produced an invalid shape result");
     return 0;
   }
 
