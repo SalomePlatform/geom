@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -561,6 +560,12 @@ Standard_Integer GEOMImpl_BlockDriver::Execute(TFunction_Logbook& log) const
       if (aBlockOrComp.IsNull()) {
         Standard_NullObject::Raise("Null Shape given");
       }
+
+      // Copy shape to avoid problems (Mantis issue 0021683)
+      TopoDS_Shape aShapeCopy;
+      TColStd_IndexedDataMapOfTransientTransient aMapTShapes;
+      TNaming_CopyShape::CopyTool(aBlockOrComp, aMapTShapes, aShapeCopy);
+      aBlockOrComp = aShapeCopy;
 
       // 1. Improve solids with seam and/or degenerated edges
       BlockFix_BlockFixAPI aTool;
