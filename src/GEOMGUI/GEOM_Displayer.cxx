@@ -39,6 +39,7 @@
 
 #include <GEOM_Actor.h>
 #include <GEOM_AISShape.hxx>
+#include <GEOM_TopWireframeShape.hxx>
 #include <GEOM_AISVector.hxx>
 #include <GEOM_AISTrihedron.hxx>
 #include <GEOM_VTKTrihedron.hxx>
@@ -673,11 +674,14 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           }
 
           // Setup shape properties here ..., e.g. display mode, color, transparency, etc
-          AISShape->SetDisplayMode( aPropMap.value(DISPLAY_MODE_PROP).toInt() );
-          AISShape->SetDisplayVectors(aPropMap.value(VECTOR_MODE_PROP).toInt());
+          Standard_Boolean isTopLevel = Standard_False;
           if(aPropMap.contains(TOP_LEVEL_PROP)) {
-            AISShape->setTopLevel( aPropMap.value(TOP_LEVEL_PROP).value<Standard_Boolean>() );
-          } 
+            isTopLevel = aPropMap.value(TOP_LEVEL_PROP).value<Standard_Boolean>();
+          }
+          AISShape->SetDisplayMode( aPropMap.value(DISPLAY_MODE_PROP).toInt() );
+          AISShape->setTopLevel(isTopLevel);
+          
+          AISShape->SetDisplayVectors(aPropMap.value(VECTOR_MODE_PROP).toInt()); 
         }else {
           MESSAGE("myDisplayMode = "<< myDisplayMode)
           AISShape->SetDisplayMode( myDisplayMode );
@@ -697,7 +701,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           QStringList uv =  anIsos.split(DIGIT_SEPARATOR);
           anUIsoNumber = uv[0].toInt();
           aVIsoNumber = uv[1].toInt();
-          //AISShape->SetTransparency(aPropMap.value(TRANSPARENCY_PROP).toDouble());
+          AISShape->SetTransparency(aPropMap.value(TRANSPARENCY_PROP).toDouble());
         } else {
           anUIsoNumber = aResMgr->integerValue("OCCViewer", "iso_number_u", 1);
           aVIsoNumber  = aResMgr->integerValue("OCCViewer", "iso_number_v", 1);
@@ -757,8 +761,7 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
               useObjMarker = true;
             }
           }
-        }
-        
+        }        
         else
         {
           if ( onlyVertex )
@@ -968,30 +971,38 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
             material.fromProperties( aPropMap.value(MATERIAL_PROP).toString() );
           } else {
             // Get material property from study and construct material model
-	    QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
+	          QString mname = aResMgr->stringValue( "Geometry", "material", "Plastic" );
             material.fromResources( mname );
           }
 
           aStudy->setObjectProperty( aMgrId, anIO->getEntry(), MATERIAL_PROP, material.toProperties() );
 
           // Set material for the selected shape
-	  AISShape->SetMaterial( material.getMaterialOCCAspect() );
-
-	  if(HasWidth())
-	    aStudy->setObjectProperty( aMgrId, anIO->getEntry(), EDGE_WIDTH_PROP, GetWidth() );
-
-	  if(HasIsosWidth())
-	    aStudy->setObjectProperty( aMgrId, anIO->getEntry(), ISOS_WIDTH_PROP, GetIsosWidth() );
-
-
+	        AISShape->SetMaterial( material.getMaterialOCCAspect() );
+	        if(HasWidth())
+	          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), EDGE_WIDTH_PROP, GetWidth() );
+	        if(HasIsosWidth())
+	          aStudy->setObjectProperty( aMgrId, anIO->getEntry(), ISOS_WIDTH_PROP, GetIsosWidth() );
         }
 
         // AISShape->SetName(???); ??? necessary to set name ???
         occPrs->AddObject( AISShape );
-
+        
         // In accordance with ToActivate() value object will be activated/deactivated
         // when it will be displayed
         occPrs->SetToActivate( ToActivate() );
+		
+		if( AISShape->isTopLevel() && AISShape->topLevelDisplayMode() == GEOM_AISShape::TopShowAdditionalWActor) {
+		//21671: EDF 1829 GEOM : Bring to front selected objects (continuation):
+		// Display wireframe presentation additionally
+			Handle(GEOM_TopWireframeShape) aWirePrs = new GEOM_TopWireframeShape(myShape);
+			aWirePrs->SetWidth(AISShape->Width());
+			if ( !myIO.IsNull() ) {
+				aWirePrs->setIO( myIO );
+				aWirePrs->SetOwner( myIO );
+			}
+			occPrs->AddObject(aWirePrs);
+		}
       }
     }
     // if presentation is found -> set again shape for it

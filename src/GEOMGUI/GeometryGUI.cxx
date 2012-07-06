@@ -61,6 +61,7 @@
 #include <SalomeApp_Application.h>
 #include <SalomeApp_DataObject.h>
 #include <SalomeApp_Study.h>
+#include <SalomeApp_Tools.h>
 
 #include <LightApp_SelectionMgr.h>
 #include <LightApp_VTKSelector.h>
@@ -1338,6 +1339,14 @@ void GeometryGUI::initialize( CAM_Application* app )
   mgr->setRule( action( GEOMOp::OpReimport ), QString("$imported in {'true'} and selcount>0"), QtxPopupMgr::VisibleRule );
 
   mgr->hide( mgr->actionId( action( myEraseAll ) ) );
+
+  
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  if(resMgr) {
+    GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)resMgr->integerValue("Geometry", "toplevel_dm", 0));
+    QColor c = resMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
+    GEOM_AISShape::setTopLevelColor(SalomeApp_Tools::color(c));
+  }
 }
 
 //=======================================================================
@@ -1712,8 +1721,8 @@ void GeometryGUI::createPreferences()
   addPreference( tr( "PREF_TOPLEVEL_COLOR" ), genGroup,
                  LightApp_Preferences::Color, "Geometry", "toplevel_color" );
 
-  addPreference( "", genGroup, LightApp_Preferences::Space );
-
+  int top_lev_dm = addPreference( tr( "PREF_TOPLEVEL_DM" ), genGroup,
+                      LightApp_Preferences::Selector, "Geometry", "toplevel_dm" );
 
   int step = addPreference( tr( "PREF_STEP_VALUE" ), genGroup,
                             LightApp_Preferences::IntSpin, "Geometry", "SettingsGeomStep" );
@@ -1800,6 +1809,25 @@ void GeometryGUI::createPreferences()
   setPreferenceProperty( dispmode, "strings", aModesList );
   setPreferenceProperty( dispmode, "indexes", anIndexesList );
 
+
+  // Set property for top level display mode
+  QStringList aTopModesList;
+  aTopModesList.append( tr("MEN_KEEP_CURRENT_DM") );
+  aTopModesList.append( tr("MEN_WIREFRAME") );
+  aTopModesList.append( tr("MEN_SHADING") );
+  aTopModesList.append( tr("MEN_SHADING_WITH_EDGES") );
+  aTopModesList.append( tr("MEN_SHOW_ADD_WACTOR") );
+
+  QList<QVariant> aTopIndexesList;
+  aTopIndexesList.append(0);
+  aTopIndexesList.append(1);
+  aTopIndexesList.append(2);
+  aTopIndexesList.append(3);
+  aTopIndexesList.append(4);
+
+  setPreferenceProperty( top_lev_dm, "strings", aTopModesList );
+  setPreferenceProperty( top_lev_dm, "indexes", aTopIndexesList );
+
   // Set property for step value for spinboxes
   setPreferenceProperty( step, "min", 1 );
   setPreferenceProperty( step, "max", 10000 );
@@ -1868,8 +1896,13 @@ void GeometryGUI::preferencesChanged( const QString& section, const QString& par
     if (param == QString("SettingsGeomStep")) {
       double spin_step = aResourceMgr->doubleValue(section, param, 100.);
       EmitSignalDefaultStepValueChanged(spin_step);
+    } else if(param == QString("toplevel_color")) {
+      QColor c = aResourceMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
+      GEOM_AISShape::setTopLevelColor(SalomeApp_Tools::color(c));
+    } else if(param == QString("toplevel_dm")) {
+      GEOM_AISShape::setTopLevelDisplayMode((GEOM_AISShape::TopLevelDispMode)aResourceMgr->integerValue("Geometry", "toplevel_dm", 0));
     }
-  }
+  } 
 }
 
 LightApp_Displayer* GeometryGUI::displayer()

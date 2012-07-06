@@ -32,6 +32,10 @@ salomeinclude_HEADERS =				\
 	GEOM_AISShape.ixx			\
 	GEOM_AISShape.jxx			\
 	Handle_GEOM_AISShape.hxx		\
+	GEOM_TopWireframeShape.hxx		\
+	GEOM_TopWireframeShape.ixx		\
+	GEOM_TopWireframeShape.jxx		\
+	Handle_GEOM_TopWireframeShape.hxx       \
 	GEOM_InteractiveObject.hxx		\
 	GEOM_InteractiveObject.ixx		\
 	GEOM_InteractiveObject.jxx		\
@@ -54,6 +58,7 @@ dist_libGEOMObject_la_SOURCES =		\
 	GEOM_Actor.cxx			\
 	GEOM_OCCReader.cxx		\
 	GEOM_AISShape.cxx		\
+	GEOM_TopWireframeShape.cxx	\
 	GEOM_InteractiveObject.cxx	\
 	GEOM_AISTrihedron.cxx		\
 	GEOM_VTKTrihedron.cxx		\

@@ -990,6 +990,7 @@ void GEOMToolsGUI::OnEdgeWidth()
   if (isOCC) { // if is OCCViewer
     OCCViewer_Viewer* vm = dynamic_cast<OCCViewer_Viewer*>(window->getViewManager()->getViewModel());
     Handle (AIS_InteractiveContext) ic = vm->getAISContext();
+    SALOME_View* view = GEOM_Displayer::GetActiveView();
     ic->InitCurrent();
     if (ic->MoreCurrent()) {
       Handle(GEOM_AISShape) CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
@@ -1001,17 +1002,26 @@ void GEOMToolsGUI::OnEdgeWidth()
       Dlg->setTheLW(aWidth);
       int aNewWidth = 0;
       if (Dlg->exec()) {
-	aNewWidth = Dlg->getTheLW();
-	bool ok = (aNewWidth != aWidth && aNewWidth != 0 );
-	if (ok) {
-	  for(; ic->MoreCurrent(); ic->NextCurrent()) {
-	    CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
-	    CurObject->SetWidth(aNewWidth);
-	    ic->Redisplay(CurObject);
-	    appStudy->setObjectProperty(mgrId,CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP, aNewWidth);
+		aNewWidth = Dlg->getTheLW();
+		bool ok = (aNewWidth != aWidth && aNewWidth != 0 );
+		if (ok) {
+		  for(; ic->MoreCurrent(); ic->NextCurrent()) {
+			CurObject = Handle(GEOM_AISShape)::DownCast(ic->Current());
+				SOCC_Prs* aPrs =  dynamic_cast<SOCC_Prs*>(view->CreatePrs(CurObject->getIO()->getEntry()));
+				AIS_ListOfInteractive anAISObjects;
+				aPrs->GetObjects( anAISObjects );
+				AIS_ListIteratorOfListOfInteractive aIter( anAISObjects );
+				for ( ; aIter.More(); aIter.Next() ) {
+				  Handle(SALOME_AISShape) cur =  Handle(SALOME_AISShape)::DownCast(aIter.Value());
+				  if ( !cur.IsNull() ) {
+	 				cur->SetWidth(aNewWidth);
+					ic->Redisplay(cur);
+				  }
+				}
+			appStudy->setObjectProperty(mgrId, CurObject->getIO()->getEntry(), EDGE_WIDTH_PROP, aNewWidth);
+		  }
+		}
 	  }
-	}
-      }
     }
     else {
       return;

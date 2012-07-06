@@ -311,7 +311,13 @@ QString GEOMGUI_Selection::displayMode( const int index ) const
 	  if ( lst.Extent() ) {
 	    Handle(AIS_InteractiveObject) io = lst.First();
 	    if ( !io.IsNull() ) {
-	      int dm = io->DisplayMode();
+        int dm;
+        Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast(io);
+        if(!aSh.IsNull()) {
+          dm = aSh->isTopLevel() ? aSh->prevDisplayMode() : aSh->DisplayMode();
+        } else {
+          dm = io->DisplayMode();
+        }
 	      OCC_DISPLAY_MODE_TO_STRING( res, dm );
 	      if ( res.isEmpty() ) { // return default display mode of AIS_InteractiveContext
 		OCCViewer_Viewer* occViewer = (OCCViewer_Viewer*)SUIT_Session::session()->activeApplication()->

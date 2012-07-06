@@ -386,7 +386,12 @@ void DisplayGUI::SetDisplayMode( const int mode, SUIT_ViewWindow* viewWindow )
     while( ite.More() ) {
       if( ite.Value()->IsInstance( STANDARD_TYPE(GEOM_AISShape) ) ) {
 	Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( ite.Value() );
-	ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
+        if(aSh->isTopLevel()) {
+           aSh->setPrevDisplayMode(Standard_Integer( newmode ));
+        }
+        else {
+      	   ic->SetDisplayMode( aSh, Standard_Integer( newmode ),true );
+        }
       }
       ite.Next();
     }
@@ -539,17 +544,21 @@ void DisplayGUI::ChangeDisplayMode( const int mode, SUIT_ViewWindow* viewWindow 
         AIS_ListOfInteractive shapes; occPrs->GetObjects( shapes );
         AIS_ListIteratorOfListOfInteractive interIter( shapes );
         for ( ; interIter.More(); interIter.Next() ) {
-	  if ( mode == 0 )
-            ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
-	  else if ( mode == 1 )
-            ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
-	  else if ( mode == 2 )
-	    ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::ShadingWithEdges, false );
-	  else if ( mode == 3 )
-            ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
-	  else if (mode == 4 ) {
-	    Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
-            if ( !aSh.IsNull() ) {
+          Handle(GEOM_AISShape) aSh = Handle(GEOM_AISShape)::DownCast( interIter.Value() );
+          if ( !aSh.IsNull() ) {
+            if(!aSh->isTopLevel()) {
+	            if ( mode == 0 )
+                ic->SetDisplayMode( interIter.Value(), AIS_WireFrame, false );
+	            else if ( mode == 1 )
+                ic->SetDisplayMode( interIter.Value(), AIS_Shaded, false );
+	            else if ( mode == 2 )
+	              ic->SetDisplayMode( interIter.Value(), GEOM_AISShape::ShadingWithEdges, false );
+	            else if ( mode == 3 )
+                ic->SetDisplayMode( interIter.Value(), AIS_ExactHLR, false );
+            } else {
+              aSh->setPrevDisplayMode(mode);
+            }
+	        if (mode == 4 ) {	    
               vectorMode = !aSh->isShowVectors();      
               aSh->SetDisplayVectors(vectorMode);
               ic->RecomputePrsOnly(interIter.Value());

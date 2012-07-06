@@ -2963,6 +2963,18 @@ Please, select face, shell or solid and try again</translation>
         <translation>Top level color</translation>
     </message>
     <message>
+        <source>PREF_TOPLEVEL_DM</source>
+        <translation>Top level display mode</translation>
+    </message>
+    <message>
+        <source>MEN_KEEP_CURRENT_DM</source>
+        <translation>Keep current display mode</translation>
+    </message>
+    <message>
+        <source>MEN_SHOW_ADD_WACTOR</source>
+        <translation>Show additional wireframe actor</translation>
+    </message>
+    <message>
         <source>PREF_LINE_COLOR</source>
         <translation>Color of edges, vectors, wires</translation>
     </message>

@@ -73,10 +73,17 @@
 #include <TopoDS_Shape.hxx>
 #include <TopoDS_Vertex.hxx>
 
+#include <TColStd_SequenceOfInteger.hxx>
+
+#include <V3d_View.hxx>
+
 #include <SalomeApp_Tools.h>
 
 #include <SUIT_Session.h>
 #include <SUIT_ResourceMgr.h>
+
+GEOM_AISShape::TopLevelDispMode GEOM_AISShape::myTopLevelDm = GEOM_AISShape::TopKeepCurrent;
+Quantity_Color GEOM_AISShape::myTopLevelColor;
 
 
 static void getEntityOwners( const Handle(AIS_InteractiveObject)& theObj,
@@ -138,8 +145,9 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   : SALOME_AISShape(shape), myName(aName), myDisplayVectors(false)
 {
   myShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
-
+  myPrevDisplayMode = 0;
   storeBoundaryColors();
+
 
   myEdgesInShadingColor = Quantity_Color( Quantity_NOC_GOLDENROD );
 
@@ -158,7 +166,7 @@ GEOM_AISShape::GEOM_AISShape(const TopoDS_Shape& shape,
   	myDrawer->ShadingAspect()->Aspect()->SetFrontMaterial(aMatAspect);
   	myDrawer->ShadingAspect()->Aspect()->SetBackMaterial(aMatAspect);
   }
-  myCurrentMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();
+  myCurrentMaterial = myDrawer->ShadingAspect()->Aspect()->FrontMaterial();  
 }
 
 void GEOM_AISShape::setIO(const Handle(SALOME_InteractiveObject)& io){
@@ -196,46 +204,38 @@ void GEOM_AISShape::Compute(const Handle(PrsMgr_PresentationManager3d)& aPresent
   if (IsInfinite()) aPrs->SetInfiniteState(Standard_True); //pas de prise en compte lors du FITALL
 
   Handle(AIS_InteractiveContext) anIC = GetContext();
-  
+ 
   //   StdSelect_DisplayMode d = (StdSelect_DisplayMode) aMode;
+  bool isTopLev = (isTopLevel() && topLevelDisplayMode() != TopShowAdditionalWActor);
   switch (aMode) {
     case 0://StdSelect_DM_Wireframe: 
     {
-
       restoreIsoNumbers();
-
       // Restore wireframe edges colors
       restoreBoundaryColors();
-
-
-      if(isTopLevel()) {
-	SetColor(topLevelColor());
-	Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
-	anAspect->SetColor( topLevelColor() );
-	Attributes()->SetWireAspect( anAspect );
+      if(isTopLev) {
+	      SetColor(topLevelColor());
+	      Handle(Prs3d_LineAspect) anAspect = Attributes()->WireAspect();
+	      anAspect->SetColor( topLevelColor() );
+	      Attributes()->SetWireAspect( anAspect );
       }
-
-      StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);
-      
+     StdPrs_WFDeflectionShape::Add(aPrs,myshape,myDrawer);      
       break;
     }
     case 1://StdSelect_DM_Shading:
     {
       restoreIsoNumbers();
-
       shadingMode(aPresentationManager, aPrs, aMode);
-
       // Store wireframe edges colors
       storeBoundaryColors();
-
       break;
     }
     case 3: //StdSelect_DM_HLR:
     {
-      if(!isTopLevel())
-	AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
+      if(!isTopLev)
+	      AIS_TexturedShape::Compute(aPresentationManager, aPrs, aMode);
       else 
-	shadingMode(aPresentationManager, aPrs, AIS_Shaded);
+	      shadingMode(aPresentationManager, aPrs, AIS_Shaded);
       break;
     }
   }
@@ -396,7 +396,7 @@ void GEOM_AISShape::shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPre
       //       P->SetPrimitivesAspect(a4bis);
       //        G->SetGroupPrimitivesAspect(a4bis);
       //a4bis->SetInteriorColor(myShadingColor);
-  if( isTopLevel() )
+  if( isTopLevel() && topLevelDisplayMode() != TopShowAdditionalWActor )
     myDrawer->ShadingAspect()->SetColor( topLevelColor() );
   else { 
     if(myDrawer->ShadingAspect()->Aspect()->FrontMaterial().MaterialType( Graphic3d_MATERIAL_ASPECT ))
@@ -470,12 +470,47 @@ Standard_Boolean GEOM_AISShape::isTopLevel() {
 }
 
 void GEOM_AISShape::setTopLevel(Standard_Boolean f) {
+  if(f) {
+    if(f != myTopLevel)
+      myPrevDisplayMode = DisplayMode();
+    Standard_Integer dm;
+    switch(topLevelDisplayMode()) {
+      case TopKeepCurrent : dm = myPrevDisplayMode; break;
+      case TopWireFrame : dm = AIS_WireFrame; break;     
+      case TopShadingWithEdges : dm = ShadingWithEdges; break;
+      default : dm = AIS_Shaded; break;
+    }
+    SetDisplayMode(dm);
+  } else {
+    if(f != myTopLevel)
+      SetDisplayMode(myPrevDisplayMode);
+  }
   myTopLevel = f;
 }
 
+void GEOM_AISShape::setPrevDisplayMode(const Standard_Integer mode) {
+  myPrevDisplayMode = mode;
+}
+
 Quantity_Color GEOM_AISShape::topLevelColor() {
-  SUIT_Session* session = SUIT_Session::session();
-  SUIT_ResourceMgr* resMgr = session->resourceMgr();
-  QColor c = resMgr->colorValue( "Geometry", "toplevel_color", QColor( 170, 85, 0 ) );
-  return SalomeApp_Tools::color(c);
+  return myTopLevelColor;
+}
+
+void GEOM_AISShape::setTopLevelColor(const Quantity_Color c) {
+  myTopLevelColor = c;
+}
+
+GEOM_AISShape::TopLevelDispMode GEOM_AISShape::topLevelDisplayMode() {
+  return myTopLevelDm;
+}
+void GEOM_AISShape::setTopLevelDisplayMode(const GEOM_AISShape::TopLevelDispMode dm) {
+  myTopLevelDm = dm;
+}
+
+Standard_Boolean GEOM_AISShape::switchTopLevel() {
+	return myTopLevelDm != TopShowAdditionalWActor;
+}
+
+Standard_Boolean GEOM_AISShape::toActivate() {
+	return Standard_True;
 }

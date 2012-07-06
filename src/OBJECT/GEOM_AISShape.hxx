@@ -77,6 +77,16 @@ public:
       TexturedShape = ShadingWithEdges+1 //!< the same as AIS_ExactHLR
     } DispMode;
 
+    //! Enumeration of top level display modes
+    typedef enum {
+      TopKeepCurrent = 0 , //!< Keep current display mode
+      TopWireFrame, 
+      TopShading, 
+      TopShadingWithEdges,
+      TopShowAdditionalWActor
+    } TopLevelDispMode;
+
+
     inline void* operator new(size_t,void* anAddress) 
       {
         return anAddress;
@@ -116,6 +126,8 @@ public:
                                       const Standard_Integer aMode = 0) ;
 
         virtual  bool isShowVectors () { return myDisplayVectors; }
+		virtual  Standard_Boolean switchTopLevel();
+		virtual  Standard_Boolean toActivate();
         
  // Type management
  //
@@ -130,6 +142,14 @@ public:
         void storeBoundaryColors();
 
 	static Quantity_Color topLevelColor();
+  static void           setTopLevelColor(const Quantity_Color c);
+
+  static TopLevelDispMode topLevelDisplayMode();
+  static void             setTopLevelDisplayMode(const TopLevelDispMode dm);
+
+  void setPrevDisplayMode(const Standard_Integer mode);
+  Standard_Integer prevDisplayMode() const {return myPrevDisplayMode;}
+
 
 protected: 
   void shadingMode(const Handle(PrsMgr_PresentationManager3d)& aPresentationManager,
@@ -149,11 +169,14 @@ protected:
   int            myVIsoNumber;
 
 private: 
-  TCollection_AsciiString myName;
+  TCollection_AsciiString  myName;
   bool                     myDisplayVectors;
   Standard_Boolean         myTopLevel;
   Graphic3d_MaterialAspect myCurrentMaterial;
+  Standard_Integer         myPrevDisplayMode;
 
+  static TopLevelDispMode myTopLevelDm;
+  static Quantity_Color   myTopLevelColor;
 };
 
 
