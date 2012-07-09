@@ -89,8 +89,9 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
   if (aType == DIVIDEDDISK_R_RATIO) {
     
     // Getting data
-    double R = aData.GetR();
-    double Ratio = aData.GetRatio();
+    double R           = aData.GetR();
+    double Ratio       = aData.GetRatio();
+    int theOrientation = aData.GetOrientation();
     
     // Geometry
     gp_Dir ZDir(0,0,1);
@@ -218,8 +219,7 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
       aBuilder.Add(S, F1);
       aBuilder.Add(S, F2);
       aBuilder.Add(S, F3);
-      
-      
+           
       // rotation
       V1=V1_60;
       V2=V2_60;
@@ -238,7 +238,7 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
       E8=E9;         
     }
     
-    aShape = S;
+    aShape = TransformShape(S, theOrientation);   
   }
   else {
     // other construction modes here
@@ -251,6 +251,47 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
   log.SetTouched(Label());
 
   return 1;
+}
+
+//=======================================================================
+//function :  TrasformShape(int theOrientation)
+//purpose  :  Perform shape transformation accordingly with specified
+//            orientation
+//=======================================================================
+TopoDS_Shape GEOMImpl_DividedDiskDriver::TransformShape(TopoDS_Shape aShape, int theOrientation) const
+{
+  gp_Dir N, Vx;
+  gp_Pnt theOrigin = gp::Origin();
+  
+  switch(theOrientation)
+  {
+    case 1:
+    {
+      N = gp::DZ();
+      Vx = gp::DX();
+      break;
+    }
+    case 2:
+    {
+      N = gp::DX();
+      Vx = gp::DY();
+      break;
+    }
+    case 3:
+    {
+      N = gp::DY();
+      Vx = gp::DZ();
+      break;
+    }
+  }
+    
+  gp_Ax3 aWPlane = gp_Ax3(theOrigin, N, Vx);
+  
+  gp_Trsf aTrans;
+  aTrans.SetTransformation(aWPlane);
+  aTrans.Invert();
+  BRepBuilderAPI_Transform aTransformation (aShape, aTrans, Standard_False);
+  return aTransformation.Shape();
 }
 
 //=======================================================================

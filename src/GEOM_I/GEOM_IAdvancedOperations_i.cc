@@ -330,7 +330,7 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CO
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio)
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio, CORBA::Short theOrientation)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -338,7 +338,7 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double
   GetOperations()->SetNotDone();
 
   //Create the DividedDisk
-  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedDisk(theR, theRatio);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedDisk(theR, theRatio, theOrientation);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -26,6 +26,7 @@
 
 class Handle_Standard_Type;
 class GEOMImpl_DividedDiskDriver;
+class TopoDS_Shape;
 
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_DividedDiskDriver);
 
@@ -116,6 +117,9 @@ public:
   {
     return (STANDARD_TYPE(GEOMImpl_DividedDiskDriver) == AType || TFunction_Driver::IsKind(AType));
   } 
+  
+private:
+  TopoDS_Shape TransformShape(TopoDS_Shape aShape, int theOrientation) const;
 };
 
 #endif // _GEOMImpl_DividedDiskDriver_HXX

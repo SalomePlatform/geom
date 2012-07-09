@@ -25,6 +25,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_1Spin;
+class DlgRef_3Radio;
 
 //=================================================================================
 // class    : AdvancedGUI_DividedDiskDlg
@@ -50,12 +51,15 @@ private:
 
 private:
   DlgRef_1Spin*                      GroupParams;
+  DlgRef_3Radio*                     GroupOrientation;
+  int                                myOrientation;
 
 private slots:
   void                               ClickOnOk();
   bool                               ClickOnApply();
   void                               ActivateThisDialog();
   void                               ValueChangedInSpinBox();
+  void                               RadioButtonClicked();
   void                               SetDoubleSpinBoxStep( double );
 };
 

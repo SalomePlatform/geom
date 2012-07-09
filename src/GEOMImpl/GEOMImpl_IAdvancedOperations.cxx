@@ -2244,7 +2244,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, double theRatio)
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, double theRatio, int theOrientation)
 {
   SetErrorCode(KO);
 
@@ -2262,6 +2262,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
 
   aData.SetR(theR);
   aData.SetRatio(theRatio);
+  aData.SetOrientation(theOrientation);
 
   //Compute the resulting value
   try {
@@ -2280,7 +2281,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
   }
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDisk(" << theR << ", " << theRatio << ")";
+  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDisk(" << theR << ", " << theOrientation << ")";
 
   SetErrorCode(OK);
 

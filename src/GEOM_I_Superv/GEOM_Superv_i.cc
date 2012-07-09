@@ -3405,12 +3405,12 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition
 //=============================================================================
 //  MakeDividedDisk
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio)
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio, CORBA::Short theOrientation)
 {
   beginService( " GEOM_Superv_i::MakeDividedDisk" );
   MESSAGE("GEOM_Superv_i::MakeDividedDisk");
   getAdvancedOp();
-  GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeDividedDisk(theR, theRatio);
+  GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeDividedDisk(theR, theRatio, theOrientation);
   endService( " GEOM_Superv_i::MakeDividedDisk" );
   return anObj;
 }

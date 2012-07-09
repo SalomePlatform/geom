@@ -58,12 +58,21 @@ AdvancedGUI_DividedDiskDlg::AdvancedGUI_DividedDiskDlg (GeometryGUI* theGeometry
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
-  GroupParams = new DlgRef_1Spin(centralWidget());
+  GroupParams      = new DlgRef_1Spin(centralWidget());
+  GroupParams->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupParams->TextLabel1->setText(tr("GEOM_RADIUS"));
+  
+  GroupOrientation = new DlgRef_3Radio(centralWidget());
+  GroupOrientation->GroupBox1->setTitle(tr("GEOM_ORIENTATION"));
+  GroupOrientation->RadioButton1->setText(tr("GEOM_WPLANE_OXY"));
+  GroupOrientation->RadioButton2->setText(tr("GEOM_WPLANE_OYZ"));
+  GroupOrientation->RadioButton3->setText(tr("GEOM_WPLANE_OZX"));
   //@@ setup dialog box layout here @@//
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupParams);
+  layout->addWidget(GroupOrientation);
   /***************************************************************/
 
   setHelpFileName("create_divideddisk_page.html");
@@ -92,6 +101,9 @@ void AdvancedGUI_DividedDiskDlg::Init()
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupParams->SpinBox_DX, 0.00001, COORD_MAX, step, "length_precision" );
   GroupParams->SpinBox_DX->setValue(100);
+  
+  GroupOrientation->RadioButton1->setChecked(true);
+  myOrientation = 1;
 
   // Signal/slot connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -100,6 +112,10 @@ void AdvancedGUI_DividedDiskDlg::Init()
           this,          SLOT(SetDoubleSpinBoxStep(double)));
 
   connect(GroupParams->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  
+  connect(GroupOrientation->RadioButton1, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
+  connect(GroupOrientation->RadioButton2, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
+  connect(GroupOrientation->RadioButton3, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
 
   initName(tr("GEOM_DIVIDEDDISK"));
   
@@ -161,6 +177,34 @@ void AdvancedGUI_DividedDiskDlg::enterEvent (QEvent*)
 }
 
 //=================================================================================
+// function : RadioBittonClicked()
+// purpose  : Radio button management
+//=================================================================================
+void AdvancedGUI_DividedDiskDlg::RadioButtonClicked()
+{ 
+  if (GroupOrientation->RadioButton1->isChecked())
+    myOrientation = 1;
+  else if (GroupOrientation->RadioButton2->isChecked())
+    myOrientation = 2;
+  else if (GroupOrientation->RadioButton3->isChecked())
+    myOrientation = 3;
+   
+//   gp_Pnt theOrigin = gp::Origin();
+//   gp_Dir DirZ = gp::DZ();
+//   gp_Dir DirX = gp::DX();
+//   gp_Dir DirY = gp::DY();
+//   
+//   if (GroupOrientation->RadioButton1->isChecked())
+//     myWPlane = gp_Ax3(theOrigin, DirZ, DirX);
+//   else if (GroupOrientation->RadioButton2->isChecked())
+//     myWPlane = gp_Ax3(theOrigin, DirX, DirY);
+//   else if (GroupOrientation->RadioButton3->isChecked())
+//     myWPlane = gp_Ax3(theOrigin, DirY, DirZ);
+  
+  displayPreview(true);
+}
+
+//=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
@@ -209,7 +253,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
   CORBA::Double theRatio = 50; //@@ init parameter value from dialog box @@;
 
   // call engine function
-  anObj = anOper->MakeDividedDisk(theR, theRatio);
+  anObj = anOper->MakeDividedDisk(theR, theRatio, myOrientation);
   res = !anObj->_is_nil();
   if (res && !IsPreview())
   {

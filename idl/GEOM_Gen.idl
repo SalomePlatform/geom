@@ -3765,7 +3765,7 @@ module GEOM
      *  \param theRatio Relative size of the central square diagonal against the disk diameter
      *  \return New GEOM_Object, containing the created shape.
      */
-    GEOM_Object MakeDividedDisk (in double theR, in double theRatio);
+    GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation);
 
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };

@@ -24,8 +24,9 @@
 
 #include "GEOM_Function.hxx"
 
-#define DIVIDEDDISK_ARG_R   1
-#define DIVIDEDDISK_ARG_RATIO   2
+#define DIVIDEDDISK_ARG_R      1
+#define DIVIDEDDISK_ARG_RATIO  2
+#define DIVIDEDDISK_ARG_ORIENT 3
 
 class GEOMImpl_IDividedDisk
 {
@@ -37,6 +38,9 @@ public:
 
   void SetRatio(double theRatio) { _func->SetReal(DIVIDEDDISK_ARG_RATIO, theRatio); }
   double GetRatio() { return _func->GetReal(DIVIDEDDISK_ARG_RATIO); }
+  
+  void SetOrientation(int theOrientation) { _func->SetInteger(DIVIDEDDISK_ARG_ORIENT, theOrientation); }
+  double GetOrientation() { return _func->GetInteger(DIVIDEDDISK_ARG_ORIENT); }
 
 private:
   Handle(GEOM_Function) _func;
