@@ -1812,11 +1812,11 @@ void GeometryGUI::createPreferences()
 
   // Set property for top level display mode
   QStringList aTopModesList;
+  aTopModesList.append( tr("MEN_SHOW_ADD_WACTOR") );
   aTopModesList.append( tr("MEN_KEEP_CURRENT_DM") );
   aTopModesList.append( tr("MEN_WIREFRAME") );
   aTopModesList.append( tr("MEN_SHADING") );
   aTopModesList.append( tr("MEN_SHADING_WITH_EDGES") );
-  aTopModesList.append( tr("MEN_SHOW_ADD_WACTOR") );
 
   QList<QVariant> aTopIndexesList;
   aTopIndexesList.append(0);

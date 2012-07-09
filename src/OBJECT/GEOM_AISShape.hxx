@@ -79,11 +79,11 @@ public:
 
     //! Enumeration of top level display modes
     typedef enum {
-      TopKeepCurrent = 0 , //!< Keep current display mode
+      TopShowAdditionalWActor = 0,
+      TopKeepCurrent, //!< Keep current display mode
       TopWireFrame, 
       TopShading, 
       TopShadingWithEdges,
-      TopShowAdditionalWActor
     } TopLevelDispMode;
 
 
