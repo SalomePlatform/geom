@@ -3758,6 +3758,15 @@ module GEOM
                                                in double theR2, in double theW2, in double theL2,
                                                in double theRF, in boolean theHexMesh,
                                                in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
+    /*!
+     *  This function allows to create a disk already divided into blocks. It
+     *  can be use to create divided pipes for later meshing in hexaedra.
+     *  \param theR Radius of the disk
+     *  \param theRatio Relative size of the central square diagonal against the disk diameter
+     *  \return New GEOM_Object, containing the created shape.
+     */
+    GEOM_Object MakeDividedDisk (in double theR, in double theRatio);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 

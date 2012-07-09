@@ -29,6 +29,7 @@
 #include <SalomeApp_Application.h>
 
 #include "AdvancedGUI_PipeTShapeDlg.h"
+#include "AdvancedGUI_DividedDiskDlg.h"
 //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
 
 #include <QDialog>
@@ -69,6 +70,9 @@ bool AdvancedGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //   case GEOMOp::OpPipeTShapeGroups:
 //     aDlg = new AdvancedGUI_PipeTShapeGroupsDlg( getGeometryGUI(), parent );
 //     break;
+  case GEOMOp::OpDividedDisk:
+    aDlg = new AdvancedGUI_DividedDiskDlg( getGeometryGUI(), parent );
+    break;
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
   default:
     app->putInfo( tr( "GEOM_PRP_COMMAND" ).arg( theCommandID ) );

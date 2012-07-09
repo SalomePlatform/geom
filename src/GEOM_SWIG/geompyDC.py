@@ -8548,6 +8548,20 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj[0].SetParameters(Parameters)
             return anObj
 
+        ## This function allows to create a disk already divided into blocks. It
+        #  can be use to create divided pipes for later meshing in hexaedra.
+        #  @param theR Radius of the disk
+        #  @param theRatio Relative size of the central square diagonal against the disk diameter
+        #  @return New GEOM_Object, containing the created shape.
+        #
+        #  @ref tui_creation_divideddisk "Example"
+        def MakeDividedDisk(self, theR, theRatio):
+            theR, theRatio, Parameters = ParseParameters(theR, theRatio)
+            anObj = self.AdvOp.MakeDividedDisk(theR, theRatio)
+            RaiseIfFailed("MakeDividedDisk", self.AdvOp)
+            if Parameters: anObj.SetParameters(Parameters)
+            return anObj
+
         #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced

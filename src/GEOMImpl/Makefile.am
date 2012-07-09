@@ -144,6 +144,7 @@ salomeinclude_HEADERS =				\
 
 ADVANCED_INCLUDES  =
 ADVANCED_INCLUDES += GEOMImpl_IPipeTShape.hxx GEOMImpl_PipeTShapeDriver.hxx
+ADVANCED_INCLUDES += GEOMImpl_IDividedDisk.hxx GEOMImpl_DividedDiskDriver.hxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 salomeinclude_HEADERS += $(ADVANCED_INCLUDES)
@@ -214,6 +215,7 @@ dist_libGEOMimpl_la_SOURCES =			\
 
 ADVANCED_SOURCES  =
 ADVANCED_SOURCES += GEOMImpl_PipeTShapeDriver.cxx
+ADVANCED_SOURCES += GEOMImpl_DividedDiskDriver.cxx
 ##@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@##
 
 dist_libGEOMimpl_la_SOURCES += $(ADVANCED_SOURCES)

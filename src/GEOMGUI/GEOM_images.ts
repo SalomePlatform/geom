@@ -1276,6 +1276,18 @@
             <translation>pipetshapegroups.png</translation>
         </message>
 -->
+        <message>
+            <source>ICON_DLG_DIVIDEDDISK_R_RATIO</source>
+            <translation>divideddisk_r_ratio.png</translation>
+        </message>
+        <message>
+            <source>ICO_DIVIDEDDISK</source>
+            <translation>divideddisk.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_202</source>
+            <translation>tree_divideddisk.png</translation>
+        </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

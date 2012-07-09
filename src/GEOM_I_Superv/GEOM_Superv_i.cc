@@ -3402,6 +3402,19 @@ GEOM::GEOM_List_ptr GEOM_Superv_i::MakePipeTShapeFilletWithPosition
   return aSeqPtr->_this();
 }
 
+//=============================================================================
+//  MakeDividedDisk
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio)
+{
+  beginService( " GEOM_Superv_i::MakeDividedDisk" );
+  MESSAGE("GEOM_Superv_i::MakeDividedDisk");
+  getAdvancedOp();
+  GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeDividedDisk(theR, theRatio);
+  endService( " GEOM_Superv_i::MakeDividedDisk" );
+  return anObj;
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================

@@ -251,6 +251,7 @@ ADVANCED_RESOURCES += dlg_pipetshapechamferh.png dlg_pipetshapechamferw.png
 ADVANCED_RESOURCES += dlg_pipetshapefilletl1.png dlg_pipetshapefilletr1.png dlg_pipetshapefilletw1.png
 ADVANCED_RESOURCES += dlg_pipetshapefilletl2.png dlg_pipetshapefilletr2.png dlg_pipetshapefilletw2.png
 ADVANCED_RESOURCES += dlg_pipetshapefilletrf.png
+#ADVANCED_RESOURCES += divideddisk.png divideddisk_r_ratio.png tree_divideddisk.png
 ##@@ insert new functions before this line @@ do not remove this line @@##
 
 dist_salomeres_DATA += $(ADVANCED_RESOURCES)

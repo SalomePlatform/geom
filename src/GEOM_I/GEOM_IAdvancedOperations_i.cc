@@ -321,4 +321,28 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CO
   return aSeq._retn();
 }
 
+//=============================================================================
+/*!
+ *  This function allows to create a disk already divided into blocks. It can be
+ *  use to create divided pipes for later meshing in hexaedra.
+ *  \param theR Radius of the disk
+ *  \param theRatio Relative size of the central square diagonal against the disk diameter
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Create the DividedDisk
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedDisk(theR, theRatio);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/

@@ -567,6 +567,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpAdvancedNoOp:       // NO OPERATION (advanced operations base)
   case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
 //   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
+  case GEOMOp::OpDividedDisk:           // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
     //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
     libName = "AdvancedGUI";
     break;
@@ -888,6 +889,7 @@ void GeometryGUI::initialize( CAM_Application* app )
                     "Geometry:Decrease number of isolines");
 
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
+  createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
@@ -934,9 +936,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
 
-//   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+  int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
 //   createMenu( GEOMOp::OpPipeTShape, advId, -1 );
 //   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
+  createMenu( GEOMOp::OpDividedDisk, advId, -1 );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -1191,7 +1194,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   #ifdef WITH_OPENCV
     createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
   #endif
-
+  
+  int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+  createTool( GEOMOp::OpDividedDisk, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------

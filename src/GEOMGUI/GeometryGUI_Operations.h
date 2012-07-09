@@ -185,6 +185,7 @@ namespace GEOMOp {
     OpAdvancedNoOp        = 10000,  // NO OPERATION (advanced operations base)
     OpPipeTShape          = 10001,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
 //     OpPipeTShapeGroups  = 10002,  // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
+    OpDividedDisk            = 10003,  // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
     //@@ insert new functions before this line @@ do not remove this line @@//
   };
 }

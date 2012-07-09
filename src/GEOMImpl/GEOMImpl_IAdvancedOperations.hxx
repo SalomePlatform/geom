@@ -109,6 +109,7 @@ public:
                                                    Handle(GEOM_Object) P1 = 0,
                                                    Handle(GEOM_Object) P2 = 0,
                                                    Handle(GEOM_Object) P3 = 0);
+  Standard_EXPORT Handle(GEOM_Object) MakeDividedDisk (double theR, double theRatio);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

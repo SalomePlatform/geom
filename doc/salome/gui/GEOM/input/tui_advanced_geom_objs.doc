@@ -80,5 +80,23 @@ gg.createAndDisplayGO(id_pipetshapefillet_position)
 
 \endcode
 
+\anchor tui_creation_divideddisk
+<br><h2>Creation of DividedDisk</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create DividedDisk object
+divideddisk = geompy.MakeDividedDisk(100, 50)
+
+# add object in the study
+id_divideddisk = geompy.addToStudy(divideddisk,"DividedDisk")
+
+# display divideddisk
+gg.createAndDisplayGO(id_divideddisk) 
+\endcode
+
 <!--@@ insert new functions before this line @@ do not remove this line @@-->
 */
