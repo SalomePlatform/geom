@@ -530,6 +530,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Ajouter un point</translation>
     </message>
     <message>
+        <source>GEOM_DIVIDEDDISK</source>
+        <translation>Disque prédécoupé</translation>
+    </message>
+    <message>
+        <source>GEOM_DIVIDEDDISK_TITLE</source>
+        <translation>Construction d&apos;un disque prédécoupé</translation>
+    </message>
+    <message>
         <source>GEOM_DX</source>
         <translation>Dx :</translation>
     </message>
@@ -2353,6 +2361,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_DISK</source>
         <translation>Disque</translation>
+    </message>
+    <message>
+        <source>MEN_DIVIDEDDISK</source>
+        <translation>Disque prédécoupé</translation>
     </message>
     <message>
         <source>MEN_DISPLAY_ALL</source>
@@ -5291,16 +5303,12 @@ Voulez-vous continuer?</translation>
         <translation>Couleur</translation>
     </message>
     <message>
-        <source>PHYSICAL</source>
-        <translation>Physical:</translation>
-    </message>
-    <message>
         <source>CUSTOM_MATERIAL</source>
         <translation>matériau personnalisé</translation>
     </message>
     <message>
         <source>QUE_CREATE_NEW_MATERIAL</source>
-        <translation>Il n'est pas possible de changer les propriétés d'un matériau pré-défini.
+        <translation>Il n&apos;est pas possible de changer les propriétés d&apos;un matériau pré-défini.
 Voulez-vous en créer un nouveau ?</translation>
     </message>
     <message>

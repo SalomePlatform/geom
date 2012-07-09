@@ -530,6 +530,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Addition of point</translation>
     </message>
     <message>
+        <source>GEOM_DIVIDEDDISK</source>
+        <translation>Divided Disk</translation>
+    </message>
+    <message>
+        <source>GEOM_DIVIDEDDISK_TITLE</source>
+        <translation>Divided Disk construction</translation>
+    </message>
+    <message>
         <source>GEOM_DX</source>
         <translation>Dx :</translation>
     </message>
@@ -2355,6 +2363,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Disk</translation>
     </message>
     <message>
+        <source>MEN_DIVIDEDDISK</source>
+        <translation>Divided Disk</translation>
+    </message>
+    <message>
         <source>MEN_DISPLAY_ALL</source>
         <translation>Show All</translation>
     </message>
@@ -2371,7 +2383,7 @@ Please, select face, shell or solid and try again</translation>
         <translation>Bring To Front</translation>
     </message>
     <message>
-	<source>TOP_BRING_TO_FRONT</source>
+        <source>TOP_BRING_TO_FRONT</source>
         <translation>Bring To Front</translation>
     </message>
     <message>
