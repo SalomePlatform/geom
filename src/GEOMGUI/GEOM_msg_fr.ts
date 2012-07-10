@@ -4535,6 +4535,10 @@ Sinon les dimensions seront préservées sans modifications.</translation>
         <translation>Objet géométrique avancé : type %1</translation>
     </message>
     <message>
+        <source>GEOM_ADVANCED_202</source>
+        <translation>Disque prédécoupé</translation>
+    </message>
+    <message>
         <source>GEOM_PRECISION_HINT</source>
         <translation>Il est possible d&apos;ajuster la précision de la valeur d&apos;entrée avec 
 le paramètre &apos;%1&apos; aux préférences du module Géométrie.</translation>

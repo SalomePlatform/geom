@@ -1,0 +1,27 @@
+/*!
+
+\page create_divideddisk_page DividedDisk
+
+To create a \b DividedDisk in the <b>Main Menu</b> select <b>New Entity - >
+Advanced - > DividedDisk </b>
+
+Specify the parameters of the DividedDisk object creation in the opened dialog
+box and press "Apply" or "Apply & Close" button.
+Result of each operation will be a GEOM_Object.
+
+<b>TUI Command:</b> <em>geompy.MakeDividedDisk(R, Ratio)</em>
+
+<b>Arguments:</b>
+- \b R - Radius of the disk
+- \b Ratio - Relative size of the central square diagonal against the disk diameter
+
+\image html divideddisk_dlg.png
+
+Example:
+
+\image html divideddisk.png
+
+Our <b>TUI Scripts</b> provide you with useful examples of creation of
+\ref tui_creation_divideddisk "Advanced objects".
+
+*/
