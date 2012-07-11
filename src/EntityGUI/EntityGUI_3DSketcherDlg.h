@@ -29,6 +29,7 @@
 class QButtonGroup;
 class QDoubleSpinBox;
 class EntityGUI_3Spin;
+class EntityGUI_Angles;
 class DlgRef_3Radio;
 
 #ifndef COORD_MIN
@@ -76,6 +77,10 @@ private:
                                                      const double = -1,
                                                      const int  = -1,
                                                      const int  = -1);
+  
+  void                               displayTrihedron( int );
+  
+  void                               displayAngle( double, double, double, int );
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
                                                    TopoDS_Shape&,
@@ -89,10 +94,12 @@ private:
   XYZList                            myRedoList;
 
   EntityGUI_3Spin*                   Group3Spin;
+  EntityGUI_Angles*                  GroupAngles;
   DlgRef_3Radio*                     GroupType;
   QButtonGroup*                      myTypeGroup;
 
   int                                myMode;
+  int                                myOrientation;
   bool                               myOK;
   double                             myLineWidth;
   GeometryGUI*                       myGeometryGUI;
@@ -112,6 +119,8 @@ private slots:
   void                               ActivateThisDialog();
   void                               TypeClicked( int );
   void                               ValueChangedInSpinBox( double );
+  void                               ButtonClicked( bool );
+  void                               AngleChecked ( bool );
   void                               SetDoubleSpinBoxStep( double );
 };
 

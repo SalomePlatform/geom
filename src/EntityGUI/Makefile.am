@@ -84,7 +84,8 @@ UIC_FILES =				\
 	ui_EntityGUI_Dir1_QTD.h		\
 	ui_EntityGUI_Dir2_QTD.h		\
 	ui_EntityGUI_Point_QTD.h	\
-	ui_EntityGUI_Skeleton_QTD.h
+	ui_EntityGUI_Skeleton_QTD.h	\
+	ui_EntityGUI_Angles_QTD.h
 
 BUILT_SOURCES = $(UIC_FILES)
 

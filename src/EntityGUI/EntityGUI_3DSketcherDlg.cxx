@@ -21,20 +21,25 @@
 // File   : EntityGUI_3DSketcherDlg.cxx
 // Author : DMV, OCN
 //
+#include <cmath>
+
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
 #include <SalomeApp_DoubleSpinBox.h>
 
 #include <GEOMBase.h>
 #include <GeometryGUI.h>
-#include <GEOMImpl_Types.hxx>
-#include <Precision.hxx>  
+#include <Precision.hxx> 
 
 #include <DlgRef.h>
-#include <SUIT_Desktop.h>
 #include <SUIT_Session.h>
+#include <SUIT_Desktop.h>
 #include <SUIT_MessageBox.h>
 #include <SUIT_ResourceMgr.h>
+#include <SUIT_ViewWindow.h>
+#include <SUIT_ViewManager.h>
+#include <SOCC_Prs.h>
+#include <SOCC_ViewModel.h>
 #include <SalomeApp_Application.h>
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
@@ -43,13 +48,25 @@
 //#include <TopExp.hxx>
 //#include <TopExp_Explorer.hxx>
 //#include <TopoDS_Vertex.hxx>
-//#include <TopoDS.hxx>
+#include <TopoDS.hxx>
 #include <TColStd_IndexedMapOfInteger.hxx>
 //#include <BRepBuilderAPI_Transform.hxx>
 //#include <BRepBuilderAPI_MakeWire.hxx>
 #include <BRepBuilderAPI_MakeVertex.hxx>
 #include <BRepBuilderAPI_MakePolygon.hxx>
 #include <BRepBuilderAPI_MakeEdge.hxx>
+
+#include <AIS_Trihedron.hxx>
+#include <AIS_AngleDimension.hxx>
+#include <Geom_Axis2Placement.hxx>
+#include <Geom_Plane.hxx>
+#include <SelectMgr_Selection.hxx>
+#include <gce_MakePln.hxx>
+
+// This include must be *AFTER* SOCC_ViewModel.h because
+// of the constant ROTATE which is a #define in
+// GEOMImpl_Types.hxx and an enum in SOCC_ViewModel.h
+#include <GEOMImpl_Types.hxx>
 
 class Locker
 {
@@ -94,10 +111,12 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
   GroupType->GroupBox1->setTitle(tr("GEOM_COORDINATES_TYPE"));
   GroupType->RadioButton1->setText(tr("GEOM_SKETCHER_ABS"));
   GroupType->RadioButton2->setText(tr("GEOM_SKETCHER_REL"));
-  GroupType->RadioButton3->close();
+  GroupType->RadioButton3->setText(tr("Angles")); //TODO translation
+//   GroupType->RadioButton3->close();
   myTypeGroup = new QButtonGroup( this );
   myTypeGroup->addButton( GroupType->RadioButton1, 0 );
   myTypeGroup->addButton( GroupType->RadioButton2, 1 );
+  myTypeGroup->addButton( GroupType->RadioButton3, 2 );
 
   Group3Spin = new EntityGUI_3Spin( centralWidget() );
   Group3Spin->GroupBox1->setTitle( tr( "GEOM_SKETCHER_VALUES" ) );
@@ -107,14 +126,20 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
   Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
   Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
   Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_Z2" ) );
+  
+  GroupAngles = new EntityGUI_Angles( centralWidget() );
 
   buttonOk()->setText( tr( "GEOM_BUT_END_SKETCH" ) );
   buttonApply()->setText( tr( "GEOM_BUT_CLOSE_SKETCH" ) );
   
   QVBoxLayout* layout = new QVBoxLayout( centralWidget() );
+  GroupAngles->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
+  GroupAngles->buttonUndo->setIcon( image1 );
+  GroupAngles->buttonRedo->setIcon( image2 );
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupType );
   layout->addWidget( Group3Spin );
+  layout->addWidget( GroupAngles );
 
   setHelpFileName( "create_3dsketcher_page.html" );
 
@@ -140,6 +165,7 @@ EntityGUI_3DSketcherDlg::~EntityGUI_3DSketcherDlg()
 void EntityGUI_3DSketcherDlg::Init()
 {
   myOK = false;
+  myOrientation = 1;
 
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
@@ -150,10 +176,24 @@ void EntityGUI_3DSketcherDlg::Init()
   initSpinBox( Group3Spin->SpinBox_DX, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox( Group3Spin->SpinBox_DY, COORD_MIN, COORD_MAX, step, "length_precision" );
   initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
+  
+  initSpinBox( GroupAngles->SpinBox_DA , -180.0, 180.0, step, "angular_precision" );
+  initSpinBox( GroupAngles->SpinBox_DA2,    0.0,  90.0, step, "angular_precision" );
+  initSpinBox( GroupAngles->SpinBox_DL, COORD_MIN, COORD_MAX, step, "length_precision" );
 
   Group3Spin->SpinBox_DX->setValue(0.0);
   Group3Spin->SpinBox_DY->setValue(0.0);
   Group3Spin->SpinBox_DZ->setValue(0.0);
+  
+  GroupAngles->SpinBox_DA->setValue(0.0);
+  GroupAngles->SpinBox_DA2->setValue(0.0);
+  GroupAngles->SpinBox_DL->setValue(0.0);
+  
+  GroupAngles->radioButton_1->setChecked(true);
+  GroupAngles->checkBox->setChecked(false);
+  GroupAngles->SpinBox_DA2->setEnabled(false); 
+   
+  GroupAngles->hide();
 
   /* signals and slots connections */
   connect( buttonOk(),     SIGNAL( clicked() ), this, SLOT( ClickOnOk() ) );
@@ -164,12 +204,25 @@ void EntityGUI_3DSketcherDlg::Init()
   connect( Group3Spin->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnAddPoint() ) );
   connect( Group3Spin->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
   connect( Group3Spin->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) ) ;
+  
+  connect( GroupAngles->buttonApply,  SIGNAL( clicked() ), this, SLOT( ClickOnAddPoint() ) );
+  connect( GroupAngles->buttonUndo,   SIGNAL( clicked() ), this, SLOT( ClickOnUndo() ) );
+  connect( GroupAngles->buttonRedo,   SIGNAL( clicked() ), this, SLOT( ClickOnRedo() ) ) ;
 
   connect( myTypeGroup, SIGNAL( buttonClicked( int ) ),  this, SLOT( TypeClicked( int ) ) );
 
   connect( Group3Spin->SpinBox_DX, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3Spin->SpinBox_DY, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
   connect( Group3Spin->SpinBox_DZ, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  
+  connect( GroupAngles->SpinBox_DA,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupAngles->SpinBox_DA2, SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  connect( GroupAngles->SpinBox_DL,  SIGNAL( valueChanged( double ) ), this, SLOT( ValueChangedInSpinBox( double ) ) );
+  
+  connect( GroupAngles->radioButton_1,   SIGNAL( clicked ( bool ) ), this, SLOT( ButtonClicked(bool) ) ) ;
+  connect( GroupAngles->radioButton_2,   SIGNAL( clicked ( bool ) ), this, SLOT( ButtonClicked(bool) ) ) ;
+  connect( GroupAngles->radioButton_3,   SIGNAL( clicked ( bool ) ), this, SLOT( ButtonClicked(bool) ) ) ;
+  connect( GroupAngles->checkBox,        SIGNAL( clicked ( bool ) ), this, SLOT( AngleChecked (bool) ) ) ;
 
   connect( myGeomGUI, SIGNAL( SignalDefaultStepValueChanged( double ) ), this, SLOT( SetDoubleSpinBoxStep( double ) ) );
 
@@ -190,6 +243,9 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
 {
   if ( mode == myMode ) return;
 
+  Group3Spin->show();
+  GroupAngles->hide();
+  
   bool blocked = Group3Spin->SpinBox_DX->signalsBlocked();
   Group3Spin->SpinBox_DX->blockSignals(true);
   Group3Spin->SpinBox_DY->blockSignals(true);
@@ -209,7 +265,7 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
     if ( okz ) Group3Spin->SpinBox_DZ->setValue( xyz.z + Group3Spin->SpinBox_DZ->value() );
     Group3Spin->buttonApply->setFocus();
   }
-  else { // DXDY
+  else if ( mode == 1) { // DXDY
     Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
     Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
     Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_DZ2" ) );
@@ -218,11 +274,18 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
     if ( okz ) Group3Spin->SpinBox_DZ->setValue( Group3Spin->SpinBox_DZ->value() - xyz.z );
     Group3Spin->buttonApply->setFocus();
   }
+  else {
+    Group3Spin->hide();
+    GroupAngles->show();
+  }
+  
   Group3Spin->SpinBox_DX->blockSignals(blocked);
   Group3Spin->SpinBox_DY->blockSignals(blocked);
   Group3Spin->SpinBox_DZ->blockSignals(blocked);
 
   myMode = mode;
+  
+  resize(minimumSizeHint());
 }
 
 //=================================================================================
@@ -257,8 +320,11 @@ void EntityGUI_3DSketcherDlg::UpdateButtonsState()
 {
   if ( myPointsList.count() == 0 ) GroupType->RadioButton1->click();
   GroupType->RadioButton2->setEnabled( myPointsList.count() > 0 );
+  GroupType->RadioButton3->setEnabled( myPointsList.count() > 0 );
   Group3Spin->buttonUndo->setEnabled( myPointsList.count() > 0 );
   Group3Spin->buttonRedo->setEnabled( myRedoList.count() > 0 );
+  GroupAngles->buttonUndo->setEnabled( myPointsList.count() > 0 );
+  GroupAngles->buttonRedo->setEnabled( myRedoList.count() > 0 );
 }
 
 //=================================================================================
@@ -385,6 +451,60 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 {
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  if(GroupType->RadioButton3->isChecked() && GroupAngles->SpinBox_DL->value()>Precision::Confusion())
+  {
+    double anAngle2 = 0.0;
+    if (GroupAngles->checkBox->isChecked())
+      anAngle2 = GroupAngles->SpinBox_DA2->value();
+    
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
+  }
+}
+
+
+//=================================================================================
+// function : AngleChecked()
+// purpose  :
+//=================================================================================
+void EntityGUI_3DSketcherDlg::AngleChecked( bool checked )
+{
+  GroupAngles->SpinBox_DA2->setEnabled(checked); 
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+ 
+  if(GroupAngles->SpinBox_DL->value()>Precision::Confusion())
+  {
+    double anAngle2 = 0.0;
+    if (checked)
+      anAngle2 = GroupAngles->SpinBox_DA2->value();
+    
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
+  }
+  
+}
+
+//=================================================================================
+// function : ButtonClicked()
+// purpose  :
+//=================================================================================
+void EntityGUI_3DSketcherDlg::ButtonClicked( bool checked )
+{
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  if (GroupAngles->radioButton_1->isChecked())
+    myOrientation = 1;
+  else if (GroupAngles->radioButton_2->isChecked())
+    myOrientation = 2;
+  else
+    myOrientation = 3;
+  
+  if(GroupAngles->SpinBox_DL->value()>Precision::Confusion())
+  {
+    double anAngle2 = 0.0;
+    if (GroupAngles->checkBox->isChecked())
+      anAngle2 = GroupAngles->SpinBox_DA2->value();
+    
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
+  }
+  
 }
 
 //=================================================================================
@@ -509,7 +629,7 @@ bool EntityGUI_3DSketcherDlg::ClickOnApply()
 
   if ( !onAccept() )
     return false;
-
+  
   ClickOnCancel();
   return true;
 }
@@ -529,21 +649,56 @@ EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getLastPoint() const
 //=================================================================================
 EntityGUI_3DSketcherDlg::XYZ EntityGUI_3DSketcherDlg::getCurrentPoint() const
 {
-  XYZ xyz;
-  if ( myMode == 0 ) {
-    xyz.x = Group3Spin->SpinBox_DX->value();
-    xyz.y = Group3Spin->SpinBox_DY->value();
-    xyz.z = Group3Spin->SpinBox_DZ->value();
-  } 
-  else {
+  XYZ xyz; 
+  // Temporary way of doing this. To be changed with ordered improvement of the sketcher
+  if ( myMode == 2 )
+  {
+    double anAngle  = GroupAngles->SpinBox_DA->value() * M_PI/180.0;
+    double anAngle2 = 0.0;
+    double aLength          = GroupAngles->SpinBox_DL->value();
+    
+    if (GroupAngles->checkBox->isChecked())
+      anAngle2 = GroupAngles->SpinBox_DA2->value() * M_PI/180.0;
+    
+    double aProjectedLength = aLength * cos(anAngle2);
+    
     xyz = getLastPoint();
-    xyz.x += Group3Spin->SpinBox_DX->value();
-    xyz.y += Group3Spin->SpinBox_DY->value();
-    xyz.z += Group3Spin->SpinBox_DZ->value();
+    if (GroupAngles->radioButton_1->isChecked())
+    {
+      xyz.x += aProjectedLength * cos(anAngle);
+      xyz.y += aProjectedLength * sin(anAngle);
+      xyz.z += aLength * sin(anAngle2);
+    }
+    else if (GroupAngles->radioButton_2->isChecked())
+    {
+      xyz.y += aProjectedLength * cos(anAngle);
+      xyz.z += aProjectedLength * sin(anAngle);
+      xyz.x += aLength * sin(anAngle2);
+    }
+    else
+    {
+      xyz.z += aProjectedLength * sin(anAngle);
+      xyz.x += aProjectedLength * cos(anAngle);
+      xyz.y += aLength * sin(anAngle2);
+    }
   }
-  xyz.xt = Group3Spin->SpinBox_DX->text();
-  xyz.yt = Group3Spin->SpinBox_DY->text();
-  xyz.zt = Group3Spin->SpinBox_DZ->text();
+  else
+  {
+    if ( myMode == 0 ) {
+      xyz.x = Group3Spin->SpinBox_DX->value();
+      xyz.y = Group3Spin->SpinBox_DY->value();
+      xyz.z = Group3Spin->SpinBox_DZ->value();
+    } 
+    else{
+      xyz = getLastPoint();
+      xyz.x += Group3Spin->SpinBox_DX->value();
+      xyz.y += Group3Spin->SpinBox_DY->value();
+      xyz.z += Group3Spin->SpinBox_DZ->value();
+    }
+    xyz.xt = Group3Spin->SpinBox_DX->text();
+    xyz.yt = Group3Spin->SpinBox_DY->text();
+    xyz.zt = Group3Spin->SpinBox_DZ->text();
+  }
   return xyz;
 }
 
@@ -559,7 +714,7 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                               const double          lineWidth,
                                               const int             displayMode,
                                               const int             color )
-{
+{  
   // Set color for preview shape
   getDisplayer()->SetColor( Quantity_NOC_RED );
 
@@ -585,13 +740,132 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
 
   getDisplayer()->SetColor( Quantity_NOC_VIOLET );
   aPrs = getDisplayer()->BuildPrs( aLastSegment );
+    
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
+  if(GroupType->RadioButton3->isChecked())
+    displayTrihedron(3);
+  else
+    displayTrihedron(2);
+  
   getDisplayer()->UnsetName();
 
   // Enable activation of displayed objects
   getDisplayer()->SetToActivate( true );
+}
+
+//================================================================
+// Function : displayTrihedron()
+// Purpose  : Method for displaying trihedron
+//================================================================
+void EntityGUI_3DSketcherDlg::displayTrihedron(int selMode)
+{
+  // Add trihedron to preview
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  
+  gp_Pnt P(getLastPoint().x,getLastPoint().y,getLastPoint().z);
+  Handle(Geom_Axis2Placement) anAxis = new Geom_Axis2Placement(P,gp::DZ(),gp::DX());
+  Handle(AIS_Trihedron) anIO = new AIS_Trihedron(anAxis);
+  anIO->SetSelectionMode(selMode);
+  
+  SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+  
+  if (aSPrs)
+  {
+    aSPrs->AddObject(anIO);
+    GEOMBase_Helper::displayPreview( aSPrs, true, true );
+  }
+}
+
+//================================================================
+// Function : displayAngle()
+// Purpose  : Method for displaying angle dimensions
+//================================================================
+void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, double theLength, int theOrientation)
+{
+  if(Abs(theAngle2 - 90.0) < Precision::Confusion())
+    return;
+  // Add trihedron to preview
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  
+  XYZ Last    = getLastPoint();
+  XYZ Current = getCurrentPoint();
+    
+  gp_Pnt Last_Pnt(Last.x,Last.y,Last.z);
+  gp_Pnt Current_Pnt(Current.x,Current.y,Current.z);
+  gp_Pnt P1, P2; //, P3;
+  
+  bool twoAngles = GroupAngles->checkBox->isChecked();
+  
+  switch(theOrientation)
+  {
+    case 1: //OXY
+    {   
+      P1 = gp_Pnt(Last.x + theLength,Last.y,Last.z);    // X direction
+      P2 = gp_Pnt(Last.x + theLength * cos(theAngle1 * M_PI / 180.),
+                  Last.y + theLength * sin(theAngle1 * M_PI / 180.),
+                  Last.z); 
+//       P3 = gp_Pnt(Last.x,Last.y,theLength);     // Z direction (normal to the plane)
+      break;
+    }
+    case 2: //OYZ
+    {
+      P1 = gp_Pnt(Last.x, Last.y + theLength,Last.z);     // Y direction
+      P2 = gp_Pnt(Last.x, 
+                  Last.y + theLength * cos(theAngle1 * M_PI / 180.),
+                  Last.z + theLength * sin(theAngle1 * M_PI / 180.)); 
+//       P2 = gp_Pnt(Last.x,Current.y,Current.z);  // Projection in OYZ plane
+//       P3 = gp_Pnt(theLength,Last.y,Last.z);     // X direction
+      break;
+    }
+    case 3: //OXZ
+    {
+      P1 = gp_Pnt( Last.x + theLength,Last.y,Last.z);     // X direction
+      P2 = gp_Pnt( Last.x + theLength * cos(theAngle1 * M_PI / 180.) ,
+                   Last.y,
+                   Last.z + theLength * sin(theAngle1 * M_PI / 180.)); 
+//       P2 = gp_Pnt(Current.x,Last.y,Current.z);  // Projection in OXZ plane
+//       P3 = gp_Pnt(Last.x,theLength,Last.z);     // Y direction
+      break;
+    }
+  }
+  
+  MESSAGE("REPERE1 :  Last  x ="<<Last.x<<"y ="<<Last.y<<"z ="<<Last.z)
+  MESSAGE("Current  x ="<<Current.x<<"y ="<<Current.y<<"z ="<<Current.z)
+  TopoDS_Vertex V1    = BRepBuilderAPI_MakeVertex(P1);
+  TopoDS_Vertex V2    = BRepBuilderAPI_MakeVertex(P2);
+  TopoDS_Vertex LastV = BRepBuilderAPI_MakeVertex(Last_Pnt);
+  TopoDS_Vertex CurV  = BRepBuilderAPI_MakeVertex(Current_Pnt);
+  TopoDS_Edge anEdge1 = BRepBuilderAPI_MakeEdge(LastV, V1);
+  TopoDS_Edge anEdge2 = BRepBuilderAPI_MakeEdge(LastV, V2);
+  TopoDS_Edge anEdge3 = BRepBuilderAPI_MakeEdge(LastV, CurV);
+  
+  gce_MakePln gce_MP(Last_Pnt, P1, P2);
+        Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
+      
+  Standard_CString aStr = "45°";
+  Handle(AIS_AngleDimension) anAngleIO  = new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle1 * M_PI / 180.,
+           TCollection_ExtendedString(aStr));
+  
+  
+  SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+  
+  if (aSPrs)
+  {
+    aSPrs->AddObject(anAngleIO);
+    if (twoAngles)
+   {
+      gce_MakePln gce_MP2(Last_Pnt, P2, Current_Pnt);
+            Handle(Geom_Plane) aPlane2 = new Geom_Plane(gce_MP2.Value());
+            
+      Handle(AIS_AngleDimension) anAngle2IO = new AIS_AngleDimension(anEdge2, anEdge3, aPlane2, theAngle2 * M_PI / 180.,
+              TCollection_ExtendedString(aStr));
+      
+      aSPrs->AddObject(anAngle2IO);
+    }
+    GEOMBase_Helper::displayPreview( aSPrs, true, true );
+  }
 }
 
 //================================================================

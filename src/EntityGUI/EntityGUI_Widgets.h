@@ -223,6 +223,22 @@ public:
 };
 
 //////////////////////////////////////////
+// EntityGUI_Angles
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_Angles_QTD.h"
+
+class EntityGUI_Angles : public QWidget, 
+                        public Ui::EntityGUI_Angles_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_Angles( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_Angles();
+};
+
+//////////////////////////////////////////
 // EntityGUI_Skeleton
 //////////////////////////////////////////
 

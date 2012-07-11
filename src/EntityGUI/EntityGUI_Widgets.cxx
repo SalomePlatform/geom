@@ -211,6 +211,20 @@ EntityGUI_Point::~EntityGUI_Point()
 }
 
 //////////////////////////////////////////
+// EntityGUI_Angles
+//////////////////////////////////////////
+
+EntityGUI_Angles::EntityGUI_Angles( QWidget* parent, Qt::WindowFlags f )
+: QWidget( parent, f )
+{
+  setupUi( this );
+}
+
+EntityGUI_Angles::~EntityGUI_Angles()
+{
+}
+
+//////////////////////////////////////////
 // EntityGUI_Skeleton
 //////////////////////////////////////////
 
