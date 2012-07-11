@@ -22,6 +22,8 @@
 // Author : DMV, OCN
 //
 #include <cmath>
+#include <string>
+#include <boost/lexical_cast.hpp>
 
 #include "EntityGUI_3DSketcherDlg.h"
 #include "EntityGUI_Widgets.h"
@@ -44,6 +46,7 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+//OCCT includes
 //#include <BRep_Tool.hxx>
 //#include <TopExp.hxx>
 //#include <TopExp_Explorer.hxx>
@@ -58,10 +61,13 @@
 
 #include <AIS_Trihedron.hxx>
 #include <AIS_AngleDimension.hxx>
+#include <AIS_Drawer.hxx>
 #include <Geom_Axis2Placement.hxx>
 #include <Geom_Plane.hxx>
 #include <SelectMgr_Selection.hxx>
 #include <gce_MakePln.hxx>
+#include <Prs3d_AngleAspect.hxx>
+#include <Prs3d_LineAspect.hxx>
 
 // This include must be *AFTER* SOCC_ViewModel.h because
 // of the constant ROTATE which is a #define in
@@ -845,9 +851,19 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   gce_MakePln gce_MP(Last_Pnt, P1, P2);
         Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
       
-  Standard_CString aStr = "45°";
+  // Covert angles to string
+  std::string Angle1_str = boost::lexical_cast<std::string>(theAngle1);
+  std::string Angle2_str = boost::lexical_cast<std::string>(theAngle2);
+  
   Handle(AIS_AngleDimension) anAngleIO  = new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle1 * M_PI / 180.,
-           TCollection_ExtendedString(aStr));
+           TCollection_ExtendedString(Angle1_str.c_str()));
+  
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr();
+  int w = resMgr->integerValue("Geometry", "measures_line_width", 1);
+  
+  Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
+  asp->LineAspect()->SetWidth(w);
+  anAngleIO->Attributes()->SetAngleAspect(asp);
   
   SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   
@@ -860,7 +876,9 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
             Handle(Geom_Plane) aPlane2 = new Geom_Plane(gce_MP2.Value());
             
       Handle(AIS_AngleDimension) anAngle2IO = new AIS_AngleDimension(anEdge2, anEdge3, aPlane2, theAngle2 * M_PI / 180.,
-              TCollection_ExtendedString(aStr));
+              TCollection_ExtendedString(Angle2_str.c_str()));
+      
+      anAngle2IO->Attributes()->SetAngleAspect(asp);
       
       aSPrs->AddObject(anAngle2IO);
     }
