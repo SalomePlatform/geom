@@ -136,6 +136,7 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
   GroupAngles->buttonApply->setText( tr( "GEOM_SKETCHER_APPLY" ) );
   GroupAngles->buttonUndo->setIcon( image1 );
   GroupAngles->buttonRedo->setIcon( image2 );
+  GroupAngles->checkBox->setText( tr( "Angle 2" ) ); //TODO translation
   layout->setMargin( 0 ); layout->setSpacing( 6 );
   layout->addWidget( GroupType );
   layout->addWidget( Group3Spin );
@@ -784,7 +785,7 @@ void EntityGUI_3DSketcherDlg::displayTrihedron(int selMode)
 //================================================================
 void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, double theLength, int theOrientation)
 {
-  if(Abs(theAngle2 - 90.0) < Precision::Confusion())
+  if(Abs(theAngle2 - 90.0) < Precision::Angular())
     return;
   // Add trihedron to preview
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
@@ -847,7 +848,6 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   Standard_CString aStr = "45°";
   Handle(AIS_AngleDimension) anAngleIO  = new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle1 * M_PI / 180.,
            TCollection_ExtendedString(aStr));
-  
   
   SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   
