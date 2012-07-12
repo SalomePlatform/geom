@@ -2494,7 +2494,7 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   CORBA::String_var objStr = myGeometryGUI->getApp()->orb()->object_to_string( object );
   getDisplayer()->SetName( objStr.in() );
 
-  // Create wire from applayed object
+  // Create wire from applied object
   TopoDS_Shape anApplyedWire, aLastSegment;
   if ( !createShapes( object, anApplyedWire, aLastSegment ) )
     return;
@@ -2509,9 +2509,9 @@ void EntityGUI_SketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
-  getDisplayer()->SetColor( Quantity_NOC_VIOLET );
-  
+  getDisplayer()->SetColor( Quantity_NOC_VIOLET ); 
   aPrs = getDisplayer()->BuildPrs( aLastSegment );
+  
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 

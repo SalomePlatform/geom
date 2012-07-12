@@ -46,6 +46,8 @@
 #include <LightApp_Application.h>
 #include <LightApp_SelectionMgr.h>
 
+#include <SalomeApp_Tools.h>
+
 //OCCT includes
 //#include <BRep_Tool.hxx>
 //#include <TopExp.hxx>
@@ -270,23 +272,30 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
     Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_X2" ) );
     Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_Y2" ) );
     Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_Z2" ) );
-    if ( okx ) Group3Spin->SpinBox_DX->setValue( xyz.x + Group3Spin->SpinBox_DX->value() );
-    if ( oky ) Group3Spin->SpinBox_DY->setValue( xyz.y + Group3Spin->SpinBox_DY->value() );
-    if ( okz ) Group3Spin->SpinBox_DZ->setValue( xyz.z + Group3Spin->SpinBox_DZ->value() );
+    if (myMode == 1)
+    {
+      if ( okx ) Group3Spin->SpinBox_DX->setValue( xyz.x + Group3Spin->SpinBox_DX->value() );
+      if ( oky ) Group3Spin->SpinBox_DY->setValue( xyz.y + Group3Spin->SpinBox_DY->value() );
+      if ( okz ) Group3Spin->SpinBox_DZ->setValue( xyz.z + Group3Spin->SpinBox_DZ->value() );
+    }
     Group3Spin->buttonApply->setFocus();
   }
   else if ( mode == 1) { // DXDY
     Group3Spin->TextLabel1->setText( tr( "GEOM_SKETCHER_DX2" ) );
     Group3Spin->TextLabel2->setText( tr( "GEOM_SKETCHER_DY2" ) );
     Group3Spin->TextLabel3->setText( tr( "GEOM_SKETCHER_DZ2" ) );
-    if ( okx ) Group3Spin->SpinBox_DX->setValue( Group3Spin->SpinBox_DX->value() - xyz.x );
-    if ( oky ) Group3Spin->SpinBox_DY->setValue( Group3Spin->SpinBox_DY->value() - xyz.y );
-    if ( okz ) Group3Spin->SpinBox_DZ->setValue( Group3Spin->SpinBox_DZ->value() - xyz.z );
+    if (myMode == 0)
+    {
+      if ( okx ) Group3Spin->SpinBox_DX->setValue( Group3Spin->SpinBox_DX->value() - xyz.x );
+      if ( oky ) Group3Spin->SpinBox_DY->setValue( Group3Spin->SpinBox_DY->value() - xyz.y );
+      if ( okz ) Group3Spin->SpinBox_DZ->setValue( Group3Spin->SpinBox_DZ->value() - xyz.z );
+    }
     Group3Spin->buttonApply->setFocus();
   }
-  else {
+  else if (mode == 2){ // Angles
     Group3Spin->hide();
     GroupAngles->show();
+    GroupAngles->buttonApply->setFocus();
   }
   
   Group3Spin->SpinBox_DX->blockSignals(blocked);
@@ -744,12 +753,18 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                               const double          lineWidth,
                                               const int             displayMode,
                                               const int             color )
-{    
-  // Set color for preview shape
-  getDisplayer()->SetColor( Quantity_NOC_RED );
-
+{ 
+  SUIT_ResourceMgr* resMgr = SUIT_Session::session()->resourceMgr(); 
+  
+  QColor aColor = resMgr->colorValue("Geometry","line_color",QColor(255,0,0));
+  Quantity_NameOfColor line_color = SalomeApp_Tools::color( aColor ).Name();
+  
   // set width of displayed shape
-  getDisplayer()->SetWidth( (lineWidth == -1)?myLineWidth:lineWidth ); 
+  int lw = lineWidth;
+  if(lw == -1) { 
+    lw = resMgr->integerValue("Geometry", "preview_edge_width", -1);
+  }
+  getDisplayer()->SetWidth( lw );
 
   // Disable activation of selection
   getDisplayer()->SetToActivate( activate );
@@ -763,6 +778,9 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   if ( !createShapes( object, anApplyedWire, aLastSegment ) )
     return;
 
+  // Set color for preview shape
+  getDisplayer()->SetColor( line_color );
+  
   // Build prs
   SALOME_Prs* aPrs = getDisplayer()->BuildPrs( anApplyedWire );
   if ( aPrs != 0 && !aPrs->IsNull() )
@@ -773,6 +791,8 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
     
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
+  
+  getDisplayer()->SetColor( line_color );
 
   // Display trihedron
 //   if(GroupType->RadioButton3->isChecked())
