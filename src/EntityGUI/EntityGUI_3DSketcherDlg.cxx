@@ -185,8 +185,8 @@ void EntityGUI_3DSketcherDlg::Init()
   initSpinBox( Group3Spin->SpinBox_DZ, COORD_MIN, COORD_MAX, step, "length_precision" );
   
   initSpinBox( GroupAngles->SpinBox_DA , -180.0, 180.0, step, "angular_precision" );
-  initSpinBox( GroupAngles->SpinBox_DA2,    0.0,  90.0, step, "angular_precision" );
-  initSpinBox( GroupAngles->SpinBox_DL, COORD_MIN, COORD_MAX, step, "length_precision" );
+  initSpinBox( GroupAngles->SpinBox_DA2,  -90.0,  90.0, step, "angular_precision" );
+  initSpinBox( GroupAngles->SpinBox_DL , COORD_MIN, COORD_MAX, step, "length_precision" );
 
   Group3Spin->SpinBox_DX->setValue(0.0);
   Group3Spin->SpinBox_DY->setValue(0.0);
@@ -250,8 +250,8 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
 {
   if ( mode == myMode ) return;
 
-  Group3Spin->show();
   GroupAngles->hide();
+  Group3Spin->show();
   
   bool blocked = Group3Spin->SpinBox_DX->signalsBlocked();
   Group3Spin->SpinBox_DX->blockSignals(true);
@@ -292,6 +292,7 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
 
   myMode = mode;
   
+  updateGeometry();
   resize(minimumSizeHint());
 }
 
