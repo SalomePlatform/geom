@@ -31,6 +31,7 @@ class QDoubleSpinBox;
 class EntityGUI_3Spin;
 class EntityGUI_Angles;
 class DlgRef_3Radio;
+class SOCC_Prs;
 
 #ifndef COORD_MIN
 #  define COORD_MIN -1e+15
@@ -80,7 +81,7 @@ private:
   
   void                               displayTrihedron( int );
   
-  void                               displayAngle( double, double, double, int );
+  void                               displayAngle( double, double, double, int, bool store = false );
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
                                                    TopoDS_Shape&,
@@ -103,6 +104,7 @@ private:
   bool                               myOK;
   double                             myLineWidth;
   GeometryGUI*                       myGeometryGUI;
+  SOCC_Prs*                          myAnglePrs;
 
 private slots:
   void                               ClickOnOk();

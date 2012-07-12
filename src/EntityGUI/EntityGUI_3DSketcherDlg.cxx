@@ -173,7 +173,10 @@ void EntityGUI_3DSketcherDlg::Init()
 {
   myOK = false;
   myOrientation = 1;
-
+  
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  myAnglePrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
+  
   localSelection( GEOM::GEOM_Object::_nil(), TopAbs_VERTEX );
 
   /* Get setting of step value from file configuration */
@@ -308,6 +311,23 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     return;
   }
 
+  // Erase cotation presentation
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+  
+  // Store last angle cotation if any
+  if(GroupType->RadioButton3->isChecked() && GroupAngles->SpinBox_DL->value()>Precision::Confusion())
+  {
+    double anAngle2 = 0.0;
+    if (GroupAngles->checkBox->isChecked())
+      anAngle2 = GroupAngles->SpinBox_DA2->value();
+    
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation, true);
+  }
+  
+  // Display modified presentation
+  ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+  
   myPointsList.append( getCurrentPoint() );
   myRedoList.clear();
 
@@ -318,6 +338,7 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   }
   UpdateButtonsState();
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  
 }
 
 //=================================================================================
@@ -459,6 +480,7 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 {
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+  
   if(GroupType->RadioButton3->isChecked() && GroupAngles->SpinBox_DL->value()>Precision::Confusion())
   {
     double anAngle2 = 0.0;
@@ -722,7 +744,7 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
                                               const double          lineWidth,
                                               const int             displayMode,
                                               const int             color )
-{  
+{    
   // Set color for preview shape
   getDisplayer()->SetColor( Quantity_NOC_RED );
 
@@ -752,10 +774,11 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   if ( aPrs != 0 && !aPrs->IsNull() )
     GEOMBase_Helper::displayPreview( aPrs, append, update );
 
-  if(GroupType->RadioButton3->isChecked())
-    displayTrihedron(3);
-  else
-    displayTrihedron(2);
+  // Display trihedron
+//   if(GroupType->RadioButton3->isChecked())
+//     displayTrihedron(3);
+//   else
+  displayTrihedron(2);
   
   getDisplayer()->UnsetName();
 
@@ -790,11 +813,11 @@ void EntityGUI_3DSketcherDlg::displayTrihedron(int selMode)
 // Function : displayAngle()
 // Purpose  : Method for displaying angle dimensions
 //================================================================
-void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, double theLength, int theOrientation)
+void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, double theLength, int theOrientation, bool store)
 {
   if(Abs(theAngle2 - 90.0) < Precision::Angular())
     return;
-  // Add trihedron to preview
+
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   
   XYZ Last    = getLastPoint();
@@ -839,8 +862,6 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
     }
   }
   
-  MESSAGE("REPERE1 :  Last  x ="<<Last.x<<"y ="<<Last.y<<"z ="<<Last.z)
-  MESSAGE("Current  x ="<<Current.x<<"y ="<<Current.y<<"z ="<<Current.z)
   TopoDS_Vertex V1    = BRepBuilderAPI_MakeVertex(P1);
   TopoDS_Vertex V2    = BRepBuilderAPI_MakeVertex(P2);
   TopoDS_Vertex LastV = BRepBuilderAPI_MakeVertex(Last_Pnt);
@@ -871,19 +892,28 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   if (aSPrs)
   {
     aSPrs->AddObject(anAngleIO);
+    if (store)
+    {
+      myAnglePrs->AddObject(anAngleIO);
+    }
     if (twoAngles)
-   {
+    {
       gce_MakePln gce_MP2(Last_Pnt, P2, Current_Pnt);
             Handle(Geom_Plane) aPlane2 = new Geom_Plane(gce_MP2.Value());
             
       Handle(AIS_AngleDimension) anAngle2IO = new AIS_AngleDimension(anEdge2, anEdge3, aPlane2, theAngle2 * M_PI / 180.,
               TCollection_ExtendedString(Angle2_str.c_str()));
       
-      anAngle2IO->Attributes()->SetAngleAspect(asp);
+      anAngle2IO->Attributes()->SetAngleAspect(asp);  
       
       aSPrs->AddObject(anAngle2IO);
+      if (store)
+      {
+        myAnglePrs->AddObject(anAngle2IO);
+      }      
     }
-    GEOMBase_Helper::displayPreview( aSPrs, true, true );
+    if (!store)
+      GEOMBase_Helper::displayPreview( aSPrs, true, true );
   }
 }
 
