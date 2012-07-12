@@ -2487,8 +2487,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
-        def MakeFilling(self, theShape, theMinDeg, theMaxDeg, theTol2D,
-                        theTol3D, theNbIter, theMethod=GEOM.FOM_Default, isApprox=0):
+        def MakeFilling(self, theShape, theMinDeg=2, theMaxDeg=5, theTol2D=0.0001,
+                        theTol3D=0.0001, theNbIter=0, theMethod=GEOM.FOM_Default, isApprox=0):
             """
             Create a filling from the given compound of contours.
 
@@ -2531,7 +2531,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created filling surface.
         #
         #  @ref tui_creation_filling "Example"
-        def MakeFillingNew(self, theShape, theMinDeg, theMaxDeg, theTol3D):
+        def MakeFillingNew(self, theShape, theMinDeg=2, theMaxDeg=5, theTol3D=0.0001):
             """
             Create a filling from the given compound of contours.
             This method corresponds to MakeFilling with isApprox=True
