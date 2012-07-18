@@ -568,6 +568,7 @@ void GeometryGUI::OnGUIEvent( int id )
   case GEOMOp::OpPipeTShape:         // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE
 //   case GEOMOp::OpPipeTShapeGroups:     // MENU NEW ENTITY - ADVANCED - PIPE TSHAPE GROUPS
   case GEOMOp::OpDividedDisk:           // MENU NEW ENTITY - ADVANCED - DIVIDEDDISK
+  case GEOMOp::OpDividedCylinder:           // MENU NEW ENTITY - ADVANCED - DIVIDEDCYLINDER
     //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
     libName = "AdvancedGUI";
     break;
@@ -890,6 +891,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 
 //   createGeomAction( GEOMOp::OpPipeTShapeGroups, "PIPETSHAPEGROUPS" );
   createGeomAction( GEOMOp::OpDividedDisk, "DIVIDEDDISK" );
+  createGeomAction( GEOMOp::OpDividedCylinder, "DIVIDEDCYLINDER" );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create menus --------------------------
@@ -940,6 +942,7 @@ void GeometryGUI::initialize( CAM_Application* app )
 //   createMenu( GEOMOp::OpPipeTShape, advId, -1 );
 //   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
   createMenu( GEOMOp::OpDividedDisk, advId, -1 );
+  createMenu( GEOMOp::OpDividedCylinder, advId, -1 );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -1197,6 +1200,7 @@ void GeometryGUI::initialize( CAM_Application* app )
   
   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
   createTool( GEOMOp::OpDividedDisk, advancedTbId );
+  createTool( GEOMOp::OpDividedCylinder, advancedTbId );
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------

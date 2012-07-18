@@ -3415,6 +3415,19 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedDisk (CORBA::Double theR, CORBA:
   return anObj;
 }
 
+//=============================================================================
+//  MakeDividedCylinder
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeDividedCylinder (CORBA::Double theR, CORBA::Double theH)
+{
+  beginService( " GEOM_Superv_i::MakeDividedCylinder" );
+  MESSAGE("GEOM_Superv_i::MakeDividedCylinder");
+  getAdvancedOp();
+  GEOM::GEOM_Object_ptr anObj = myAdvancedOp->MakeDividedCylinder(theR, theH);
+  endService( " GEOM_Superv_i::MakeDividedCylinder" );
+  return anObj;
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 //=====================================================================================

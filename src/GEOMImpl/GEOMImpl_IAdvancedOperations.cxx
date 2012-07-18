@@ -47,6 +47,8 @@
 #include "GEOMImpl_IPipeTShape.hxx"
 #include <GEOMImpl_DividedDiskDriver.hxx>
 #include <GEOMImpl_IDividedDisk.hxx>
+// #include <GEOMImpl_DividedCylinderDriver.hxx>
+#include <GEOMImpl_IDividedCylinder.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TopExp.hxx>
@@ -2282,6 +2284,25 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
 
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDisk(" << theR << ", " << theOrientation << ")";
+
+  SetErrorCode(OK);
+
+  return aShape;
+}
+//=============================================================================
+/*!
+ *  Builds a cylinder prepared for hexa meshes
+ *  \param theR Radius of the cylinder
+ *  \param theH Height of the cylinder
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double theR, double theH)
+{
+  SetErrorCode(KO);
+
+  Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 50.0, 1);
+  Handle(GEOM_Object) aShape = my3DPrimOperations->MakePrismDXDYDZ(aBaseShape,0.0,0.0,theH, -1.0);
 
   SetErrorCode(OK);
 

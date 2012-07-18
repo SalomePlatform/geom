@@ -619,6 +619,8 @@ module GEOM
 
     GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation);
 
+    GEOM_Object MakeDividedCylinder (in double theR, in double theH);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };
 };

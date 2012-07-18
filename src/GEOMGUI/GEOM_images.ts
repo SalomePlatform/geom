@@ -1288,6 +1288,18 @@
             <source>ICON_OBJBROWSER_ADVANCED_202</source>
             <translation>tree_divideddisk.png</translation>
         </message>
+        <message>
+            <source>ICON_DLG_DIVIDEDCYLINDER_R_H</source>
+            <translation>dividedcylinder_r_h.png</translation>
+        </message>
+        <message>
+            <source>ICO_DIVIDEDCYLINDER</source>
+            <translation>dividedcylinder.png</translation>
+        </message>
+        <message>
+            <source>ICON_OBJBROWSER_ADVANCED_203</source>
+            <translation>tree_dividedcylinder.png</translation>
+        </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>
 </TS>

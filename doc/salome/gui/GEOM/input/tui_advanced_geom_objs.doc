@@ -98,5 +98,23 @@ id_divideddisk = geompy.addToStudy(divideddisk,"DividedDisk")
 gg.createAndDisplayGO(id_divideddisk) 
 \endcode
 
+\anchor tui_creation_dividedcylinder
+<br><h2>Creation of DividedCylinder</h2>
+
+\code
+import geompy
+import salome
+gg = salome.ImportComponentGUI("GEOM")
+
+# create DividedCylinder object
+dividedcylinder = geompy.MakeDividedCylinder(100, 300)
+
+# add object in the study
+id_dividedcylinder = geompy.addToStudy(dividedcylinder,"DividedCylinder")
+
+# display dividedcylinder
+gg.createAndDisplayGO(id_dividedcylinder) 
+\endcode
+
 <!--@@ insert new functions before this line @@ do not remove this line @@-->
 */

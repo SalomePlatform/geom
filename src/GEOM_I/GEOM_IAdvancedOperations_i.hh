@@ -64,6 +64,7 @@ class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
 						    CORBA::Double theRF, CORBA::Boolean theHexMesh,
 						    GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
   GEOM::GEOM_Object_ptr MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio, CORBA::Short theOrientation);
+  GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR, CORBA::Double theH);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
   ::GEOMImpl_IAdvancedOperations* GetOperations()

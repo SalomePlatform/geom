@@ -3767,6 +3767,14 @@ module GEOM
      */
     GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation);
 
+    /*!
+     *  Builds a cylinder prepared for hexa meshes
+     *  \param theR Radius of the cylinder
+     *  \param theH Height of the cylinder
+     *  \return New GEOM_Object, containing the created shape.
+     */
+    GEOM_Object MakeDividedCylinder (in double theR, in double theH);
+
     /*@@ insert new functions before this line @@ do not remove this line @@*/
   };
 

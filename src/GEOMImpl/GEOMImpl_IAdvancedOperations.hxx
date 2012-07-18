@@ -110,6 +110,7 @@ public:
                                                    Handle(GEOM_Object) P2 = 0,
                                                    Handle(GEOM_Object) P3 = 0);
   Standard_EXPORT Handle(GEOM_Object) MakeDividedDisk (double theR, double theRatio, int theOrientation);
+  Standard_EXPORT Handle(GEOM_Object) MakeDividedCylinder (double theR, double theH);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

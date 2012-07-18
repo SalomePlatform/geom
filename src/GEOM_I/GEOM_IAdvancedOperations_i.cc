@@ -345,4 +345,27 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double
   return GetObject(anObject);
 }
 
+//=============================================================================
+/*!
+ *  Builds a cylinder prepared for hexa meshes
+ *  \param theR Radius of the cylinder
+ *  \param theH Height of the cylinder
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Double theR, CORBA::Double theH)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Create the DividedCylinder
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedCylinder(theR, theH);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
 /*@@ insert new functions before this line @@ do not remove this line @@*/

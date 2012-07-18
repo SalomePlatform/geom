@@ -30,6 +30,7 @@
 
 #include "AdvancedGUI_PipeTShapeDlg.h"
 #include "AdvancedGUI_DividedDiskDlg.h"
+#include "AdvancedGUI_DividedCylinderDlg.h"
 //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
 
 #include <QDialog>
@@ -72,6 +73,9 @@ bool AdvancedGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
 //     break;
   case GEOMOp::OpDividedDisk:
     aDlg = new AdvancedGUI_DividedDiskDlg( getGeometryGUI(), parent );
+    break;
+  case GEOMOp::OpDividedCylinder:
+    aDlg = new AdvancedGUI_DividedCylinderDlg( getGeometryGUI(), parent );
     break;
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@//
   default:

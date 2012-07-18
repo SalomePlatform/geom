@@ -8562,6 +8562,19 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
 
+        ## Builds a cylinder prepared for hexa meshes
+        #  @param theR Radius of the cylinder
+        #  @param theH Height of the cylinder
+        #  @return New GEOM_Object, containing the created shape.
+        #
+        #  @ref tui_creation_dividedcylinder "Example"
+        def MakeDividedCylinder(self, theR, theH):
+            theR, theH, Parameters = ParseParameters(theR, theH)
+            anObj = self.AdvOp.MakeDividedCylinder(theR, theH)
+            RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
+            if Parameters: anObj.SetParameters(Parameters)
+            return anObj
+
         #@@ insert new functions before this line @@ do not remove this line @@#
 
         # end of l4_advanced
