@@ -2289,6 +2289,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
 
   return aShape;
 }
+
 //=============================================================================
 /*!
  *  Builds a cylinder prepared for hexa meshes

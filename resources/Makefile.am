@@ -73,6 +73,7 @@ cylinder.png			\
 cylinderdxyz.png		\
 cylinderpointvector.png		\
 delete.png			\
+divided_disk.png			\
 disk.png			\
 disk3points.png			\
 disk_pntvecr.png		\
