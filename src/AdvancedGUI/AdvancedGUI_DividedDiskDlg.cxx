@@ -258,9 +258,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
   if (res && !IsPreview())
   {
     QStringList aParameters;
-    //@@ put stringified input parameters to the string list here to store in the data model for notebook @@//
-    //aParameters << @@ stringified parameter value @@; // R parameter
-    //aParameters << @@ stringified parameter value @@; // Ratio parameter
+    aParameters << GroupParams->SpinBox_DX->text();
     if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
   }
   
