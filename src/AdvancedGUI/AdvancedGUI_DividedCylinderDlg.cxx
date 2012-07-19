@@ -108,6 +108,8 @@ void AdvancedGUI_DividedCylinderDlg::Init()
   connect(GroupParams->SpinBox_DY,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
 
   initName(tr("GEOM_DIVIDEDCYLINDER"));
+  
+  resize(minimumSizeHint());
   displayPreview(true);
 }
 
