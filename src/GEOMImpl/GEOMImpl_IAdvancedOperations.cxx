@@ -48,7 +48,7 @@
 #include <GEOMImpl_DividedDiskDriver.hxx>
 #include <GEOMImpl_IDividedDisk.hxx>
 // #include <GEOMImpl_DividedCylinderDriver.hxx>
-#include <GEOMImpl_IDividedCylinder.hxx>
+//#include <GEOMImpl_IDividedCylinder.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TopExp.hxx>
