@@ -27,6 +27,10 @@
 class Handle_Standard_Type;
 class GEOMImpl_DividedDiskDriver;
 class TopoDS_Shape;
+class TopoDS_Shell;
+class gp_Pnt;
+class gp_Dir;
+class gp_Ax3;
 
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_DividedDiskDriver);
 
@@ -119,7 +123,10 @@ public:
   } 
   
 private:
-  TopoDS_Shape TransformShape(TopoDS_Shape aShape, int theOrientation) const;
+  TopoDS_Shape TransformShape  (TopoDS_Shape aShape, int theOrientation) const;
+  TopoDS_Shape TransformShape  (TopoDS_Shape aShape, gp_Pnt P, gp_Dir V) const;
+  TopoDS_Shape WPlaneTransform (TopoDS_Shape aShape, gp_Ax3 theWPlane) const;
+  TopoDS_Shell MakeDisk (double R, double Ratio) const;
 };
 
 #endif // _GEOMImpl_DividedDiskDriver_HXX

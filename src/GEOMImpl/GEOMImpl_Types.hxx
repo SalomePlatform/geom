@@ -337,5 +337,6 @@
 #define TSHAPE_CHAMFER 2
 #define TSHAPE_FILLET 3
 #define DIVIDEDDISK_R_RATIO 1
+#define DIVIDEDDISK_R_VECTOR_PNT 2
 #define DIVIDEDCYLINDER_R_H 1
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
