@@ -48,7 +48,7 @@
 #include <GEOMImpl_DividedDiskDriver.hxx>
 #include <GEOMImpl_IDividedDisk.hxx>
 // #include <GEOMImpl_DividedCylinderDriver.hxx>
-//#include <GEOMImpl_IDividedCylinder.hxx>
+// #include <GEOMImpl_IDividedCylinder.hxx>
 /*@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@*/
 
 #include <TopExp.hxx>
@@ -2240,7 +2240,7 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
 //=============================================================================
 /*!
  *  This function allows to create a disk already divided into blocks. It can be
- *  use to create divided pipes for later meshing in hexaedra.
+ *  used to create divided pipes for later meshing in hexaedra.
  *  \param theR Radius of the disk
  *  \param theRatio Relative size of the central square diagonal against the disk diameter
  *  \return New GEOM_Object, containing the created shape.
@@ -2301,9 +2301,20 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
 Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double theR, double theH)
 {
   SetErrorCode(KO);
+  
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDCYLINDER);
 
   Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 50.0, 1);
-  Handle(GEOM_Object) aShape = my3DPrimOperations->MakePrismDXDYDZ(aBaseShape,0.0,0.0,theH, -1.0);
+  aBaseShape->GetLastFunction()->SetDescription("");   // Erase dump of MakeDividedDisk
+  
+  aShape = my3DPrimOperations->MakePrismDXDYDZ(aBaseShape,0.0,0.0,theH, -1.0);
+        
+  Handle(GEOM_Function) aFunction =  aShape->GetLastFunction();
+  aFunction->SetDescription("");   // Erase dump of MakePrismDXDYDZ
+  
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedCylinder(" << theR << ", " << theH << ")";
 
   SetErrorCode(OK);
 
