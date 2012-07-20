@@ -159,4 +159,8 @@ points in the current LCS.
 Our <b>TUI Scripts</b> provide you with useful examples of the use of
 \ref tui_sketcher_page "Sketcher".
 
+A wrapper also exists to help in the construction of a sketcher using simple commands.
+The description of this wrapper can be found in the <a class="el" target="_new" href="../../tui/GEOM/docutils/docapi.html#module-salome.geom.sketcher">
+dedicated page</a> of the <a class="el" target="_new" href="../../tui/GEOM/docutils/index.html">salome.geom python package</a>.
+
 */

@@ -4,6 +4,8 @@
 
 <b>SALOME NoteBook</b> allows defining variables to be used for creation and modification of objects.
 
+A detailed description of the SALOME NoteBook can be found the the GUI documentation.
+
 \image html using_notebook_geom.png "Definition of variables in SALOME NoteBook"
 
 \image html box3.png "Use of variables for creation of a box in Geometry module"

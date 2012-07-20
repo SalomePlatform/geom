@@ -14,7 +14,6 @@ provided by Geometry module.
 
 <ul>
   <li>\subpage tui_import_export_page</li>
-  <li>\subpage tui_viewing_geom_objs_page</li>
   <li>\subpage tui_creating_geom_objs_page</li>
   <ul>
     <li>\ref tui_basic_geom_objs_page</li>
@@ -25,6 +24,7 @@ provided by Geometry module.
     <li>\ref tui_sketcher_page</li>
     <li>\ref tui_advanced_geom_objs_page</li>
   </ul>
+  <li>\subpage tui_viewing_geom_objs_page</li>
   <li>\subpage tui_transformation_page</li>
   <ul>
     <li>\ref tui_basic_operations_page</li>
