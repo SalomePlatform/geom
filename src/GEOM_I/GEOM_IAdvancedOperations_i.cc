@@ -347,6 +347,36 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double
 
 //=============================================================================
 /*!
+ *  MakeDividedDiskPntVecR
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::GEOM_Object_ptr thePnt, 
+                                                                          GEOM::GEOM_Object_ptr theVec,
+                                                                          CORBA::Double theR,
+                                                                          CORBA::Double theRatio)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference points
+  Handle(GEOM_Object) aPnt = GetObjectImpl(thePnt);
+  Handle(GEOM_Object) aVec = GetObjectImpl(theVec);
+
+  if (aPnt.IsNull() || aVec.IsNull()) return aGEOMObject._retn();
+
+  // Make DividedDisk
+  Handle(GEOM_Object) anObject =
+    GetOperations()->MakeDividedDiskPntVecR(aPnt, aVec, theR, theRatio);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
+}
+
+//=============================================================================
+/*!
  *  Builds a cylinder prepared for hexa meshes
  *  \param theR Radius of the cylinder
  *  \param theH Height of the cylinder

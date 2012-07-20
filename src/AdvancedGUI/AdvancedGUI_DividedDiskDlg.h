@@ -26,6 +26,7 @@
 
 class DlgRef_1Spin;
 class DlgRef_3Radio;
+class DlgRef_2Sel1Spin;
 
 //=================================================================================
 // class    : AdvancedGUI_DividedDiskDlg
@@ -50,13 +51,18 @@ private:
   void                               enterEvent( QEvent* );
 
 private:
+  GEOM::GeomObjPtr                   myPoint, myDir;
   DlgRef_1Spin*                      GroupParams;
   DlgRef_3Radio*                     GroupOrientation;
+  DlgRef_2Sel1Spin*                  GroupPntVecR;
   int                                myOrientation;
 
 private slots:
+  void                               ConstructorsClicked ( int );
   void                               ClickOnOk();
   bool                               ClickOnApply();
+  void                               SetEditCurrentArgument();
+  void                               SelectionIntoArgument();
   void                               ActivateThisDialog();
   void                               ValueChangedInSpinBox();
   void                               RadioButtonClicked();

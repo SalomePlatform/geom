@@ -50,8 +50,9 @@
 #include <TFunction_Logbook.hxx>
 #include <StdFail_NotDone.hxx>
 
-#include <utilities.h>
+#include <TopExp.hxx>
 
+#include <utilities.h>
 //@@ include required header files here @@//
 
 //=======================================================================
@@ -91,17 +92,34 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
   double Ratio       = aData.GetRatio();
   
   // Build reference disk (in the global coordinate system)
-  TopoDS_Shell S = MakeDisk( R, Ratio );
+  TopoDS_Shell aDisk = MakeDisk( R, Ratio );
   
-  if (aType == DIVIDEDDISK_R_RATIO) { 
+  if (aType == DIVIDEDDISK_R_RATIO) 
+  { 
     int theOrientation = aData.GetOrientation();        
-    aShape = TransformShape(S, theOrientation);   
+    aShape = TransformShape(aDisk, theOrientation);   
   }
-  else if (aType == DIVIDEDDISK_R_VECTOR_PNT){
-    // other construction modes here
-    gp_Pnt P = gp::Origin();
-    gp_Dir V = gp::DZ();
-    aShape = TransformShape(S, P, V);  
+  else if (aType == DIVIDEDDISK_R_VECTOR_PNT)
+  {
+    Handle(GEOM_Function) aRefPoint  = aData.GetCenter();
+    Handle(GEOM_Function) aRefVector = aData.GetVector();
+    TopoDS_Shape aShapePnt = aRefPoint->GetValue();
+    TopoDS_Shape aShapeVec = aRefVector->GetValue();
+    
+    if (aShapePnt.ShapeType() == TopAbs_VERTEX &&
+        aShapeVec.ShapeType() == TopAbs_EDGE) 
+    {
+      gp_Pnt aPnt = BRep_Tool::Pnt(TopoDS::Vertex(aShapePnt));
+      TopoDS_Edge anE = TopoDS::Edge(aShapeVec);
+      TopoDS_Vertex V1, V2;
+      TopExp::Vertices(anE, V1, V2, Standard_True);
+      if (!V1.IsNull() && !V2.IsNull()) 
+      {
+        gp_Vec aVec (BRep_Tool::Pnt(V1), BRep_Tool::Pnt(V2));
+        gp_Dir aDir(aVec);
+        aShape = TransformShape(aDisk, aPnt, aDir); 
+      }
+    }   
   }
 
   if (aShape.IsNull()) return 0;

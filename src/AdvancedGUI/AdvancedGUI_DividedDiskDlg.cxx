@@ -45,16 +45,19 @@
 AdvancedGUI_DividedDiskDlg::AdvancedGUI_DividedDiskDlg (GeometryGUI* theGeometryGUI, QWidget* parent)
   : GEOMBase_Skeleton(theGeometryGUI, parent, false)
 {
-  QPixmap imageOp  (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_DIVIDEDDISK_R_RATIO")));
+//   QPixmap imageOp  (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_DIVIDEDDISK_R_RATIO")));
+  QPixmap imageOp1 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_DISK_R")));
+  QPixmap imageOp2 (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_DLG_DISK_PNT_VEC_R")));
   QPixmap imageSel (SUIT_Session::session()->resourceMgr()->loadPixmap("GEOM", tr("ICON_SELECT")));
 
   setWindowTitle(tr("GEOM_DIVIDEDDISK_TITLE"));
 
   /***************************************************************/
   mainFrame()->GroupConstructors->setTitle(tr("GEOM_DIVIDEDDISK"));
-  mainFrame()->RadioButton1->setIcon(imageOp);
-  mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
-  mainFrame()->RadioButton2->close();
+  mainFrame()->RadioButton1->setIcon(imageOp1);
+  mainFrame()->RadioButton2->setIcon(imageOp2);
+//   mainFrame()->RadioButton2->setAttribute(Qt::WA_DeleteOnClose);
+//   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   mainFrame()->RadioButton3->close();
 
@@ -67,12 +70,23 @@ AdvancedGUI_DividedDiskDlg::AdvancedGUI_DividedDiskDlg (GeometryGUI* theGeometry
   GroupOrientation->RadioButton1->setText(tr("GEOM_WPLANE_OXY"));
   GroupOrientation->RadioButton2->setText(tr("GEOM_WPLANE_OYZ"));
   GroupOrientation->RadioButton3->setText(tr("GEOM_WPLANE_OZX"));
+  
+  GroupPntVecR = new DlgRef_2Sel1Spin(centralWidget());
+  GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
+  GroupPntVecR->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
+  GroupPntVecR->TextLabel2->setText(tr("GEOM_VECTOR"));
+  GroupPntVecR->TextLabel3->setText(tr("GEOM_RADIUS"));
+  GroupPntVecR->PushButton1->setIcon(imageSel);
+  GroupPntVecR->PushButton2->setIcon(imageSel);
+  GroupPntVecR->LineEdit1->setReadOnly(true);
+  GroupPntVecR->LineEdit2->setReadOnly(true);
   //@@ setup dialog box layout here @@//
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupParams);
   layout->addWidget(GroupOrientation);
+  layout->addWidget(GroupPntVecR);
   /***************************************************************/
 
   setHelpFileName("create_divideddisk_page.html");
@@ -100,7 +114,8 @@ void AdvancedGUI_DividedDiskDlg::Init()
 
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupParams->SpinBox_DX, 0.00001, COORD_MAX, step, "length_precision" );
-  GroupParams->SpinBox_DX->setValue(100);
+  GroupParams ->SpinBox_DX->setValue(100);
+  GroupPntVecR->SpinBox_DX->setValue(100);
   
   GroupOrientation->RadioButton1->setChecked(true);
   myOrientation = 1;
@@ -110,17 +125,22 @@ void AdvancedGUI_DividedDiskDlg::Init()
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
   connect(myGeomGUI,     SIGNAL(SignalDefaultStepValueChanged(double)),
           this,          SLOT(SetDoubleSpinBoxStep(double)));
-
-  connect(GroupParams->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   
-  connect(GroupOrientation->RadioButton1, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
-  connect(GroupOrientation->RadioButton2, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
-  connect(GroupOrientation->RadioButton3, SIGNAL(clicked()), this, SLOT(RadioButtonClicked()));
+  connect(this,                           SIGNAL(constructorsClicked(int)), this, SLOT(ConstructorsClicked(int)));
+
+  connect(GroupPntVecR->PushButton1,      SIGNAL(clicked()),                this, SLOT(SetEditCurrentArgument()));
+  connect(GroupPntVecR->PushButton2,      SIGNAL(clicked()),                this, SLOT(SetEditCurrentArgument()));
+
+  connect(GroupParams->SpinBox_DX,        SIGNAL(valueChanged(double)),     this, SLOT(ValueChangedInSpinBox()));  
+  connect(GroupPntVecR->SpinBox_DX,       SIGNAL(valueChanged(double)),     this, SLOT(ValueChangedInSpinBox()));
+  
+  connect(GroupOrientation->RadioButton1, SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
+  connect(GroupOrientation->RadioButton2, SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
+  connect(GroupOrientation->RadioButton3, SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
 
   initName(tr("GEOM_DIVIDEDDISK"));
   
-  resize(minimumSizeHint());
-  displayPreview(true);
+  ConstructorsClicked(0);
 }
 
 //=================================================================================
@@ -130,6 +150,60 @@ void AdvancedGUI_DividedDiskDlg::Init()
 void AdvancedGUI_DividedDiskDlg::SetDoubleSpinBoxStep (double step)
 {
   //@@ set double spin box step for all spin boxes here @@//
+}
+
+//=================================================================================
+// function : ConstructorsClicked()
+// purpose  : Radio button management
+//=================================================================================
+void AdvancedGUI_DividedDiskDlg::ConstructorsClicked (int constructorId)
+{
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+
+  switch (constructorId) {
+  case 0:
+    {
+      GroupPntVecR->hide();
+      GroupParams->show();
+      GroupOrientation->show();
+
+      disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+      globalSelection(); // close local contexts, if any
+      break;
+    }
+  case 1:
+    {
+      GroupParams->hide();
+      GroupOrientation->hide();
+      GroupPntVecR->show();
+
+      GroupPntVecR->PushButton1->click();
+      break;
+    }
+  }
+
+  qApp->processEvents();
+  updateGeometry();
+  resize(minimumSizeHint());
+  SelectionIntoArgument();
+
+  displayPreview(true);
+}
+
+//=================================================================================
+// function : RadioButtonClicked()
+// purpose  : Radio button management
+//=================================================================================
+void AdvancedGUI_DividedDiskDlg::RadioButtonClicked()
+{ 
+  if (GroupOrientation->RadioButton1->isChecked())
+    myOrientation = 1;
+  else if (GroupOrientation->RadioButton2->isChecked())
+    myOrientation = 2;
+  else if (GroupOrientation->RadioButton3->isChecked())
+    myOrientation = 3;
+  
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -157,13 +231,109 @@ bool AdvancedGUI_DividedDiskDlg::ClickOnApply()
 }
 
 //=================================================================================
+// function : SelectionIntoArgument()
+// purpose  : Called when selection is changed or on dialog initialization or activation
+//=================================================================================
+void AdvancedGUI_DividedDiskDlg::SelectionIntoArgument()
+{
+  if (getConstructorId() == 0)
+    return;
+
+  erasePreview();
+  myEditCurrentArgument->setText("");
+
+  LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
+  SALOME_ListIO aSelList;
+  aSelMgr->selectedObjects(aSelList);
+
+  if (aSelList.Extent() != 1) {
+    if      (myEditCurrentArgument == GroupPntVecR->LineEdit1) myPoint.nullify();
+    else if (myEditCurrentArgument == GroupPntVecR->LineEdit2) myDir.nullify();
+    return;
+  }
+
+  TopAbs_ShapeEnum aNeedType = myEditCurrentArgument == GroupPntVecR->LineEdit2 ? TopAbs_EDGE : TopAbs_VERTEX;
+  GEOM::GeomObjPtr aSelectedObject = getSelected( aNeedType );
+  TopoDS_Shape aShape;
+  if ( aSelectedObject && GEOMBase::GetShape( aSelectedObject.get(), aShape ) && !aShape.IsNull() ){
+    QString aName = GEOMBase::GetName( aSelectedObject.get() );
+
+    myEditCurrentArgument->setText(aName);
+    
+    // clear selection
+    disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+    myGeomGUI->getApp()->selectionMgr()->clearSelected();
+    connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+        this, SLOT(SelectionIntoArgument()));
+    
+    if (myEditCurrentArgument == GroupPntVecR->LineEdit1) {
+      myPoint = aSelectedObject;
+      if (myPoint && !myDir)
+    GroupPntVecR->PushButton2->click();
+    }
+    else if (myEditCurrentArgument == GroupPntVecR->LineEdit2) {
+      myDir = aSelectedObject;
+      if (myDir && !myPoint)
+    GroupPntVecR->PushButton1->click();
+    }
+  }
+  displayPreview(true);
+}
+
+//=================================================================================
+// function : SetEditCurrentArgument()
+// purpose  :
+//=================================================================================
+void AdvancedGUI_DividedDiskDlg::SetEditCurrentArgument()
+{
+  QPushButton* send = (QPushButton*)sender();
+
+  if (send == GroupPntVecR->PushButton1) {
+    myEditCurrentArgument = GroupPntVecR->LineEdit1;
+
+    GroupPntVecR->PushButton2->setDown(false);
+    GroupPntVecR->LineEdit2->setEnabled(false);
+  }
+  else if (send == GroupPntVecR->PushButton2) {
+    myEditCurrentArgument = GroupPntVecR->LineEdit2;
+
+    GroupPntVecR->PushButton1->setDown(false);
+    GroupPntVecR->LineEdit1->setEnabled(false);
+  }
+
+  disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
+  if (myEditCurrentArgument == GroupPntVecR->LineEdit2) {
+    globalSelection(); // close local contexts, if any
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_EDGE);
+  }
+  else {
+    globalSelection(); // close local contexts, if any
+    localSelection(GEOM::GEOM_Object::_nil(), TopAbs_VERTEX);
+  }
+  connect(myGeomGUI->getApp()->selectionMgr(), SIGNAL(currentSelectionChanged()),
+          this, SLOT(SelectionIntoArgument()));
+
+  // enable line edit
+  myEditCurrentArgument->setEnabled(true);
+  myEditCurrentArgument->setFocus();
+  // after setFocus(), because it will be setDown(false) when loses focus
+  send->setDown(true);
+
+  // seems we need it only to avoid preview disappearing, caused by selection mode change
+  displayPreview(true);
+}
+
+//=================================================================================
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
 void AdvancedGUI_DividedDiskDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
-  displayPreview(true);
+  connect( myGeomGUI->getApp()->selectionMgr(), SIGNAL( currentSelectionChanged() ),
+           this, SLOT( SelectionIntoArgument() ) );
+  
+  ConstructorsClicked( getConstructorId() );
 }
 
 //=================================================================================
@@ -177,40 +347,11 @@ void AdvancedGUI_DividedDiskDlg::enterEvent (QEvent*)
 }
 
 //=================================================================================
-// function : RadioBittonClicked()
-// purpose  : Radio button management
-//=================================================================================
-void AdvancedGUI_DividedDiskDlg::RadioButtonClicked()
-{ 
-  if (GroupOrientation->RadioButton1->isChecked())
-    myOrientation = 1;
-  else if (GroupOrientation->RadioButton2->isChecked())
-    myOrientation = 2;
-  else if (GroupOrientation->RadioButton3->isChecked())
-    myOrientation = 3;
-   
-//   gp_Pnt theOrigin = gp::Origin();
-//   gp_Dir DirZ = gp::DZ();
-//   gp_Dir DirX = gp::DX();
-//   gp_Dir DirY = gp::DY();
-//   
-//   if (GroupOrientation->RadioButton1->isChecked())
-//     myWPlane = gp_Ax3(theOrigin, DirZ, DirX);
-//   else if (GroupOrientation->RadioButton2->isChecked())
-//     myWPlane = gp_Ax3(theOrigin, DirX, DirY);
-//   else if (GroupOrientation->RadioButton3->isChecked())
-//     myWPlane = gp_Ax3(theOrigin, DirY, DirZ);
-  
-  displayPreview(true);
-}
-
-//=================================================================================
 // function : ValueChangedInSpinBox()
 // purpose  :
 //=================================================================================
 void AdvancedGUI_DividedDiskDlg::ValueChangedInSpinBox()
 {
-  //@@ connect custom spin boxes or other widget to this slot in the Init() method for automatic preview update @@//
   displayPreview(true);
 }
 
@@ -247,20 +388,38 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IAdvancedOperations_var anOper = GEOM::GEOM_IAdvancedOperations::_narrow(getOperation());
+  CORBA::Double theRatio = 50;  
+  CORBA::Double theR = 0;
+  
+  switch (getConstructorId()) {
+  case 0:
+    theR = GroupParams->SpinBox_DX->value(); // init parameter value from dialog box ;
 
-  //@@ retrieve input values from the widgets here @@//
-  CORBA::Double theR = GroupParams->SpinBox_DX->value(); //@@ init parameter value from dialog box @@;
-  CORBA::Double theRatio = 50; //@@ init parameter value from dialog box @@;
-
-  // call engine function
-  anObj = anOper->MakeDividedDisk(theR, theRatio, myOrientation);
-  res = !anObj->_is_nil();
-  if (res && !IsPreview())
-  {
-    QStringList aParameters;
-    aParameters << GroupParams->SpinBox_DX->text();
-    if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    // call engine function
+    anObj = anOper->MakeDividedDisk(theR, theRatio, myOrientation);
+    res = !anObj->_is_nil();
+    if (res && !IsPreview())
+    {
+      QStringList aParameters;
+      aParameters << GroupParams->SpinBox_DX->text();
+      if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    }
+    break;
+  case 1:
+    theR = GroupPntVecR->SpinBox_DX->value(); 
+    
+    // call engine function
+    anObj = anOper->MakeDividedDiskPntVecR(myPoint.get(), myDir.get(), theR, theRatio);
+    res = !anObj->_is_nil();
+    if (res && !IsPreview())
+    {
+      QStringList aParameters;
+      aParameters << GroupPntVecR->SpinBox_DX->text();
+      if ( aParameters.count() > 0 ) anObj->SetParameters(aParameters.join(":").toLatin1().constData());
+    }
+    break;
   }
+    
   
   if (res)
     objects.push_back(anObj._retn());

@@ -2292,6 +2292,69 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
 
 //=============================================================================
 /*!
+ *  This function allows to create a disk already divided into blocks. It can be
+ *  used to create divided pipes for later meshing in hexaedra.
+ *  \param theR Radius of the disk
+ *  \param theRatio Relative size of the central square diagonal against the disk diameter
+ *  \return New GEOM_Object, containing the created shape.
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDiskPntVecR (Handle(GEOM_Object) thePnt, 
+                                                                          Handle(GEOM_Object) theVec, 
+                                                                          double theR, 
+                                                                          double theRatio)
+{
+  SetErrorCode(KO);
+
+  //Add a new object
+  Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDDISK);
+
+  //Add a new shape function with parameters
+  Handle(GEOM_Function) aFunction = aShape->AddFunction(GEOMImpl_DividedDiskDriver::GetID(), DIVIDEDDISK_R_VECTOR_PNT);
+  if (aFunction.IsNull()) return NULL;
+
+  //Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_DividedDiskDriver::GetID()) return NULL;
+
+  GEOMImpl_IDividedDisk aData (aFunction);
+  
+  Handle(GEOM_Function) aRefPnt = thePnt->GetLastFunction();
+  Handle(GEOM_Function) aRefVec = theVec->GetLastFunction();
+
+  if (aRefPnt.IsNull() || aRefVec.IsNull()) return NULL;
+
+  aData.SetCenter(aRefPnt);
+  aData.SetVector(aRefVec);
+
+  aData.SetR(theR);
+  aData.SetRatio(theRatio);
+
+  //Compute the resulting value
+  try {
+#if (OCC_VERSION_MAJOR << 16 | OCC_VERSION_MINOR << 8 | OCC_VERSION_MAINTENANCE) > 0x060100
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("DividedDisk driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  //Make a Python command
+  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDiskPntVecR(" << thePnt << ", " << theVec << ", " << theR << ")";
+
+  SetErrorCode(OK);
+
+  return aShape;
+}
+
+//=============================================================================
+/*!
  *  Builds a cylinder prepared for hexa meshes
  *  \param theR Radius of the cylinder
  *  \param theH Height of the cylinder

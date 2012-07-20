@@ -3763,9 +3763,23 @@ module GEOM
      *  can be use to create divided pipes for later meshing in hexaedra.
      *  \param theR Radius of the disk
      *  \param theRatio Relative size of the central square diagonal against the disk diameter
+     *  \param theOrientation Plane on which the disk will be built
      *  \return New GEOM_Object, containing the created shape.
      */
     GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation);
+
+    /*!
+     *  \brief Create a Disk prepared for hexa meshing with given center, normal vector and radius.
+     *  \param thePnt disk center.
+     *  \param theVec Vector, normal to the plane of the disk.
+     *  \param theR Disk radius.
+     *  \param theRatio Relative size of the central square diagonal against the disk diameter
+     *  \return New GEOM_Object, containing the created disk.
+     */
+    GEOM_Object MakeDividedDiskPntVecR ( in GEOM_Object thePnt,
+                                         in GEOM_Object theVec,
+                                         in double theR, 
+                                         in double theRatio);
 
     /*!
      *  Builds a cylinder prepared for hexa meshes
