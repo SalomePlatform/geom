@@ -538,6 +538,14 @@ Please, select face, shell or solid and try again</translation>
         <translation>Divided Disk construction</translation>
     </message>
     <message>
+        <source>GEOM_DIVIDEDCYLINDER</source>
+        <translation>Divided Cylinder</translation>
+    </message>
+    <message>
+        <source>GEOM_DIVIDEDCYLINDER_TITLE</source>
+        <translation>Divided Cylinder construction</translation>
+    </message>
+    <message>
         <source>GEOM_DX</source>
         <translation>Dx :</translation>
     </message>
@@ -2365,6 +2373,26 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>MEN_DIVIDEDDISK</source>
         <translation>Divided Disk</translation>
+    </message>
+    <message>
+        <source>TOP_DIVIDEDDISK</source>
+        <translation>Divided Disk</translation>
+    </message>
+    <message>
+        <source>STB_DIVIDEDDISK</source>
+        <translation>Divided Disk</translation>
+    </message>
+    <message>
+        <source>MEN_DIVIDEDCYLINDER</source>
+        <translation>Divided Cylinder</translation>
+    </message>
+    <message>
+        <source>TOP_DIVIDEDCYLINDER</source>
+        <translation>Divided Cylinder</translation>
+    </message>
+    <message>
+        <source>STB_DIVIDEDCYLINDER</source>
+        <translation>Divided Cylinder</translation>
     </message>
     <message>
         <source>MEN_DISPLAY_ALL</source>

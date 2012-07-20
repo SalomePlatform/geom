@@ -538,6 +538,14 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Construction d&apos;un disque prédécoupé</translation>
     </message>
     <message>
+        <source>GEOM_DIVIDEDCYLINDER</source>
+        <translation>Cylinder prédécoupé</translation>
+    </message>
+    <message>
+        <source>GEOM_DIVIDEDCYLINDER_TITLE</source>
+        <translation>Construction d&apos;un cylindre prédécoupé</translation>
+    </message>
+    <message>
         <source>GEOM_DX</source>
         <translation>Dx :</translation>
     </message>
@@ -2365,6 +2373,26 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>MEN_DIVIDEDDISK</source>
         <translation>Disque prédécoupé</translation>
+    </message>
+    <message>
+        <source>TOP_DIVIDEDDISK</source>
+        <translation>Disque prédécoupé</translation>
+    </message>
+    <message>
+        <source>STB_DIVIDEDDISK</source>
+        <translation>Disque prédécoupé</translation>
+    </message>
+    <message>
+        <source>MEN_DIVIDEDCYLINDER</source>
+        <translation>Cylinder prédécoupé</translation>
+    </message>
+    <message>
+        <source>TOP_DIVIDEDCYLINDER</source>
+        <translation>Cylinder prédécoupé</translation>
+    </message>
+    <message>
+        <source>STB_DIVIDEDCYLINDER</source>
+        <translation>Cylinder prédécoupé</translation>
     </message>
     <message>
         <source>MEN_DISPLAY_ALL</source>

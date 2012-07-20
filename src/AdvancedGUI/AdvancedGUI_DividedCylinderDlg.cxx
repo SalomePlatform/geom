@@ -59,6 +59,9 @@ AdvancedGUI_DividedCylinderDlg::AdvancedGUI_DividedCylinderDlg (GeometryGUI* the
   mainFrame()->RadioButton3->close();
 
   GroupParams = new DlgRef_2Spin(centralWidget());
+  GroupParams->GroupBox1->setTitle(tr("GEOM_BOX_OBJ"));
+  GroupParams->TextLabel1->setText(tr("GEOM_RADIUS"));
+  GroupParams->TextLabel2->setText(tr("GEOM_HEIGHT"));
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
