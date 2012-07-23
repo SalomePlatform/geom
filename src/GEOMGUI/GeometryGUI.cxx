@@ -914,9 +914,9 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpEllipse, basicId, -1 );
   createMenu( GEOMOp::OpArc,     basicId, -1 );
   createMenu( GEOMOp::OpCurve,   basicId, -1 );
-  createMenu( separator(),       basicId, -1 );
   createMenu( GEOMOp::Op2dSketcher, basicId, -1 );
   createMenu( GEOMOp::Op3dSketcher, basicId, -1 );
+  createMenu( separator(),       basicId, -1 );
   createMenu( GEOMOp::OpVector,  basicId, -1 );
   createMenu( GEOMOp::OpPlane,   basicId, -1 );
   createMenu( GEOMOp::OpLCS,     basicId, -1 );
@@ -938,11 +938,8 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( GEOMOp::OpFilling,    genId, -1 );
   createMenu( GEOMOp::OpPipe,       genId, -1 );
 
-  int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
-//   createMenu( GEOMOp::OpPipeTShape, advId, -1 );
-//   createMenu( GEOMOp::OpPipeTShapeGroups, advId, -1 );
-  createMenu( GEOMOp::OpDividedDisk, advId, -1 );
-  createMenu( GEOMOp::OpDividedCylinder, advId, -1 );
+//   int advId = createMenu( tr( "MEN_ADVANCED" ), newEntId, -1 );
+
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   createMenu( separator(), newEntId, -1 );
@@ -954,8 +951,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createMenu( separator(), newEntId, -1 );
 
   int blocksId = createMenu( tr( "MEN_BLOCKS" ), newEntId, -1 );
-  createMenu( GEOMOp::OpQuadFace,  blocksId, -1 );
-  createMenu( GEOMOp::OpHexaSolid, blocksId, -1 );
+  createMenu( GEOMOp::OpQuadFace,        blocksId, -1 );
+  createMenu( GEOMOp::OpHexaSolid,       blocksId, -1 );
+  createMenu( GEOMOp::OpDividedDisk,     blocksId, -1 );
+  createMenu( GEOMOp::OpDividedCylinder, blocksId, -1 );
 
   createMenu( separator(),          newEntId, -1 );
 
@@ -1122,6 +1121,10 @@ void GeometryGUI::initialize( CAM_Application* app )
   createTool( GEOMOp::OpDisk,       primTbId );
   createTool( GEOMOp::OpPipeTShape, primTbId ); //rnc
   
+  int blocksTbId = createTool( tr( "TOOL_BLOCKS" ) );
+  createTool( GEOMOp::OpDividedDisk, blocksTbId );
+  createTool( GEOMOp::OpDividedCylinder, blocksTbId );
+  
 //   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) ); //rnc
 //   createTool( GEOMOp::OpPipeTShape, advancedTbId );
   
@@ -1198,9 +1201,8 @@ void GeometryGUI::initialize( CAM_Application* app )
     createTool( GEOMOp::OpFeatureDetect,  picturesTbId );
   #endif
   
-  int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
-  createTool( GEOMOp::OpDividedDisk, advancedTbId );
-  createTool( GEOMOp::OpDividedCylinder, advancedTbId );
+//   int advancedTbId = createTool( tr( "TOOL_ADVANCED" ) );
+
   //@@ insert new functions before this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@ do not remove this line @@//
 
   // ---- create popup menus --------------------------

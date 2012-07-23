@@ -9,7 +9,6 @@ range of geometrical objects, from points to complex extrusions:
 <li>create \subpage create_basic_geom_obj_page "Basic objects" - points,
 lines, circles...</li>
 <li>create \subpage create_primitives_page "Primitives" - cubes, spheres, cones...</li>
-<li>create \subpage create_adv_obj_page "Advanced geometrical objects" - Pipe TShape...</li>
 <li>create \subpage create_complex_obj_page "Complex objects" by
 extrusion, rotation, interpolation of other objects.</li>
 <li>create and edit \subpage work_with_groups_page "Groups of objects" of

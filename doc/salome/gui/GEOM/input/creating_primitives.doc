@@ -13,6 +13,7 @@ geometrical objects, such as:
 <li>\subpage create_cone_page</li>
 <li>\subpage create_squareface_page</li>
 <li>\subpage create_disk_page</li>
+<li>\subpage create_pipetshape_page</li>
 </ul>
 
 */

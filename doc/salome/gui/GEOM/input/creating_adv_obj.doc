@@ -10,5 +10,5 @@
 <li>\subpage create_dividedcylinder_page</li>
 <!--@@ insert new functions before this line @@ do not remove this line @@-->
 </ul>
-
+<!--WRNING : In order to let this page appear in the documentation please remove this file from the EXCLUDE_PATTERNS field of the doxyfile.in file in ../ -->
 */
