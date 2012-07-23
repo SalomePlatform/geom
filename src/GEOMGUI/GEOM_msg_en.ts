@@ -4579,6 +4579,10 @@ Otherwise the dimensions will be kept without modifications.</translation>
         <translation>Divided Disk</translation>
     </message>
     <message>
+        <source>GEOM_ADVANCED_203</source>
+        <translation>Divided Cylinder</translation>
+    </message>
+    <message>
         <source>GEOM_PRECISION_HINT</source>
         <translation>Input value precision can be adjusted using
 &apos;%1&apos; parameter in Geometry module preferences.</translation>

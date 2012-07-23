@@ -1298,7 +1298,7 @@
         </message>
         <message>
             <source>ICON_OBJBROWSER_ADVANCED_203</source>
-            <translation>tree_dividedcylinder.png</translation>
+            <translation>dividedcylinder.png</translation>
         </message>
 	<!-- @@ insert new functions before this line @@ do not remove this line @@ -->
     </context>

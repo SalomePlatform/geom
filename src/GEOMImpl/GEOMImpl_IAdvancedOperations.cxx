@@ -2375,6 +2375,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double th
         
   Handle(GEOM_Function) aFunction =  aShape->GetLastFunction();
   aFunction->SetDescription("");   // Erase dump of MakePrismDXDYDZ
+  aShape->SetType(GEOM_DIVIDEDCYLINDER);
   
   //Make a Python command
   GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedCylinder(" << theR << ", " << theH << ")";
