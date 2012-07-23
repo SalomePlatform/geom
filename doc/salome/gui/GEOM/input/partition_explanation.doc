@@ -12,7 +12,7 @@ The \b fuse operation will make a <b>single solid</b> from the two given solids.
 \image html fuse.png
 
 \section sec2 Partition
-The \b partition operation will also allow connecting the two solids but it will <b>keep a face at the frontier</b> (in brown on the picture below). The resulting shape will consist in <b>two connected solids</b> that share 
+The \b partition operation will also connect the two solids but it will <b>keep a face at the frontier</b> (in brown on the picture below). The resulting shape will consist in <b>two connected solids</b> that share 
 a face at their frontier. It means that this face is present only one time in the resulting shape and is a sub-shape of both the box and the cylinder.
 
 \n This operation allows you to identify different areas in a shape (e.g. different materials) and to ensure a <b>conformal mesh</b> when meshing it later. Indeed the face at the frontier is meshed only once. 
