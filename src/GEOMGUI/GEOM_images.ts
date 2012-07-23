@@ -1286,7 +1286,7 @@
         </message>
         <message>
             <source>ICON_OBJBROWSER_ADVANCED_202</source>
-            <translation>tree_divideddisk.png</translation>
+            <translation>divided_disk.png</translation>
         </message>
         <message>
             <source>ICON_DLG_DIVIDEDCYLINDER_R_H</source>
