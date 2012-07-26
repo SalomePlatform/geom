@@ -54,9 +54,11 @@ private:
   GEOM::GeomObjPtr                   myPoint, myDir;
   DlgRef_1Spin*                      GroupParams;
   DlgRef_3Radio*                     GroupOrientation;
+  DlgRef_3Radio*                     GroupPattern;
   DlgRef_2Sel1Spin*                  GroupPntVecR;
   int                                myOrientation;
-
+  GEOM::pattern                      myPattern;
+  
 private slots:
   void                               ConstructorsClicked ( int );
   void                               ClickOnOk();

@@ -2243,10 +2243,13 @@ GEOMImpl_IAdvancedOperations::MakePipeTShapeFilletWithPosition(double theR1, dou
  *  used to create divided pipes for later meshing in hexaedra.
  *  \param theR Radius of the disk
  *  \param theRatio Relative size of the central square diagonal against the disk diameter
+ *  \param theOrientation Plane on which the disk will be built
+ *  \param thePattern The division pattern of the disk (hexagon or square in the center)
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, double theRatio, int theOrientation)
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, double theRatio, 
+                                                                   int theOrientation, int thePattern)
 {
   SetErrorCode(KO);
 
@@ -2265,6 +2268,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
   aData.SetR(theR);
   aData.SetRatio(theRatio);
   aData.SetOrientation(theOrientation);
+  aData.SetType(thePattern);
 
   //Compute the resulting value
   try {
@@ -2302,7 +2306,8 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
 Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDiskPntVecR (Handle(GEOM_Object) thePnt, 
                                                                           Handle(GEOM_Object) theVec, 
                                                                           double theR, 
-                                                                          double theRatio)
+                                                                          double theRatio,
+                                                                          int    thePattern)
 {
   SetErrorCode(KO);
 
@@ -2328,6 +2333,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDiskPntVecR (Handle
 
   aData.SetR(theR);
   aData.SetRatio(theRatio);
+  aData.SetType(thePattern);
 
   //Compute the resulting value
   try {
@@ -2368,7 +2374,7 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double th
   //Add a new object
   Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDCYLINDER);
 
-  Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 50.0, 1);
+  Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 50.0, 1, 0);
   aBaseShape->GetLastFunction()->SetDescription("");   // Erase dump of MakeDividedDisk
   
   aShape = my3DPrimOperations->MakePrismDXDYDZ(aBaseShape,0.0,0.0,theH, -1.0);

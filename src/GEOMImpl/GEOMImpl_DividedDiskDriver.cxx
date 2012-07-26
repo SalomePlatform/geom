@@ -55,6 +55,11 @@
 #include <utilities.h>
 //@@ include required header files here @@//
 
+enum
+{
+  SQUARE,
+  HEXAGON
+};
 //=======================================================================
 //function : GetID
 //purpose  :
@@ -88,11 +93,17 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
   TopoDS_Shape aShape;
 
   // Getting data
-  double R           = aData.GetR();
-  double Ratio       = aData.GetRatio();
+  double R       = aData.GetR();
+  double Ratio   = aData.GetRatio();
+  int    Pattern = aData.GetType();
   
   // Build reference disk (in the global coordinate system)
-  TopoDS_Shell aDisk = MakeDisk( R, Ratio );
+  TopoDS_Shape aDisk;
+  
+  if (Pattern == SQUARE)
+    aDisk = MakeDiskSquare( R, Ratio );
+  else if (Pattern == HEXAGON)
+    aDisk = MakeDiskHexagon( R, Ratio );
   
   if (aType == DIVIDEDDISK_R_RATIO) 
   { 
@@ -133,10 +144,10 @@ Standard_Integer GEOMImpl_DividedDiskDriver::Execute(TFunction_Logbook& log) con
 
 
 //=======================================================================
-//function : MakeDisk
+//function : MakeDiskHexagon
 //purpose  :
 //=======================================================================
-TopoDS_Shell GEOMImpl_DividedDiskDriver::MakeDisk(double R, double Ratio) const
+TopoDS_Shell GEOMImpl_DividedDiskDriver::MakeDiskHexagon(double R, double Ratio) const
 {
   // Geometry
   gp_Dir ZDir(0,0,1);
@@ -149,11 +160,17 @@ TopoDS_Shell GEOMImpl_DividedDiskDriver::MakeDisk(double R, double Ratio) const
   gp_Circ aCircle(Ax, R);
   
   // Points
-  gp_Pnt P1(0.01*Ratio*R,0,0);
+//   gp_Pnt P4(0.01*Ratio*R,0,0); 
+//   gp_Pnt P3(R,0,0);
+//   gp_Pnt P2 = P3.Rotated(Ax1,-M_PI/6.0);
+//   gp_Pnt P1(P4.X(), 
+//             P4.X()/sqrt(3.0),0);
+  gp_Pnt P1(0.01*Ratio*R*sqrt(3.0)/2,0,0);
   gp_Pnt P2(R,0,0);
   gp_Pnt P3 = P2.Rotated(Ax1,M_PI/6.0);
   gp_Pnt P4(P1.X(), 
             P1.X()/sqrt(3.0),0);
+
   
   //surfaces
   gp_Ax2 anAx (gp::XOY());
@@ -285,6 +302,123 @@ TopoDS_Shell GEOMImpl_DividedDiskDriver::MakeDisk(double R, double Ratio) const
   
   return S;
 }
+
+//=======================================================================
+//function : MakeDiskSquare
+//purpose  :
+//=======================================================================
+TopoDS_Shape GEOMImpl_DividedDiskDriver::MakeDiskSquare(double R, double Ratio) const
+{
+  // Geometry
+  gp_Dir ZDir(0,0,1);
+  gp_Dir XDir(1,0,0);
+  gp_Pnt Orig(0,0,0);
+  
+  // Circle
+  gp_Ax1 Ax1(Orig,ZDir);
+  gp_Ax2 Ax(Orig,ZDir,XDir);
+  gp_Circ aCircle(Ax, R);
+  
+  // Points
+  gp_Pnt P1(0.01*Ratio*R,0,0);
+  gp_Pnt P2(R,0,0);
+  
+  //surfaces
+  gp_Ax2 anAx (gp::XOY());
+  Handle(Geom_Plane) aPlane = new Geom_Plane (anAx);
+  
+  // Topology
+  
+  // Vertices
+  TopoDS_Vertex V1_init = BRepBuilderAPI_MakeVertex(P1);
+  TopoDS_Vertex V2_init = BRepBuilderAPI_MakeVertex(P2);
+  
+  TopoDS_Vertex V1 = V1_init;
+  TopoDS_Vertex V2 = V2_init;
+  
+  //Rotation
+  gp_Trsf myTrsf;
+  myTrsf.SetRotation(Ax1, M_PI/2);
+  
+  BRepBuilderAPI_Transform xform(myTrsf);
+  xform.Perform(V1,Standard_True);
+  TopoDS_Vertex V1_rotated = TopoDS::Vertex(xform.Shape()); 
+  xform.Perform(V2,Standard_True);
+  TopoDS_Vertex V2_rotated = TopoDS::Vertex(xform.Shape());
+  
+  // Declaration of shapes (used in the loop) 
+  TopoDS_Edge E1, E2, E3, E4;
+  TopoDS_Wire W1, W2;
+  TopoDS_Face F1, F2;   
+  TopoDS_Shell S;
+  
+  BRep_Builder aBuilder;
+  aBuilder.MakeWire(W2);  // Central Wire
+  aBuilder.MakeShell(S);  // Shell
+  
+  // Initialisation of edges
+  TopoDS_Edge E1_init = BRepBuilderAPI_MakeEdge(V1,TopoDS::Vertex(V2.Reversed()));
+  E1 = E1_init;
+  
+  for (int i=1;i<=4;i++)
+  { 
+    // Edges
+    // for Face1
+   
+    E3 = BRepBuilderAPI_MakeEdge(V2_rotated,TopoDS::Vertex(V1_rotated.Reversed()));
+    if (i == 4)
+    {
+      E2 = BRepBuilderAPI_MakeEdge(aCircle, V2, TopoDS::Vertex(V2_init.Reversed())); 
+      E4 = BRepBuilderAPI_MakeEdge(V1_init,TopoDS::Vertex(V1.Reversed()));
+    }
+    else
+    {
+      E2 = BRepBuilderAPI_MakeEdge(aCircle, V2, TopoDS::Vertex(V2_rotated.Reversed())); 
+      E4 = BRepBuilderAPI_MakeEdge(V1_rotated,TopoDS::Vertex(V1.Reversed()));
+    }
+    
+    // Wires
+    //Wire1
+    aBuilder.MakeWire(W1);
+    if (i==1)
+      aBuilder.Add(W1,E1);
+    else
+      aBuilder.Add(W1,TopoDS::Edge(E1.Reversed()));
+    aBuilder.Add(W1,E2);
+    if (i==4)
+      aBuilder.Add(W1,TopoDS::Edge(E1_init.Reversed()));
+    else
+      aBuilder.Add(W1,E3);
+    aBuilder.Add(W1,E4);
+    
+    // Wire central
+    aBuilder.Add(W2,TopoDS::Edge(E4.Reversed()));
+    
+    // Faces creation
+    F1 = BRepBuilderAPI_MakeFace(aPlane,W1);
+    
+    //Shell
+    aBuilder.Add(S, F1);
+    
+    // rotation
+    V1=V1_rotated;
+    V2=V2_rotated;
+    
+    xform.Perform(V1_rotated,Standard_True);
+    V1_rotated = TopoDS::Vertex(xform.Shape());
+    xform.Perform(V2_rotated,Standard_True);
+    V2_rotated = TopoDS::Vertex(xform.Shape());
+    
+    // "Increment" of edges
+    E1=E3;        
+  }
+  // Central square Face 
+  F2 = BRepBuilderAPI_MakeFace(aPlane,W2);
+  aBuilder.Add(S, F2);
+  
+  return S;
+}
+
 
 //=======================================================================
 //function :  TrasformShape(TopoDS_Shape aShape,int theOrientation)

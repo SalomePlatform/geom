@@ -66,13 +66,15 @@ class GEOM_I_EXPORT GEOM_IAdvancedOperations_i :
   
   GEOM::GEOM_Object_ptr MakeDividedDisk        (CORBA::Double theR, 
                                                 CORBA::Double theRatio, 
-                                                CORBA::Short theOrientation);
+                                                CORBA::Short theOrientation,
+                                                GEOM::pattern thePattern);
   
   GEOM::GEOM_Object_ptr MakeDividedDiskPntVecR (GEOM::GEOM_Object_ptr theCenter,
                                                 GEOM::GEOM_Object_ptr theVector,
                                                 CORBA::Double theR,
-                                                CORBA::Double theRatio);
-                                                
+                                                CORBA::Double theRatio,
+                                                GEOM::pattern thePattern);
+  
   GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR, CORBA::Double theH);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 

@@ -330,7 +330,10 @@ GEOM::ListOfGO* GEOM_IAdvancedOperations_i::MakePipeTShapeFilletWithPosition (CO
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio, CORBA::Short theOrientation)
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double theR, 
+                                                                   CORBA::Double theRatio, 
+                                                                   CORBA::Short theOrientation,
+                                                                   GEOM::pattern thePattern)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -338,7 +341,7 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double
   GetOperations()->SetNotDone();
 
   //Create the DividedDisk
-  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedDisk(theR, theRatio, theOrientation);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedDisk(theR, theRatio, theOrientation, thePattern);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 
@@ -353,7 +356,8 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDisk (CORBA::Double
 GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::GEOM_Object_ptr thePnt, 
                                                                           GEOM::GEOM_Object_ptr theVec,
                                                                           CORBA::Double theR,
-                                                                          CORBA::Double theRatio)
+                                                                          CORBA::Double theRatio,
+                                                                          GEOM::pattern thePattern)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -368,7 +372,7 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::
 
   // Make DividedDisk
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeDividedDiskPntVecR(aPnt, aVec, theR, theRatio);
+    GetOperations()->MakeDividedDiskPntVecR(aPnt, aVec, theR, theRatio, thePattern);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -177,6 +177,19 @@ module GEOM
     Interpolation
   };
 
+ /*!
+   * \brief Pattern for block division of the disk
+   *
+   * Used in the functions GEOM_IAdvancedOperations.MakeDividedDisk(), GEOM_ICurvesOperations.MakeDividedDiskPntVecR()
+   */
+  enum pattern {
+    /*! Square */
+    SQUARE,
+    
+    /*! Hexagon */
+    HEXAGON
+  };
+
 
   typedef sequence<string>      string_array;
   typedef sequence<short>       short_array;
@@ -3766,7 +3779,10 @@ module GEOM
      *  \param theOrientation Plane on which the disk will be built
      *  \return New GEOM_Object, containing the created shape.
      */
-    GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation);
+    GEOM_Object MakeDividedDisk (in double theR, 
+                                 in double theRatio, 
+                                 in short theOrientation,
+                                 in pattern thePattern);
 
     /*!
      *  \brief Create a Disk prepared for hexa meshing with given center, normal vector and radius.
@@ -3779,7 +3795,8 @@ module GEOM
     GEOM_Object MakeDividedDiskPntVecR ( in GEOM_Object thePnt,
                                          in GEOM_Object theVec,
                                          in double theR, 
-                                         in double theRatio);
+                                         in double theRatio,
+                                         in pattern thePattern);
 
     /*!
      *  Builds a cylinder prepared for hexa meshes

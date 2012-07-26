@@ -39,6 +39,12 @@
 
 #include <GEOMImpl_Types.hxx>
 
+// enum
+// {
+//  SQUARE,
+//  HEXAGON
+// };
+
 //=================================================================================
 // Constructor
 //=================================================================================
@@ -71,6 +77,12 @@ AdvancedGUI_DividedDiskDlg::AdvancedGUI_DividedDiskDlg (GeometryGUI* theGeometry
   GroupOrientation->RadioButton2->setText(tr("GEOM_WPLANE_OYZ"));
   GroupOrientation->RadioButton3->setText(tr("GEOM_WPLANE_OZX"));
   
+  GroupPattern = new DlgRef_3Radio(centralWidget());
+  GroupPattern->GroupBox1->setTitle(tr("GEOM_PATTERN"));
+  GroupPattern->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+  GroupPattern->RadioButton3->close();
+  
+  
   GroupPntVecR = new DlgRef_2Sel1Spin(centralWidget());
   GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));
   GroupPntVecR->TextLabel1->setText(tr("GEOM_CENTER_POINT"));
@@ -87,6 +99,7 @@ AdvancedGUI_DividedDiskDlg::AdvancedGUI_DividedDiskDlg (GeometryGUI* theGeometry
   layout->addWidget(GroupParams);
   layout->addWidget(GroupOrientation);
   layout->addWidget(GroupPntVecR);
+  layout->addWidget(GroupPattern);
   /***************************************************************/
 
   setHelpFileName("create_divideddisk_page.html");
@@ -114,11 +127,15 @@ void AdvancedGUI_DividedDiskDlg::Init()
 
   // min, max, step and decimals for spin boxes & initial values
   initSpinBox(GroupParams->SpinBox_DX, 0.00001, COORD_MAX, step, "length_precision" );
+  initSpinBox(GroupPntVecR->SpinBox_DX, 0.00001, COORD_MAX, step, "length_precision" );
   GroupParams ->SpinBox_DX->setValue(100);
   GroupPntVecR->SpinBox_DX->setValue(100);
   
   GroupOrientation->RadioButton1->setChecked(true);
   myOrientation = 1;
+  
+  GroupPattern->RadioButton1->setChecked(true);
+  myPattern = GEOM::SQUARE;
 
   // Signal/slot connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -137,6 +154,9 @@ void AdvancedGUI_DividedDiskDlg::Init()
   connect(GroupOrientation->RadioButton1, SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
   connect(GroupOrientation->RadioButton2, SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
   connect(GroupOrientation->RadioButton3, SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
+  
+  connect(GroupPattern->RadioButton1,     SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
+  connect(GroupPattern->RadioButton2,     SIGNAL(clicked()),                this, SLOT(RadioButtonClicked()));
 
   initName(tr("GEOM_DIVIDEDDISK"));
   
@@ -196,12 +216,21 @@ void AdvancedGUI_DividedDiskDlg::ConstructorsClicked (int constructorId)
 //=================================================================================
 void AdvancedGUI_DividedDiskDlg::RadioButtonClicked()
 { 
-  if (GroupOrientation->RadioButton1->isChecked())
+  QRadioButton* send = (QRadioButton*)sender();
+  
+  // Orientation
+  if (send == GroupOrientation->RadioButton1)
     myOrientation = 1;
-  else if (GroupOrientation->RadioButton2->isChecked())
+  else if ( send == GroupOrientation->RadioButton2)
     myOrientation = 2;
-  else if (GroupOrientation->RadioButton3->isChecked())
+  else if ( send == GroupOrientation->RadioButton3)
     myOrientation = 3;
+  
+  // Division pattern
+  else if (send == GroupPattern->RadioButton1)
+    myPattern = GEOM::SQUARE;
+  else if (send == GroupPattern->RadioButton2)
+    myPattern = GEOM::HEXAGON;
   
   displayPreview(true);
 }
@@ -388,7 +417,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
   GEOM::GEOM_Object_var anObj;
 
   GEOM::GEOM_IAdvancedOperations_var anOper = GEOM::GEOM_IAdvancedOperations::_narrow(getOperation());
-  CORBA::Double theRatio = 50;  
+  CORBA::Double theRatio = 67; // About  2/3  
   CORBA::Double theR = 0;
   
   switch (getConstructorId()) {
@@ -396,7 +425,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
     theR = GroupParams->SpinBox_DX->value(); // init parameter value from dialog box ;
 
     // call engine function
-    anObj = anOper->MakeDividedDisk(theR, theRatio, myOrientation);
+    anObj = anOper->MakeDividedDisk(theR, theRatio, myOrientation, myPattern);
     res = !anObj->_is_nil();
     if (res && !IsPreview())
     {
@@ -409,7 +438,7 @@ bool AdvancedGUI_DividedDiskDlg::execute (ObjectList& objects)
     theR = GroupPntVecR->SpinBox_DX->value(); 
     
     // call engine function
-    anObj = anOper->MakeDividedDiskPntVecR(myPoint.get(), myDir.get(), theR, theRatio);
+    anObj = anOper->MakeDividedDiskPntVecR(myPoint.get(), myDir.get(), theR, theRatio, myPattern);
     res = !anObj->_is_nil();
     if (res && !IsPreview())
     {

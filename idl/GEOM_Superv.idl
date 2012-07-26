@@ -617,7 +617,8 @@ module GEOM
                           in double theRF, in boolean theHexMesh,
                           in GEOM_Object theP1, in GEOM_Object theP2, in GEOM_Object theP3);
 
-    GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation);
+    GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation,
+                                 in pattern thePattern);
 
     GEOM_Object MakeDividedCylinder (in double theR, in double theH);
 

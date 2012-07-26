@@ -31,6 +31,8 @@
 #define DIVIDEDDISK_ARG_CENTER 4
 #define DIVIDEDDISK_ARG_VECTOR 5
 
+#define DIVIDEDDISK_ARG_TYPE 6
+
 class GEOMImpl_IDividedDisk
 {
 public:
@@ -43,7 +45,10 @@ public:
   double GetRatio() { return _func->GetReal(DIVIDEDDISK_ARG_RATIO); }
   
   void SetOrientation(int theOrientation) { _func->SetInteger(DIVIDEDDISK_ARG_ORIENT, theOrientation); }
-  double GetOrientation() { return _func->GetInteger(DIVIDEDDISK_ARG_ORIENT); }
+  int GetOrientation() { return _func->GetInteger(DIVIDEDDISK_ARG_ORIENT); }
+  
+  void SetType(int theType) { _func->SetInteger(DIVIDEDDISK_ARG_TYPE, theType); }
+  int GetType() { return _func->GetInteger(DIVIDEDDISK_ARG_TYPE); }
   
   void SetCenter(Handle(GEOM_Function) theP) { _func->SetReference(DIVIDEDDISK_ARG_CENTER, theP); }
   void SetVector(Handle(GEOM_Function) theV) { _func->SetReference(DIVIDEDDISK_ARG_VECTOR, theV); }
