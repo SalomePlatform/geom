@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -245,7 +244,8 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet2D
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
                       (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
-                       const GEOM::ListOfLong& theVertexes)
+                       const GEOM::ListOfLong& theVertexes,
+                       CORBA::Boolean doIgnoreSecantVertices)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -263,7 +263,7 @@ GEOM::GEOM_Object_ptr GEOM_ILocalOperations_i::MakeFillet1D
 
   //Create the Fillet
   Handle(GEOM_Object) anObject =
-    GetOperations()->MakeFillet1D(aShapeRef, theR, aVertexes);
+    GetOperations()->MakeFillet1D(aShapeRef, theR, aVertexes, doIgnoreSecantVertices);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File      : GEOMImpl_IShapesOperations.cxx
 //  Created   :
@@ -1010,10 +1009,10 @@ Handle(TColStd_HSequenceOfTransient) GEOMImpl_IShapesOperations::GetGlueShapes
   TopTools_DataMapIteratorOfDataMapOfShapeListOfShape aItDMSLS (aImages);
   for (int index = 1; aItDMSLS.More(); aItDMSLS.Next(), ++index) {
     // some key shape
-    //const TopoDS_Shape& aSkey = aItDMSLS.Key();  
+    //const TopoDS_Shape& aSkey = aItDMSLS.Key();
 
     // list of shapes of the argument that can be glued
-    const TopTools_ListOfShape& aLSD = aItDMSLS.Value(); 
+    const TopTools_ListOfShape& aLSD = aItDMSLS.Value();
 
     //listShape.Append(aLSD.First());
     TopoDS_Shape aValue = aLSD.First();
@@ -3920,8 +3919,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetInPlace (Handle(GEOM_Object) 
     return NULL;
   }
 
-  // the list of shapes aLSA contains the shapes 
-  // of the Shape For Search that corresponds 
+  // the list of shapes aLSA contains the shapes
+  // of the Shape For Search that corresponds
   // to the Argument aWhat
   const TopTools_ListOfShape& aLSA = aDMSLS.Find(aWhat);
   if (aLSA.Extent() == 0) {
@@ -4920,7 +4919,8 @@ Handle(GEOM_Object) GEOMImpl_IShapesOperations::GetSame(const Handle(GEOM_Object
 //function : GetSameIDs
 //purpose  :
 //=======================================================================
-Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs(const Handle(GEOM_Object)& theShapeWhere,
+Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs
+                                                       (const Handle(GEOM_Object)& theShapeWhere,
                                                         const Handle(GEOM_Object)& theShapeWhat)
 {
   SetErrorCode(KO);
@@ -4931,8 +4931,6 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs(const 
 
   if (aWhere.IsNull() || aWhat.IsNull()) return NULL;
 
-  int anIndex = -1;
-  bool isFound = false;
   TopTools_ListOfShape listShape;
   TopTools_MapOfShape aMap;
 
@@ -5017,6 +5015,6 @@ Handle(TColStd_HSequenceOfInteger) GEOMImpl_IShapesOperations::GetSameIDs(const 
     return aSeq;
   } else {
     SetErrorCode(NOT_FOUND_ANY);
-    return NULL; 
+    return NULL;
   }
 }

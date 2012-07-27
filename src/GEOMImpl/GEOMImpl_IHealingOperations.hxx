@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_IHealingOperations_HXX_
 #define _GEOMImpl_IHealingOperations_HXX_
@@ -77,6 +76,10 @@ class GEOMImpl_IHealingOperations : public GEOM_IOperations {
                                                   int theIndex,
                                                   double theValue,
                                                   bool isByParameter );
+
+  Standard_EXPORT Handle(GEOM_Object) FuseCollinearEdgesWithinWire
+                                     (Handle(GEOM_Object) theWire,
+                                      std::list<Handle(GEOM_Object)> theVertices);
 
   // this function does not use Function-Driver mechanism, it just computes the free
   // boundary edges and returns them in the sequence.  It is called just for information reasons

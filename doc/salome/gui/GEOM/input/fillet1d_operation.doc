@@ -17,9 +17,13 @@ vertexes on this wire in the OCC Viewer and define the \b Radius of the Fillet.
 
 \b Note: This Operation Works for the Wires with <b>Planar Edges</b> only.
 
+\b Note: Use option <b>Fuse collinear edges to allow bigger radius</b>
+         to allow ignoring of possible secant points, i.e. the
+         joints of collinear edges, thus processing such edges as one.
+
 <b>TUI Command:</b> <em>geompy.MakeFillet1D(Shape, R, ListVertexes)</em>
 \n <b>Arguments:</b> Name + 1 shape + empty list or several vertexes + 1 value (Fillet radius).
-\n <b>Advanced options</b> \ref preview_anchor "Preview"
+\n <b>Advanced options:</b> \ref preview_anchor "Preview"
 
 <b>Examples:</b>
 

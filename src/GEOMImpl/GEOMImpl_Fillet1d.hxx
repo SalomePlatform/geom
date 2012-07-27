@@ -15,19 +15,20 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_Fillet1d.hxx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_Fillet1d_HeaderFile
 #define _GEOMImpl_Fillet1d_HeaderFile
 
-#include <gp_Pnt.hxx>
+#include <TopoDS_Edge.hxx>
+
 #include <Geom_Plane.hxx>
 #include <Geom2d_Curve.hxx>
 
-#include <TopoDS_Edge.hxx>
+#include <gp_Pnt.hxx>
+
 #include <TColStd_ListOfReal.hxx>
 #include <TColStd_SequenceOfReal.hxx>
 #include <TColStd_SequenceOfInteger.hxx>
@@ -38,17 +39,18 @@ class GEOMImpl_Fillet1dPoint;
 * GEOMImpl_Fillet1d is 1D fillet algorithm on two planar edges with given radius
 */
 
-class GEOMImpl_Fillet1d 
+class GEOMImpl_Fillet1d
 {
 public:
   //! Constructor
-  //! The fillet 1D algorithm initialise by two edges and plane
+  //! The fillet 1D algorithm is initialised by two edges and plane
   Standard_EXPORT GEOMImpl_Fillet1d(const TopoDS_Edge& theEdge1,
                                     const TopoDS_Edge& theEdge2,
                                     const gp_Pln&      thePlane);
   //! Makes fillet with given radius
   //! @returns Standard_True, if at least one result computed
   Standard_EXPORT Standard_Boolean Perform(const Standard_Real theRadius);
+
   //! Returns result fillet edge and modified edges as out parameters
   Standard_EXPORT TopoDS_Edge Result(const gp_Pnt& thePoint, TopoDS_Edge& theEdge1, TopoDS_Edge& theEdge2);
 
@@ -58,7 +60,6 @@ private:
   void fillDiff(GEOMImpl_Fillet1dPoint*, Standard_Real, Standard_Boolean);
   void performNewton(GEOMImpl_Fillet1dPoint*, GEOMImpl_Fillet1dPoint*);
   Standard_Boolean processPoint(GEOMImpl_Fillet1dPoint*, GEOMImpl_Fillet1dPoint*, Standard_Real);
-
 
 private:
   //! private fields
@@ -86,10 +87,10 @@ public:
   //! Constructor
   Standard_EXPORT GEOMImpl_Fillet1dPoint(Standard_Real theParam)
   {myParam = theParam;}
-  
+
   //! Make copy of point
   //!WARNING: Copies only field values: myParam, myV, myD, myValid
-  Standard_EXPORT GEOMImpl_Fillet1dPoint* Copy(); // warning: this is not the full copy! 
+  Standard_EXPORT GEOMImpl_Fillet1dPoint* Copy(); // warning: this is not the full copy!
 
   //! Set/Get parameter
   Standard_EXPORT inline void SetParam(Standard_Real theParam)
@@ -101,7 +102,7 @@ public:
   Standard_EXPORT inline Standard_Real GetParam2()
     { return myParam2 ; }
 
-  //! Returns validity  
+  //! Returns validity
   Standard_EXPORT inline Standard_Boolean IsValid(int theIndex)
     {return (Standard_Boolean)myValid.Value(theIndex);}
 
@@ -125,9 +126,9 @@ public:
   //! compute difference between this and given point
   Standard_EXPORT Standard_Boolean ComputeDifference(GEOMImpl_Fillet1dPoint*);
   Standard_EXPORT void FilterPoints(GEOMImpl_Fillet1dPoint*);
-  
-  //! Check is point contains solution and  returns the index of them if any
-  Standard_EXPORT Standard_Integer HasSolution(Standard_Real theRadius); 
+
+  //! Checks if point contains solution and returns the index of it if any
+  Standard_EXPORT Standard_Integer HasSolution(Standard_Real theRadius);
   //! Remove solution by index
   void RemoveSolution(Standard_Integer theIndex);
 

@@ -15,7 +15,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_Fillet1d.cxx
 //  Module : GEOMImpl
@@ -401,7 +400,7 @@ void GEOMImpl_Fillet1d::performNewton(GEOMImpl_Fillet1dPoint* theLeft,
     else
     {
       if (fabs(aB) > fabs(aDet * 1000000.))
-      {  // possible floating point operations accurancy errors
+      {  // possible floating point operations accuracy errors
         processPoint(theLeft, theRight, theLeft->GetParam() + aDX / 2.0); // linear division otherwise
       }
       else

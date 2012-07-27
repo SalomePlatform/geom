@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -492,7 +491,8 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet2D
  */
 //=============================================================================
 Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet1D
-       (Handle(GEOM_Object) theShape, double theR, std::list<int> theVertexes)
+                      (Handle(GEOM_Object) theShape, double theR,
+                       std::list<int> theVertexes, bool doIgnoreSecantVertices)
 {
   SetErrorCode(KO);
 
@@ -514,6 +514,7 @@ Handle(GEOM_Object) GEOMImpl_ILocalOperations::MakeFillet1D
 
   aCI.SetShape(aRefShape);
   aCI.SetR(theR);
+  aCI.SetFlag(doIgnoreSecantVertices);
   int aLen = theVertexes.size();
   aCI.SetLength(aLen);
 

@@ -691,15 +691,13 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
 #if OCC_VERSION_LARGE > 0x06010000
     OCC_CATCH_SIGNALS;
 #endif
-    if (!GetSolver()->ComputeFunction(aFunction))
-    {
+    if (!GetSolver()->ComputeFunction(aFunction)) {
       SetErrorCode("Healing driver failed");
       return NULL;
     }
   }
-  catch (Standard_Failure)
-  {
-        Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
@@ -710,6 +708,81 @@ Handle(GEOM_Object) GEOMImpl_IHealingOperations::DivideEdge (Handle(GEOM_Object)
 
   SetErrorCode(OK);
   return aNewObject;
+}
+
+//=============================================================================
+/*!
+ *  FuseCollinearEdgesWithinWire
+ */
+//=============================================================================
+Handle(GEOM_Object) GEOMImpl_IHealingOperations::FuseCollinearEdgesWithinWire
+                                   (Handle(GEOM_Object) theWire,
+                                    std::list<Handle(GEOM_Object)> theVertices)
+{
+  SetErrorCode(KO);
+
+  if (theWire.IsNull()) return NULL;
+
+  // Add a new object
+  Handle(GEOM_Object) aRes = GetEngine()->AddObject(GetDocID(), theWire->GetType());
+
+  // Add a new function
+  Handle(GEOM_Function) aFunction;
+  aFunction = aRes->AddFunction(GEOMImpl_HealingDriver::GetID(), FUSE_COLLINEAR_EDGES);
+  if (aFunction.IsNull()) return NULL;
+
+  // Check if the function is set correctly
+  if (aFunction->GetDriverGUID() != GEOMImpl_HealingDriver::GetID()) return NULL;
+
+  GEOMImpl_IHealing aCI (aFunction);
+
+  Handle(GEOM_Function) aRefShape = theWire->GetLastFunction();
+  if (aRefShape.IsNull()) return NULL;
+  aCI.SetOriginal(aRefShape);
+
+  Handle(TColStd_HSequenceOfTransient) aVertices = new TColStd_HSequenceOfTransient;
+  std::list<Handle(GEOM_Object)>::iterator it = theVertices.begin();
+  for (; it != theVertices.end(); it++) {
+    Handle(GEOM_Function) aRefSh = (*it)->GetLastFunction();
+    if (aRefSh.IsNull()) {
+      SetErrorCode("NULL argument shape for the shape construction");
+      return NULL;
+    }
+    aVertices->Append(aRefSh);
+  }
+  aCI.SetShapes(aVertices);
+
+  // Compute the new wire
+  try {
+#if OCC_VERSION_LARGE > 0x06010000
+    OCC_CATCH_SIGNALS;
+#endif
+    if (!GetSolver()->ComputeFunction(aFunction)) {
+      SetErrorCode("Healing driver failed");
+      return NULL;
+    }
+  }
+  catch (Standard_Failure) {
+    Handle(Standard_Failure) aFail = Standard_Failure::Caught();
+    SetErrorCode(aFail->GetMessageString());
+    return NULL;
+  }
+
+  // Make a Python command
+  GEOM::TPythonDump pd (aFunction);
+  pd << aRes << " = geompy.FuseCollinearEdgesWithinWire(" << theWire << ", [";
+  // Vertices
+  it = theVertices.begin();
+  if (it != theVertices.end()) {
+    pd << (*it++);
+    while (it != theVertices.end()) {
+      pd << ", " << (*it++);
+    }
+  }
+  pd << "])";
+
+  SetErrorCode(OK);
+  return aRes;
 }
 
 //=============================================================================

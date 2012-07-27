@@ -711,6 +711,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Fillet 1D</translation>
     </message>
     <message>
+        <source>GEOM_FILLET_1D_IGNORE_SECANT</source>
+        <translation>Fuse collinear edges to allow bigger radius</translation>
+    </message>
+    <message>
         <source>GEOM_FILLET_ABORT</source>
         <translation>Fillet can&apos;t be computed with radius %1</translation>
     </message>
@@ -4305,6 +4309,30 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>STB_REMOVE_EXTRA_EDGES</source>
         <translation>Remove extra edges</translation>
+    </message>
+    <message>
+        <source>GEOM_FUSE_EDGES_TITLE</source>
+        <translation>Fuse Collinear Edges within a Wire</translation>
+    </message>
+    <message>
+        <source>GEOM_FUSE_EDGES</source>
+        <translation>Fuse edges</translation>
+    </message>
+    <message>
+        <source>FUSE_EDGES_NEW_OBJ_NAME</source>
+        <translation>FuseEdges</translation>
+    </message>
+    <message>
+        <source>TOP_FUSE_EDGES</source>
+        <translation>Fuse collinear edges within a wire</translation>
+    </message>
+    <message>
+        <source>MEN_FUSE_EDGES</source>
+        <translation>Fuse Collinear Edges within a Wire</translation>
+    </message>
+    <message>
+        <source>STB_FUSE_EDGES</source>
+        <translation>Fuse collinear edges within a wire</translation>
     </message>
     <message>
         <source>TOP_NORMALE</source>

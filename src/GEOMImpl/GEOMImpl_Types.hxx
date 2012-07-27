@@ -285,6 +285,7 @@
 #define DIVIDE_EDGE        7
 #define CHANGE_ORIENTATION 8
 #define LIMIT_TOLERANCE    9
+#define FUSE_COLLINEAR_EDGES 10
 
 #define BASIC_FILLING 1
 

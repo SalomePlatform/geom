@@ -18,11 +18,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_ShapeDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_ShapeDriver_HeaderFile
 #define _GEOMImpl_ShapeDriver_HeaderFile
 
@@ -119,6 +118,9 @@ class Handle(GEOMImpl_ShapeDriver) : public Handle(TFunction_Driver) {
 #include <Standard_CString.hxx>
 #endif
 
+#include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+
 class TColStd_SequenceOfExtendedString;
 
 
@@ -126,35 +128,38 @@ class GEOMImpl_ShapeDriver : public TFunction_Driver {
 
 public:
 
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
+  inline void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  inline void* operator new(size_t size) 
+  { 
+    return Standard::Allocate(size); 
+  }
+  inline void  operator delete(void *anAddress) 
+  { 
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOMImpl_ShapeDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_ShapeDriver() {};
+  // Methods PUBLIC
+  // 
+  Standard_EXPORT GEOMImpl_ShapeDriver();
+  Standard_EXPORT ~GEOMImpl_ShapeDriver() {};
 
+  Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
+  Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
+  Standard_EXPORT static const Standard_GUID& GetID();
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_ShapeDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_ShapeDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_ShapeDriver) == AType || TFunction_Driver::IsKind(AType)); } 
+  Standard_EXPORT static TopoDS_Edge MakeEdgeFromWire(const TopoDS_Shape& aWire,
+                                                      const Standard_Real LinTol,
+                                                      const Standard_Real AngTol);
 
+  // Type management
+  //
+  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_ShapeDriver_Type_();
+  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_ShapeDriver) ; }
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_ShapeDriver) == AType || TFunction_Driver::IsKind(AType)); } 
 
 };
 

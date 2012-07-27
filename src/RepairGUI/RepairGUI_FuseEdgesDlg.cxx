@@ -16,11 +16,7 @@
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
 
-// GEOM GEOMGUI : GUI for Geometry component
-// File   : OperationGUI_Fillet1d2dDlg.cxx
-// Author : DMV, OCN.
-
-#include "OperationGUI_Fillet1d2dDlg.h"
+#include "RepairGUI_FuseEdgesDlg.h"
 
 #include <DlgRef.h>
 #include <GeometryGUI.h>
@@ -42,59 +38,45 @@
 #include <GEOMImpl_Types.hxx>
 
 //=================================================================================
-// class    : OperationGUI_Fillet1d2dDlg()
-// purpose  : Constructs a OperationGUI_Fillet1d2dDlg which is a child of 'parent', with the
+// class    : RepairGUI_FuseEdgesDlg()
+// purpose  : Constructs a RepairGUI_FuseEdgesDlg which is a child of 'parent', with the
 //            name 'name' and widget flags set to 'f'.
 //            The dialog will by default be modeless, unless you set 'modal' to
 //            TRUE to construct a modal dialog.
 //=================================================================================
-OperationGUI_Fillet1d2dDlg::OperationGUI_Fillet1d2dDlg (GeometryGUI* theGeometryGUI,
-                                                        QWidget* parent,
-                                                        bool is1D)
-  : GEOMBase_Skeleton(theGeometryGUI, parent, false),
-    myIs1D( is1D )
+RepairGUI_FuseEdgesDlg::RepairGUI_FuseEdgesDlg (GeometryGUI* theGeometryGUI,
+                                                QWidget* parent)
+  : GEOMBase_Skeleton(theGeometryGUI, parent, false)
 {
   SUIT_ResourceMgr* aResMgr = myGeomGUI->getApp()->resourceMgr();
-  QPixmap image0 (aResMgr->loadPixmap("GEOM", myIs1D ? tr("ICON_DLG_FILLET_1D") 
-                                                     : tr("ICON_DLG_FILLET_2D")));
+  QPixmap image0 (aResMgr->loadPixmap("GEOM", tr("ICON_DLG_FUSE_EDGES")));
   QPixmap iconSelect (aResMgr->loadPixmap("GEOM", tr("ICON_SELECT")));
 
-  setWindowTitle(myIs1D ? tr("GEOM_FILLET_1D_TITLE") : tr("GEOM_FILLET_2D_TITLE"));
+  setWindowTitle(tr("GEOM_FUSE_EDGES_TITLE"));
 
-  /***************************************************************/
-  mainFrame()->GroupConstructors->setTitle(myIs1D ? tr("GEOM_FILLET_1D") : tr("GEOM_FILLET_2D"));
+  mainFrame()->GroupConstructors->setTitle(tr("GEOM_FUSE_EDGES"));
   mainFrame()->RadioButton1->setIcon(image0);
   mainFrame()->RadioButton2->close();
   mainFrame()->RadioButton3->close();
 
-  GroupVertexes = new DlgRef_2Sel1Spin2Check (centralWidget());
-  GroupVertexes->GroupBox1->setTitle(myIs1D ? tr("GEOM_FILLET_1D") : tr("GEOM_FILLET_2D"));
-  GroupVertexes->TextLabel1->setText(myIs1D ? tr("GEOM_PLANAR_EDGE_WIRE") : tr("GEOM_PLANAR_FACE"));
+  GroupVertexes = new DlgRef_2Sel1Spin (centralWidget());
+  GroupVertexes->GroupBox1->setTitle(tr("GEOM_FUSE_EDGES"));
+  GroupVertexes->TextLabel1->setText(tr("GEOM_WIRE"));
   GroupVertexes->TextLabel2->setText(tr("GEOM_VERTEXES"));
-  GroupVertexes->TextLabel3->setText(tr("GEOM_RADIUS"));
   GroupVertexes->PushButton1->setIcon(iconSelect);
   GroupVertexes->PushButton2->setIcon(iconSelect);
   GroupVertexes->LineEdit1->setReadOnly(true);
   GroupVertexes->LineEdit2->setReadOnly(true);
-  if (myIs1D) {
-    GroupVertexes->CheckButton1->setText(tr("GEOM_FILLET_1D_IGNORE_SECANT"));
-    GroupVertexes->CheckButton1->setChecked(true);
-  }
-  else
-    GroupVertexes->CheckButton1->close();
-  GroupVertexes->CheckButton2->close();
 
-  QVBoxLayout* layout = new QVBoxLayout(centralWidget());
-  layout->setMargin(0); layout->setSpacing(6);
+  GroupVertexes->TextLabel3->setShown(false);
+  GroupVertexes->SpinBox_DX->setShown(false);
+
+  QVBoxLayout* layout = new QVBoxLayout (centralWidget());
+  layout->setMargin(0);
+  layout->setSpacing(6);
   layout->addWidget(GroupVertexes);
 
-  /***************************************************************/
-
-  // Set range of spinboxes
-  double SpecificStep = 10.0;
-  initSpinBox(GroupVertexes->SpinBox_DX, 0.00001, COORD_MAX, SpecificStep, "length_precision" );
-
-  setHelpFileName(myIs1D ? "fillet1d_operation_page.html" : "fillet2d_operation_page.html");
+  setHelpFileName("fuse_edges_operation_page.html");
 
   // Initialisation
   Init();
@@ -102,10 +84,10 @@ OperationGUI_Fillet1d2dDlg::OperationGUI_Fillet1d2dDlg (GeometryGUI* theGeometry
 }
 
 //=================================================================================
-// function : ~OperationGUI_Fillet1d2dDlg()
+// function : ~RepairGUI_FuseEdgesDlg()
 // purpose  : Destroys the object and frees any allocated resources
 //=================================================================================
-OperationGUI_Fillet1d2dDlg::~OperationGUI_Fillet1d2dDlg()
+RepairGUI_FuseEdgesDlg::~RepairGUI_FuseEdgesDlg()
 {
 }
 
@@ -113,24 +95,18 @@ OperationGUI_Fillet1d2dDlg::~OperationGUI_Fillet1d2dDlg()
 // function : Init()
 // purpose  :
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::Init()
+void RepairGUI_FuseEdgesDlg::Init()
 {
-  // Set Initial values of spinboxes
-  GroupVertexes->SpinBox_DX->setValue(5);
-
   // Clear line edits
   GroupVertexes->LineEdit1->setText("");
   GroupVertexes->LineEdit2->setText("");
 
   myShape = GEOM::GEOM_Object::_nil();
 
-  myVertexes.Clear();
-
-  showOnlyPreviewControl();
+  myPoints.clear();
 
   // signals and slots connections
-
-  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()   ));
+  connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
   connect(buttonApply(), SIGNAL(clicked()), this, SLOT(ClickOnApply()));
 
   connect(GroupVertexes->PushButton1, SIGNAL(clicked()), this, SLOT(SetEditCurrentArgument()));
@@ -139,11 +115,7 @@ void OperationGUI_Fillet1d2dDlg::Init()
   connect(GroupVertexes->LineEdit1, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
   connect(GroupVertexes->LineEdit2, SIGNAL(returnPressed()), this, SLOT(LineEditReturnPressed()));
 
-  connect(GroupVertexes->SpinBox_DX, SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox(double)));
-
-  connect(GroupVertexes->CheckButton1, SIGNAL(toggled(bool)), this, SLOT(processPreview()));
-
-  initName(myIs1D ? tr("GEOM_FILLET_1D") : tr("GEOM_FILLET_2D"));
+  initName(tr("FUSE_EDGES_NEW_OBJ_NAME"));
   GroupVertexes->PushButton1->click();
 
   SelectionIntoArgument();
@@ -153,9 +125,9 @@ void OperationGUI_Fillet1d2dDlg::Init()
 // function : ClickOnOk()
 // purpose  :
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::ClickOnOk()
+void RepairGUI_FuseEdgesDlg::ClickOnOk()
 {
-  setIsApplyAndClose( true );
+  setIsApplyAndClose(true);
   if (ClickOnApply())
     ClickOnCancel();
 }
@@ -164,7 +136,7 @@ void OperationGUI_Fillet1d2dDlg::ClickOnOk()
 // function : ClickOnApply()
 // purpose  :
 //=================================================================================
-bool OperationGUI_Fillet1d2dDlg::ClickOnApply()
+bool RepairGUI_FuseEdgesDlg::ClickOnApply()
 {
   if (!onAccept())
     return false;
@@ -174,7 +146,7 @@ bool OperationGUI_Fillet1d2dDlg::ClickOnApply()
   GroupVertexes->LineEdit1->setText("");
   GroupVertexes->LineEdit2->setText("");
   myShape = GEOM::GEOM_Object::_nil();
-  myVertexes.Clear();
+  myPoints.clear();
   GroupVertexes->PushButton1->click();
 
   return true;
@@ -184,9 +156,8 @@ bool OperationGUI_Fillet1d2dDlg::ClickOnApply()
 // function : SelectionIntoArgument()
 // purpose  : Called when selection is changed or on dialog initialization or activation
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
+void RepairGUI_FuseEdgesDlg::SelectionIntoArgument()
 {
-  erasePreview();
   myEditCurrentArgument->setText("");
 
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
@@ -198,75 +169,49 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
     myShape = GEOM::GEOM_Object::_nil();
     if (aSelList.Extent() == 1) {
       GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
-      
-      if ( !anObj->_is_nil() ) {
-        QString aName = GEOMBase::GetName( anObj );
+        GEOMBase::ConvertIOinGEOMObject(aSelList.First());
+
+      if (!anObj->_is_nil()) {
+        QString aName = GEOMBase::GetName(anObj);
         TopoDS_Shape aShape;
-        if ( GEOMBase::GetShape( anObj, aShape, TopAbs_SHAPE ) && !aShape.IsNull() ) {
+        if (GEOMBase::GetShape(anObj, aShape, TopAbs_SHAPE) && !aShape.IsNull()) {
           TColStd_IndexedMapOfInteger aMap;
           aSelMgr->GetIndexes(aSelList.First(), aMap);
-          if ( aMap.Extent() == 1 ) { // Local Selection
-            int anIndex = aMap( 1 );
-            aName += QString( myIs1D ? ":wire_%1" : ":face_%1" ).arg( anIndex );
-   
+          if (aMap.Extent() == 1) { // Local Selection
+            int anIndex = aMap(1);
+            aName += QString(":wire_%1").arg(anIndex);
+
             //Find SubShape Object in Father
-            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather( anObj, aName );
-            
-            if ( aFindedObject->_is_nil()) { // Object not found in study
-              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations( getStudyId() );
-              anObj = aShapesOp->GetSubShape( anObj, anIndex );
+            GEOM::GEOM_Object_var aFindedObject = GEOMBase_Helper::findObjectInFather(anObj, aName);
+
+            if (aFindedObject->_is_nil()) { // Object not found in study
+              GEOM::GEOM_IShapesOperations_var aShapesOp = getGeomEngine()->GetIShapesOperations(getStudyId());
+              anObj = aShapesOp->GetSubShape(anObj, anIndex);
             }
             else
               anObj = aFindedObject; // get Object from study
           }
           else { // Global Selection
-            if ((myIs1D && aShape.ShapeType() != TopAbs_WIRE) ||
-                (!myIs1D && aShape.ShapeType() != TopAbs_FACE && aShape.ShapeType() != TopAbs_SHELL)) {
+            if (aShape.ShapeType() != TopAbs_WIRE) {
               anObj = GEOM::GEOM_Object::_nil();
               aName = "";
             }
           }
         }
         myShape = anObj;
-        myEditCurrentArgument->setText(aName
-);
-        processPreview();
+        myEditCurrentArgument->setText(aName);
       }
     }
-  } else if (myEditCurrentArgument == GroupVertexes->LineEdit2) {
-    myVertexes.Clear();
-    bool isPreview = myIs1D;
-    if (aSelList.Extent() == 1) {
-      GEOM::GEOM_Object_var anObj =
-        GEOMBase::ConvertIOinGEOMObject( aSelList.First() );
 
-      if ( !anObj->_is_nil() ) {
-        TColStd_IndexedMapOfInteger anIndexes;
-        aSelMgr->GetIndexes(aSelList.First(), anIndexes);
-
-        if (anIndexes.Extent() > 0) {
-          QString aName;
-          if (anIndexes.Extent() == 1) {
-            int anIndex = anIndexes(1);
-            aName = QString(GEOMBase::GetName(anObj)) + QString(":vertex_%1").arg(anIndex);
-          }
-          else
-            aName = tr("GEOM_MEN_POPUP_NAME").arg(anIndexes.Extent());
-
-          isPreview = true;
-          myEditCurrentArgument->setText(aName);
-          myVertexes = anIndexes;
-        }
-      }
-    }
-    if ( isPreview )
-      processPreview();
-  }
-
-  if (myEditCurrentArgument == GroupVertexes->LineEdit1) {
-    if (!myShape->_is_nil() && myVertexes.Extent() == 0)
+    if (!myShape->_is_nil() && myPoints.isEmpty())
       GroupVertexes->PushButton2->click();
+  }
+  else if (myEditCurrentArgument == GroupVertexes->LineEdit2) {
+    myPoints = getSelected(TopAbs_VERTEX, -1);
+    if (!myPoints.isEmpty())
+      myEditCurrentArgument->setText(QString::number(myPoints.count()) + "_" + tr("GEOM_POINT") + tr("_S_"));
+    else
+      myEditCurrentArgument->setText("");
   }
 }
 
@@ -274,7 +219,7 @@ void OperationGUI_Fillet1d2dDlg::SelectionIntoArgument()
 // function : SetEditCurrentArgument()
 // purpose  :
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::SetEditCurrentArgument()
+void RepairGUI_FuseEdgesDlg::SetEditCurrentArgument()
 {
   QPushButton* send = (QPushButton*)sender();
 
@@ -296,16 +241,13 @@ void OperationGUI_Fillet1d2dDlg::SetEditCurrentArgument()
   send->setDown(true);
 
   activateSelection();
-
-  // seems we need it only to avoid preview disappearing, caused by selection mode change
-  processPreview();
 }
 
 //=================================================================================
 // function : LineEditReturnPressed()
 // purpose  :
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::LineEditReturnPressed()
+void RepairGUI_FuseEdgesDlg::LineEditReturnPressed()
 {
   QLineEdit* send = (QLineEdit*)sender();
 
@@ -323,7 +265,7 @@ void OperationGUI_Fillet1d2dDlg::LineEditReturnPressed()
 // function : ActivateThisDialog()
 // purpose  :
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::ActivateThisDialog()
+void RepairGUI_FuseEdgesDlg::ActivateThisDialog()
 {
   GEOMBase_Skeleton::ActivateThisDialog();
 }
@@ -332,39 +274,22 @@ void OperationGUI_Fillet1d2dDlg::ActivateThisDialog()
 // function : enterEvent()
 // purpose  :
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::enterEvent (QEvent*)
+void RepairGUI_FuseEdgesDlg::enterEvent (QEvent*)
 {
   if (!mainFrame()->GroupConstructors->isEnabled())
     this->ActivateThisDialog();
 }
 
 //=================================================================================
-// function : ValueChangedInSpinBox()
-// purpose  :
-//=================================================================================
-void OperationGUI_Fillet1d2dDlg::ValueChangedInSpinBox (double)
-{
-  processPreview();
-}
-
-//=================================================================================
 // function : activateSelection
 // purpose  : Activate selection in accordance with myEditCurrentArgument
 //=================================================================================
-void OperationGUI_Fillet1d2dDlg::activateSelection()
+void RepairGUI_FuseEdgesDlg::activateSelection()
 {
   disconnect(myGeomGUI->getApp()->selectionMgr(), 0, this, 0);
   globalSelection();
   if (myEditCurrentArgument == GroupVertexes->LineEdit1)
-    //localSelection(myShape, myIs1D ? TopAbs_WIRE : TopAbs_FACE);
-    if (myIs1D)
-      globalSelection(GEOM_WIRE);
-    else {
-      TColStd_MapOfInteger aMap;
-      aMap.Add(GEOM_FACE);
-      aMap.Add(GEOM_SHELL);
-      globalSelection(aMap);
-    }
+    globalSelection(GEOM_WIRE);
   else if (!myShape->_is_nil() && myEditCurrentArgument == GroupVertexes->LineEdit2)
     localSelection(myShape, TopAbs_VERTEX);
 
@@ -376,39 +301,34 @@ void OperationGUI_Fillet1d2dDlg::activateSelection()
 // function : createOperation
 // purpose  :
 //=================================================================================
-GEOM::GEOM_IOperations_ptr OperationGUI_Fillet1d2dDlg::createOperation()
+GEOM::GEOM_IOperations_ptr RepairGUI_FuseEdgesDlg::createOperation()
 {
-  return getGeomEngine()->GetILocalOperations(getStudyId());
+  return getGeomEngine()->GetIHealingOperations(getStudyId());
 }
 
 //=================================================================================
 // function : isValid()
 // purpose  : Verify validity of input data
 //=================================================================================
-bool OperationGUI_Fillet1d2dDlg::isValid (QString& msg)
+bool RepairGUI_FuseEdgesDlg::isValid (QString& msg)
 {
-  bool ok = !myShape->_is_nil();
-  ok = GroupVertexes->SpinBox_DX->isValid( msg, !IsPreview() ) && ok;
-  ok = (myIs1D || myVertexes.Extent() > 0) && ok;
-  return ok;
+  return (!myShape->_is_nil());
 }
 
 //=================================================================================
 // function : execute
 // purpose  :
 //=================================================================================
-bool OperationGUI_Fillet1d2dDlg::execute (ObjectList& objects)
+bool RepairGUI_FuseEdgesDlg::execute (ObjectList& objects)
 {
-  GEOM::ListOfLong_var aListOfIndexes = new GEOM::ListOfLong;
-  aListOfIndexes->length(myVertexes.Extent());
+  GEOM::GEOM_IHealingOperations_var anOper = GEOM::GEOM_IHealingOperations::_narrow(getOperation());
 
-  for (int i = 1, n = myVertexes.Extent(); i <= n; i++)
-    aListOfIndexes[ i - 1 ] = myVertexes(i);
+  GEOM::ListOfGO_var points = new GEOM::ListOfGO();
+  points->length(myPoints.count());
+  for (int i = 0; i < myPoints.count(); i++)
+    points[i] = myPoints[i].copy();
 
-  GEOM::GEOM_ILocalOperations_var anOper = GEOM::GEOM_ILocalOperations::_narrow(getOperation());
-  GEOM::GEOM_Object_var anObj = myIs1D ?
-    anOper->MakeFillet1D(myShape, getRadius(), aListOfIndexes, GroupVertexes->CheckButton1->isChecked()) : 
-    anOper->MakeFillet2D(myShape, getRadius(), aListOfIndexes);
+  GEOM::GEOM_Object_var anObj = anOper->FuseCollinearEdgesWithinWire(myShape, points.in());
 
   if (!anObj->_is_nil())
     objects.push_back(anObj._retn());
@@ -417,10 +337,11 @@ bool OperationGUI_Fillet1d2dDlg::execute (ObjectList& objects)
 }
 
 //=================================================================================
-// function : getRadius
-// purpose  : Get radius
+// function : addSubshapeToStudy
+// purpose  : virtual method to add new SubObjects if local selection
 //=================================================================================
-double OperationGUI_Fillet1d2dDlg::getRadius() const
+void RepairGUI_FuseEdgesDlg::addSubshapesToStudy()
 {
-  return GroupVertexes->SpinBox_DX->value();
+  for (int i = 0; i < myPoints.count(); i++)
+    GEOMBase::PublishSubObject(myPoints[i].get());
 }

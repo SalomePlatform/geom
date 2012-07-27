@@ -144,14 +144,14 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
       if (aShape_i.IsNull()) {
         Standard_NullObject::Raise("Shape for wire construction is null");
       }
-     if (aShape_i.ShapeType() == TopAbs_EDGE || aShape_i.ShapeType() == TopAbs_WIRE) {
-       TopExp_Explorer exp (aShape_i, TopAbs_EDGE);
-       for (; exp.More(); exp.Next())
-         B.Add(aWire, TopoDS::Edge(exp.Current()));
-     } else {
-       Standard_TypeMismatch::Raise
-         ("Shape for wire construction is neither an edge nor a wire");
-     }
+      if (aShape_i.ShapeType() == TopAbs_EDGE || aShape_i.ShapeType() == TopAbs_WIRE) {
+        TopExp_Explorer exp (aShape_i, TopAbs_EDGE);
+        for (; exp.More(); exp.Next())
+          B.Add(aWire, TopoDS::Edge(exp.Current()));
+      } else {
+        Standard_TypeMismatch::Raise
+          ("Shape for wire construction is neither an edge nor a wire");
+      }
     }
 
     // fix edges order
@@ -491,6 +491,108 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     Standard_Real AngTol = aCI.GetAngularTolerance();
     if (aWire.IsNull()) Standard_NullObject::Raise("Argument Wire is null");
 
+    aShape = MakeEdgeFromWire(aWire, LinTol, AngTol);
+  }
+  else if (aType == EDGE_CURVE_LENGTH) {
+    GEOMImpl_IVector aVI (aFunction);
+
+    // RefCurve
+    Handle(GEOM_Function) aRefCurve = aVI.GetPoint1();
+    if (aRefCurve.IsNull()) Standard_NullObject::Raise("Argument Curve is null");
+    TopoDS_Shape aRefShape1 = aRefCurve->GetValue();
+    if (aRefShape1.ShapeType() != TopAbs_EDGE) {
+      Standard_TypeMismatch::Raise
+        ("Edge On Curve creation aborted : curve shape is not an edge");
+    }
+    TopoDS_Edge aRefEdge = TopoDS::Edge(aRefShape1);
+    TopoDS_Vertex V1, V2;
+    TopExp::Vertices(aRefEdge, V1, V2, Standard_True);
+
+    // RefPoint
+    TopoDS_Vertex aRefVertex;
+    Handle(GEOM_Function) aRefPoint = aVI.GetPoint2();
+    if (aRefPoint.IsNull()) {
+      aRefVertex = V1;
+    }
+    else {
+      TopoDS_Shape aRefShape2 = aRefPoint->GetValue();
+      if (aRefShape2.ShapeType() != TopAbs_VERTEX) {
+        Standard_TypeMismatch::Raise
+          ("Edge On Curve creation aborted : start point shape is not a vertex");
+      }
+      aRefVertex = TopoDS::Vertex(aRefShape2);
+    }
+    gp_Pnt aRefPnt = BRep_Tool::Pnt(aRefVertex);
+
+    // Length
+    Standard_Real aLength = aVI.GetParameter();
+    //Standard_Real aCurveLength = IntTools::Length(aRefEdge);
+    //if (aLength > aCurveLength) {
+    //  Standard_ConstructionError::Raise
+    //    ("Edge On Curve creation aborted : given length is greater than edges length");
+    //}
+    if (fabs(aLength) < Precision::Confusion()) {
+      Standard_ConstructionError::Raise
+        ("Edge On Curve creation aborted : given length is smaller than Precision::Confusion()");
+    }
+
+    // Check orientation
+    Standard_Real UFirst, ULast;
+    Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(aRefEdge, UFirst, ULast);
+    Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
+
+    Standard_Real dU = ULast - UFirst;
+    Standard_Real par1 = UFirst + 0.1 * dU;
+    Standard_Real par2 = ULast  - 0.1 * dU;
+
+    gp_Pnt P1 = EdgeCurve->Value(par1);
+    gp_Pnt P2 = EdgeCurve->Value(par2);
+
+    if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
+      ReOrientedCurve = EdgeCurve->Reversed();
+      UFirst = EdgeCurve->ReversedParameter(ULast);
+    }
+
+    // Get the point by length
+    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
+    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst);
+    Standard_Real aParam = anAbsPnt.Parameter();
+
+    if (AdapCurve.IsClosed() && aLength < 0.0) {
+      Standard_Real aTmp = aParam;
+      aParam = UFirst;
+      UFirst = aTmp;
+    }
+
+    BRepBuilderAPI_MakeEdge aME (ReOrientedCurve, UFirst, aParam);
+    if (aME.IsDone())
+      aShape = aME.Shape();
+  }
+  else {
+  }
+
+  if (aShape.IsNull()) return 0;
+
+  // Check shape validity
+  BRepCheck_Analyzer ana (aShape, false);
+  if (!ana.IsValid()) {
+    //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
+  }
+
+  aFunction->SetValue(aShape);
+
+  log.SetTouched(Label());
+
+  if (!aWarning.IsEmpty())
+    Standard_Failure::Raise(aWarning.ToCString());
+
+  return 1;
+}
+
+TopoDS_Edge GEOMImpl_ShapeDriver::MakeEdgeFromWire(const TopoDS_Shape& aWire,
+                                                   const Standard_Real LinTol,
+                                                   const Standard_Real AngTol)
+{
     TopoDS_Edge ResEdge;
 
     BRepLib::BuildCurves3d(aWire);
@@ -834,104 +936,8 @@ Standard_Integer GEOMImpl_ShapeDriver::Execute(TFunction_Logbook& log) const
     if (FinalReverse)
       ResEdge.Reverse();
 
-    aShape = ResEdge;
-  }
-  else if (aType == EDGE_CURVE_LENGTH) {
-    GEOMImpl_IVector aVI (aFunction);
-
-    // RefCurve
-    Handle(GEOM_Function) aRefCurve = aVI.GetPoint1();
-    if (aRefCurve.IsNull()) Standard_NullObject::Raise("Argument Curve is null");
-    TopoDS_Shape aRefShape1 = aRefCurve->GetValue();
-    if (aRefShape1.ShapeType() != TopAbs_EDGE) {
-      Standard_TypeMismatch::Raise
-        ("Edge On Curve creation aborted : curve shape is not an edge");
-    }
-    TopoDS_Edge aRefEdge = TopoDS::Edge(aRefShape1);
-    TopoDS_Vertex V1, V2;
-    TopExp::Vertices(aRefEdge, V1, V2, Standard_True);
-
-    // RefPoint
-    TopoDS_Vertex aRefVertex;
-    Handle(GEOM_Function) aRefPoint = aVI.GetPoint2();
-    if (aRefPoint.IsNull()) {
-      aRefVertex = V1;
-    }
-    else {
-      TopoDS_Shape aRefShape2 = aRefPoint->GetValue();
-      if (aRefShape2.ShapeType() != TopAbs_VERTEX) {
-        Standard_TypeMismatch::Raise
-          ("Edge On Curve creation aborted : start point shape is not a vertex");
-      }
-      aRefVertex = TopoDS::Vertex(aRefShape2);
-    }
-    gp_Pnt aRefPnt = BRep_Tool::Pnt(aRefVertex);
-
-    // Length
-    Standard_Real aLength = aVI.GetParameter();
-    //Standard_Real aCurveLength = IntTools::Length(aRefEdge);
-    //if (aLength > aCurveLength) {
-    //  Standard_ConstructionError::Raise
-    //    ("Edge On Curve creation aborted : given length is greater than edges length");
-    //}
-    if (fabs(aLength) < Precision::Confusion()) {
-      Standard_ConstructionError::Raise
-        ("Edge On Curve creation aborted : given length is smaller than Precision::Confusion()");
-    }
-
-    // Check orientation
-    Standard_Real UFirst, ULast;
-    Handle(Geom_Curve) EdgeCurve = BRep_Tool::Curve(aRefEdge, UFirst, ULast);
-    Handle(Geom_Curve) ReOrientedCurve = EdgeCurve;
-
-    Standard_Real dU = ULast - UFirst;
-    Standard_Real par1 = UFirst + 0.1 * dU;
-    Standard_Real par2 = ULast  - 0.1 * dU;
-
-    gp_Pnt P1 = EdgeCurve->Value(par1);
-    gp_Pnt P2 = EdgeCurve->Value(par2);
-
-    if (aRefPnt.SquareDistance(P2) < aRefPnt.SquareDistance(P1)) {
-      ReOrientedCurve = EdgeCurve->Reversed();
-      UFirst = EdgeCurve->ReversedParameter(ULast);
-    }
-
-    // Get the point by length
-    GeomAdaptor_Curve AdapCurve = GeomAdaptor_Curve(ReOrientedCurve);
-    GCPnts_AbscissaPoint anAbsPnt (AdapCurve, aLength, UFirst);
-    Standard_Real aParam = anAbsPnt.Parameter();
-
-    if (AdapCurve.IsClosed() && aLength < 0.0) {
-      Standard_Real aTmp = aParam;
-      aParam = UFirst;
-      UFirst = aTmp;
-    }
-
-    BRepBuilderAPI_MakeEdge aME (ReOrientedCurve, UFirst, aParam);
-    if (aME.IsDone())
-      aShape = aME.Shape();
-  }
-  else {
-  }
-
-  if (aShape.IsNull()) return 0;
-
-  // Check shape validity
-  BRepCheck_Analyzer ana (aShape, false);
-  if (!ana.IsValid()) {
-    //Standard_ConstructionError::Raise("Algorithm have produced an invalid shape result");
-  }
-
-  aFunction->SetValue(aShape);
-
-  log.SetTouched(Label());
-
-  if (!aWarning.IsEmpty())
-    Standard_Failure::Raise(aWarning.ToCString());
-
-  return 1;
+    return ResEdge;
 }
-
 
 //=======================================================================
 //function :  GEOMImpl_ShapeDriver_Type_

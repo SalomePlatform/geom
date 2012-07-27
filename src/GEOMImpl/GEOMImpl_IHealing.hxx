@@ -18,28 +18,31 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "GEOM_Function.hxx"
 
 #include <TColStd_HArray1OfInteger.hxx>
 #include <TColStd_HArray1OfExtendedString.hxx>
-
-#define ARG_SHAPE_PROCESS_OPERATORS   1
-#define ARG_SHAPE_PROCESS_PARAMS      2
-#define ARG_SHAPE_PROCESS_VALUES      3
-#define ARG_ORIGINAL                  4
-#define ARG_LIST_ARGUMENTS            5
-#define ARG_IS_COMMON_VERTEX          6
-#define ARG_TOLERANCE                 7
-#define ARG_DEV_EDGE_VALUE            8
-#define ARG_IS_BY_PARAMETER           9
-#define ARG_SUBSHAPE_INDEX           10
-
+#include "TColStd_HSequenceOfTransient.hxx"
 
 class GEOMImpl_IHealing
 {
 public:
+
+  enum {
+    ARG_SHAPE_PROCESS_OPERATORS =  1,
+    ARG_SHAPE_PROCESS_PARAMS    =  2,
+    ARG_SHAPE_PROCESS_VALUES    =  3,
+    ARG_ORIGINAL                =  4,
+    ARG_LIST_ARGUMENTS          =  5,
+    ARG_IS_COMMON_VERTEX        =  6,
+    ARG_TOLERANCE               =  7,
+    ARG_DEV_EDGE_VALUE          =  8,
+    ARG_IS_BY_PARAMETER         =  9,
+    ARG_SUBSHAPE_INDEX          = 10,
+    ARG_LIST_SHAPES             = 11
+  };
+
   GEOMImpl_IHealing(Handle(GEOM_Function) theFunction): _func(theFunction) {}
 
   void SetOperators( const Handle(TColStd_HArray1OfExtendedString)& arr ) {  if ( !arr.IsNull() ) _func->SetStringArray(ARG_SHAPE_PROCESS_OPERATORS, arr); }
@@ -74,6 +77,11 @@ public:
 
   void SetIndex( Standard_Integer val ) { _func->SetInteger(ARG_SUBSHAPE_INDEX, val); }
   Standard_Integer GetIndex() { return _func->GetInteger(ARG_SUBSHAPE_INDEX); }
+
+  void SetShapes(const Handle(TColStd_HSequenceOfTransient)& theShapes)
+  { _func->SetReferenceList(ARG_LIST_SHAPES, theShapes); }
+  Handle(TColStd_HSequenceOfTransient) GetShapes()
+  { return _func->GetReferenceList(ARG_LIST_SHAPES); }
 
 private:
   Handle(GEOM_Function) _func;

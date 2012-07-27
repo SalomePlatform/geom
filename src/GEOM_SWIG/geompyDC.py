@@ -4642,6 +4642,29 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             anObj.SetParameters(Parameters)
             return anObj
 
+        ## Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
+        #  @param theWire Wire to minimize the number of C1 continuous edges in.
+        #  @param theVertices A list of vertices to suppress. If the list
+        #                     is empty, all vertices in a wire will be assumed.
+        #  @return New GEOM.GEOM_Object with modified wire.
+        #
+        #  @ref tui_fuse_collinear_edges "Example"
+        def FuseCollinearEdgesWithinWire(self, theWire, theVertices = []):
+            """
+            Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
+
+            Parameters: 
+                theWire Wire to minimize the number of C1 continuous edges in.
+                theVertices A list of vertices to suppress. If the list
+                            is empty, all vertices in a wire will be assumed.
+
+            Returns:  
+                New GEOM.GEOM_Object with modified wire.
+            """
+            anObj = self.HealOp.FuseCollinearEdgesWithinWire(theWire, theVertices)
+            RaiseIfFailed("FuseCollinearEdgesWithinWire", self.HealOp)
+            return anObj
+
         ## Change orientation of the given object. Updates given shape.
         #  @param theObject Shape to be processed.
         #  @return Updated <var>theObject</var>
@@ -6001,10 +6024,16 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #    \note Global index of sub-shape can be obtained, using method GetSubShapeID()
         #    \note The list of vertices could be empty,
         #          in this case fillet will done done at all vertices in wire
+        #  @param doIgnoreSecantVertices If FALSE, fillet radius is always limited
+        #         by the length of the edges, nearest to the fillet vertex.
+        #         But sometimes the next edge is C1 continuous with the one, nearest to
+        #         the fillet point, and such two (or more) edges can be united to allow
+        #         bigger radius. Set this flag to TRUE to allow collinear edges union,
+        #         thus ignoring the secant vertex (vertices).
         #  @return New GEOM.GEOM_Object, containing the result shape.
         #
         #  @ref tui_fillet2d "Example"
-        def MakeFillet1D(self,theShape, theR, theListOfVertexes):
+        def MakeFillet1D(self,theShape, theR, theListOfVertexes, doIgnoreSecantVertices = True):
             """
             Perform a fillet on the specified edges of the given shape
 
@@ -6012,6 +6041,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 theShape  Wire Shape to perform fillet on.
                 theR  Fillet radius.
                 theListOfVertexes Global indices of vertexes to perform fillet on.
+                doIgnoreSecantVertices If FALSE, fillet radius is always limited
+                    by the length of the edges, nearest to the fillet vertex.
+                    But sometimes the next edge is C1 continuous with the one, nearest to
+                    the fillet point, and such two (or more) edges can be united to allow
+                    bigger radius. Set this flag to TRUE to allow collinear edges union,
+                    thus ignoring the secant vertex (vertices).
             Note:
                 Global index of sub-shape can be obtained, using method geompy.GetSubShapeID
 
@@ -6027,8 +6062,8 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 Fillet_1D_1 = geompy.MakeFillet1D(Wire_1, 55, [3, 4, 6, 8, 10])
             """
             # Example: see GEOM_TestAll.py
-            theR,Parameters = ParseParameters(theR)
-            anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes)
+            theR,doIgnoreSecantVertices,Parameters = ParseParameters(theR,doIgnoreSecantVertices)
+            anObj = self.LocalOp.MakeFillet1D(theShape, theR, theListOfVertexes, doIgnoreSecantVertices)
             RaiseIfFailed("MakeFillet1D", self.LocalOp)
             anObj.SetParameters(Parameters)
             return anObj

@@ -15,11 +15,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 //  File   : GEOMImpl_Fillet1dDriver.ixx
 //  Module : GEOMImpl
-//
+
 #ifndef _GEOMImpl_Fillet1dDriver_HeaderFile
 #define _GEOMImpl_Fillet1dDriver_HeaderFile
 
@@ -47,6 +46,9 @@
 #ifndef _Handle_TFunction_Driver_HeaderFile
 #include <Handle_TFunction_Driver.hxx>
 #endif
+
+#include <TopoDS_Wire.hxx>
+#include <TopTools_ListOfShape.hxx>
 
 class Standard_Transient;
 class Handle_Standard_Type;
@@ -123,37 +125,42 @@ class GEOMImpl_Fillet1dDriver : public TFunction_Driver {
 
 public:
 
-    inline void* operator new(size_t,void* anAddress) 
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size) 
-      { 
-        return Standard::Allocate(size); 
-      }
-    inline void  operator delete(void *anAddress) 
-      { 
-        if (anAddress) Standard::Free((Standard_Address&)anAddress); 
-      }
+  inline void* operator new(size_t,void* anAddress) 
+  {
+    return anAddress;
+  }
+  inline void* operator new(size_t size) 
+  { 
+    return Standard::Allocate(size); 
+  }
+  inline void  operator delete(void *anAddress) 
+  { 
+    if (anAddress) Standard::Free((Standard_Address&)anAddress); 
+  }
 
- // Methods PUBLIC
- // 
-Standard_EXPORT GEOMImpl_Fillet1dDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_Fillet1dDriver() {};
+  // Methods PUBLIC
+  // 
+  Standard_EXPORT GEOMImpl_Fillet1dDriver();
+  Standard_EXPORT ~GEOMImpl_Fillet1dDriver() {};
 
+  Standard_EXPORT static const Standard_GUID& GetID();
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_Fillet1dDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const 
- { return STANDARD_TYPE(GEOMImpl_Fillet1dDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
- { return (STANDARD_TYPE(GEOMImpl_Fillet1dDriver) == AType || TFunction_Driver::IsKind(AType)); } 
+  Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const; 
+  Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
 
+  // Type management
+  //
+  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_Fillet1dDriver_Type_();
+  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const 
+  { return STANDARD_TYPE(GEOMImpl_Fillet1dDriver) ; }
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const
+  { return (STANDARD_TYPE(GEOMImpl_Fillet1dDriver) == AType || TFunction_Driver::IsKind(AType)); } 
+
+private:
+
+  Standard_EXPORT bool MakeFillet(const TopoDS_Wire&, const TopTools_ListOfShape&,
+                                  const Standard_Real, bool, TopoDS_Wire&) const; 
 
 };
 

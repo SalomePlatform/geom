@@ -15,12 +15,11 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 // GEOM GEOMGUI : GUI for Geometry component
 // File   : OperationGUI_Fillet1d2dDlg.h
 // Author : DMV, OCN
-//
+
 #ifndef OPERATIONGUI_Fillet1d2dDLG_H
 #define OPERATIONGUI_Fillet1d2dDLG_H
 
@@ -28,7 +27,7 @@
 
 #include <TColStd_IndexedMapOfInteger.hxx>
 
-class DlgRef_2Sel1Spin;
+class DlgRef_2Sel1Spin2Check;
 
 //=================================================================================
 // class    : OperationGUI_Fillet1d2dDlg
@@ -68,7 +67,7 @@ private:
   GEOM::GEOM_Object_var               myShape;
   TColStd_IndexedMapOfInteger         myVertexes;
 
-  DlgRef_2Sel1Spin*                   GroupVertexes;
+  DlgRef_2Sel1Spin2Check*             GroupVertexes;
 };
 
 #endif // OPERATIONGUI_Fillet1d2dDLG_H

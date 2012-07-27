@@ -2905,11 +2905,18 @@ module GEOM
      *          <VAR>GEOM_IShapesOperations.GetSubShapeIndex()</VAR>.
      *    \note The list of vertices coudl be empty, in this case fillet fill be done
      *          at all vertices in given wire
+     *  \param doIgnoreSecantVertices If FALSE, fillet radius is always limited
+     *         by the length of the edges, nearest to the fillet vertex.
+     *         But sometimes the next edge is C1 continuous with the one, nearest to
+     *         the fillet point, and such two (or more) edges can be united to allow
+     *         bigger radius. Set this flag to TRUE to allow collinear edges union,
+     *         thus ignoring the secant vertex (vertices).
      *  \return New GEOM_Object, containing the result shape.
      */
     GEOM_Object MakeFillet1D (in GEOM_Object theShape,
                               in double      theR,
-                              in ListOfLong  theVertexes);
+                              in ListOfLong  theVertexes,
+                              in boolean     doIgnoreSecantVertices);
 
     /*!
      *  \brief Perform a symmetric chamfer on all edges of the given shape.
@@ -3119,6 +3126,16 @@ module GEOM
      */
     GEOM_Object DivideEdge (in GEOM_Object theObject, in short theEdgeIndex,
                             in double theValue, in boolean isByParameter);
+
+    /*!
+     *  \brief Suppress the vertices in the wire in case if adjacent edges are C1 continuous.
+     *  \param theWire Wire to minimize the number of C1 continuous edges in.
+     *  \param theVertices A list of vertices to suppress. If the list
+     *                     is empty, all vertices in a wire will be assumed.
+     *  \return New GEOM_Object with modified wire.
+     */
+    GEOM_Object FuseCollinearEdgesWithinWire (in GEOM_Object theWire,
+                                              in ListOfGO theVertices);
 
     /*!
      *  \brief Get a list of wires (wrapped in GEOM_Object-s),

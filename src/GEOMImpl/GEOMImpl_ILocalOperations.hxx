@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOMImpl_ILocalOperations_HXX_
 #define _GEOMImpl_ILocalOperations_HXX_
@@ -50,7 +49,7 @@ class GEOMImpl_ILocalOperations : public GEOM_IOperations {
   Standard_EXPORT Handle(GEOM_Object) MakeFillet2D (Handle(GEOM_Object) theShape, double theR,
                                                     std::list<int> theVertexes);
   Standard_EXPORT Handle(GEOM_Object) MakeFillet1D (Handle(GEOM_Object) theShape, double theR,
-                                                    std::list<int> theVertexes);
+                                                    std::list<int> theVertexes, bool doIgnoreSecantVertices);
 
   Standard_EXPORT Handle(GEOM_Object) MakeChamferAll   (Handle(GEOM_Object) theShape, double theD);
   Standard_EXPORT Handle(GEOM_Object) MakeChamferEdge  (Handle(GEOM_Object) theShape,

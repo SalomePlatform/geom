@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include <Standard_Stream.hxx>
 
@@ -394,6 +393,43 @@ GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::DivideEdge (GEOM::GEOM_Object_p
     return aGEOMObject._retn();
 
   return GetObject(aNewObject);
+}
+
+//=============================================================================
+/*!
+ *  FuseCollinearEdgesWithinWire
+ */
+//=============================================================================
+GEOM::GEOM_Object_ptr GEOM_IHealingOperations_i::FuseCollinearEdgesWithinWire
+                                          (GEOM::GEOM_Object_ptr theWire,
+                                           const GEOM::ListOfGO& theVertices)
+{
+  GEOM::GEOM_Object_var aGEOMObject;
+
+  //Set a not done flag
+  GetOperations()->SetNotDone();
+
+  //Get the reference objects
+  Handle(GEOM_Object) aWire = GetObjectImpl(theWire);
+  if (aWire.IsNull()) return aGEOMObject._retn();
+
+  int ind, aLen;
+  std::list<Handle(GEOM_Object)> aVerts;
+  //Get the shapes
+  aLen = theVertices.length();
+  for (ind = 0; ind < aLen; ind++) {
+    Handle(GEOM_Object) aSh = GetObjectImpl(theVertices[ind]);
+    if (aSh.IsNull()) return aGEOMObject._retn();
+    aVerts.push_back(aSh);
+  }
+
+  //Perform operation
+  Handle(GEOM_Object) anObject =
+    GetOperations()->FuseCollinearEdgesWithinWire(aWire, aVerts);
+  if (!GetOperations()->IsDone() || anObject.IsNull())
+    return aGEOMObject._retn();
+
+  return GetObject(anObject);
 }
 
 //=============================================================================

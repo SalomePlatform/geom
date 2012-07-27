@@ -18,8 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
-
 
 #ifndef _GEOM_IHealingOperations_i_HeaderFile
 #define _GEOM_IHealingOperations_i_HeaderFile
@@ -80,6 +78,9 @@ class GEOM_I_EXPORT GEOM_IHealingOperations_i :
                                      CORBA::Short theIndex,
                                      CORBA::Double theValue,
                                      CORBA::Boolean isByParameter);
+
+   GEOM::GEOM_Object_ptr FuseCollinearEdgesWithinWire (GEOM::GEOM_Object_ptr theWire,
+                                                       const GEOM::ListOfGO& theVertices);
 
    CORBA::Boolean GetFreeBoundary(GEOM::GEOM_Object_ptr theObject,
                                   GEOM::ListOfGO_out theClosedWires,

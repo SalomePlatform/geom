@@ -44,6 +44,7 @@
 #include "RepairGUI_LimitToleranceDlg.h"    // Method LIMIT TOLERANCE
 #include "RepairGUI_ChangeOrientationDlg.h" // Method CHANGE ORIENTATION
 #include "RepairGUI_RemoveExtraEdgesDlg.h"  // Method REMOVE EXTRA EDGES
+#include "RepairGUI_FuseEdgesDlg.h"         // Method FUSE COLLINEAR EDGES
 
 //=======================================================================
 // function : RepairGUI()
@@ -90,9 +91,10 @@ bool RepairGUI::OnGUIEvent( int theCommandID, SUIT_Desktop* parent )
   case GEOMOp::OpFreeFaces:        aDlg = new RepairGUI_FreeFacesDlg         (getGeometryGUI(), parent); break;
   case GEOMOp::OpOrientation:      aDlg = new RepairGUI_ChangeOrientationDlg (getGeometryGUI(), parent); break;
   case GEOMOp::OpRemoveExtraEdges: aDlg = new RepairGUI_RemoveExtraEdgesDlg  (getGeometryGUI(), parent); break;
-    default:
-      app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
-      break;
+  case GEOMOp::OpFuseEdges:        aDlg = new RepairGUI_FuseEdgesDlg         (getGeometryGUI(), parent); break;
+  default:
+    app->putInfo(tr("GEOM_PRP_COMMAND").arg(theCommandID));
+    break;
   }
 
   if (aDlg)

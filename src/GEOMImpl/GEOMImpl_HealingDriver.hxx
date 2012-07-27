@@ -57,6 +57,8 @@ class GEOMImpl_HealingDriver;
 
 class GEOMImpl_IHealing;
 #include <TopoDS_Shape.hxx>
+#include <TopoDS_Edge.hxx>
+#include <TColStd_HSequenceOfTransient.hxx>
 
 Standard_EXPORT Handle_Standard_Type& STANDARD_TYPE(GEOMImpl_HealingDriver);
 
@@ -128,45 +130,51 @@ class GEOMImpl_HealingDriver : public TFunction_Driver {
 
 public:
 
-    inline void* operator new(size_t,void* anAddress)
-      {
-        return anAddress;
-      }
-    inline void* operator new(size_t size)
-      {
-        return Standard::Allocate(size);
-      }
-    inline void  operator delete(void *anAddress)
-      {
-        if (anAddress) Standard::Free((Standard_Address&)anAddress);
-      }
+  inline void* operator new(size_t,void* anAddress)
+  {
+    return anAddress;
+  }
+  inline void* operator new(size_t size)
+  {
+    return Standard::Allocate(size);
+  }
+  inline void  operator delete(void *anAddress)
+  {
+    if (anAddress) Standard::Free((Standard_Address&)anAddress);
+  }
 
- // Methods PUBLIC
- //
-Standard_EXPORT GEOMImpl_HealingDriver();
-Standard_EXPORT virtual  Standard_Integer Execute(TFunction_Logbook& log) const;
-Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
-Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
-Standard_EXPORT static const Standard_GUID& GetID();
-Standard_EXPORT ~GEOMImpl_HealingDriver() {};
+  // Methods PUBLIC
+  //
+  Standard_EXPORT GEOMImpl_HealingDriver();
+  Standard_EXPORT ~GEOMImpl_HealingDriver() {};
 
+  Standard_EXPORT static const Standard_GUID& GetID();
 
- // Type management
- //
-Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_HealingDriver_Type_();
-Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_HealingDriver) ; }
-Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_HealingDriver) == AType || TFunction_Driver::IsKind(AType)); }
+  Standard_EXPORT virtual Standard_Integer Execute(TFunction_Logbook& log) const;
+  Standard_EXPORT virtual void Validate(TFunction_Logbook&) const {}
+  Standard_EXPORT Standard_Boolean MustExecute(const TFunction_Logbook&) const { return Standard_True; }
+
+  Standard_EXPORT static Standard_Boolean AreEdgesC1 (const TopoDS_Edge& E1, const TopoDS_Edge& E2);
+  Standard_EXPORT static void FuseCollinearEdges (const TopoDS_Shape&,
+                                                  const Handle(TColStd_HSequenceOfTransient)&,
+                                                  TopoDS_Shape&);
+
+  // Type management
+  //
+  Standard_EXPORT friend Handle_Standard_Type& GEOMImpl_HealingDriver_Type_();
+  Standard_EXPORT const Handle(Standard_Type)& DynamicType() const  { return STANDARD_TYPE(GEOMImpl_HealingDriver) ; }
+  Standard_EXPORT Standard_Boolean IsKind(const Handle(Standard_Type)& AType) const { return (STANDARD_TYPE(GEOMImpl_HealingDriver) == AType || TFunction_Driver::IsKind(AType)); }
 
 private:
-Standard_Boolean ShapeProcess  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean SuppressFaces ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean CloseContour  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean RemoveIntWires( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean RemoveHoles   ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean Sew           ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean AddPointOnEdge( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-Standard_Boolean ChangeOrientation( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
-void             LimitTolerance( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean ShapeProcess  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean SuppressFaces ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean CloseContour  ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean RemoveIntWires( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean RemoveHoles   ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean Sew           ( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean AddPointOnEdge( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  Standard_Boolean ChangeOrientation( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
+  void             LimitTolerance( GEOMImpl_IHealing*, const TopoDS_Shape&, TopoDS_Shape& ) const;
 
 };
 

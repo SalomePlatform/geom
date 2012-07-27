@@ -156,6 +156,10 @@
             <translation>remove_extra_edges.png</translation>
         </message>
         <message>
+            <source>ICON_DLG_FUSE_EDGES</source>
+            <translation>fuse_collinear_edges.png</translation>
+        </message>
+        <message>
             <source>ICON_DLG_CHECKSHAPE</source>
             <translation>check.png</translation>
         </message>
@@ -978,6 +982,10 @@
         <message>
             <source>ICO_REMOVE_EXTRA_EDGES</source>
             <translation>remove_extra_edges.png</translation>
+        </message>
+        <message>
+            <source>ICO_FUSE_EDGES</source>
+            <translation>fuse_collinear_edges.png</translation>
         </message>
         <message>
             <source>ICO_NORMALE</source>

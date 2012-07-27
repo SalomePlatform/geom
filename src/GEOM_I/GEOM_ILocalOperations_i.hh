@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #ifndef _GEOM_ILocalOperations_i_HeaderFile
 #define _GEOM_ILocalOperations_i_HeaderFile
@@ -65,7 +64,8 @@ class GEOM_I_EXPORT GEOM_ILocalOperations_i :
 				      const GEOM::ListOfLong& theVertexes);
 
   GEOM::GEOM_Object_ptr MakeFillet1D (GEOM::GEOM_Object_ptr theShape, CORBA::Double theR,
-				      const GEOM::ListOfLong& theVertexes);
+				      const GEOM::ListOfLong& theVertexes,
+                                      CORBA::Boolean doIgnoreSecantVertices);
 
   GEOM::GEOM_Object_ptr MakeChamferAll   (GEOM::GEOM_Object_ptr theShape, CORBA::Double theD);
 

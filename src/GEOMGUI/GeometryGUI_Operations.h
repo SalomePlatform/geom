@@ -157,6 +157,7 @@ namespace GEOMOp {
     OpRemoveExtraEdges    = 4011,   // MENU REPAIR - REMOVE EXTRA EDGES
     OpLimitTolerance      = 4012,   // MENU REPAIR - LIMIT TOLERANCE
     OpGlueEdges           = 4013,   // MENU REPAIR - GLUE EDGES
+    OpFuseEdges           = 4014,   // MENU REPAIR - FUSE COLLINEAR EDGES
     // MeasureGUI ----------------//--------------------------------
     OpProperties          = 5000,   // MENU MEASURES - PROPERTIES
     OpCenterMass          = 5001,   // MENU MEASURES - CENTRE OF MASS

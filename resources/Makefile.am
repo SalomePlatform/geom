@@ -98,6 +98,7 @@ filletwire.png			\
 filletface.png			\
 filling.png			\
 fuse.png			\
+fuse_collinear_edges.png	\
 geometry.png			\
 import_picture.png		\
 limit_tolerance.png		\

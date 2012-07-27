@@ -18,7 +18,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 //
 // See http://www.salome-platform.org/ or email : webmaster.salome@opencascade.com
-//
 
 #include "GEOM_Superv_i.hh"
 #include "SALOME_LifeCycleCORBA.hxx"
@@ -3034,14 +3033,16 @@ GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet2D (GEOM::GEOM_Object_ptr theShap
 //=============================================================================
 GEOM::GEOM_Object_ptr GEOM_Superv_i::MakeFillet1D (GEOM::GEOM_Object_ptr theShape,
                                                    CORBA::Double theR,
-                                                   GEOM::GEOM_List_ptr theVertexes)
+                                                   GEOM::GEOM_List_ptr theVertexes,
+                                                   CORBA::Boolean doIgnoreSecantVertices)
 {
   beginService( " GEOM_Superv_i::MakeFillet1D" );
   MESSAGE("GEOM_Superv_i::MakeFillet1D");
   if (GEOM_List_i<GEOM::ListOfLong>* aListImplV =
       dynamic_cast<GEOM_List_i<GEOM::ListOfLong>*>(GetServant(theVertexes, myPOA).in())) {
     getLocalOp();
-    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet1D(theShape, theR, aListImplV->GetList());
+    GEOM::GEOM_Object_ptr anObj = myLocalOp->MakeFillet1D
+      (theShape, theR, aListImplV->GetList(), doIgnoreSecantVertices);
     endService( " GEOM_Superv_i::MakeFillet1D" );
     return anObj;
   }
