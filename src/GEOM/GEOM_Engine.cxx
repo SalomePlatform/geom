@@ -244,8 +244,10 @@ GEOM_Engine::~GEOM_Engine()
   Interface_DataMapIteratorOfDataMapOfIntegerTransient anItr (_mapIDDocument);
 #endif
   for (; anItr.More(); anItr.Next())
+  {
     Close(anItr.Key());
-
+    anItr.Initialize( _mapIDDocument ); // anItr becomes invalid at _mapIDDocument.UnBind(docId)
+  }
   _mapIDDocument.Clear();
   _objects.Clear();
 }
