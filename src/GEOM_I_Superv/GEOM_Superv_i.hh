@@ -708,7 +708,9 @@ public:
                                                         GEOM::GEOM_Object_ptr theP1, GEOM::GEOM_Object_ptr theP2, GEOM::GEOM_Object_ptr theP3);
   GEOM::GEOM_Object_ptr MakeDividedDisk (CORBA::Double theR, CORBA::Double theRatio,
                                          CORBA::Short theOrientation, GEOM::pattern thePattern);
-  GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR, CORBA::Double theH);
+  GEOM::GEOM_Object_ptr MakeDividedCylinder (CORBA::Double theR, 
+                                             CORBA::Double theH,
+                                             GEOM::pattern thePattern);
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 
 private:

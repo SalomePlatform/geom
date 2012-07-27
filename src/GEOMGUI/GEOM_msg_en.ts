@@ -839,6 +839,10 @@ Please, select face, shell or solid and try again</translation>
         <translation>Height :</translation>
     </message>
     <message>
+        <source>GEOM_HEXAGON</source>
+        <translation>Hexagon</translation>
+    </message>
+    <message>
         <source>GEOM_HOLES</source>
         <translation>Holes</translation>
     </message>
@@ -1145,6 +1149,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_OFFSET_TITLE</source>
         <translation>Offset Surface</translation>
+    </message>
+    <message>
+        <source>GEOM_PATTERN</source>
+        <translation>Division pattern</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION</source>
@@ -1849,6 +1857,10 @@ Please, select face, shell or solid and try again</translation>
     <message>
         <source>GEOM_SPLINE_TITLE</source>
         <translation>Spline Construction</translation>
+    </message>
+    <message>
+        <source>GEOM_SQUARE</source>
+        <translation>Square</translation>
     </message>
     <message>
         <source>GEOM_START_LCS</source>

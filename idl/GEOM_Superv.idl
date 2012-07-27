@@ -620,7 +620,8 @@ module GEOM
     GEOM_Object MakeDividedDisk (in double theR, in double theRatio, in short theOrientation,
                                  in pattern thePattern);
 
-    GEOM_Object MakeDividedCylinder (in double theR, in double theH);
+    GEOM_Object MakeDividedCylinder (in double theR, in double theH,
+                                     in pattern thePattern);
 
     /*@@ insert new functions before this line @@ do not remove this line @@*/
  };

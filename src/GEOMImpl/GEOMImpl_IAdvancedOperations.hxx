@@ -118,7 +118,10 @@ public:
                                                               double theRatio,
                                                               int    thePattern);
   
-  Standard_EXPORT Handle(GEOM_Object) MakeDividedCylinder (double theR, double theH);
+  Standard_EXPORT Handle(GEOM_Object) MakeDividedCylinder (double theR, 
+                                                           double theH,
+                                                           int thePattern);
+  
   /*@@ insert new functions before this line @@ do not remove this line @@*/
 };
 #endif

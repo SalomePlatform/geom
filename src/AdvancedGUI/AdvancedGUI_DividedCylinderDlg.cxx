@@ -62,10 +62,18 @@ AdvancedGUI_DividedCylinderDlg::AdvancedGUI_DividedCylinderDlg (GeometryGUI* the
   GroupParams->GroupBox1->setTitle(tr("GEOM_BOX_OBJ"));
   GroupParams->TextLabel1->setText(tr("GEOM_RADIUS"));
   GroupParams->TextLabel2->setText(tr("GEOM_HEIGHT"));
+  
+  GroupPattern = new DlgRef_3Radio(centralWidget());
+  GroupPattern->GroupBox1->setTitle(tr("GEOM_PATTERN"));
+  GroupPattern->RadioButton1->setText(tr("GEOM_SQUARE"));
+  GroupPattern->RadioButton2->setText(tr("GEOM_HEXAGON"));
+  GroupPattern->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
+  GroupPattern->RadioButton3->close();
 
   QVBoxLayout* layout = new QVBoxLayout(centralWidget());
   layout->setMargin(0); layout->setSpacing(6);
   layout->addWidget(GroupParams);
+  layout->addWidget(GroupPattern);
   /***************************************************************/
 
   setHelpFileName("create_dividedcylinder_page.html");
@@ -100,6 +108,9 @@ void AdvancedGUI_DividedCylinderDlg::Init()
   double aHeight = 300;
   GroupParams->SpinBox_DX->setValue(aRadius);
   GroupParams->SpinBox_DY->setValue(aHeight);
+  
+  GroupPattern->RadioButton1->setChecked(true);
+  myPattern = GEOM::SQUARE;
 
   // Signal/slot connections
   connect(buttonOk(),    SIGNAL(clicked()), this, SLOT(ClickOnOk()));
@@ -109,6 +120,9 @@ void AdvancedGUI_DividedCylinderDlg::Init()
   
   connect(GroupParams->SpinBox_DX,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
   connect(GroupParams->SpinBox_DY,     SIGNAL(valueChanged(double)), this, SLOT(ValueChangedInSpinBox()));
+  
+  connect(GroupPattern->RadioButton1,  SIGNAL(clicked()),            this, SLOT(RadioButtonClicked()));
+  connect(GroupPattern->RadioButton2,  SIGNAL(clicked()),            this, SLOT(RadioButtonClicked()));
 
   initName(tr("GEOM_DIVIDEDCYLINDER"));
   
@@ -123,6 +137,23 @@ void AdvancedGUI_DividedCylinderDlg::Init()
 void AdvancedGUI_DividedCylinderDlg::SetDoubleSpinBoxStep (double step)
 {
   //@@ set double spin box step for all spin boxes here @@//
+}
+
+//=================================================================================
+// function : RadioButtonClicked()
+// purpose  : Radio button management
+//=================================================================================
+void AdvancedGUI_DividedCylinderDlg::RadioButtonClicked()
+{ 
+  QRadioButton* send = (QRadioButton*)sender();
+  
+  // Division pattern
+  if (send == GroupPattern->RadioButton1)
+    myPattern = GEOM::SQUARE;
+  else if (send == GroupPattern->RadioButton2)
+    myPattern = GEOM::HEXAGON;
+  
+  displayPreview(true);
 }
 
 //=================================================================================
@@ -218,7 +249,7 @@ bool AdvancedGUI_DividedCylinderDlg::execute (ObjectList& objects)
   CORBA::Double theH = GroupParams->SpinBox_DY->value();
 
   // call engine function
-  anObj = anOper->MakeDividedCylinder(theR, theH);
+  anObj = anOper->MakeDividedCylinder(theR, theH, myPattern);
   res = !anObj->_is_nil();
   if (res && !IsPreview())
   {

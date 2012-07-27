@@ -79,9 +79,10 @@ AdvancedGUI_DividedDiskDlg::AdvancedGUI_DividedDiskDlg (GeometryGUI* theGeometry
   
   GroupPattern = new DlgRef_3Radio(centralWidget());
   GroupPattern->GroupBox1->setTitle(tr("GEOM_PATTERN"));
+  GroupPattern->RadioButton1->setText(tr("GEOM_SQUARE"));
+  GroupPattern->RadioButton2->setText(tr("GEOM_HEXAGON"));
   GroupPattern->RadioButton3->setAttribute(Qt::WA_DeleteOnClose);
   GroupPattern->RadioButton3->close();
-  
   
   GroupPntVecR = new DlgRef_2Sel1Spin(centralWidget());
   GroupPntVecR->GroupBox1->setTitle(tr("GEOM_ARGUMENTS"));

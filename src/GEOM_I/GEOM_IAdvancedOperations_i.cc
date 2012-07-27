@@ -387,7 +387,9 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedDiskPntVecR (GEOM::
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Double theR, CORBA::Double theH)
+GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Double theR, 
+                                                                       CORBA::Double theH,
+                                                                       GEOM::pattern thePattern)
 {
   GEOM::GEOM_Object_var aGEOMObject;
 
@@ -395,7 +397,7 @@ GEOM::GEOM_Object_ptr GEOM_IAdvancedOperations_i::MakeDividedCylinder (CORBA::Do
   GetOperations()->SetNotDone();
 
   //Create the DividedCylinder
-  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedCylinder(theR, theH);
+  Handle(GEOM_Object) anObject = GetOperations()->MakeDividedCylinder(theR, theH, thePattern);
   if (!GetOperations()->IsDone() || anObject.IsNull())
     return aGEOMObject._retn();
 

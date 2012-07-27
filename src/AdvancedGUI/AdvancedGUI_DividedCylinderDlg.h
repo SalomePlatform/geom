@@ -25,6 +25,7 @@
 #include <GEOMBase_Skeleton.h>
 
 class DlgRef_2Spin;
+class DlgRef_3Radio;
 
 //=================================================================================
 // class    : AdvancedGUI_DividedCylinderDlg
@@ -50,6 +51,8 @@ private:
 
 private:
   DlgRef_2Spin*                      GroupParams;
+  DlgRef_3Radio*                     GroupPattern;
+  GEOM::pattern                      myPattern;
 
 private slots:
   void                               ClickOnOk();
@@ -57,6 +60,7 @@ private slots:
   void                               ActivateThisDialog();
   void                               ValueChangedInSpinBox();
   void                               SetDoubleSpinBoxStep( double );
+  void                               RadioButtonClicked();
 };
 
 #endif // ADVANCEDGUI_DIVIDEDCYLINDERDLG_H

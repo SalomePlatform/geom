@@ -839,6 +839,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
         <translation>Hauteur:</translation>
     </message>
     <message>
+        <source>GEOM_HEXAGON</source>
+        <translation>Héxagone</translation>
+    </message>
+    <message>
         <source>GEOM_HOLES</source>
         <translation>Trous</translation>
     </message>
@@ -1145,6 +1149,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_OFFSET_TITLE</source>
         <translation>Décaler une surface</translation>
+    </message>
+    <message>
+        <source>GEOM_PATTERN</source>
+        <translation>Schema de découpe</translation>
     </message>
     <message>
         <source>GEOM_PROJECTION</source>
@@ -1849,6 +1857,10 @@ Choisissez une face, une coque ou un solide et essayez de nouveau</translation>
     <message>
         <source>GEOM_SPLINE_TITLE</source>
         <translation>Construction d&apos;un spline</translation>
+    </message>
+    <message>
+        <source>GEOM_SQUARE</source>
+        <translation>Carré</translation>
     </message>
     <message>
         <source>GEOM_START_LCS</source>

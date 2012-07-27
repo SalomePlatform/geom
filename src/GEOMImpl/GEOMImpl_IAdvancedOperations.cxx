@@ -2367,14 +2367,16 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDiskPntVecR (Handle
  *  \return New GEOM_Object, containing the created shape.
  */
 //=============================================================================
-Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double theR, double theH)
+Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double theR, 
+                                                                       double theH,
+                                                                       int    thePattern)
 {
   SetErrorCode(KO);
   
   //Add a new object
   Handle(GEOM_Object) aShape = GetEngine()->AddObject(GetDocID(), GEOM_DIVIDEDCYLINDER);
 
-  Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 50.0, 1, 0);
+  Handle(GEOM_Object) aBaseShape = MakeDividedDisk(theR, 67.0, 1, thePattern);
   aBaseShape->GetLastFunction()->SetDescription("");   // Erase dump of MakeDividedDisk
   
   aShape = my3DPrimOperations->MakePrismDXDYDZ(aBaseShape,0.0,0.0,theH, -1.0);
