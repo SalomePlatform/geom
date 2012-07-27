@@ -2285,9 +2285,21 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDisk (double theR, 
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
-
+  
+  std::string aPatternStr;
+  
+  switch(thePattern)
+  {
+    case 0:
+      aPatternStr = "GEOM.SQUARE";
+      break;
+    case 1:
+      aPatternStr = "GEOM.HEXAGON";
+      break;
+  }
+  
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDisk(" << theR << ", " << theOrientation << ")";
+  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDisk(" << theR << ", " << theOrientation << ", " << aPatternStr.c_str() << ")";
 
   SetErrorCode(OK);
 
@@ -2350,9 +2362,22 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedDiskPntVecR (Handle
     SetErrorCode(aFail->GetMessageString());
     return NULL;
   }
+  
+  std::string aPatternStr;
+  
+  switch(thePattern)
+  {
+    case 0:
+      aPatternStr = "GEOM.SQUARE";
+      break;
+    case 1:
+      aPatternStr = "GEOM.HEXAGON";
+      break;
+  }
+  
 
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDiskPntVecR(" << thePnt << ", " << theVec << ", " << theR << ")";
+  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedDiskPntVecR(" << thePnt << ", " << theVec << ", " << theR << ", " << aPatternStr.c_str() << ")";
 
   SetErrorCode(OK);
 
@@ -2385,8 +2410,20 @@ Handle(GEOM_Object) GEOMImpl_IAdvancedOperations::MakeDividedCylinder (double th
   aFunction->SetDescription("");   // Erase dump of MakePrismDXDYDZ
   aShape->SetType(GEOM_DIVIDEDCYLINDER);
   
+  std::string aPatternStr;
+  
+  switch(thePattern)
+  {
+    case 0:
+      aPatternStr = "GEOM.SQUARE";
+      break;
+    case 1:
+      aPatternStr = "GEOM.HEXAGON";
+      break;
+  }
+  
   //Make a Python command
-  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedCylinder(" << theR << ", " << theH << ")";
+  GEOM::TPythonDump(aFunction) << aShape << " = geompy.MakeDividedCylinder(" << theR << ", " << theH << ", " << aPatternStr.c_str() << ")";
 
   SetErrorCode(OK);
 

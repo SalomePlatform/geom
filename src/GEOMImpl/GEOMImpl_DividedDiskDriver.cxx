@@ -216,6 +216,7 @@ TopoDS_Shell GEOMImpl_DividedDiskDriver::MakeDiskHexagon(double R, double Ratio)
   for (int i=1;i<=6;i++)
   { 
     // Edges
+    
     // for Face1
     E2 = BRepBuilderAPI_MakeEdge(aCircle, V2, TopoDS::Vertex(V3.Reversed())); 
     E3 = BRepBuilderAPI_MakeEdge(V3,TopoDS::Vertex(V4.Reversed()));
@@ -239,6 +240,7 @@ TopoDS_Shell GEOMImpl_DividedDiskDriver::MakeDiskHexagon(double R, double Ratio)
     
     
     // Wires
+    
     //Wire1
     aBuilder.MakeWire(W1);
     if (i==1)

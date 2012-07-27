@@ -8553,12 +8553,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theR Radius of the disk
         #  @param theOrientation Orientation of the plane on which the disk will be built
         #         1 = XOY, 2 = OYZ, 3 = OZX
+        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_divideddisk "Example"
-        def MakeDividedDisk(self, theR, theOrientation):
-            theR, theOrientation, Parameters = ParseParameters(theR, theOrientation)
-            anObj = self.AdvOp.MakeDividedDisk(theR, 50.0, theOrientation)
+        def MakeDividedDisk(self, theR, theOrientation, thePattern ):
+            theR, Parameters = ParseParameters(theR)
+            anObj = self.AdvOp.MakeDividedDisk(theR, 67.0, theOrientation, thePattern)
             RaiseIfFailed("MakeDividedDisk", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
@@ -8568,12 +8569,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @param theCenter Center of the disk
         #  @param theVector Normal vector to the plane of the created disk
         #  @param theRadius Radius of the disk
+        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_divideddisk "Example"
-        def MakeDividedDiskPntVecR(self, theCenter, theVector, theRadius):
+        def MakeDividedDiskPntVecR(self, theCenter, theVector, theRadius, thePattern):
             theRadius, Parameters = ParseParameters(theRadius)
-            anObj = self.AdvOp.MakeDividedDiskPntVecR(theCenter, theVector, theRadius, 50.0)
+            anObj = self.AdvOp.MakeDividedDiskPntVecR(theCenter, theVector, theRadius, 67.0, thePattern)
             RaiseIfFailed("MakeDividedDiskPntVecR", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
@@ -8581,12 +8583,13 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         ## Builds a cylinder prepared for hexa meshes
         #  @param theR Radius of the cylinder
         #  @param theH Height of the cylinder
+        #  @param thePattern Division pattern. It can be GEOM.SQUARE or GEOM.HEXAGON
         #  @return New GEOM_Object, containing the created shape.
         #
         #  @ref tui_creation_dividedcylinder "Example"
-        def MakeDividedCylinder(self, theR, theH):
+        def MakeDividedCylinder(self, theR, theH, thePattern):
             theR, theH, Parameters = ParseParameters(theR, theH)
-            anObj = self.AdvOp.MakeDividedCylinder(theR, theH)
+            anObj = self.AdvOp.MakeDividedCylinder(theR, theH, thePattern)
             RaiseIfFailed("MakeDividedCylinder", self.AdvOp)
             if Parameters: anObj.SetParameters(Parameters)
             return anObj
