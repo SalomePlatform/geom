@@ -683,7 +683,6 @@ void GEOM_Displayer::Update( SALOME_OCCPrs* prs )
           
           AISShape->SetDisplayVectors(aPropMap.value(VECTOR_MODE_PROP).toInt()); 
         }else {
-          MESSAGE("myDisplayMode = "<< myDisplayMode)
           AISShape->SetDisplayMode( myDisplayMode );
           AISShape->SetShadingColor( myShadingColor );
         }

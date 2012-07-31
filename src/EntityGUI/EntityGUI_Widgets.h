@@ -239,6 +239,22 @@ public:
 };
 
 //////////////////////////////////////////
+// EntityGUI_Controls
+//////////////////////////////////////////
+
+#include "ui_EntityGUI_Controls_QTD.h"
+
+class EntityGUI_Controls : public QWidget, 
+                        public Ui::EntityGUI_Controls_QTD
+{
+  Q_OBJECT
+
+public:
+  EntityGUI_Controls( QWidget* = 0, Qt::WindowFlags = 0 );
+  ~EntityGUI_Controls();
+};
+
+//////////////////////////////////////////
 // EntityGUI_Skeleton
 //////////////////////////////////////////
 

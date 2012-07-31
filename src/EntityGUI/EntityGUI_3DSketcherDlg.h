@@ -30,6 +30,7 @@ class QButtonGroup;
 class QDoubleSpinBox;
 class EntityGUI_3Spin;
 class EntityGUI_Angles;
+class EntityGUI_Controls;
 class DlgRef_3Radio;
 class SOCC_Prs;
 
@@ -82,12 +83,14 @@ private:
   void                               displayTrihedron( int );
   
   void                               displayAngle( double, double, double, int, bool store = false );
+  void                               displayLength( double theLength = -1.0, bool store = false );
 
   bool                               createShapes( GEOM::GEOM_Object_ptr,
                                                    TopoDS_Shape&,
                                                    TopoDS_Shape& );
 
   XYZ                                getLastPoint() const;
+  XYZ                                getPenultimatePoint() const;
   XYZ                                getCurrentPoint() const;
 
 private:
@@ -96,15 +99,20 @@ private:
 
   EntityGUI_3Spin*                   Group3Spin;
   EntityGUI_Angles*                  GroupAngles;
+  EntityGUI_Controls*                GroupControls;
   DlgRef_3Radio*                     GroupType;
   QButtonGroup*                      myTypeGroup;
 
   int                                myMode;
   int                                myOrientation;
   bool                               myOK;
+  bool                               isLengthVisible;
+  bool                               isAngleVisible;
+  
   double                             myLineWidth;
   GeometryGUI*                       myGeometryGUI;
   SOCC_Prs*                          myAnglePrs;
+  SOCC_Prs*                          myLengthPrs;
 
 private slots:
   void                               ClickOnOk();
@@ -122,7 +130,7 @@ private slots:
   void                               TypeClicked( int );
   void                               ValueChangedInSpinBox( double );
   void                               ButtonClicked( bool );
-  void                               AngleChecked ( bool );
+  void                               BoxChecked ( bool );
   void                               SetDoubleSpinBoxStep( double );
 };
 
