@@ -94,6 +94,8 @@ private:
   XYZ                                getLastPoint() const;
   XYZ                                getPenultimatePoint() const;
   XYZ                                getCurrentPoint() const;
+  
+  std::string                        doubleToString( double );
 
 private:
   XYZList                            myPointsList;

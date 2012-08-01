@@ -153,8 +153,9 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
   GroupAngles->checkBox->setText( tr( "Angle 2" ) ); //TODO translation
   
   GroupControls = new EntityGUI_Controls( centralWidget() );
+  GroupControls->GroupBox1->setTitle(tr("GEOM_CONTROLS"));
   GroupControls->CheckBox1->setText( tr( "Show length dimensions" ) ); //TODO translation
-  GroupControls->CheckBox2->setText( tr( "Show angle dimensions" ) ); //TODO translation
+  GroupControls->CheckBox2->setText( tr( "Show angle dimensions" ) );  //TODO translation
 
   buttonOk()->setText( tr( "GEOM_BUT_END_SKETCH" ) );
   buttonApply()->setText( tr( "GEOM_BUT_CLOSE_SKETCH" ) );
@@ -1063,8 +1064,8 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
         Handle(Geom_Plane) aPlane = new Geom_Plane(gce_MP.Value());
       
   // Covert angles to string
-  std::string Angle1_str = boost::lexical_cast<std::string>(theAngle1);
-  std::string Angle2_str = boost::lexical_cast<std::string>(theAngle2);
+  std::string Angle1_str = doubleToString(theAngle1);
+  std::string Angle2_str = doubleToString(theAngle2);
   
   Handle(AIS_AngleDimension) anAngleIO  = new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle1 * M_PI / 180.,
            TCollection_ExtendedString(Angle1_str.c_str()));
@@ -1156,7 +1157,7 @@ void EntityGUI_3DSketcherDlg::displayLength(double theLength, bool store)
   TopoDS_Vertex aVert2 = BRepBuilderAPI_MakeVertex(P2);
   
   // Convert length to string
-  std::string aLength_str = boost::lexical_cast<std::string>(aLength);
+  std::string aLength_str = doubleToString(aLength);
   
   // Plane for the presentation
   if ( Abs(Vec1.CrossMagnitude(Vec2)) < Precision::Confusion() ) // Check colinearity
@@ -1305,4 +1306,17 @@ bool EntityGUI_3DSketcherDlg::createShapes( GEOM::GEOM_Object_ptr /*theObject*/,
   */
 
   return true;
+}
+
+//================================================================
+// Function : doubleToString
+// Purpose  : converts double to string
+//================================================================
+std::string EntityGUI_3DSketcherDlg::doubleToString(double num)
+{
+  // truncate num
+  int digNum = 5;
+  char format = 'g'; // truncated to a number of significant digits
+  
+  return QString::number( num, format, digNum).toStdString();
 }
