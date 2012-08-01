@@ -78,6 +78,14 @@
 // GEOMImpl_Types.hxx and an enum in SOCC_ViewModel.h
 #include <GEOMImpl_Types.hxx>
 
+enum
+{
+  NONE,
+  TYPE_LENGTH,
+  TYPE_ANGLE,
+  TYPE_TWO_ANGLES
+};
+
 class Locker
 {
 public:
@@ -101,7 +109,8 @@ EntityGUI_3DSketcherDlg::EntityGUI_3DSketcherDlg( GeometryGUI* theGeometryGUI, Q
     myMode( -1 ),
     myOK( false ),
     myLineWidth( lineWidth ),
-    myGeometryGUI( theGeometryGUI )
+    myGeometryGUI( theGeometryGUI ),
+    myLengthIORedoList()
 {
   QPixmap image0( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_SELECT" ) ) );
   QPixmap image1( SUIT_Session::session()->resourceMgr()->loadPixmap( "GEOM", tr( "ICON_DLG_UNDO" ) ) );
@@ -182,6 +191,7 @@ void EntityGUI_3DSketcherDlg::Init()
 {
   myOK = false;
   myOrientation = 1;
+  myPrsType = NONE;
   
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   myAnglePrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
@@ -350,11 +360,10 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     if (GroupAngles->checkBox->isChecked())
       anAngle2 = GroupAngles->SpinBox_DA2->value();
     
-    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation, true);
-    displayLength(GroupAngles->SpinBox_DL->value(), true);  
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation, true);  
   }
   
-  // Store last length simensions if any
+  // Store last length dimensions if any
   if (GroupType->RadioButton1->isChecked() ||
       GroupType->RadioButton2->isChecked())
   {
@@ -366,11 +375,15 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
   if (isAngleVisible)
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
-//   ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->LocalSelection(myAnglePrs, 1);
   
   myPointsList.append( getCurrentPoint() );
+  myPrsTypeList.push_back( myPrsType );
+  
   myRedoList.clear();
-
+  myPrsTypeRedoList.clear();
+  myLengthIORedoList.Clear();
+  myAngleIORedoList.Clear();
+  
   if ( myMode == 1 ) {
     Group3Spin->SpinBox_DX->setValue( 0.0 );
     Group3Spin->SpinBox_DY->setValue( 0.0 );
@@ -406,6 +419,48 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     myRedoList.append( myPointsList.takeLast() );
     UpdateButtonsState();
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+    
+    // Erase dimensions presentations
+    SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true); 
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+    
+    AIS_ListOfInteractive anIOList;
+    
+    if (myPrsTypeList.back() != NONE)
+    {
+      // Remove last prepended IO
+      myLengthPrs->GetObjects(anIOList);
+      myLengthIORedoList.Prepend(anIOList.First()); // due to AIS_ListOfInteractive structure 
+                                                    // we have to prepend objects and take first then
+      myLengthPrs->RemoveFirst();
+    }   
+    if ( myPrsTypeList.back() == TYPE_ANGLE ||
+         myPrsTypeList.back() == TYPE_TWO_ANGLES )
+    {
+      myAnglePrs->GetObjects(anIOList);
+      myAngleIORedoList.Prepend(anIOList.First());
+      myAnglePrs->RemoveFirst();
+      if ( myPrsTypeList.back() == TYPE_TWO_ANGLES )
+      {
+        // Remove a second IO
+        myAnglePrs->GetObjects(anIOList);
+        myAngleIORedoList.Prepend(anIOList.First());
+        myAnglePrs->RemoveFirst();
+      }
+    }
+       
+    // Erase last action type and store it in redo list
+    myPrsTypeRedoList.push_back(myPrsTypeList.back());
+    myPrsTypeList.pop_back();
+    
+    // Display modified presentation
+    if (isLengthVisible)
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
+    if (isAngleVisible)
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    
+    ValueChangedInSpinBox(0.0); // To update preview
   }
 }
 
@@ -419,6 +474,40 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     myPointsList.append( myRedoList.takeLast() );
     UpdateButtonsState();
     GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
+      
+    // Erase dimensions presentations
+    SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
+    
+    if ( myPrsTypeRedoList.back() != NONE )
+    {
+      myLengthPrs->PrependObject(myLengthIORedoList.First());
+      myLengthIORedoList.RemoveFirst();
+    }    
+    if ( myPrsTypeRedoList.back() == TYPE_ANGLE || 
+         myPrsTypeRedoList.back() == TYPE_TWO_ANGLES )
+    {
+      myAnglePrs->PrependObject(myAngleIORedoList.First());
+      myAngleIORedoList.RemoveFirst();
+      if ( myPrsTypeRedoList.back() == TYPE_TWO_ANGLES )
+      {
+        // Add a second IO from the Redo list
+        myAnglePrs->PrependObject(myAngleIORedoList.First());
+        myAngleIORedoList.RemoveFirst();
+      }
+    }
+       
+    // Record last prs type
+    myPrsTypeList.push_back(myPrsTypeRedoList.back());
+    myPrsTypeRedoList.pop_back();
+    
+    // Display modified presentation
+    if (isLengthVisible)
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
+    if (isAngleVisible)
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
+    
+    ValueChangedInSpinBox(0.0); // To update preview
   }
 }
 
@@ -428,7 +517,6 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
 //=================================================================================
 void EntityGUI_3DSketcherDlg::SelectionIntoArgument()
 {
-  MESSAGE("EntityGUI_3DSketcherDlg::SelectionIntoArgument()")
   LightApp_SelectionMgr* aSelMgr = myGeomGUI->getApp()->selectionMgr();
   SALOME_ListIO aSelList;
   aSelMgr->selectedObjects(aSelList);
@@ -545,7 +633,6 @@ void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 //=================================================================================
 void EntityGUI_3DSketcherDlg::BoxChecked( bool checked )
 {
-  MESSAGE("BoxChecked")
   QCheckBox* send = (QCheckBox*) sender();
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   
@@ -567,36 +654,23 @@ void EntityGUI_3DSketcherDlg::BoxChecked( bool checked )
   else if (send == GroupControls->CheckBox1)
   {
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
-    MESSAGE("send == GroupControls->CheckBox1")
     if(checked){
-      MESSAGE("checked")
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
       isLengthVisible=true;
     }
     else
       isLengthVisible=false;
-//     else{
-//       MESSAGE("unchecked")
-//       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
-//     }
   }
   else if (send == GroupControls->CheckBox2)
   {
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true); 
-    MESSAGE("send == GroupControls->CheckBox2")
     if(checked)
     {
-      MESSAGE("checked")
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
       isAngleVisible=true;
     }
     else
       isAngleVisible=false;
-//     else
-//     {
-//       MESSAGE("unchecked")
-//       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true); 
-//     }
   }
   updateViewer();
   ValueChangedInSpinBox(0.0);
@@ -915,7 +989,7 @@ void EntityGUI_3DSketcherDlg::displayTrihedron(int selMode)
   
   if (aSPrs)
   {
-    aSPrs->AddObject(anIO);
+    aSPrs->PrependObject(anIO);
     GEOMBase_Helper::displayPreview( aSPrs, true, true );
 //     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->LocalSelection(aSPrs, selMode);
   }
@@ -929,6 +1003,9 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
 {
   if(Abs(theAngle2 - 90.0) < Precision::Angular())
     return;
+  
+  // Display length dimensions
+  displayLength(theLength, store);
 
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   
@@ -1004,32 +1081,41 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   
   SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   
-  if (aSPrs)
+  if (store)
+  {
+    myAnglePrs->PrependObject(anAngleIO);
+    myPrsType = TYPE_ANGLE;  // Overwrite type with ANGLE
+  }
+  else if(aSPrs)
   {
     aSPrs->AddObject(anAngleIO);
+  }
+  
+  if (twoAngles)
+  {
+    gce_MakePln gce_MP2(Last_Pnt, P2, Current_Pnt);
+    Handle(Geom_Plane) aPlane2 = new Geom_Plane(gce_MP2.Value());
+          
+    Handle(AIS_AngleDimension) anAngle2IO = new AIS_AngleDimension(anEdge2, anEdge3, aPlane2, theAngle2 * M_PI / 180.,
+            TCollection_ExtendedString(Angle2_str.c_str()));
+    anAngle2IO->SetArrowSize( (theAngle2 * M_PI / 180) * (theLength/20) );
+    
+    anAngle2IO->Attributes()->SetAngleAspect(asp);
+    
     if (store)
     {
-      myAnglePrs->AddObject(anAngleIO);
+      myAnglePrs->PrependObject(anAngle2IO);
+      myPrsType = TYPE_TWO_ANGLES;   // Overwrite type with TWO_ANGLES
     }
-    if (twoAngles)
+    else if (aSPrs)
     {
-      gce_MakePln gce_MP2(Last_Pnt, P2, Current_Pnt);
-      Handle(Geom_Plane) aPlane2 = new Geom_Plane(gce_MP2.Value());
-            
-      Handle(AIS_AngleDimension) anAngle2IO = new AIS_AngleDimension(anEdge2, anEdge3, aPlane2, theAngle2 * M_PI / 180.,
-              TCollection_ExtendedString(Angle2_str.c_str()));
-      anAngle2IO->SetArrowSize( (theAngle2 * M_PI / 180) * (theLength/20) );
-      
-      anAngle2IO->Attributes()->SetAngleAspect(asp);  
-      
-      aSPrs->AddObject(anAngle2IO);
-      if (store)
-      {
-        myAnglePrs->AddObject(anAngle2IO);
-      }      
+      aSPrs->AddObject(anAngle2IO);   
     }
-    if (!store && isAngleVisible)
-      GEOMBase_Helper::displayPreview( aSPrs, true, true );
+  }
+  
+  if(!store && isAngleVisible)
+  {       
+    GEOMBase_Helper::displayPreview( aSPrs, true, true ); 
   }
 }
 
@@ -1130,14 +1216,15 @@ void EntityGUI_3DSketcherDlg::displayLength(double theLength, bool store)
    
   if (store)
   {
-    myLengthPrs->AddObject(anIO);
+    myLengthPrs->PrependObject(anIO);
+    myPrsType = TYPE_LENGTH;
   }
   else if( isLengthVisible )
   {
     SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
     if (aSPrs)
     {
-      aSPrs->AddObject(anIO);
+      aSPrs->PrependObject(anIO);
       GEOMBase_Helper::displayPreview( aSPrs, true, true );
     }
   }

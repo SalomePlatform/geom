@@ -34,6 +34,8 @@ class EntityGUI_Controls;
 class DlgRef_3Radio;
 class SOCC_Prs;
 
+#include <AIS_ListOfInteractive.hxx>
+
 #ifndef COORD_MIN
 #  define COORD_MIN -1e+15
 #  define COORD_MAX +1e+15
@@ -96,6 +98,11 @@ private:
 private:
   XYZList                            myPointsList;
   XYZList                            myRedoList;
+  AIS_ListOfInteractive              myLengthIORedoList;
+  AIS_ListOfInteractive              myAngleIORedoList;
+  int                                myPrsType;
+  std::list<int>                     myPrsTypeList;
+  std::list<int>                     myPrsTypeRedoList;
 
   EntityGUI_3Spin*                   Group3Spin;
   EntityGUI_Angles*                  GroupAngles;
