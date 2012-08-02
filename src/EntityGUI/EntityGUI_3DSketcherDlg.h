@@ -96,6 +96,9 @@ private:
   XYZ                                getCurrentPoint() const;
   
   std::string                        doubleToString( double );
+  
+  void                               removeLastIOFromPrs( int );
+  void                               restoreLastIOToPrs( int );
 
 private:
   XYZList                            myPointsList;

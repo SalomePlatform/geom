@@ -335,6 +335,8 @@ void EntityGUI_3DSketcherDlg::TypeClicked( int mode )
   
   updateGeometry();
   resize(minimumSizeHint());
+  
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -354,17 +356,20 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
   ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
   ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
   
-  // Store last angle dimensions if any
-  if(GroupType->RadioButton3->isChecked() && GroupAngles->SpinBox_DL->value()>Precision::Confusion())
+  // Store last angle dimensions if needed
+  if( GroupType->RadioButton3->isChecked() )
   {
     double anAngle2 = 0.0;
     if (GroupAngles->checkBox->isChecked())
       anAngle2 = GroupAngles->SpinBox_DA2->value();
     
+    // Store length dimensions
+    displayLength(GroupAngles->SpinBox_DL->value(), true);
+    // Store angle dimensions
     displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation, true);  
   }
   
-  // Store last length dimensions if any
+  // Store last length dimensions if needed
   if (GroupType->RadioButton1->isChecked() ||
       GroupType->RadioButton2->isChecked())
   {
@@ -389,6 +394,12 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     Group3Spin->SpinBox_DX->setValue( 0.0 );
     Group3Spin->SpinBox_DY->setValue( 0.0 );
     Group3Spin->SpinBox_DZ->setValue( 0.0 );
+  }
+  else if ( myMode == 2 )
+  {
+    GroupAngles->SpinBox_DA->setValue( 0.0 );
+    GroupAngles->SpinBox_DL->setValue( 0.0 );
+    GroupAngles->SpinBox_DA2->setValue( 0.0 );
   }
   UpdateButtonsState();
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
@@ -431,23 +442,17 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     if (myPrsTypeList.back() != NONE)
     {
       // Remove last prepended IO
-      myLengthPrs->GetObjects(anIOList);
-      myLengthIORedoList.Prepend(anIOList.First()); // due to AIS_ListOfInteractive structure 
-                                                    // we have to prepend objects and take first then
-      myLengthPrs->RemoveFirst();
+      removeLastIOFromPrs( TYPE_LENGTH );     
     }   
     if ( myPrsTypeList.back() == TYPE_ANGLE ||
          myPrsTypeList.back() == TYPE_TWO_ANGLES )
     {
-      myAnglePrs->GetObjects(anIOList);
-      myAngleIORedoList.Prepend(anIOList.First());
-      myAnglePrs->RemoveFirst();
+      // Remove first Angle IO from presentation
+      removeLastIOFromPrs( TYPE_ANGLE );   
       if ( myPrsTypeList.back() == TYPE_TWO_ANGLES )
       {
-        // Remove a second IO
-        myAnglePrs->GetObjects(anIOList);
-        myAngleIORedoList.Prepend(anIOList.First());
-        myAnglePrs->RemoveFirst();
+        // Remove second  Angle IO
+        removeLastIOFromPrs( TYPE_ANGLE );   
       }
     }
        
@@ -461,7 +466,7 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
     
-    ValueChangedInSpinBox(0.0); // To update preview
+    updateViewer();
   }
 }
 
@@ -481,23 +486,20 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
     
     if ( myPrsTypeRedoList.back() != NONE )
-    {
-      myLengthPrs->PrependObject(myLengthIORedoList.First());
-      myLengthIORedoList.RemoveFirst();
-    }    
+      restoreLastIOToPrs( TYPE_LENGTH ); 
+    
     if ( myPrsTypeRedoList.back() == TYPE_ANGLE || 
          myPrsTypeRedoList.back() == TYPE_TWO_ANGLES )
     {
-      myAnglePrs->PrependObject(myAngleIORedoList.First());
-      myAngleIORedoList.RemoveFirst();
+      // Add a first IO from the Redo list
+      restoreLastIOToPrs( TYPE_ANGLE ); 
       if ( myPrsTypeRedoList.back() == TYPE_TWO_ANGLES )
       {
         // Add a second IO from the Redo list
-        myAnglePrs->PrependObject(myAngleIORedoList.First());
-        myAngleIORedoList.RemoveFirst();
+        restoreLastIOToPrs( TYPE_ANGLE ); 
       }
     }
-       
+    
     // Record last prs type
     myPrsTypeList.push_back(myPrsTypeRedoList.back());
     myPrsTypeRedoList.pop_back();
@@ -508,8 +510,48 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     if (isAngleVisible)
       ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
     
-    ValueChangedInSpinBox(0.0); // To update preview
+    updateViewer();
   }
+}
+
+//=================================================================================
+// function : removeLastIO()
+// purpose  :
+//=================================================================================
+void EntityGUI_3DSketcherDlg::removeLastIOFromPrs(int type)
+{
+  AIS_ListOfInteractive anIOList;
+  
+  if (type == TYPE_LENGTH)
+  {
+    myLengthPrs->GetObjects(anIOList);
+    myLengthIORedoList.Prepend(anIOList.First());  // Store last prepended Length IO in redo list
+    myLengthPrs->RemoveFirst();                    // Remove it from myLengthPrs
+  }   
+  if (type == TYPE_ANGLE)
+  {
+    myAnglePrs->GetObjects(anIOList);
+    myAngleIORedoList.Prepend(anIOList.First());  // Store last prepended Angle IO in redo list
+    myAnglePrs->RemoveFirst();                    // Remove it from myAnglePrs
+  }   
+}
+
+//=================================================================================
+// function : restoreLastIO()
+// purpose  :
+//=================================================================================
+void EntityGUI_3DSketcherDlg::restoreLastIOToPrs(int type)
+{
+  if (type == TYPE_LENGTH)
+  {
+    myLengthPrs->PrependObject(myLengthIORedoList.First()); // Restore last removed IO
+    myLengthIORedoList.RemoveFirst();                       // Remove it from redo list
+  }   
+  if (type == TYPE_ANGLE)
+  {
+    myAnglePrs->PrependObject(myAngleIORedoList.First());  // Restore last removed IO
+    myAngleIORedoList.RemoveFirst();                       // Remove it from redo list
+  }   
 }
 
 //=================================================================================
@@ -611,7 +653,7 @@ void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 {
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   
-  if(GroupType->RadioButton3->isChecked() && GroupAngles->SpinBox_DL->value()>Precision::Confusion())
+  if(GroupType->RadioButton3->isChecked())
   {
     double anAngle2 = 0.0;
     if (GroupAngles->checkBox->isChecked())
@@ -622,9 +664,7 @@ void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
   }
   if( GroupType->RadioButton1->isChecked() ||
       GroupType->RadioButton2->isChecked() )
-  {
-    displayLength();
-  }  
+    displayLength(); 
 }
 
 
@@ -638,20 +678,8 @@ void EntityGUI_3DSketcherDlg::BoxChecked( bool checked )
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   
   if (send == GroupAngles->checkBox)
-  {
     GroupAngles->SpinBox_DA2->setEnabled(checked); 
-    GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   
-    if(GroupAngles->SpinBox_DL->value()>Precision::Confusion())
-    {
-      double anAngle2 = 0.0;
-      if (checked)
-        anAngle2 = GroupAngles->SpinBox_DA2->value();
-      
-      displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
-      displayLength(GroupAngles->SpinBox_DL->value()); 
-    }
-  }
   else if (send == GroupControls->CheckBox1)
   {
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
@@ -673,8 +701,8 @@ void EntityGUI_3DSketcherDlg::BoxChecked( bool checked )
     else
       isAngleVisible=false;
   }
-  updateViewer();
-  ValueChangedInSpinBox(0.0);
+//   updateViewer();
+  ValueChangedInSpinBox(0.0); // To redisplay the previews
 }
 
 //=================================================================================
@@ -959,12 +987,10 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
     GEOMBase_Helper::displayPreview( aPrs, append, update );
   
   getDisplayer()->SetColor( line_color );
-
-  // Display trihedron
-//   if(GroupType->RadioButton3->isChecked())
-//     displayTrihedron(3);
-//   else
-  displayTrihedron(2);
+  
+  // Display local trihedron if the mode is relatives coordinates or angles
+  if (myMode == 1 || myMode == 2)
+    displayTrihedron(2);
   
   getDisplayer()->UnsetName();
 
@@ -992,7 +1018,6 @@ void EntityGUI_3DSketcherDlg::displayTrihedron(int selMode)
   {
     aSPrs->PrependObject(anIO);
     GEOMBase_Helper::displayPreview( aSPrs, true, true );
-//     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->LocalSelection(aSPrs, selMode);
   }
 }
 
@@ -1002,11 +1027,9 @@ void EntityGUI_3DSketcherDlg::displayTrihedron(int selMode)
 //================================================================
 void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, double theLength, int theOrientation, bool store)
 {
-  if(Abs(theAngle2 - 90.0) < Precision::Angular())
+  if( Abs(theAngle2 - 90.0) < Precision::Angular() || 
+      theLength < Precision::Confusion() )
     return;
-  
-  // Display length dimensions
-  displayLength(theLength, store);
 
   SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
   
@@ -1015,7 +1038,7 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
     
   gp_Pnt Last_Pnt(Last.x,Last.y,Last.z);
   gp_Pnt Current_Pnt(Current.x,Current.y,Current.z);
-  gp_Pnt P1, P2; //, P3;
+  gp_Pnt P1, P2;
   
   bool twoAngles = GroupAngles->checkBox->isChecked();
   
@@ -1027,7 +1050,6 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
       P2 = gp_Pnt(Last.x + theLength * cos(theAngle1 * M_PI / 180.),
                   Last.y + theLength * sin(theAngle1 * M_PI / 180.),
                   Last.z); 
-//       P3 = gp_Pnt(Last.x,Last.y,theLength);     // Z direction (normal to the plane)
       break;
     }
     case 2: //OYZ
@@ -1036,8 +1058,6 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
       P2 = gp_Pnt(Last.x, 
                   Last.y + theLength * cos(theAngle1 * M_PI / 180.),
                   Last.z + theLength * sin(theAngle1 * M_PI / 180.)); 
-//       P2 = gp_Pnt(Last.x,Current.y,Current.z);  // Projection in OYZ plane
-//       P3 = gp_Pnt(theLength,Last.y,Last.z);     // X direction
       break;
     }
     case 3: //OXZ
@@ -1046,8 +1066,6 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
       P2 = gp_Pnt( Last.x + theLength * cos(theAngle1 * M_PI / 180.) ,
                    Last.y,
                    Last.z + theLength * sin(theAngle1 * M_PI / 180.)); 
-//       P2 = gp_Pnt(Current.x,Last.y,Current.z);  // Projection in OXZ plane
-//       P3 = gp_Pnt(Last.x,theLength,Last.z);     // Y direction
       break;
     }
   }
@@ -1077,8 +1095,6 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   Handle(Prs3d_AngleAspect) asp = new Prs3d_AngleAspect();
   asp->LineAspect()->SetWidth(w);
   anAngleIO->Attributes()->SetAngleAspect(asp);
-  //TEST
-  //anAngleIO->SetSelectionMode(1);
   
   SOCC_Prs* aSPrs = dynamic_cast<SOCC_Prs*>(((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->CreatePrs(0));
   
@@ -1134,7 +1150,7 @@ void EntityGUI_3DSketcherDlg::displayLength(double theLength, bool store)
   
   double aLength = 0.0;
   
-  if( theLength < 0)
+  if( theLength < 0)  // Calculate length if not given
   {
     aLength = sqrt((Last.x - Current.x)*(Last.x - Current.x) +
                    (Last.y - Current.y)*(Last.y - Current.y) +  
