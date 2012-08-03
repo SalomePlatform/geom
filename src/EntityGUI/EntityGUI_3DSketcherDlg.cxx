@@ -350,13 +350,8 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
     showError( msg );
     return;
   }
-
-  // Erase dimensions presentations
-  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
-  ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
-  ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
   
-  // Store last angle dimensions if needed
+  // Display and store angle dimensions interactive objects in Prs
   if( GroupType->RadioButton3->isChecked() )
   {
     double anAngle2 = 0.0;
@@ -364,27 +359,23 @@ void EntityGUI_3DSketcherDlg::ClickOnAddPoint()
       anAngle2 = GroupAngles->SpinBox_DA2->value();
     
     // Store length dimensions
-    displayLength(GroupAngles->SpinBox_DL->value(), true);
+    displayLength(GroupAngles->SpinBox_DL->value(), /*store =*/true);
     // Store angle dimensions
-    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation, true);  
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, 
+                 GroupAngles->SpinBox_DL->value(), myOrientation,  /*store =*/true);  
   }
   
-  // Store last length dimensions if needed
+  // Display and store store length dimension interactive object in Prs
   if (GroupType->RadioButton1->isChecked() ||
       GroupType->RadioButton2->isChecked())
   {
-    displayLength(-1, true);
+    displayLength(-1, /*store=*/true);
   }
-  
-  // Display modified presentation
-  if (isLengthVisible)
-    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
-  if (isAngleVisible)
-    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
   
   myPointsList.append( getCurrentPoint() );
   myPrsTypeList.push_back( myPrsType );
   
+  // Clean redo lists
   myRedoList.clear();
   myPrsTypeRedoList.clear();
   myLengthIORedoList.Clear();
@@ -437,8 +428,6 @@ void EntityGUI_3DSketcherDlg::ClickOnUndo()
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true); 
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
     
-    AIS_ListOfInteractive anIOList;
-    
     if (myPrsTypeList.back() != NONE)
     {
       // Remove last prepended IO
@@ -484,6 +473,7 @@ void EntityGUI_3DSketcherDlg::ClickOnRedo()
     // Erase dimensions presentations
     SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
     ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
     
     if ( myPrsTypeRedoList.back() != NONE )
       restoreLastIOToPrs( TYPE_LENGTH ); 
@@ -817,6 +807,9 @@ void EntityGUI_3DSketcherDlg::SetDoubleSpinBoxStep( double step )
   Group3Spin->SpinBox_DX->setSingleStep(step);
   Group3Spin->SpinBox_DY->setSingleStep(step);
   Group3Spin->SpinBox_DZ->setSingleStep(step);
+  GroupAngles->SpinBox_DA->setSingleStep(step);
+  GroupAngles->SpinBox_DL->setSingleStep(step);
+  GroupAngles->SpinBox_DA2->setSingleStep(step);
 }
 
 //=================================================================================
@@ -1031,7 +1024,7 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
       theLength < Precision::Confusion() )
     return;
 
-  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow();
+  SUIT_ViewWindow* vw = SUIT_Session::session()->activeApplication()->desktop()->activeWindow(); 
   
   XYZ Last    = getLastPoint();
   XYZ Current = getCurrentPoint();
@@ -1085,6 +1078,7 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   std::string Angle1_str = doubleToString(theAngle1);
   std::string Angle2_str = doubleToString(theAngle2);
   
+  // Create interactive object
   Handle(AIS_AngleDimension) anAngleIO  = new AIS_AngleDimension(anEdge1, anEdge2, aPlane, theAngle1 * M_PI / 180.,
            TCollection_ExtendedString(Angle1_str.c_str()));
   anAngleIO->SetArrowSize( (theAngle1 * M_PI / 180) * (theLength/20) );
@@ -1100,8 +1094,15 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
   
   if (store)
   {
+    // Erase dimensions presentations
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+    
     myAnglePrs->PrependObject(anAngleIO);
     myPrsType = TYPE_ANGLE;  // Overwrite type with ANGLE
+    
+    // Display modified presentation
+    if (isAngleVisible)
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
   }
   else if(aSPrs)
   {
@@ -1121,8 +1122,15 @@ void EntityGUI_3DSketcherDlg::displayAngle(double theAngle1, double theAngle2, d
     
     if (store)
     {
+      // Erase dimensions presentations
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myAnglePrs, true);
+      
       myAnglePrs->PrependObject(anAngle2IO);
       myPrsType = TYPE_TWO_ANGLES;   // Overwrite type with TWO_ANGLES
+      
+      // Display modified presentation
+      if (isAngleVisible)
+        ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myAnglePrs);
     }
     else if (aSPrs)
     {
@@ -1233,8 +1241,15 @@ void EntityGUI_3DSketcherDlg::displayLength(double theLength, bool store)
    
   if (store)
   {
+    // Erase length dimensions presentation
+    ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Erase(myLengthPrs, true);
+    
     myLengthPrs->PrependObject(anIO);
     myPrsType = TYPE_LENGTH;
+    
+    // Display modified presentation
+    if (isLengthVisible)
+      ((SOCC_Viewer*)(vw->getViewManager()->getViewModel()))->Display(myLengthPrs);
   }
   else if( isLengthVisible )
   {
