@@ -2111,6 +2111,11 @@ Standard_Real GEOMImpl_IMeasureOperations::GetAngleBtwVectors (Handle(GEOM_Objec
   if (theVec1.IsNull() || theVec2.IsNull())
     return anAngle;
 
+  if (theVec1->GetType() != GEOM_VECTOR || theVec2->GetType() != GEOM_VECTOR) {
+    SetErrorCode("Two vectors must be given");
+    return anAngle;
+  }
+
   Handle(GEOM_Function) aRefVec1 = theVec1->GetLastFunction();
   Handle(GEOM_Function) aRefVec2 = theVec2->GetLastFunction();
   if (aRefVec1.IsNull() || aRefVec2.IsNull())
