@@ -642,19 +642,6 @@ void EntityGUI_3DSketcherDlg::ActivateThisDialog()
 void EntityGUI_3DSketcherDlg::ValueChangedInSpinBox( double newValue )
 {
   GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
-  
-  if(GroupType->RadioButton3->isChecked())
-  {
-    double anAngle2 = 0.0;
-    if (GroupAngles->checkBox->isChecked())
-      anAngle2 = GroupAngles->SpinBox_DA2->value();
-    
-    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
-    displayLength(GroupAngles->SpinBox_DL->value());  
-  }
-  if( GroupType->RadioButton1->isChecked() ||
-      GroupType->RadioButton2->isChecked() )
-    displayLength(); 
 }
 
 
@@ -691,8 +678,8 @@ void EntityGUI_3DSketcherDlg::BoxChecked( bool checked )
     else
       isAngleVisible=false;
   }
-//   updateViewer();
-  ValueChangedInSpinBox(0.0); // To redisplay the previews
+
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -701,23 +688,14 @@ void EntityGUI_3DSketcherDlg::BoxChecked( bool checked )
 //=================================================================================
 void EntityGUI_3DSketcherDlg::ButtonClicked( bool checked )
 {
-  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
   if (GroupAngles->radioButton_1->isChecked())
     myOrientation = 1;
   else if (GroupAngles->radioButton_2->isChecked())
     myOrientation = 2;
   else
-    myOrientation = 3;
+    myOrientation = 3; 
   
-  if(GroupAngles->SpinBox_DL->value()>Precision::Confusion())
-  {
-    double anAngle2 = 0.0;
-    if (GroupAngles->checkBox->isChecked())
-      anAngle2 = GroupAngles->SpinBox_DA2->value();
-    
-    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
-    displayLength(GroupAngles->SpinBox_DL->value());  
-  }
+  GEOMBase_Helper::displayPreview( true, false, true, true, myLineWidth );
 }
 
 //=================================================================================
@@ -984,6 +962,19 @@ void EntityGUI_3DSketcherDlg::displayPreview( GEOM::GEOM_Object_ptr object,
   // Display local trihedron if the mode is relatives coordinates or angles
   if (myMode == 1 || myMode == 2)
     displayTrihedron(2);
+  
+  // Display preview of suitable dimension presentations
+  if(myMode == 2)  // ANGLES
+  {
+    double anAngle2 = 0.0;
+    if (GroupAngles->checkBox->isChecked())
+      anAngle2 = GroupAngles->SpinBox_DA2->value();
+    
+    displayAngle(GroupAngles->SpinBox_DA->value(), anAngle2, GroupAngles->SpinBox_DL->value(), myOrientation);
+    displayLength(GroupAngles->SpinBox_DL->value());  
+  }
+  if( myMode == 0 || myMode == 1 )  // COORDINATES
+    displayLength(); 
   
   getDisplayer()->UnsetName();
 
