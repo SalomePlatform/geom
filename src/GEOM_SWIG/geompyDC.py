@@ -6638,6 +6638,47 @@ class geompyDC(GEOM._objref_GEOM_Gen):
             RaiseIfFailed("GetAngle", self.MeasuOp)
             return anAngle
 
+        ## Get angle between the given vectors in degrees.
+        #  @param theShape1,theShape2 Vectors to find angle between.
+        #  @param theFlag If True, the normal vector is defined by the two vectors cross,
+        #                 if False, the opposite vector to the normal vector is used.
+        #  @return Value of the angle between the given vectors in degrees.
+        #
+        #  @ref tui_measurement_tools_page "Example"
+        def GetAngleVectors(self, theShape1, theShape2, theFlag = True):
+            """
+            Get angle between the given vectors in degrees.
+
+            Parameters: 
+                theShape1,theShape2 Vectors to find angle between.
+                theFlag If True, the normal vector is defined by the two vectors cross,
+                        if False, the opposite vector to the normal vector is used.
+
+            Returns:  
+                Value of the angle between the given vectors in degrees.
+            """
+            anAngle = self.MeasuOp.GetAngleBtwVectors(theShape1, theShape2)
+            if not theFlag:
+                anAngle = 360. - anAngle
+            RaiseIfFailed("GetAngleVectors", self.MeasuOp)
+            return anAngle
+
+        ## The same as GetAngleVectors, but the result is in radians.
+        def GetAngleRadiansVectors(self, theShape1, theShape2, theFlag = True):
+            """
+            Get angle between the given vectors in radians.
+
+            Parameters: 
+                theShape1,theShape2 Vectors to find angle between.
+                theFlag If True, the normal vector is defined by the two vectors cross,
+                        if False, the opposite vector to the normal vector is used.
+
+            Returns:  
+                Value of the angle between the given vectors in radians.
+            """
+            anAngle = self.GetAngleVectors(theShape1, theShape2, theFlag)*math.pi/180.
+            return anAngle
+
         ## @name Curve Curvature Measurement
         #  Methods for receiving radius of curvature of curves
         #  in the given point
