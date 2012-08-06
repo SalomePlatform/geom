@@ -258,11 +258,13 @@ bool BuildGUI_SolidDlg::isValid (QString& msg)
   GEOM::MeasureOpPtr anOp;
   anOp.take(myGeomGUI->GetGeomGen()->GetIMeasureOperations(getStudyId()));
 
-  for ( int i = 0, n = myShells.count(); i < n && ok; i++ ) {
-    CORBA::String_var aRes = anOp->IsGoodForSolid(myShells[i].get());
-    if (strlen(aRes.in())) {
-      msg = QObject::tr(aRes.in()).arg(GEOMBase::GetName(myShells[i].get()));
-      ok = false;
+  if (!GroupSolid->CheckButton1->isChecked() || myShells.count() == 1) {
+    for (int i = 0, n = myShells.count(); i < n && ok; i++) {
+      CORBA::String_var aRes = anOp->IsGoodForSolid(myShells[i].get());
+      if (strlen(aRes.in())) {
+        msg = QObject::tr(aRes.in()).arg(GEOMBase::GetName(myShells[i].get()));
+        ok = false;
+      }
     }
   }
   return ok;

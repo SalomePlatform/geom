@@ -3016,7 +3016,7 @@ class geompyDC(GEOM._objref_GEOM_Gen):
         #  @return New GEOM.GEOM_Object, containing the created solid.
         #
         #  @ref tui_creation_solid "Example"
-        def MakeSolid(self,theShells):
+        def MakeSolid(self, theShells):
             """
             Create a solid, bounded by the given shells.
 
@@ -3027,6 +3027,12 @@ class geompyDC(GEOM._objref_GEOM_Gen):
                 New GEOM.GEOM_Object, containing the created solid.
             """
             # Example: see GEOM_TestAll.py
+            if len(theShells) == 1:
+                descr = self.MeasuOp.IsGoodForSolid(theShells[0])
+                #if len(descr) > 0:
+                #    raise RuntimeError, "MakeSolidShells : " + descr
+                if descr == "WRN_SHAPE_UNCLOSED":
+                    raise RuntimeError, "MakeSolidShells : Unable to create solid from unclosed shape"
             anObj = self.ShapesOp.MakeSolidShells(theShells)
             RaiseIfFailed("MakeSolidShells", self.ShapesOp)
             return anObj
