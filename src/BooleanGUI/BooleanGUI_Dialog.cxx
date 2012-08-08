@@ -224,6 +224,7 @@ void BooleanGUI_Dialog::SelectionIntoArgument()
     if      (myEditCurrentArgument == myGroup->LineEdit1) myObject1.nullify();
     else if (myEditCurrentArgument == myGroup->LineEdit2) myObject2.nullify();
   }
+  processPreview();
 }
 
 //=================================================================================
